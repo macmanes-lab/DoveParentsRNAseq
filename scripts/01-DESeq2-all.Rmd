@@ -57,9 +57,16 @@ percentVar <- round(100 * attr(pcadata, "percentVar"))
 pcadata$sextissue <- as.factor(paste(pcadata$sex, pcadata$tissue, sep="_"))
 pcadata$sextreatment <- as.factor(paste(pcadata$sex, pcadata$treatment, sep="_"))
 
+write.csv(pcadata, "../results/01_pcadata.csv")
+write.csv(percentVar, "../results/01_percentVar.csv")
 
 summary(aov(PC1 ~ sex * treatment * tissue * treatment, data=pcadata)) 
 summary(aov(PC2 ~ sex * treatment * tissue * treatment, data=pcadata)) 
+summary(aov(PC3 ~ sex * treatment * tissue * treatment, data=pcadata)) 
+summary(aov(PC4 ~ sex * treatment * tissue * treatment, data=pcadata)) 
+summary(aov(PC5 ~ sex * treatment * tissue * treatment, data=pcadata)) 
+summary(aov(PC6 ~ sex * treatment * tissue * treatment, data=pcadata)) 
+
 
 PCA12 <- ggplot(pcadata, aes(pcadata$PC1, pcadata$PC2, color=sextreatment, shape= tissue)) +
     geom_point(size=1.5) +

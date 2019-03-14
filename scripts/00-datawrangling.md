@@ -199,8 +199,8 @@ save files for downstream use
 -----------------------------
 
     write.csv(colData_manipluation, "../results/00_colData_manipluation.csv", row.names = TRUE) 
-    write.csv(countData_manipluation, "../results/countData_manipluation.csv", row.names = TRUE) 
+    write.csv(countData_manipluation, "../results/00_countData_manipluation.csv", row.names = TRUE) 
     write.csv(colData_characterization, "../results/00_colData_characterization.csv", row.names = TRUE) 
-    write.csv(countData_characterization, "../results/00-countData-characterization.csv", row.names = TRUE) 
+    write.csv(countData_characterization, "../results/00_countData_characterization.csv", row.names = TRUE) 
 
 \`\`\`
