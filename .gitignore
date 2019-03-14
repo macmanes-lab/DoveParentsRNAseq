@@ -1,0 +1,7 @@
+# files to ignore
+
+kallisto_mappings/
+mapping/
+.DS_Store
+*/.DS_Store
+*/*/.DS_Store
