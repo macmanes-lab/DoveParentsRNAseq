@@ -16,16 +16,21 @@ knitr::opts_chunk$set(fig.path = '../figures/',
 ```
 
 
-Now, I'll do RNAseq on all the data
+Now, I'll do RNAseq on all the data from the parental care characterization study. 
+
+```{r}
+colData <- read.csv("../results/00-colData_characterization.csv", header = T, row.names = 1)
+countData <- read.csv("../results/00-countData_characterization.csv", header = T, row.names = 1)
+```
 
 ```{r deseq2}
-dds <- DESeqDataSetFromMatrix(countGonad, colGonad, ~ sex*treatment)
+dds <- DESeqDataSetFromMatrix(countData, colData, ~ sex*treatment)
 dds # view the DESeq object - note numnber of genes
 dds <- dds[ rowSums(counts(dds)) > 1, ]  # Pre-filtering genes with 0 counts
 dds # view number of genes afternormalization and the number of samples
 dds <- DESeq(dds) # Differential expression analysis
 vsd <- vst(dds, blind=FALSE) ## variance stabilized
-head(assay(vsd),3)
+#head(assay(vsd),3)
 #write.csv(assay(vsd), file = "../results/01-vsd.csv", row.names = T)
 ```
 

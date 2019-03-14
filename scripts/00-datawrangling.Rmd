@@ -123,10 +123,10 @@ ncol(countData_characterization) == nrow(colData_characterization)
 ## save files for downstream use
 
 ```{r write}
-write.csv(colData_manipluation, "../results/colData_manipluation.csv", row.names = TRUE) 
-write.csv(countData_manipluation, "../results/countData_manipluation.csv", row.names = TRUE) 
-write.csv(colData_characterization, "../results/colData_characterization.csv", row.names = TRUE) 
-write.csv(countData_characterization, "../results/countData_characterization.csv", row.names = TRUE) 
+write.csv(colData_manipluation, "../results/00-colData-manipluation.csv", row.names = TRUE) 
+write.csv(countData_manipluation, "../results/countData-manipluation.csv", row.names = TRUE) 
+write.csv(colData_characterization, "../results/00-colData-characterization.csv", row.names = TRUE) 
+write.csv(countData_characterization, "../results/00-countData-characterization.csv", row.names = TRUE) 
 ```
 
 ```
