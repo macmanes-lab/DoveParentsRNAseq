@@ -19,8 +19,8 @@ knitr::opts_chunk$set(fig.path = '../figures/',
 Now, I'll do RNAseq on all the data from the parental care characterization study. 
 
 ```{r}
-colData <- read.csv("../results/00-colData-characterization.csv", header = T, row.names = 1)
-countData <- read.csv("../results/00-countData-characterization.csv", header = T, row.names = 1)
+colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
+countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 ```
 
 ```{r deseq2}
