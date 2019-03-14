@@ -11,6 +11,9 @@ countData and geneinfo
     ## set row names as entrezid for deseq2
     row.names(countData) <- countData$entrezid
 
+    # replace dashes with periods (to make deseq happy)
+    colnames(countData) <- gsub('-', '.', colnames(countData))
+
     # create df with gene info and remove this from countData
     geneinfo <- countData %>%
       select(row.names, Name, geneid, entrezid)
@@ -83,7 +86,7 @@ wrangle colData
     # drop no-longer-needed cols
     colData <- colData %>% dplyr::select(-c(temp, treatmentTemp))
 
-    # replace dashes with peroids and make rowname, to match colnames(countData)
+    # replace dashes with periods and make rowname, (to make deseq happy)
     colData$V1 <- gsub("-", ".", colData$V1)
     row.names(colData) <- colData$V1
 
@@ -195,9 +198,9 @@ subset for characterization study
 save files for downstream use
 -----------------------------
 
-    write.csv(colData_manipluation, "../results/colData_manipluation.csv", row.names = TRUE) 
+    write.csv(colData_manipluation, "../results/00_colData_manipluation.csv", row.names = TRUE) 
     write.csv(countData_manipluation, "../results/countData_manipluation.csv", row.names = TRUE) 
-    write.csv(colData_characterization, "../results/colData_characterization.csv", row.names = TRUE) 
-    write.csv(countData_characterization, "../results/countData_characterization.csv", row.names = TRUE) 
+    write.csv(colData_characterization, "../results/00_colData_characterization.csv", row.names = TRUE) 
+    write.csv(countData_characterization, "../results/00-countData-characterization.csv", row.names = TRUE) 
 
 \`\`\`
