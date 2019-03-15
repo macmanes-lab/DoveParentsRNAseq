@@ -4,6 +4,16 @@
 
 This repository contains the data and analysis for a collaboration between Drs. Rebecca Calisi and Matt MacManes that focuses on one characterizing the neurogenomocs of parental care in the rock dove.
 
+## Main research questions
+
+1. What genes differ in expression between timepoints?
+1. What stages are most different, stressful, responsive? 
+1. How do genes in the HPG affect genes in other regions?
+1. How do male and females differ?
+1. How do tissues differ?
+1. What is the relationship between genes and hormones across timepoints?
+ 
+
 ## Organization
 
 These repositories is broken down into the following sub-repositories, each with their own unique purpose and structure.
