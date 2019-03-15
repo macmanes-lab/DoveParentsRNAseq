@@ -1,8 +1,5 @@
-# files to ignore
-
+# files that are either too large or annoying or not ready to share
 kallisto_mappings/
 mapping/
 .DS_Store
-*/.DS_Store
-*/*/.DS_Store
-*/.html
+scripts/01_limma_all_cache/
