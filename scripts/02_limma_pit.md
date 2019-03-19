@@ -6,14 +6,14 @@ tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -47,30 +47,6 @@ First, I read in the data I processed in 00\_datawrangling.Rmd.
     # import "colData" which contains sample information and "countData" which contains read counts
     colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
     countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
-    head(colData)
-
-    ##                                                                            V1
-    ## L.Blu13_male_gonad_control.NYNO               L.Blu13_male_gonad_control.NYNO
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
-    ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
-    ## L.G107_male_gonad_control                           L.G107_male_gonad_control
-    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
-    ## L.G107_male_pituitary_control                   L.G107_male_pituitary_control
-    ##                                           bird  sex       tissue NYNO
-    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male        gonad NYNO
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus NYNO
-    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male    pituitary NYNO
-    ## L.G107_male_gonad_control               L.G107 male        gonad <NA>
-    ## L.G107_male_hypothalamus_control        L.G107 male hypothalamus <NA>
-    ## L.G107_male_pituitary_control           L.G107 male    pituitary <NA>
-    ##                                        treatment                     group
-    ## L.Blu13_male_gonad_control.NYNO          control        male.gonad.control
-    ## L.Blu13_male_hypothalamus_control.NYNO   control male.hypothalamus.control
-    ## L.Blu13_male_pituitary_control.NYNO      control    male.pituitary.control
-    ## L.G107_male_gonad_control                control        male.gonad.control
-    ## L.G107_male_hypothalamus_control         control male.hypothalamus.control
-    ## L.G107_male_pituitary_control            control    male.pituitary.control
-
     geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
 
     colData <- colData %>%
@@ -216,8 +192,19 @@ specify contrasts and make MA plots (currently only a subset)
                  FP_H5 = female.pituitary.hatch -  female.pituitary.n5,
                  FP_n59 = female.pituitary.n5 - female.pituitary.n9,
                  FP_n9C = female.pituitary.n9 - female.pituitary.control,
+                 
+                 MP_CB = male.pituitary.control - male.pituitary.bldg,
+                 MP_BL = male.pituitary.bldg - male.pituitary.lay,
+                 MP_Li3 = male.pituitary.lay - male.pituitary.inc.d3,
+                 MP_i39 = male.pituitary.inc.d3 - male.pituitary.inc.d9,
+                 MP_i917 = male.pituitary.inc.d9 - male.pituitary.inc.d17,
+                 MP_i17H = male.pituitary.inc.d17 - male.pituitary.hatch,
+                 MP_H5 = male.pituitary.hatch -  male.pituitary.n5,
+                 MP_n59 = male.pituitary.n5 - male.pituitary.n9,
+                 MP_n9C = male.pituitary.n9 - male.pituitary.control,
     levels=parentaldesign)
 
+    # female comparisons
     cont <- "FP_CB"
     summary(decideTestsDGE(
         glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
@@ -2701,6 +2688,2492 @@ glm
     plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FP_n9C', frame.plot=F)
 
 ![](../figures/pit/01-contrasts-9.png)
+
+    ## male comparisons
+
+    cont <- "MP_CB"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        -1*male.pituitary.bldg 1*male.pituitary.control
+    ## Down                                                46
+    ## NotSig                                           14793
+    ## Up                                                  98
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015139992.1
+</td>
+<td style="text-align:right;">
+396473
+</td>
+<td style="text-align:left;">
+MARCKS
+</td>
+<td style="text-align:right;">
+396473
+</td>
+<td style="text-align:left;">
+XP\_015139992.1
+</td>
+<td style="text-align:right;">
+-1.97
+</td>
+<td style="text-align:right;">
+-1.98
+</td>
+<td style="text-align:right;">
+5.97
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_003643482.1
+</td>
+<td style="text-align:right;">
+100857405
+</td>
+<td style="text-align:left;">
+ANAPC15
+</td>
+<td style="text-align:right;">
+100857405
+</td>
+<td style="text-align:left;">
+XP\_003643482.1
+</td>
+<td style="text-align:right;">
+2.03
+</td>
+<td style="text-align:right;">
+2.03
+</td>
+<td style="text-align:right;">
+5.23
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015134142.1
+</td>
+<td style="text-align:right;">
+776915
+</td>
+<td style="text-align:left;">
+F8A3
+</td>
+<td style="text-align:right;">
+776915
+</td>
+<td style="text-align:left;">
+XP\_015134142.1
+</td>
+<td style="text-align:right;">
+-3.06
+</td>
+<td style="text-align:right;">
+-3.08
+</td>
+<td style="text-align:right;">
+2.83
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_003642170.2
+</td>
+<td style="text-align:right;">
+427675
+</td>
+<td style="text-align:left;">
+RPS15A
+</td>
+<td style="text-align:right;">
+427675
+</td>
+<td style="text-align:left;">
+XP\_003642170.2
+</td>
+<td style="text-align:right;">
+2.79
+</td>
+<td style="text-align:right;">
+2.79
+</td>
+<td style="text-align:right;">
+7.98
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_003642240.1
+</td>
+<td style="text-align:right;">
+100857736
+</td>
+<td style="text-align:left;">
+EIF2B1
+</td>
+<td style="text-align:right;">
+100857736
+</td>
+<td style="text-align:left;">
+XP\_003642240.1
+</td>
+<td style="text-align:right;">
+1.16
+</td>
+<td style="text-align:right;">
+1.16
+</td>
+<td style="text-align:right;">
+5.09
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+-1*male.pituitary.bldg 1*male.pituitary.control
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_CB', frame.plot=F)
+
+![](../figures/pit/01-contrasts-10.png)
+
+    cont <- "MP_BL"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        1*male.pituitary.bldg -1*male.pituitary.lay
+    ## Down                                             0
+    ## NotSig                                       14937
+    ## Up                                               0
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015132190.1
+</td>
+<td style="text-align:right;">
+422696
+</td>
+<td style="text-align:left;">
+LRIT3
+</td>
+<td style="text-align:right;">
+422696
+</td>
+<td style="text-align:left;">
+XP\_015132190.1
+</td>
+<td style="text-align:right;">
+3.80
+</td>
+<td style="text-align:right;">
+144269481.59
+</td>
+<td style="text-align:right;">
+-1.54
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015137344.1
+</td>
+<td style="text-align:right;">
+420606
+</td>
+<td style="text-align:left;">
+ABCB5
+</td>
+<td style="text-align:right;">
+420606
+</td>
+<td style="text-align:left;">
+XP\_015137344.1
+</td>
+<td style="text-align:right;">
+4.10
+</td>
+<td style="text-align:right;">
+144269481.90
+</td>
+<td style="text-align:right;">
+-1.70
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001004370.1
+</td>
+<td style="text-align:right;">
+415490
+</td>
+<td style="text-align:left;">
+RHCG
+</td>
+<td style="text-align:right;">
+415490
+</td>
+<td style="text-align:left;">
+NP\_001004370.1
+</td>
+<td style="text-align:right;">
+3.78
+</td>
+<td style="text-align:right;">
+144269481.56
+</td>
+<td style="text-align:right;">
+-1.47
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001095200.1
+</td>
+<td style="text-align:right;">
+396206
+</td>
+<td style="text-align:left;">
+NEFM
+</td>
+<td style="text-align:right;">
+396206
+</td>
+<td style="text-align:left;">
+NP\_001095200.1
+</td>
+<td style="text-align:right;">
+2.96
+</td>
+<td style="text-align:right;">
+2.97
+</td>
+<td style="text-align:right;">
+1.51
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.26
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001007882.1
+</td>
+<td style="text-align:right;">
+419864
+</td>
+<td style="text-align:left;">
+GUCA1B
+</td>
+<td style="text-align:right;">
+419864
+</td>
+<td style="text-align:left;">
+NP\_001007882.1
+</td>
+<td style="text-align:right;">
+3.11
+</td>
+<td style="text-align:right;">
+144269480.82
+</td>
+<td style="text-align:right;">
+-1.85
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.36
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*male.pituitary.bldg -1*male.pituitary.lay
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_BL', frame.plot=F)
+
+![](../figures/pit/01-contrasts-11.png)
+
+    cont <- "MP_Li3"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        -1*male.pituitary.inc.d3 1*male.pituitary.lay
+    ## Down                                               0
+    ## NotSig                                         14937
+    ## Up                                                 0
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015132190.1
+</td>
+<td style="text-align:right;">
+422696
+</td>
+<td style="text-align:left;">
+LRIT3
+</td>
+<td style="text-align:right;">
+422696
+</td>
+<td style="text-align:left;">
+XP\_015132190.1
+</td>
+<td style="text-align:right;">
+-4.02
+</td>
+<td style="text-align:right;">
+-144269481.83
+</td>
+<td style="text-align:right;">
+-1.54
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001004370.1
+</td>
+<td style="text-align:right;">
+415490
+</td>
+<td style="text-align:left;">
+RHCG
+</td>
+<td style="text-align:right;">
+415490
+</td>
+<td style="text-align:left;">
+NP\_001004370.1
+</td>
+<td style="text-align:right;">
+-4.38
+</td>
+<td style="text-align:right;">
+-144269482.20
+</td>
+<td style="text-align:right;">
+-1.47
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015157097.1
+</td>
+<td style="text-align:right;">
+107056587
+</td>
+<td style="text-align:left;">
+LOC107056587
+</td>
+<td style="text-align:right;">
+107056587
+</td>
+<td style="text-align:left;">
+XP\_015157097.1
+</td>
+<td style="text-align:right;">
+-3.68
+</td>
+<td style="text-align:right;">
+-144269481.45
+</td>
+<td style="text-align:right;">
+-1.84
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990331.1
+</td>
+<td style="text-align:right;">
+395850
+</td>
+<td style="text-align:left;">
+MMP27
+</td>
+<td style="text-align:right;">
+395850
+</td>
+<td style="text-align:left;">
+NP\_990331.1
+</td>
+<td style="text-align:right;">
+-3.56
+</td>
+<td style="text-align:right;">
+-5.13
+</td>
+<td style="text-align:right;">
+-1.56
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.52
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_004948276.1
+</td>
+<td style="text-align:right;">
+101747315
+</td>
+<td style="text-align:left;">
+S100A4
+</td>
+<td style="text-align:right;">
+101747315
+</td>
+<td style="text-align:left;">
+XP\_004948276.1
+</td>
+<td style="text-align:right;">
+-3.44
+</td>
+<td style="text-align:right;">
+-144269481.19
+</td>
+<td style="text-align:right;">
+-1.89
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.71
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+-1*male.pituitary.inc.d3 1*male.pituitary.lay
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_Li3', frame.plot=F)
+
+![](../figures/pit/01-contrasts-12.png)
+
+    cont <- "MP_i39"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        1*male.pituitary.inc.d3 -1*male.pituitary.inc.d9
+    ## Down                                                  3
+    ## NotSig                                            14934
+    ## Up                                                    0
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+NP\_001264524.1
+</td>
+<td style="text-align:right;">
+415770
+</td>
+<td style="text-align:left;">
+C11H19ORF40
+</td>
+<td style="text-align:right;">
+415770
+</td>
+<td style="text-align:left;">
+NP\_001264524.1
+</td>
+<td style="text-align:right;">
+-6.90
+</td>
+<td style="text-align:right;">
+-144269484.78
+</td>
+<td style="text-align:right;">
+2.86
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_004944394.1
+</td>
+<td style="text-align:right;">
+101750188
+</td>
+<td style="text-align:left;">
+LOC101750188
+</td>
+<td style="text-align:right;">
+101750188
+</td>
+<td style="text-align:left;">
+XP\_004944394.1
+</td>
+<td style="text-align:right;">
+-5.20
+</td>
+<td style="text-align:right;">
+-5.70
+</td>
+<td style="text-align:right;">
+2.73
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_001234565.2
+</td>
+<td style="text-align:right;">
+771273
+</td>
+<td style="text-align:left;">
+MRPS36
+</td>
+<td style="text-align:right;">
+771273
+</td>
+<td style="text-align:left;">
+XP\_001234565.2
+</td>
+<td style="text-align:right;">
+-4.52
+</td>
+<td style="text-align:right;">
+-5.21
+</td>
+<td style="text-align:right;">
+1.89
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015135776.1
+</td>
+<td style="text-align:right;">
+427254
+</td>
+<td style="text-align:left;">
+ZFAND5
+</td>
+<td style="text-align:right;">
+427254
+</td>
+<td style="text-align:left;">
+XP\_015135776.1
+</td>
+<td style="text-align:right;">
+-2.76
+</td>
+<td style="text-align:right;">
+-2.79
+</td>
+<td style="text-align:right;">
+4.35
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_004941449.1
+</td>
+<td style="text-align:right;">
+423056
+</td>
+<td style="text-align:left;">
+TRIM66
+</td>
+<td style="text-align:right;">
+423056
+</td>
+<td style="text-align:left;">
+XP\_004941449.1
+</td>
+<td style="text-align:right;">
+-2.47
+</td>
+<td style="text-align:right;">
+-2.55
+</td>
+<td style="text-align:right;">
+0.29
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*male.pituitary.inc.d3 -1*male.pituitary.inc.d9
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_i39', frame.plot=F)
+
+![](../figures/pit/01-contrasts-13.png)
+
+    cont <- "MP_i917"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        -1*male.pituitary.inc.d17 1*male.pituitary.inc.d9
+    ## Down                                                  34
+    ## NotSig                                             14900
+    ## Up                                                     3
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015135377.1
+</td>
+<td style="text-align:right;">
+417420
+</td>
+<td style="text-align:left;">
+KPNA2
+</td>
+<td style="text-align:right;">
+417420
+</td>
+<td style="text-align:left;">
+XP\_015135377.1
+</td>
+<td style="text-align:right;">
+-4.49
+</td>
+<td style="text-align:right;">
+-4.51
+</td>
+<td style="text-align:right;">
+2.52
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001006274.1
+</td>
+<td style="text-align:right;">
+418882
+</td>
+<td style="text-align:left;">
+CKAP2
+</td>
+<td style="text-align:right;">
+418882
+</td>
+<td style="text-align:left;">
+NP\_001006274.1
+</td>
+<td style="text-align:right;">
+-3.92
+</td>
+<td style="text-align:right;">
+-3.93
+</td>
+<td style="text-align:right;">
+2.60
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015143888.1
+</td>
+<td style="text-align:right;">
+423793
+</td>
+<td style="text-align:left;">
+LOC423793
+</td>
+<td style="text-align:right;">
+423793
+</td>
+<td style="text-align:left;">
+XP\_015143888.1
+</td>
+<td style="text-align:right;">
+-3.89
+</td>
+<td style="text-align:right;">
+-3.92
+</td>
+<td style="text-align:right;">
+1.66
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001012888.1
+</td>
+<td style="text-align:right;">
+421226
+</td>
+<td style="text-align:left;">
+BUB1
+</td>
+<td style="text-align:right;">
+421226
+</td>
+<td style="text-align:left;">
+NP\_001012888.1
+</td>
+<td style="text-align:right;">
+-3.38
+</td>
+<td style="text-align:right;">
+-3.41
+</td>
+<td style="text-align:right;">
+1.05
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_004949789.2
+</td>
+<td style="text-align:right;">
+426884
+</td>
+<td style="text-align:left;">
+RACGAP1
+</td>
+<td style="text-align:right;">
+426884
+</td>
+<td style="text-align:left;">
+XP\_004949789.2
+</td>
+<td style="text-align:right;">
+-3.37
+</td>
+<td style="text-align:right;">
+-3.39
+</td>
+<td style="text-align:right;">
+1.67
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+-1*male.pituitary.inc.d17 1*male.pituitary.inc.d9
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_i917', frame.plot=F)
+
+![](../figures/pit/01-contrasts-14.png)
+
+    cont <- "MP_i17H"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        -1*male.pituitary.hatch 1*male.pituitary.inc.d17
+    ## Down                                                  0
+    ## NotSig                                            14936
+    ## Up                                                    1
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015133687.1
+</td>
+<td style="text-align:right;">
+396214
+</td>
+<td style="text-align:left;">
+PLP1
+</td>
+<td style="text-align:right;">
+396214
+</td>
+<td style="text-align:left;">
+XP\_015133687.1
+</td>
+<td style="text-align:right;">
+7.94
+</td>
+<td style="text-align:right;">
+7.97
+</td>
+<td style="text-align:right;">
+5.46
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_001231917.1
+</td>
+<td style="text-align:right;">
+769726
+</td>
+<td style="text-align:left;">
+LOC769726
+</td>
+<td style="text-align:right;">
+769726
+</td>
+<td style="text-align:left;">
+XP\_001231917.1
+</td>
+<td style="text-align:right;">
+4.81
+</td>
+<td style="text-align:right;">
+4.83
+</td>
+<td style="text-align:right;">
+3.59
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990381.1
+</td>
+<td style="text-align:right;">
+395921
+</td>
+<td style="text-align:left;">
+CNP
+</td>
+<td style="text-align:right;">
+395921
+</td>
+<td style="text-align:left;">
+NP\_990381.1
+</td>
+<td style="text-align:right;">
+1.81
+</td>
+<td style="text-align:right;">
+1.81
+</td>
+<td style="text-align:right;">
+5.40
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015142329.1
+</td>
+<td style="text-align:right;">
+418151
+</td>
+<td style="text-align:left;">
+NINJ2
+</td>
+<td style="text-align:right;">
+418151
+</td>
+<td style="text-align:left;">
+XP\_015142329.1
+</td>
+<td style="text-align:right;">
+2.97
+</td>
+<td style="text-align:right;">
+2.98
+</td>
+<td style="text-align:right;">
+1.75
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015137249.1
+</td>
+<td style="text-align:right;">
+428448
+</td>
+<td style="text-align:left;">
+COL6A6
+</td>
+<td style="text-align:right;">
+428448
+</td>
+<td style="text-align:left;">
+XP\_015137249.1
+</td>
+<td style="text-align:right;">
+1.13
+</td>
+<td style="text-align:right;">
+1.14
+</td>
+<td style="text-align:right;">
+1.75
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+-1*male.pituitary.hatch 1*male.pituitary.inc.d17
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_i17H', frame.plot=F)
+
+![](../figures/pit/01-contrasts-15.png)
+
+    cont <- "MP_H5"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        1*male.pituitary.hatch -1*male.pituitary.n5
+    ## Down                                             0
+    ## NotSig                                       14937
+    ## Up                                               0
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+NP\_990016.1
+</td>
+<td style="text-align:right;">
+395420
+</td>
+<td style="text-align:left;">
+F13A1
+</td>
+<td style="text-align:right;">
+395420
+</td>
+<td style="text-align:left;">
+NP\_990016.1
+</td>
+<td style="text-align:right;">
+1.71
+</td>
+<td style="text-align:right;">
+1.72
+</td>
+<td style="text-align:right;">
+2.10
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990247.1
+</td>
+<td style="text-align:right;">
+395746
+</td>
+<td style="text-align:left;">
+OAZ1
+</td>
+<td style="text-align:right;">
+395746
+</td>
+<td style="text-align:left;">
+NP\_990247.1
+</td>
+<td style="text-align:right;">
+0.80
+</td>
+<td style="text-align:right;">
+0.80
+</td>
+<td style="text-align:right;">
+9.84
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015133687.1
+</td>
+<td style="text-align:right;">
+396214
+</td>
+<td style="text-align:left;">
+PLP1
+</td>
+<td style="text-align:right;">
+396214
+</td>
+<td style="text-align:left;">
+XP\_015133687.1
+</td>
+<td style="text-align:right;">
+-4.90
+</td>
+<td style="text-align:right;">
+-4.93
+</td>
+<td style="text-align:right;">
+5.46
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001264404.1
+</td>
+<td style="text-align:right;">
+425027
+</td>
+<td style="text-align:left;">
+SSR3
+</td>
+<td style="text-align:right;">
+425027
+</td>
+<td style="text-align:left;">
+NP\_001264404.1
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+<td style="text-align:right;">
+0.70
+</td>
+<td style="text-align:right;">
+6.85
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015154663.1
+</td>
+<td style="text-align:right;">
+418479
+</td>
+<td style="text-align:left;">
+ADAMTS1
+</td>
+<td style="text-align:right;">
+418479
+</td>
+<td style="text-align:left;">
+XP\_015154663.1
+</td>
+<td style="text-align:right;">
+-1.41
+</td>
+<td style="text-align:right;">
+-1.41
+</td>
+<td style="text-align:right;">
+4.08
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.35
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*male.pituitary.hatch -1*male.pituitary.n5
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_H5', frame.plot=F)
+
+![](../figures/pit/01-contrasts-16.png)
+
+    cont <- "MP_n59"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        1*male.pituitary.n5 -1*male.pituitary.n9
+    ## Down                                          0
+    ## NotSig                                    14937
+    ## Up                                            0
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015146188.1
+</td>
+<td style="text-align:right;">
+424490
+</td>
+<td style="text-align:left;">
+ABCA4
+</td>
+<td style="text-align:right;">
+424490
+</td>
+<td style="text-align:left;">
+XP\_015146188.1
+</td>
+<td style="text-align:right;">
+-3.28
+</td>
+<td style="text-align:right;">
+-3.29
+</td>
+<td style="text-align:right;">
+1.73
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001026123.1
+</td>
+<td style="text-align:right;">
+420332
+</td>
+<td style="text-align:left;">
+MYC
+</td>
+<td style="text-align:right;">
+420332
+</td>
+<td style="text-align:left;">
+NP\_001026123.1
+</td>
+<td style="text-align:right;">
+1.87
+</td>
+<td style="text-align:right;">
+1.88
+</td>
+<td style="text-align:right;">
+2.62
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_001232071.1
+</td>
+<td style="text-align:right;">
+768907
+</td>
+<td style="text-align:left;">
+FGF6
+</td>
+<td style="text-align:right;">
+768907
+</td>
+<td style="text-align:left;">
+XP\_001232071.1
+</td>
+<td style="text-align:right;">
+3.28
+</td>
+<td style="text-align:right;">
+3.28
+</td>
+<td style="text-align:right;">
+4.24
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015143549.1
+</td>
+<td style="text-align:right;">
+396252
+</td>
+<td style="text-align:left;">
+CDK1
+</td>
+<td style="text-align:right;">
+396252
+</td>
+<td style="text-align:left;">
+XP\_015143549.1
+</td>
+<td style="text-align:right;">
+2.23
+</td>
+<td style="text-align:right;">
+2.24
+</td>
+<td style="text-align:right;">
+2.41
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001012888.1
+</td>
+<td style="text-align:right;">
+421226
+</td>
+<td style="text-align:left;">
+BUB1
+</td>
+<td style="text-align:right;">
+421226
+</td>
+<td style="text-align:left;">
+NP\_001012888.1
+</td>
+<td style="text-align:right;">
+2.01
+</td>
+<td style="text-align:right;">
+2.02
+</td>
+<td style="text-align:right;">
+1.05
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*male.pituitary.n5 -1*male.pituitary.n9
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_n59', frame.plot=F)
+
+![](../figures/pit/01-contrasts-17.png)
+
+    cont <- "MP_n9C"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        -1*male.pituitary.control 1*male.pituitary.n9
+    ## Down                                             104
+    ## NotSig                                         14790
+    ## Up                                                43
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015139992.1
+</td>
+<td style="text-align:right;">
+396473
+</td>
+<td style="text-align:left;">
+MARCKS
+</td>
+<td style="text-align:right;">
+396473
+</td>
+<td style="text-align:left;">
+XP\_015139992.1
+</td>
+<td style="text-align:right;">
+1.95
+</td>
+<td style="text-align:right;">
+1.95
+</td>
+<td style="text-align:right;">
+5.97
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_003643482.1
+</td>
+<td style="text-align:right;">
+100857405
+</td>
+<td style="text-align:left;">
+ANAPC15
+</td>
+<td style="text-align:right;">
+100857405
+</td>
+<td style="text-align:left;">
+XP\_003643482.1
+</td>
+<td style="text-align:right;">
+-2.09
+</td>
+<td style="text-align:right;">
+-2.09
+</td>
+<td style="text-align:right;">
+5.23
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_003642170.2
+</td>
+<td style="text-align:right;">
+427675
+</td>
+<td style="text-align:left;">
+RPS15A
+</td>
+<td style="text-align:right;">
+427675
+</td>
+<td style="text-align:left;">
+XP\_003642170.2
+</td>
+<td style="text-align:right;">
+-2.84
+</td>
+<td style="text-align:right;">
+-2.84
+</td>
+<td style="text-align:right;">
+7.98
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015134142.1
+</td>
+<td style="text-align:right;">
+776915
+</td>
+<td style="text-align:left;">
+F8A3
+</td>
+<td style="text-align:right;">
+776915
+</td>
+<td style="text-align:left;">
+XP\_015134142.1
+</td>
+<td style="text-align:right;">
+2.90
+</td>
+<td style="text-align:right;">
+2.92
+</td>
+<td style="text-align:right;">
+2.83
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015133287.1
+</td>
+<td style="text-align:right;">
+418714
+</td>
+<td style="text-align:left;">
+MAP4K4
+</td>
+<td style="text-align:right;">
+418714
+</td>
+<td style="text-align:left;">
+XP\_015133287.1
+</td>
+<td style="text-align:right;">
+1.80
+</td>
+<td style="text-align:right;">
+1.80
+</td>
+<td style="text-align:right;">
+5.81
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+-1*male.pituitary.control 1*male.pituitary.n9
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_n9C', frame.plot=F)
+
+![](../figures/pit/01-contrasts-18.png)
 
 volcano plots
 =============

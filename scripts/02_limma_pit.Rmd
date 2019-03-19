@@ -24,7 +24,6 @@ First, I read in the data I processed in 00_datawrangling.Rmd.
 # import "colData" which contains sample information and "countData" which contains read counts
 colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
 countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
-head(colData)
 geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
 ```
 
@@ -85,6 +84,8 @@ topTags(tr)
 plotMDS(parentalobject, cex = 0.5)
 ```
 
+For color coding, I used this tutorial for guidance <https://combine-australia.github.io/RNAseq-R/06-rnaseq-day1.html>.
+
 ```{r plotMDS-lables}
 levels(colData$treatment)
 col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")[colData$treatment]
@@ -98,7 +99,7 @@ legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99
 title("Pituitary Colored by Treatment")
 ```
 
-# specify contrasts and make MA plots (currently only a subset)
+# specify contrasts and make MA plots 
 
 ```{r 01-contrasts}
 # view all levels
@@ -115,8 +116,19 @@ my.contrasts <- makeContrasts(
 	         FP_H5 = female.pituitary.hatch -  female.pituitary.n5,
 	         FP_n59 = female.pituitary.n5 - female.pituitary.n9,
 	         FP_n9C = female.pituitary.n9 - female.pituitary.control,
+	         
+	         MP_CB = male.pituitary.control - male.pituitary.bldg,
+	         MP_BL = male.pituitary.bldg - male.pituitary.lay,
+	         MP_Li3 = male.pituitary.lay - male.pituitary.inc.d3,
+	         MP_i39 = male.pituitary.inc.d3 - male.pituitary.inc.d9,
+	         MP_i917 = male.pituitary.inc.d9 - male.pituitary.inc.d17,
+	         MP_i17H = male.pituitary.inc.d17 - male.pituitary.hatch,
+	         MP_H5 = male.pituitary.hatch -  male.pituitary.n5,
+	         MP_n59 = male.pituitary.n5 - male.pituitary.n9,
+	         MP_n9C = male.pituitary.n9 - male.pituitary.control,
 levels=parentaldesign)
 
+# female comparisons
 cont <- "FP_CB"
 summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
@@ -179,6 +191,73 @@ summary(decideTestsDGE(
 	adjust.method="fdr", p.value=0.01))
 kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
 plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FP_n9C', frame.plot=F)
+
+
+## male comparisons
+
+cont <- "MP_CB"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_CB', frame.plot=F)
+
+cont <- "MP_BL"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_BL', frame.plot=F)
+
+cont <- "MP_Li3"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_Li3', frame.plot=F)
+
+cont <- "MP_i39"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_i39', frame.plot=F)
+
+cont <- "MP_i917"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_i917', frame.plot=F)
+
+cont <- "MP_i17H"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_i17H', frame.plot=F)
+
+cont <- "MP_H5"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_H5', frame.plot=F)
+
+cont <- "MP_n59"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_n59', frame.plot=F)
+
+cont <- "MP_n9C"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MP_n9C', frame.plot=F)
+
 ```
 
 # volcano plots
