@@ -142,8 +142,8 @@ printplotcontrasts <- function(whichcontrast){
   summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
-  return(kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1))
-  return(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
+  print(kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1))
+  print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
 }
 
 for(i in mycontrasts){
