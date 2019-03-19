@@ -67,6 +67,26 @@ topTags(tr)
 plotMDS(parentalobject, cex = 0.5)
 ```
 
+```{r plotMDS-colored}
+levels(colData$tissue)
+col.tissue <- c("#7570b3","#d95f02", "#1b9e77")[colData$tissue]
+plotMDS(parentalobject,col=col.tissue)
+legend("bottomright",fill=c("#7570b3","#d95f02", "#1b9e77"),legend=levels(colData$tissue))
+title("Colored by Tissue")
+
+levels(colData$treatment)
+col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")[colData$treatment]
+plotMDS(parentalobject,col=col.treatment)
+legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
+title("Colored by Treatment")
+
+levels(colData$sex)
+col.sex <- c("#5ab4ac","#d8b365")[colData$sex]
+plotMDS(parentalobject,col=col.sex)
+legend("bottomright",fill=c("#5ab4ac","#d8b365"),legend=levels(colData$sex))
+title("Colored by Sex")
+```
+
 
 # specify contrasts and make MA plots (currently only a subset)
 
@@ -88,23 +108,23 @@ cont <- "FG_HL"
 summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
-#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-c <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
 
 cont <- "FH_HL"
 summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
-#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-a <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
 
 
 cont <- "FP_HL"
 summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
-#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-b <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
 
 
 cont <- "MG_HL"
@@ -112,25 +132,22 @@ summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
 #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-f <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male gonad lay to hatch', frame.plot=F)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male gonad lay to hatch', frame.plot=F)
 
 cont <- "MH_HL"
 summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
-#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-d <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male hypothalamus lay to hatch', frame.plot=F)
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male hypothalamus lay to hatch', frame.plot=F)
 
 
 cont <- "MP_HL"
 summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
-#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-e <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pituitary lay to hatch', frame.plot=F)
-
-plot_grid(a,b,c,d,e,f, nrow = 2)
-
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pituitary lay to hatch', frame.plot=F)
 ```
 
 # volcano plots

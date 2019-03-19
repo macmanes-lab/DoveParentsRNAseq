@@ -125,6 +125,40 @@ plotMDS (multidimential scaling)
 
 ![](../figures/plotMDS-1.png)
 
+    levels(colData$tissue)
+
+    ## [1] "gonad"        "hypothalamus" "pituitary"
+
+    col.tissue <- c("#7570b3","#d95f02", "#1b9e77")[colData$tissue]
+    plotMDS(parentalobject,col=col.tissue)
+    legend("bottomright",fill=c("#7570b3","#d95f02", "#1b9e77"),legend=levels(colData$tissue))
+    title("Colored by Tissue")
+
+![](../figures/plotMDS-colored-1.png)
+
+    levels(colData$treatment)
+
+    ## [1] "bldg"    "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"    
+    ## [8] "n5"      "n9"
+
+    col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")[colData$treatment]
+    plotMDS(parentalobject,col=col.treatment)
+    legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
+    title("Colored by Treatment")
+
+![](../figures/plotMDS-colored-2.png)
+
+    levels(colData$sex)
+
+    ## [1] "female" "male"
+
+    col.sex <- c("#5ab4ac","#d8b365")[colData$sex]
+    plotMDS(parentalobject,col=col.sex)
+    legend("bottomright",fill=c("#5ab4ac","#d8b365"),legend=levels(colData$sex))
+    title("Colored by Sex")
+
+![](../figures/plotMDS-colored-3.png)
+
 specify contrasts and make MA plots (currently only a subset)
 =============================================================
 
@@ -179,8 +213,269 @@ specify contrasts and make MA plots (currently only a subset)
     ## NotSig                                    14899
     ## Up                                            3
 
-    #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    c <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+NP\_001292097.1
+</td>
+<td style="text-align:right;">
+419533
+</td>
+<td style="text-align:left;">
+LOXL2
+</td>
+<td style="text-align:right;">
+419533
+</td>
+<td style="text-align:left;">
+NP\_001292097.1
+</td>
+<td style="text-align:right;">
+-3.16
+</td>
+<td style="text-align:right;">
+-3.16
+</td>
+<td style="text-align:right;">
+6.37
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_423478.5
+</td>
+<td style="text-align:right;">
+425757
+</td>
+<td style="text-align:left;">
+OVSTL
+</td>
+<td style="text-align:right;">
+425757
+</td>
+<td style="text-align:left;">
+XP\_423478.5
+</td>
+<td style="text-align:right;">
+-5.67
+</td>
+<td style="text-align:right;">
+-5.70
+</td>
+<td style="text-align:right;">
+1.84
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990519.2
+</td>
+<td style="text-align:right;">
+396105
+</td>
+<td style="text-align:left;">
+SOX2
+</td>
+<td style="text-align:right;">
+396105
+</td>
+<td style="text-align:left;">
+NP\_990519.2
+</td>
+<td style="text-align:right;">
+-2.58
+</td>
+<td style="text-align:right;">
+-2.60
+</td>
+<td style="text-align:right;">
+5.07
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990844.1
+</td>
+<td style="text-align:right;">
+396519
+</td>
+<td style="text-align:left;">
+CALB1
+</td>
+<td style="text-align:right;">
+396519
+</td>
+<td style="text-align:left;">
+NP\_990844.1
+</td>
+<td style="text-align:right;">
+-3.91
+</td>
+<td style="text-align:right;">
+-3.91
+</td>
+<td style="text-align:right;">
+5.97
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_004940583.1
+</td>
+<td style="text-align:right;">
+422168
+</td>
+<td style="text-align:left;">
+HEPH
+</td>
+<td style="text-align:right;">
+422168
+</td>
+<td style="text-align:left;">
+XP\_004940583.1
+</td>
+<td style="text-align:right;">
+-1.61
+</td>
+<td style="text-align:right;">
+-1.61
+</td>
+<td style="text-align:right;">
+5.30
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*female.gonad.hatch -1*female.gonad.lay
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
 
 ![](../figures/01-contrasts-1.png)
 
@@ -194,8 +489,269 @@ specify contrasts and make MA plots (currently only a subset)
     ## NotSig                                                  14935
     ## Up                                                          2
 
-    #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    a <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+NP\_990411.1
+</td>
+<td style="text-align:right;">
+395963
+</td>
+<td style="text-align:left;">
+CAPN2
+</td>
+<td style="text-align:right;">
+395963
+</td>
+<td style="text-align:left;">
+NP\_990411.1
+</td>
+<td style="text-align:right;">
+2.42
+</td>
+<td style="text-align:right;">
+2.42
+</td>
+<td style="text-align:right;">
+7.89
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015137344.1
+</td>
+<td style="text-align:right;">
+420606
+</td>
+<td style="text-align:left;">
+ABCB5
+</td>
+<td style="text-align:right;">
+420606
+</td>
+<td style="text-align:left;">
+XP\_015137344.1
+</td>
+<td style="text-align:right;">
+4.67
+</td>
+<td style="text-align:right;">
+4.87
+</td>
+<td style="text-align:right;">
+-1.09
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015153516.1
+</td>
+<td style="text-align:right;">
+430981
+</td>
+<td style="text-align:left;">
+GABRR3
+</td>
+<td style="text-align:right;">
+430981
+</td>
+<td style="text-align:left;">
+XP\_015153516.1
+</td>
+<td style="text-align:right;">
+1.57
+</td>
+<td style="text-align:right;">
+1.62
+</td>
+<td style="text-align:right;">
+3.63
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_989594.1
+</td>
+<td style="text-align:right;">
+374117
+</td>
+<td style="text-align:left;">
+IGJ
+</td>
+<td style="text-align:right;">
+374117
+</td>
+<td style="text-align:left;">
+NP\_989594.1
+</td>
+<td style="text-align:right;">
+-3.68
+</td>
+<td style="text-align:right;">
+-3.70
+</td>
+<td style="text-align:right;">
+5.82
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990378.1
+</td>
+<td style="text-align:right;">
+395916
+</td>
+<td style="text-align:left;">
+NME2
+</td>
+<td style="text-align:right;">
+395916
+</td>
+<td style="text-align:left;">
+NP\_990378.1
+</td>
+<td style="text-align:right;">
+1.84
+</td>
+<td style="text-align:right;">
+1.85
+</td>
+<td style="text-align:right;">
+1.26
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*female.hypothalamus.hatch -1*female.hypothalamus.lay
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
 
 ![](../figures/01-contrasts-2.png)
 
@@ -209,8 +765,269 @@ specify contrasts and make MA plots (currently only a subset)
     ## NotSig                                            14857
     ## Up                                                   76
 
-    #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    b <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+NP\_001026684.1
+</td>
+<td style="text-align:right;">
+428444
+</td>
+<td style="text-align:left;">
+STT3B
+</td>
+<td style="text-align:right;">
+428444
+</td>
+<td style="text-align:left;">
+NP\_001026684.1
+</td>
+<td style="text-align:right;">
+1.57
+</td>
+<td style="text-align:right;">
+1.57
+</td>
+<td style="text-align:right;">
+8.44
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_004947617.1
+</td>
+<td style="text-align:right;">
+428201
+</td>
+<td style="text-align:left;">
+STC1
+</td>
+<td style="text-align:right;">
+428201
+</td>
+<td style="text-align:left;">
+XP\_004947617.1
+</td>
+<td style="text-align:right;">
+3.25
+</td>
+<td style="text-align:right;">
+3.25
+</td>
+<td style="text-align:right;">
+5.62
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_001232858.1
+</td>
+<td style="text-align:right;">
+416770
+</td>
+<td style="text-align:left;">
+SDF2L1
+</td>
+<td style="text-align:right;">
+416770
+</td>
+<td style="text-align:left;">
+XP\_001232858.1
+</td>
+<td style="text-align:right;">
+1.82
+</td>
+<td style="text-align:right;">
+1.82
+</td>
+<td style="text-align:right;">
+6.03
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001186426.2
+</td>
+<td style="text-align:right;">
+417735
+</td>
+<td style="text-align:left;">
+CRELD2
+</td>
+<td style="text-align:right;">
+417735
+</td>
+<td style="text-align:left;">
+NP\_001186426.2
+</td>
+<td style="text-align:right;">
+2.18
+</td>
+<td style="text-align:right;">
+2.18
+</td>
+<td style="text-align:right;">
+6.69
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001104544.1
+</td>
+<td style="text-align:right;">
+374087
+</td>
+<td style="text-align:left;">
+ADARB1
+</td>
+<td style="text-align:right;">
+374087
+</td>
+<td style="text-align:left;">
+NP\_001104544.1
+</td>
+<td style="text-align:right;">
+1.42
+</td>
+<td style="text-align:right;">
+1.42
+</td>
+<td style="text-align:right;">
+8.18
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*female.pituitary.hatch -1*female.pituitary.lay
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
 
 ![](../figures/01-contrasts-3.png)
 
@@ -225,7 +1042,7 @@ specify contrasts and make MA plots (currently only a subset)
     ## Up                                        0
 
     #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    f <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male gonad lay to hatch', frame.plot=F)
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male gonad lay to hatch', frame.plot=F)
 
 ![](../figures/01-contrasts-4.png)
 
@@ -239,8 +1056,269 @@ specify contrasts and make MA plots (currently only a subset)
     ## NotSig                                              14937
     ## Up                                                      0
 
-    #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    d <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male hypothalamus lay to hatch', frame.plot=F)
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015154090.1
+</td>
+<td style="text-align:right;">
+107055138
+</td>
+<td style="text-align:left;">
+HAX1
+</td>
+<td style="text-align:right;">
+107055138
+</td>
+<td style="text-align:left;">
+XP\_015154090.1
+</td>
+<td style="text-align:right;">
+-1.43
+</td>
+<td style="text-align:right;">
+-1.43
+</td>
+<td style="text-align:right;">
+4.54
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990781.1
+</td>
+<td style="text-align:right;">
+396434
+</td>
+<td style="text-align:left;">
+TNNC2
+</td>
+<td style="text-align:right;">
+396434
+</td>
+<td style="text-align:left;">
+NP\_990781.1
+</td>
+<td style="text-align:right;">
+4.67
+</td>
+<td style="text-align:right;">
+4.83
+</td>
+<td style="text-align:right;">
+1.21
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015143153.1
+</td>
+<td style="text-align:right;">
+418099
+</td>
+<td style="text-align:left;">
+MYBPC1
+</td>
+<td style="text-align:right;">
+418099
+</td>
+<td style="text-align:left;">
+XP\_015143153.1
+</td>
+<td style="text-align:right;">
+3.34
+</td>
+<td style="text-align:right;">
+3.43
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_415592.5
+</td>
+<td style="text-align:right;">
+417323
+</td>
+<td style="text-align:left;">
+FBXW10
+</td>
+<td style="text-align:right;">
+417323
+</td>
+<td style="text-align:left;">
+XP\_415592.5
+</td>
+<td style="text-align:right;">
+-4.22
+</td>
+<td style="text-align:right;">
+-144269481.99
+</td>
+<td style="text-align:right;">
+3.86
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990748.1
+</td>
+<td style="text-align:right;">
+396386
+</td>
+<td style="text-align:left;">
+TNNI2
+</td>
+<td style="text-align:right;">
+396386
+</td>
+<td style="text-align:left;">
+NP\_990748.1
+</td>
+<td style="text-align:right;">
+3.27
+</td>
+<td style="text-align:right;">
+3.31
+</td>
+<td style="text-align:right;">
+0.89
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*male.hypothalamus.hatch -1*male.hypothalamus.lay
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male hypothalamus lay to hatch', frame.plot=F)
 
 ![](../figures/01-contrasts-5.png)
 
@@ -254,14 +1332,271 @@ specify contrasts and make MA plots (currently only a subset)
     ## NotSig                                        14885
     ## Up                                               52
 
-    #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    e <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pituitary lay to hatch', frame.plot=F)
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+NP\_001072968.1
+</td>
+<td style="text-align:right;">
+770922
+</td>
+<td style="text-align:left;">
+DGUOK
+</td>
+<td style="text-align:right;">
+770922
+</td>
+<td style="text-align:left;">
+NP\_001072968.1
+</td>
+<td style="text-align:right;">
+2.99
+</td>
+<td style="text-align:right;">
+3.00
+</td>
+<td style="text-align:right;">
+3.45
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015135377.1
+</td>
+<td style="text-align:right;">
+417420
+</td>
+<td style="text-align:left;">
+KPNA2
+</td>
+<td style="text-align:right;">
+417420
+</td>
+<td style="text-align:left;">
+XP\_015135377.1
+</td>
+<td style="text-align:right;">
+4.44
+</td>
+<td style="text-align:right;">
+4.47
+</td>
+<td style="text-align:right;">
+5.89
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015143549.1
+</td>
+<td style="text-align:right;">
+396252
+</td>
+<td style="text-align:left;">
+CDK1
+</td>
+<td style="text-align:right;">
+396252
+</td>
+<td style="text-align:left;">
+XP\_015143549.1
+</td>
+<td style="text-align:right;">
+3.86
+</td>
+<td style="text-align:right;">
+3.87
+</td>
+<td style="text-align:right;">
+5.80
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015133686.1
+</td>
+<td style="text-align:right;">
+396167
+</td>
+<td style="text-align:left;">
+CCNB3
+</td>
+<td style="text-align:right;">
+396167
+</td>
+<td style="text-align:left;">
+XP\_015133686.1
+</td>
+<td style="text-align:right;">
+3.94
+</td>
+<td style="text-align:right;">
+4.00
+</td>
+<td style="text-align:right;">
+4.70
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_003641983.1
+</td>
+<td style="text-align:right;">
+415751
+</td>
+<td style="text-align:left;">
+SHCBP1
+</td>
+<td style="text-align:right;">
+415751
+</td>
+<td style="text-align:left;">
+XP\_003641983.1
+</td>
+<td style="text-align:right;">
+3.97
+</td>
+<td style="text-align:right;">
+4.03
+</td>
+<td style="text-align:right;">
+4.77
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+1*male.pituitary.hatch -1*male.pituitary.lay
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pituitary lay to hatch', frame.plot=F)
 
 ![](../figures/01-contrasts-6.png)
-
-    plot_grid(a,b,c,d,e,f, nrow = 2)
-
-![](../figures/01-contrasts-7.png)
 
 volcano plots
 =============
