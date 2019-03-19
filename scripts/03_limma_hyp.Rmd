@@ -1,0 +1,275 @@
+---
+title: "03_limma_hyp"
+output: md_document
+---
+
+DESeq2 is _not_ recommended for experiments with more than 100 samples ([see Mike Love's post](https://mikelove.wordpress.com/2016/09/28/deseq2-or-edger/)), so I decided to try the limma package. I followed [this tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq123/inst/doc/limmaWorkflow.html).
+
+```{r}
+library(tidyverse)
+library(limma)
+library(Glimma)
+library(edgeR)
+library(kableExtra)
+library(cowplot)
+library(ggplot2)
+
+knitr::opts_chunk$set(fig.path = '../figures/hyp/',cache=TRUE)
+
+```
+
+First, I read in the data I processed in 00_datawrangling.Rmd.
+
+```{r read}
+# import "colData" which contains sample information and "countData" which contains read counts
+colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
+countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+head(colData)
+geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+```
+
+```{r filter}
+colData <- colData %>%
+  dplyr::filter(grepl('hypothalamus', tissue)) %>%
+  droplevels()
+row.names(colData) <- colData$V1
+
+# print sample sizes
+colData %>% select(sex,treatment, tissue)  %>%  summary()
+
+savecols <- as.character(colData$V1) 
+savecols <- as.vector(savecols) 
+countData <- countData %>% dplyr::select(one_of(savecols)) 
+
+# check that row and col lenghts are equal
+ncol(countData) == nrow(colData)
+```
+
+Then, I followed the steps from <https://github.com/macmanes-lab/RockDove/blob/master/parental_care/parental_analysis.Rmd>.
+
+```{r edgeR}
+# create a large DGEList with 3 elements
+parentalobject <- DGEList(counts=countData, genes=geneinfo, group=colData$group)
+
+# transform raw counts to countspermillion
+cpms <- cpm(parentalobject)
+
+# calculate number of lowly lowly expressed genes and remove them
+table(rowSums(parentalobject$counts==0)==10)
+keep_genes <- rowSums(cpms >= 1) >= 10
+dge <- parentalobject[keep_genes, ]
+
+# specific the design
+parentaldesign <- model.matrix(~ colData$group )
+colnames(parentaldesign) <- levels(colData$group)
+
+# The TMM normalization
+parentalobject <- calcNormFactors(parentalobject)
+parentalobject <- estimateCommonDisp(parentalobject)
+parentalobject <- estimateTagwiseDisp(parentalobject)
+parentalobject <- estimateDisp(parentalobject, parentaldesign)
+parentalobject <- estimateGLMCommonDisp(parentalobject, parentaldesign, verbose=TRUE)
+parentalobject <- estimateGLMTrendedDisp(parentalobject, parentaldesign)
+parentalobject <- estimateGLMTagwiseDisp(parentalobject, parentaldesign)
+
+#  perform likelihood ratio test and thresholded testing
+fit <- glmFit( parentalobject, parentaldesign, robust=T)
+tr <- glmTreat(fit, lfc = 1)
+topTags(tr)
+```
+
+
+# plotMDS (multidimential scaling)
+
+```{r plotMDS}
+plotMDS(parentalobject, cex = 0.5)
+```
+
+```{r plotMDS-lables}
+levels(colData$treatment)
+col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")[colData$treatment]
+
+plotMDS(parentalobject,col=col.treatment, labels = colData$sex)
+legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
+title("Hypothalamus Colored by Treatment")
+
+plotMDS(parentalobject,dim=c(3,4), col=col.treatment, labels = colData$sex)
+legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
+title("Hypothalamus Colored by Treatment")
+```
+
+# specify contrasts and make MA plots (currently only a subset)
+
+```{r 01-contrasts}
+# view all levels
+levels(colData$group)
+
+# subset of conrasts - sex specific comparing hatch to lay
+my.contrasts <- makeContrasts(
+	         FH_CB = female.hypothalamus.control - female.hypothalamus.bldg,
+	         FH_BL = female.hypothalamus.bldg - female.hypothalamus.lay,
+	         FH_Li3 = female.hypothalamus.lay - female.hypothalamus.inc.d3,
+	         FH_i39 = female.hypothalamus.inc.d3 - female.hypothalamus.inc.d9,
+	         FH_i917 = female.hypothalamus.inc.d9 - female.hypothalamus.inc.d17,
+	         FH_i17H = female.hypothalamus.inc.d17 - female.hypothalamus.hatch,
+	         FH_H5 = female.hypothalamus.hatch -  female.hypothalamus.n5,
+	         FH_n59 = female.hypothalamus.n5 - female.hypothalamus.n9,
+	         FH_n9C = female.hypothalamus.n9 - female.hypothalamus.control,
+	         
+	         MH_CB = male.hypothalamus.control - male.hypothalamus.bldg,
+	         MH_BL = male.hypothalamus.bldg - male.hypothalamus.lay,
+	         MH_Li3 = male.hypothalamus.lay - male.hypothalamus.inc.d3,
+	         MH_i39 = male.hypothalamus.inc.d3 - male.hypothalamus.inc.d9,
+	         MH_i917 = male.hypothalamus.inc.d9 - male.hypothalamus.inc.d17,
+	         MH_i17H = male.hypothalamus.inc.d17 - male.hypothalamus.hatch,
+	         MH_H5 = male.hypothalamus.hatch -  male.hypothalamus.n5,
+	         MH_n59 = male.hypothalamus.n5 - male.hypothalamus.n9,
+	         MH_n9C = male.hypothalamus.n9 - male.hypothalamus.control,
+levels=parentaldesign)
+
+# female comparisons
+cont <- "FH_CB"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_CB', frame.plot=F)
+
+cont <- "FH_BL"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_BL', frame.plot=F)
+
+cont <- "FH_Li3"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_Li3', frame.plot=F)
+
+cont <- "FH_i39"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_i39', frame.plot=F)
+
+cont <- "FH_i917"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_i917', frame.plot=F)
+
+cont <- "FH_i17H"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_i17H', frame.plot=F)
+
+cont <- "FH_H5"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_H5', frame.plot=F)
+
+cont <- "FH_n59"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_n59', frame.plot=F)
+
+cont <- "FH_n9C"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_n9C', frame.plot=F)
+
+
+## male comparisons
+
+cont <- "MH_CB"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_CB', frame.plot=F)
+
+cont <- "MH_BL"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_BL', frame.plot=F)
+
+cont <- "MH_Li3"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_Li3', frame.plot=F)
+
+cont <- "MH_i39"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_i39', frame.plot=F)
+
+cont <- "MH_i917"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_i917', frame.plot=F)
+
+cont <- "MH_i17H"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_i17H', frame.plot=F)
+
+cont <- "MH_H5"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_H5', frame.plot=F)
+
+cont <- "MH_n59"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_n59', frame.plot=F)
+
+cont <- "MH_n9C"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_n9C', frame.plot=F)
+
+
+```
+
+# volcano plots
+
+```{r volcanoplots}
+# from http://www.compbio.dundee.ac.uk/user/pschofield/Projects/teaching_pg/workshops/biocDGE.html#maplots
+
+lrt <- glmLRT(fit,coef=2)
+topTags(lrt)
+
+tt <- topTags(lrt,n=10000)$table
+
+ggplot(data=tt) + geom_point(aes(x=logFC,y=-log(FDR),color=logCPM)) +
+  scale_colour_gradientn(colours=c("#000000" ,"#FF0000" ))
+```
