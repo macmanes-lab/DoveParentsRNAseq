@@ -91,7 +91,7 @@ levels(colData$treatment)
 col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")[colData$treatment]
 
 plotMDS(parentalobject,col=col.treatment, labels = colData$sex)
-legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
+legend("bottomleft",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
 title("Hypothalamus Colored by Treatment")
 
 plotMDS(parentalobject,dim=c(3,4), col=col.treatment, labels = colData$sex)
@@ -126,6 +126,9 @@ my.contrasts <- makeContrasts(
 	         MH_H5 = male.hypothalamus.hatch -  male.hypothalamus.n5,
 	         MH_n59 = male.hypothalamus.n5 - male.hypothalamus.n9,
 	         MH_n9C = male.hypothalamus.n9 - male.hypothalamus.control,
+	         
+	         FH_n9B = female.hypothalamus.n9 - female.hypothalamus.bldg,
+	         MH_n9B = male.hypothalamus.n9 - male.hypothalamus.bldg,
 levels=parentaldesign)
 
 # female comparisons
@@ -257,6 +260,24 @@ summary(decideTestsDGE(
 	adjust.method="fdr", p.value=0.01))
 kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
 plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_n9C', frame.plot=F)
+
+
+## nesting to building
+
+cont <- "FH_n9B"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_n9B', frame.plot=F)
+
+
+cont <- "MH_n9B"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_n9B', frame.plot=F)
 
 
 ```

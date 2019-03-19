@@ -6,14 +6,14 @@ tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ─────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -157,7 +157,7 @@ For color coding, I used this tutorial for guidance
     col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")[colData$treatment]
 
     plotMDS(parentalobject,col=col.treatment, labels = colData$sex)
-    legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
+    legend("bottomleft",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
     title("Hypothalamus Colored by Treatment")
 
 ![](../figures/hyp/plotMDS-lables-1.png)
@@ -205,6 +205,9 @@ specify contrasts and make MA plots
                  MH_H5 = male.hypothalamus.hatch -  male.hypothalamus.n5,
                  MH_n59 = male.hypothalamus.n5 - male.hypothalamus.n9,
                  MH_n9C = male.hypothalamus.n9 - male.hypothalamus.control,
+                 
+                 FH_n9B = female.hypothalamus.n9 - female.hypothalamus.bldg,
+                 MH_n9B = male.hypothalamus.n9 - male.hypothalamus.bldg,
     levels=parentaldesign)
 
     # female comparisons
@@ -5177,6 +5180,560 @@ glm
     plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_n9C', frame.plot=F)
 
 ![](../figures/hyp/01-contrasts-18.png)
+
+    ## nesting to building
+
+    cont <- "FH_n9B"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        -1*female.hypothalamus.bldg 1*female.hypothalamus.n9
+    ## Down                                                      0
+    ## NotSig                                                  233
+    ## Up                                                    14704
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+XP\_015144243.1
+</td>
+<td style="text-align:right;">
+428973
+</td>
+<td style="text-align:left;">
+LZTS2
+</td>
+<td style="text-align:right;">
+428973
+</td>
+<td style="text-align:left;">
+XP\_015144243.1
+</td>
+<td style="text-align:right;">
+20.67
+</td>
+<td style="text-align:right;">
+20.69
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015155805.1
+</td>
+<td style="text-align:right;">
+107055406
+</td>
+<td style="text-align:left;">
+LMBR1L
+</td>
+<td style="text-align:right;">
+107055406
+</td>
+<td style="text-align:left;">
+XP\_015155805.1
+</td>
+<td style="text-align:right;">
+20.18
+</td>
+<td style="text-align:right;">
+20.19
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015140781.1
+</td>
+<td style="text-align:right;">
+422420
+</td>
+<td style="text-align:left;">
+MARCH1
+</td>
+<td style="text-align:right;">
+422420
+</td>
+<td style="text-align:left;">
+XP\_015140781.1
+</td>
+<td style="text-align:right;">
+20.09
+</td>
+<td style="text-align:right;">
+20.11
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001001755.1
+</td>
+<td style="text-align:right;">
+414837
+</td>
+<td style="text-align:left;">
+THBS2
+</td>
+<td style="text-align:right;">
+414837
+</td>
+<td style="text-align:left;">
+NP\_001001755.1
+</td>
+<td style="text-align:right;">
+20.05
+</td>
+<td style="text-align:right;">
+20.06
+</td>
+<td style="text-align:right;">
+0.59
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015147038.1
+</td>
+<td style="text-align:right;">
+424951
+</td>
+<td style="text-align:left;">
+VWA5B2
+</td>
+<td style="text-align:right;">
+424951
+</td>
+<td style="text-align:left;">
+XP\_015147038.1
+</td>
+<td style="text-align:right;">
+20.00
+</td>
+<td style="text-align:right;">
+20.01
+</td>
+<td style="text-align:right;">
+0.74
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+-1*female.hypothalamus.bldg 1*female.hypothalamus.n9
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FH_n9B', frame.plot=F)
+
+![](../figures/hyp/01-contrasts-19.png)
+
+    cont <- "MH_n9B"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        -1*male.hypothalamus.bldg 1*male.hypothalamus.n9
+    ## Down                                                  0
+    ## NotSig                                            14937
+    ## Up                                                    0
+
+    kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+
+<table class="kable_wrapper">
+<tbody>
+<tr>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+row.names
+</th>
+<th style="text-align:left;">
+Name
+</th>
+<th style="text-align:right;">
+geneid
+</th>
+<th style="text-align:left;">
+entrezid
+</th>
+<th style="text-align:right;">
+logFC
+</th>
+<th style="text-align:right;">
+unshrunk.logFC
+</th>
+<th style="text-align:right;">
+logCPM
+</th>
+<th style="text-align:right;">
+PValue
+</th>
+<th style="text-align:right;">
+FDR
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+NP\_001001301.1
+</td>
+<td style="text-align:right;">
+408026
+</td>
+<td style="text-align:left;">
+TPH2
+</td>
+<td style="text-align:right;">
+408026
+</td>
+<td style="text-align:left;">
+NP\_001001301.1
+</td>
+<td style="text-align:right;">
+-3.25
+</td>
+<td style="text-align:right;">
+-3.27
+</td>
+<td style="text-align:right;">
+0.52
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_990136.1
+</td>
+<td style="text-align:right;">
+395592
+</td>
+<td style="text-align:left;">
+TH
+</td>
+<td style="text-align:right;">
+395592
+</td>
+<td style="text-align:left;">
+NP\_990136.1
+</td>
+<td style="text-align:right;">
+-2.38
+</td>
+<td style="text-align:right;">
+-2.38
+</td>
+<td style="text-align:right;">
+2.85
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_015151186.1
+</td>
+<td style="text-align:right;">
+404747
+</td>
+<td style="text-align:left;">
+SLC6A4
+</td>
+<td style="text-align:right;">
+404747
+</td>
+<td style="text-align:left;">
+XP\_015151186.1
+</td>
+<td style="text-align:right;">
+-2.74
+</td>
+<td style="text-align:right;">
+-2.78
+</td>
+<td style="text-align:right;">
+-0.87
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NP\_001264519.1
+</td>
+<td style="text-align:right;">
+424607
+</td>
+<td style="text-align:left;">
+TSPAN1
+</td>
+<td style="text-align:right;">
+424607
+</td>
+<td style="text-align:left;">
+NP\_001264519.1
+</td>
+<td style="text-align:right;">
+-3.95
+</td>
+<td style="text-align:right;">
+-144269481.34
+</td>
+<td style="text-align:right;">
+-2.23
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+XP\_004936174.2
+</td>
+<td style="text-align:right;">
+426317
+</td>
+<td style="text-align:left;">
+TMEM156
+</td>
+<td style="text-align:right;">
+426317
+</td>
+<td style="text-align:left;">
+XP\_004936174.2
+</td>
+<td style="text-align:right;">
+-3.67
+</td>
+<td style="text-align:right;">
+-144269481.05
+</td>
+<td style="text-align:right;">
+-2.18
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0.33
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+BH
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+-1*male.hypothalamus.bldg 1*male.hypothalamus.n9
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+x
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+</table>
+
+    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MH_n9B', frame.plot=F)
+
+![](../figures/hyp/01-contrasts-20.png)
 
 volcano plots
 =============
