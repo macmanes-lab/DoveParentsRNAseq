@@ -159,6 +159,14 @@ plotMDS (multidimential scaling)
 
 ![](../figures/plotMDS-colored-3.png)
 
+    colData$sexTissue <- paste(colData$sex, colData$tissue, sep = "_")
+
+    plotMDS(parentalobject,col=col.treatment, labels = colData$sexTissue)
+    legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
+    title("Colored by Treatment")
+
+![](../figures/plotMDS-colorshape-1.png)
+
 specify contrasts and make MA plots (currently only a subset)
 =============================================================
 
