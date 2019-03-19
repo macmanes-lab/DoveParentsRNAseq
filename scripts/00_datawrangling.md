@@ -144,17 +144,21 @@ subset for manipulation study
 
     # create a new dfs for just the manipulation study
     colData_manipluation <- colData %>%
-      dplyr::filter(grepl('m-|extend|prolong', treatment)) %>%
+      dplyr::filter(grepl('m.|extend|prolong', treatment)) %>%
       droplevels()
     row.names(colData_manipluation) <- colData_manipluation$V1
 
     # print sample sizes
     colData_manipluation %>% select(sex,treatment, tissue)  %>%  summary()
 
-    ##      sex           treatment           tissue  
-    ##  female:60   extend     :60   hypothalamus:40  
-    ##  male  :60   inc.prolong:24   pituitary   :40  
-    ##              prolong    :36   gonad       :40
+    ##      sex          treatment           tissue   
+    ##  female:208   m.inc.d17:63   hypothalamus:138  
+    ##  male  :203   extend   :60   pituitary   :137  
+    ##               m.inc.d3 :60   gonad       :136  
+    ##               m.inc.d8 :60                     
+    ##               m.inc.d9 :49                     
+    ##               m.hatch  :47                     
+    ##               (Other)  :72
 
     # create list with filenames and select countData columns matching the file names
     savecols <- as.character(colData_manipluation$V1) 
@@ -171,21 +175,21 @@ subset for characterization study
 
     # filter out data related to the manipulation study
     colData_characterization <- colData %>%
-      dplyr::filter(!grepl('m-|extend|prolong', treatment)) %>%
+      dplyr::filter(!grepl('m.|extend|prolong', treatment)) %>%
       droplevels()
     row.names(colData_characterization) <- colData_characterization$V1
 
     # print sample sizes
     colData_characterization %>% select(sex,treatment, tissue)  %>%  summary()
 
-    ##      sex          treatment            tissue   
-    ##  female:437   control  : 73   hypothalamus:287  
-    ##  male  :430   inc.d9   : 71   pituitary   :290  
-    ##               inc.d17  : 66   gonad       :290  
-    ##               n9       : 66                     
-    ##               m.inc.d17: 63                     
-    ##               bldg     : 60                     
-    ##               (Other)  :468
+    ##      sex        treatment            tissue   
+    ##  female:289   control: 73   hypothalamus:189  
+    ##  male  :287   inc.d9 : 71   pituitary   :193  
+    ##               inc.d17: 66   gonad       :194  
+    ##               n9     : 66                     
+    ##               bldg   : 60                     
+    ##               hatch  : 60                     
+    ##               (Other):180
 
     savecols <- as.character(colData_characterization$V1) 
     savecols <- as.vector(savecols) 

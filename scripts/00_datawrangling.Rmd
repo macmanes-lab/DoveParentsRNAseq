@@ -91,7 +91,7 @@ ncol(countData) == nrow(colData)
 ```{r manip}
 # create a new dfs for just the manipulation study
 colData_manipluation <- colData %>%
-  dplyr::filter(grepl('m-|extend|prolong', treatment)) %>%
+  dplyr::filter(grepl('m.|extend|prolong', treatment)) %>%
   droplevels()
 row.names(colData_manipluation) <- colData_manipluation$V1
 
@@ -112,7 +112,7 @@ ncol(countData_manipluation) == nrow(colData_manipluation)
 ```{r characterization}
 # filter out data related to the manipulation study
 colData_characterization <- colData %>%
-  dplyr::filter(!grepl('m-|extend|prolong', treatment)) %>%
+  dplyr::filter(!grepl('m.|extend|prolong', treatment)) %>%
   droplevels()
 row.names(colData_characterization) <- colData_characterization$V1
 
