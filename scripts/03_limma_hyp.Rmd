@@ -24,7 +24,6 @@ First, I read in the data I processed in 00_datawrangling.Rmd.
 # import "colData" which contains sample information and "countData" which contains read counts
 colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
 countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
-head(colData)
 geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
 ```
 
@@ -85,6 +84,8 @@ topTags(tr)
 plotMDS(parentalobject, cex = 0.5)
 ```
 
+For color coding, I used this tutorial for guidance <https://combine-australia.github.io/RNAseq-R/06-rnaseq-day1.html>.
+
 ```{r plotMDS-lables}
 levels(colData$treatment)
 col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")[colData$treatment]
@@ -98,7 +99,7 @@ legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99
 title("Hypothalamus Colored by Treatment")
 ```
 
-# specify contrasts and make MA plots (currently only a subset)
+# specify contrasts and make MA plots
 
 ```{r 01-contrasts}
 # view all levels
