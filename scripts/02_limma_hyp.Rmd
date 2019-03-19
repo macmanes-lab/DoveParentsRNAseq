@@ -138,10 +138,10 @@ mycontrasts <- c("FH_CB", "FH_BL", "FH_Li3", "FH_i39", "FH_i917", "FH_i17H", "FH
 
 printplotcontrasts <- function(whichcontrast){
   cont <- whichcontrast
-  summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-  print(kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1))
+  print(summary(decideTestsDGE(
+    glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+    adjust.method="fdr", p.value=0.01)))
+  print(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
   print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
 }
 

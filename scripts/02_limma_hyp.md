@@ -217,10 +217,10 @@ specify contrasts and make MA plots
 
     printplotcontrasts <- function(whichcontrast){
       cont <- whichcontrast
-      summary(decideTestsDGE(
+      print(summary(decideTestsDGE(
         glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-        adjust.method="fdr", p.value=0.01))
-      print(kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1))
+        adjust.method="fdr", p.value=0.01)))
+      print(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
       print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
     }
 
@@ -228,2802 +228,702 @@ specify contrasts and make MA plots
       printplotcontrasts(i)
     }
 
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*female.hypothalamus.bldg 1*female.hypothalamus.control
+    ## Down                                                           0
+    ## NotSig                                                       263
+    ## Up                                                         14674
+    ## $table
+    ##                row.names   Name    geneid       entrezid    logFC
+    ## XP_015140781.1    422420 MARCH1    422420 XP_015140781.1 20.71919
+    ## XP_015155805.1 107055406 LMBR1L 107055406 XP_015155805.1 20.48851
+    ## XP_015151240.1    417564   DPH1    417564 XP_015151240.1 20.16694
+    ## NP_001072968.1    770922  DGUOK    770922 NP_001072968.1 20.08691
+    ## XP_015128664.1 100857346 CILD27 100857346 XP_015128664.1 20.05921
+    ##                unshrunk.logFC     logCPM PValue FDR
+    ## XP_015140781.1       20.74118 0.08218104      0   0
+    ## XP_015155805.1       20.50742 0.31655743      0   0
+    ## XP_015151240.1       20.17933 1.01480964      0   0
+    ## NP_001072968.1       20.10088 0.65421315      0   0
+    ## XP_015128664.1       20.07186 0.94343949      0   0
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015140781.1 </td>
-    ##    <td style="text-align:right;"> 422420 </td>
-    ##    <td style="text-align:left;"> MARCH1 </td>
-    ##    <td style="text-align:right;"> 422420 </td>
-    ##    <td style="text-align:left;"> XP_015140781.1 </td>
-    ##    <td style="text-align:right;"> 20.72 </td>
-    ##    <td style="text-align:right;"> 20.74 </td>
-    ##    <td style="text-align:right;"> 0.08 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015155805.1 </td>
-    ##    <td style="text-align:right;"> 107055406 </td>
-    ##    <td style="text-align:left;"> LMBR1L </td>
-    ##    <td style="text-align:right;"> 107055406 </td>
-    ##    <td style="text-align:left;"> XP_015155805.1 </td>
-    ##    <td style="text-align:right;"> 20.49 </td>
-    ##    <td style="text-align:right;"> 20.51 </td>
-    ##    <td style="text-align:right;"> 0.32 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015151240.1 </td>
-    ##    <td style="text-align:right;"> 417564 </td>
-    ##    <td style="text-align:left;"> DPH1 </td>
-    ##    <td style="text-align:right;"> 417564 </td>
-    ##    <td style="text-align:left;"> XP_015151240.1 </td>
-    ##    <td style="text-align:right;"> 20.17 </td>
-    ##    <td style="text-align:right;"> 20.18 </td>
-    ##    <td style="text-align:right;"> 1.01 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001072968.1 </td>
-    ##    <td style="text-align:right;"> 770922 </td>
-    ##    <td style="text-align:left;"> DGUOK </td>
-    ##    <td style="text-align:right;"> 770922 </td>
-    ##    <td style="text-align:left;"> NP_001072968.1 </td>
-    ##    <td style="text-align:right;"> 20.09 </td>
-    ##    <td style="text-align:right;"> 20.10 </td>
-    ##    <td style="text-align:right;"> 0.65 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015128664.1 </td>
-    ##    <td style="text-align:right;"> 100857346 </td>
-    ##    <td style="text-align:left;"> CILD27 </td>
-    ##    <td style="text-align:right;"> 100857346 </td>
-    ##    <td style="text-align:left;"> XP_015128664.1 </td>
-    ##    <td style="text-align:right;"> 20.06 </td>
-    ##    <td style="text-align:right;"> 20.07 </td>
-    ##    <td style="text-align:right;"> 0.94 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*female.hypothalamus.bldg 1*female.hypothalamus.control"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*female.hypothalamus.bldg 1*female.hypothalamus.control </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-1.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        1*female.hypothalamus.bldg -1*female.hypothalamus.lay
+    ## Down                                                   14742
+    ## NotSig                                                   195
+    ## Up                                                         0
+    ## $table
+    ##                row.names         Name    geneid       entrezid     logFC
+    ## NP_989878.1       395229         TCF7    395229    NP_989878.1 -21.00154
+    ## XP_015144243.1    428973        LZTS2    428973 XP_015144243.1 -20.52688
+    ## XP_015155805.1 107055406       LMBR1L 107055406 XP_015155805.1 -20.41352
+    ## XP_015130583.1 107051524 LOC107051524 107051524 XP_015130583.1 -20.12509
+    ## XP_015140781.1    422420       MARCH1    422420 XP_015140781.1 -20.06455
+    ##                unshrunk.logFC      logCPM PValue FDR
+    ## NP_989878.1         -21.03186 -0.58526235      0   0
+    ## XP_015144243.1      -20.54865  0.02302039      0   0
+    ## XP_015155805.1      -20.43241  0.31655743      0   0
+    ## XP_015130583.1      -20.13945  0.89634419      0   0
+    ## XP_015140781.1      -20.07987  0.08218104      0   0
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_989878.1 </td>
-    ##    <td style="text-align:right;"> 395229 </td>
-    ##    <td style="text-align:left;"> TCF7 </td>
-    ##    <td style="text-align:right;"> 395229 </td>
-    ##    <td style="text-align:left;"> NP_989878.1 </td>
-    ##    <td style="text-align:right;"> -21.00 </td>
-    ##    <td style="text-align:right;"> -21.03 </td>
-    ##    <td style="text-align:right;"> -0.59 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015144243.1 </td>
-    ##    <td style="text-align:right;"> 428973 </td>
-    ##    <td style="text-align:left;"> LZTS2 </td>
-    ##    <td style="text-align:right;"> 428973 </td>
-    ##    <td style="text-align:left;"> XP_015144243.1 </td>
-    ##    <td style="text-align:right;"> -20.53 </td>
-    ##    <td style="text-align:right;"> -20.55 </td>
-    ##    <td style="text-align:right;"> 0.02 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015155805.1 </td>
-    ##    <td style="text-align:right;"> 107055406 </td>
-    ##    <td style="text-align:left;"> LMBR1L </td>
-    ##    <td style="text-align:right;"> 107055406 </td>
-    ##    <td style="text-align:left;"> XP_015155805.1 </td>
-    ##    <td style="text-align:right;"> -20.41 </td>
-    ##    <td style="text-align:right;"> -20.43 </td>
-    ##    <td style="text-align:right;"> 0.32 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015130583.1 </td>
-    ##    <td style="text-align:right;"> 107051524 </td>
-    ##    <td style="text-align:left;"> LOC107051524 </td>
-    ##    <td style="text-align:right;"> 107051524 </td>
-    ##    <td style="text-align:left;"> XP_015130583.1 </td>
-    ##    <td style="text-align:right;"> -20.13 </td>
-    ##    <td style="text-align:right;"> -20.14 </td>
-    ##    <td style="text-align:right;"> 0.90 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015140781.1 </td>
-    ##    <td style="text-align:right;"> 422420 </td>
-    ##    <td style="text-align:left;"> MARCH1 </td>
-    ##    <td style="text-align:right;"> 422420 </td>
-    ##    <td style="text-align:left;"> XP_015140781.1 </td>
-    ##    <td style="text-align:right;"> -20.06 </td>
-    ##    <td style="text-align:right;"> -20.08 </td>
-    ##    <td style="text-align:right;"> 0.08 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "1*female.hypothalamus.bldg -1*female.hypothalamus.lay"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> 1*female.hypothalamus.bldg -1*female.hypothalamus.lay </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-2.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*female.hypothalamus.inc.d3 1*female.hypothalamus.lay
+    ## Down                                                         0
+    ## NotSig                                                   14937
+    ## Up                                                           0
+    ## $table
+    ##                row.names    Name geneid       entrezid    logFC
+    ## NP_001231522.1    420588    SCIN 420588 NP_001231522.1 1.155203
+    ## NP_001039297.1    417465    CCL5 417465 NP_001039297.1 3.739649
+    ## NP_001186559.1    417852  KCNMB4 417852 NP_001186559.1 2.179642
+    ## XP_015149500.1    396384    IRF1 396384 XP_015149500.1 1.035201
+    ## NP_001231990.1    430189 HLA-DRA 430189 NP_001231990.1 1.475590
+    ##                unshrunk.logFC    logCPM       PValue       FDR
+    ## NP_001231522.1       1.155903  3.646427 1.662403e-05 0.2483131
+    ## NP_001039297.1       4.153931 -1.868250 1.930977e-04 0.9822719
+    ## NP_001186559.1       2.556626 -1.993389 2.757673e-04 0.9822719
+    ## XP_015149500.1       1.036761  2.540514 2.985017e-04 0.9822719
+    ## NP_001231990.1       1.477389  3.126420 3.316264e-04 0.9822719
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001231522.1 </td>
-    ##    <td style="text-align:right;"> 420588 </td>
-    ##    <td style="text-align:left;"> SCIN </td>
-    ##    <td style="text-align:right;"> 420588 </td>
-    ##    <td style="text-align:left;"> NP_001231522.1 </td>
-    ##    <td style="text-align:right;"> 1.16 </td>
-    ##    <td style="text-align:right;"> 1.16 </td>
-    ##    <td style="text-align:right;"> 3.65 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.25 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001039297.1 </td>
-    ##    <td style="text-align:right;"> 417465 </td>
-    ##    <td style="text-align:left;"> CCL5 </td>
-    ##    <td style="text-align:right;"> 417465 </td>
-    ##    <td style="text-align:left;"> NP_001039297.1 </td>
-    ##    <td style="text-align:right;"> 3.74 </td>
-    ##    <td style="text-align:right;"> 4.15 </td>
-    ##    <td style="text-align:right;"> -1.87 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.98 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001186559.1 </td>
-    ##    <td style="text-align:right;"> 417852 </td>
-    ##    <td style="text-align:left;"> KCNMB4 </td>
-    ##    <td style="text-align:right;"> 417852 </td>
-    ##    <td style="text-align:left;"> NP_001186559.1 </td>
-    ##    <td style="text-align:right;"> 2.18 </td>
-    ##    <td style="text-align:right;"> 2.56 </td>
-    ##    <td style="text-align:right;"> -1.99 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.98 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015149500.1 </td>
-    ##    <td style="text-align:right;"> 396384 </td>
-    ##    <td style="text-align:left;"> IRF1 </td>
-    ##    <td style="text-align:right;"> 396384 </td>
-    ##    <td style="text-align:left;"> XP_015149500.1 </td>
-    ##    <td style="text-align:right;"> 1.04 </td>
-    ##    <td style="text-align:right;"> 1.04 </td>
-    ##    <td style="text-align:right;"> 2.54 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.98 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001231990.1 </td>
-    ##    <td style="text-align:right;"> 430189 </td>
-    ##    <td style="text-align:left;"> HLA-DRA </td>
-    ##    <td style="text-align:right;"> 430189 </td>
-    ##    <td style="text-align:left;"> NP_001231990.1 </td>
-    ##    <td style="text-align:right;"> 1.48 </td>
-    ##    <td style="text-align:right;"> 1.48 </td>
-    ##    <td style="text-align:right;"> 3.13 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.98 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*female.hypothalamus.inc.d3 1*female.hypothalamus.lay"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*female.hypothalamus.inc.d3 1*female.hypothalamus.lay </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-3.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        1*female.hypothalamus.inc.d3 -1*female.hypothalamus.inc.d9
+    ## Down                                                            0
+    ## NotSig                                                      14937
+    ## Up                                                              0
+    ## $table
+    ##                row.names         Name    geneid       entrezid     logFC
+    ## XP_419585.2       421544        CAPN9    421544    XP_419585.2  1.850138
+    ## XP_004934606.1    427984       KCNJ15    427984 XP_004934606.1  1.719314
+    ## NP_001186559.1    417852       KCNMB4    417852 NP_001186559.1 -1.927996
+    ## XP_415429.5       395549          DBH    395549    XP_415429.5  2.219263
+    ## XP_015128155.1 107049005 LOC107049005 107049005 XP_015128155.1  4.904223
+    ##                unshrunk.logFC     logCPM      PValue FDR
+    ## XP_419585.2          2.022808 -1.8598548 0.001318246   1
+    ## XP_004934606.1       1.871223 -1.6920875 0.001753268   1
+    ## NP_001186559.1      -2.279919 -1.9933891 0.002244336   1
+    ## XP_415429.5          2.606767 -1.8117017 0.002485900   1
+    ## XP_015128155.1       5.457609 -0.1185445 0.003716467   1
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_419585.2 </td>
-    ##    <td style="text-align:right;"> 421544 </td>
-    ##    <td style="text-align:left;"> CAPN9 </td>
-    ##    <td style="text-align:right;"> 421544 </td>
-    ##    <td style="text-align:left;"> XP_419585.2 </td>
-    ##    <td style="text-align:right;"> 1.85 </td>
-    ##    <td style="text-align:right;"> 2.02 </td>
-    ##    <td style="text-align:right;"> -1.86 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004934606.1 </td>
-    ##    <td style="text-align:right;"> 427984 </td>
-    ##    <td style="text-align:left;"> KCNJ15 </td>
-    ##    <td style="text-align:right;"> 427984 </td>
-    ##    <td style="text-align:left;"> XP_004934606.1 </td>
-    ##    <td style="text-align:right;"> 1.72 </td>
-    ##    <td style="text-align:right;"> 1.87 </td>
-    ##    <td style="text-align:right;"> -1.69 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001186559.1 </td>
-    ##    <td style="text-align:right;"> 417852 </td>
-    ##    <td style="text-align:left;"> KCNMB4 </td>
-    ##    <td style="text-align:right;"> 417852 </td>
-    ##    <td style="text-align:left;"> NP_001186559.1 </td>
-    ##    <td style="text-align:right;"> -1.93 </td>
-    ##    <td style="text-align:right;"> -2.28 </td>
-    ##    <td style="text-align:right;"> -1.99 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_415429.5 </td>
-    ##    <td style="text-align:right;"> 395549 </td>
-    ##    <td style="text-align:left;"> DBH </td>
-    ##    <td style="text-align:right;"> 395549 </td>
-    ##    <td style="text-align:left;"> XP_415429.5 </td>
-    ##    <td style="text-align:right;"> 2.22 </td>
-    ##    <td style="text-align:right;"> 2.61 </td>
-    ##    <td style="text-align:right;"> -1.81 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015128155.1 </td>
-    ##    <td style="text-align:right;"> 107049005 </td>
-    ##    <td style="text-align:left;"> LOC107049005 </td>
-    ##    <td style="text-align:right;"> 107049005 </td>
-    ##    <td style="text-align:left;"> XP_015128155.1 </td>
-    ##    <td style="text-align:right;"> 4.90 </td>
-    ##    <td style="text-align:right;"> 5.46 </td>
-    ##    <td style="text-align:right;"> -0.12 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "1*female.hypothalamus.inc.d3 -1*female.hypothalamus.inc.d9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> 1*female.hypothalamus.inc.d3 -1*female.hypothalamus.inc.d9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-4.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*female.hypothalamus.inc.d17 1*female.hypothalamus.inc.d9
+    ## Down                                                             0
+    ## NotSig                                                       14937
+    ## Up                                                               0
+    ## $table
+    ##                row.names         Name    geneid       entrezid      logFC
+    ## XP_015130802.1    416928        IGLL1    416928 XP_015130802.1 -4.1876386
+    ## XP_004938467.2    418651      SHROOM2    418651 XP_004938467.2 -0.8969677
+    ## XP_003642428.2    417471         HSF5    417471 XP_003642428.2  3.8426795
+    ## NP_989594.1       374117          IGJ    374117    NP_989594.1 -3.0952485
+    ## XP_015128794.1 107049579 LOC107049579 107049579 XP_015128794.1 -4.3215587
+    ##                unshrunk.logFC    logCPM       PValue       FDR
+    ## XP_015130802.1  -4.197635e+00  2.966941 2.477487e-05 0.3700623
+    ## XP_004938467.2  -8.969999e-01  7.824297 5.737433e-05 0.4285002
+    ## XP_003642428.2   1.442695e+08 -1.799766 1.260804e-04 0.5030798
+    ## NP_989594.1     -3.107436e+00  1.954701 1.347204e-04 0.5030798
+    ## XP_015128794.1  -1.442695e+08 -1.951813 2.557317e-04 0.7639729
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015130802.1 </td>
-    ##    <td style="text-align:right;"> 416928 </td>
-    ##    <td style="text-align:left;"> IGLL1 </td>
-    ##    <td style="text-align:right;"> 416928 </td>
-    ##    <td style="text-align:left;"> XP_015130802.1 </td>
-    ##    <td style="text-align:right;"> -4.19 </td>
-    ##    <td style="text-align:right;"> -4.20 </td>
-    ##    <td style="text-align:right;"> 2.97 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.37 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004938467.2 </td>
-    ##    <td style="text-align:right;"> 418651 </td>
-    ##    <td style="text-align:left;"> SHROOM2 </td>
-    ##    <td style="text-align:right;"> 418651 </td>
-    ##    <td style="text-align:left;"> XP_004938467.2 </td>
-    ##    <td style="text-align:right;"> -0.90 </td>
-    ##    <td style="text-align:right;"> -0.90 </td>
-    ##    <td style="text-align:right;"> 7.82 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.43 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_003642428.2 </td>
-    ##    <td style="text-align:right;"> 417471 </td>
-    ##    <td style="text-align:left;"> HSF5 </td>
-    ##    <td style="text-align:right;"> 417471 </td>
-    ##    <td style="text-align:left;"> XP_003642428.2 </td>
-    ##    <td style="text-align:right;"> 3.84 </td>
-    ##    <td style="text-align:right;"> 144269481.23 </td>
-    ##    <td style="text-align:right;"> -1.80 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.50 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_989594.1 </td>
-    ##    <td style="text-align:right;"> 374117 </td>
-    ##    <td style="text-align:left;"> IGJ </td>
-    ##    <td style="text-align:right;"> 374117 </td>
-    ##    <td style="text-align:left;"> NP_989594.1 </td>
-    ##    <td style="text-align:right;"> -3.10 </td>
-    ##    <td style="text-align:right;"> -3.11 </td>
-    ##    <td style="text-align:right;"> 1.95 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.50 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015128794.1 </td>
-    ##    <td style="text-align:right;"> 107049579 </td>
-    ##    <td style="text-align:left;"> LOC107049579 </td>
-    ##    <td style="text-align:right;"> 107049579 </td>
-    ##    <td style="text-align:left;"> XP_015128794.1 </td>
-    ##    <td style="text-align:right;"> -4.32 </td>
-    ##    <td style="text-align:right;"> -144269481.74 </td>
-    ##    <td style="text-align:right;"> -1.95 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.76 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*female.hypothalamus.inc.d17 1*female.hypothalamus.inc.d9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*female.hypothalamus.inc.d17 1*female.hypothalamus.inc.d9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-5.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*female.hypothalamus.hatch 1*female.hypothalamus.inc.d17
+    ## Down                                                            0
+    ## NotSig                                                      14937
+    ## Up                                                              0
+    ## $table
+    ##                row.names      Name geneid       entrezid     logFC
+    ## NP_990411.1       395963     CAPN2 395963    NP_990411.1 -2.173226
+    ## XP_015137344.1    420606     ABCB5 420606 XP_015137344.1 -4.285261
+    ## NP_001026427.2    424189    PSMD14 424189 NP_001026427.2 -1.048208
+    ## NP_001072943.1    404299 HIST1H2A4 404299 NP_001072943.1 -1.186910
+    ## NP_001075178.3    771173     TLR1B 771173 NP_001075178.3 -1.813599
+    ##                unshrunk.logFC    logCPM       PValue          FDR
+    ## NP_990411.1         -2.173285  7.821358 2.770786e-08 0.0004138723
+    ## XP_015137344.1      -4.428706 -1.454634 1.583334e-05 0.1182512809
+    ## NP_001026427.2      -1.048681  4.405830 5.320979e-05 0.2649315623
+    ## NP_001072943.1      -1.188234  2.860939 1.068590e-04 0.3990381377
+    ## NP_001075178.3      -1.862301 -1.130119 1.459543e-04 0.4360237621
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_990411.1 </td>
-    ##    <td style="text-align:right;"> 395963 </td>
-    ##    <td style="text-align:left;"> CAPN2 </td>
-    ##    <td style="text-align:right;"> 395963 </td>
-    ##    <td style="text-align:left;"> NP_990411.1 </td>
-    ##    <td style="text-align:right;"> -2.17 </td>
-    ##    <td style="text-align:right;"> -2.17 </td>
-    ##    <td style="text-align:right;"> 7.82 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015137344.1 </td>
-    ##    <td style="text-align:right;"> 420606 </td>
-    ##    <td style="text-align:left;"> ABCB5 </td>
-    ##    <td style="text-align:right;"> 420606 </td>
-    ##    <td style="text-align:left;"> XP_015137344.1 </td>
-    ##    <td style="text-align:right;"> -4.29 </td>
-    ##    <td style="text-align:right;"> -4.43 </td>
-    ##    <td style="text-align:right;"> -1.45 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.12 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001026427.2 </td>
-    ##    <td style="text-align:right;"> 424189 </td>
-    ##    <td style="text-align:left;"> PSMD14 </td>
-    ##    <td style="text-align:right;"> 424189 </td>
-    ##    <td style="text-align:left;"> NP_001026427.2 </td>
-    ##    <td style="text-align:right;"> -1.05 </td>
-    ##    <td style="text-align:right;"> -1.05 </td>
-    ##    <td style="text-align:right;"> 4.41 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.26 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001072943.1 </td>
-    ##    <td style="text-align:right;"> 404299 </td>
-    ##    <td style="text-align:left;"> HIST1H2A4 </td>
-    ##    <td style="text-align:right;"> 404299 </td>
-    ##    <td style="text-align:left;"> NP_001072943.1 </td>
-    ##    <td style="text-align:right;"> -1.19 </td>
-    ##    <td style="text-align:right;"> -1.19 </td>
-    ##    <td style="text-align:right;"> 2.86 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.40 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001075178.3 </td>
-    ##    <td style="text-align:right;"> 771173 </td>
-    ##    <td style="text-align:left;"> TLR1B </td>
-    ##    <td style="text-align:right;"> 771173 </td>
-    ##    <td style="text-align:left;"> NP_001075178.3 </td>
-    ##    <td style="text-align:right;"> -1.81 </td>
-    ##    <td style="text-align:right;"> -1.86 </td>
-    ##    <td style="text-align:right;"> -1.13 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.44 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*female.hypothalamus.hatch 1*female.hypothalamus.inc.d17"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*female.hypothalamus.hatch 1*female.hypothalamus.inc.d17 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-6.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        1*female.hypothalamus.hatch -1*female.hypothalamus.n5
+    ## Down                                                       0
+    ## NotSig                                                 14936
+    ## Up                                                         1
+    ## $table
+    ##                row.names         Name    geneid       entrezid    logFC
+    ## NP_990411.1       395963        CAPN2    395963    NP_990411.1 2.684965
+    ## XP_015137344.1    420606        ABCB5    420606 XP_015137344.1 5.734115
+    ## XP_015152100.1 107054855 LOC107054855 107054855 XP_015152100.1 2.529087
+    ## NP_990229.1       395719          TK1    395719    NP_990229.1 1.013148
+    ## XP_015155605.1 100858365       HAPLN4 100858365 XP_015155605.1 1.691003
+    ##                unshrunk.logFC    logCPM       PValue          FDR
+    ## NP_990411.1          2.685056  7.821358 4.943879e-11 7.384671e-07
+    ## XP_015137344.1       6.161427 -1.454634 3.154949e-07 2.356274e-03
+    ## XP_015152100.1       2.533881  2.622015 8.752686e-07 4.357962e-03
+    ## NP_990229.1          1.016078  1.678144 2.014287e-05 7.521850e-02
+    ## XP_015155605.1       1.692318  3.546715 3.481432e-05 8.992769e-02
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_990411.1 </td>
-    ##    <td style="text-align:right;"> 395963 </td>
-    ##    <td style="text-align:left;"> CAPN2 </td>
-    ##    <td style="text-align:right;"> 395963 </td>
-    ##    <td style="text-align:left;"> NP_990411.1 </td>
-    ##    <td style="text-align:right;"> 2.68 </td>
-    ##    <td style="text-align:right;"> 2.69 </td>
-    ##    <td style="text-align:right;"> 7.82 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015137344.1 </td>
-    ##    <td style="text-align:right;"> 420606 </td>
-    ##    <td style="text-align:left;"> ABCB5 </td>
-    ##    <td style="text-align:right;"> 420606 </td>
-    ##    <td style="text-align:left;"> XP_015137344.1 </td>
-    ##    <td style="text-align:right;"> 5.73 </td>
-    ##    <td style="text-align:right;"> 6.16 </td>
-    ##    <td style="text-align:right;"> -1.45 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015152100.1 </td>
-    ##    <td style="text-align:right;"> 107054855 </td>
-    ##    <td style="text-align:left;"> LOC107054855 </td>
-    ##    <td style="text-align:right;"> 107054855 </td>
-    ##    <td style="text-align:left;"> XP_015152100.1 </td>
-    ##    <td style="text-align:right;"> 2.53 </td>
-    ##    <td style="text-align:right;"> 2.53 </td>
-    ##    <td style="text-align:right;"> 2.62 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_990229.1 </td>
-    ##    <td style="text-align:right;"> 395719 </td>
-    ##    <td style="text-align:left;"> TK1 </td>
-    ##    <td style="text-align:right;"> 395719 </td>
-    ##    <td style="text-align:left;"> NP_990229.1 </td>
-    ##    <td style="text-align:right;"> 1.01 </td>
-    ##    <td style="text-align:right;"> 1.02 </td>
-    ##    <td style="text-align:right;"> 1.68 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.08 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015155605.1 </td>
-    ##    <td style="text-align:right;"> 100858365 </td>
-    ##    <td style="text-align:left;"> HAPLN4 </td>
-    ##    <td style="text-align:right;"> 100858365 </td>
-    ##    <td style="text-align:left;"> XP_015155605.1 </td>
-    ##    <td style="text-align:right;"> 1.69 </td>
-    ##    <td style="text-align:right;"> 1.69 </td>
-    ##    <td style="text-align:right;"> 3.55 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.09 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "1*female.hypothalamus.hatch -1*female.hypothalamus.n5"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> 1*female.hypothalamus.hatch -1*female.hypothalamus.n5 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-7.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        1*female.hypothalamus.n5 -1*female.hypothalamus.n9
+    ## Down                                                    0
+    ## NotSig                                              14937
+    ## Up                                                      0
+    ## $table
+    ##                row.names  Name geneid       entrezid      logFC
+    ## XP_416510.2       418287  LAG3 418287    XP_416510.2  3.3487756
+    ## XP_015146387.1    424552  NEXN 424552 XP_015146387.1  3.9346952
+    ## NP_990847.1       396522  CNN1 396522    NP_990847.1 -1.1544970
+    ## XP_015134716.1    415686  MLKL 415686 XP_015134716.1 -2.6842958
+    ## XP_419781.2       421750 TUBE1 421750    XP_419781.2  0.7178173
+    ##                unshrunk.logFC     logCPM      PValue FDR
+    ## XP_416510.2      4.497510e+00 -2.1665203 0.000313620   1
+    ## XP_015146387.1   1.442695e+08 -2.0190731 0.001111319   1
+    ## NP_990847.1     -1.175879e+00 -0.4416355 0.001281674   1
+    ## XP_015134716.1  -3.341361e+00 -2.0821098 0.001334893   1
+    ## XP_419781.2      7.192915e-01  2.4418848 0.001494061   1
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_416510.2 </td>
-    ##    <td style="text-align:right;"> 418287 </td>
-    ##    <td style="text-align:left;"> LAG3 </td>
-    ##    <td style="text-align:right;"> 418287 </td>
-    ##    <td style="text-align:left;"> XP_416510.2 </td>
-    ##    <td style="text-align:right;"> 3.35 </td>
-    ##    <td style="text-align:right;"> 4.50 </td>
-    ##    <td style="text-align:right;"> -2.17 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015146387.1 </td>
-    ##    <td style="text-align:right;"> 424552 </td>
-    ##    <td style="text-align:left;"> NEXN </td>
-    ##    <td style="text-align:right;"> 424552 </td>
-    ##    <td style="text-align:left;"> XP_015146387.1 </td>
-    ##    <td style="text-align:right;"> 3.93 </td>
-    ##    <td style="text-align:right;"> 144269481.33 </td>
-    ##    <td style="text-align:right;"> -2.02 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_990847.1 </td>
-    ##    <td style="text-align:right;"> 396522 </td>
-    ##    <td style="text-align:left;"> CNN1 </td>
-    ##    <td style="text-align:right;"> 396522 </td>
-    ##    <td style="text-align:left;"> NP_990847.1 </td>
-    ##    <td style="text-align:right;"> -1.15 </td>
-    ##    <td style="text-align:right;"> -1.18 </td>
-    ##    <td style="text-align:right;"> -0.44 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015134716.1 </td>
-    ##    <td style="text-align:right;"> 415686 </td>
-    ##    <td style="text-align:left;"> MLKL </td>
-    ##    <td style="text-align:right;"> 415686 </td>
-    ##    <td style="text-align:left;"> XP_015134716.1 </td>
-    ##    <td style="text-align:right;"> -2.68 </td>
-    ##    <td style="text-align:right;"> -3.34 </td>
-    ##    <td style="text-align:right;"> -2.08 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_419781.2 </td>
-    ##    <td style="text-align:right;"> 421750 </td>
-    ##    <td style="text-align:left;"> TUBE1 </td>
-    ##    <td style="text-align:right;"> 421750 </td>
-    ##    <td style="text-align:left;"> XP_419781.2 </td>
-    ##    <td style="text-align:right;"> 0.72 </td>
-    ##    <td style="text-align:right;"> 0.72 </td>
-    ##    <td style="text-align:right;"> 2.44 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "1*female.hypothalamus.n5 -1*female.hypothalamus.n9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> 1*female.hypothalamus.n5 -1*female.hypothalamus.n9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-8.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*female.hypothalamus.control 1*female.hypothalamus.n9
+    ## Down                                                        70
+    ## NotSig                                                   14858
+    ## Up                                                           9
+    ## $table
+    ##                row.names         Name    geneid       entrezid     logFC
+    ## XP_004950299.2 107049137 LOC107049137 107049137 XP_004950299.2 -4.160759
+    ## XP_015129796.1 100859555       CLAPS2 100859555 XP_015129796.1 -2.379088
+    ## XP_015155850.1 101749643 LOC101749643 101749643 XP_015155850.1 -3.286449
+    ## XP_015147109.1    424884       PLSCR5    424884 XP_015147109.1 -2.459359
+    ## NP_006917.1       807639         COX1    807639    NP_006917.1 -1.573243
+    ##                unshrunk.logFC    logCPM       PValue          FDR
+    ## XP_004950299.2      -4.163400  3.092408 1.008564e-29 1.506492e-25
+    ## XP_015129796.1      -2.379273  6.343011 1.650987e-22 1.233039e-18
+    ## XP_015155850.1      -3.293027  1.532522 1.330239e-19 6.623259e-16
+    ## XP_015147109.1      -2.462074  2.479308 5.587389e-19 1.950749e-15
+    ## NP_006917.1         -1.573243 16.110350 6.529923e-19 1.950749e-15
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004950299.2 </td>
-    ##    <td style="text-align:right;"> 107049137 </td>
-    ##    <td style="text-align:left;"> LOC107049137 </td>
-    ##    <td style="text-align:right;"> 107049137 </td>
-    ##    <td style="text-align:left;"> XP_004950299.2 </td>
-    ##    <td style="text-align:right;"> -4.16 </td>
-    ##    <td style="text-align:right;"> -4.16 </td>
-    ##    <td style="text-align:right;"> 3.09 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015129796.1 </td>
-    ##    <td style="text-align:right;"> 100859555 </td>
-    ##    <td style="text-align:left;"> CLAPS2 </td>
-    ##    <td style="text-align:right;"> 100859555 </td>
-    ##    <td style="text-align:left;"> XP_015129796.1 </td>
-    ##    <td style="text-align:right;"> -2.38 </td>
-    ##    <td style="text-align:right;"> -2.38 </td>
-    ##    <td style="text-align:right;"> 6.34 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015155850.1 </td>
-    ##    <td style="text-align:right;"> 101749643 </td>
-    ##    <td style="text-align:left;"> LOC101749643 </td>
-    ##    <td style="text-align:right;"> 101749643 </td>
-    ##    <td style="text-align:left;"> XP_015155850.1 </td>
-    ##    <td style="text-align:right;"> -3.29 </td>
-    ##    <td style="text-align:right;"> -3.29 </td>
-    ##    <td style="text-align:right;"> 1.53 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015147109.1 </td>
-    ##    <td style="text-align:right;"> 424884 </td>
-    ##    <td style="text-align:left;"> PLSCR5 </td>
-    ##    <td style="text-align:right;"> 424884 </td>
-    ##    <td style="text-align:left;"> XP_015147109.1 </td>
-    ##    <td style="text-align:right;"> -2.46 </td>
-    ##    <td style="text-align:right;"> -2.46 </td>
-    ##    <td style="text-align:right;"> 2.48 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_006917.1 </td>
-    ##    <td style="text-align:right;"> 807639 </td>
-    ##    <td style="text-align:left;"> COX1 </td>
-    ##    <td style="text-align:right;"> 807639 </td>
-    ##    <td style="text-align:left;"> NP_006917.1 </td>
-    ##    <td style="text-align:right;"> -1.57 </td>
-    ##    <td style="text-align:right;"> -1.57 </td>
-    ##    <td style="text-align:right;"> 16.11 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*female.hypothalamus.control 1*female.hypothalamus.n9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*female.hypothalamus.control 1*female.hypothalamus.n9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-9.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*male.hypothalamus.bldg 1*male.hypothalamus.control
+    ## Down                                                      11
+    ## NotSig                                                 14820
+    ## Up                                                       106
+    ## $table
+    ##                row.names    Name geneid       entrezid    logFC
+    ## NP_006917.1       807639    COX1 807639    NP_006917.1 1.960253
+    ## NP_001264272.1    423726   RPS24 423726 NP_001264272.1 2.129064
+    ## XP_003640629.1    771615   MRP63 771615 XP_003640629.1 2.238542
+    ## NP_001007968.1    425416   RPL30 425416 NP_001007968.1 2.358952
+    ## NP_001279014.1    768911 RSL24D1 768911 NP_001279014.1 1.616264
+    ##                unshrunk.logFC    logCPM       PValue          FDR
+    ## NP_006917.1          1.960253 16.110350 1.460730e-27 1.721767e-23
+    ## NP_001264272.1       2.129163  7.137721 2.305371e-27 1.721767e-23
+    ## XP_003640629.1       2.239350  4.095240 3.253988e-26 1.620161e-22
+    ## NP_001007968.1       2.359108  6.584953 2.773903e-24 1.035845e-20
+    ## NP_001279014.1       1.616569  5.170571 8.685014e-23 2.252618e-19
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_006917.1 </td>
-    ##    <td style="text-align:right;"> 807639 </td>
-    ##    <td style="text-align:left;"> COX1 </td>
-    ##    <td style="text-align:right;"> 807639 </td>
-    ##    <td style="text-align:left;"> NP_006917.1 </td>
-    ##    <td style="text-align:right;"> 1.96 </td>
-    ##    <td style="text-align:right;"> 1.96 </td>
-    ##    <td style="text-align:right;"> 16.11 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001264272.1 </td>
-    ##    <td style="text-align:right;"> 423726 </td>
-    ##    <td style="text-align:left;"> RPS24 </td>
-    ##    <td style="text-align:right;"> 423726 </td>
-    ##    <td style="text-align:left;"> NP_001264272.1 </td>
-    ##    <td style="text-align:right;"> 2.13 </td>
-    ##    <td style="text-align:right;"> 2.13 </td>
-    ##    <td style="text-align:right;"> 7.14 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_003640629.1 </td>
-    ##    <td style="text-align:right;"> 771615 </td>
-    ##    <td style="text-align:left;"> MRP63 </td>
-    ##    <td style="text-align:right;"> 771615 </td>
-    ##    <td style="text-align:left;"> XP_003640629.1 </td>
-    ##    <td style="text-align:right;"> 2.24 </td>
-    ##    <td style="text-align:right;"> 2.24 </td>
-    ##    <td style="text-align:right;"> 4.10 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001007968.1 </td>
-    ##    <td style="text-align:right;"> 425416 </td>
-    ##    <td style="text-align:left;"> RPL30 </td>
-    ##    <td style="text-align:right;"> 425416 </td>
-    ##    <td style="text-align:left;"> NP_001007968.1 </td>
-    ##    <td style="text-align:right;"> 2.36 </td>
-    ##    <td style="text-align:right;"> 2.36 </td>
-    ##    <td style="text-align:right;"> 6.58 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001279014.1 </td>
-    ##    <td style="text-align:right;"> 768911 </td>
-    ##    <td style="text-align:left;"> RSL24D1 </td>
-    ##    <td style="text-align:right;"> 768911 </td>
-    ##    <td style="text-align:left;"> NP_001279014.1 </td>
-    ##    <td style="text-align:right;"> 1.62 </td>
-    ##    <td style="text-align:right;"> 1.62 </td>
-    ##    <td style="text-align:right;"> 5.17 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*male.hypothalamus.bldg 1*male.hypothalamus.control"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*male.hypothalamus.bldg 1*male.hypothalamus.control </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-10.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        1*male.hypothalamus.bldg -1*male.hypothalamus.lay
+    ## Down                                                   0
+    ## NotSig                                             14937
+    ## Up                                                     0
+    ## $table
+    ##                row.names         Name    geneid       entrezid     logFC
+    ## NP_001001301.1    408026         TPH2    408026 NP_001001301.1  3.200660
+    ## NP_990136.1       395592           TH    395592    NP_990136.1  2.075474
+    ## XP_015154090.1 107055138         HAX1 107055138 XP_015154090.1 -1.435403
+    ## XP_004935201.1    420947          DDC    420947 XP_004935201.1  1.229574
+    ## XP_004941024.1 101749269 LOC101749269 101749269 XP_004941024.1  3.232029
+    ##                unshrunk.logFC     logCPM       PValue          FDR
+    ## NP_001001301.1       3.216992  0.5198868 5.146221e-08 0.0007686911
+    ## NP_990136.1          2.077283  2.8462744 3.625612e-06 0.0270778852
+    ## XP_015154090.1      -1.435990  4.0060271 7.686733e-06 0.0382722440
+    ## XP_004935201.1       1.230469  3.5361496 5.019995e-05 0.1874591696
+    ## XP_004941024.1       3.393795 -1.2538249 8.091379e-05 0.2089706984
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001001301.1 </td>
-    ##    <td style="text-align:right;"> 408026 </td>
-    ##    <td style="text-align:left;"> TPH2 </td>
-    ##    <td style="text-align:right;"> 408026 </td>
-    ##    <td style="text-align:left;"> NP_001001301.1 </td>
-    ##    <td style="text-align:right;"> 3.20 </td>
-    ##    <td style="text-align:right;"> 3.22 </td>
-    ##    <td style="text-align:right;"> 0.52 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_990136.1 </td>
-    ##    <td style="text-align:right;"> 395592 </td>
-    ##    <td style="text-align:left;"> TH </td>
-    ##    <td style="text-align:right;"> 395592 </td>
-    ##    <td style="text-align:left;"> NP_990136.1 </td>
-    ##    <td style="text-align:right;"> 2.08 </td>
-    ##    <td style="text-align:right;"> 2.08 </td>
-    ##    <td style="text-align:right;"> 2.85 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.03 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015154090.1 </td>
-    ##    <td style="text-align:right;"> 107055138 </td>
-    ##    <td style="text-align:left;"> HAX1 </td>
-    ##    <td style="text-align:right;"> 107055138 </td>
-    ##    <td style="text-align:left;"> XP_015154090.1 </td>
-    ##    <td style="text-align:right;"> -1.44 </td>
-    ##    <td style="text-align:right;"> -1.44 </td>
-    ##    <td style="text-align:right;"> 4.01 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.04 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004935201.1 </td>
-    ##    <td style="text-align:right;"> 420947 </td>
-    ##    <td style="text-align:left;"> DDC </td>
-    ##    <td style="text-align:right;"> 420947 </td>
-    ##    <td style="text-align:left;"> XP_004935201.1 </td>
-    ##    <td style="text-align:right;"> 1.23 </td>
-    ##    <td style="text-align:right;"> 1.23 </td>
-    ##    <td style="text-align:right;"> 3.54 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.19 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004941024.1 </td>
-    ##    <td style="text-align:right;"> 101749269 </td>
-    ##    <td style="text-align:left;"> LOC101749269 </td>
-    ##    <td style="text-align:right;"> 101749269 </td>
-    ##    <td style="text-align:left;"> XP_004941024.1 </td>
-    ##    <td style="text-align:right;"> 3.23 </td>
-    ##    <td style="text-align:right;"> 3.39 </td>
-    ##    <td style="text-align:right;"> -1.25 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.21 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "1*male.hypothalamus.bldg -1*male.hypothalamus.lay"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> 1*male.hypothalamus.bldg -1*male.hypothalamus.lay </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-11.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*male.hypothalamus.inc.d3 1*male.hypothalamus.lay
+    ## Down                                                     0
+    ## NotSig                                               14937
+    ## Up                                                       0
+    ## $table
+    ##                row.names  Name    geneid       entrezid     logFC
+    ## XP_015154090.1 107055138  HAX1 107055138 XP_015154090.1  1.542476
+    ## NP_001289086.1    426880 COX14    426880 NP_001289086.1  1.442578
+    ## XP_424461.2       426853 ALPK2    426853    XP_424461.2 -1.344897
+    ## XP_003640374.1    429671  SCO2    429671 XP_003640374.1  1.094363
+    ## XP_015145655.1 107053895  RPRM 107053895 XP_015145655.1  1.299870
+    ##                unshrunk.logFC    logCPM       PValue        FDR
+    ## XP_015154090.1       1.543143 4.0060271 1.524117e-06 0.02276574
+    ## NP_001289086.1       1.444094 2.8104133 4.578735e-05 0.34196283
+    ## XP_424461.2         -1.356406 0.7209294 1.200243e-04 0.59760090
+    ## XP_003640374.1       1.096236 2.2808205 3.337767e-04 1.00000000
+    ## XP_015145655.1       1.301914 2.5166295 4.736241e-04 1.00000000
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015154090.1 </td>
-    ##    <td style="text-align:right;"> 107055138 </td>
-    ##    <td style="text-align:left;"> HAX1 </td>
-    ##    <td style="text-align:right;"> 107055138 </td>
-    ##    <td style="text-align:left;"> XP_015154090.1 </td>
-    ##    <td style="text-align:right;"> 1.54 </td>
-    ##    <td style="text-align:right;"> 1.54 </td>
-    ##    <td style="text-align:right;"> 4.01 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.02 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001289086.1 </td>
-    ##    <td style="text-align:right;"> 426880 </td>
-    ##    <td style="text-align:left;"> COX14 </td>
-    ##    <td style="text-align:right;"> 426880 </td>
-    ##    <td style="text-align:left;"> NP_001289086.1 </td>
-    ##    <td style="text-align:right;"> 1.44 </td>
-    ##    <td style="text-align:right;"> 1.44 </td>
-    ##    <td style="text-align:right;"> 2.81 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.34 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_424461.2 </td>
-    ##    <td style="text-align:right;"> 426853 </td>
-    ##    <td style="text-align:left;"> ALPK2 </td>
-    ##    <td style="text-align:right;"> 426853 </td>
-    ##    <td style="text-align:left;"> XP_424461.2 </td>
-    ##    <td style="text-align:right;"> -1.34 </td>
-    ##    <td style="text-align:right;"> -1.36 </td>
-    ##    <td style="text-align:right;"> 0.72 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.60 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_003640374.1 </td>
-    ##    <td style="text-align:right;"> 429671 </td>
-    ##    <td style="text-align:left;"> SCO2 </td>
-    ##    <td style="text-align:right;"> 429671 </td>
-    ##    <td style="text-align:left;"> XP_003640374.1 </td>
-    ##    <td style="text-align:right;"> 1.09 </td>
-    ##    <td style="text-align:right;"> 1.10 </td>
-    ##    <td style="text-align:right;"> 2.28 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015145655.1 </td>
-    ##    <td style="text-align:right;"> 107053895 </td>
-    ##    <td style="text-align:left;"> RPRM </td>
-    ##    <td style="text-align:right;"> 107053895 </td>
-    ##    <td style="text-align:left;"> XP_015145655.1 </td>
-    ##    <td style="text-align:right;"> 1.30 </td>
-    ##    <td style="text-align:right;"> 1.30 </td>
-    ##    <td style="text-align:right;"> 2.52 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1.00 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*male.hypothalamus.inc.d3 1*male.hypothalamus.lay"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*male.hypothalamus.inc.d3 1*male.hypothalamus.lay </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-12.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        1*male.hypothalamus.inc.d3 -1*male.hypothalamus.inc.d9
+    ## Down                                                        1
+    ## NotSig                                                  14936
+    ## Up                                                          0
+    ## $table
+    ##                row.names         Name    geneid       entrezid     logFC
+    ## XP_001234565.2    771273       MRPS36    771273 XP_001234565.2 -6.290735
+    ## NP_001264524.1    415770  C11H19ORF40    415770 NP_001264524.1 -3.646812
+    ## XP_004944394.1 101750188 LOC101750188 101750188 XP_004944394.1 -2.855471
+    ## XP_015135776.1    427254       ZFAND5    427254 XP_015135776.1 -2.435041
+    ## XP_015130802.1    416928        IGLL1    416928 XP_015130802.1  4.157006
+    ##                unshrunk.logFC   logCPM       PValue          FDR
+    ## XP_001234565.2      -7.588688 2.666805 4.626200e-12 6.910155e-08
+    ## NP_001264524.1      -3.948298 1.815759 5.302163e-06 3.959921e-02
+    ## XP_004944394.1      -3.128303 1.342799 1.286737e-05 6.406666e-02
+    ## XP_015135776.1      -2.492132 3.162803 2.916637e-05 1.089145e-01
+    ## XP_015130802.1       4.176547 2.966941 6.301455e-05 1.882497e-01
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_001234565.2 </td>
-    ##    <td style="text-align:right;"> 771273 </td>
-    ##    <td style="text-align:left;"> MRPS36 </td>
-    ##    <td style="text-align:right;"> 771273 </td>
-    ##    <td style="text-align:left;"> XP_001234565.2 </td>
-    ##    <td style="text-align:right;"> -6.29 </td>
-    ##    <td style="text-align:right;"> -7.59 </td>
-    ##    <td style="text-align:right;"> 2.67 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001264524.1 </td>
-    ##    <td style="text-align:right;"> 415770 </td>
-    ##    <td style="text-align:left;"> C11H19ORF40 </td>
-    ##    <td style="text-align:right;"> 415770 </td>
-    ##    <td style="text-align:left;"> NP_001264524.1 </td>
-    ##    <td style="text-align:right;"> -3.65 </td>
-    ##    <td style="text-align:right;"> -3.95 </td>
-    ##    <td style="text-align:right;"> 1.82 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.04 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004944394.1 </td>
-    ##    <td style="text-align:right;"> 101750188 </td>
-    ##    <td style="text-align:left;"> LOC101750188 </td>
-    ##    <td style="text-align:right;"> 101750188 </td>
-    ##    <td style="text-align:left;"> XP_004944394.1 </td>
-    ##    <td style="text-align:right;"> -2.86 </td>
-    ##    <td style="text-align:right;"> -3.13 </td>
-    ##    <td style="text-align:right;"> 1.34 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.06 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015135776.1 </td>
-    ##    <td style="text-align:right;"> 427254 </td>
-    ##    <td style="text-align:left;"> ZFAND5 </td>
-    ##    <td style="text-align:right;"> 427254 </td>
-    ##    <td style="text-align:left;"> XP_015135776.1 </td>
-    ##    <td style="text-align:right;"> -2.44 </td>
-    ##    <td style="text-align:right;"> -2.49 </td>
-    ##    <td style="text-align:right;"> 3.16 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.11 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015130802.1 </td>
-    ##    <td style="text-align:right;"> 416928 </td>
-    ##    <td style="text-align:left;"> IGLL1 </td>
-    ##    <td style="text-align:right;"> 416928 </td>
-    ##    <td style="text-align:left;"> XP_015130802.1 </td>
-    ##    <td style="text-align:right;"> 4.16 </td>
-    ##    <td style="text-align:right;"> 4.18 </td>
-    ##    <td style="text-align:right;"> 2.97 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.19 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "1*male.hypothalamus.inc.d3 -1*male.hypothalamus.inc.d9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> 1*male.hypothalamus.inc.d3 -1*male.hypothalamus.inc.d9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-13.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*male.hypothalamus.inc.d17 1*male.hypothalamus.inc.d9
+    ## Down                                                         0
+    ## NotSig                                                   14935
+    ## Up                                                           2
+    ## $table
+    ##                row.names         Name    geneid       entrezid     logFC
+    ## XP_001234565.2    771273       MRPS36    771273 XP_001234565.2  5.813583
+    ## NP_001264524.1    415770  C11H19ORF40    415770 NP_001264524.1  4.643991
+    ## XP_004944394.1 101750188 LOC101750188 101750188 XP_004944394.1  3.621729
+    ## XP_015128714.1    395532       COL1A1    395532 XP_015128714.1 -1.283438
+    ## XP_015132890.1    770140         CTIF    770140 XP_015132890.1  3.467658
+    ##                unshrunk.logFC     logCPM       PValue          FDR
+    ## XP_001234565.2   6.621741e+00 2.66680542 6.995273e-12 1.044884e-07
+    ## NP_001264524.1   5.439575e+00 1.81575906 4.624104e-08 3.453512e-04
+    ## XP_004944394.1   4.175814e+00 1.34279932 1.759459e-07 8.760346e-04
+    ## XP_015128714.1  -1.286297e+00 2.28899332 1.206443e-05 4.505161e-02
+    ## XP_015132890.1   1.442695e+08 0.05238573 3.771986e-05 1.126843e-01
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_001234565.2 </td>
-    ##    <td style="text-align:right;"> 771273 </td>
-    ##    <td style="text-align:left;"> MRPS36 </td>
-    ##    <td style="text-align:right;"> 771273 </td>
-    ##    <td style="text-align:left;"> XP_001234565.2 </td>
-    ##    <td style="text-align:right;"> 5.81 </td>
-    ##    <td style="text-align:right;"> 6.62 </td>
-    ##    <td style="text-align:right;"> 2.67 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001264524.1 </td>
-    ##    <td style="text-align:right;"> 415770 </td>
-    ##    <td style="text-align:left;"> C11H19ORF40 </td>
-    ##    <td style="text-align:right;"> 415770 </td>
-    ##    <td style="text-align:left;"> NP_001264524.1 </td>
-    ##    <td style="text-align:right;"> 4.64 </td>
-    ##    <td style="text-align:right;"> 5.44 </td>
-    ##    <td style="text-align:right;"> 1.82 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004944394.1 </td>
-    ##    <td style="text-align:right;"> 101750188 </td>
-    ##    <td style="text-align:left;"> LOC101750188 </td>
-    ##    <td style="text-align:right;"> 101750188 </td>
-    ##    <td style="text-align:left;"> XP_004944394.1 </td>
-    ##    <td style="text-align:right;"> 3.62 </td>
-    ##    <td style="text-align:right;"> 4.18 </td>
-    ##    <td style="text-align:right;"> 1.34 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015128714.1 </td>
-    ##    <td style="text-align:right;"> 395532 </td>
-    ##    <td style="text-align:left;"> COL1A1 </td>
-    ##    <td style="text-align:right;"> 395532 </td>
-    ##    <td style="text-align:left;"> XP_015128714.1 </td>
-    ##    <td style="text-align:right;"> -1.28 </td>
-    ##    <td style="text-align:right;"> -1.29 </td>
-    ##    <td style="text-align:right;"> 2.29 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.05 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015132890.1 </td>
-    ##    <td style="text-align:right;"> 770140 </td>
-    ##    <td style="text-align:left;"> CTIF </td>
-    ##    <td style="text-align:right;"> 770140 </td>
-    ##    <td style="text-align:left;"> XP_015132890.1 </td>
-    ##    <td style="text-align:right;"> 3.47 </td>
-    ##    <td style="text-align:right;"> 144269480.80 </td>
-    ##    <td style="text-align:right;"> 0.05 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.11 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*male.hypothalamus.inc.d17 1*male.hypothalamus.inc.d9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*male.hypothalamus.inc.d17 1*male.hypothalamus.inc.d9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-14.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*male.hypothalamus.hatch 1*male.hypothalamus.inc.d17
+    ## Down                                                        0
+    ## NotSig                                                  14937
+    ## Up                                                          0
+    ## $table
+    ##                row.names         Name    geneid       entrezid     logFC
+    ## XP_004942140.1    423744        MYOZ1    423744 XP_004942140.1 -2.815323
+    ## NP_001090995.1    417506        MYL10    417506 NP_001090995.1 -2.452448
+    ## NP_990781.1       396434        TNNC2    396434    NP_990781.1 -5.496662
+    ## XP_015157102.1 101748402 LOC101748402 101748402 XP_015157102.1 -2.433188
+    ## XP_015143153.1    418099       MYBPC1    418099 XP_015143153.1 -3.463940
+    ##                unshrunk.logFC     logCPM       PValue         FDR
+    ## XP_004942140.1      -2.980035 -1.3768867 4.124783e-07 0.006161189
+    ## NP_001090995.1      -2.485098 -0.6899327 4.303781e-06 0.017671661
+    ## NP_990781.1         -5.751426 -1.3686886 4.660468e-06 0.017671661
+    ## XP_015157102.1      -2.453450  0.1432844 4.732319e-06 0.017671661
+    ## XP_015143153.1      -3.547983 -1.4121647 1.631660e-05 0.041505184
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004942140.1 </td>
-    ##    <td style="text-align:right;"> 423744 </td>
-    ##    <td style="text-align:left;"> MYOZ1 </td>
-    ##    <td style="text-align:right;"> 423744 </td>
-    ##    <td style="text-align:left;"> XP_004942140.1 </td>
-    ##    <td style="text-align:right;"> -2.82 </td>
-    ##    <td style="text-align:right;"> -2.98 </td>
-    ##    <td style="text-align:right;"> -1.38 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.01 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001090995.1 </td>
-    ##    <td style="text-align:right;"> 417506 </td>
-    ##    <td style="text-align:left;"> MYL10 </td>
-    ##    <td style="text-align:right;"> 417506 </td>
-    ##    <td style="text-align:left;"> NP_001090995.1 </td>
-    ##    <td style="text-align:right;"> -2.45 </td>
-    ##    <td style="text-align:right;"> -2.49 </td>
-    ##    <td style="text-align:right;"> -0.69 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.02 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_990781.1 </td>
-    ##    <td style="text-align:right;"> 396434 </td>
-    ##    <td style="text-align:left;"> TNNC2 </td>
-    ##    <td style="text-align:right;"> 396434 </td>
-    ##    <td style="text-align:left;"> NP_990781.1 </td>
-    ##    <td style="text-align:right;"> -5.50 </td>
-    ##    <td style="text-align:right;"> -5.75 </td>
-    ##    <td style="text-align:right;"> -1.37 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.02 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015157102.1 </td>
-    ##    <td style="text-align:right;"> 101748402 </td>
-    ##    <td style="text-align:left;"> LOC101748402 </td>
-    ##    <td style="text-align:right;"> 101748402 </td>
-    ##    <td style="text-align:left;"> XP_015157102.1 </td>
-    ##    <td style="text-align:right;"> -2.43 </td>
-    ##    <td style="text-align:right;"> -2.45 </td>
-    ##    <td style="text-align:right;"> 0.14 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.02 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015143153.1 </td>
-    ##    <td style="text-align:right;"> 418099 </td>
-    ##    <td style="text-align:left;"> MYBPC1 </td>
-    ##    <td style="text-align:right;"> 418099 </td>
-    ##    <td style="text-align:left;"> XP_015143153.1 </td>
-    ##    <td style="text-align:right;"> -3.46 </td>
-    ##    <td style="text-align:right;"> -3.55 </td>
-    ##    <td style="text-align:right;"> -1.41 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.04 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*male.hypothalamus.hatch 1*male.hypothalamus.inc.d17"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*male.hypothalamus.hatch 1*male.hypothalamus.inc.d17 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-15.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        1*male.hypothalamus.hatch -1*male.hypothalamus.n5
+    ## Down                                                   0
+    ## NotSig                                             14937
+    ## Up                                                     0
+    ## $table
+    ##                row.names   Name geneid       entrezid     logFC
+    ## XP_015143153.1    418099 MYBPC1 418099 XP_015143153.1  4.225033
+    ## XP_015145352.1    374027    NEB 374027 XP_015145352.1  1.608141
+    ## XP_015141730.1    422974 SLC6A5 422974 XP_015141730.1 -3.034010
+    ## NP_990748.1       396386  TNNI2 396386    NP_990748.1  3.422881
+    ## NP_001001301.1    408026   TPH2 408026 NP_001001301.1 -2.392722
+    ##                unshrunk.logFC     logCPM       PValue        FDR
+    ## XP_015143153.1       4.379469 -1.4121647 1.292359e-06 0.01930396
+    ## XP_015145352.1       1.612957  1.5616577 1.176036e-05 0.08783226
+    ## XP_015141730.1      -3.136049 -1.2882754 1.845064e-05 0.09186572
+    ## NP_990748.1          3.465542 -0.5425393 2.574926e-05 0.09211663
+    ## NP_001001301.1      -2.406330  0.5198868 3.083505e-05 0.09211663
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015143153.1 </td>
-    ##    <td style="text-align:right;"> 418099 </td>
-    ##    <td style="text-align:left;"> MYBPC1 </td>
-    ##    <td style="text-align:right;"> 418099 </td>
-    ##    <td style="text-align:left;"> XP_015143153.1 </td>
-    ##    <td style="text-align:right;"> 4.23 </td>
-    ##    <td style="text-align:right;"> 4.38 </td>
-    ##    <td style="text-align:right;"> -1.41 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.02 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015145352.1 </td>
-    ##    <td style="text-align:right;"> 374027 </td>
-    ##    <td style="text-align:left;"> NEB </td>
-    ##    <td style="text-align:right;"> 374027 </td>
-    ##    <td style="text-align:left;"> XP_015145352.1 </td>
-    ##    <td style="text-align:right;"> 1.61 </td>
-    ##    <td style="text-align:right;"> 1.61 </td>
-    ##    <td style="text-align:right;"> 1.56 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.09 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015141730.1 </td>
-    ##    <td style="text-align:right;"> 422974 </td>
-    ##    <td style="text-align:left;"> SLC6A5 </td>
-    ##    <td style="text-align:right;"> 422974 </td>
-    ##    <td style="text-align:left;"> XP_015141730.1 </td>
-    ##    <td style="text-align:right;"> -3.03 </td>
-    ##    <td style="text-align:right;"> -3.14 </td>
-    ##    <td style="text-align:right;"> -1.29 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.09 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_990748.1 </td>
-    ##    <td style="text-align:right;"> 396386 </td>
-    ##    <td style="text-align:left;"> TNNI2 </td>
-    ##    <td style="text-align:right;"> 396386 </td>
-    ##    <td style="text-align:left;"> NP_990748.1 </td>
-    ##    <td style="text-align:right;"> 3.42 </td>
-    ##    <td style="text-align:right;"> 3.47 </td>
-    ##    <td style="text-align:right;"> -0.54 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.09 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001001301.1 </td>
-    ##    <td style="text-align:right;"> 408026 </td>
-    ##    <td style="text-align:left;"> TPH2 </td>
-    ##    <td style="text-align:right;"> 408026 </td>
-    ##    <td style="text-align:left;"> NP_001001301.1 </td>
-    ##    <td style="text-align:right;"> -2.39 </td>
-    ##    <td style="text-align:right;"> -2.41 </td>
-    ##    <td style="text-align:right;"> 0.52 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.09 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "1*male.hypothalamus.hatch -1*male.hypothalamus.n5"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> 1*male.hypothalamus.hatch -1*male.hypothalamus.n5 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-16.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        1*male.hypothalamus.n5 -1*male.hypothalamus.n9
+    ## Down                                                0
+    ## NotSig                                          14937
+    ## Up                                                  0
+    ## $table
+    ##                row.names         Name    geneid       entrezid     logFC
+    ## NP_001001296.1    403120         IFI6    403120 NP_001001296.1  3.227465
+    ## NP_001001301.1    408026         TPH2    408026 NP_001001301.1  2.565999
+    ## XP_015142180.1 107053409 LOC107053409 107053409 XP_015142180.1 -2.725892
+    ## XP_015141730.1    422974       SLC6A5    422974 XP_015141730.1  2.323432
+    ## XP_004936174.2    426317      TMEM156    426317 XP_004936174.2  3.103917
+    ##                unshrunk.logFC     logCPM       PValue        FDR
+    ## NP_001001296.1   3.281180e+00 -0.1724468 4.667777e-06 0.04457781
+    ## NP_001001301.1   2.582189e+00  0.5198868 5.968777e-06 0.04457781
+    ## XP_015142180.1  -3.388438e+00 -1.9711567 2.166539e-04 1.00000000
+    ## XP_015141730.1   2.379404e+00 -1.2882754 5.631868e-04 1.00000000
+    ## XP_004936174.2   1.442695e+08 -2.1793343 9.184999e-04 1.00000000
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001001296.1 </td>
-    ##    <td style="text-align:right;"> 403120 </td>
-    ##    <td style="text-align:left;"> IFI6 </td>
-    ##    <td style="text-align:right;"> 403120 </td>
-    ##    <td style="text-align:left;"> NP_001001296.1 </td>
-    ##    <td style="text-align:right;"> 3.23 </td>
-    ##    <td style="text-align:right;"> 3.28 </td>
-    ##    <td style="text-align:right;"> -0.17 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.04 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001001301.1 </td>
-    ##    <td style="text-align:right;"> 408026 </td>
-    ##    <td style="text-align:left;"> TPH2 </td>
-    ##    <td style="text-align:right;"> 408026 </td>
-    ##    <td style="text-align:left;"> NP_001001301.1 </td>
-    ##    <td style="text-align:right;"> 2.57 </td>
-    ##    <td style="text-align:right;"> 2.58 </td>
-    ##    <td style="text-align:right;"> 0.52 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.04 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015142180.1 </td>
-    ##    <td style="text-align:right;"> 107053409 </td>
-    ##    <td style="text-align:left;"> LOC107053409 </td>
-    ##    <td style="text-align:right;"> 107053409 </td>
-    ##    <td style="text-align:left;"> XP_015142180.1 </td>
-    ##    <td style="text-align:right;"> -2.73 </td>
-    ##    <td style="text-align:right;"> -3.39 </td>
-    ##    <td style="text-align:right;"> -1.97 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015141730.1 </td>
-    ##    <td style="text-align:right;"> 422974 </td>
-    ##    <td style="text-align:left;"> SLC6A5 </td>
-    ##    <td style="text-align:right;"> 422974 </td>
-    ##    <td style="text-align:left;"> XP_015141730.1 </td>
-    ##    <td style="text-align:right;"> 2.32 </td>
-    ##    <td style="text-align:right;"> 2.38 </td>
-    ##    <td style="text-align:right;"> -1.29 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004936174.2 </td>
-    ##    <td style="text-align:right;"> 426317 </td>
-    ##    <td style="text-align:left;"> TMEM156 </td>
-    ##    <td style="text-align:right;"> 426317 </td>
-    ##    <td style="text-align:left;"> XP_004936174.2 </td>
-    ##    <td style="text-align:right;"> 3.10 </td>
-    ##    <td style="text-align:right;"> 144269480.41 </td>
-    ##    <td style="text-align:right;"> -2.18 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 1.00 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "1*male.hypothalamus.n5 -1*male.hypothalamus.n9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> 1*male.hypothalamus.n5 -1*male.hypothalamus.n9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-17.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*male.hypothalamus.control 1*male.hypothalamus.n9
+    ## Down                                                   199
+    ## NotSig                                               14717
+    ## Up                                                      21
+    ## $table
+    ##                row.names    Name geneid       entrezid     logFC
+    ## NP_006917.1       807639    COX1 807639    NP_006917.1 -2.031436
+    ## XP_003640629.1    771615   MRP63 771615 XP_003640629.1 -2.366473
+    ## NP_001264272.1    423726   RPS24 423726 NP_001264272.1 -2.167364
+    ## NP_001007968.1    425416   RPL30 425416 NP_001007968.1 -2.443819
+    ## NP_001171687.1    417907 NDUFA12 417907 NP_001171687.1 -2.872529
+    ##                unshrunk.logFC    logCPM       PValue          FDR
+    ## NP_006917.1         -2.031436 16.110350 2.296800e-31 3.430730e-27
+    ## XP_003640629.1      -2.367380  4.095240 5.453009e-31 4.072580e-27
+    ## NP_001264272.1      -2.167467  7.137721 4.314545e-30 2.148212e-26
+    ## NP_001007968.1      -2.443987  6.584953 1.439224e-27 5.374423e-24
+    ## NP_001171687.1      -2.872822  6.024849 3.863902e-26 1.154302e-22
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_006917.1 </td>
-    ##    <td style="text-align:right;"> 807639 </td>
-    ##    <td style="text-align:left;"> COX1 </td>
-    ##    <td style="text-align:right;"> 807639 </td>
-    ##    <td style="text-align:left;"> NP_006917.1 </td>
-    ##    <td style="text-align:right;"> -2.03 </td>
-    ##    <td style="text-align:right;"> -2.03 </td>
-    ##    <td style="text-align:right;"> 16.11 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_003640629.1 </td>
-    ##    <td style="text-align:right;"> 771615 </td>
-    ##    <td style="text-align:left;"> MRP63 </td>
-    ##    <td style="text-align:right;"> 771615 </td>
-    ##    <td style="text-align:left;"> XP_003640629.1 </td>
-    ##    <td style="text-align:right;"> -2.37 </td>
-    ##    <td style="text-align:right;"> -2.37 </td>
-    ##    <td style="text-align:right;"> 4.10 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001264272.1 </td>
-    ##    <td style="text-align:right;"> 423726 </td>
-    ##    <td style="text-align:left;"> RPS24 </td>
-    ##    <td style="text-align:right;"> 423726 </td>
-    ##    <td style="text-align:left;"> NP_001264272.1 </td>
-    ##    <td style="text-align:right;"> -2.17 </td>
-    ##    <td style="text-align:right;"> -2.17 </td>
-    ##    <td style="text-align:right;"> 7.14 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001007968.1 </td>
-    ##    <td style="text-align:right;"> 425416 </td>
-    ##    <td style="text-align:left;"> RPL30 </td>
-    ##    <td style="text-align:right;"> 425416 </td>
-    ##    <td style="text-align:left;"> NP_001007968.1 </td>
-    ##    <td style="text-align:right;"> -2.44 </td>
-    ##    <td style="text-align:right;"> -2.44 </td>
-    ##    <td style="text-align:right;"> 6.58 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001171687.1 </td>
-    ##    <td style="text-align:right;"> 417907 </td>
-    ##    <td style="text-align:left;"> NDUFA12 </td>
-    ##    <td style="text-align:right;"> 417907 </td>
-    ##    <td style="text-align:left;"> NP_001171687.1 </td>
-    ##    <td style="text-align:right;"> -2.87 </td>
-    ##    <td style="text-align:right;"> -2.87 </td>
-    ##    <td style="text-align:right;"> 6.02 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*male.hypothalamus.control 1*male.hypothalamus.n9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*male.hypothalamus.control 1*male.hypothalamus.n9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-18.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*female.hypothalamus.bldg 1*female.hypothalamus.n9
+    ## Down                                                      0
+    ## NotSig                                                  233
+    ## Up                                                    14704
+    ## $table
+    ##                row.names   Name    geneid       entrezid    logFC
+    ## XP_015144243.1    428973  LZTS2    428973 XP_015144243.1 20.66989
+    ## XP_015155805.1 107055406 LMBR1L 107055406 XP_015155805.1 20.17583
+    ## XP_015140781.1    422420 MARCH1    422420 XP_015140781.1 20.09379
+    ## NP_001001755.1    414837  THBS2    414837 NP_001001755.1 20.04711
+    ## XP_015147038.1    424951 VWA5B2    424951 XP_015147038.1 19.99886
+    ##                unshrunk.logFC     logCPM PValue FDR
+    ## XP_015144243.1       20.69295 0.02302039      0   0
+    ## XP_015155805.1       20.19276 0.31655743      0   0
+    ## XP_015140781.1       20.10954 0.08218104      0   0
+    ## NP_001001755.1       20.06203 0.59119540      0   0
+    ## XP_015147038.1       20.01290 0.74120094      0   0
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015144243.1 </td>
-    ##    <td style="text-align:right;"> 428973 </td>
-    ##    <td style="text-align:left;"> LZTS2 </td>
-    ##    <td style="text-align:right;"> 428973 </td>
-    ##    <td style="text-align:left;"> XP_015144243.1 </td>
-    ##    <td style="text-align:right;"> 20.67 </td>
-    ##    <td style="text-align:right;"> 20.69 </td>
-    ##    <td style="text-align:right;"> 0.02 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015155805.1 </td>
-    ##    <td style="text-align:right;"> 107055406 </td>
-    ##    <td style="text-align:left;"> LMBR1L </td>
-    ##    <td style="text-align:right;"> 107055406 </td>
-    ##    <td style="text-align:left;"> XP_015155805.1 </td>
-    ##    <td style="text-align:right;"> 20.18 </td>
-    ##    <td style="text-align:right;"> 20.19 </td>
-    ##    <td style="text-align:right;"> 0.32 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015140781.1 </td>
-    ##    <td style="text-align:right;"> 422420 </td>
-    ##    <td style="text-align:left;"> MARCH1 </td>
-    ##    <td style="text-align:right;"> 422420 </td>
-    ##    <td style="text-align:left;"> XP_015140781.1 </td>
-    ##    <td style="text-align:right;"> 20.09 </td>
-    ##    <td style="text-align:right;"> 20.11 </td>
-    ##    <td style="text-align:right;"> 0.08 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001001755.1 </td>
-    ##    <td style="text-align:right;"> 414837 </td>
-    ##    <td style="text-align:left;"> THBS2 </td>
-    ##    <td style="text-align:right;"> 414837 </td>
-    ##    <td style="text-align:left;"> NP_001001755.1 </td>
-    ##    <td style="text-align:right;"> 20.05 </td>
-    ##    <td style="text-align:right;"> 20.06 </td>
-    ##    <td style="text-align:right;"> 0.59 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015147038.1 </td>
-    ##    <td style="text-align:right;"> 424951 </td>
-    ##    <td style="text-align:left;"> VWA5B2 </td>
-    ##    <td style="text-align:right;"> 424951 </td>
-    ##    <td style="text-align:left;"> XP_015147038.1 </td>
-    ##    <td style="text-align:right;"> 20.00 </td>
-    ##    <td style="text-align:right;"> 20.01 </td>
-    ##    <td style="text-align:right;"> 0.74 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*female.hypothalamus.bldg 1*female.hypothalamus.n9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*female.hypothalamus.bldg 1*female.hypothalamus.n9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-19.png)
 
     ## NULL
-    ## <table class="kable_wrapper">
-    ## <tbody>
-    ##   <tr>
-    ##    <td> 
+    ##        -1*male.hypothalamus.bldg 1*male.hypothalamus.n9
+    ## Down                                                  0
+    ## NotSig                                            14937
+    ## Up                                                    0
+    ## $table
+    ##                row.names    Name geneid       entrezid     logFC
+    ## NP_001001301.1    408026    TPH2 408026 NP_001001301.1 -3.253322
+    ## NP_990136.1       395592      TH 395592    NP_990136.1 -2.379767
+    ## XP_015151186.1    404747  SLC6A4 404747 XP_015151186.1 -2.737861
+    ## NP_001264519.1    424607  TSPAN1 424607 NP_001264519.1 -3.947761
+    ## XP_004936174.2    426317 TMEM156 426317 XP_004936174.2 -3.670587
+    ##                unshrunk.logFC     logCPM       PValue          FDR
+    ## NP_001001301.1  -3.270751e+00  0.5198868 1.562950e-08 0.0002334578
+    ## NP_990136.1     -2.382123e+00  2.8462744 5.645732e-08 0.0004216515
+    ## XP_015151186.1  -2.779205e+00 -0.8677670 1.361795e-05 0.0678037696
+    ## NP_001264519.1  -1.442695e+08 -2.2299288 1.019504e-04 0.3321153714
+    ## XP_004936174.2  -1.442695e+08 -2.1793343 1.111720e-04 0.3321153714
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;">   </th>
-    ##    <th style="text-align:right;"> row.names </th>
-    ##    <th style="text-align:left;"> Name </th>
-    ##    <th style="text-align:right;"> geneid </th>
-    ##    <th style="text-align:left;"> entrezid </th>
-    ##    <th style="text-align:right;"> logFC </th>
-    ##    <th style="text-align:right;"> unshrunk.logFC </th>
-    ##    <th style="text-align:right;"> logCPM </th>
-    ##    <th style="text-align:right;"> PValue </th>
-    ##    <th style="text-align:right;"> FDR </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001001301.1 </td>
-    ##    <td style="text-align:right;"> 408026 </td>
-    ##    <td style="text-align:left;"> TPH2 </td>
-    ##    <td style="text-align:right;"> 408026 </td>
-    ##    <td style="text-align:left;"> NP_001001301.1 </td>
-    ##    <td style="text-align:right;"> -3.25 </td>
-    ##    <td style="text-align:right;"> -3.27 </td>
-    ##    <td style="text-align:right;"> 0.52 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_990136.1 </td>
-    ##    <td style="text-align:right;"> 395592 </td>
-    ##    <td style="text-align:left;"> TH </td>
-    ##    <td style="text-align:right;"> 395592 </td>
-    ##    <td style="text-align:left;"> NP_990136.1 </td>
-    ##    <td style="text-align:right;"> -2.38 </td>
-    ##    <td style="text-align:right;"> -2.38 </td>
-    ##    <td style="text-align:right;"> 2.85 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.00 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_015151186.1 </td>
-    ##    <td style="text-align:right;"> 404747 </td>
-    ##    <td style="text-align:left;"> SLC6A4 </td>
-    ##    <td style="text-align:right;"> 404747 </td>
-    ##    <td style="text-align:left;"> XP_015151186.1 </td>
-    ##    <td style="text-align:right;"> -2.74 </td>
-    ##    <td style="text-align:right;"> -2.78 </td>
-    ##    <td style="text-align:right;"> -0.87 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.07 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> NP_001264519.1 </td>
-    ##    <td style="text-align:right;"> 424607 </td>
-    ##    <td style="text-align:left;"> TSPAN1 </td>
-    ##    <td style="text-align:right;"> 424607 </td>
-    ##    <td style="text-align:left;"> NP_001264519.1 </td>
-    ##    <td style="text-align:right;"> -3.95 </td>
-    ##    <td style="text-align:right;"> -144269481.34 </td>
-    ##    <td style="text-align:right;"> -2.23 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.33 </td>
-    ##   </tr>
-    ##   <tr>
-    ##    <td style="text-align:left;"> XP_004936174.2 </td>
-    ##    <td style="text-align:right;"> 426317 </td>
-    ##    <td style="text-align:left;"> TMEM156 </td>
-    ##    <td style="text-align:right;"> 426317 </td>
-    ##    <td style="text-align:left;"> XP_004936174.2 </td>
-    ##    <td style="text-align:right;"> -3.67 </td>
-    ##    <td style="text-align:right;"> -144269481.05 </td>
-    ##    <td style="text-align:right;"> -2.18 </td>
-    ##    <td style="text-align:right;"> 0 </td>
-    ##    <td style="text-align:right;"> 0.33 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $adjust.method
+    ## [1] "BH"
     ## 
-    ##  </td>
-    ##    <td> 
+    ## $comparison
+    ## [1] "-1*male.hypothalamus.bldg 1*male.hypothalamus.n9"
     ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> BH </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## $test
+    ## [1] "glm"
     ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> -1*male.hypothalamus.bldg 1*male.hypothalamus.n9 </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##    <td> 
-    ## 
-    ## <table>
-    ##  <thead>
-    ##   <tr>
-    ##    <th style="text-align:left;"> x </th>
-    ##   </tr>
-    ##  </thead>
-    ## <tbody>
-    ##   <tr>
-    ##    <td style="text-align:left;"> glm </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
-    ## 
-    ##  </td>
-    ##   </tr>
-    ## </tbody>
-    ## </table>
+    ## attr(,"class")
+    ## [1] "TopTags"
+    ## attr(,"class")attr(,"package")
+    ## [1] "edgeR"
 
 ![](../figures/hyp/01-contrasts-20.png)
 
