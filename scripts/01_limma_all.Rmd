@@ -54,7 +54,17 @@ fit <- glmFit( parentalobject, parentaldesign, robust=T)
 treatres <- glmTreat(fit, lfc = 1)
 ```
 
-# specify contrasts
+
+# plotMDS (multidimential scaling)
+
+```{r plotMDS}
+
+plotMDS(parentalobject, cex = 0.5)
+
+```
+
+
+# specify contrasts and make MA plots (currently only a subset)
 
 ```{r 01-contrasts}
 levels(colData$group)
@@ -116,6 +126,8 @@ e <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pitui
 plot_grid(a,b,c,d,e,f, nrow = 2)
 
 ```
+
+# volcano plots
 
 ```{r volcanoplots}
 # from http://www.compbio.dundee.ac.uk/user/pschofield/Projects/teaching_pg/workshops/biocDGE.html#maplots

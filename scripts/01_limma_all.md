@@ -88,8 +88,15 @@ Then, I followed the steps from
     fit <- glmFit( parentalobject, parentaldesign, robust=T)
     treatres <- glmTreat(fit, lfc = 1)
 
-specify contrasts
-=================
+plotMDS (multidimential scaling)
+================================
+
+    plotMDS(parentalobject, cex = 0.5)
+
+![](../figures/plotMDS-1.png)
+
+specify contrasts and make MA plots (currently only a subset)
+=============================================================
 
     levels(colData$group)
 
@@ -241,6 +248,9 @@ specify contrasts
     plot_grid(a,b,c,d,e,f, nrow = 2)
 
 ![](../figures/01-contrasts-7.png)
+
+volcano plots
+=============
 
     # from http://www.compbio.dundee.ac.uk/user/pschofield/Projects/teaching_pg/workshops/biocDGE.html#maplots
 
