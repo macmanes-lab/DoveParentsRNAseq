@@ -126,137 +126,29 @@ my.contrasts <- makeContrasts(
 	         MG_H5 = male.gonad.hatch -  male.gonad.n5,
 	         MG_n59 = male.gonad.n5 - male.gonad.n9,
 	         MG_n9C = male.gonad.n9 - male.gonad.control,
+
+	         FG_n9B = female.gonad.n9 - female.gonad.bldg,
+	         MG_n9B = male.gonad.n9 - male.gonad.bldg,
 levels=parentaldesign)
 
-# female comparisons
-cont <- "FG_CB"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_CB', frame.plot=F)
-
-cont <- "FG_BL"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_BL', frame.plot=F)
-
-cont <- "FG_Li3"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_Li3', frame.plot=F)
-
-cont <- "FG_i39"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_i39', frame.plot=F)
-
-cont <- "FG_i917"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_i917', frame.plot=F)
-
-cont <- "FG_i17H"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_i17H', frame.plot=F)
-
-cont <- "FG_H5"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_H5', frame.plot=F)
-
-cont <- "FG_n59"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_n59', frame.plot=F)
-
-cont <- "FG_n9C"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='FG_n9C', frame.plot=F)
+mycontrasts <- c("FG_CB", "FG_BL", "FG_Li3", "FG_i39", "FG_i917", "FG_i17H", "FG_H5", "FG_n59", "FG_n9C",
+                 "MG_CB", "MG_BL", "MG_Li3", "MG_i39", "MG_i917", "MG_i17H", "MG_H5", "MG_n59", "MG_n9C",
+                 "FG_n9B", "MG_n9B")
 
 
-## male comparisons
+printplotcontrasts <- function(whichcontrast){
+  cont <- whichcontrast
+  print(summary(decideTestsDGE(
+    glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+    adjust.method="fdr", p.value=0.01)))
+  print(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+  print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
+}
 
-cont <- "MG_CB"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_CB', frame.plot=F)
+for(i in mycontrasts){
+  printplotcontrasts(i)
+}
 
-cont <- "MG_BL"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_BL', frame.plot=F)
-
-cont <- "MG_Li3"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_Li3', frame.plot=F)
-
-cont <- "MG_i39"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_i39', frame.plot=F)
-
-cont <- "MG_i917"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_i917', frame.plot=F)
-
-cont <- "MG_i17H"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_i17H', frame.plot=F)
-
-cont <- "MG_H5"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_H5', frame.plot=F)
-
-cont <- "MG_n59"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_n59', frame.plot=F)
-
-cont <- "MG_n9C"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='MG_n9C', frame.plot=F)
 ```
 
 # volcano plots
