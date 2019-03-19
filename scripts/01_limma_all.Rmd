@@ -20,6 +20,7 @@ knitr::opts_chunk$set(fig.path = '../figures/',cache=TRUE)
 First, I read in the data I processed in 00_datawrangling.Rmd.
 
 ```{r read}
+# import "colData" which contains sample information and "countData" which contains read counts
 colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
 countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 head(colData)
@@ -40,9 +41,11 @@ table(rowSums(parentalobject$counts==0)==10)
 keep_genes <- rowSums(cpms >= 1) >= 10
 dge <- parentalobject[keep_genes, ]
 
-# magic
+# specific the design
 parentaldesign <- model.matrix(~ colData$group )
 colnames(parentaldesign) <- levels(colData$group)
+
+# The TMM normalization
 parentalobject <- calcNormFactors(parentalobject)
 parentalobject <- estimateCommonDisp(parentalobject)
 parentalobject <- estimateTagwiseDisp(parentalobject)
@@ -50,25 +53,28 @@ parentalobject <- estimateDisp(parentalobject, parentaldesign)
 parentalobject <- estimateGLMCommonDisp(parentalobject, parentaldesign, verbose=TRUE)
 parentalobject <- estimateGLMTrendedDisp(parentalobject, parentaldesign)
 parentalobject <- estimateGLMTagwiseDisp(parentalobject, parentaldesign)
+
+#  perform likelihood ratio test and thresholded testing
 fit <- glmFit( parentalobject, parentaldesign, robust=T)
-treatres <- glmTreat(fit, lfc = 1)
+tr <- glmTreat(fit, lfc = 1)
+topTags(tr)
 ```
 
 
 # plotMDS (multidimential scaling)
 
 ```{r plotMDS}
-
 plotMDS(parentalobject, cex = 0.5)
-
 ```
 
 
 # specify contrasts and make MA plots (currently only a subset)
 
 ```{r 01-contrasts}
+# view all levels
 levels(colData$group)
 
+# subset of conrasts - sex specific comparing hatch to lay
 my.contrasts <- makeContrasts(
 	         FG_HL = female.gonad.hatch - female.gonad.lay,
 	         FH_HL = female.hypothalamus.hatch - female.hypothalamus.lay,
@@ -139,5 +145,4 @@ tt <- topTags(lrt,n=10000)$table
 
 ggplot(data=tt) + geom_point(aes(x=logFC,y=-log(FDR),color=logCPM)) +
   scale_colour_gradientn(colours=c("#000000" ,"#FF0000" ))
-
 ```
