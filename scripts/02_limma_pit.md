@@ -146,6 +146,9 @@ plotMDS (multidimential scaling)
 
 ![](../figures/pit/plotMDS-1.png)
 
+For color coding, I used this tutorial for guidance
+<a href="https://combine-australia.github.io/RNAseq-R/06-rnaseq-day1.html" class="uri">https://combine-australia.github.io/RNAseq-R/06-rnaseq-day1.html</a>.
+
     levels(colData$treatment)
 
     ## [1] "bldg"    "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"    
@@ -165,8 +168,8 @@ plotMDS (multidimential scaling)
 
 ![](../figures/pit/plotMDS-lables-2.png)
 
-specify contrasts and make MA plots (currently only a subset)
-=============================================================
+specify contrasts and make MA plots
+===================================
 
     # view all levels
     levels(colData$group)
