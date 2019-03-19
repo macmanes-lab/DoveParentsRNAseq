@@ -2,6 +2,6 @@
 kallisto_mappings/
 mapping/
 .DS_Store
-scripts/01_limma_all_cache/
+scripts/*cache/
 */*html
 .Rproj.user
