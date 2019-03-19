@@ -8,6 +8,18 @@ tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq
     library(Glimma)
     library(edgeR)
     library(kableExtra)
+    library(cowplot)
+
+    ## Loading required package: ggplot2
+
+    ## 
+    ## Attaching package: 'cowplot'
+
+    ## The following object is masked from 'package:ggplot2':
+    ## 
+    ##     ggsave
+
+    library(ggplot2)
 
     knitr::opts_chunk$set(fig.path = '../figures/',cache=TRUE)
 
@@ -130,7 +142,7 @@ specify contrasts
     my.contrasts <- makeContrasts(
                  FG_HL = female.gonad.hatch - female.gonad.lay,
                  FH_HL = female.hypothalamus.hatch - female.hypothalamus.lay,
-                 FP_HL = male.pituitary.hatch - male.pituitary.lay,
+                 FP_HL = female.pituitary.hatch - female.pituitary.lay,
                  MP_HL = male.pituitary.hatch - male.pituitary.lay,
                  MH_HL = male.hypothalamus.hatch - male.hypothalamus.lay,
                  MG_HL = male.gonad.hatch - male.gonad.lay,          
@@ -147,7 +159,7 @@ specify contrasts
     ## Up                                            2
 
     #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
+    c <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
 
 ![](../figures/01-contrasts-1.png)
 
@@ -162,11 +174,56 @@ specify contrasts
     ## Up                                                          2
 
     #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
+    a <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
 
 ![](../figures/01-contrasts-2.png)
 
     cont <- "FP_HL"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        1*female.pituitary.hatch -1*female.pituitary.lay
+    ## Down                                                  4
+    ## NotSig                                            14852
+    ## Up                                                   81
+
+    #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+    b <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
+
+![](../figures/01-contrasts-3.png)
+
+    cont <- "MG_HL"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        1*male.gonad.hatch -1*male.gonad.lay
+    ## Down                                      1
+    ## NotSig                                14936
+    ## Up                                        0
+
+    #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+    f <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male gonad lay to hatch', frame.plot=F)
+
+![](../figures/01-contrasts-4.png)
+
+    cont <- "MH_HL"
+    summary(decideTestsDGE(
+        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+        adjust.method="fdr", p.value=0.01))
+
+    ##        1*male.hypothalamus.hatch -1*male.hypothalamus.lay
+    ## Down                                                    0
+    ## NotSig                                              14937
+    ## Up                                                      0
+
+    #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+    d <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male hypothalamus lay to hatch', frame.plot=F)
+
+![](../figures/01-contrasts-5.png)
+
+    cont <- "MP_HL"
     summary(decideTestsDGE(
         glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
         adjust.method="fdr", p.value=0.01))
@@ -177,6 +234,46 @@ specify contrasts
     ## Up                                               55
 
     #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-    plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
+    e <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pituitary lay to hatch', frame.plot=F)
 
-![](../figures/01-contrasts-3.png)
+![](../figures/01-contrasts-6.png)
+
+    plot_grid(a,b,c,d,e,f, nrow = 2)
+
+![](../figures/01-contrasts-7.png)
+
+    # from http://www.compbio.dundee.ac.uk/user/pschofield/Projects/teaching_pg/workshops/biocDGE.html#maplots
+
+    lrt <- glmLRT(fit,coef=2)
+    topTags(lrt)
+
+    ## Coefficient:  female.gonad.control 
+    ##                row.names   Name geneid       entrezid     logFC   logCPM
+    ## NP_001034689.1    423130 ZDHHC5 423130 NP_001034689.1 -1.765980 5.108494
+    ## XP_015144701.1    424039   PCNT 424039 XP_015144701.1 -1.749180 7.721697
+    ## XP_414493.1       416161  CCNG1 416161    XP_414493.1  1.284982 6.319566
+    ## XP_004940508.2    421875   BAI3 421875 XP_004940508.2  2.122044 7.319320
+    ## XP_015150276.1    426991  ACSM4 426991 XP_015150276.1  4.346866 4.062362
+    ## XP_015145487.1    424246  DIRC2 424246 XP_015145487.1 -1.541659 6.727815
+    ## XP_015148335.1    415945 SEMA3G 415945 XP_015148335.1 -3.682352 2.321141
+    ## XP_004939926.1    421139    CA8 421139 XP_004939926.1 -4.156934 4.602398
+    ## NP_990011.1       395411 ZBTB7A 395411    NP_990011.1 -1.364403 4.598160
+    ## NP_001186400.1    422975  PRMT3 422975 NP_001186400.1  1.459907 5.523044
+    ##                      LR       PValue          FDR
+    ## NP_001034689.1 179.2203 7.172207e-41 1.071313e-36
+    ## XP_015144701.1 174.5304 7.581380e-40 4.318126e-36
+    ## XP_414493.1    174.2630 8.672677e-40 4.318126e-36
+    ## XP_004940508.2 173.0488 1.597019e-39 5.963667e-36
+    ## XP_015150276.1 171.7558 3.059738e-39 9.140660e-36
+    ## XP_015145487.1 170.8755 4.763826e-39 1.185954e-35
+    ## XP_015148335.1 166.1335 5.172465e-38 1.103730e-34
+    ## XP_004939926.1 163.9095 1.583216e-37 2.956062e-34
+    ## NP_990011.1    157.8089 3.407224e-36 5.654856e-33
+    ## NP_001186400.1 156.5373 6.460306e-36 9.649759e-33
+
+    tt <- topTags(lrt,n=10000)$table
+
+    ggplot(data=tt) + geom_point(aes(x=logFC,y=-log(FDR),color=logCPM)) +
+      scale_colour_gradientn(colours=c("#000000" ,"#FF0000" ))
+
+![](../figures/volcanoplots-1.png)

@@ -10,6 +10,8 @@ library(limma)
 library(Glimma)
 library(edgeR)
 library(kableExtra)
+library(cowplot)
+library(ggplot2)
 
 knitr::opts_chunk$set(fig.path = '../figures/',cache=TRUE)
 
@@ -60,7 +62,7 @@ levels(colData$group)
 my.contrasts <- makeContrasts(
 	         FG_HL = female.gonad.hatch - female.gonad.lay,
 	         FH_HL = female.hypothalamus.hatch - female.hypothalamus.lay,
-	         FP_HL = male.pituitary.hatch - male.pituitary.lay,
+	         FP_HL = female.pituitary.hatch - female.pituitary.lay,
 	         MP_HL = male.pituitary.hatch - male.pituitary.lay,
 	         MH_HL = male.hypothalamus.hatch - male.hypothalamus.lay,
 	         MG_HL = male.gonad.hatch - male.gonad.lay,	         
@@ -71,14 +73,14 @@ summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
 #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
+c <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
 
 cont <- "FH_HL"
 summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
 #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
+a <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
 
 
 cont <- "FP_HL"
@@ -86,6 +88,44 @@ summary(decideTestsDGE(
 	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
 	adjust.method="fdr", p.value=0.01))
 #kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
+b <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
+
+
+cont <- "MG_HL"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+f <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male gonad lay to hatch', frame.plot=F)
+
+cont <- "MH_HL"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+d <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male hypothalamus lay to hatch', frame.plot=F)
+
+
+cont <- "MP_HL"
+summary(decideTestsDGE(
+	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
+	adjust.method="fdr", p.value=0.01))
+#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
+e <- plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pituitary lay to hatch', frame.plot=F)
+
+plot_grid(a,b,c,d,e,f, nrow = 2)
+
+```
+
+```{r volcanoplots}
+# from http://www.compbio.dundee.ac.uk/user/pschofield/Projects/teaching_pg/workshops/biocDGE.html#maplots
+
+lrt <- glmLRT(fit,coef=2)
+topTags(lrt)
+
+tt <- topTags(lrt,n=10000)$table
+
+ggplot(data=tt) + geom_point(aes(x=logFC,y=-log(FDR),color=logCPM)) +
+  scale_colour_gradientn(colours=c("#000000" ,"#FF0000" ))
 
 ```
