@@ -2,6 +2,6 @@
 kallisto_mappings/
 mapping/
 .DS_Store
-scripts/*cache/
+analysis/*cache/
 */*html
 .Rproj.user
