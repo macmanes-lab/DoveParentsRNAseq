@@ -1,4 +1,4 @@
-Package: dove_parents_RNAseq
+Package: DoveParentsRNAseq
 Title: Dove Parents RNAseq
 Version: 0.1
 Authors@R: person("Rayna", "Harris", email = "rayna.harris@gmail.com", role = c("aut", "cre"))
