@@ -1,0 +1,23 @@
+Package: dove_parents_RNAseq
+Title: Dove Parents RNAseq
+Version: 0.1
+Authors@R: person("Rayna", "Harris", email = "rayna.harris@gmail.com", role = c("aut", "cre"))
+Description: This package contains all the materials needed to reproduce
+    a project using RNA-sequencing to examine how the HPG axis changes 
+    during the course of parenting in male and female rockdoves
+    These materials are presented as an R Package which contains code
+    used for analyses, code used to develop figures, raw data used for all
+    analyses.
+Depends:
+    R (>= 3.1.1)
+Suggests:
+    knitr,
+    rmarkdown
+Imports:
+    tidyverse,
+    edgeR,
+    Glimma,
+    limma 
+License: CC0
+LazyData: true
+VignetteBuilder: knitr
