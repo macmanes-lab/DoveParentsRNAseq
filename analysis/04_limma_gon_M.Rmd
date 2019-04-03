@@ -1,8 +1,7 @@
 ---
-title: "04_limma_gon_F"
+title: "04_limma_gon_M"
 output: md_document
 ---
-
 
 ```{r}
 library(tidyverse)
@@ -15,13 +14,12 @@ library(cowplot)
 # load custom functions  
 source("../R/functions.R")  
 
-knitr::opts_chunk$set(fig.path = '../figures/gon_F/',cache=TRUE)
+knitr::opts_chunk$set(fig.path = '../figures/gon_M/',cache=TRUE)
 ```
 
-# Females Gonads
+# Male Gonad Data
 
-This anlaysis will _exclude_ the control timepoint and only examine females.
-
+This anlaysis will _exclude_ the control timepoint and only examine males.
 
 ```{r read}
 # import "colData" which contains sample information and "countData" which contains read counts
@@ -34,7 +32,7 @@ geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
 colData <- colData %>%
   dplyr::filter(grepl('gonad', tissue)) %>%
   dplyr::filter(treatment != "control") %>%
-  dplyr::filter(sex == "female") %>%
+  dplyr::filter(sex == "male") %>%
   droplevels()
 row.names(colData) <- colData$V1
 
@@ -92,11 +90,11 @@ col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a
 myfill <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")
 
 plotMDS(parentalobject, cex = 0.5, labels = colData$treatment, col=col.treatment)
-title("Female Gonad MDS 1v2")
+title("Male Gonad MDS 1v2")
 plotMDS(parentalobject, cex = 0.5, labels = colData$treatment, col=col.treatment, dim=c(3,4))
-title("Female Gonad MDS 3v4")
+title("Male Gonad MDS 3v4")
 plotMDS(parentalobject, cex = 0.5, labels = colData$treatment, col=col.treatment, dim=c(5,6))
-title("Female Gonad MDS 5v6")
+title("Male Gonad MDS 5v6")
 ```
 
 For color coding, I used this tutorial for guidance <https://combine-australia.github.io/RNAseq-R/06-rnaseq-day1.html>.
@@ -110,40 +108,40 @@ levels(colData$group)
 
 # subset of conrasts - sex specific comparing hatch to lay
 my.contrasts <- makeContrasts(
-	         FG_BL = female.gonad.bldg - female.gonad.lay,
-	         FG_Li3 = female.gonad.lay - female.gonad.inc.d3,
-	         FG_i3i9 = female.gonad.inc.d3 - female.gonad.inc.d9,
-	         FG_i9i17 = female.gonad.inc.d9 - female.gonad.inc.d17,
-	         FG_i17H = female.gonad.inc.d17 - female.gonad.hatch,
-	         FG_Hn5 = female.gonad.hatch -  female.gonad.n5,
-	         FG_n5n9 = female.gonad.n5 - female.gonad.n9,
+	         MG_BL = male.gonad.bldg - male.gonad.lay,
+	         MG_Li3 = male.gonad.lay - male.gonad.inc.d3,
+	         MG_i3i9 = male.gonad.inc.d3 - male.gonad.inc.d9,
+	         MG_i9i17 = male.gonad.inc.d9 - male.gonad.inc.d17,
+	         MG_i17H = male.gonad.inc.d17 - male.gonad.hatch,
+	         MG_Hn5 = male.gonad.hatch -  male.gonad.n5,
+	         MG_n5n9 = male.gonad.n5 - male.gonad.n9,
 	         
-	         FG_Bi3 = female.gonad.bldg - female.gonad.inc.d3,
-	         FG_Bi9 = female.gonad.bldg - female.gonad.inc.d9,
-	         FG_Bi17 = female.gonad.bldg - female.gonad.inc.d17,
-	         FG_BH = female.gonad.bldg - female.gonad.hatch,
-	         FG_Bn5 = female.gonad.bldg - female.gonad.n5,
-	         FG_Bn9 = female.gonad.bldg - female.gonad.n9,
+	         MG_Bi3 = male.gonad.bldg - male.gonad.inc.d3,
+	         MG_Bi9 = male.gonad.bldg - male.gonad.inc.d9,
+	         MG_Bi17 = male.gonad.bldg - male.gonad.inc.d17,
+	         MG_BH = male.gonad.bldg - male.gonad.hatch,
+	         MG_Bn5 = male.gonad.bldg - male.gonad.n5,
+	         MG_Bn9 = male.gonad.bldg - male.gonad.n9,
 	         
-	         FG_Li9 = female.gonad.lay - female.gonad.inc.d9,
-           FG_Li17 = female.gonad.lay - female.gonad.inc.d17, 
-	         FG_LH = female.gonad.lay - female.gonad.hatch,
-	         FG_Ln5 = female.gonad.lay - female.gonad.n5,
-	         FG_Ln9 = female.gonad.lay - female.gonad.n9,
+	         MG_Li9 = male.gonad.lay - male.gonad.inc.d9,
+           MG_Li17 = male.gonad.lay - male.gonad.inc.d17, 
+	         MG_LH = male.gonad.lay - male.gonad.hatch,
+	         MG_Ln5 = male.gonad.lay - male.gonad.n5,
+	         MG_Ln9 = male.gonad.lay - male.gonad.n9,
 
-	         FG_i3i17 = female.gonad.inc.d3 - female.gonad.inc.d17,
-	         FG_i3H = female.gonad.inc.d3 - female.gonad.hatch,
-	         FG_i3n5 = female.gonad.inc.d3 - female.gonad.n5,
-	         FG_i3n9 = female.gonad.inc.d3 - female.gonad.n9,
+	         MG_i3i17 = male.gonad.inc.d3 - male.gonad.inc.d17,
+	         MG_i3H = male.gonad.inc.d3 - male.gonad.hatch,
+	         MG_i3n5 = male.gonad.inc.d3 - male.gonad.n5,
+	         MG_i3n9 = male.gonad.inc.d3 - male.gonad.n9,
 	        
-	         FG_i9H = female.gonad.inc.d9 - female.gonad.hatch,
-	         FG_i9n5 = female.gonad.inc.d9 - female.gonad.n5,
-	         FG_i9n9 = female.gonad.inc.d9 - female.gonad.n9,
+	         MG_i9H = male.gonad.inc.d9 - male.gonad.hatch,
+	         MG_i9n5 = male.gonad.inc.d9 - male.gonad.n5,
+	         MG_i9n9 = male.gonad.inc.d9 - male.gonad.n9,
 	         
-	         FG_i17n5 = female.gonad.inc.d17 - female.gonad.n5,
-	         FG_i17n9 = female.gonad.inc.d17 - female.gonad.n9,
+	         MG_i17n5 = male.gonad.inc.d17 - male.gonad.n5,
+	         MG_i17n9 = male.gonad.inc.d17 - male.gonad.n9,
 	         
-	         FG_Hn9 = female.gonad.hatch -  female.gonad.n9,
+	         MG_Hn9 = male.gonad.hatch -  male.gonad.n9,
 	         
 levels=parentaldesign)
 

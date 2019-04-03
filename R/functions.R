@@ -7,7 +7,8 @@ printplotcontrasts <- function(whichcontrast){
   print(summary(decideTestsDGE(
     glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
     adjust.method="fdr", p.value=0.01)))
-  print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
+  print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F,
+               ylim=c(-40,20)))
 }
 
 # this custom function returns a dataframe 
@@ -36,11 +37,11 @@ plotVolcanos <- function(whichcontrast){
 
   myplot <- ggplot(tt, aes(x = logFC, y = FDR, color = DEGs)) +
     geom_point(size = 1.5, alpha = 0.8, na.rm = T) +
-    scale_y_reverse() +
+    scale_y_reverse(limits = c(1,0)) +
     scale_color_manual(values=c("down" = "#2166ac",
                                 "NS" = "#bdbdbd", 
                                 "up" = "#b2182b")) +
-    xlim(-40, 40)  +
+    xlim(-40, 40)  + 
     theme(legend.position = "bottom")
   print(myplot)
 }
