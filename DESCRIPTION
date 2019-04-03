@@ -1,6 +1,6 @@
 Package: DoveParentsRNAseq
 Title: Dove Parents RNAseq
-Version: 0.1
+Version: 0.2
 Authors@R: person("Rayna", "Harris", email = "rayna.harris@gmail.com", role = c("aut", "cre"))
 Description: This package contains all the materials needed to reproduce
     a project using RNA-sequencing to examine how the HPG axis changes 
@@ -17,7 +17,9 @@ Imports:
     tidyverse,
     edgeR,
     Glimma,
-    limma 
+    limma,
+    kableExtra,
+    cowplot 
 License: CC0
 LazyData: true
 VignetteBuilder: knitr
