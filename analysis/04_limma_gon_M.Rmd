@@ -158,11 +158,3 @@ for(i in mycontrasts){
   printplotcontrasts(i)
 }
 ```
-
-
-```{r volcanoplots}
-for(i in mycontrasts){
-  plotVolcanos(i) 
-}
-```
-
