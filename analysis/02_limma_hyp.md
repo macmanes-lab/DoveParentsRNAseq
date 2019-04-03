@@ -6,14 +6,14 @@ tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -39,6 +39,9 @@ tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq
     ##     ggsave
 
     library(ggplot2)
+
+    # load custom functions
+    source("../R/functions.R")
 
     knitr::opts_chunk$set(fig.path = '../figures/hyp/',cache=TRUE)
 
@@ -210,19 +213,13 @@ specify contrasts and make MA plots
                  MH_n9B = male.hypothalamus.n9 - male.hypothalamus.bldg,
     levels=parentaldesign)
 
+
+    # create a list with all the two way contrasts
     mycontrasts <- c("FH_CB", "FH_BL", "FH_Li3", "FH_i39", "FH_i917", "FH_i17H", "FH_H5", "FH_n59", "FH_n9C",
                      "MH_CB", "MH_BL", "MH_Li3", "MH_i39", "MH_i917", "MH_i17H", "MH_H5", "MH_n59", "MH_n9C",
                      "FH_n9B", "MH_n9B")
 
-
-    printplotcontrasts <- function(whichcontrast){
-      cont <- whichcontrast
-      print(summary(decideTestsDGE(
-        glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-        adjust.method="fdr", p.value=0.01)))
-      print(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-      print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
-    }
+    # use the printplotcontrasts function to print summary stats and a volcano plot
 
     for(i in mycontrasts){
       printplotcontrasts(i)

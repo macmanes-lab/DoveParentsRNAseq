@@ -12,7 +12,9 @@ library(Glimma)
 library(edgeR)
 library(kableExtra)
 library(cowplot)
-library(ggplot2)
+
+# load custom functions
+source("../R/functions.R") 
 
 knitr::opts_chunk$set(fig.path = '../figures/gon/',cache=TRUE)
 
@@ -131,19 +133,13 @@ my.contrasts <- makeContrasts(
 	         MG_n9B = male.gonad.n9 - male.gonad.bldg,
 levels=parentaldesign)
 
+# create a list with all the two way contrasts
+
 mycontrasts <- c("FG_CB", "FG_BL", "FG_Li3", "FG_i39", "FG_i917", "FG_i17H", "FG_H5", "FG_n59", "FG_n9C",
                  "MG_CB", "MG_BL", "MG_Li3", "MG_i39", "MG_i917", "MG_i17H", "MG_H5", "MG_n59", "MG_n9C",
                  "FG_n9B", "MG_n9B")
 
-
-printplotcontrasts <- function(whichcontrast){
-  cont <- whichcontrast
-  print(summary(decideTestsDGE(
-    glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-    adjust.method="fdr", p.value=0.01)))
-  print(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-  print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
-}
+# use the printplotcontrasts function to print summary stats and a volcano plot
 
 for(i in mycontrasts){
   printplotcontrasts(i)

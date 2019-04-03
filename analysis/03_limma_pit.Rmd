@@ -12,7 +12,9 @@ library(Glimma)
 library(edgeR)
 library(kableExtra)
 library(cowplot)
-library(ggplot2)
+
+# load custom functions
+source("../R/functions.R")
 
 knitr::opts_chunk$set(fig.path = '../figures/pit/',cache=TRUE)
 
@@ -131,20 +133,13 @@ my.contrasts <- makeContrasts(
 	         MP_n9B = male.pituitary.n9 - male.pituitary.bldg,
 levels=parentaldesign)
 
+# create a list with all the two way contrasts
 
 mycontrasts <- c("FP_CB", "FP_BL", "FP_Li3", "FP_i39", "FP_i917", "FP_i17H", "FP_H5", "FP_n59", "FP_n9C",
                  "MP_CB", "MP_BL", "MP_Li3", "MP_i39", "MP_i917", "MP_i17H", "MP_H5", "MP_n59", "MP_n9C",
                  "FP_n9B", "MP_n9B")
 
-
-printplotcontrasts <- function(whichcontrast){
-  cont <- whichcontrast
-  print(summary(decideTestsDGE(
-    glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-    adjust.method="fdr", p.value=0.01)))
-  print(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-  print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F))
-}
+# use the printplotcontrasts function to print summary stats and a volcano plot
 
 for(i in mycontrasts){
   printplotcontrasts(i)
