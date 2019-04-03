@@ -165,10 +165,3 @@ for(i in mycontrasts){
 }
 ```
 
-
-```{r volcanoplots}
-for(i in mycontrasts){
-  plotVolcanos(i) 
-}
-```
-
