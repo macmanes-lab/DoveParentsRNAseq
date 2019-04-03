@@ -205,9 +205,9 @@ specify contrasts and make MA plots
                  femaleLI = femalelay - femaleinc,
                  femaleIH = femaleinc - femalehatch,
                  femaleHN = femalehatch -  femalenestl,
-                 femaleBL = femalebldg - femaleinc,
-                 femaleBL = femalebldg - femalehatch,
-                 femaleBL = femalebldg - femalenestl,
+                 femaleBI = femalebldg - femaleinc,
+                 femaleBH = femalebldg - femalehatch,
+                 femaleBN = femalebldg - femalenestl,
                  femaleLH = femalelay - femalehatch,
                  femaleLN = femalelay - femalenestl,
                  femaleHN = femalehatch - femalenestl,
@@ -216,9 +216,9 @@ specify contrasts and make MA plots
                  maleLI = malelay - maleinc,
                  maleIH = maleinc - malehatch,
                  maleHN = malehatch -  malenestl,
-                 maleBL = malebldg - maleinc,
-                 maleBL = malebldg - malehatch,
-                 maleBL = malebldg - malenestl,
+                 maleBI = malebldg - maleinc,
+                 maleBH = malebldg - malehatch,
+                 maleBN = malebldg - malenestl,
                  maleLH = malelay - malehatch,
                  maleLN = malelay - malenestl,
                  maleHN = malehatch - malenestl,
@@ -271,24 +271,28 @@ specify contrasts and make MA plots
 ![](../figures/hyp_grouped/MDSplots-4.png)
 
     ## NULL
-    ##        1*femalebldg -1*femalelay
-    ## Down                       14760
-    ## NotSig                       177
+    ##        1*femalebldg -1*femaleinc
+    ## Down                       14847
+    ## NotSig                        90
     ## Up                             0
 
 ![](../figures/hyp_grouped/MDSplots-5.png)
 
     ## NULL
-    ##        1*femalebldg -1*femalelay
-    ## Down                       14760
-    ## NotSig                       177
-    ## Up                             0
+    ##        1*femalebldg -1*femalehatch
+    ## Down                         14733
+    ## NotSig                         204
+    ## Up                               0
+
+![](../figures/hyp_grouped/MDSplots-6.png)
 
     ## NULL
-    ##        1*femalebldg -1*femalelay
-    ## Down                       14760
-    ## NotSig                       177
-    ## Up                             0
+    ##        1*femalebldg -1*femalenestl
+    ## Down                         14796
+    ## NotSig                         141
+    ## Up                               0
+
+![](../figures/hyp_grouped/MDSplots-7.png)
 
     ## NULL
     ##        -1*femalehatch 1*femalelay
@@ -296,7 +300,7 @@ specify contrasts and make MA plots
     ## NotSig                      14937
     ## Up                              0
 
-![](../figures/hyp_grouped/MDSplots-6.png)
+![](../figures/hyp_grouped/MDSplots-8.png)
 
     ## NULL
     ##        1*femalelay -1*femalenestl
@@ -304,7 +308,7 @@ specify contrasts and make MA plots
     ## NotSig                      14937
     ## Up                              0
 
-![](../figures/hyp_grouped/MDSplots-7.png)
+![](../figures/hyp_grouped/MDSplots-9.png)
 
     ## NULL
     ##        1*femalehatch -1*femalenestl
@@ -312,7 +316,7 @@ specify contrasts and make MA plots
     ## NotSig                        14934
     ## Up                                3
 
-![](../figures/hyp_grouped/MDSplots-8.png)
+![](../figures/hyp_grouped/MDSplots-10.png)
 
     ## NULL
     ##        1*malebldg -1*malelay
@@ -320,7 +324,7 @@ specify contrasts and make MA plots
     ## NotSig                 14937
     ## Up                         0
 
-![](../figures/hyp_grouped/MDSplots-9.png)
+![](../figures/hyp_grouped/MDSplots-11.png)
 
     ## NULL
     ##        -1*maleinc 1*malelay
@@ -328,7 +332,7 @@ specify contrasts and make MA plots
     ## NotSig                14937
     ## Up                        0
 
-![](../figures/hyp_grouped/MDSplots-10.png)
+![](../figures/hyp_grouped/MDSplots-12.png)
 
     ## NULL
     ##        -1*malehatch 1*maleinc
@@ -336,7 +340,7 @@ specify contrasts and make MA plots
     ## NotSig                  14933
     ## Up                          1
 
-![](../figures/hyp_grouped/MDSplots-11.png)
+![](../figures/hyp_grouped/MDSplots-13.png)
 
     ## NULL
     ##        1*malehatch -1*malenestl
@@ -344,27 +348,31 @@ specify contrasts and make MA plots
     ## NotSig                    14935
     ## Up                            2
 
-![](../figures/hyp_grouped/MDSplots-12.png)
+![](../figures/hyp_grouped/MDSplots-14.png)
 
     ## NULL
-    ##        1*malebldg -1*malelay
+    ##        1*malebldg -1*maleinc
     ## Down                       0
-    ## NotSig                 14937
-    ## Up                         0
+    ## NotSig                 14936
+    ## Up                         1
 
-![](../figures/hyp_grouped/MDSplots-13.png)
-
-    ## NULL
-    ##        1*malebldg -1*malelay
-    ## Down                       0
-    ## NotSig                 14937
-    ## Up                         0
+![](../figures/hyp_grouped/MDSplots-15.png)
 
     ## NULL
-    ##        1*malebldg -1*malelay
-    ## Down                       0
-    ## NotSig                 14937
-    ## Up                         0
+    ##        1*malebldg -1*malehatch
+    ## Down                         0
+    ## NotSig                   14937
+    ## Up                           0
+
+![](../figures/hyp_grouped/MDSplots-16.png)
+
+    ## NULL
+    ##        1*malebldg -1*malenestl
+    ## Down                         0
+    ## NotSig                   14937
+    ## Up                           0
+
+![](../figures/hyp_grouped/MDSplots-17.png)
 
     ## NULL
     ##        -1*malehatch 1*malelay
@@ -372,7 +380,7 @@ specify contrasts and make MA plots
     ## NotSig                  14937
     ## Up                          0
 
-![](../figures/hyp_grouped/MDSplots-14.png)
+![](../figures/hyp_grouped/MDSplots-18.png)
 
     ## NULL
     ##        1*malelay -1*malenestl
@@ -380,7 +388,7 @@ specify contrasts and make MA plots
     ## NotSig                  14937
     ## Up                          0
 
-![](../figures/hyp_grouped/MDSplots-15.png)
+![](../figures/hyp_grouped/MDSplots-19.png)
 
     ## NULL
     ##        1*malehatch -1*malenestl
@@ -388,7 +396,7 @@ specify contrasts and make MA plots
     ## NotSig                    14935
     ## Up                            2
 
-![](../figures/hyp_grouped/MDSplots-16.png)
+![](../figures/hyp_grouped/MDSplots-20.png)
 
     ## NULL
     ##        1*femalebldg -1*malebldg
@@ -396,7 +404,7 @@ specify contrasts and make MA plots
     ## NotSig                      225
     ## Up                            0
 
-![](../figures/hyp_grouped/MDSplots-17.png)
+![](../figures/hyp_grouped/MDSplots-21.png)
 
     ## NULL
     ##        1*femalelay -1*malelay
@@ -404,7 +412,7 @@ specify contrasts and make MA plots
     ## NotSig                  14927
     ## Up                         10
 
-![](../figures/hyp_grouped/MDSplots-18.png)
+![](../figures/hyp_grouped/MDSplots-22.png)
 
     ## NULL
     ##        1*femaleinc -1*maleinc
@@ -412,7 +420,7 @@ specify contrasts and make MA plots
     ## NotSig                  14925
     ## Up                         12
 
-![](../figures/hyp_grouped/MDSplots-19.png)
+![](../figures/hyp_grouped/MDSplots-23.png)
 
     ## NULL
     ##        1*femalehatch -1*malehatch
@@ -420,7 +428,7 @@ specify contrasts and make MA plots
     ## NotSig                      14924
     ## Up                             11
 
-![](../figures/hyp_grouped/MDSplots-20.png)
+![](../figures/hyp_grouped/MDSplots-24.png)
 
     ## NULL
     ##        1*femalenestl -1*malenestl
@@ -428,6 +436,6 @@ specify contrasts and make MA plots
     ## NotSig                      14925
     ## Up                             12
 
-![](../figures/hyp_grouped/MDSplots-21.png)
+![](../figures/hyp_grouped/MDSplots-25.png)
 
     ## NULL
