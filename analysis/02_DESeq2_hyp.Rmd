@@ -1,0 +1,261 @@
+---
+title: "02_DESeq_hyp"
+output: md_document
+---
+
+```{r}
+library(tidyverse)
+library(DESeq2)
+library(cowplot)
+
+# load custom functions  
+source("../R/functions.R")  
+
+knitr::opts_chunk$set(fig.path = '../figures/hyp/',cache=TRUE)
+```
+
+
+This anlaysis will _exclude_ the control timepoint but _combine_ incubation and nestling timepoints.
+
+
+```{r read}
+# import "colData" which contains sample information and "countData" which contains read counts
+colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
+countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+```
+
+```{r}
+# making new groups
+colData$group <- NULL
+colData$tempgroup <- ifelse(colData$treatment == "bldg", "bldg",
+                  ifelse(colData$treatment == "control", "control",
+                   ifelse(colData$treatment == "hatch", "hatch",
+                    ifelse(grepl("inc", colData$treatment), "inc",
+                     ifelse(colData$treatment == "lay", "lay", "nestl")))))
+colData$tempgroup <- as.factor(colData$tempgroup)
+
+colData$group <- paste(colData$sex, colData$tempgroup, sep = "")
+colData$group <- as.factor(colData$group)
+str(colData$group)
+```
+
+```{r filter}
+colData <- colData %>%
+  dplyr::filter(grepl('hypothalamus', tissue)) %>%
+  #dplyr::filter(treatment != "control") %>%
+  dplyr::filter(sex == "female") %>%
+  droplevels()
+row.names(colData) <- colData$V1
+
+# print sample sizes
+colData %>% select(group, tissue)  %>%  summary()
+
+savecols <- as.character(colData$V1) 
+savecols <- as.vector(savecols) 
+countData <- countData %>% dplyr::select(one_of(savecols)) 
+
+# check that row and col lenghts are equal
+ncol(countData) == nrow(colData)
+```
+
+
+
+```{r deseq2}
+dds <- DESeqDataSetFromMatrix(countData = countData,
+                              colData = colData,
+                              design = ~ treatment )
+dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
+dds <- DESeq(dds) # Differential expression analysis
+vsd <- vst(dds, blind=FALSE) # variance stabilized
+```
+
+```{r res}
+levels(colData$treatment)
+summary(results(dds, contrast=c("treatment",'control', 'bldg')))    #3502 2450
+summary(results(dds, contrast=c("treatment",'control', 'lay')))     #3581 2642
+summary(results(dds, contrast=c("treatment",'control', 'inc.d3')))  #3956 2802
+summary(results(dds, contrast=c("treatment",'control', 'inc.d9')))  #3968 2985
+summary(results(dds, contrast=c("treatment",'control', 'inc.d17'))) #3949 2724
+summary(results(dds, contrast=c("treatment",'control', 'hatch')))   #3600 2660
+summary(results(dds, contrast=c("treatment",'control', 'n5')))      #4080 2842
+summary(results(dds, contrast=c("treatment",'control', 'n9')))      #4035 2979
+
+summary(results(dds, contrast=c("treatment",'bldg', 'lay')))     #1   0
+summary(results(dds, contrast=c("treatment",'bldg', 'inc.d3')))  #0   0 
+summary(results(dds, contrast=c("treatment",'bldg', 'inc.d9')))  #5   0 
+summary(results(dds, contrast=c("treatment",'bldg', 'inc.d17'))) #0   0 
+summary(results(dds, contrast=c("treatment",'bldg', 'hatch')))   #1   2
+summary(results(dds, contrast=c("treatment",'bldg', 'n5')))      #10  3
+summary(results(dds, contrast=c("treatment",'bldg', 'n9')))      #168 124
+
+summary(results(dds, contrast=c("treatment",'lay', 'bldg')))    #    1
+summary(results(dds, contrast=c("treatment",'lay', 'inc.d3')))  #0   0   
+summary(results(dds, contrast=c("treatment",'lay', 'inc.d9')))  #5   6 
+summary(results(dds, contrast=c("treatment",'lay', 'inc.d17'))) #2   2 
+summary(results(dds, contrast=c("treatment",'lay', 'hatch')))   #3   8 
+summary(results(dds, contrast=c("treatment",'lay', 'n5')))      #1   0
+summary(results(dds, contrast=c("treatment",'lay', 'n9')))      #135 194
+
+summary(results(dds, contrast=c("treatment",'inc.d3', 'bldg')))    #0 0 
+summary(results(dds, contrast=c("treatment",'inc.d3', 'lay')))     #0 0 
+summary(results(dds, contrast=c("treatment",'inc.d3', 'inc.d9')))  #1 0
+summary(results(dds, contrast=c("treatment",'inc.d3', 'inc.d17'))) #0 0   
+summary(results(dds, contrast=c("treatment",'inc.d3', 'lay')))     #0 0 
+summary(results(dds, contrast=c("treatment",'inc.d3', 'n5')))      #0 0 
+summary(results(dds, contrast=c("treatment",'inc.d3', 'n9')))      #0 0 
+
+summary(results(dds, contrast=c("treatment",'inc.d9', 'inc.d17'))) #2 3  
+summary(results(dds, contrast=c("treatment",'inc.d9', 'lay')))     #6 5
+summary(results(dds, contrast=c("treatment",'inc.d9', 'n5')))      #0 1
+summary(results(dds, contrast=c("treatment",'inc.d9', 'n9')))      #0 2
+
+summary(results(dds, contrast=c("treatment",'inc.d17', 'lay'))) #2   2
+summary(results(dds, contrast=c("treatment",'inc.d17', 'n5')))  #2   4
+summary(results(dds, contrast=c("treatment",'inc.d17', 'n9')))  #131 136
+
+summary(results(dds, contrast=c("treatment",'hatch', 'bldg')))    #2   1    
+summary(results(dds, contrast=c("treatment",'hatch', 'lay')))     #8   3  
+summary(results(dds, contrast=c("treatment",'hatch', 'inc.d3')))  #524 406 
+summary(results(dds, contrast=c("treatment",'hatch', 'inc.d9')))  #1106 1169 
+summary(results(dds, contrast=c("treatment",'hatch', 'inc.d17'))) #3    0 
+summary(results(dds, contrast=c("treatment",'hatch', 'n5')))      #1076 875
+summary(results(dds, contrast=c("treatment",'hatch', 'n9')))      #898  845
+
+summary(results(dds, contrast=c("treatment",'n5', 'bldg')))    #3   10 
+summary(results(dds, contrast=c("treatment",'n5', 'lay')))     #0   1 
+summary(results(dds, contrast=c("treatment",'n5', 'inc.d3')))  #0   0 
+summary(results(dds, contrast=c("treatment",'n5', 'inc.d9')))  #1   0 
+summary(results(dds, contrast=c("treatment",'n5', 'inc.d17'))) #4   2 
+summary(results(dds, contrast=c("treatment",'n5', 'hatch')))   #875 1076 
+summary(results(dds, contrast=c("treatment",'n5', 'n9')))      #0   0 
+
+
+summary(results(dds, contrast=c("treatment",'n9', 'bldg')))    #124 168 
+summary(results(dds, contrast=c("treatment",'n9', 'lay')))     #194 135 
+summary(results(dds, contrast=c("treatment",'n9', 'inc.d3')))  #0   0 
+summary(results(dds, contrast=c("treatment",'n9', 'inc.d9')))  #2   0 
+summary(results(dds, contrast=c("treatment",'n9', 'inc.d17'))) #136 131 
+summary(results(dds, contrast=c("treatment",'n9', 'hatch')))   #845 898 
+summary(results(dds, contrast=c("treatment",'n9', 'n5')))      #0   0 
+```
+
+```{r totalDEGs}
+levels(colData$treatment)
+
+totalDEGs(c("treatment", 'bldg','lay'))
+totalDEGs(c("treatment", 'bldg','inc.d3'))
+totalDEGs(c("treatment", 'bldg','inc.d9'))
+totalDEGs(c("treatment", 'bldg','inc.d17'))
+totalDEGs(c("treatment", 'bldg','hatch'))
+totalDEGs(c("treatment", 'bldg','n5'))
+totalDEGs(c("treatment", 'bldg','n9'))
+
+totalDEGs(c("treatment", 'lay','bldg'))
+totalDEGs(c("treatment", 'lay','inc.d3'))
+totalDEGs(c("treatment", 'lay','inc.d9'))
+totalDEGs(c("treatment", 'lay','inc.d17'))
+totalDEGs(c("treatment", 'lay','hatch'))
+totalDEGs(c("treatment", 'lay','n5'))
+totalDEGs(c("treatment", 'lay','n9'))
+
+totalDEGs(c("treatment", 'inc.d3','bldg'))
+totalDEGs(c("treatment", 'inc.d3','lay'))
+totalDEGs(c("treatment", 'inc.d3','inc.d9'))
+totalDEGs(c("treatment", 'inc.d3','inc.d17'))
+totalDEGs(c("treatment", 'inc.d3','hatch'))
+totalDEGs(c("treatment", 'inc.d3','n5'))
+totalDEGs(c("treatment", 'inc.d3','n9'))
+
+totalDEGs(c("treatment", 'inc.d9','bldg'))
+totalDEGs(c("treatment", 'inc.d9','lay'))
+totalDEGs(c("treatment", 'inc.d9','inc.d3'))
+totalDEGs(c("treatment", 'inc.d9','inc.d17'))
+totalDEGs(c("treatment", 'inc.d9','hatch'))
+totalDEGs(c("treatment", 'inc.d9','n5'))
+totalDEGs(c("treatment", 'inc.d9','n9'))
+
+totalDEGs(c("treatment", 'inc.d17','bldg'))
+totalDEGs(c("treatment", 'inc.d17','lay'))
+totalDEGs(c("treatment", 'inc.d17','inc.d3'))
+totalDEGs(c("treatment", 'inc.d17','inc.d9'))
+totalDEGs(c("treatment", 'inc.d17','hatch'))
+totalDEGs(c("treatment", 'inc.d17','n5'))
+totalDEGs(c("treatment", 'inc.d17','n9'))
+
+totalDEGs(c("treatment", 'hatch','bldg'))
+totalDEGs(c("treatment", 'hatch','lay'))
+totalDEGs(c("treatment", 'hatch','inc.d3'))
+totalDEGs(c("treatment", 'hatch','inc.d9'))
+totalDEGs(c("treatment", 'hatch','inc.d17'))
+totalDEGs(c("treatment", 'hatch','n5'))
+totalDEGs(c("treatment", 'hatch','n9'))
+
+totalDEGs(c("treatment", 'n5','bldg'))
+totalDEGs(c("treatment", 'n5','lay'))
+totalDEGs(c("treatment", 'n5','inc.d3'))
+totalDEGs(c("treatment", 'n5','inc.d9'))
+totalDEGs(c("treatment", 'n5','inc.d17'))
+totalDEGs(c("treatment", 'n5','hatch'))
+totalDEGs(c("treatment", 'n5','n9'))
+
+totalDEGs(c("treatment", 'n9','bldg'))
+totalDEGs(c("treatment", 'n9','lay'))
+totalDEGs(c("treatment", 'n9','inc.d3'))
+totalDEGs(c("treatment", 'n9','inc.d9'))
+totalDEGs(c("treatment", 'n9','inc.d17'))
+totalDEGs(c("treatment", 'n9','hatch'))
+totalDEGs(c("treatment", 'n9','n5'))
+```
+
+```{r PCA, message=FALSE, warning=FALSE}
+levels(colData$treatment)
+colData$treatment <- factor(colData$treatment, levels = 
+                              c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                "inc.d17", "hatch", "n5", "n9"))
+
+# create the dataframe using my function pcadataframe
+pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
+percentVar <- round(100 * attr(pcadata, "percentVar"))
+percentVar
+
+ggplot(pcadata, aes(PC1, PC2,color = treatment)) + 
+  geom_point(size = 2, alpha = 1) +
+  stat_ellipse(type = "t") +
+  xlab(paste0("PC1: ", percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+  theme_cowplot(font_size = 8, line_size = 0.25) 
+
+ggplot(pcadata, aes(PC2, PC3,color = treatment)) + 
+  geom_point(size = 2, alpha = 1) +
+  stat_ellipse(type = "t") +
+  xlab(paste0("PC2: ", percentVar[2],"% variance")) +
+  ylab(paste0("PC3: ", percentVar[3],"% variance")) +
+  theme_cowplot(font_size = 8, line_size = 0.25) 
+
+ggplot(pcadata, aes(PC3, PC4,color = treatment)) + 
+  geom_point(size = 2, alpha = 1) +
+  stat_ellipse(type = "t") +
+  xlab(paste0("PC3: ", percentVar[3],"% variance")) +
+  ylab(paste0("PC4: ", percentVar[4],"% variance")) +
+  theme_cowplot(font_size = 8, line_size = 0.25) 
+```
+
+PCA statistics
+
+```{r}
+summary(aov(PC1 ~ treatment, data=pcadata)) 
+TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment") 
+
+summary(aov(PC2 ~ treatment, data=pcadata)) 
+TukeyHSD(aov(PC2 ~ treatment, data=pcadata), which = "treatment") 
+
+summary(aov(PC3 ~ treatment, data=pcadata)) 
+
+summary(aov(PC4 ~ treatment, data=pcadata)) 
+
+summary(aov(PC5 ~ treatment, data=pcadata)) 
+TukeyHSD(aov(PC5 ~ treatment, data=pcadata), which = "treatment") 
+
+summary(aov(PC6 ~ treatment, data=pcadata)) 
+```
