@@ -56,7 +56,7 @@ savecols <- as.vector(savecols)
 countData <- countData %>% dplyr::select(one_of(savecols)) 
 
 # check that row and col lenghts are equal
-ncol(countData) == nrow(colData)
+ncol(countData) == nrow(colData) 
 ```
 
 
@@ -67,11 +67,11 @@ dds <- DESeqDataSetFromMatrix(countData = countData,
                               design = ~ treatment )
 dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
 dds <- DESeq(dds) # Differential expression analysis
-vsd <- vst(dds, blind=FALSE) # variance stabilized
+vsd <- vst(dds, blind=FALSE) # variance stabilized 
 ```
 
 ```{r res}
-levels(colData$treatment)
+levels(colData$treatment) 
 summary(results(dds, contrast=c("treatment",'control', 'bldg')))    #3502 2450
 summary(results(dds, contrast=c("treatment",'control', 'lay')))     #3581 2642
 summary(results(dds, contrast=c("treatment",'control', 'inc.d3')))  #3956 2802
