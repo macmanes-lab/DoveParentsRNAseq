@@ -46,8 +46,16 @@ plotVolcanos <- function(whichcontrast){
   print(myplot)
 }
 
+# this is an old version
 totalDEGs <- function(contrastvector){
   res <- results(dds, contrast = c(contrastvector[1],contrastvector[2],contrastvector[3]), independentFiltering = T)
+  sumpadj <- sum(res$padj < 0.1, na.rm = TRUE)
+  print(sumpadj)
+}
+
+# this is a new version
+numDEGs <- function(group1, group2){
+  res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
   sumpadj <- sum(res$padj < 0.1, na.rm = TRUE)
   print(sumpadj)
 }
