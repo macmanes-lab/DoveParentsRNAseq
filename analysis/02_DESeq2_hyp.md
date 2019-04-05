@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -131,6 +131,9 @@
     ## The following object is masked from 'package:ggplot2':
     ## 
     ##     ggsave
+
+    library(RColorBrewer)
+    library(pheatmap)
 
     # load custom functions  
     source("../R/functions.R")  
@@ -1421,3 +1424,18 @@ PCA statistics
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    8   97.4  12.180   1.591  0.139
     ## Residuals   86  658.5   7.657
+
+    # see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
+    sampleDists <- dist(t(assay(vsd)))
+
+    sampleDistMatrix <- as.matrix(sampleDists)
+    rownames(sampleDistMatrix) <- NULL
+    colnames(sampleDistMatrix) <- colData$treatment
+    colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+    pheatmap(sampleDistMatrix,
+             clustering_distance_rows=sampleDists,
+             clustering_distance_cols=sampleDists,
+             col=colors,
+             fontsize = 6)
+
+![](../figures/hyp/heatmap-1.png)

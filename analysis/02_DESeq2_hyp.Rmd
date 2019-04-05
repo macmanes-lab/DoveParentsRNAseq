@@ -7,6 +7,8 @@ output: md_document
 library(tidyverse)
 library(DESeq2)
 library(cowplot)
+library(RColorBrewer)
+library(pheatmap)
 
 # load custom functions  
 source("../R/functions.R")  
@@ -258,4 +260,18 @@ summary(aov(PC5 ~ treatment, data=pcadata))
 TukeyHSD(aov(PC5 ~ treatment, data=pcadata), which = "treatment") 
 
 summary(aov(PC6 ~ treatment, data=pcadata)) 
+```
+```{r heatmap}
+# see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
+sampleDists <- dist(t(assay(vsd)))
+
+sampleDistMatrix <- as.matrix(sampleDists)
+rownames(sampleDistMatrix) <- NULL
+colnames(sampleDistMatrix) <- colData$treatment
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col=colors,
+         fontsize = 6)
 ```
