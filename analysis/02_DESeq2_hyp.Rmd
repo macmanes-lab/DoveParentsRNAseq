@@ -3,12 +3,13 @@ title: "02_DESeq_hyp"
 output: md_document
 ---
 
-```{r}
+```{r setup}
 library(tidyverse)
 library(DESeq2)
 library(cowplot)
 library(RColorBrewer)
 library(pheatmap)
+library(kableExtra)
 
 # load custom functions  
 source("../R/functions.R")  
@@ -80,21 +81,34 @@ vsd <- vst(dds, blind=FALSE) # variance stabilized
 ```{r resloop}
 #create list of groups
 a <- levels(colData$treatment)
-a
+b <- levels(colData$treatment)
 
-# create list of groups, with control last
-b <- a[2:9]
-b[9] <- a[1]
-b
+# slim for testing
+a <- c("n9", "bldg" , "lay" )
+b <- c("n9", "bldg" , "lay" )
 
+# comapre all contrasts, save to datafrmes
+dat=data.frame()
 for (i in a){
   for (j in b){
-    print(paste(i,j))
     if (i != j) {
-    numDEGs(i,j)
-  }
+      k <- paste(i,j, sep = "") #assigns usique rownames
+      dat[k,1]<-i               
+      dat[k,2]<-j
+      dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+    }
   }
 }
+
+head(dat)
+```
+
+```{r restable}
+# widen data to create table of degs
+rownames(dat) <- NULL #remove row names
+data_wide <- spread(dat, V2, V3)
+data_wide
+kable(data_wide) # pretty printing
 ```
 
 ```{r PCA, message=FALSE, warning=FALSE}

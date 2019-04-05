@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -134,6 +134,14 @@
 
     library(RColorBrewer)
     library(pheatmap)
+    library(kableExtra)
+
+    ## 
+    ## Attaching package: 'kableExtra'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     group_rows
 
     # load custom functions  
     source("../R/functions.R")  
@@ -231,181 +239,109 @@ incubation and nestling timepoints.
 
     #create list of groups
     a <- levels(colData$treatment)
-    a
+    b <- levels(colData$treatment)
 
-    ## [1] "bldg"    "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"    
-    ## [8] "n5"      "n9"
+    # slim for testing
+    a <- c("n9", "bldg" , "lay" )
+    b <- c("n9", "bldg" , "lay" )
 
-    # create list of groups, with control last
-    b <- a[2:9]
-    b[9] <- a[1]
-    b
-
-    ## [1] "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"     "n5"     
-    ## [8] "n9"      "bldg"
-
+    # comapre all contrasts, save to datafrmes
+    dat=data.frame()
     for (i in a){
       for (j in b){
-        print(paste(i,j))
         if (i != j) {
-        numDEGs(i,j)
-      }
+          k <- paste(i,j, sep = "") #assigns usique rownames
+          dat[k,1]<-i               
+          dat[k,2]<-j
+          dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+        }
       }
     }
 
-    ## [1] "bldg control"
-    ## [1] 5961
-    ## [1] "bldg hatch"
-    ## [1] 3
-    ## [1] "bldg inc.d17"
-    ## [1] 0
-    ## [1] "bldg inc.d3"
-    ## [1] 0
-    ## [1] "bldg inc.d9"
-    ## [1] 5
-    ## [1] "bldg lay"
-    ## [1] 1
-    ## [1] "bldg n5"
-    ## [1] 13
-    ## [1] "bldg n9"
-    ## [1] 292
-    ## [1] "bldg bldg"
-    ## [1] "control control"
-    ## [1] "control hatch"
-    ## [1] 6266
-    ## [1] "control inc.d17"
-    ## [1] 6673
-    ## [1] "control inc.d3"
-    ## [1] 6758
-    ## [1] "control inc.d9"
-    ## [1] 6953
-    ## [1] "control lay"
-    ## [1] 6223
-    ## [1] "control n5"
-    ## [1] 6922
-    ## [1] "control n9"
-    ## [1] 7014
-    ## [1] "control bldg"
-    ## [1] 5961
-    ## [1] "hatch control"
-    ## [1] 6266
-    ## [1] "hatch hatch"
-    ## [1] "hatch inc.d17"
-    ## [1] 3
-    ## [1] "hatch inc.d3"
-    ## [1] 930
-    ## [1] "hatch inc.d9"
-    ## [1] 2175
-    ## [1] "hatch lay"
-    ## [1] 11
-    ## [1] "hatch n5"
-    ## [1] 1951
-    ## [1] "hatch n9"
-    ## [1] 1743
-    ## [1] "hatch bldg"
-    ## [1] 3
-    ## [1] "inc.d17 control"
-    ## [1] 6673
-    ## [1] "inc.d17 hatch"
-    ## [1] 3
-    ## [1] "inc.d17 inc.d17"
-    ## [1] "inc.d17 inc.d3"
-    ## [1] 0
-    ## [1] "inc.d17 inc.d9"
-    ## [1] 5
-    ## [1] "inc.d17 lay"
-    ## [1] 4
-    ## [1] "inc.d17 n5"
-    ## [1] 6
-    ## [1] "inc.d17 n9"
-    ## [1] 267
-    ## [1] "inc.d17 bldg"
-    ## [1] 0
-    ## [1] "inc.d3 control"
-    ## [1] 6758
-    ## [1] "inc.d3 hatch"
-    ## [1] 930
-    ## [1] "inc.d3 inc.d17"
-    ## [1] 0
-    ## [1] "inc.d3 inc.d3"
-    ## [1] "inc.d3 inc.d9"
-    ## [1] 1
-    ## [1] "inc.d3 lay"
-    ## [1] 0
-    ## [1] "inc.d3 n5"
-    ## [1] 0
-    ## [1] "inc.d3 n9"
-    ## [1] 0
-    ## [1] "inc.d3 bldg"
-    ## [1] 0
-    ## [1] "inc.d9 control"
-    ## [1] 6953
-    ## [1] "inc.d9 hatch"
-    ## [1] 2175
-    ## [1] "inc.d9 inc.d17"
-    ## [1] 5
-    ## [1] "inc.d9 inc.d3"
-    ## [1] 1
-    ## [1] "inc.d9 inc.d9"
-    ## [1] "inc.d9 lay"
-    ## [1] 11
-    ## [1] "inc.d9 n5"
-    ## [1] 1
-    ## [1] "inc.d9 n9"
-    ## [1] 2
-    ## [1] "inc.d9 bldg"
-    ## [1] 5
-    ## [1] "lay control"
-    ## [1] 6223
-    ## [1] "lay hatch"
-    ## [1] 11
-    ## [1] "lay inc.d17"
-    ## [1] 4
-    ## [1] "lay inc.d3"
-    ## [1] 0
-    ## [1] "lay inc.d9"
-    ## [1] 11
-    ## [1] "lay lay"
-    ## [1] "lay n5"
-    ## [1] 1
-    ## [1] "lay n9"
-    ## [1] 329
-    ## [1] "lay bldg"
-    ## [1] 1
-    ## [1] "n5 control"
-    ## [1] 6922
-    ## [1] "n5 hatch"
-    ## [1] 1951
-    ## [1] "n5 inc.d17"
-    ## [1] 6
-    ## [1] "n5 inc.d3"
-    ## [1] 0
-    ## [1] "n5 inc.d9"
-    ## [1] 1
-    ## [1] "n5 lay"
-    ## [1] 1
-    ## [1] "n5 n5"
-    ## [1] "n5 n9"
-    ## [1] 0
-    ## [1] "n5 bldg"
-    ## [1] 13
-    ## [1] "n9 control"
-    ## [1] 7014
-    ## [1] "n9 hatch"
-    ## [1] 1743
-    ## [1] "n9 inc.d17"
-    ## [1] 267
-    ## [1] "n9 inc.d3"
-    ## [1] 0
-    ## [1] "n9 inc.d9"
-    ## [1] 2
-    ## [1] "n9 lay"
-    ## [1] 329
-    ## [1] "n9 n5"
-    ## [1] 0
-    ## [1] "n9 n9"
-    ## [1] "n9 bldg"
-    ## [1] 292
+    head(dat)
+
+    ##           V1   V2  V3
+    ## n9bldg    n9 bldg 292
+    ## n9lay     n9  lay 329
+    ## bldgn9  bldg   n9 292
+    ## bldglay bldg  lay   1
+    ## layn9    lay   n9 329
+    ## laybldg  lay bldg   1
+
+    # widen data to create table of degs
+    rownames(dat) <- NULL #remove row names
+    data_wide <- spread(dat, V2, V3)
+    data_wide
+
+    ##     V1 bldg lay  n9
+    ## 1 bldg   NA   1 292
+    ## 2  lay    1  NA 329
+    ## 3   n9  292 329  NA
+
+    kable(data_wide) # pretty printing
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+V1
+</th>
+<th style="text-align:right;">
+bldg
+</th>
+<th style="text-align:right;">
+lay
+</th>
+<th style="text-align:right;">
+n9
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+292
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+329
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+292
+</td>
+<td style="text-align:right;">
+329
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
 
     levels(colData$treatment)
 
