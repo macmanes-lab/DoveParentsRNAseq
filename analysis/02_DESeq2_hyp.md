@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -163,6 +163,10 @@ incubation and nestling timepoints.
 
     ##  Factor w/ 12 levels "femalebldg","femalecontrol",..: 8 8 8 8 8 8 2 2 2 8 ...
 
+    colData$treatment <- factor(colData$treatment, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+
     colData <- colData %>%
       dplyr::filter(grepl('hypothalamus', tissue)) %>%
       #dplyr::filter(treatment != "control") %>%
@@ -225,980 +229,183 @@ incubation and nestling timepoints.
 
     vsd <- vst(dds, blind=FALSE) # variance stabilized 
 
-    levels(colData$treatment) 
+    #create list of groups
+    a <- levels(colData$treatment)
+    a
 
     ## [1] "bldg"    "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"    
     ## [8] "n5"      "n9"
 
-    summary(results(dds, contrast=c("treatment",'control', 'bldg')))    #3502 2450
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3502, 24%
-    ## LFC < 0 (down)     : 2459, 17%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 577, 3.9%
-    ## (mean count < 1)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'control', 'lay')))     #3581 2642
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3581, 24%
-    ## LFC < 0 (down)     : 2642, 18%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'control', 'inc.d3')))  #3956 2802
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3956, 27%
-    ## LFC < 0 (down)     : 2802, 19%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'control', 'inc.d9')))  #3968 2985
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3968, 27%
-    ## LFC < 0 (down)     : 2985, 20%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'control', 'inc.d17'))) #3949 2724
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3949, 27%
-    ## LFC < 0 (down)     : 2724, 18%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'control', 'hatch')))   #3600 2660
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3600, 24%
-    ## LFC < 0 (down)     : 2666, 18%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 577, 3.9%
-    ## (mean count < 1)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'control', 'n5')))      #4080 2842
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 4080, 27%
-    ## LFC < 0 (down)     : 2842, 19%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'control', 'n9')))      #4035 2979
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 4035, 27%
-    ## LFC < 0 (down)     : 2979, 20%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 577, 3.9%
-    ## (mean count < 1)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'bldg', 'lay')))     #1   0
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 1, 0.0067%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'bldg', 'inc.d3')))  #0   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'bldg', 'inc.d9')))  #5   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 5, 0.034%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'bldg', 'inc.d17'))) #0   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'bldg', 'hatch')))   #1   2
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 1, 0.0067%
-    ## LFC < 0 (down)     : 2, 0.013%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'bldg', 'n5')))      #10  3
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 10, 0.067%
-    ## LFC < 0 (down)     : 3, 0.02%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 3459, 23%
-    ## (mean count < 30)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'bldg', 'n9')))      #168 124
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 168, 1.1%
-    ## LFC < 0 (down)     : 124, 0.83%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 1441, 9.7%
-    ## (mean count < 4)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'lay', 'bldg')))    #    1
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 1, 0.0067%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'lay', 'inc.d3')))  #0   0   
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'lay', 'inc.d9')))  #5   6 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 5, 0.034%
-    ## LFC < 0 (down)     : 6, 0.04%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 1730, 12%
-    ## (mean count < 5)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'lay', 'inc.d17'))) #2   2 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 2, 0.013%
-    ## LFC < 0 (down)     : 2, 0.013%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'lay', 'hatch')))   #3   8 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3, 0.02%
-    ## LFC < 0 (down)     : 8, 0.054%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'lay', 'n5')))      #1   0
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 1, 0.0067%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'lay', 'n9')))      #135 194
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 135, 0.91%
-    ## LFC < 0 (down)     : 194, 1.3%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 2306, 16%
-    ## (mean count < 10)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'bldg')))    #0 0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'lay')))     #0 0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'inc.d9')))  #1 0
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 1, 0.0067%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'inc.d17'))) #0 0   
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'lay')))     #0 0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'n5')))      #0 0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'n9')))      #0 0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d9', 'inc.d17'))) #2 3  
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 2, 0.013%
-    ## LFC < 0 (down)     : 3, 0.02%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d9', 'lay')))     #6 5
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 6, 0.04%
-    ## LFC < 0 (down)     : 5, 0.034%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 1730, 12%
-    ## (mean count < 5)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d9', 'n5')))      #0 1
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 1, 0.0067%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d9', 'n9')))      #0 2
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 2, 0.013%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d17', 'lay'))) #2   2
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 2, 0.013%
-    ## LFC < 0 (down)     : 2, 0.013%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d17', 'n5')))  #2   4
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 2, 0.013%
-    ## LFC < 0 (down)     : 4, 0.027%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'inc.d17', 'n9')))  #131 136
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 131, 0.88%
-    ## LFC < 0 (down)     : 136, 0.91%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 3459, 23%
-    ## (mean count < 30)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'hatch', 'bldg')))    #2   1    
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 2, 0.013%
-    ## LFC < 0 (down)     : 1, 0.0067%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'hatch', 'lay')))     #8   3  
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 8, 0.054%
-    ## LFC < 0 (down)     : 3, 0.02%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'hatch', 'inc.d3')))  #524 406 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 524, 3.5%
-    ## LFC < 0 (down)     : 406, 2.7%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 2594, 17%
-    ## (mean count < 14)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'hatch', 'inc.d9')))  #1106 1169 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 1106, 7.4%
-    ## LFC < 0 (down)     : 1069, 7.2%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 1441, 9.7%
-    ## (mean count < 4)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'hatch', 'inc.d17'))) #3    0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3, 0.02%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'hatch', 'n5')))      #1076 875
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 1076, 7.2%
-    ## LFC < 0 (down)     : 875, 5.9%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 1441, 9.7%
-    ## (mean count < 4)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'hatch', 'n9')))      #898  845
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 898, 6%
-    ## LFC < 0 (down)     : 845, 5.7%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 865, 5.8%
-    ## (mean count < 1)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n5', 'bldg')))    #3   10 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3, 0.02%
-    ## LFC < 0 (down)     : 10, 0.067%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 3459, 23%
-    ## (mean count < 30)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n5', 'lay')))     #0   1 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 1, 0.0067%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n5', 'inc.d3')))  #0   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n5', 'inc.d9')))  #1   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 1, 0.0067%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n5', 'inc.d17'))) #4   2 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 4, 0.027%
-    ## LFC < 0 (down)     : 2, 0.013%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n5', 'hatch')))   #875 1076 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 875, 5.9%
-    ## LFC < 0 (down)     : 1076, 7.2%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 1441, 9.7%
-    ## (mean count < 4)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n5', 'n9')))      #0   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n9', 'bldg')))    #124 168 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 124, 0.83%
-    ## LFC < 0 (down)     : 168, 1.1%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 1441, 9.7%
-    ## (mean count < 4)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n9', 'lay')))     #194 135 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 194, 1.3%
-    ## LFC < 0 (down)     : 135, 0.91%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 2306, 16%
-    ## (mean count < 10)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n9', 'inc.d3')))  #0   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n9', 'inc.d9')))  #2   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 2, 0.013%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n9', 'inc.d17'))) #136 131 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 136, 0.91%
-    ## LFC < 0 (down)     : 131, 0.88%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 3459, 23%
-    ## (mean count < 30)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n9', 'hatch')))   #845 898 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 845, 5.7%
-    ## LFC < 0 (down)     : 898, 6%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 865, 5.8%
-    ## (mean count < 1)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'n9', 'n5')))      #0   0 
-
-    ## 
-    ## out of 14866 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 0, 0%
-    ## LFC < 0 (down)     : 0, 0%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    levels(colData$treatment)
-
-    ## [1] "bldg"    "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"    
-    ## [8] "n5"      "n9"
-
-    totalDEGs(c("treatment", 'bldg','lay'))
-
-    ## [1] 1
-
-    totalDEGs(c("treatment", 'bldg','inc.d3'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'bldg','inc.d9'))
-
-    ## [1] 5
-
-    totalDEGs(c("treatment", 'bldg','inc.d17'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'bldg','hatch'))
-
+    # create list of groups, with control last
+    b <- a[2:9]
+    b[9] <- a[1]
+    b
+
+    ## [1] "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"     "n5"     
+    ## [8] "n9"      "bldg"
+
+    for (i in a){
+      for (j in b){
+        print(paste(i,j))
+        if (i != j) {
+        numDEGs(i,j)
+      }
+      }
+    }
+
+    ## [1] "bldg control"
+    ## [1] 5961
+    ## [1] "bldg hatch"
     ## [1] 3
-
-    totalDEGs(c("treatment", 'bldg','n5'))
-
+    ## [1] "bldg inc.d17"
+    ## [1] 0
+    ## [1] "bldg inc.d3"
+    ## [1] 0
+    ## [1] "bldg inc.d9"
+    ## [1] 5
+    ## [1] "bldg lay"
+    ## [1] 1
+    ## [1] "bldg n5"
     ## [1] 13
-
-    totalDEGs(c("treatment", 'bldg','n9'))
-
+    ## [1] "bldg n9"
     ## [1] 292
-
-    totalDEGs(c("treatment", 'lay','bldg'))
-
-    ## [1] 1
-
-    totalDEGs(c("treatment", 'lay','inc.d3'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'lay','inc.d9'))
-
-    ## [1] 11
-
-    totalDEGs(c("treatment", 'lay','inc.d17'))
-
-    ## [1] 4
-
-    totalDEGs(c("treatment", 'lay','hatch'))
-
-    ## [1] 11
-
-    totalDEGs(c("treatment", 'lay','n5'))
-
-    ## [1] 1
-
-    totalDEGs(c("treatment", 'lay','n9'))
-
-    ## [1] 329
-
-    totalDEGs(c("treatment", 'inc.d3','bldg'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'inc.d3','lay'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'inc.d3','inc.d9'))
-
-    ## [1] 1
-
-    totalDEGs(c("treatment", 'inc.d3','inc.d17'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'inc.d3','hatch'))
-
+    ## [1] "bldg bldg"
+    ## [1] "control control"
+    ## [1] "control hatch"
+    ## [1] 6266
+    ## [1] "control inc.d17"
+    ## [1] 6673
+    ## [1] "control inc.d3"
+    ## [1] 6758
+    ## [1] "control inc.d9"
+    ## [1] 6953
+    ## [1] "control lay"
+    ## [1] 6223
+    ## [1] "control n5"
+    ## [1] 6922
+    ## [1] "control n9"
+    ## [1] 7014
+    ## [1] "control bldg"
+    ## [1] 5961
+    ## [1] "hatch control"
+    ## [1] 6266
+    ## [1] "hatch hatch"
+    ## [1] "hatch inc.d17"
+    ## [1] 3
+    ## [1] "hatch inc.d3"
     ## [1] 930
-
-    totalDEGs(c("treatment", 'inc.d3','n5'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'inc.d3','n9'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'inc.d9','bldg'))
-
-    ## [1] 5
-
-    totalDEGs(c("treatment", 'inc.d9','lay'))
-
-    ## [1] 11
-
-    totalDEGs(c("treatment", 'inc.d9','inc.d3'))
-
-    ## [1] 1
-
-    totalDEGs(c("treatment", 'inc.d9','inc.d17'))
-
-    ## [1] 5
-
-    totalDEGs(c("treatment", 'inc.d9','hatch'))
-
+    ## [1] "hatch inc.d9"
     ## [1] 2175
-
-    totalDEGs(c("treatment", 'inc.d9','n5'))
-
-    ## [1] 1
-
-    totalDEGs(c("treatment", 'inc.d9','n9'))
-
-    ## [1] 2
-
-    totalDEGs(c("treatment", 'inc.d17','bldg'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'inc.d17','lay'))
-
-    ## [1] 4
-
-    totalDEGs(c("treatment", 'inc.d17','inc.d3'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'inc.d17','inc.d9'))
-
-    ## [1] 5
-
-    totalDEGs(c("treatment", 'inc.d17','hatch'))
-
-    ## [1] 3
-
-    totalDEGs(c("treatment", 'inc.d17','n5'))
-
-    ## [1] 6
-
-    totalDEGs(c("treatment", 'inc.d17','n9'))
-
-    ## [1] 267
-
-    totalDEGs(c("treatment", 'hatch','bldg'))
-
-    ## [1] 3
-
-    totalDEGs(c("treatment", 'hatch','lay'))
-
+    ## [1] "hatch lay"
     ## [1] 11
-
-    totalDEGs(c("treatment", 'hatch','inc.d3'))
-
-    ## [1] 930
-
-    totalDEGs(c("treatment", 'hatch','inc.d9'))
-
-    ## [1] 2175
-
-    totalDEGs(c("treatment", 'hatch','inc.d17'))
-
-    ## [1] 3
-
-    totalDEGs(c("treatment", 'hatch','n5'))
-
+    ## [1] "hatch n5"
     ## [1] 1951
-
-    totalDEGs(c("treatment", 'hatch','n9'))
-
+    ## [1] "hatch n9"
     ## [1] 1743
-
-    totalDEGs(c("treatment", 'n5','bldg'))
-
+    ## [1] "hatch bldg"
+    ## [1] 3
+    ## [1] "inc.d17 control"
+    ## [1] 6673
+    ## [1] "inc.d17 hatch"
+    ## [1] 3
+    ## [1] "inc.d17 inc.d17"
+    ## [1] "inc.d17 inc.d3"
+    ## [1] 0
+    ## [1] "inc.d17 inc.d9"
+    ## [1] 5
+    ## [1] "inc.d17 lay"
+    ## [1] 4
+    ## [1] "inc.d17 n5"
+    ## [1] 6
+    ## [1] "inc.d17 n9"
+    ## [1] 267
+    ## [1] "inc.d17 bldg"
+    ## [1] 0
+    ## [1] "inc.d3 control"
+    ## [1] 6758
+    ## [1] "inc.d3 hatch"
+    ## [1] 930
+    ## [1] "inc.d3 inc.d17"
+    ## [1] 0
+    ## [1] "inc.d3 inc.d3"
+    ## [1] "inc.d3 inc.d9"
+    ## [1] 1
+    ## [1] "inc.d3 lay"
+    ## [1] 0
+    ## [1] "inc.d3 n5"
+    ## [1] 0
+    ## [1] "inc.d3 n9"
+    ## [1] 0
+    ## [1] "inc.d3 bldg"
+    ## [1] 0
+    ## [1] "inc.d9 control"
+    ## [1] 6953
+    ## [1] "inc.d9 hatch"
+    ## [1] 2175
+    ## [1] "inc.d9 inc.d17"
+    ## [1] 5
+    ## [1] "inc.d9 inc.d3"
+    ## [1] 1
+    ## [1] "inc.d9 inc.d9"
+    ## [1] "inc.d9 lay"
+    ## [1] 11
+    ## [1] "inc.d9 n5"
+    ## [1] 1
+    ## [1] "inc.d9 n9"
+    ## [1] 2
+    ## [1] "inc.d9 bldg"
+    ## [1] 5
+    ## [1] "lay control"
+    ## [1] 6223
+    ## [1] "lay hatch"
+    ## [1] 11
+    ## [1] "lay inc.d17"
+    ## [1] 4
+    ## [1] "lay inc.d3"
+    ## [1] 0
+    ## [1] "lay inc.d9"
+    ## [1] 11
+    ## [1] "lay lay"
+    ## [1] "lay n5"
+    ## [1] 1
+    ## [1] "lay n9"
+    ## [1] 329
+    ## [1] "lay bldg"
+    ## [1] 1
+    ## [1] "n5 control"
+    ## [1] 6922
+    ## [1] "n5 hatch"
+    ## [1] 1951
+    ## [1] "n5 inc.d17"
+    ## [1] 6
+    ## [1] "n5 inc.d3"
+    ## [1] 0
+    ## [1] "n5 inc.d9"
+    ## [1] 1
+    ## [1] "n5 lay"
+    ## [1] 1
+    ## [1] "n5 n5"
+    ## [1] "n5 n9"
+    ## [1] 0
+    ## [1] "n5 bldg"
     ## [1] 13
-
-    totalDEGs(c("treatment", 'n5','lay'))
-
-    ## [1] 1
-
-    totalDEGs(c("treatment", 'n5','inc.d3'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'n5','inc.d9'))
-
-    ## [1] 1
-
-    totalDEGs(c("treatment", 'n5','inc.d17'))
-
-    ## [1] 6
-
-    totalDEGs(c("treatment", 'n5','hatch'))
-
-    ## [1] 1951
-
-    totalDEGs(c("treatment", 'n5','n9'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'n9','bldg'))
-
-    ## [1] 292
-
-    totalDEGs(c("treatment", 'n9','lay'))
-
-    ## [1] 329
-
-    totalDEGs(c("treatment", 'n9','inc.d3'))
-
-    ## [1] 0
-
-    totalDEGs(c("treatment", 'n9','inc.d9'))
-
-    ## [1] 2
-
-    totalDEGs(c("treatment", 'n9','inc.d17'))
-
-    ## [1] 267
-
-    totalDEGs(c("treatment", 'n9','hatch'))
-
+    ## [1] "n9 control"
+    ## [1] 7014
+    ## [1] "n9 hatch"
     ## [1] 1743
-
-    totalDEGs(c("treatment", 'n9','n5'))
-
+    ## [1] "n9 inc.d17"
+    ## [1] 267
+    ## [1] "n9 inc.d3"
     ## [1] 0
+    ## [1] "n9 inc.d9"
+    ## [1] 2
+    ## [1] "n9 lay"
+    ## [1] 329
+    ## [1] "n9 n5"
+    ## [1] 0
+    ## [1] "n9 n9"
+    ## [1] "n9 bldg"
+    ## [1] 292
 
     levels(colData$treatment)
 

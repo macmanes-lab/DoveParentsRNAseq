@@ -40,6 +40,10 @@ colData$tempgroup <- as.factor(colData$tempgroup)
 colData$group <- paste(colData$sex, colData$tempgroup, sep = "")
 colData$group <- as.factor(colData$group)
 str(colData$group)
+
+colData$treatment <- factor(colData$treatment, levels = 
+                              c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                "inc.d17", "hatch", "n5", "n9"))
 ```
 
 ```{r filter}
@@ -72,142 +76,25 @@ dds <- DESeq(dds) # Differential expression analysis
 vsd <- vst(dds, blind=FALSE) # variance stabilized 
 ```
 
-```{r res}
-levels(colData$treatment) 
-summary(results(dds, contrast=c("treatment",'control', 'bldg')))    #3502 2450
-summary(results(dds, contrast=c("treatment",'control', 'lay')))     #3581 2642
-summary(results(dds, contrast=c("treatment",'control', 'inc.d3')))  #3956 2802
-summary(results(dds, contrast=c("treatment",'control', 'inc.d9')))  #3968 2985
-summary(results(dds, contrast=c("treatment",'control', 'inc.d17'))) #3949 2724
-summary(results(dds, contrast=c("treatment",'control', 'hatch')))   #3600 2660
-summary(results(dds, contrast=c("treatment",'control', 'n5')))      #4080 2842
-summary(results(dds, contrast=c("treatment",'control', 'n9')))      #4035 2979
 
-summary(results(dds, contrast=c("treatment",'bldg', 'lay')))     #1   0
-summary(results(dds, contrast=c("treatment",'bldg', 'inc.d3')))  #0   0 
-summary(results(dds, contrast=c("treatment",'bldg', 'inc.d9')))  #5   0 
-summary(results(dds, contrast=c("treatment",'bldg', 'inc.d17'))) #0   0 
-summary(results(dds, contrast=c("treatment",'bldg', 'hatch')))   #1   2
-summary(results(dds, contrast=c("treatment",'bldg', 'n5')))      #10  3
-summary(results(dds, contrast=c("treatment",'bldg', 'n9')))      #168 124
+```{r resloop}
+#create list of groups
+a <- levels(colData$treatment)
+a
 
-summary(results(dds, contrast=c("treatment",'lay', 'bldg')))    #    1
-summary(results(dds, contrast=c("treatment",'lay', 'inc.d3')))  #0   0   
-summary(results(dds, contrast=c("treatment",'lay', 'inc.d9')))  #5   6 
-summary(results(dds, contrast=c("treatment",'lay', 'inc.d17'))) #2   2 
-summary(results(dds, contrast=c("treatment",'lay', 'hatch')))   #3   8 
-summary(results(dds, contrast=c("treatment",'lay', 'n5')))      #1   0
-summary(results(dds, contrast=c("treatment",'lay', 'n9')))      #135 194
+# create list of groups, with control last
+b <- a[2:9]
+b[9] <- a[1]
+b
 
-summary(results(dds, contrast=c("treatment",'inc.d3', 'bldg')))    #0 0 
-summary(results(dds, contrast=c("treatment",'inc.d3', 'lay')))     #0 0 
-summary(results(dds, contrast=c("treatment",'inc.d3', 'inc.d9')))  #1 0
-summary(results(dds, contrast=c("treatment",'inc.d3', 'inc.d17'))) #0 0   
-summary(results(dds, contrast=c("treatment",'inc.d3', 'lay')))     #0 0 
-summary(results(dds, contrast=c("treatment",'inc.d3', 'n5')))      #0 0 
-summary(results(dds, contrast=c("treatment",'inc.d3', 'n9')))      #0 0 
-
-summary(results(dds, contrast=c("treatment",'inc.d9', 'inc.d17'))) #2 3  
-summary(results(dds, contrast=c("treatment",'inc.d9', 'lay')))     #6 5
-summary(results(dds, contrast=c("treatment",'inc.d9', 'n5')))      #0 1
-summary(results(dds, contrast=c("treatment",'inc.d9', 'n9')))      #0 2
-
-summary(results(dds, contrast=c("treatment",'inc.d17', 'lay'))) #2   2
-summary(results(dds, contrast=c("treatment",'inc.d17', 'n5')))  #2   4
-summary(results(dds, contrast=c("treatment",'inc.d17', 'n9')))  #131 136
-
-summary(results(dds, contrast=c("treatment",'hatch', 'bldg')))    #2   1    
-summary(results(dds, contrast=c("treatment",'hatch', 'lay')))     #8   3  
-summary(results(dds, contrast=c("treatment",'hatch', 'inc.d3')))  #524 406 
-summary(results(dds, contrast=c("treatment",'hatch', 'inc.d9')))  #1106 1169 
-summary(results(dds, contrast=c("treatment",'hatch', 'inc.d17'))) #3    0 
-summary(results(dds, contrast=c("treatment",'hatch', 'n5')))      #1076 875
-summary(results(dds, contrast=c("treatment",'hatch', 'n9')))      #898  845
-
-summary(results(dds, contrast=c("treatment",'n5', 'bldg')))    #3   10 
-summary(results(dds, contrast=c("treatment",'n5', 'lay')))     #0   1 
-summary(results(dds, contrast=c("treatment",'n5', 'inc.d3')))  #0   0 
-summary(results(dds, contrast=c("treatment",'n5', 'inc.d9')))  #1   0 
-summary(results(dds, contrast=c("treatment",'n5', 'inc.d17'))) #4   2 
-summary(results(dds, contrast=c("treatment",'n5', 'hatch')))   #875 1076 
-summary(results(dds, contrast=c("treatment",'n5', 'n9')))      #0   0 
-
-
-summary(results(dds, contrast=c("treatment",'n9', 'bldg')))    #124 168 
-summary(results(dds, contrast=c("treatment",'n9', 'lay')))     #194 135 
-summary(results(dds, contrast=c("treatment",'n9', 'inc.d3')))  #0   0 
-summary(results(dds, contrast=c("treatment",'n9', 'inc.d9')))  #2   0 
-summary(results(dds, contrast=c("treatment",'n9', 'inc.d17'))) #136 131 
-summary(results(dds, contrast=c("treatment",'n9', 'hatch')))   #845 898 
-summary(results(dds, contrast=c("treatment",'n9', 'n5')))      #0   0 
-```
-
-```{r totalDEGs}
-levels(colData$treatment)
-
-totalDEGs(c("treatment", 'bldg','lay'))
-totalDEGs(c("treatment", 'bldg','inc.d3'))
-totalDEGs(c("treatment", 'bldg','inc.d9'))
-totalDEGs(c("treatment", 'bldg','inc.d17'))
-totalDEGs(c("treatment", 'bldg','hatch'))
-totalDEGs(c("treatment", 'bldg','n5'))
-totalDEGs(c("treatment", 'bldg','n9'))
-
-totalDEGs(c("treatment", 'lay','bldg'))
-totalDEGs(c("treatment", 'lay','inc.d3'))
-totalDEGs(c("treatment", 'lay','inc.d9'))
-totalDEGs(c("treatment", 'lay','inc.d17'))
-totalDEGs(c("treatment", 'lay','hatch'))
-totalDEGs(c("treatment", 'lay','n5'))
-totalDEGs(c("treatment", 'lay','n9'))
-
-totalDEGs(c("treatment", 'inc.d3','bldg'))
-totalDEGs(c("treatment", 'inc.d3','lay'))
-totalDEGs(c("treatment", 'inc.d3','inc.d9'))
-totalDEGs(c("treatment", 'inc.d3','inc.d17'))
-totalDEGs(c("treatment", 'inc.d3','hatch'))
-totalDEGs(c("treatment", 'inc.d3','n5'))
-totalDEGs(c("treatment", 'inc.d3','n9'))
-
-totalDEGs(c("treatment", 'inc.d9','bldg'))
-totalDEGs(c("treatment", 'inc.d9','lay'))
-totalDEGs(c("treatment", 'inc.d9','inc.d3'))
-totalDEGs(c("treatment", 'inc.d9','inc.d17'))
-totalDEGs(c("treatment", 'inc.d9','hatch'))
-totalDEGs(c("treatment", 'inc.d9','n5'))
-totalDEGs(c("treatment", 'inc.d9','n9'))
-
-totalDEGs(c("treatment", 'inc.d17','bldg'))
-totalDEGs(c("treatment", 'inc.d17','lay'))
-totalDEGs(c("treatment", 'inc.d17','inc.d3'))
-totalDEGs(c("treatment", 'inc.d17','inc.d9'))
-totalDEGs(c("treatment", 'inc.d17','hatch'))
-totalDEGs(c("treatment", 'inc.d17','n5'))
-totalDEGs(c("treatment", 'inc.d17','n9'))
-
-totalDEGs(c("treatment", 'hatch','bldg'))
-totalDEGs(c("treatment", 'hatch','lay'))
-totalDEGs(c("treatment", 'hatch','inc.d3'))
-totalDEGs(c("treatment", 'hatch','inc.d9'))
-totalDEGs(c("treatment", 'hatch','inc.d17'))
-totalDEGs(c("treatment", 'hatch','n5'))
-totalDEGs(c("treatment", 'hatch','n9'))
-
-totalDEGs(c("treatment", 'n5','bldg'))
-totalDEGs(c("treatment", 'n5','lay'))
-totalDEGs(c("treatment", 'n5','inc.d3'))
-totalDEGs(c("treatment", 'n5','inc.d9'))
-totalDEGs(c("treatment", 'n5','inc.d17'))
-totalDEGs(c("treatment", 'n5','hatch'))
-totalDEGs(c("treatment", 'n5','n9'))
-
-totalDEGs(c("treatment", 'n9','bldg'))
-totalDEGs(c("treatment", 'n9','lay'))
-totalDEGs(c("treatment", 'n9','inc.d3'))
-totalDEGs(c("treatment", 'n9','inc.d9'))
-totalDEGs(c("treatment", 'n9','inc.d17'))
-totalDEGs(c("treatment", 'n9','hatch'))
-totalDEGs(c("treatment", 'n9','n5'))
+for (i in a){
+  for (j in b){
+    print(paste(i,j))
+    if (i != j) {
+    numDEGs(i,j)
+  }
+  }
+}
 ```
 
 ```{r PCA, message=FALSE, warning=FALSE}
