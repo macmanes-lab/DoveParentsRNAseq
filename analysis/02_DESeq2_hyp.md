@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ───────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -143,33 +143,22 @@
     ## 
     ##     group_rows
 
+    library(viridis)
+
+    ## Loading required package: viridisLite
+
     # load custom functions  
     source("../R/functions.R")  
 
     knitr::opts_chunk$set(fig.path = '../figures/hyp/',cache=TRUE)
 
-This anlaysis will *exclude* the control timepoint but *combine*
-incubation and nestling timepoints.
+Females only
+============
 
     # import "colData" which contains sample information and "countData" which contains read counts
     colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
     countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
     geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
-
-    # making new groups
-    colData$group <- NULL
-    colData$tempgroup <- ifelse(colData$treatment == "bldg", "bldg",
-                      ifelse(colData$treatment == "control", "control",
-                       ifelse(colData$treatment == "hatch", "hatch",
-                        ifelse(grepl("inc", colData$treatment), "inc",
-                         ifelse(colData$treatment == "lay", "lay", "nestl")))))
-    colData$tempgroup <- as.factor(colData$tempgroup)
-
-    colData$group <- paste(colData$sex, colData$tempgroup, sep = "")
-    colData$group <- as.factor(colData$group)
-    str(colData$group)
-
-    ##  Factor w/ 12 levels "femalebldg","femalecontrol",..: 8 8 8 8 8 8 2 2 2 8 ...
 
     colData$treatment <- factor(colData$treatment, levels = 
                                   c("control", "bldg", "lay", "inc.d3", "inc.d9", 
@@ -177,7 +166,6 @@ incubation and nestling timepoints.
 
     colData <- colData %>%
       dplyr::filter(grepl('hypothalamus', tissue)) %>%
-      #dplyr::filter(treatment != "control") %>%
       dplyr::filter(sex == "female") %>%
       droplevels()
     row.names(colData) <- colData$V1
@@ -185,13 +173,14 @@ incubation and nestling timepoints.
     # print sample sizes
     colData %>% select(group, tissue)  %>%  summary()
 
-    ##            group             tissue  
-    ##  femalebldg   :10   hypothalamus:95  
-    ##  femalecontrol:11                    
-    ##  femalehatch  :10                    
-    ##  femaleinc    :33                    
-    ##  femalelay    :10                    
-    ##  femalenestl  :21
+    ##                          group             tissue  
+    ##  female.hypothalamus.inc.d9 :12   hypothalamus:95  
+    ##  female.hypothalamus.control:11                    
+    ##  female.hypothalamus.inc.d17:11                    
+    ##  female.hypothalamus.n9     :11                    
+    ##  female.hypothalamus.bldg   :10                    
+    ##  female.hypothalamus.hatch  :10                    
+    ##  (Other)                    :30
 
     savecols <- as.character(colData$V1) 
     savecols <- as.vector(savecols) 
@@ -242,8 +231,8 @@ incubation and nestling timepoints.
     b <- levels(colData$treatment)
 
     # slim for testing
-    a <- c("n9", "bldg" , "lay" )
-    b <- c("n9", "bldg" , "lay" )
+    #a <- c("n9", "bldg" , "lay" )
+    #b <- c("n9", "bldg" , "lay" )
 
     # comapre all contrasts, save to datafrmes
     dat=data.frame()
@@ -260,25 +249,31 @@ incubation and nestling timepoints.
 
     head(dat)
 
-    ##           V1   V2  V3
-    ## n9bldg    n9 bldg 292
-    ## n9lay     n9  lay 329
-    ## bldgn9  bldg   n9 292
-    ## bldglay bldg  lay   1
-    ## layn9    lay   n9 329
-    ## laybldg  lay bldg   1
+    ##                     V1      V2   V3
+    ## controlbldg    control    bldg 5961
+    ## controllay     control     lay 6223
+    ## controlinc.d3  control  inc.d3 6758
+    ## controlinc.d9  control  inc.d9 6953
+    ## controlinc.d17 control inc.d17 6673
+    ## controlhatch   control   hatch 6266
 
     # widen data to create table of degs
     rownames(dat) <- NULL #remove row names
     data_wide <- spread(dat, V2, V3)
     data_wide
 
-    ##     V1 bldg lay  n9
-    ## 1 bldg   NA   1 292
-    ## 2  lay    1  NA 329
-    ## 3   n9  292 329  NA
+    ##        V1 bldg control hatch inc.d17 inc.d3 inc.d9  lay   n5   n9
+    ## 1    bldg   NA    5961     3       0      0      5    1   13  292
+    ## 2 control 5961      NA  6266    6673   6758   6953 6223 6922 7014
+    ## 3   hatch    3    6266    NA       3    930   2175   11 1951 1743
+    ## 4 inc.d17    0    6673     3      NA      0      5    4    6  267
+    ## 5  inc.d3    0    6758   930       0     NA      1    0    0    0
+    ## 6  inc.d9    5    6953  2175       5      1     NA   11    1    2
+    ## 7     lay    1    6223    11       4      0     11   NA    1  329
+    ## 8      n5   13    6922  1951       6      0      1    1   NA    0
+    ## 9      n9  292    7014  1743     267      0      2  329    0   NA
 
-    kable(data_wide) # pretty printing
+    kable(data_wide) 
 
 <table>
 <thead>
@@ -290,7 +285,25 @@ V1
 bldg
 </th>
 <th style="text-align:right;">
+control
+</th>
+<th style="text-align:right;">
+hatch
+</th>
+<th style="text-align:right;">
+inc.d17
+</th>
+<th style="text-align:right;">
+inc.d3
+</th>
+<th style="text-align:right;">
+inc.d9
+</th>
+<th style="text-align:right;">
 lay
+</th>
+<th style="text-align:right;">
+n5
 </th>
 <th style="text-align:right;">
 n9
@@ -306,10 +319,188 @@ bldg
 NA
 </td>
 <td style="text-align:right;">
+5961
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
 1
 </td>
 <td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
 292
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+control
+</td>
+<td style="text-align:right;">
+5961
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+6266
+</td>
+<td style="text-align:right;">
+6673
+</td>
+<td style="text-align:right;">
+6758
+</td>
+<td style="text-align:right;">
+6953
+</td>
+<td style="text-align:right;">
+6223
+</td>
+<td style="text-align:right;">
+6922
+</td>
+<td style="text-align:right;">
+7014
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+6266
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+930
+</td>
+<td style="text-align:right;">
+2175
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1951
+</td>
+<td style="text-align:right;">
+1743
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+6673
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+267
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+6758
+</td>
+<td style="text-align:right;">
+930
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+6953
+</td>
+<td style="text-align:right;">
+2175
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
 </td>
 </tr>
 <tr>
@@ -320,10 +511,60 @@ lay
 1
 </td>
 <td style="text-align:right;">
+6223
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
 NA
 </td>
 <td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
 329
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+6922
+</td>
+<td style="text-align:right;">
+1951
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 <tr>
@@ -334,7 +575,25 @@ n9
 292
 </td>
 <td style="text-align:right;">
+7014
+</td>
+<td style="text-align:right;">
+1743
+</td>
+<td style="text-align:right;">
+267
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
 329
+</td>
+<td style="text-align:right;">
+0
 </td>
 <td style="text-align:right;">
 NA
@@ -343,14 +602,11 @@ NA
 </tbody>
 </table>
 
-    levels(colData$treatment)
+    ggplot(dat, aes(V1, V2)) +
+      geom_tile(aes(fill = V3)) +
+      scale_fill_viridis(na.value="#FFFFFF00")
 
-    ## [1] "bldg"    "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"    
-    ## [8] "n5"      "n9"
-
-    colData$treatment <- factor(colData$treatment, levels = 
-                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
-                                    "inc.d17", "hatch", "n5", "n9"))
+![](../figures/hyp/restable-1.png)
 
     # create the dataframe using my function pcadataframe
     pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
@@ -367,26 +623,6 @@ NA
       theme_cowplot(font_size = 8, line_size = 0.25) 
 
 ![](../figures/hyp/PCA-1.png)
-
-    ggplot(pcadata, aes(PC2, PC3,color = treatment)) + 
-      geom_point(size = 2, alpha = 1) +
-      stat_ellipse(type = "t") +
-      xlab(paste0("PC2: ", percentVar[2],"% variance")) +
-      ylab(paste0("PC3: ", percentVar[3],"% variance")) +
-      theme_cowplot(font_size = 8, line_size = 0.25) 
-
-![](../figures/hyp/PCA-2.png)
-
-    ggplot(pcadata, aes(PC3, PC4,color = treatment)) + 
-      geom_point(size = 2, alpha = 1) +
-      stat_ellipse(type = "t") +
-      xlab(paste0("PC3: ", percentVar[3],"% variance")) +
-      ylab(paste0("PC4: ", percentVar[4],"% variance")) +
-      theme_cowplot(font_size = 8, line_size = 0.25) 
-
-![](../figures/hyp/PCA-3.png)
-
-PCA statistics
 
     summary(aov(PC1 ~ treatment, data=pcadata)) 
 
@@ -496,6 +732,15 @@ PCA statistics
     ## n9-lay          -3.6324779 -10.7787035  3.5137477 0.7926352
     ## n9-n5            0.2011228  -6.9451028  7.3473483 1.0000000
 
+    ggplot(pcadata, aes(PC3, PC4,color = treatment)) + 
+      geom_point(size = 2, alpha = 1) +
+      stat_ellipse(type = "t") +
+      xlab(paste0("PC3: ", percentVar[3],"% variance")) +
+      ylab(paste0("PC4: ", percentVar[4],"% variance")) +
+      theme_cowplot(font_size = 8, line_size = 0.25) 
+
+![](../figures/hyp/PCA-2.png)
+
     summary(aov(PC3 ~ treatment, data=pcadata)) 
 
     ##             Df Sum Sq Mean Sq F value Pr(>F)
@@ -516,57 +761,13 @@ PCA statistics
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-    TukeyHSD(aov(PC5 ~ treatment, data=pcadata), which = "treatment") 
-
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC5 ~ treatment, data = pcadata)
-    ## 
-    ## $treatment
-    ##                        diff        lwr      upr     p adj
-    ## control-bldg    -0.02460454 -4.1684576 4.119249 1.0000000
-    ## hatch-bldg       3.21034597 -1.0310229 7.451715 0.2928010
-    ## inc.d17-bldg     0.82869693 -3.3151562 4.972550 0.9993340
-    ## inc.d3-bldg      0.48210100 -3.7592679 4.723470 0.9999908
-    ## inc.d9-bldg      1.15087978 -2.9099218 5.211681 0.9923187
-    ## lay-bldg         0.87120943 -3.3701594 5.112578 0.9991905
-    ## n5-bldg          2.09679895 -2.1445699 6.338168 0.8164660
-    ## n9-bldg          3.09637458 -1.0474785 7.240228 0.3094573
-    ## hatch-control    3.23495051 -0.9089026 7.378804 0.2543173
-    ## inc.d17-control  0.85330147 -3.1906851 4.897288 0.9990164
-    ## inc.d3-control   0.50670554 -3.6371476 4.650559 0.9999838
-    ## inc.d9-control   1.17548432 -2.7833561 5.134325 0.9895564
-    ## lay-control      0.89581397 -3.2480391 5.039667 0.9988286
-    ## n5-control       2.12140349 -2.0224496 6.265257 0.7861992
-    ## n9-control       3.12097912 -0.9230074 7.164966 0.2683504
-    ## inc.d17-hatch   -2.38164904 -6.5255021 1.762204 0.6630848
-    ## inc.d3-hatch    -2.72824497 -6.9696138 1.513124 0.5158387
-    ## inc.d9-hatch    -2.05946619 -6.1202677 2.001335 0.7946531
-    ## lay-hatch       -2.33913654 -6.5805054 1.902232 0.7108691
-    ## n5-hatch        -1.11354702 -5.3549159 3.127822 0.9954146
-    ## n9-hatch        -0.11397139 -4.2578245 4.029882 1.0000000
-    ## inc.d3-inc.d17  -0.34659593 -4.4904490 3.797257 0.9999992
-    ## inc.d9-inc.d17   0.32218284 -3.6366576 4.281023 0.9999993
-    ## lay-inc.d17      0.04251250 -4.1013406 4.186366 1.0000000
-    ## n5-inc.d17       1.26810202 -2.8757511 5.411955 0.9872972
-    ## n9-inc.d17       2.26767764 -1.7763089 6.311664 0.6921014
-    ## inc.d9-inc.d3    0.66877878 -3.3920228 4.729580 0.9998423
-    ## lay-inc.d3       0.38910843 -3.8522604 4.630477 0.9999983
-    ## n5-inc.d3        1.61469795 -2.6266709 5.856067 0.9518646
-    ## n9-inc.d3        2.61427358 -1.5295795 6.758127 0.5425174
-    ## lay-inc.d9      -0.27967035 -4.3404719 3.781131 0.9999998
-    ## n5-inc.d9        0.94591918 -3.1148824 5.006721 0.9980048
-    ## n9-inc.d9        1.94549480 -2.0133456 5.904335 0.8213070
-    ## n5-lay           1.22558952 -3.0157793 5.466958 0.9912650
-    ## n9-lay           2.22516515 -1.9186880 6.369018 0.7395442
-    ## n9-n5            0.99957562 -3.1442775 5.143429 0.9974489
-
     summary(aov(PC6 ~ treatment, data=pcadata)) 
 
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    8   97.4  12.180   1.591  0.139
     ## Residuals   86  658.5   7.657
+
+Heatmaps
 
     # see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
     sampleDists <- dist(t(assay(vsd)))
@@ -582,3 +783,358 @@ PCA statistics
              fontsize = 6)
 
 ![](../figures/hyp/heatmap-1.png)
+
+Males only
+==========
+
+    # import "colData" which contains sample information and "countData" which contains read counts
+    colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
+    countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+    geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+
+    colData$treatment <- factor(colData$treatment, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+
+    colData <- colData %>%
+      dplyr::filter(grepl('hypothalamus', tissue)) %>%
+      dplyr::filter(sex == "male") %>%
+      droplevels()
+    row.names(colData) <- colData$V1
+
+    # print sample sizes
+    colData %>% select(group, tissue)  %>%  summary()
+
+    ##                        group             tissue  
+    ##  male.hypothalamus.control:11   hypothalamus:94  
+    ##  male.hypothalamus.inc.d17:11                    
+    ##  male.hypothalamus.inc.d9 :11                    
+    ##  male.hypothalamus.n9     :11                    
+    ##  male.hypothalamus.bldg   :10                    
+    ##  male.hypothalamus.hatch  :10                    
+    ##  (Other)                  :30
+
+    savecols <- as.character(colData$V1) 
+    savecols <- as.vector(savecols) 
+    countData <- countData %>% dplyr::select(one_of(savecols)) 
+
+    # check that row and col lenghts are equal
+    ncol(countData) == nrow(colData) 
+
+    ## [1] TRUE
+
+    dds <- DESeqDataSetFromMatrix(countData = countData,
+                                  colData = colData,
+                                  design = ~ treatment )
+    dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
+    dds <- DESeq(dds) # Differential expression analysis
+
+    ## estimating size factors
+
+    ## estimating dispersions
+
+    ## gene-wise dispersion estimates
+
+    ## mean-dispersion relationship
+
+    ## final dispersion estimates
+
+    ## fitting model and testing
+
+    ## -- replacing outliers and refitting for 13 genes
+    ## -- DESeq argument 'minReplicatesForReplace' = 7 
+    ## -- original counts are preserved in counts(dds)
+
+    ## estimating dispersions
+
+    ## fitting model and testing
+
+    vsd <- vst(dds, blind=FALSE) # variance stabilized 
+
+    #create list of groups
+    a <- levels(colData$treatment)
+    b <- levels(colData$treatment)
+
+    # slim for testing
+    a <- c("n9", "bldg" , "lay" )
+    b <- c("n9", "bldg" , "lay" )
+
+    # comapre all contrasts, save to datafrmes
+    dat=data.frame()
+    for (i in a){
+      for (j in b){
+        if (i != j) {
+          k <- paste(i,j, sep = "") #assigns usique rownames
+          dat[k,1]<-i               
+          dat[k,2]<-j
+          dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+        }
+      }
+    }
+
+    head(dat)
+
+    ##           V1   V2 V3
+    ## n9bldg    n9 bldg  1
+    ## n9lay     n9  lay  2
+    ## bldgn9  bldg   n9  1
+    ## bldglay bldg  lay  1
+    ## layn9    lay   n9  2
+    ## laybldg  lay bldg  1
+
+    # widen data to create table of degs
+    rownames(dat) <- NULL #remove row names
+    data_wide <- spread(dat, V2, V3)
+    data_wide
+
+    ##     V1 bldg lay n9
+    ## 1 bldg   NA   1  1
+    ## 2  lay    1  NA  2
+    ## 3   n9    1   2 NA
+
+    kable(data_wide) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+V1
+</th>
+<th style="text-align:right;">
+bldg
+</th>
+<th style="text-align:right;">
+lay
+</th>
+<th style="text-align:right;">
+n9
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+
+    ggplot(dat, aes(V1, V2)) +
+      geom_tile(aes(fill = V3)) +
+      scale_fill_viridis(na.value="#FFFFFF00")
+
+![](../figures/hyp/restableMale-1.png)
+
+    # create the dataframe using my function pcadataframe
+    pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
+    percentVar <- round(100 * attr(pcadata, "percentVar"))
+    percentVar
+
+    ## [1] 25 11  7  5  4  3
+
+    ggplot(pcadata, aes(PC1, PC2,color = treatment)) + 
+      geom_point(size = 2, alpha = 1) +
+      stat_ellipse(type = "t") +
+      xlab(paste0("PC1: ", percentVar[1],"% variance")) +
+      ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+      theme_cowplot(font_size = 8, line_size = 0.25) 
+
+![](../figures/hyp/PCAmale-1.png)
+
+    summary(aov(PC1 ~ treatment, data=pcadata)) 
+
+    ##             Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## treatment    8   3367   420.8   8.697 1.34e-08 ***
+    ## Residuals   85   4113    48.4                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment") 
+
+    ##   Tukey multiple comparisons of means
+    ##     95% family-wise confidence level
+    ## 
+    ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
+    ## 
+    ## $treatment
+    ##                       diff        lwr       upr     p adj
+    ## bldg-control    16.0558412   6.381071 25.730611 0.0000332
+    ## lay-control     17.1886729   7.513903 26.863443 0.0000071
+    ## inc.d3-control  19.5858239   9.911054 29.260594 0.0000002
+    ## inc.d9-control  18.2374636   8.795855 27.679072 0.0000009
+    ## inc.d17-control 17.0736269   7.632018 26.515236 0.0000047
+    ## hatch-control   15.8521083   6.177338 25.526878 0.0000435
+    ## n5-control      20.0913312  10.416561 29.766101 0.0000001
+    ## n9-control      19.9676002  10.525991 29.409209 0.0000001
+    ## lay-bldg         1.1328318  -8.769611 11.035275 0.9999903
+    ## inc.d3-bldg      3.5299828  -6.372460 13.432426 0.9671248
+    ## inc.d9-bldg      2.1816225  -7.493148 11.856393 0.9984103
+    ## inc.d17-bldg     1.0177857  -8.656984 10.692556 0.9999949
+    ## hatch-bldg      -0.2037328 -10.106176  9.698710 1.0000000
+    ## n5-bldg          4.0354900  -5.866953 13.937933 0.9295186
+    ## n9-bldg          3.9117590  -5.763011 13.586529 0.9324762
+    ## inc.d3-lay       2.3971510  -7.505292 12.299594 0.9973763
+    ## inc.d9-lay       1.0487907  -8.625979 10.723561 0.9999936
+    ## inc.d17-lay     -0.1150460  -9.789816  9.559724 1.0000000
+    ## hatch-lay       -1.3365646 -11.239007  8.565878 0.9999652
+    ## n5-lay           2.9026583  -6.999785 12.805101 0.9903740
+    ## n9-lay           2.7789273  -6.895843 12.453697 0.9915798
+    ## inc.d9-inc.d3   -1.3483603 -11.023130  8.326410 0.9999554
+    ## inc.d17-inc.d3  -2.5121970 -12.186967  7.162573 0.9957349
+    ## hatch-inc.d3    -3.7337156 -13.636158  6.168727 0.9543450
+    ## n5-inc.d3        0.5055073  -9.396936 10.407950 1.0000000
+    ## n9-inc.d3        0.3817763  -9.292994 10.056546 1.0000000
+    ## inc.d17-inc.d9  -1.1638368 -10.605446  8.277772 0.9999827
+    ## hatch-inc.d9    -2.3853553 -12.060125  7.289415 0.9970183
+    ## n5-inc.d9        1.8538675  -7.820902 11.528638 0.9995114
+    ## n9-inc.d9        1.7301365  -7.711472 11.171745 0.9996487
+    ## hatch-inc.d17   -1.2215186 -10.896289  8.453251 0.9999792
+    ## n5-inc.d17       3.0177043  -6.657066 12.692474 0.9856015
+    ## n9-inc.d17       2.8939733  -6.547635 12.335582 0.9871288
+    ## n5-hatch         4.2392229  -5.663220 14.141666 0.9084407
+    ## n9-hatch         4.1154919  -5.559278 13.790262 0.9114280
+    ## n9-n5           -0.1237310  -9.798501  9.551039 1.0000000
+
+    summary(aov(PC2 ~ treatment, data=pcadata)) 
+
+    ##             Df Sum Sq Mean Sq F value Pr(>F)   
+    ## treatment    8  824.5   103.1   3.458 0.0017 **
+    ## Residuals   85 2533.0    29.8                  
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    TukeyHSD(aov(PC2 ~ treatment, data=pcadata), which = "treatment") 
+
+    ##   Tukey multiple comparisons of means
+    ##     95% family-wise confidence level
+    ## 
+    ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
+    ## 
+    ## $treatment
+    ##                        diff        lwr        upr     p adj
+    ## bldg-control    -7.34348077 -14.935876  0.2489141 0.0659633
+    ## lay-control     -7.55992391 -15.152319  0.0324710 0.0518722
+    ## inc.d3-control  -4.24916383 -11.841559  3.3432311 0.6939859
+    ## inc.d9-control  -6.87457810 -14.283997  0.5348407 0.0906720
+    ## inc.d17-control -9.76681789 -17.176237 -2.3573991 0.0020817
+    ## hatch-control   -9.30141531 -16.893810 -1.7090204 0.0057235
+    ## n5-control      -4.22110886 -11.813504  3.3712860 0.7015141
+    ## n9-control      -3.82832450 -11.237743  3.5810943 0.7773499
+    ## lay-bldg        -0.21644314  -7.987507  7.5546208 1.0000000
+    ## inc.d3-bldg      3.09431694  -4.676747 10.8653809 0.9379180
+    ## inc.d9-bldg      0.46890268  -7.123492  8.0612976 0.9999999
+    ## inc.d17-bldg    -2.42333711 -10.015732  5.1690578 0.9833315
+    ## hatch-bldg      -1.95793454  -9.728998  5.8131294 0.9965347
+    ## n5-bldg          3.12237191  -4.648692 10.8934359 0.9347565
+    ## n9-bldg          3.51515628  -4.077239 11.1075512 0.8644313
+    ## inc.d3-lay       3.31076008  -4.460304 11.0818240 0.9107152
+    ## inc.d9-lay       0.68534582  -6.907049  8.2777407 0.9999985
+    ## inc.d17-lay     -2.20689397  -9.799289  5.3855009 0.9908917
+    ## hatch-lay       -1.74149140  -9.512555  6.0295725 0.9984792
+    ## n5-lay           3.33881505  -4.432249 11.1098790 0.9067085
+    ## n9-lay           3.73159942  -3.860795 11.3239943 0.8209282
+    ## inc.d9-inc.d3   -2.62541426 -10.217809  4.9669806 0.9726187
+    ## inc.d17-inc.d3  -5.51765405 -13.110049  2.0747409 0.3461156
+    ## hatch-inc.d3    -5.05225148 -12.823315  2.7188125 0.5007129
+    ## n5-inc.d3        0.02805497  -7.743009  7.7991189 1.0000000
+    ## n9-inc.d3        0.42083934  -7.171556  8.0132343 1.0000000
+    ## inc.d17-inc.d9  -2.89223979 -10.301659  4.5171790 0.9444195
+    ## hatch-inc.d9    -2.42683722 -10.019232  5.1655577 0.9831787
+    ## n5-inc.d9        2.65346923  -4.938926 10.2458641 0.9708013
+    ## n9-inc.d9        3.04625360  -4.363165 10.4556724 0.9260807
+    ## hatch-inc.d17    0.46540257  -7.126992  8.0577975 0.9999999
+    ## n5-inc.d17       5.54570902  -2.046686 13.1381039 0.3392935
+    ## n9-inc.d17       5.93849339  -1.470925 13.3479121 0.2232322
+    ## n5-hatch         5.08030645  -2.690757 12.8513704 0.4930059
+    ## n9-hatch         5.47309082  -2.119304 13.0654857 0.3570962
+    ## n9-n5            0.39278437  -7.199611  7.9851793 1.0000000
+
+    ggplot(pcadata, aes(PC3, PC4,color = treatment)) + 
+      geom_point(size = 2, alpha = 1) +
+      stat_ellipse(type = "t") +
+      xlab(paste0("PC3: ", percentVar[3],"% variance")) +
+      ylab(paste0("PC4: ", percentVar[4],"% variance")) +
+      theme_cowplot(font_size = 8, line_size = 0.25) 
+
+![](../figures/hyp/PCAmale-2.png)
+
+    summary(aov(PC3 ~ treatment, data=pcadata)) 
+
+    ##             Df Sum Sq Mean Sq F value Pr(>F)
+    ## treatment    8  134.9   16.86   0.761  0.638
+    ## Residuals   85 1883.5   22.16
+
+    summary(aov(PC4 ~ treatment, data=pcadata)) 
+
+    ##             Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## treatment    8  478.2   59.77   4.613 0.000106 ***
+    ## Residuals   85 1101.4   12.96                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    summary(aov(PC5 ~ treatment, data=pcadata)) 
+
+    ##             Df Sum Sq Mean Sq F value Pr(>F)
+    ## treatment    8   70.2    8.78   0.691  0.698
+    ## Residuals   85 1080.1   12.71
+
+    summary(aov(PC6 ~ treatment, data=pcadata)) 
+
+    ##             Df Sum Sq Mean Sq F value Pr(>F)
+    ## treatment    8   45.5   5.684   0.589  0.784
+    ## Residuals   85  820.1   9.648
+
+Heatmaps
+
+    # see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
+    sampleDists <- dist(t(assay(vsd)))
+
+    sampleDistMatrix <- as.matrix(sampleDists)
+    rownames(sampleDistMatrix) <- NULL
+    colnames(sampleDistMatrix) <- colData$treatment
+    colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+    pheatmap(sampleDistMatrix,
+             clustering_distance_rows=sampleDists,
+             clustering_distance_cols=sampleDists,
+             col=colors,
+             fontsize = 6)
+
+![](../figures/hyp/heatmapMale-1.png)
