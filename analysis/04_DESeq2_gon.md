@@ -1,176 +1,30 @@
     library(tidyverse)
-
-    ## ── Attaching packages ────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
-
-    ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
-    ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
-    ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
-    ## ✔ readr   1.3.1       ✔ forcats 0.4.0
-
-    ## ── Conflicts ───────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-
     library(DESeq2)
-
-    ## Loading required package: S4Vectors
-
-    ## Loading required package: stats4
-
-    ## Loading required package: BiocGenerics
-
-    ## Loading required package: parallel
-
-    ## 
-    ## Attaching package: 'BiocGenerics'
-
-    ## The following objects are masked from 'package:parallel':
-    ## 
-    ##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-    ##     clusterExport, clusterMap, parApply, parCapply, parLapply,
-    ##     parLapplyLB, parRapply, parSapply, parSapplyLB
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     combine, intersect, setdiff, union
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     IQR, mad, sd, var, xtabs
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     anyDuplicated, append, as.data.frame, basename, cbind,
-    ##     colMeans, colnames, colSums, dirname, do.call, duplicated,
-    ##     eval, evalq, Filter, Find, get, grep, grepl, intersect,
-    ##     is.unsorted, lapply, lengths, Map, mapply, match, mget, order,
-    ##     paste, pmax, pmax.int, pmin, pmin.int, Position, rank, rbind,
-    ##     Reduce, rowMeans, rownames, rowSums, sapply, setdiff, sort,
-    ##     table, tapply, union, unique, unsplit, which, which.max,
-    ##     which.min
-
-    ## 
-    ## Attaching package: 'S4Vectors'
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     first, rename
-
-    ## The following object is masked from 'package:tidyr':
-    ## 
-    ##     expand
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     expand.grid
-
-    ## Loading required package: IRanges
-
-    ## 
-    ## Attaching package: 'IRanges'
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     collapse, desc, slice
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     reduce
-
-    ## Loading required package: GenomicRanges
-
-    ## Loading required package: GenomeInfoDb
-
-    ## Loading required package: SummarizedExperiment
-
-    ## Loading required package: Biobase
-
-    ## Welcome to Bioconductor
-    ## 
-    ##     Vignettes contain introductory material; view with
-    ##     'browseVignettes()'. To cite Bioconductor, see
-    ##     'citation("Biobase")', and for packages 'citation("pkgname")'.
-
-    ## Loading required package: DelayedArray
-
-    ## Loading required package: matrixStats
-
-    ## 
-    ## Attaching package: 'matrixStats'
-
-    ## The following objects are masked from 'package:Biobase':
-    ## 
-    ##     anyMissing, rowMedians
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     count
-
-    ## Loading required package: BiocParallel
-
-    ## 
-    ## Attaching package: 'DelayedArray'
-
-    ## The following objects are masked from 'package:matrixStats':
-    ## 
-    ##     colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     simplify
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     aperm, apply
-
     library(cowplot)
-
-    ## 
-    ## Attaching package: 'cowplot'
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     ggsave
-
     library(RColorBrewer)
     library(pheatmap)
+    library(kableExtra)
+    library(viridis)
 
     # load custom functions  
-    source("../R/functions.R")   
+    source("../R/functions.R")  
 
     knitr::opts_chunk$set(fig.path = '../figures/gon/',cache=TRUE)
 
-This anlaysis will *exclude* the control timepoint but *combine*
-incubation and nestling timepoints.
+Females only
+============
 
     # import "colData" which contains sample information and "countData" which contains read counts
     colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
     countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
-    geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1) 
-
-    # making new groups
-    colData$group <- NULL
-    colData$tempgroup <- ifelse(colData$treatment == "bldg", "bldg",
-                      ifelse(colData$treatment == "control", "control",
-                       ifelse(colData$treatment == "hatch", "hatch",
-                        ifelse(grepl("inc", colData$treatment), "inc",
-                         ifelse(colData$treatment == "lay", "lay", "nestl")))))
-    colData$tempgroup <- as.factor(colData$tempgroup)
-
-    colData$group <- paste(colData$sex, colData$tempgroup, sep = "")
-    colData$group <- as.factor(colData$group)
-    str(colData$group)
-
-    ##  Factor w/ 12 levels "femalebldg","femalecontrol",..: 8 8 8 8 8 8 2 2 2 8 ...
+    geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
 
     colData$treatment <- factor(colData$treatment, levels = 
                                   c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                                     "inc.d17", "hatch", "n5", "n9"))
 
-    #select samples of interest from colData
     colData <- colData %>%
       dplyr::filter(grepl('gonad', tissue)) %>%
-      #dplyr::filter(treatment != "control") %>%
       dplyr::filter(sex == "female") %>%
       droplevels()
     row.names(colData) <- colData$V1
@@ -178,21 +32,21 @@ incubation and nestling timepoints.
     # print sample sizes
     colData %>% select(group, tissue)  %>%  summary()
 
-    ##            group      tissue  
-    ##  femalebldg   :10   gonad:98  
-    ##  femalecontrol:13             
-    ##  femalehatch  :10             
-    ##  femaleinc    :34             
-    ##  femalelay    :10             
-    ##  femalenestl  :21
+    ##                   group      tissue  
+    ##  female.gonad.control:13   gonad:98  
+    ##  female.gonad.inc.d9 :13             
+    ##  female.gonad.inc.d17:11             
+    ##  female.gonad.n9     :11             
+    ##  female.gonad.bldg   :10             
+    ##  female.gonad.hatch  :10             
+    ##  (Other)             :30
 
-    #select samples of interest from countData
     savecols <- as.character(colData$V1) 
     savecols <- as.vector(savecols) 
     countData <- countData %>% dplyr::select(one_of(savecols)) 
 
     # check that row and col lenghts are equal
-    ncol(countData) == nrow(colData)  
+    ncol(countData) == nrow(colData) 
 
     ## [1] TRUE
 
@@ -222,249 +76,398 @@ incubation and nestling timepoints.
 
     ## fitting model and testing
 
-    vsd <- vst(dds, blind=FALSE) # variance stabilized  
-
-    levels(colData$treatment)
-
-    ## [1] "control" "bldg"    "lay"     "inc.d3"  "inc.d9"  "inc.d17" "hatch"  
-    ## [8] "n5"      "n9"
-
-    summary(results(dds, contrast=c("treatment",'control', 'bldg'))) 
-
-    ## 
-    ## out of 14900 with nonzero total read count
-    ## adjusted p-value < 0.1
-    ## LFC > 0 (up)       : 3797, 25%
-    ## LFC < 0 (down)     : 3639, 24%
-    ## outliers [1]       : 0, 0%
-    ## low counts [2]     : 0, 0%
-    ## (mean count < 0)
-    ## [1] see 'cooksCutoff' argument of ?results
-    ## [2] see 'independentFiltering' argument of ?results
-
-    summary(results(dds, contrast=c("treatment",'control', 'lay')))     
-    summary(results(dds, contrast=c("treatment",'control', 'inc.d3')))  
-    summary(results(dds, contrast=c("treatment",'control', 'inc.d9')))   
-    summary(results(dds, contrast=c("treatment",'control', 'inc.d17')))  
-    summary(results(dds, contrast=c("treatment",'control', 'hatch')))    
-    summary(results(dds, contrast=c("treatment",'control', 'n5')))      
-    summary(results(dds, contrast=c("treatment",'control', 'n9')))       
-
-    summary(results(dds, contrast=c("treatment",'bldg', 'lay')))      
-    summary(results(dds, contrast=c("treatment",'bldg', 'inc.d3')))   
-    summary(results(dds, contrast=c("treatment",'bldg', 'inc.d9')))   
-    summary(results(dds, contrast=c("treatment",'bldg', 'inc.d17')))  
-    summary(results(dds, contrast=c("treatment",'bldg', 'hatch')))   
-    summary(results(dds, contrast=c("treatment",'bldg', 'n5')))      
-    summary(results(dds, contrast=c("treatment",'bldg', 'n9')))      
-
-    #summary(results(dds, contrast=c("treatment",'lay', 'bldg')))     
-    summary(results(dds, contrast=c("treatment",'lay', 'inc.d3')))    
-    summary(results(dds, contrast=c("treatment",'lay', 'inc.d9')))   
-    summary(results(dds, contrast=c("treatment",'lay', 'inc.d17')))  
-    summary(results(dds, contrast=c("treatment",'lay', 'hatch')))    
-    summary(results(dds, contrast=c("treatment",'lay', 'n5')))       
-    summary(results(dds, contrast=c("treatment",'lay', 'n9')))       
-
-    #summary(results(dds, contrast=c("treatment",'inc.d3', 'bldg')))     
-    #summary(results(dds, contrast=c("treatment",'inc.d3', 'lay')))       
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'inc.d9')))   
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'inc.d17')))   
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'lay')))      
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'n5')))        
-    summary(results(dds, contrast=c("treatment",'inc.d3', 'n9')))       
-
-    summary(results(dds, contrast=c("treatment",'inc.d9', 'inc.d17')))   
-    summary(results(dds, contrast=c("treatment",'inc.d9', 'lay')))      
-    summary(results(dds, contrast=c("treatment",'inc.d9', 'n5')))       
-    summary(results(dds, contrast=c("treatment",'inc.d9', 'n9')))       
-
-    summary(results(dds, contrast=c("treatment",'inc.d17', 'lay')))  
-    summary(results(dds, contrast=c("treatment",'inc.d17', 'n5')))   
-    summary(results(dds, contrast=c("treatment",'inc.d17', 'n9')))   
-
-    #summary(results(dds, contrast=c("treatment",'hatch', 'bldg')))      
-    #summary(results(dds, contrast=c("treatment",'hatch', 'lay')))       
-    #summary(results(dds, contrast=c("treatment",'hatch', 'inc.d3')))    
-    #summary(results(dds, contrast=c("treatment",'hatch', 'inc.d9')))    
-    summary(results(dds, contrast=c("treatment",'hatch', 'inc.d17')))  
-    summary(results(dds, contrast=c("treatment",'hatch', 'n5')))       
-    summary(results(dds, contrast=c("treatment",'hatch', 'n9')))       
-
-    #summary(results(dds, contrast=c("treatment",'n5', 'bldg')))      
-    #summary(results(dds, contrast=c("treatment",'n5', 'lay')))       
-    #summary(results(dds, contrast=c("treatment",'n5', 'inc.d3')))  
-    #summary(results(dds, contrast=c("treatment",'n5', 'inc.d9')))   
-    #summary(results(dds, contrast=c("treatment",'n5', 'inc.d17')))  
-    summary(results(dds, contrast=c("treatment",'n5', 'hatch')))   
-    summary(results(dds, contrast=c("treatment",'n5', 'n9')))      
-
-    #summary(results(dds, contrast=c("treatment",'n9', 'bldg')))     
-    #summary(results(dds, contrast=c("treatment",'n9', 'lay')))      
-    #summary(results(dds, contrast=c("treatment",'n9', 'inc.d3')))   
-    #summary(results(dds, contrast=c("treatment",'n9', 'inc.d9')))   
-    #summary(results(dds, contrast=c("treatment",'n9', 'inc.d17')))  
-    #summary(results(dds, contrast=c("treatment",'n9', 'hatch')))    
-    summary(results(dds, contrast=c("treatment",'n9', 'n5')))     
-
-    levels(colData$treatment)
-
-    ## [1] "control" "bldg"    "lay"     "inc.d3"  "inc.d9"  "inc.d17" "hatch"  
-    ## [8] "n5"      "n9"
-
-    totalDEGs(c("treatment", 'bldg','lay'))
-
-    ## [1] 778
-
-    totalDEGs(c("treatment", 'bldg','inc.d3'))
-
-    ## [1] 2039
-
-    totalDEGs(c("treatment", 'bldg','inc.d9'))
-
-    ## [1] 1165
-
-    totalDEGs(c("treatment", 'bldg','inc.d17'))
-
-    ## [1] 5025
-
-    totalDEGs(c("treatment", 'bldg','hatch'))
-
-    ## [1] 1709
-
-    totalDEGs(c("treatment", 'bldg','n5'))
-
-    ## [1] 1295
-
-    totalDEGs(c("treatment", 'bldg','n9'))
-
-    ## [1] 55
-
-    #totalDEGs(c("treatment", 'lay','bldg'))
-    totalDEGs(c("treatment", 'lay','inc.d3'))
-
-    ## [1] 2193
-
-    totalDEGs(c("treatment", 'lay','inc.d9'))
-
-    ## [1] 1456
-
-    totalDEGs(c("treatment", 'lay','inc.d17'))
-
-    ## [1] 4090
-
-    totalDEGs(c("treatment", 'lay','hatch'))
-
-    ## [1] 2132
-
-    totalDEGs(c("treatment", 'lay','n5'))
-
-    ## [1] 1198
-
-    totalDEGs(c("treatment", 'lay','n9'))
-
-    ## [1] 1039
-
-    #totalDEGs(c("treatment", 'inc.d3','bldg'))
-    #totalDEGs(c("treatment", 'inc.d3','lay'))
-    totalDEGs(c("treatment", 'inc.d3','inc.d9'))
-
-    ## [1] 13
-
-    totalDEGs(c("treatment", 'inc.d3','inc.d17'))
-
-    ## [1] 125
-
-    totalDEGs(c("treatment", 'inc.d3','hatch'))
-
-    ## [1] 82
-
-    totalDEGs(c("treatment", 'inc.d3','n5'))
-
-    ## [1] 482
-
-    totalDEGs(c("treatment", 'inc.d3','n9'))
-
-    ## [1] 1867
-
-    #totalDEGs(c("treatment", 'inc.d9','bldg'))
-    #totalDEGs(c("treatment", 'inc.d9','lay'))
-    #totalDEGs(c("treatment", 'inc.d9','inc.d3'))
-    totalDEGs(c("treatment", 'inc.d9','inc.d17'))
-
-    ## [1] 305
-
-    totalDEGs(c("treatment", 'inc.d9','hatch'))
-
-    ## [1] 6
-
-    totalDEGs(c("treatment", 'inc.d9','n5'))
-
-    ## [1] 65
-
-    totalDEGs(c("treatment", 'inc.d9','n9'))
-
-    ## [1] 1031
-
-    #totalDEGs(c("treatment", 'inc.d17','bldg'))
-    #totalDEGs(c("treatment", 'inc.d17','lay'))
-    #totalDEGs(c("treatment", 'inc.d17','inc.d3'))
-    #totalDEGs(c("treatment", 'inc.d17','inc.d9'))
-    totalDEGs(c("treatment", 'inc.d17','hatch'))
-
-    ## [1] 2
-
-    totalDEGs(c("treatment", 'inc.d17','n5'))
-
-    ## [1] 17
-
-    totalDEGs(c("treatment", 'inc.d17','n9'))
-
-    ## [1] 3952
-
-    #totalDEGs(c("treatment", 'hatch','bldg'))
-    #totalDEGs(c("treatment", 'hatch','lay'))
-    #totalDEGs(c("treatment", 'hatch','inc.d3'))
-    #totalDEGs(c("treatment", 'hatch','inc.d9'))
-    totalDEGs(c("treatment", 'hatch','inc.d17'))
-
-    ## [1] 2
-
-    totalDEGs(c("treatment", 'hatch','n5'))
-
-    ## [1] 3
-
-    totalDEGs(c("treatment", 'hatch','n9'))
-
-    ## [1] 723
-
-    #totalDEGs(c("treatment", 'n5','bldg'))
-    #totalDEGs(c("treatment", 'n5','lay'))
-    #totalDEGs(c("treatment", 'n5','inc.d3'))
-    #totalDEGs(c("treatment", 'n5','inc.d9'))
-    #totalDEGs(c("treatment", 'n5','inc.d17'))
-    totalDEGs(c("treatment", 'n5','hatch'))
-
-    ## [1] 3
-
-    totalDEGs(c("treatment", 'n5','n9'))
-
-    ## [1] 271
-
-    #totalDEGs(c("treatment", 'n9','bldg'))
-    #totalDEGs(c("treatment", 'n9','lay'))
-    #totalDEGs(c("treatment", 'n9','inc.d3'))
-    #totalDEGs(c("treatment", 'n9','inc.d9'))
-    #totalDEGs(c("treatment", 'n9','inc.d17'))
-    #totalDEGs(c("treatment", 'n9','hatch'))
-    totalDEGs(c("treatment", 'n9','n5'))
-
-    ## [1] 271
-
-    levels(colData$treatment)
-
-    ## [1] "control" "bldg"    "lay"     "inc.d3"  "inc.d9"  "inc.d17" "hatch"  
-    ## [8] "n5"      "n9"
+    vsd <- vst(dds, blind=FALSE) # variance stabilized 
+
+    #create list of groups
+    a <- levels(colData$treatment)
+    b <- levels(colData$treatment)
+
+    # slim for testing
+    #a <- c("n9", "bldg" , "lay" )
+    #b <- c("n9", "bldg" , "lay" )
+
+    # comapre all contrasts, save to datafrmes
+    dat=data.frame()
+    for (i in a){
+      for (j in b){
+        if (i != j) {
+          k <- paste(i,j, sep = "") #assigns usique rownames
+          dat[k,1]<-i               
+          dat[k,2]<-j
+          dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+        }
+      }
+    }
+
+    head(dat)
+
+    ##                     V1      V2   V3
+    ## controlbldg    control    bldg 7436
+    ## controllay     control     lay 7164
+    ## controlinc.d3  control  inc.d3 5303
+    ## controlinc.d9  control  inc.d9 5523
+    ## controlinc.d17 control inc.d17 2284
+    ## controlhatch   control   hatch 3519
+
+    # widen data to create table of degs
+    rownames(dat) <- NULL #remove row names
+    data_wide <- spread(dat, V2, V3)
+    data_wide
+
+    ##        V1 bldg control hatch inc.d17 inc.d3 inc.d9  lay   n5   n9
+    ## 1    bldg   NA    7436  1709    5025   2039   1165  778 1295   55
+    ## 2 control 7436      NA  3519    2284   5303   5523 7164 4885 7191
+    ## 3   hatch 1709    3519    NA       2     82      6 2132    3  723
+    ## 4 inc.d17 5025    2284     2      NA    125    305 4090   17 3952
+    ## 5  inc.d3 2039    5303    82     125     NA     13 2193  482 1867
+    ## 6  inc.d9 1165    5523     6     305     13     NA 1456   65 1031
+    ## 7     lay  778    7164  2132    4090   2193   1456   NA 1198 1039
+    ## 8      n5 1295    4885     3      17    482     65 1198   NA  271
+    ## 9      n9   55    7191   723    3952   1867   1031 1039  271   NA
+
+    kable(data_wide) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+V1
+</th>
+<th style="text-align:right;">
+bldg
+</th>
+<th style="text-align:right;">
+control
+</th>
+<th style="text-align:right;">
+hatch
+</th>
+<th style="text-align:right;">
+inc.d17
+</th>
+<th style="text-align:right;">
+inc.d3
+</th>
+<th style="text-align:right;">
+inc.d9
+</th>
+<th style="text-align:right;">
+lay
+</th>
+<th style="text-align:right;">
+n5
+</th>
+<th style="text-align:right;">
+n9
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+7436
+</td>
+<td style="text-align:right;">
+1709
+</td>
+<td style="text-align:right;">
+5025
+</td>
+<td style="text-align:right;">
+2039
+</td>
+<td style="text-align:right;">
+1165
+</td>
+<td style="text-align:right;">
+778
+</td>
+<td style="text-align:right;">
+1295
+</td>
+<td style="text-align:right;">
+55
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+control
+</td>
+<td style="text-align:right;">
+7436
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+3519
+</td>
+<td style="text-align:right;">
+2284
+</td>
+<td style="text-align:right;">
+5303
+</td>
+<td style="text-align:right;">
+5523
+</td>
+<td style="text-align:right;">
+7164
+</td>
+<td style="text-align:right;">
+4885
+</td>
+<td style="text-align:right;">
+7191
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1709
+</td>
+<td style="text-align:right;">
+3519
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+82
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+2132
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+723
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+5025
+</td>
+<td style="text-align:right;">
+2284
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+125
+</td>
+<td style="text-align:right;">
+305
+</td>
+<td style="text-align:right;">
+4090
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+3952
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+2039
+</td>
+<td style="text-align:right;">
+5303
+</td>
+<td style="text-align:right;">
+82
+</td>
+<td style="text-align:right;">
+125
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+2193
+</td>
+<td style="text-align:right;">
+482
+</td>
+<td style="text-align:right;">
+1867
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+1165
+</td>
+<td style="text-align:right;">
+5523
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+305
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1456
+</td>
+<td style="text-align:right;">
+65
+</td>
+<td style="text-align:right;">
+1031
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+778
+</td>
+<td style="text-align:right;">
+7164
+</td>
+<td style="text-align:right;">
+2132
+</td>
+<td style="text-align:right;">
+4090
+</td>
+<td style="text-align:right;">
+2193
+</td>
+<td style="text-align:right;">
+1456
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+1198
+</td>
+<td style="text-align:right;">
+1039
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+1295
+</td>
+<td style="text-align:right;">
+4885
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+482
+</td>
+<td style="text-align:right;">
+65
+</td>
+<td style="text-align:right;">
+1198
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+271
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+55
+</td>
+<td style="text-align:right;">
+7191
+</td>
+<td style="text-align:right;">
+723
+</td>
+<td style="text-align:right;">
+3952
+</td>
+<td style="text-align:right;">
+1867
+</td>
+<td style="text-align:right;">
+1031
+</td>
+<td style="text-align:right;">
+1039
+</td>
+<td style="text-align:right;">
+271
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+
+    dat$V1 <- factor(dat$V1, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+    dat$V2 <- factor(dat$V2, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+
+    ggplot(dat, aes(V1, V2)) +
+      geom_tile(aes(fill = V3)) +
+      scale_fill_viridis(na.value="#FFFFFF00") + 
+      xlab("Treatment") + ylab("Treatment") +
+      labs(fill = "# of DEGs")
+
+![](../figures/gon/restable-1.png)
 
     # create the dataframe using my function pcadataframe
     pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
@@ -481,30 +484,6 @@ incubation and nestling timepoints.
       theme_cowplot(font_size = 8, line_size = 0.25) 
 
 ![](../figures/gon/PCA-1.png)
-
-    ggplot(pcadata, aes(PC2, PC3,color = treatment)) + 
-      geom_point(size = 2, alpha = 1) +
-      stat_ellipse(type = "t") +
-      xlab(paste0("PC2: ", percentVar[2],"% variance")) +
-      ylab(paste0("PC3: ", percentVar[3],"% variance")) +
-      theme_cowplot(font_size = 8, line_size = 0.25) 
-
-![](../figures/gon/PCA-2.png)
-
-    ggplot(pcadata, aes(PC3, PC4,color = treatment)) + 
-      geom_point(size = 2, alpha = 1) +
-      stat_ellipse(type = "t") +
-      xlab(paste0("PC3: ", percentVar[3],"% variance")) +
-      ylab(paste0("PC4: ", percentVar[4],"% variance")) +
-      theme_cowplot(font_size = 8, line_size = 0.25) 
-
-![](../figures/gon/PCA-3.png)
-
-    plotPCA(vsd, intgroup=c("treatment"))
-
-![](../figures/gon/PCA-4.png)
-
-PCA statistics
 
     summary(aov(PC1 ~ treatment, data=pcadata)) 
 
@@ -614,6 +593,15 @@ PCA statistics
     ## n9-hatch         -4.3947896 -18.0868027  9.297223 0.9829099
     ## n9-n5            -0.9082149 -14.6002280 12.783798 0.9999999
 
+    ggplot(pcadata, aes(PC3, PC4,color = treatment)) + 
+      geom_point(size = 2, alpha = 1) +
+      stat_ellipse(type = "t") +
+      xlab(paste0("PC3: ", percentVar[3],"% variance")) +
+      ylab(paste0("PC4: ", percentVar[4],"% variance")) +
+      theme_cowplot(font_size = 8, line_size = 0.25) 
+
+![](../figures/gon/PCA-2.png)
+
     summary(aov(PC3 ~ treatment, data=pcadata)) 
 
     ##             Df Sum Sq Mean Sq F value Pr(>F)
@@ -644,6 +632,8 @@ PCA statistics
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
+Heatmaps
+
     # see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
     sampleDists <- dist(t(assay(vsd)))
 
@@ -658,3 +648,461 @@ PCA statistics
              fontsize = 6)
 
 ![](../figures/gon/heatmap-1.png)
+
+Males only
+==========
+
+    # import "colData" which contains sample information and "countData" which contains read counts
+    colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
+    countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+    geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+
+    colData$treatment <- factor(colData$treatment, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+
+    colData <- colData %>%
+      dplyr::filter(grepl('gonad', tissue)) %>%
+      dplyr::filter(sex == "male") %>%
+      droplevels()
+    row.names(colData) <- colData$V1
+
+    # print sample sizes
+    colData %>% select(group, tissue)  %>%  summary()
+
+    ##                 group      tissue  
+    ##  male.gonad.control:13   gonad:96  
+    ##  male.gonad.inc.d17:11             
+    ##  male.gonad.inc.d9 :11             
+    ##  male.gonad.n9     :11             
+    ##  male.gonad.bldg   :10             
+    ##  male.gonad.hatch  :10             
+    ##  (Other)           :30
+
+    savecols <- as.character(colData$V1) 
+    savecols <- as.vector(savecols) 
+    countData <- countData %>% dplyr::select(one_of(savecols)) 
+
+    # check that row and col lenghts are equal
+    ncol(countData) == nrow(colData) 
+
+    ## [1] TRUE
+
+    dds <- DESeqDataSetFromMatrix(countData = countData,
+                                  colData = colData,
+                                  design = ~ treatment )
+    dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
+    dds <- DESeq(dds) # Differential expression analysis
+
+    ## estimating size factors
+
+    ## estimating dispersions
+
+    ## gene-wise dispersion estimates
+
+    ## mean-dispersion relationship
+
+    ## final dispersion estimates
+
+    ## fitting model and testing
+
+    ## -- replacing outliers and refitting for 8 genes
+    ## -- DESeq argument 'minReplicatesForReplace' = 7 
+    ## -- original counts are preserved in counts(dds)
+
+    ## estimating dispersions
+
+    ## fitting model and testing
+
+    vsd <- vst(dds, blind=FALSE) # variance stabilized 
+
+    #create list of groups
+    a <- levels(colData$treatment)
+    b <- levels(colData$treatment)
+
+    # slim for testing
+    #a <- c("n9", "bldg" , "lay" )
+    #b <- c("n9", "bldg" , "lay" )
+
+    # comapre all contrasts, save to datafrmes
+    dat=data.frame()
+    for (i in a){
+      for (j in b){
+        if (i != j) {
+          k <- paste(i,j, sep = "") #assigns usique rownames
+          dat[k,1]<-i               
+          dat[k,2]<-j
+          dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+        }
+      }
+    }
+
+    head(dat)
+
+    ##                     V1      V2   V3
+    ## controlbldg    control    bldg 4352
+    ## controllay     control     lay 5500
+    ## controlinc.d3  control  inc.d3 3827
+    ## controlinc.d9  control  inc.d9 4251
+    ## controlinc.d17 control inc.d17 3474
+    ## controlhatch   control   hatch 4315
+
+    # widen data to create table of degs
+    rownames(dat) <- NULL #remove row names
+    data_wide <- spread(dat, V2, V3)
+    data_wide
+
+    ##        V1 bldg control hatch inc.d17 inc.d3 inc.d9  lay   n5   n9
+    ## 1    bldg   NA    4352     0       0      0      0  126    0    0
+    ## 2 control 4352      NA  4315    3474   3827   4251 5500 4878 5284
+    ## 3   hatch    0    4315    NA       0      0      2   34    0    0
+    ## 4 inc.d17    0    3474     0      NA      0      0  373    1    0
+    ## 5  inc.d3    0    3827     0       0     NA      0  127    1    2
+    ## 6  inc.d9    0    4251     2       0      0     NA 2527  409   16
+    ## 7     lay  126    5500    34     373    127   2527   NA    0    1
+    ## 8      n5    0    4878     0       1      1    409    0   NA    0
+    ## 9      n9    0    5284     0       0      2     16    1    0   NA
+
+    kable(data_wide) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+V1
+</th>
+<th style="text-align:right;">
+bldg
+</th>
+<th style="text-align:right;">
+control
+</th>
+<th style="text-align:right;">
+hatch
+</th>
+<th style="text-align:right;">
+inc.d17
+</th>
+<th style="text-align:right;">
+inc.d3
+</th>
+<th style="text-align:right;">
+inc.d9
+</th>
+<th style="text-align:right;">
+lay
+</th>
+<th style="text-align:right;">
+n5
+</th>
+<th style="text-align:right;">
+n9
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+4352
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+control
+</td>
+<td style="text-align:right;">
+4352
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+4315
+</td>
+<td style="text-align:right;">
+3474
+</td>
+<td style="text-align:right;">
+3827
+</td>
+<td style="text-align:right;">
+4251
+</td>
+<td style="text-align:right;">
+5500
+</td>
+<td style="text-align:right;">
+4878
+</td>
+<td style="text-align:right;">
+5284
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4315
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3474
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+373
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3827
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4251
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+2527
+</td>
+<td style="text-align:right;">
+409
+</td>
+<td style="text-align:right;">
+16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+126
+</td>
+<td style="text-align:right;">
+5500
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+373
+</td>
+<td style="text-align:right;">
+127
+</td>
+<td style="text-align:right;">
+2527
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4878
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+409
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+5284
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+
+    dat$V1 <- factor(dat$V1, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+    dat$V2 <- factor(dat$V2, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+
+    ggplot(dat, aes(V1, V2)) +
+      geom_tile(aes(fill = V3)) +
+      scale_fill_viridis(na.value="#FFFFFF00") + 
+      xlab("Treatment") + ylab("Treatment") +
+      labs(fill = "# of DEGs")
+
+![](../figures/gon/restableMale-1.png)
