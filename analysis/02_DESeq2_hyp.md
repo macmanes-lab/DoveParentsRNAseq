@@ -461,9 +461,18 @@ NA
 </tbody>
 </table>
 
+    dat$V1 <- factor(dat$V1, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+    dat$V2 <- factor(dat$V2, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+
     ggplot(dat, aes(V1, V2)) +
       geom_tile(aes(fill = V3)) +
-      scale_fill_viridis(na.value="#FFFFFF00")
+      scale_fill_viridis(na.value="#FFFFFF00") + 
+      xlab("Treatment") + ylab("Treatment") +
+      labs(fill = "# of DEGs")
 
 ![](../figures/hyp/restable-1.png)
 
@@ -1086,9 +1095,18 @@ NA
 </tbody>
 </table>
 
+    dat$V1 <- factor(dat$V1, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+    dat$V2 <- factor(dat$V2, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+
     ggplot(dat, aes(V1, V2)) +
       geom_tile(aes(fill = V3)) +
-      scale_fill_viridis(na.value="#FFFFFF00") 
+      scale_fill_viridis(na.value="#FFFFFF00") + 
+      xlab("Treatment") + ylab("Treatment") +
+      labs(fill = "# of DEGs")
 
 ![](../figures/hyp/restableMale-1.png)
 
