@@ -3,7 +3,7 @@ title: "02_DESeq_hyp"
 output: md_document
 ---
 
-```{r setup}
+```{r setup, message=F, comment=FALSE, warning=FALSE}
 library(tidyverse)
 library(DESeq2)
 library(cowplot)
@@ -230,7 +230,7 @@ kable(data_wide)
 
 ggplot(dat, aes(V1, V2)) +
   geom_tile(aes(fill = V3)) +
-  scale_fill_viridis(na.value="#FFFFFF00")
+  scale_fill_viridis(na.value="#FFFFFF00") 
 ```
 
 ```{r PCAmale, message=FALSE, warning=FALSE}
