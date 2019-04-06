@@ -3,7 +3,7 @@ title: "02_DESeq_hyp"
 output: md_document
 ---
 
-```{r setup, message=F, comment=FALSE, warning=FALSE}
+```{r setup, message=F, comment=FALSE, warning=FALSE, results='hide'}
 library(tidyverse)
 library(DESeq2)
 library(cowplot)
