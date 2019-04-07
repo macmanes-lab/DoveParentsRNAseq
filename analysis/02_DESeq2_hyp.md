@@ -470,7 +470,8 @@ NA
 
     ggplot(dat, aes(V1, V2)) +
       geom_tile(aes(fill = V3)) +
-      scale_fill_viridis(na.value="#FFFFFF00") + 
+      scale_fill_viridis(na.value="#FFFFFF00", 
+                         limits = c(0,8028)) + 
       xlab("Treatment") + ylab("Treatment") +
       labs(fill = "# of DEGs")
 
@@ -1104,7 +1105,8 @@ NA
 
     ggplot(dat, aes(V1, V2)) +
       geom_tile(aes(fill = V3)) +
-      scale_fill_viridis(na.value="#FFFFFF00") + 
+      scale_fill_viridis(na.value="#FFFFFF00", 
+                         limits = c(0,8028)) + 
       xlab("Treatment") + ylab("Treatment") +
       labs(fill = "# of DEGs")
 

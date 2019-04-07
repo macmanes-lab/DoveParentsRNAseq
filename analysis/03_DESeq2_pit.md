@@ -464,7 +464,7 @@ NA
     ggplot(dat, aes(V1, V2)) +
       geom_tile(aes(fill = V3)) +
       scale_fill_viridis(na.value="#FFFFFF00", 
-                         limits = c(0,7914)) + 
+                         limits = c(0,8028)) + 
       xlab("Timepoint") + ylab("Timepoint") +
       labs(fill = "# of DEGs")
 
@@ -1099,7 +1099,7 @@ NA
     ggplot(dat, aes(V1, V2)) +
       geom_tile(aes(fill = V3)) +
       scale_fill_viridis(na.value="#FFFFFF00",
-                         limits = c(0,7914)) + 
+                         limits = c(0,8028)) + 
       xlab("Timepoint") + ylab("Timepoint") +
       labs(fill = "# of DEGs")
 
