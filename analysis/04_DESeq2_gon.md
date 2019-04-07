@@ -1112,12 +1112,12 @@ NA
 ![](../figures/gon/restableMale-1.png)
 
     dat %>%
-      filter(V1 != "control")  %>%
+      filter(V1 != "control", V2 != "control")  %>%
       ggplot( aes(V1, V2)) +
         geom_tile(aes(fill = V3)) +
         scale_fill_viridis(na.value="#FFFFFF00", 
-                         limits = c(0,8028),
-                         breaks = c(0, 2000, 4000, 6000, 8000)) + 
+                         limits = c(0, 5025),
+                         breaks = c(0, 1000, 2000, 3000, 4000, 5000)) + 
         xlab(" ") + ylab("Timepoint") +
         labs(fill = "# of DEGs")
 
