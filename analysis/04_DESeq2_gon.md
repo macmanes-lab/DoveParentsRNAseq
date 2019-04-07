@@ -464,8 +464,9 @@ NA
     ggplot(dat, aes(V1, V2)) +
       geom_tile(aes(fill = V3)) +
       scale_fill_viridis(na.value="#FFFFFF00", 
-                         limits = c(0,8028)) + 
-      xlab("Treatment") + ylab("Treatment") +
+                         limits = c(0,8028),
+                         breaks = c(0, 2000, 4000, 6000, 8000)) + 
+      xlab("Timepoint") + ylab("Timepoint") +
       labs(fill = "# of DEGs")
 
 ![](../figures/gon/restable-1.png)
@@ -1103,8 +1104,21 @@ NA
     ggplot(dat, aes(V1, V2)) +
       geom_tile(aes(fill = V3)) +
       scale_fill_viridis(na.value="#FFFFFF00", 
-                         limits = c(0,8028)) + 
-      xlab("Treatment") + ylab("Treatment") +
+                         limits = c(0,8028),
+                         breaks = c(0, 2000, 4000, 6000, 8000)) + 
+      xlab(" ") + ylab("Timepoint") +
       labs(fill = "# of DEGs")
 
 ![](../figures/gon/restableMale-1.png)
+
+    dat %>%
+      filter(V1 != "control")  %>%
+      ggplot( aes(V1, V2)) +
+        geom_tile(aes(fill = V3)) +
+        scale_fill_viridis(na.value="#FFFFFF00", 
+                         limits = c(0,8028),
+                         breaks = c(0, 2000, 4000, 6000, 8000)) + 
+        xlab(" ") + ylab("Timepoint") +
+        labs(fill = "# of DEGs")
+
+![](../figures/gon/restableMale-2.png)

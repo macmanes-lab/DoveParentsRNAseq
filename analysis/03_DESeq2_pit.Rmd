@@ -23,14 +23,14 @@ knitr::opts_chunk$set(fig.path = '../figures/pit/',cache=TRUE)
 ```{r read} 
 # import "colData" which contains sample information and "countData" which contains read counts
 colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
-countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)  
 geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
 ```
 
 ```{r factors} 
 colData$treatment <- factor(colData$treatment, levels = 
                               c("control", "bldg", "lay", "inc.d3", "inc.d9", 
-                                "inc.d17", "hatch", "n5", "n9"))
+                                "inc.d17", "hatch", "n5", "n9"))  
 ```
 
 ```{r filter} 
@@ -48,7 +48,7 @@ savecols <- as.vector(savecols)
 countData <- countData %>% dplyr::select(one_of(savecols)) 
 
 # check that row and col lenghts are equal
-ncol(countData) == nrow(colData) 
+ncol(countData) == nrow(colData)     
 ```
 
 
@@ -59,7 +59,7 @@ dds <- DESeqDataSetFromMatrix(countData = countData,
                               design = ~ treatment ) 
 dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
 dds <- DESeq(dds) # Differential expression analysis
-vsd <- vst(dds, blind=FALSE) # variance stabilized 
+vsd <- vst(dds, blind=FALSE) # variance stabilized   
 ```
 
 
@@ -85,7 +85,7 @@ for (i in a){
   }
 }
 
-head(dat)
+head(dat)  
 ```
 
 ```{r restable} 
@@ -105,9 +105,10 @@ dat$V2 <- factor(dat$V2, levels =
 ggplot(dat, aes(V1, V2)) +
   geom_tile(aes(fill = V3)) +
   scale_fill_viridis(na.value="#FFFFFF00", 
-                     limits = c(0,8028)) + 
+                     limits = c(0,8028),
+                     breaks = c(0, 2000, 4000, 6000, 8000)) + 
   xlab("Timepoint") + ylab("Timepoint") +
-  labs(fill = "# of DEGs")
+  labs(fill = "# of DEGs")  
 ```
 
 ```{r PCA, message=FALSE, warning=FALSE} 
@@ -142,7 +143,7 @@ summary(aov(PC4 ~ treatment, data=pcadata))
 
 summary(aov(PC5 ~ treatment, data=pcadata)) 
 
-summary(aov(PC6 ~ treatment, data=pcadata)) 
+summary(aov(PC6 ~ treatment, data=pcadata))   
 ```
 
 Heatmaps
@@ -159,7 +160,7 @@ pheatmap(sampleDistMatrix,
          clustering_distance_rows=sampleDists,
          clustering_distance_cols=sampleDists,
          col=colors,
-         fontsize = 6)
+         fontsize = 6)  
 ```
 
 # Males only
@@ -168,7 +169,7 @@ pheatmap(sampleDistMatrix,
 # import "colData" which contains sample information and "countData" which contains read counts
 colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
 countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
-geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)  
 ```
 
 ```{r factorsMale}
@@ -201,7 +202,7 @@ dds <- DESeqDataSetFromMatrix(countData = countData,
                               design = ~ treatment )
 dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
 dds <- DESeq(dds) # Differential expression analysis
-vsd <- vst(dds, blind=FALSE) # variance stabilized 
+vsd <- vst(dds, blind=FALSE) # variance stabilized   
 ```
 
 ```{r resloopMale} 
@@ -224,7 +225,7 @@ for (i in a){
       dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
     }
   }
-}
+}  
 
 head(dat)
 ```
@@ -245,10 +246,11 @@ dat$V2 <- factor(dat$V2, levels =
 
 ggplot(dat, aes(V1, V2)) +
   geom_tile(aes(fill = V3)) +
-  scale_fill_viridis(na.value="#FFFFFF00",
-                     limits = c(0,8028)) + 
-  xlab("Timepoint") + ylab("Timepoint") +
-  labs(fill = "# of DEGs")
+  scale_fill_viridis(na.value="#FFFFFF00", 
+                     limits = c(0,8028),
+                     breaks = c(0, 2000, 4000, 6000, 8000)) + 
+  xlab(" ") + ylab("Timepoint") +
+  labs(fill = "# of DEGs")  
 ```
 
 ```{r PCAmale, message=FALSE, warning=FALSE}
@@ -283,7 +285,7 @@ summary(aov(PC4 ~ treatment, data=pcadata))
 
 summary(aov(PC5 ~ treatment, data=pcadata)) 
 
-summary(aov(PC6 ~ treatment, data=pcadata)) 
+summary(aov(PC6 ~ treatment, data=pcadata))   
 ```
 
 Heatmaps
@@ -300,5 +302,5 @@ pheatmap(sampleDistMatrix,
          clustering_distance_rows=sampleDists,
          clustering_distance_cols=sampleDists,
          col=colors,
-         fontsize = 6)
+         fontsize = 6)  
 ```
