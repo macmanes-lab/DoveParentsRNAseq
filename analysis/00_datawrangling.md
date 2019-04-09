@@ -73,18 +73,13 @@ wrangle colData
     colData$NYNO <- sapply(strsplit(as.character(colData$temp),'\\.'), "[", 2)
 
     # relabel incorrectly named variables 
-    unique(colData$treatmentTemp)
-
-    ##  [1] "control"      "prolong"      "m-hatch"      "m-inc-d3"    
-    ##  [5] "inc-d9"       "m-inc-d8"     "m-n2"         "bldg"        
-    ##  [9] "n5"           "inc-d17"      "extend"       "hatch"       
-    ## [13] "n9"           "inc-d3"       "inc-prolong"  "m-inc-d9"    
-    ## [17] "extend-hatch" "m-inc-d17"    "lay"
-
-    colData$treatment <- ifelse(grepl("extend-hatch", colData$treatmentTemp), "extend", colData$treatmentTemp) 
+    colData$treatment <- ifelse(grepl("extend-hatch", colData$treatmentTemp), "extend",
+                                ifelse(grepl("inc-prolong", colData$treatmentTemp), "prolong",
+                                       ifelse(grepl("m.hatch", colData$treatmentTemp), "m.n2",
+                                       colData$treatmentTemp)))
 
     # drop no-longer-needed cols
-    colData <- colData %>% dplyr::select(-c(temp, treatmentTemp))
+    colData <- colData %>% dplyr::select(-c(temp, treatmentTemp, NYNO))
 
     # replace dashes with periods and make rowname, (to make deseq happy)
     colData$bird <- gsub("-", ".", colData$bird)
@@ -104,13 +99,12 @@ wrangle colData
     ## view colData
     str(colData)
 
-    ## 'data.frame':    987 obs. of  7 variables:
+    ## 'data.frame':    987 obs. of  6 variables:
     ##  $ V1       : chr  "L.Blu13_male_gonad_control.NYNO" "L.Blu13_male_hypothalamus_control.NYNO" "L.Blu13_male_pituitary_control.NYNO" "L.G107_male_gonad_control" ...
     ##  $ bird     : chr  "L.Blu13" "L.Blu13" "L.Blu13" "L.G107" ...
     ##  $ sex      : Factor w/ 2 levels "female","male": 2 2 2 2 2 2 1 1 1 2 ...
     ##  $ tissue   : Factor w/ 3 levels "hypothalamus",..: 3 1 2 3 1 2 3 1 2 3 ...
-    ##  $ NYNO     : chr  "NYNO" "NYNO" "NYNO" NA ...
-    ##  $ treatment: Factor w/ 18 levels "bldg","control",..: 2 2 2 2 2 2 2 2 2 2 ...
+    ##  $ treatment: Factor w/ 16 levels "bldg","control",..: 2 2 2 2 2 2 2 2 2 2 ...
     ##  $ group    : chr  "male.gonad.control" "male.hypothalamus.control" "male.pituitary.control" "male.gonad.control" ...
 
     head(colData, 5)
@@ -121,18 +115,18 @@ wrangle colData
     ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
     ## L.G107_male_gonad_control                           L.G107_male_gonad_control
     ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
-    ##                                           bird  sex       tissue NYNO
-    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male        gonad NYNO
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus NYNO
-    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male    pituitary NYNO
-    ## L.G107_male_gonad_control               L.G107 male        gonad <NA>
-    ## L.G107_male_hypothalamus_control        L.G107 male hypothalamus <NA>
-    ##                                        treatment                     group
-    ## L.Blu13_male_gonad_control.NYNO          control        male.gonad.control
-    ## L.Blu13_male_hypothalamus_control.NYNO   control male.hypothalamus.control
-    ## L.Blu13_male_pituitary_control.NYNO      control    male.pituitary.control
-    ## L.G107_male_gonad_control                control        male.gonad.control
-    ## L.G107_male_hypothalamus_control         control male.hypothalamus.control
+    ##                                           bird  sex       tissue treatment
+    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male        gonad   control
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus   control
+    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male    pituitary   control
+    ## L.G107_male_gonad_control               L.G107 male        gonad   control
+    ## L.G107_male_hypothalamus_control        L.G107 male hypothalamus   control
+    ##                                                            group
+    ## L.Blu13_male_gonad_control.NYNO               male.gonad.control
+    ## L.Blu13_male_hypothalamus_control.NYNO male.hypothalamus.control
+    ## L.Blu13_male_pituitary_control.NYNO       male.pituitary.control
+    ## L.G107_male_gonad_control                     male.gonad.control
+    ## L.G107_male_hypothalamus_control       male.hypothalamus.control
 
     # check that rownames and colnames match for DESeq
     ncol(countData) == nrow(colData)
@@ -152,13 +146,13 @@ subset for manipulation study
     colData_manipluation %>% select(sex,treatment, tissue)  %>%  summary()
 
     ##      sex          treatment           tissue   
-    ##  female:208   m.inc.d17:63   hypothalamus:138  
-    ##  male  :203   extend   :60   pituitary   :137  
+    ##  female:208   extend   :60   hypothalamus:138  
+    ##  male  :203   m.inc.d17:63   pituitary   :137  
     ##               m.inc.d3 :60   gonad       :136  
     ##               m.inc.d8 :60                     
     ##               m.inc.d9 :49                     
-    ##               m.hatch  :47                     
-    ##               (Other)  :72
+    ##               m.n2     :59                     
+    ##               prolong  :60
 
     # create list with filenames and select countData columns matching the file names
     savecols <- as.character(colData_manipluation$V1) 

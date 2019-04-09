@@ -57,11 +57,13 @@ colData$treatmentTemp <- sapply(strsplit(as.character(colData$temp),'\\.'), "[",
 colData$NYNO <- sapply(strsplit(as.character(colData$temp),'\\.'), "[", 2)
 
 # relabel incorrectly named variables 
-unique(colData$treatmentTemp)
-colData$treatment <- ifelse(grepl("extend-hatch", colData$treatmentTemp), "extend", colData$treatmentTemp) 
+colData$treatment <- ifelse(grepl("extend-hatch", colData$treatmentTemp), "extend",
+                            ifelse(grepl("inc-prolong", colData$treatmentTemp), "prolong",
+                                   ifelse(grepl("m.hatch", colData$treatmentTemp), "m.n2",
+                                   colData$treatmentTemp)))
 
 # drop no-longer-needed cols
-colData <- colData %>% dplyr::select(-c(temp, treatmentTemp))
+colData <- colData %>% dplyr::select(-c(temp, treatmentTemp, NYNO))
 
 # replace dashes with periods and make rowname, (to make deseq happy)
 colData$bird <- gsub("-", ".", colData$bird)
