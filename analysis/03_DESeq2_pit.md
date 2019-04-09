@@ -461,13 +461,15 @@ NA
                                   c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                                     "inc.d17", "hatch", "n5", "n9"))
 
-    ggplot(dat, aes(V1, V2)) +
-      geom_tile(aes(fill = V3)) +
-      scale_fill_viridis(na.value="#FFFFFF00", 
-                         limits = c(0,8028),
-                         breaks = c(0, 2000, 4000, 6000, 8000)) + 
-      xlab("Timepoint") + ylab("Timepoint") +
-      labs(fill = "# of DEGs")  
+    dat %>%
+      filter(V1 != "control", V2 != "control")  %>%
+      ggplot( aes(V1, V2)) +
+        geom_tile(aes(fill = V3)) +
+        scale_fill_viridis(na.value="#FFFFFF00", 
+                         limits = c(0, 5025),
+                         breaks = c(0, 1000, 2000, 3000, 4000, 5000)) + 
+        xlab(" ") + ylab("Timepoint") +
+        labs(fill = "# of DEGs") 
 
 ![](../figures/pit/restable-1.png)
 
@@ -1103,15 +1105,6 @@ NA
                                   c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                                     "inc.d17", "hatch", "n5", "n9"))
 
-    ggplot(dat, aes(V1, V2)) +
-      geom_tile(aes(fill = V3)) +
-      scale_fill_viridis(na.value="#FFFFFF00", 
-                         limits = c(0,8028),
-                         breaks = c(0, 2000, 4000, 6000, 8000)) + 
-      xlab(" ") + ylab("Timepoint") +
-      labs(fill = "# of DEGs")  
-
-![](../figures/pit/restableMale-1.png)
 
     dat %>%
       filter(V1 != "control", V2 != "control")  %>%
@@ -1123,7 +1116,7 @@ NA
         xlab(" ") + ylab("Timepoint") +
         labs(fill = "# of DEGs")
 
-![](../figures/pit/restableMale-2.png)
+![](../figures/pit/restableMale-1.png)
 
     # create the dataframe using my function pcadataframe
     pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
