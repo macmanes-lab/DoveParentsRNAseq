@@ -133,14 +133,6 @@ pca34 <- ggplot(pcadata, aes(PC3, PC4,color = treatment)) +
   labs(subtitle = eachgroup)
 print(pca34)
 
-summary(aov(PC3 ~ treatment, data=pcadata)) 
-
-summary(aov(PC4 ~ treatment, data=pcadata)) 
-
-summary(aov(PC5 ~ treatment, data=pcadata)) 
-
-summary(aov(PC6 ~ treatment, data=pcadata)) 
-
 # see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
 sampleDists <- dist(t(assay(vsd)))
 
