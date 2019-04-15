@@ -1,5 +1,5 @@
 ---
-title: "05_DESeq_manipulation"
+title: "07_DESeq_ALL"
 output: md_document
 ---
 
@@ -15,33 +15,40 @@ library(viridis)
 # load custom functions  
 source("../R/functions.R") 
 
-knitr::opts_chunk$set(fig.path = '../figures/manipulation/',cache=TRUE)
+knitr::opts_chunk$set(fig.path = '../figures/ALL/',cache=TRUE)
 ```
 
-# Manipulation data
 
 ```{r readfiles}
 # import "colData" which contains sample information and "countData" which contains read counts
 m.colData <- read.csv("../results/00_colData_manipluation.csv", header = T, row.names = 1)
 m.countData <- read.csv("../results/00_countData_manipluation.csv", header = T, row.names = 1)
-geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
 
-# set levels
-m.colData$treatment <- factor(m.colData$treatment, levels = 
-                              c("m.inc.d3", "m.inc.d8", "m.inc.d9",
-                                "m.inc.d17",  "prolong", "extend", "m.n2"))
+c.colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
+c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)  
 
-m.colData$sextissue <- as.factor(paste(m.colData$sex, m.colData$tissue, sep = "_"))
+a.colData <- rbind(m.colData, c.colData)
+a.countData <- cbind(m.countData, c.countData)
+
+a.colData$sextissue <- as.factor(paste(a.colData$sex, a.colData$tissue, sep = "_"))
 ```
 
-# Write for loop to do this one for every tissue and for every treatment
+```{r factors} 
+a.colData$treatment <- factor(a.colData$treatment, levels = 
+                              c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                "inc.d17", "hatch", "n5", "n9",
+                                "m.inc.d3", "m.inc.d8", "m.inc.d9",
+                                "m.inc.d17",  "prolong", "extend", "m.n2"))
+```
+
 
 ```{r althings}
-for (eachgroup in levels(m.colData$sextissue)){
+
+for (eachgroup in levels(a.colData$sextissue)){
   
   print(eachgroup)
   
-  colData <- m.colData %>%
+  colData <- a.colData %>%
       dplyr::filter(sextissue == eachgroup) %>%
       droplevels()
   row.names(colData) <- colData$V1
@@ -49,7 +56,7 @@ for (eachgroup in levels(m.colData$sextissue)){
   savecols <- as.character(colData$V1) 
   savecols <- as.vector(savecols) 
 
-  countData <- m.countData %>% dplyr::select(one_of(savecols)) 
+  countData <- a.countData %>% dplyr::select(one_of(savecols)) 
 
   # check that row and col lenghts are equal
   print(ncol(countData) == nrow(colData))
@@ -85,12 +92,12 @@ rownames(dat) <- NULL #remove row names
 data_wide <- spread(dat, V2, V3)
 print(data_wide) 
 
-dat$V1 <- factor(dat$V1, levels = 
-                              c("m.inc.d3", "m.inc.d8", "m.inc.d9",
-                                "m.inc.d17",  "prolong", "extend", "m.n2"))
-dat$V2 <- factor(dat$V2, levels = 
-                              c("m.inc.d3", "m.inc.d8", "m.inc.d9",
-                                "m.inc.d17",  "prolong", "extend", "m.n2"))
+#dat$V1 <- factor(dat$V1, levels = 
+#                              c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+#                                "inc.d17", "hatch", "n5", "n9",
+#                                "m.inc.d3", "m.inc.d8", "m.inc.d9",
+#                                "m.inc.d17",  "prolong", "extend", "m.n2"))
+dat$V2 <- dat$V1
 
 allcontrasts <- dat %>%
   ggplot( aes(V1, V2)) +
