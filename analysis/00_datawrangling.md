@@ -133,6 +133,14 @@ wrangle colData
 
     ## [1] TRUE
 
+save bird data
+--------------
+
+    birds <- colData %>%
+      select(bird, sex, treatment) %>%
+      distinct()
+    write.csv(birds, "../metadata/birds.csv")
+
 subset for manipulation study
 -----------------------------
 

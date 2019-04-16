@@ -88,6 +88,16 @@ head(colData, 5)
 ncol(countData) == nrow(colData)
 ```
 
+## save bird data 
+
+```{r}
+birds <- colData %>%
+  select(bird, sex, treatment) %>%
+  distinct()
+write.csv(birds, "../metadata/birds.csv")
+```
+
+
 ## subset for manipulation study
 
 ```{r manip}
