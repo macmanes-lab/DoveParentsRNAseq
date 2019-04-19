@@ -96,16 +96,20 @@ wrangle colData
     # create a combinatorial variable
     colData$group <- paste(colData$sex, colData$tissue, colData$treatment, sep=".")
 
+    # add variable to distinguish characterization study and manipulation
+    colData$study <- ifelse(grepl("m.|extend|prolong", colData$treatment), "manipulation", "charcterization")
+
     ## view colData
     str(colData)
 
-    ## 'data.frame':    987 obs. of  6 variables:
+    ## 'data.frame':    987 obs. of  7 variables:
     ##  $ V1       : chr  "L.Blu13_male_gonad_control.NYNO" "L.Blu13_male_hypothalamus_control.NYNO" "L.Blu13_male_pituitary_control.NYNO" "L.G107_male_gonad_control" ...
     ##  $ bird     : chr  "L.Blu13" "L.Blu13" "L.Blu13" "L.G107" ...
     ##  $ sex      : Factor w/ 2 levels "female","male": 2 2 2 2 2 2 1 1 1 2 ...
     ##  $ tissue   : Factor w/ 3 levels "hypothalamus",..: 3 1 2 3 1 2 3 1 2 3 ...
     ##  $ treatment: Factor w/ 16 levels "bldg","control",..: 2 2 2 2 2 2 2 2 2 2 ...
     ##  $ group    : chr  "male.gonad.control" "male.hypothalamus.control" "male.pituitary.control" "male.gonad.control" ...
+    ##  $ study    : chr  "charcterization" "charcterization" "charcterization" "charcterization" ...
 
     head(colData, 5)
 
@@ -127,6 +131,12 @@ wrangle colData
     ## L.Blu13_male_pituitary_control.NYNO       male.pituitary.control
     ## L.G107_male_gonad_control                     male.gonad.control
     ## L.G107_male_hypothalamus_control       male.hypothalamus.control
+    ##                                                  study
+    ## L.Blu13_male_gonad_control.NYNO        charcterization
+    ## L.Blu13_male_hypothalamus_control.NYNO charcterization
+    ## L.Blu13_male_pituitary_control.NYNO    charcterization
+    ## L.G107_male_gonad_control              charcterization
+    ## L.G107_male_hypothalamus_control       charcterization
 
     # check that rownames and colnames match for DESeq
     ncol(countData) == nrow(colData)
@@ -135,6 +145,9 @@ wrangle colData
 
 save bird data
 --------------
+
+    samples <- colData
+    write.csv(samples, "../metadata/samples.csv")
 
     birds <- colData %>%
       select(bird, sex, treatment) %>%
@@ -205,8 +218,8 @@ subset for characterization study
 save files for downstream use
 -----------------------------
 
-    write.csv(colData_manipluation, "../results/00_colData_manipluation.csv", row.names = TRUE) 
+    write.csv(colData_manipluation, "../metadata/00_colData_manipluation.csv", row.names = TRUE) 
     write.csv(countData_manipluation, "../results/00_countData_manipluation.csv", row.names = TRUE) 
-    write.csv(colData_characterization, "../results/00_colData_characterization.csv", row.names = TRUE) 
+    write.csv(colData_characterization, "../metadata/00_colData_characterization.csv", row.names = TRUE) 
     write.csv(countData_characterization, "../results/00_countData_characterization.csv", row.names = TRUE) 
     write.csv(geneinfo, "../results/00_geneinfo.csv", row.names = TRUE)
