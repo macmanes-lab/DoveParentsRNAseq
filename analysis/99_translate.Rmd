@@ -1,0 +1,70 @@
+---
+title: "translation-es"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/espanol/')
+```
+
+## Tranlsating the sample information for downstreatm analysis and data viz
+
+```{r cars}
+library(tidyverse)
+library(cowplot)
+samples <- read.csv("../metadata/samples.csv" , row.names = 1) 
+str(samples)
+
+muestras <- samples
+names(muestras) <- c("nombrearchivo", "pajaro", "sexo", "tejido", "tratamiento", "grupo", "estudio")
+str(muestras)
+
+levels(muestras$sexo) 
+levels(muestras$tejido)
+levels(muestras$tratamiento)
+levels(muestras$estudio)
+
+
+levels(muestras$sexo) <- c("mujer", "hombre")
+levels(muestras$tejido) <- c("gonada", "hipotalamo", "pituitaria")
+levels(muestras$tratamiento) <- c("construir", "control", "extender", "escotilla", "incubación 17", "incubacion 03", "incubacion 09", "poner", "eliminar 17", "eliminar 03"," precoz 09"," eliminar 09"," eliminar 21"," extender n5"," extender n9"," prolongar")
+levels(muestras$estudio) <- c("caracterizacion", "manipulacion")
+```
+
+
+
+```{r datasummary}
+theme_rmh <- function(){ 
+    theme_bw(base_size=10) +
+        theme(
+            panel.grid.minor.x  = element_blank(),
+           panel.grid.minor.y  = element_blank(),
+            strip.background = element_rect(colour="white", fill="white"),
+              legend.position = "bottom",           
+           legend.margin=margin(t=-0.1, r=0, b=-0.1, l=-0.1, unit="cm"),
+           legend.key.size = unit(0.5, "cm"))
+}
+
+a <- muestras %>%
+  #filter(estudio == "caracterizacion")  %>%
+ggplot(aes(x = tratamiento, fill = sexo)) +  
+  geom_bar() + 
+  facet_wrap(~ tejido) +
+  theme_rmh() +
+  labs(x = "Hitos del cuidado parental (natural y manipulado).",
+       y = "número de muestras",
+       subtitle = "Muestras de la HPG de padres \nde paloma de roca masculinos y femeninos") + 
+  coord_flip() 
+
+b <- samples %>%
+ggplot(aes(x = treatment, fill = sex)) +  
+  geom_bar() + 
+  facet_wrap(~ tissue) +
+  theme_rmh() +
+  labs(x = "Milestones of parental care (natural and manipualted",
+       y = "Number of samples",
+       subtitle = "Samples from the HPG axis of \nmale and female rock dove parents") + 
+  coord_flip()
+
+plot_grid(b,a, labels = c("english", "espanñol"), label_size=7)
+```
