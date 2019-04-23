@@ -3,7 +3,7 @@ title: "00_datawrangling.Rmd"
 output: md_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup}
 # https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 library(tidyverse)
 ```
@@ -155,6 +155,6 @@ write.csv(countData_manipluation, "../results/00_countData_manipluation.csv", ro
 write.csv(colData_characterization, "../metadata/00_colData_characterization.csv", row.names = TRUE) 
 write.csv(countData_characterization, "../results/00_countData_characterization.csv", row.names = TRUE) 
 
-write.csv(geneinfo, "../results/00_geneinfo.csv", row.names = TRUE)
+write.csv(geneinfo, "../metadata/00_geneinfo.csv", row.names = TRUE)
 ```
 
