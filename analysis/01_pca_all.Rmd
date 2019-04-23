@@ -4,36 +4,113 @@ output: md_document
 ---
 
 ```{r setup}
+library(tidyverse)
 library(ggfortify) # for PCA analysis
 library(cluster)
+library(cowplot)
+
+
+theme_rmh <- function(){ 
+    theme_bw(base_size=10) +
+        theme(
+            panel.grid.minor.x  = element_blank(),
+           panel.grid.minor.y  = element_blank(),
+            strip.background = element_rect(colour="white", fill="white"),
+              legend.position = "right",           
+           legend.margin=margin(t=-0.1, r=0, b=-0.1, l=-0.1, unit="cm"),
+           legend.key.size = unit(0.5, "cm"))
+}
+
 
 knitr::opts_chunk$set(echo = TRUE, cache = T, fig.path = '../figures/pca/')
 ```
 
 ```{r rawdata}
-colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
-countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
-head(colData)
-geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+counts <- read.csv("../results/00_countData_characterization.csv", row.names = 1, header = T)
+
+samples <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, header = T)
+geneinfo <- read.csv("../metadata//00_geneinfo.csv", row.names = 1, header = T)
+
+head(samples)
 ```
 
 ```{r pca}
 # https://cran.r-project.org/web/packages/ggfortify/vignettes/plot_pca.html
 
 # pca
-pca <- prcomp(t(countData))
-autoplot(pca, data = colData, colour = 'tissue') 
-autoplot(pca, data = colData, colour = 'sex') 
-autoplot(pca, data = colData, colour = 'treatment') 
-autoplot(pca, data = colData, colour = 'tissue', shape = "sex") 
-autoplot(pca, data = colData, colour = 'tissue', shape = "sex", alpha = "treatment")
-autoplot(pca, data = colData, colour = 'treatment', shape = "sex", alpha = "tissue")
+pca <- prcomp(t(counts))
+autoplot(pca, data = samples, colour = 'tissue') 
+autoplot(pca, data = samples, colour = 'sex') 
+autoplot(pca, data = samples, colour = 'treatment') 
+autoplot(pca, data = samples, colour = 'tissue', shape = "sex") 
+autoplot(pca, data = samples, colour = 'tissue', shape = "sex", alpha = "treatment")
+autoplot(pca, data = samples, colour = 'treatment', shape = "sex", alpha = "tissue")
 
 # kmeans
-autoplot(clara(t(countData),3), frame = TRUE)
+autoplot(clara(t(counts),3), frame = TRUE)
 
 # probability ellipse
-autoplot(pam(t(countData), 3), frame = TRUE, frame.type = 'norm')
+autoplot(pam(t(counts), 3), frame = TRUE, frame.type = 'norm')
 ```
+
+```{r pca-es}
+p <- autoplot(pca, data = samples, colour = 'tissue', shape = "sex")
+
+en <- p + labs(subtitle = "PCA plot in English") +
+  scale_colour_discrete(name = "colour", labels = c("rosado", "verde", "azul")) +
+  scale_shape_discrete(name = "shape", labels = c("circle", "square")) +
+  theme_rmh()
+
+es <- p + labs(subtitle = "PCA plot en español") +
+  scale_colour_discrete(name = "color", labels = c("rosado", "verde", "azul")) +
+  scale_shape_discrete(name = "forma", labels = c("circulo", "triangulo")) +
+  theme_rmh()
+
+enes <- plot_grid(en,es)
+
+enes 
+
+ggsave("../figures/espanol/pca-en-es.png", width=6, height=3, dpi=300)
+
+pdf(file="../figures/espanol/pca-en-es.pdf", width=6, height=3)
+plot(enes)    
+dev.off()
+```
+
+
+
+```{r subset}
+for (eachgroup in levels(samples$treatment)){
+  
+  print(eachgroup)
+  
+  colData <- samples %>%
+      dplyr::filter(treatment == eachgroup) %>%
+      droplevels()
+  row.names(colData) <- colData$V1
+  
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+
+  countData <- counts %>% dplyr::select(one_of(savecols)) 
+
+  # check that row and col lenghts are equal
+  print(ncol(countData) == nrow(colData))
+  
+  pca <- prcomp(t(countData))
+  
+  p <- autoplot(pca, data = colData, colour = 'tissue', shape = "sex")
+
+en <- p + labs(subtitle = eachgroup) +
+  theme_rmh() 
+
+
+plot(en) 
+}
+```
+
+
+
+
 
 
