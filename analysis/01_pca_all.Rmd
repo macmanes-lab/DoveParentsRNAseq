@@ -1,0 +1,39 @@
+---
+title: "01_pca"
+output: md_document
+---
+
+```{r setup}
+library(ggfortify) # for PCA analysis
+library(cluster)
+
+knitr::opts_chunk$set(echo = TRUE, cache = T, fig.path = '../figures/pca/')
+```
+
+```{r rawdata}
+colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
+countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+head(colData)
+geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+```
+
+```{r pca}
+# https://cran.r-project.org/web/packages/ggfortify/vignettes/plot_pca.html
+
+# pca
+pca <- prcomp(t(countData))
+autoplot(pca, data = colData, colour = 'tissue') 
+autoplot(pca, data = colData, colour = 'sex') 
+autoplot(pca, data = colData, colour = 'treatment') 
+autoplot(pca, data = colData, colour = 'tissue', shape = "sex") 
+autoplot(pca, data = colData, colour = 'tissue', shape = "sex", alpha = "treatment")
+autoplot(pca, data = colData, colour = 'treatment', shape = "sex", alpha = "tissue")
+
+# kmeans
+autoplot(clara(t(countData),3), frame = TRUE)
+
+# probability ellipse
+autoplot(pam(t(countData), 3), frame = TRUE, frame.type = 'norm')
+```
+
+
