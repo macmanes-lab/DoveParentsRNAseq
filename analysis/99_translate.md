@@ -3,14 +3,14 @@ Tranlsating the sample information for downstreatm analysis and data viz
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -104,6 +104,14 @@ Tranlsating the sample information for downstreatm analysis and data viz
            subtitle = "Samples from the HPG axis of \nmale and female rock dove parents") + 
       coord_flip()
 
-    plot_grid(b,a, labels = c("english", "espanñol"), label_size=7)
+    barre <- plot_grid(b,a, labels = c("english", "espanñol"), label_size=7)
+    barre
 
 ![](../figures/espanol/datasummary-1.png)
+
+    pdf(file="../figures/espanol/barre.pdf", width=2.5, height=5)
+    plot(barre)    
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2

@@ -66,5 +66,10 @@ ggplot(aes(x = treatment, fill = sex)) +
        subtitle = "Samples from the HPG axis of \nmale and female rock dove parents") + 
   coord_flip()
 
-plot_grid(b,a, labels = c("english", "espanñol"), label_size=7)
+barre <- plot_grid(b,a, labels = c("english", "espanñol"), label_size=7)
+barre
+
+pdf(file="../figures/espanol/barre.pdf", width=2.5, height=5)
+plot(barre)    
+dev.off()
 ```
