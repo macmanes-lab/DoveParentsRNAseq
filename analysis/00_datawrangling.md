@@ -143,16 +143,14 @@ wrangle colData
 
     ## [1] TRUE
 
-save bird data
---------------
+save bird and sample and count data
+-----------------------------------
 
     samples <- colData
-    write.csv(samples, "../metadata/samples.csv")
 
     birds <- colData %>%
       select(bird, sex, treatment) %>%
       distinct()
-    write.csv(birds, "../metadata/birds.csv")
 
 subset for manipulation study
 -----------------------------
@@ -218,8 +216,13 @@ subset for characterization study
 save files for downstream use
 -----------------------------
 
+    write.csv(countData, "../results/00_counts.csv")
+    write.csv(samples, "../metadata/00_samples.csv")
+    write.csv(birds, "../metadata/00_birds.csv")
+
     write.csv(colData_manipluation, "../metadata/00_colData_manipluation.csv", row.names = TRUE) 
     write.csv(countData_manipluation, "../results/00_countData_manipluation.csv", row.names = TRUE) 
     write.csv(colData_characterization, "../metadata/00_colData_characterization.csv", row.names = TRUE) 
     write.csv(countData_characterization, "../results/00_countData_characterization.csv", row.names = TRUE) 
+
     write.csv(geneinfo, "../results/00_geneinfo.csv", row.names = TRUE)
