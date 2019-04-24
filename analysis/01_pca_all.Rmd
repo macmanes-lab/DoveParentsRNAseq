@@ -8,6 +8,7 @@ library(tidyverse)
 library(ggfortify) # for PCA analysis
 library(cluster)
 library(cowplot)
+library(stringr)
 
 
 theme_rmh <- function(){ 
@@ -59,15 +60,21 @@ head(pca)
 ```{r pca-es}
 p <- autoplot(pca, data = samples, colour = 'tissue', shape = "sex")
 
-en <- p + labs(subtitle = "PCA plot in English") +
-  scale_colour_discrete(name = "colour", labels = c("pink", "green", "blue")) +
-  scale_shape_discrete(name = "shape", labels = c("circle", "square")) +
-  theme_rmh()
+en <- p + labs(subtitle = "Principle Component Analysis") +
+  scale_colour_discrete(name = "tissue", labels = c("hypothalamus", "pituitary", "gonad")) +
+  scale_shape_discrete(name = "sex", labels = c("female", "male")) +
+  xlab(stringr::str_replace(p$labels$x, "PC", "Principle Component ")) +
+  ylab(stringr::str_replace(p$labels$y, "PC", "Principle Component ")) +
+  theme_rmh() + guides(colour = guide_legend(order = 2), 
+              shape = guide_legend(order = 1))
 
-es <- p + labs(subtitle = "PCA plot en español") +
-  scale_colour_discrete(name = "color", labels = c("rosado", "verde", "azul")) +
-  scale_shape_discrete(name = "forma", labels = c("circulo", "triangulo")) +
-  theme_rmh()
+es <- p + labs(subtitle = "Análisis de Componentes Principales ") +
+  scale_colour_discrete(name = "tejido", labels = c("hipotálamo", "pituitaria", "gónada")) +
+  scale_shape_discrete(name = "sexo", labels = c("femenino", "masculino")) +
+  xlab(stringr::str_replace(p$labels$x, "PC", "Componente Principal ")) +
+  ylab(stringr::str_replace(p$labels$y, "PC", "Componente Principal ")) +
+  theme_rmh() + guides(colour = guide_legend(order = 2), 
+              shape = guide_legend(order = 1))
 
 enes <- plot_grid(en,es)
 
