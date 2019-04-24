@@ -53,8 +53,6 @@ autoplot(clara(t(counts),3), frame = TRUE)
 
 # probability ellipse
 autoplot(pam(t(counts), 3), frame = TRUE, frame.type = 'norm')
-
-head(pca)
 ```
 
 ```{r pca-es}
