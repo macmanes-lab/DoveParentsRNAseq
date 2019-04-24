@@ -39,6 +39,7 @@ head(samples)
 
 # pca
 pca <- prcomp(t(counts))
+
 autoplot(pca, data = samples, colour = 'tissue') 
 autoplot(pca, data = samples, colour = 'sex') 
 autoplot(pca, data = samples, colour = 'treatment') 
@@ -51,13 +52,15 @@ autoplot(clara(t(counts),3), frame = TRUE)
 
 # probability ellipse
 autoplot(pam(t(counts), 3), frame = TRUE, frame.type = 'norm')
+
+head(pca)
 ```
 
 ```{r pca-es}
 p <- autoplot(pca, data = samples, colour = 'tissue', shape = "sex")
 
 en <- p + labs(subtitle = "PCA plot in English") +
-  scale_colour_discrete(name = "colour", labels = c("rosado", "verde", "azul")) +
+  scale_colour_discrete(name = "colour", labels = c("pink", "green", "blue")) +
   scale_shape_discrete(name = "shape", labels = c("circle", "square")) +
   theme_rmh()
 
@@ -108,9 +111,6 @@ en <- p + labs(subtitle = eachgroup) +
 plot(en) 
 }
 ```
-
-
-
 
 
 
