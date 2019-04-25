@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
     ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
     ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
     ## ✔ readr   1.3.1       ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -23,10 +23,20 @@
     ##     ggsave
 
     library(stringr)
+    library(gridExtra)
+
+    ## 
+    ## Attaching package: 'gridExtra'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     combine
+
+    library(grid)
 
 
     theme_rmh <- function(){ 
-        theme_bw(base_size=10) +
+        theme_bw(base_size=14) +
             theme(
                 panel.grid.minor.x  = element_blank(),
                panel.grid.minor.y  = element_blank(),
@@ -36,121 +46,3364 @@
                legend.key.size = unit(0.5, "cm"))
     }
 
+    treatmentcolors <-  c("control" = "#bdbdbd", 
+                                  "bldg" =  "#d95f02", 
+                                  "lay"  = "#a1d99b", 
+                                  "inc.d3" = "#74c476", 
+                                  "inc.d9"  = "#41ab5d", 
+                                  "inc.d17" = "#238b45", 
+                                  "hatch"  = "#807dba", 
+                                  "n5"  = "#6a51a3", 
+                                   "n9" = "#4a1486")
 
     knitr::opts_chunk$set(echo = TRUE, cache = T, fig.path = '../figures/pca/')
 
     counts <- read.csv("../results/00_countData_characterization.csv", row.names = 1, header = T)
 
     samples <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, header = T)
+
+    samples$treatment <- factor(samples$treatment, levels = 
+                                  c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                    "inc.d17", "hatch", "n5", "n9"))
+    samples$tissue <- factor(samples$tissue, levels = 
+                                  c("hypothalamus", "pituitary", "gonad"))
+
+
     geneinfo <- read.csv("../metadata//00_geneinfo.csv", row.names = 1, header = T)
-
-    head(samples)
-
-    ##                                                                            V1
-    ## L.Blu13_male_gonad_control.NYNO               L.Blu13_male_gonad_control.NYNO
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
-    ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
-    ## L.G107_male_gonad_control                           L.G107_male_gonad_control
-    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
-    ## L.G107_male_pituitary_control                   L.G107_male_pituitary_control
-    ##                                           bird  sex       tissue treatment
-    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male        gonad   control
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus   control
-    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male    pituitary   control
-    ## L.G107_male_gonad_control               L.G107 male        gonad   control
-    ## L.G107_male_hypothalamus_control        L.G107 male hypothalamus   control
-    ## L.G107_male_pituitary_control           L.G107 male    pituitary   control
-    ##                                                            group
-    ## L.Blu13_male_gonad_control.NYNO               male.gonad.control
-    ## L.Blu13_male_hypothalamus_control.NYNO male.hypothalamus.control
-    ## L.Blu13_male_pituitary_control.NYNO       male.pituitary.control
-    ## L.G107_male_gonad_control                     male.gonad.control
-    ## L.G107_male_hypothalamus_control       male.hypothalamus.control
-    ## L.G107_male_pituitary_control             male.pituitary.control
-    ##                                                  study
-    ## L.Blu13_male_gonad_control.NYNO        charcterization
-    ## L.Blu13_male_hypothalamus_control.NYNO charcterization
-    ## L.Blu13_male_pituitary_control.NYNO    charcterization
-    ## L.G107_male_gonad_control              charcterization
-    ## L.G107_male_hypothalamus_control       charcterization
-    ## L.G107_male_pituitary_control          charcterization
 
     # https://cran.r-project.org/web/packages/ggfortify/vignettes/plot_pca.html
 
     # pca
     pca <- prcomp(t(counts))
 
-    autoplot(pca, data = samples, colour = 'tissue') 
-
-![](../figures/pca/pca-1.png)
-
-    autoplot(pca, data = samples, colour = 'sex') 
-
-![](../figures/pca/pca-2.png)
-
-    autoplot(pca, data = samples, colour = 'treatment') 
-
-![](../figures/pca/pca-3.png)
-
-    autoplot(pca, data = samples, colour = 'tissue', shape = "sex") 
-
-![](../figures/pca/pca-4.png)
-
-    autoplot(pca, data = samples, colour = 'tissue', shape = "sex", alpha = "treatment")
-
-    ## Warning: Using alpha for a discrete variable is not advised.
-
-![](../figures/pca/pca-5.png)
-
-    autoplot(pca, data = samples, colour = 'treatment', shape = "sex", alpha = "tissue")
-
-    ## Warning: Using alpha for a discrete variable is not advised.
-
-![](../figures/pca/pca-6.png)
-
-    # kmeans
-    autoplot(clara(t(counts),3), frame = TRUE)
-
-![](../figures/pca/pca-7.png)
-
-    # probability ellipse
-    autoplot(pam(t(counts), 3), frame = TRUE, frame.type = 'norm')
-
-![](../figures/pca/pca-8.png)
-
     p <- autoplot(pca, data = samples, colour = 'tissue', shape = "sex")
 
-    en <- p + labs(subtitle = "Principle Component Analysis") +
+
+    rawPCA112 <- p + labs(subtitle = "Raw counts") +
       scale_colour_discrete(name = "tissue", labels = c("hypothalamus", "pituitary", "gonad")) +
       scale_shape_discrete(name = "sex", labels = c("female", "male")) +
-      xlab(stringr::str_replace(p$labels$x, "PC", "Principle Component ")) +
-      ylab(stringr::str_replace(p$labels$y, "PC", "Principle Component ")) +
-      theme_rmh() + guides(colour = guide_legend(order = 2), 
-                  shape = guide_legend(order = 1))
+      #xlab(stringr::str_replace(p$labels$x, "PC", "Principle Component ")) +
+      #ylab(stringr::str_replace(p$labels$y, "PC", "Principle Component ")) +
+      theme_rmh() + guides(colour = guide_legend(order = 1), 
+                  shape = guide_legend(order = 2)) +
+      stat_ellipse(aes(linetype = sex, colour = tissue)) 
+    rawPCA112
 
-    es <- p + labs(subtitle = "Análisis de Componentes Principales ") +
-      scale_colour_discrete(name = "tejido", labels = c("hipotálamo", "pituitaria", "gónada")) +
-      scale_shape_discrete(name = "sexo", labels = c("femenino", "masculino")) +
-      xlab(stringr::str_replace(p$labels$x, "PC", "Componente Principal ")) +
-      ylab(stringr::str_replace(p$labels$y, "PC", "Componente Principal ")) +
-      theme_rmh() + guides(colour = guide_legend(order = 2), 
-                  shape = guide_legend(order = 1))
+![](../figures/pca/raw-1.png)
 
-    enes <- plot_grid(en,es)
+with normalize edgeR data
+-------------------------
 
-    enes 
+    pseudocounts <- read.csv("../results/01_pseudo.counts.csv", row.names = 1)
+    head(pseudocounts)
 
-![](../figures/pca/pca-es-1.png)
+    ##                L.Blu13_male_gonad_control.NYNO
+    ## NP_001001127.1                      15.5447636
+    ## NP_001001129.1                       2.3790784
+    ## NP_001001189.1                    1077.7008442
+    ## NP_001001194.1                       2.6011130
+    ## NP_001001195.1                       0.6792475
+    ## NP_001001201.1                     172.4219279
+    ##                L.Blu13_male_hypothalamus_control.NYNO
+    ## NP_001001127.1                           244.95556078
+    ## NP_001001129.1                             0.58399860
+    ## NP_001001189.1                           484.86684216
+    ## NP_001001194.1                             0.08624786
+    ## NP_001001195.1                             0.00000000
+    ## NP_001001201.1                            20.75537672
+    ##                L.Blu13_male_pituitary_control.NYNO
+    ## NP_001001127.1                         103.4666406
+    ## NP_001001129.1                         101.9782851
+    ## NP_001001189.1                         436.3840915
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.1195537
+    ## NP_001001201.1                          65.0950141
+    ##                L.G107_male_gonad_control L.G107_male_hypothalamus_control
+    ## NP_001001127.1                 12.334706                     120.07899984
+    ## NP_001001129.1                  3.077051                       2.58169012
+    ## NP_001001189.1               1251.706725                     432.87957495
+    ## NP_001001194.1                  1.864052                       0.05485767
+    ## NP_001001195.1                  3.637769                       0.00000000
+    ## NP_001001201.1                251.683823                      21.64976557
+    ##                L.G107_male_pituitary_control L.G118_female_gonad_control
+    ## NP_001001127.1                   154.1580580                   23.842676
+    ## NP_001001129.1                    65.2366617                   69.438783
+    ## NP_001001189.1                   478.5465523                  542.564563
+    ## NP_001001194.1                     0.0000000                   70.423411
+    ## NP_001001195.1                     0.1379547                    1.416957
+    ## NP_001001201.1                    49.2692732                   39.738681
+    ##                L.G118_female_hypothalamus_control.NYNO
+    ## NP_001001127.1                            304.90302067
+    ## NP_001001129.1                              0.46807772
+    ## NP_001001189.1                            351.21926343
+    ## NP_001001194.1                              0.03865148
+    ## NP_001001195.1                              0.07687948
+    ## NP_001001201.1                             19.29298008
+    ##                L.G118_female_pituitary_control.NYNO
+    ## NP_001001127.1                          77.20529837
+    ## NP_001001129.1                          23.77851291
+    ## NP_001001189.1                         502.20894932
+    ## NP_001001194.1                           0.02196706
+    ## NP_001001195.1                           1.79628078
+    ## NP_001001201.1                          64.02942351
+    ##                L.R3_male_gonad_control.NYNO L.R3_male_hypothalamus_control
+    ## NP_001001127.1                   16.2920712                    220.0157304
+    ## NP_001001129.1                    0.3894552                      0.2530384
+    ## NP_001001189.1                 1173.2270058                    475.5476970
+    ## NP_001001194.1                    0.5259732                      0.0394230
+    ## NP_001001195.1                    0.9614122                      0.0000000
+    ## NP_001001201.1                  173.4828548                     28.1672856
+    ##                L.R3_male_pituitary_control.NYNO L.R8_male_gonad_control
+    ## NP_001001127.1                     196.46402141              10.5974170
+    ## NP_001001129.1                      64.60263454               0.5970466
+    ## NP_001001189.1                     432.03679588            1308.2990443
+    ## NP_001001194.1                       0.00000000               0.0000000
+    ## NP_001001195.1                       0.08707434               3.5100202
+    ## NP_001001201.1                      45.47073410             174.3818725
+    ##                L.R8_male_hypothalamus_control L.R8_male_pituitary_control
+    ## NP_001001127.1                    172.6224304                  158.077785
+    ## NP_001001129.1                      0.7844015                  104.051502
+    ## NP_001001189.1                    571.6802113                  411.803838
+    ## NP_001001194.1                      0.1131252                    0.000000
+    ## NP_001001195.1                      0.0000000                    1.618532
+    ## NP_001001201.1                      6.9257928                   78.223597
+    ##                L.W33_male_gonad_control
+    ## NP_001001127.1               11.5761347
+    ## NP_001001129.1                2.7834681
+    ## NP_001001189.1             1040.6159523
+    ## NP_001001194.1                0.4640305
+    ## NP_001001195.1                3.9162225
+    ## NP_001001201.1              131.2565282
+    ##                L.W33_male_hypothalamus_control.NYNO
+    ## NP_001001127.1                         257.57713696
+    ## NP_001001129.1                           0.30926699
+    ## NP_001001189.1                         462.79119228
+    ## NP_001001194.1                           0.04768254
+    ## NP_001001195.1                           0.00000000
+    ## NP_001001201.1                          18.94880199
+    ##                L.W33_male_pituitary_control L.W3_male_gonad_control.NYNO
+    ## NP_001001127.1                   188.510094                    7.1395596
+    ## NP_001001129.1                    86.938759                    0.3788346
+    ## NP_001001189.1                   408.237736                 1008.0950157
+    ## NP_001001194.1                     0.000000                    3.3671403
+    ## NP_001001195.1                     1.493279                    4.3457034
+    ## NP_001001201.1                    45.635425                  157.3780558
+    ##                L.W3_male_hypothalamus_control L.W3_male_pituitary_control
+    ## NP_001001127.1                    244.0429976                  123.846268
+    ## NP_001001129.1                      0.7740843                   58.010978
+    ## NP_001001189.1                    548.4858712                  522.123829
+    ## NP_001001194.1                      0.1117574                    0.000000
+    ## NP_001001195.1                      0.0000000                    1.568041
+    ## NP_001001201.1                     22.6255258                   83.073377
+    ##                L.W4_male_gonad_control.NYNO L.W4_male_hypothalamus_control
+    ## NP_001001127.1                   27.5396295                   177.25496555
+    ## NP_001001129.1                    2.7417935                     0.18218076
+    ## NP_001001189.1                 1158.9998761                   678.82104797
+    ## NP_001001194.1                    0.4558533                     0.02878456
+    ## NP_001001195.1                    3.8450643                     0.00000000
+    ## NP_001001201.1                  191.5648572                    22.20618115
+    ##                L.W4_male_pituitary_control R.G106_female_gonad_control
+    ## NP_001001127.1                125.13882539                  44.9408787
+    ## NP_001001129.1                 14.98897383                  83.8540356
+    ## NP_001001189.1                450.62363653                 392.8207503
+    ## NP_001001194.1                  0.00000000                  26.1383868
+    ## NP_001001195.1                  0.09464594                   0.6759158
+    ## NP_001001201.1                 70.14378371                  28.8481670
+    ##                R.G106_female_hypothalamus_control
+    ## NP_001001127.1                         150.526723
+    ## NP_001001129.1                           1.654939
+    ## NP_001001189.1                         417.808085
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           0.000000
+    ## NP_001001201.1                          22.507621
+    ##                R.G106_female_pituitary_control R.R20_female_gonad_control
+    ## NP_001001127.1                    205.81394218                70.61273623
+    ## NP_001001129.1                     10.41905446                82.35052454
+    ## NP_001001189.1                    375.85062713               371.57246085
+    ## NP_001001194.1                      0.03012902                63.07041969
+    ## NP_001001195.1                      0.28058423                 0.05595723
+    ## NP_001001201.1                     85.46329114                28.96274574
+    ##                R.R20_female_hypothalamus_control.NYNO
+    ## NP_001001127.1                           158.72189491
+    ## NP_001001129.1                             0.33917664
+    ## NP_001001189.1                           599.41164608
+    ## NP_001001194.1                             0.02862140
+    ## NP_001001195.1                             0.05681882
+    ## NP_001001201.1                            19.48697415
+    ##                R.R20_female_pituitary_control R.R9_female_gonad_control
+    ## NP_001001127.1                      77.150081                 57.857136
+    ## NP_001001129.1                      16.727741                111.789566
+    ## NP_001001189.1                     497.111117                485.506646
+    ## NP_001001194.1                       1.588577                 65.023481
+    ## NP_001001195.1                       3.745126                  1.570475
+    ## NP_001001201.1                      49.503807                 18.332739
+    ##                R.R9_female_hypothalamus_control
+    ## NP_001001127.1                      222.3597937
+    ## NP_001001129.1                        0.7452668
+    ## NP_001001189.1                      368.6771366
+    ## NP_001001194.1                        0.0000000
+    ## NP_001001195.1                        1.7853907
+    ## NP_001001201.1                       12.8611805
+    ##                R.R9_female_pituitary_control.NYNO
+    ## NP_001001127.1                       180.77640435
+    ## NP_001001129.1                         4.08301789
+    ## NP_001001189.1                       399.85870735
+    ## NP_001001194.1                         0.01785363
+    ## NP_001001195.1                         1.62420900
+    ## NP_001001201.1                        26.83302128
+    ##                R.W44_female_gonad_control
+    ## NP_001001127.1                  78.899124
+    ## NP_001001129.1                  29.634489
+    ## NP_001001189.1                 379.314976
+    ## NP_001001194.1                  47.588339
+    ## NP_001001195.1                   3.965038
+    ## NP_001001201.1                  26.987005
+    ##                R.W44_female_hypothalamus_control
+    ## NP_001001127.1                       402.0192402
+    ## NP_001001129.1                         3.1138050
+    ## NP_001001189.1                       658.0329368
+    ## NP_001001194.1                         0.8141338
+    ## NP_001001195.1                         0.0000000
+    ## NP_001001201.1                        25.1555855
+    ##                R.W44_female_pituitary_control.NYNO
+    ## NP_001001127.1                        148.56376606
+    ## NP_001001129.1                         83.50681962
+    ## NP_001001189.1                        439.20026788
+    ## NP_001001194.1                          0.04157379
+    ## NP_001001195.1                          2.80681370
+    ## NP_001001201.1                         59.60070183
+    ##                R.Y108.W29_male_gonad_control
+    ## NP_001001127.1                  1.139189e+01
+    ## NP_001001129.1                  4.156644e-02
+    ## NP_001001189.1                  1.079225e+03
+    ## NP_001001194.1                  5.467345e-02
+    ## NP_001001195.1                  5.605148e+00
+    ## NP_001001201.1                  1.731402e+02
+    ##                R.Y108.W29_male_hypothalamus_control.NYNO
+    ## NP_001001127.1                              242.27815712
+    ## NP_001001129.1                                3.61670178
+    ## NP_001001189.1                              350.24758559
+    ## NP_001001194.1                                0.07745056
+    ## NP_001001195.1                                0.00000000
+    ## NP_001001201.1                               26.96277156
+    ##                R.Y108.W29_male_pituitary_control
+    ## NP_001001127.1                      142.81786320
+    ## NP_001001129.1                       12.17160422
+    ## NP_001001189.1                      393.28879083
+    ## NP_001001194.1                        0.00000000
+    ## NP_001001195.1                        0.06946074
+    ## NP_001001201.1                       74.17186192
+    ##                blk.s061.pu.y_female_gonad_inc.d9
+    ## NP_001001127.1                         58.493244
+    ## NP_001001129.1                        100.082459
+    ## NP_001001189.1                        304.280894
+    ## NP_001001194.1                        195.190180
+    ## NP_001001195.1                          1.342481
+    ## NP_001001201.1                         34.115450
+    ##                blk.s061.pu.y_female_hypothalamus_inc.d9
+    ## NP_001001127.1                               200.535463
+    ## NP_001001129.1                                 2.085921
+    ## NP_001001189.1                               297.858047
+    ## NP_001001194.1                                 0.000000
+    ## NP_001001195.1                                 1.162383
+    ## NP_001001201.1                                28.103396
+    ##                blk.s061.pu.y_female_pituitary_inc.d9
+    ## NP_001001127.1                          119.02719210
+    ## NP_001001129.1                           81.99593115
+    ## NP_001001189.1                          264.13686488
+    ## NP_001001194.1                            0.00000000
+    ## NP_001001195.1                            0.07368607
+    ## NP_001001201.1                           77.11780355
+    ##                blk11.x_female_gonad_bldg blk11.x_female_hypothalamus_bldg
+    ## NP_001001127.1                90.2166392                      217.9558005
+    ## NP_001001129.1                60.2153468                        1.8792271
+    ## NP_001001189.1               413.4144646                      387.6924236
+    ## NP_001001194.1                70.9199422                        0.0000000
+    ## NP_001001195.1                 0.1553448                        0.6828657
+    ## NP_001001201.1                42.4500681                       24.5991691
+    ##                blk11.x_female_pituitary_bldg blk12.x_male_gonad_n5
+    ## NP_001001127.1                    116.536151            12.3559043
+    ## NP_001001129.1                     80.992257             0.1843547
+    ## NP_001001189.1                    397.747991           682.2419425
+    ## NP_001001194.1                      0.000000             0.1345569
+    ## NP_001001195.1                      1.696241             2.2871671
+    ## NP_001001201.1                     76.603384           255.7470008
+    ##                blk12.x_male_hypothalamus_n5.NYNO blk12.x_male_pituitary_n5
+    ## NP_001001127.1                       135.5322850                126.792995
+    ## NP_001001129.1                         0.6474282                 41.679980
+    ## NP_001001189.1                       450.1322618                375.853424
+    ## NP_001001194.1                         0.0000000                  0.000000
+    ## NP_001001195.1                         0.0000000                  0.229342
+    ## NP_001001201.1                        33.4224524                126.656907
+    ##                blk17.x_male_gonad_inc.d17
+    ## NP_001001127.1                 16.8478393
+    ## NP_001001129.1                  4.9222852
+    ## NP_001001189.1                797.3168257
+    ## NP_001001194.1                  0.1511248
+    ## NP_001001195.1                  8.0982048
+    ## NP_001001201.1                166.8570126
+    ##                blk17.x_male_hypothalamus_inc.d17
+    ## NP_001001127.1                       142.2220914
+    ## NP_001001129.1                         2.3637325
+    ## NP_001001189.1                       390.6679388
+    ## NP_001001194.1                         0.6965653
+    ## NP_001001195.1                         1.1604289
+    ## NP_001001201.1                        32.6038158
+    ##                blk17.x_male_pituitary_inc.d17 blk21.x_female_gonad_hatch
+    ## NP_001001127.1                    161.0159210                  52.920716
+    ## NP_001001129.1                     32.1603569                 180.076368
+    ## NP_001001189.1                    386.2995324                 437.038290
+    ## NP_001001194.1                      0.0000000                   3.416744
+    ## NP_001001195.1                      0.3830923                   2.667888
+    ## NP_001001201.1                     89.3725268                  36.633374
+    ##                blk21.x_female_hypothalamus_hatch
+    ## NP_001001127.1                         176.44034
+    ## NP_001001129.1                           0.00000
+    ## NP_001001189.1                         651.75570
+    ## NP_001001194.1                           0.00000
+    ## NP_001001195.1                           0.00000
+    ## NP_001001201.1                          59.54209
+    ##                blk21.x_female_pituitary_hatch blk4.x_female_gonad_n9
+    ## NP_001001127.1                   1.375603e+02             101.481741
+    ## NP_001001129.1                   2.334992e+01              13.432457
+    ## NP_001001189.1                   3.423692e+02             338.339621
+    ## NP_001001194.1                   9.800038e-03               1.805081
+    ## NP_001001195.1                   6.487163e-02               2.767220
+    ## NP_001001201.1                   1.053892e+02             130.499277
+    ##                blk4.x_female_hypothalamus_n9 blk4.x_female_pituitary_n9
+    ## NP_001001127.1                    107.465665                  89.997463
+    ## NP_001001129.1                      2.909582                  10.280419
+    ## NP_001001189.1                   1102.364465                 426.240626
+    ## NP_001001194.1                      0.000000                   0.000000
+    ## NP_001001195.1                      0.000000                   1.847213
+    ## NP_001001201.1                     43.282193                 102.266460
+    ##                blu.o.x.ATLAS_female_gonad_control
+    ## NP_001001127.1                          34.776264
+    ## NP_001001129.1                          96.261310
+    ## NP_001001189.1                         469.813320
+    ## NP_001001194.1                           3.306713
+    ## NP_001001195.1                           1.516578
+    ## NP_001001201.1                          24.921751
+    ##                blu.o.x.ATLAS_female_hypothalamus_control
+    ## NP_001001127.1                              125.30161605
+    ## NP_001001129.1                                0.47202537
+    ## NP_001001189.1                              327.26311869
+    ## NP_001001194.1                                0.03895369
+    ## NP_001001195.1                                0.07748478
+    ## NP_001001201.1                               23.36040118
+    ##                blu.o.x.ATLAS_female_pituitary_control
+    ## NP_001001127.1                            124.7066919
+    ## NP_001001129.1                             29.9542088
+    ## NP_001001189.1                            395.2823368
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              0.8197919
+    ## NP_001001201.1                             49.9728682
+    ##                blu103.x_female_gonad_hatch.NYNO
+    ## NP_001001127.1                        53.772391
+    ## NP_001001129.1                        17.444202
+    ## NP_001001189.1                       431.754593
+    ## NP_001001194.1                        51.054062
+    ## NP_001001195.1                         3.462758
+    ## NP_001001201.1                        94.969110
+    ##                blu103.x_female_hypothalamus_hatch
+    ## NP_001001127.1                        198.9089766
+    ## NP_001001129.1                          0.9053725
+    ## NP_001001189.1                        364.2241325
+    ## NP_001001194.1                          0.0000000
+    ## NP_001001195.1                          0.0000000
+    ## NP_001001201.1                         31.2913357
+    ##                blu103.x_female_pituitary_hatch.NYNO
+    ## NP_001001127.1                             180.8724
+    ## NP_001001129.1                              33.8059
+    ## NP_001001189.1                             371.5367
+    ## NP_001001194.1                               0.0000
+    ## NP_001001195.1                               0.0000
+    ## NP_001001201.1                             121.8384
+    ##                blu104.w120.x_male_gonad_hatch
+    ## NP_001001127.1                     11.6350825
+    ## NP_001001129.1                      0.1983575
+    ## NP_001001189.1                    756.7808517
+    ## NP_001001194.1                      0.3229483
+    ## NP_001001195.1                      3.9045474
+    ## NP_001001201.1                    158.3917389
+    ##                blu104.w120.x_male_hypothalamus_hatch
+    ## NP_001001127.1                            219.957953
+    ## NP_001001129.1                              3.615639
+    ## NP_001001189.1                            311.337932
+    ## NP_001001194.1                              0.000000
+    ## NP_001001195.1                              1.197757
+    ## NP_001001201.1                             27.557776
+    ##                blu104.w120.x_male_pituitary_hatch.NYNO
+    ## NP_001001127.1                            149.13700183
+    ## NP_001001129.1                             29.68624232
+    ## NP_001001189.1                            659.26648170
+    ## NP_001001194.1                              0.02093769
+    ## NP_001001195.1                              0.02070810
+    ## NP_001001201.1                            130.20384004
+    ##                blu108.w40.o158_male_gonad_inc.d9
+    ## NP_001001127.1                        15.2790201
+    ## NP_001001129.1                         0.1137721
+    ## NP_001001189.1                       593.0970156
+    ## NP_001001194.1                         0.1252110
+    ## NP_001001195.1                         3.0676244
+    ## NP_001001201.1                       338.1505531
+    ##                blu108.w40.o158_male_hypothalamus_inc.d9
+    ## NP_001001127.1                              283.4255303
+    ## NP_001001129.1                                2.5075166
+    ## NP_001001189.1                              397.7229505
+    ## NP_001001194.1                                0.0000000
+    ## NP_001001195.1                                0.6482931
+    ## NP_001001201.1                               20.4040401
+    ##                blu108.w40.o158_male_pituitary_inc.d9
+    ## NP_001001127.1                          1.345740e+02
+    ## NP_001001129.1                          1.174132e+01
+    ## NP_001001189.1                          2.529745e+02
+    ## NP_001001194.1                          9.091174e-03
+    ## NP_001001195.1                          1.224579e+00
+    ## NP_001001201.1                          9.088663e+01
+    ##                blu111.w113.x_male_gonad_inc.d3
+    ## NP_001001127.1                      18.1193460
+    ## NP_001001129.1                       0.2594583
+    ## NP_001001189.1                     728.3342461
+    ## NP_001001194.1                       0.8591325
+    ## NP_001001195.1                       0.2827609
+    ## NP_001001201.1                     212.8772793
+    ##                blu111.w113.x_male_hypothalamus_inc.d3
+    ## NP_001001127.1                              141.78160
+    ## NP_001001129.1                                0.00000
+    ## NP_001001189.1                              321.95540
+    ## NP_001001194.1                                0.00000
+    ## NP_001001195.1                                0.00000
+    ## NP_001001201.1                               19.88989
+    ##                blu111.w113.x_male_pituitary_inc.d3
+    ## NP_001001127.1                            86.06251
+    ## NP_001001129.1                            38.11132
+    ## NP_001001189.1                           498.81141
+    ## NP_001001194.1                             0.00000
+    ## NP_001001195.1                             2.41873
+    ## NP_001001201.1                            83.28027
+    ##                blu113.w124.x_male_gonad_inc.d17
+    ## NP_001001127.1                       12.8625914
+    ## NP_001001129.1                        2.2211908
+    ## NP_001001189.1                      825.7234820
+    ## NP_001001194.1                        0.1678030
+    ## NP_001001195.1                        0.4154466
+    ## NP_001001201.1                      222.8880872
+    ##                blu113.w124.x_male_hypothalamus_inc.d17
+    ## NP_001001127.1                             345.2742181
+    ## NP_001001129.1                               0.6462245
+    ## NP_001001189.1                             387.7113152
+    ## NP_001001194.1                               0.0000000
+    ## NP_001001195.1                               2.9356418
+    ## NP_001001201.1                              21.8960328
+    ##                blu113.w124.x_male_pituitary_inc.d17.NYNO
+    ## NP_001001127.1                                142.056087
+    ## NP_001001129.1                                 13.677954
+    ## NP_001001189.1                                347.320578
+    ## NP_001001194.1                                  0.000000
+    ## NP_001001195.1                                  2.908266
+    ## NP_001001201.1                                 90.804162
+    ##                blu114.r38.w198_male_gonad_bldg
+    ## NP_001001127.1                       6.1414907
+    ## NP_001001129.1                       0.2880997
+    ## NP_001001189.1                     956.5821070
+    ## NP_001001194.1                       2.9885387
+    ## NP_001001195.1                       2.3030655
+    ## NP_001001201.1                     280.1083999
+    ##                blu114.r38.w198_male_hypothalamus_bldg
+    ## NP_001001127.1                             242.083227
+    ## NP_001001129.1                               3.182301
+    ## NP_001001189.1                             355.866238
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               0.000000
+    ## NP_001001201.1                              23.013742
+    ##                blu114.r38.w198_male_pituitary_bldg
+    ## NP_001001127.1                        9.937368e+01
+    ## NP_001001129.1                        9.688802e+01
+    ## NP_001001189.1                        2.937812e+02
+    ## NP_001001194.1                        8.329271e-04
+    ## NP_001001195.1                        1.350876e-02
+    ## NP_001001201.1                        1.138765e+02
+    ##                blu121.w91.x_male_gonad_inc.d17
+    ## NP_001001127.1                       15.391391
+    ## NP_001001129.1                        0.268792
+    ## NP_001001189.1                      795.965573
+    ## NP_001001194.1                        1.839434
+    ## NP_001001195.1                        2.317833
+    ## NP_001001201.1                      238.555460
+    ##                blu121.w91.x_male_hypothalamus_inc.d17
+    ## NP_001001127.1                            269.2501036
+    ## NP_001001129.1                              0.3128387
+    ## NP_001001189.1                            514.3205079
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              1.9121764
+    ## NP_001001201.1                             38.8765391
+    ##                blu121.w91.x_male_pituitary_inc.d17
+    ## NP_001001127.1                        159.76514213
+    ## NP_001001129.1                         12.67729502
+    ## NP_001001189.1                        492.70753249
+    ## NP_001001194.1                          0.01402418
+    ## NP_001001195.1                          0.16716126
+    ## NP_001001201.1                         97.22316184
+    ##                blu124.w180.x_female_gonad_hatch
+    ## NP_001001127.1                        68.373622
+    ## NP_001001129.1                        90.265567
+    ## NP_001001189.1                       316.606524
+    ## NP_001001194.1                        19.540267
+    ## NP_001001195.1                         0.111374
+    ## NP_001001201.1                        36.323451
+    ##                blu124.w180.x_female_hypothalamus_hatch
+    ## NP_001001127.1                               279.24855
+    ## NP_001001129.1                                 0.00000
+    ## NP_001001189.1                               422.38496
+    ## NP_001001194.1                                 0.00000
+    ## NP_001001195.1                                 1.16898
+    ## NP_001001201.1                                29.97812
+    ##                blu124.w180.x_female_pituitary_hatch
+    ## NP_001001127.1                         127.29422203
+    ## NP_001001129.1                          13.63977637
+    ## NP_001001189.1                         305.17757257
+    ## NP_001001194.1                           0.01451143
+    ## NP_001001195.1                           0.09669965
+    ## NP_001001201.1                         135.88664959
+    ##                blu33.y88.x_male_gonad_bldg
+    ## NP_001001127.1                 10.39060497
+    ## NP_001001129.1                  3.79047133
+    ## NP_001001189.1                820.67163583
+    ## NP_001001194.1                  0.05588387
+    ## NP_001001195.1                  7.48252598
+    ## NP_001001201.1                317.29984586
+    ##                blu33.y88.x_male_hypothalamus_bldg
+    ## NP_001001127.1                        165.1481552
+    ## NP_001001129.1                          0.8849476
+    ## NP_001001189.1                        392.1898292
+    ## NP_001001194.1                          0.0000000
+    ## NP_001001195.1                          0.0000000
+    ## NP_001001201.1                         26.7479680
+    ##                blu33.y88.x_male_pituitary_bldg blu36.w16_female_gonad_n9
+    ## NP_001001127.1                     228.5226524                 65.677249
+    ## NP_001001129.1                      15.1444209                 73.865834
+    ## NP_001001189.1                     252.0780553                382.692477
+    ## NP_001001194.1                       0.0000000                 10.234481
+    ## NP_001001195.1                       0.7765203                  1.040691
+    ## NP_001001201.1                      62.0474746                 70.825355
+    ##                blu36.w16_female_hypothalamus_n9
+    ## NP_001001127.1                       113.689828
+    ## NP_001001129.1                         1.049071
+    ## NP_001001189.1                       617.140743
+    ## NP_001001194.1                         0.000000
+    ## NP_001001195.1                         1.042227
+    ## NP_001001201.1                        20.893504
+    ##                blu36.w16_female_pituitary_n9 blu37.r65.x_male_gonad_n5
+    ## NP_001001127.1                    140.854879                10.3096934
+    ## NP_001001129.1                     38.974451                 0.1761383
+    ## NP_001001189.1                    424.726282               660.3862843
+    ## NP_001001194.1                      0.000000                 0.1286262
+    ## NP_001001195.1                      3.690776                 0.3716094
+    ## NP_001001201.1                     98.825534               245.7941531
+    ##                blu37.r65.x_male_hypothalamus_n5
+    ## NP_001001127.1                      175.9383683
+    ## NP_001001129.1                        0.2810434
+    ## NP_001001189.1                      455.2636062
+    ## NP_001001194.1                        0.0000000
+    ## NP_001001195.1                        0.0000000
+    ## NP_001001201.1                       44.9287256
+    ##                blu37.r65.x_male_pituitary_n5
+    ## NP_001001127.1                    140.165618
+    ## NP_001001129.1                     28.281500
+    ## NP_001001189.1                    389.956218
+    ## NP_001001194.1                      0.000000
+    ## NP_001001195.1                      4.317538
+    ## NP_001001201.1                    115.583074
+    ##                blu38.g135.x_female_gonad_bldg
+    ## NP_001001127.1                      10.345352
+    ## NP_001001129.1                       5.849114
+    ## NP_001001189.1                     396.223623
+    ## NP_001001194.1                       1.096130
+    ## NP_001001195.1                       1.510791
+    ## NP_001001201.1                     123.821366
+    ##                blu38.g135.x_female_hypothalamus_bldg
+    ## NP_001001127.1                            203.368045
+    ## NP_001001129.1                              3.253681
+    ## NP_001001189.1                            357.559662
+    ## NP_001001194.1                              0.000000
+    ## NP_001001195.1                              0.000000
+    ## NP_001001201.1                             36.778204
+    ##                blu38.g135.x_female_pituitary_bldg
+    ## NP_001001127.1                        75.68593622
+    ## NP_001001129.1                        29.90147518
+    ## NP_001001189.1                       285.91016660
+    ## NP_001001194.1                         0.03396955
+    ## NP_001001195.1                         3.43800480
+    ## NP_001001201.1                       105.19406189
+    ##                blu39.o26.x_female_gonad_inc.d3
+    ## NP_001001127.1                     53.97759670
+    ## NP_001001129.1                     19.20655956
+    ## NP_001001189.1                    621.10548081
+    ## NP_001001194.1                     51.03284279
+    ## NP_001001195.1                      0.07807668
+    ## NP_001001201.1                     26.70942025
+    ##                blu39.o26.x_female_hypothalamus_inc.d3.NYNO
+    ## NP_001001127.1                                  248.219101
+    ## NP_001001129.1                                    3.379885
+    ## NP_001001189.1                                  419.246188
+    ## NP_001001194.1                                    0.000000
+    ## NP_001001195.1                                    0.000000
+    ## NP_001001201.1                                   22.532858
+    ##                blu39.o26.x_female_pituitary_inc.d3.NYNO
+    ## NP_001001127.1                              101.7325946
+    ## NP_001001129.1                               18.9383138
+    ## NP_001001189.1                              380.0538646
+    ## NP_001001194.1                                0.0000000
+    ## NP_001001195.1                                0.5250758
+    ## NP_001001201.1                              123.8950036
+    ##                blu41.y100.x_male_gonad_n5
+    ## NP_001001127.1                   5.965597
+    ## NP_001001129.1                   2.003652
+    ## NP_001001189.1                1009.433341
+    ## NP_001001194.1                   1.871584
+    ## NP_001001195.1                   4.082801
+    ## NP_001001201.1                 220.648700
+    ##                blu41.y100.x_male_hypothalamus_n5.NYNO
+    ## NP_001001127.1                            143.4350817
+    ## NP_001001129.1                              3.8665275
+    ## NP_001001189.1                            434.2466880
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              0.9695437
+    ## NP_001001201.1                             39.5222350
+    ##                blu41.y100.x_male_pituitary_n5
+    ## NP_001001127.1                     149.451645
+    ## NP_001001129.1                      17.123190
+    ## NP_001001189.1                     339.790864
+    ## NP_001001194.1                       0.000000
+    ## NP_001001195.1                       1.035728
+    ## NP_001001201.1                     122.462201
+    ##                blu47.y96.x_female_gonad_inc.d9
+    ## NP_001001127.1                       64.687750
+    ## NP_001001129.1                      106.279582
+    ## NP_001001189.1                      290.728682
+    ## NP_001001194.1                       37.971304
+    ## NP_001001195.1                        2.712641
+    ## NP_001001201.1                       41.562887
+    ##                blu47.y96.x_female_hypothalamus_inc.d9
+    ## NP_001001127.1                           180.31132495
+    ## NP_001001129.1                             0.22507397
+    ## NP_001001189.1                           478.35484261
+    ## NP_001001194.1                             0.00000000
+    ## NP_001001195.1                             0.07097405
+    ## NP_001001201.1                            20.35332039
+    ##                blu47.y96.x_female_pituitary_inc.d9
+    ## NP_001001127.1                          144.319530
+    ## NP_001001129.1                           59.740579
+    ## NP_001001189.1                          330.646766
+    ## NP_001001194.1                            0.000000
+    ## NP_001001195.1                            2.888742
+    ## NP_001001201.1                          108.151704
+    ##                blu55.g51_female_gonad_n5 blu55.g51_female_hypothalamus_n5
+    ## NP_001001127.1                 27.863546                      205.6320569
+    ## NP_001001129.1                 19.486070                        0.9454928
+    ## NP_001001189.1                355.507024                      342.8332126
+    ## NP_001001194.1                 10.455306                        0.0000000
+    ## NP_001001195.1                  1.527009                        2.5832090
+    ## NP_001001201.1                 58.145787                       33.3842142
+    ##                blu55.g51_female_pituitary_n5 blu81.r88_male_gonad_n9
+    ## NP_001001127.1                    146.548018               16.788074
+    ## NP_001001129.1                     25.731066                2.331862
+    ## NP_001001189.1                    418.401957              782.460250
+    ## NP_001001194.1                      0.000000                0.000000
+    ## NP_001001195.1                      3.728593                2.787513
+    ## NP_001001201.1                    102.464807              270.779157
+    ##                blu81.r88_male_hypothalamus_n9 blu81.r88_male_pituitary_n9
+    ## NP_001001127.1                     110.101535                108.32896976
+    ## NP_001001129.1                       3.368237                 28.46909103
+    ## NP_001001189.1                     417.964324                436.63240588
+    ## NP_001001194.1                       0.000000                  0.00000000
+    ## NP_001001195.1                       0.000000                  0.08166984
+    ## NP_001001201.1                      30.558183                 67.66224931
+    ##                d.s008.y.blk_male_gonad_n5
+    ## NP_001001127.1                  7.6765715
+    ## NP_001001129.1                  0.2005698
+    ## NP_001001189.1                632.6403098
+    ## NP_001001194.1                  1.8363507
+    ## NP_001001195.1                  8.4008160
+    ## NP_001001201.1                206.3634624
+    ##                d.s008.y.blk_male_hypothalamus_n5
+    ## NP_001001127.1                       164.2666769
+    ## NP_001001129.1                         4.5565416
+    ## NP_001001189.1                       354.3199869
+    ## NP_001001194.1                         0.0000000
+    ## NP_001001195.1                         0.4240799
+    ## NP_001001201.1                        14.5143311
+    ##                d.s008.y.blk_male_pituitary_n5 d.s047.blk.o_male_gonad_n5
+    ## NP_001001127.1                     174.554122                  5.2028994
+    ## NP_001001129.1                       7.634686                  2.6047661
+    ## NP_001001189.1                     334.106406                821.2658283
+    ## NP_001001194.1                       0.000000                  0.4794331
+    ## NP_001001195.1                       4.601879                  0.8411422
+    ## NP_001001201.1                      63.606588                298.4788212
+    ##                d.s047.blk.o_male_hypothalamus_n5
+    ## NP_001001127.1                         164.75732
+    ## NP_001001129.1                           3.09418
+    ## NP_001001189.1                         362.94685
+    ## NP_001001194.1                           0.00000
+    ## NP_001001195.1                           0.00000
+    ## NP_001001201.1                          20.91480
+    ##                d.s047.blk.o_male_pituitary_n5
+    ## NP_001001127.1                    127.5461731
+    ## NP_001001129.1                     59.1719352
+    ## NP_001001189.1                    302.8940653
+    ## NP_001001194.1                      0.0000000
+    ## NP_001001195.1                      0.1191297
+    ## NP_001001201.1                     94.8553902
+    ##                g.blk.s004.pk_female_gonad_lay
+    ## NP_001001127.1                      195.23093
+    ## NP_001001129.1                       48.66795
+    ## NP_001001189.1                      324.01547
+    ## NP_001001194.1                      119.90905
+    ## NP_001001195.1                        0.00000
+    ## NP_001001201.1                       54.70891
+    ##                g.blk.s004.pk_female_hypothalamus_lay
+    ## NP_001001127.1                           119.7644312
+    ## NP_001001129.1                             0.6316607
+    ## NP_001001189.1                           406.6336690
+    ## NP_001001194.1                             0.0000000
+    ## NP_001001195.1                             1.1357784
+    ## NP_001001201.1                            38.1624197
+    ##                g.blk.s004.pk_female_pituitary_lay g.s.blk.d_male_gonad_n9
+    ## NP_001001127.1                        100.3137089              11.4236604
+    ## NP_001001129.1                          4.6670344               7.6170532
+    ## NP_001001189.1                        288.5434748             710.9738020
+    ## NP_001001194.1                          0.5649409               0.4755062
+    ## NP_001001195.1                          0.3912892               5.2560514
+    ## NP_001001201.1                        155.9600003             318.5972352
+    ##                g.s.blk.d_male_hypothalamus_n9 g.s.blk.d_male_pituitary_n9
+    ## NP_001001127.1                     155.573100                 150.5566064
+    ## NP_001001129.1                       2.437624                  19.9465886
+    ## NP_001001189.1                     357.346674                 257.2806558
+    ## NP_001001194.1                       0.000000                   0.0000000
+    ## NP_001001195.1                       1.201976                   0.6743104
+    ## NP_001001201.1                      24.300507                  80.5156342
+    ##                g.s.blk.y_male_gonad_lay g.s.blk.y_male_hypothalamus_lay
+    ## NP_001001127.1                 9.550443                        95.25510
+    ## NP_001001129.1                 2.782407                         0.00000
+    ## NP_001001189.1               567.379681                      1240.05932
+    ## NP_001001194.1                 0.000000                         0.00000
+    ## NP_001001195.1                 0.000000                         0.00000
+    ## NP_001001201.1               265.671771                        23.35795
+    ##                g.s.blk.y_male_pituitary_lay g.s043.pu.blk_male_gonad_lay
+    ## NP_001001127.1                    139.69497                   15.0562755
+    ## NP_001001129.1                     50.74447                    0.8181376
+    ## NP_001001189.1                    280.99772                  494.5054656
+    ## NP_001001194.1                      0.00000                    0.3142596
+    ## NP_001001195.1                      0.00000                    1.0837459
+    ## NP_001001201.1                    102.52292                  190.1293167
+    ##                g.s043.pu.blk_male_hypothalamus_lay
+    ## NP_001001127.1                         160.9931697
+    ## NP_001001129.1                           0.7863398
+    ## NP_001001189.1                         414.2514920
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.8588610
+    ## NP_001001201.1                          34.8891684
+    ##                g.s043.pu.blk_male_pituitary_lay
+    ## NP_001001127.1                       136.582356
+    ## NP_001001129.1                        67.230666
+    ## NP_001001189.1                       390.908980
+    ## NP_001001194.1                         0.669454
+    ## NP_001001195.1                         1.159517
+    ## NP_001001201.1                        91.846886
+    ##                g.s078.blk.o_female_gonad_lay
+    ## NP_001001127.1                      43.57237
+    ## NP_001001129.1                      94.42535
+    ## NP_001001189.1                     300.68627
+    ## NP_001001194.1                      70.97823
+    ## NP_001001195.1                       0.00000
+    ## NP_001001201.1                      32.37347
+    ##                g.s078.blk.o_female_hypothalamus_lay
+    ## NP_001001127.1                          126.0644350
+    ## NP_001001129.1                            3.4304866
+    ## NP_001001189.1                          408.9160144
+    ## NP_001001194.1                            0.0000000
+    ## NP_001001195.1                            0.8554307
+    ## NP_001001201.1                           20.3141316
+    ##                g.s078.blk.o_female_pituitary_lay
+    ## NP_001001127.1                        170.190286
+    ## NP_001001129.1                         22.182292
+    ## NP_001001189.1                        324.349187
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          2.345019
+    ## NP_001001201.1                         88.687888
+    ##                g.x.ATLAS_female_gonad_control g104.w82.x_male_gonad_bldg
+    ## NP_001001127.1                      61.342188                 15.0858109
+    ## NP_001001129.1                      77.726115                  0.4028735
+    ## NP_001001189.1                     397.375771                811.9183470
+    ## NP_001001194.1                     598.983856                  0.1639171
+    ## NP_001001195.1                       1.804833                  0.6158049
+    ## NP_001001201.1                      29.537428                269.8662971
+    ##                g104.w82.x_male_hypothalamus_bldg
+    ## NP_001001127.1                        131.370634
+    ## NP_001001129.1                          0.277567
+    ## NP_001001189.1                        404.293468
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          1.525172
+    ## NP_001001201.1                         21.182135
+    ##                g104.w82.x_male_pituitary_bldg
+    ## NP_001001127.1                    119.3072571
+    ## NP_001001129.1                     22.9276004
+    ## NP_001001189.1                    403.1907616
+    ## NP_001001194.1                      0.6783835
+    ## NP_001001195.1                      0.0000000
+    ## NP_001001201.1                     85.9326360
+    ##                g114.w83.x_male_gonad_hatch.NYNO
+    ## NP_001001127.1                        20.753333
+    ## NP_001001129.1                         0.000000
+    ## NP_001001189.1                       843.153569
+    ## NP_001001194.1                         0.000000
+    ## NP_001001195.1                         1.475355
+    ## NP_001001201.1                       321.488257
+    ##                g114.w83.x_male_hypothalamus_hatch
+    ## NP_001001127.1                         173.768469
+    ## NP_001001129.1                           1.868285
+    ## NP_001001189.1                         382.104159
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           0.000000
+    ## NP_001001201.1                          40.483188
+    ##                g114.w83.x_male_pituitary_hatch.NYNO
+    ## NP_001001127.1                            166.00377
+    ## NP_001001129.1                             20.51042
+    ## NP_001001189.1                            355.87271
+    ## NP_001001194.1                              0.00000
+    ## NP_001001195.1                              0.00000
+    ## NP_001001201.1                             81.89561
+    ##                g130.y81.x_male_gonad_inc.d17
+    ## NP_001001127.1                      3.094593
+    ## NP_001001129.1                      1.985417
+    ## NP_001001189.1                   1083.750326
+    ## NP_001001194.1                      3.098538
+    ## NP_001001195.1                      5.083850
+    ## NP_001001201.1                    423.586456
+    ##                g130.y81.x_male_hypothalamus_inc.d17
+    ## NP_001001127.1                           156.301509
+    ## NP_001001129.1                             1.731149
+    ## NP_001001189.1                           458.967254
+    ## NP_001001194.1                             0.000000
+    ## NP_001001195.1                             0.000000
+    ## NP_001001201.1                            24.454236
+    ##                g130.y81.x_male_pituitary_inc.d17
+    ## NP_001001127.1                       146.1552287
+    ## NP_001001129.1                        16.6719896
+    ## NP_001001189.1                       381.2526972
+    ## NP_001001194.1                         0.0000000
+    ## NP_001001195.1                         0.4565395
+    ## NP_001001201.1                       123.6330130
+    ##                g141.blu27.x_female_gonad_bldg
+    ## NP_001001127.1                    77.15759915
+    ## NP_001001129.1                    19.94928442
+    ## NP_001001189.1                   307.29725367
+    ## NP_001001194.1                   198.61746549
+    ## NP_001001195.1                     0.09666154
+    ## NP_001001201.1                    87.88427613
+    ##                g141.blu27.x_female_hypothalamus_bldg
+    ## NP_001001127.1                           242.3311934
+    ## NP_001001129.1                             0.8050937
+    ## NP_001001189.1                           343.0902904
+    ## NP_001001194.1                             0.0000000
+    ## NP_001001195.1                             0.0000000
+    ## NP_001001201.1                            18.4343891
+    ##                g141.blu27.x_female_pituitary_bldg
+    ## NP_001001127.1                         95.1580248
+    ## NP_001001129.1                         18.6024514
+    ## NP_001001189.1                        381.2765527
+    ## NP_001001194.1                          0.0000000
+    ## NP_001001195.1                          0.1622317
+    ## NP_001001201.1                        107.7608032
+    ##                g142.r40.x_female_gonad_inc.d17
+    ## NP_001001127.1                        71.69137
+    ## NP_001001129.1                        75.80392
+    ## NP_001001189.1                       333.80577
+    ## NP_001001194.1                        11.32604
+    ## NP_001001195.1                         2.04693
+    ## NP_001001201.1                        37.89760
+    ##                g142.r40.x_female_hypothalamus_inc.d17
+    ## NP_001001127.1                              125.40633
+    ## NP_001001129.1                                0.00000
+    ## NP_001001189.1                              568.30486
+    ## NP_001001194.1                                0.00000
+    ## NP_001001195.1                                0.00000
+    ## NP_001001201.1                               45.68751
+    ##                g142.r40.x_female_pituitary_inc.d17
+    ## NP_001001127.1                         111.2979429
+    ## NP_001001129.1                          13.1204388
+    ## NP_001001189.1                         311.9578074
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.1730881
+    ## NP_001001201.1                          99.0169541
+    ##                g143.blu32.x_male_gonad_inc.d17
+    ## NP_001001127.1                       9.0716581
+    ## NP_001001129.1                       3.2003350
+    ## NP_001001189.1                     778.1075159
+    ## NP_001001194.1                       0.1231993
+    ## NP_001001195.1                       2.0067240
+    ## NP_001001201.1                     364.6611429
+    ##                g143.blu32.x_male_hypothalamus_inc.d17
+    ## NP_001001127.1                             172.564486
+    ## NP_001001129.1                               1.807792
+    ## NP_001001189.1                             385.248759
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               0.000000
+    ## NP_001001201.1                              12.568758
+    ##                g143.blu32.x_male_pituitary_inc.d17
+    ## NP_001001127.1                        1.726342e+02
+    ## NP_001001129.1                        2.022230e+01
+    ## NP_001001189.1                        3.937000e+02
+    ## NP_001001194.1                        7.001958e-03
+    ## NP_001001195.1                        1.407388e+00
+    ## NP_001001201.1                        4.342171e+01
+    ##                g146.blu51_male_gonad_inc.d3
+    ## NP_001001127.1                    6.4768456
+    ## NP_001001129.1                    0.2874025
+    ## NP_001001189.1                 1052.1132033
+    ## NP_001001194.1                    0.9665629
+    ## NP_001001195.1                    2.1159660
+    ## NP_001001201.1                  212.5523041
+    ##                g146.blu51_male_hypothalamus_inc.d3.NYNO
+    ## NP_001001127.1                               156.100502
+    ## NP_001001129.1                                 4.428931
+    ## NP_001001189.1                               545.650159
+    ## NP_001001194.1                                 0.000000
+    ## NP_001001195.1                                 0.000000
+    ## NP_001001201.1                                17.108076
+    ##                g146.blu51_male_pituitary_inc.d3
+    ## NP_001001127.1                     160.15903087
+    ## NP_001001129.1                      38.53945203
+    ## NP_001001189.1                     456.15485435
+    ## NP_001001194.1                       0.01633911
+    ## NP_001001195.1                       0.12934594
+    ## NP_001001201.1                      92.57558534
+    ##                g20.w106.x_male_gonad_inc.d3
+    ## NP_001001127.1                    15.296890
+    ## NP_001001129.1                     1.761394
+    ## NP_001001189.1                   886.409809
+    ## NP_001001194.1                     4.017679
+    ## NP_001001195.1                     4.422741
+    ## NP_001001201.1                   310.765412
+    ##                g20.w106.x_male_hypothalamus_inc.d3
+    ## NP_001001127.1                         259.3253394
+    ## NP_001001129.1                           2.7903880
+    ## NP_001001189.1                         373.2049332
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.1821016
+    ## NP_001001201.1                          42.7822171
+    ##                g20.w106.x_male_pituitary_inc.d3 g52.blu58_male_gonad_bldg
+    ## NP_001001127.1                     156.15320568                14.1002677
+    ## NP_001001129.1                       5.17684855                 4.5055087
+    ## NP_001001189.1                     392.91685536               768.7285503
+    ## NP_001001194.1                       1.11440278                 0.1000451
+    ## NP_001001195.1                       0.05256067                 2.0542998
+    ## NP_001001201.1                      66.50613368               236.1729505
+    ##                g52.blu58_male_hypothalamus_bldg
+    ## NP_001001127.1                        217.81487
+    ## NP_001001129.1                          0.00000
+    ## NP_001001189.1                        307.18019
+    ## NP_001001194.1                          0.00000
+    ## NP_001001195.1                          0.00000
+    ## NP_001001201.1                         22.30135
+    ##                g52.blu58_male_pituitary_bldg g53.y84_male_gonad_hatch
+    ## NP_001001127.1                    113.376815               10.5133716
+    ## NP_001001129.1                     46.583702                2.4943003
+    ## NP_001001189.1                    335.098133              709.5190338
+    ## NP_001001194.1                      0.000000                0.1369360
+    ## NP_001001195.1                      2.487505                0.1916036
+    ## NP_001001201.1                     95.271212              222.1430824
+    ##                g53.y84_male_hypothalamus_hatch
+    ## NP_001001127.1                    122.54167093
+    ## NP_001001129.1                      5.82682250
+    ## NP_001001189.1                    389.05161254
+    ## NP_001001194.1                      0.00000000
+    ## NP_001001195.1                      0.03392673
+    ## NP_001001201.1                     14.56965237
+    ##                g53.y84_male_pituitary_hatch g6.w197.x_female_gonad_inc.d3
+    ## NP_001001127.1                 119.27225140                     61.719810
+    ## NP_001001129.1                  33.85679387                     30.616420
+    ## NP_001001189.1                 403.50575677                    321.788064
+    ## NP_001001194.1                   0.03576130                     13.779182
+    ## NP_001001195.1                   0.03536779                      1.426027
+    ## NP_001001201.1                 107.25604263                     47.256597
+    ##                g6.w197.x_female_hypothalamus_inc.d3
+    ## NP_001001127.1                           139.188124
+    ## NP_001001129.1                             1.423269
+    ## NP_001001189.1                           419.769505
+    ## NP_001001194.1                             0.000000
+    ## NP_001001195.1                             0.000000
+    ## NP_001001201.1                            34.835200
+    ##                g6.w197.x_female_pituitary_inc.d3 g75.x_female_gonad_inc.d9
+    ## NP_001001127.1                        133.186848               50.73780291
+    ## NP_001001129.1                         47.849982               80.89567925
+    ## NP_001001189.1                        445.923337              423.60270877
+    ## NP_001001194.1                          0.000000               19.89895884
+    ## NP_001001195.1                          1.822081                0.09397668
+    ## NP_001001201.1                        104.869812               30.53432313
+    ##                g75.x_female_hypothalamus_inc.d9
+    ## NP_001001127.1                      163.1596711
+    ## NP_001001129.1                        1.9003456
+    ## NP_001001189.1                      370.1258381
+    ## NP_001001194.1                        0.0000000
+    ## NP_001001195.1                        0.4836556
+    ## NP_001001201.1                       23.8943328
+    ##                g75.x_female_pituitary_inc.d9
+    ## NP_001001127.1                   135.8788289
+    ## NP_001001129.1                    26.8500374
+    ## NP_001001189.1                   348.9067141
+    ## NP_001001194.1                     0.0000000
+    ## NP_001001195.1                     0.4976551
+    ## NP_001001201.1                    82.4884283
+    ##                l.s120.y.blk_female_gonad_bldg
+    ## NP_001001127.1                     66.8835104
+    ## NP_001001129.1                    187.2102961
+    ## NP_001001189.1                    417.1555887
+    ## NP_001001194.1                      6.8613739
+    ## NP_001001195.1                      0.2095576
+    ## NP_001001201.1                     53.8874086
+    ##                l.s120.y.blk_female_hypothalamus_bldg
+    ## NP_001001127.1                          314.11991082
+    ## NP_001001129.1                            4.58925491
+    ## NP_001001189.1                          387.19689329
+    ## NP_001001194.1                            0.00000000
+    ## NP_001001195.1                            0.01437613
+    ## NP_001001201.1                           30.92930986
+    ##                l.s120.y.blk_female_pituitary_bldg o.s.w.r_male_gonad_lay
+    ## NP_001001127.1                         169.840301              10.161253
+    ## NP_001001129.1                          17.668677               4.053637
+    ## NP_001001189.1                         299.512148             661.029273
+    ## NP_001001194.1                           0.000000               2.024392
+    ## NP_001001195.1                           1.961849               2.039358
+    ## NP_001001201.1                         130.484228             271.113716
+    ##                o.s.w.r_male_hypothalamus_lay o.s.w.r_male_pituitary_lay
+    ## NP_001001127.1                   186.2615756                194.5843881
+    ## NP_001001129.1                     0.0000000                 43.6743087
+    ## NP_001001189.1                   436.4102208                264.7589558
+    ## NP_001001194.1                     0.0000000                  0.0000000
+    ## NP_001001195.1                     0.7294525                  0.8182745
+    ## NP_001001201.1                    22.9794689                 77.0048889
+    ##                o152.o120.w42_male_gonad_n5
+    ## NP_001001127.1                  41.0726293
+    ## NP_001001129.1                   2.0442072
+    ## NP_001001189.1                 544.6385778
+    ## NP_001001194.1                   0.8897369
+    ## NP_001001195.1                   1.5327029
+    ## NP_001001201.1                 333.8439680
+    ##                o152.o120.w42_male_hypothalamus_n5
+    ## NP_001001127.1                         166.364984
+    ## NP_001001129.1                           1.962211
+    ## NP_001001189.1                         350.496378
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           0.000000
+    ## NP_001001201.1                          37.590064
+    ##                o152.o120.w42_male_pituitary_n5
+    ## NP_001001127.1                       128.81687
+    ## NP_001001129.1                        42.85387
+    ## NP_001001189.1                       299.27180
+    ## NP_001001194.1                         0.00000
+    ## NP_001001195.1                         0.00000
+    ## NP_001001201.1                       112.07462
+    ##                o156.w80.x_female_gonad_inc.d3
+    ## NP_001001127.1                    42.08085322
+    ## NP_001001129.1                    73.64913308
+    ## NP_001001189.1                   337.31622823
+    ## NP_001001194.1                    10.73584964
+    ## NP_001001195.1                     0.04873355
+    ## NP_001001201.1                    25.41157277
+    ##                o156.w80.x_female_hypothalamus_inc.d3
+    ## NP_001001127.1                           194.6469519
+    ## NP_001001129.1                             2.8377469
+    ## NP_001001189.1                           295.5856616
+    ## NP_001001194.1                             0.0000000
+    ## NP_001001195.1                             0.4901058
+    ## NP_001001201.1                            31.2763758
+    ##                o156.w80.x_female_pituitary_inc.d3
+    ## NP_001001127.1                        167.6042172
+    ## NP_001001129.1                         98.9786028
+    ## NP_001001189.1                        297.9878492
+    ## NP_001001194.1                          0.0000000
+    ## NP_001001195.1                          0.4484516
+    ## NP_001001201.1                        111.4998301
+    ##                o165.w122.x_female_gonad_inc.d3.NYNO
+    ## NP_001001127.1                             64.06344
+    ## NP_001001129.1                            106.94244
+    ## NP_001001189.1                            412.10359
+    ## NP_001001194.1                             99.19781
+    ## NP_001001195.1                              0.00000
+    ## NP_001001201.1                             29.74546
+    ##                o165.w122.x_female_hypothalamus_inc.d3
+    ## NP_001001127.1                             165.729426
+    ## NP_001001129.1                               0.181932
+    ## NP_001001189.1                             400.350952
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               1.147760
+    ## NP_001001201.1                              35.556627
+    ##                o165.w122.x_female_pituitary_inc.d3.NYNO
+    ## NP_001001127.1                               221.892581
+    ## NP_001001129.1                                72.743445
+    ## NP_001001189.1                               379.800902
+    ## NP_001001194.1                                 0.000000
+    ## NP_001001195.1                                 1.228923
+    ## NP_001001201.1                                76.374968
+    ##                o172.w115.x_female_gonad_hatch
+    ## NP_001001127.1                     78.3079366
+    ## NP_001001129.1                     33.0066063
+    ## NP_001001189.1                    431.4183175
+    ## NP_001001194.1                     90.6925413
+    ## NP_001001195.1                      0.1770425
+    ## NP_001001201.1                     27.9350882
+    ##                o172.w115.x_female_hypothalamus_hatch
+    ## NP_001001127.1                           260.1317373
+    ## NP_001001129.1                             1.7057989
+    ## NP_001001189.1                           324.3660015
+    ## NP_001001194.1                             0.5684533
+    ## NP_001001195.1                             0.7593219
+    ## NP_001001201.1                            24.6021479
+    ##                o172.w115.x_female_pituitary_hatch.NYNO
+    ## NP_001001127.1                            1.830495e+02
+    ## NP_001001129.1                            2.354783e+01
+    ## NP_001001189.1                            4.478652e+02
+    ## NP_001001194.1                            7.154637e-03
+    ## NP_001001195.1                            4.717580e-02
+    ## NP_001001201.1                            1.320094e+02
+    ##                o173.w179.x_female_gonad_inc.d3
+    ## NP_001001127.1                       39.543455
+    ## NP_001001129.1                      104.366249
+    ## NP_001001189.1                      343.569454
+    ## NP_001001194.1                        1.045879
+    ## NP_001001195.1                        1.012651
+    ## NP_001001201.1                       14.216517
+    ##                o173.w179.x_female_hypothalamus_inc.d3
+    ## NP_001001127.1                            140.6092285
+    ## NP_001001129.1                              0.7832067
+    ## NP_001001189.1                            438.4061074
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              0.0000000
+    ## NP_001001201.1                             23.5830260
+    ##                o173.w179.x_female_pituitary_inc.d3
+    ## NP_001001127.1                           155.49716
+    ## NP_001001129.1                            30.60265
+    ## NP_001001189.1                           298.27367
+    ## NP_001001194.1                             0.00000
+    ## NP_001001195.1                             1.57038
+    ## NP_001001201.1                            76.14341
+    ##                o35.r51.x_female_gonad_inc.d17
+    ## NP_001001127.1                      83.078683
+    ## NP_001001129.1                      89.007304
+    ## NP_001001189.1                     405.990428
+    ## NP_001001194.1                     140.270853
+    ## NP_001001195.1                       1.488383
+    ## NP_001001201.1                      65.833193
+    ##                o35.r51.x_female_hypothalamus_inc.d17
+    ## NP_001001127.1                           236.2959111
+    ## NP_001001129.1                             0.9180092
+    ## NP_001001189.1                           403.0174963
+    ## NP_001001194.1                             0.0000000
+    ## NP_001001195.1                             0.4452956
+    ## NP_001001201.1                            21.1050893
+    ##                o35.r51.x_female_pituitary_inc.d17
+    ## NP_001001127.1                         142.112715
+    ## NP_001001129.1                          37.966963
+    ## NP_001001189.1                         372.931571
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           1.299441
+    ## NP_001001201.1                         114.778284
+    ##                o38.blu29.x_female_gonad_bldg
+    ## NP_001001127.1                     34.560849
+    ## NP_001001129.1                    100.479934
+    ## NP_001001189.1                    285.742100
+    ## NP_001001194.1                     77.893747
+    ## NP_001001195.1                      1.814465
+    ## NP_001001201.1                     46.573657
+    ##                o38.blu29.x_female_hypothalamus_bldg
+    ## NP_001001127.1                           139.817605
+    ## NP_001001129.1                             1.221686
+    ## NP_001001189.1                           398.501954
+    ## NP_001001194.1                             0.000000
+    ## NP_001001195.1                             0.000000
+    ## NP_001001201.1                            30.887366
+    ##                o38.blu29.x_female_pituitary_bldg
+    ## NP_001001127.1                      202.00508643
+    ## NP_001001129.1                       27.15183296
+    ## NP_001001189.1                      373.38641894
+    ## NP_001001194.1                        0.06448908
+    ## NP_001001195.1                        3.86817287
+    ## NP_001001201.1                      120.39285862
+    ##                o39.y77.x_male_gonad_hatch
+    ## NP_001001127.1                18.18476504
+    ## NP_001001129.1                 0.09290841
+    ## NP_001001189.1               817.11675760
+    ## NP_001001194.1                 0.14883463
+    ## NP_001001195.1                 8.72636655
+    ## NP_001001201.1               202.34816828
+    ##                o39.y77.x_male_hypothalamus_hatch
+    ## NP_001001127.1                        280.248445
+    ## NP_001001129.1                          3.119858
+    ## NP_001001189.1                        380.106662
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          0.000000
+    ## NP_001001201.1                         23.829615
+    ##                o39.y77.x_male_pituitary_hatch o44.blu26.x_male_gonad_hatch
+    ## NP_001001127.1                   151.80486461                    16.727839
+    ## NP_001001129.1                    94.16829879                     2.285255
+    ## NP_001001189.1                   368.92843157                   888.957419
+    ## NP_001001194.1                     0.02304067                     2.672912
+    ## NP_001001195.1                     0.02278789                     3.070287
+    ## NP_001001201.1                   149.38204825                   306.091101
+    ##                o44.blu26.x_male_hypothalamus_hatch
+    ## NP_001001127.1                         156.4653968
+    ## NP_001001129.1                           2.3025815
+    ## NP_001001189.1                         381.4235965
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.4831251
+    ## NP_001001201.1                          31.2113044
+    ##                o44.blu26.x_male_pituitary_hatch
+    ## NP_001001127.1                        192.25905
+    ## NP_001001129.1                         14.67259
+    ## NP_001001189.1                        256.53598
+    ## NP_001001194.1                          0.00000
+    ## NP_001001195.1                          0.00000
+    ## NP_001001201.1                        105.22009
+    ##                o48.r197.x_male_gonad_inc.d3
+    ## NP_001001127.1                    14.431372
+    ## NP_001001129.1                     3.869670
+    ## NP_001001189.1                   609.840381
+    ## NP_001001194.1                     7.632810
+    ## NP_001001195.1                     5.449554
+    ## NP_001001201.1                   238.617461
+    ##                o48.r197.x_male_hypothalamus_inc.d3
+    ## NP_001001127.1                          148.046472
+    ## NP_001001129.1                            5.469387
+    ## NP_001001189.1                          351.821569
+    ## NP_001001194.1                            0.000000
+    ## NP_001001195.1                            0.000000
+    ## NP_001001201.1                           30.037632
+    ##                o48.r197.x_male_pituitary_inc.d3 o49.x_male_gonad_inc.d9
+    ## NP_001001127.1                       97.8902908               14.889237
+    ## NP_001001129.1                      136.0939832                4.058476
+    ## NP_001001189.1                      400.1908698              459.295419
+    ## NP_001001194.1                        0.0000000                0.149246
+    ## NP_001001195.1                        0.8864542                4.631450
+    ## NP_001001201.1                       91.7838037              302.663848
+    ##                o49.x_male_hypothalamus_inc.d9 o49.x_male_pituitary_inc.d9
+    ## NP_001001127.1                    259.4309393                129.64754278
+    ## NP_001001129.1                      4.7768995                 74.30281717
+    ## NP_001001189.1                    423.6349030                320.46174308
+    ## NP_001001194.1                      0.2618937                  0.01537315
+    ## NP_001001195.1                      0.0473932                  2.59033804
+    ## NP_001001201.1                     30.4893030                 95.44477307
+    ##                o52.blu53_female_gonad_inc.d17
+    ## NP_001001127.1                      77.683552
+    ## NP_001001129.1                     155.545464
+    ## NP_001001189.1                     484.642483
+    ## NP_001001194.1                      98.854723
+    ## NP_001001195.1                       2.900952
+    ## NP_001001201.1                      41.247636
+    ##                o52.blu53_female_hypothalamus_inc.d17
+    ## NP_001001127.1                           195.8328123
+    ## NP_001001129.1                             0.4040369
+    ## NP_001001189.1                           390.5851646
+    ## NP_001001194.1                             0.0000000
+    ## NP_001001195.1                             3.6967946
+    ## NP_001001201.1                            22.6084570
+    ##                o52.blu53_female_pituitary_inc.d17
+    ## NP_001001127.1                         186.738663
+    ## NP_001001129.1                          12.957145
+    ## NP_001001189.1                         382.304612
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           3.149954
+    ## NP_001001201.1                          75.289747
+    ##                o57.g59_male_gonad_inc.d9 o57.g59_male_hypothalamus_inc.d9
+    ## NP_001001127.1                 9.0482239                      245.4406844
+    ## NP_001001129.1                 1.5176122                        3.5662365
+    ## NP_001001189.1               826.9268133                      400.8812765
+    ## NP_001001194.1                 0.1351263                        0.2866262
+    ## NP_001001195.1                 3.1633421                        1.5605105
+    ## NP_001001201.1               320.6173253                       27.0595153
+    ##                o57.g59_male_pituitary_inc.d9 o73.x_female_gonad_inc.d9
+    ## NP_001001127.1                  149.57767006                 31.465323
+    ## NP_001001129.1                   40.10489212                 65.855836
+    ## NP_001001189.1                  372.16407102                330.490799
+    ## NP_001001194.1                    0.01457625                 57.054163
+    ## NP_001001195.1                    1.37669020                  0.874691
+    ## NP_001001201.1                  100.46713683                 42.466522
+    ##                o73.x_female_hypothalamus_inc.d9
+    ## NP_001001127.1                       143.099038
+    ## NP_001001129.1                         1.142063
+    ## NP_001001189.1                       397.984229
+    ## NP_001001194.1                         0.000000
+    ## NP_001001195.1                         1.090197
+    ## NP_001001201.1                        26.638478
+    ##                o73.x_female_pituitary_inc.d9 pk.s238.blk.w_male_gonad_lay
+    ## NP_001001127.1                  208.22381881                    14.065857
+    ## NP_001001129.1                   21.56347072                     2.809189
+    ## NP_001001189.1                  241.96080254                   509.557630
+    ## NP_001001194.1                    0.00000000                     1.306112
+    ## NP_001001195.1                    0.07610082                     2.913947
+    ## NP_001001201.1                   65.52834809                   175.032801
+    ##                pk.s238.blk.w_male_hypothalamus_lay
+    ## NP_001001127.1                         123.8447068
+    ## NP_001001129.1                           1.8061445
+    ## NP_001001189.1                         434.1859559
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.5863735
+    ## NP_001001201.1                          26.4589905
+    ##                pk.s238.blk.w_male_pituitary_lay pk.w.s141.o_male_gonad_lay
+    ## NP_001001127.1                      153.7204625                   5.637551
+    ## NP_001001129.1                       27.0792490                   5.079488
+    ## NP_001001189.1                      271.5404305                1602.420743
+    ## NP_001001194.1                        0.6116998                   3.898644
+    ## NP_001001195.1                        0.3628197                   3.337511
+    ## NP_001001201.1                       64.4065672                 325.701431
+    ##                pk.w.s141.o_male_hypothalamus_lay
+    ## NP_001001127.1                       189.7846860
+    ## NP_001001129.1                         1.5823594
+    ## NP_001001189.1                       374.4790300
+    ## NP_001001194.1                         0.6393204
+    ## NP_001001195.1                         0.0000000
+    ## NP_001001201.1                        25.9943273
+    ##                pk.w.s141.o_male_pituitary_lay
+    ## NP_001001127.1                     169.800722
+    ## NP_001001129.1                      52.803986
+    ## NP_001001189.1                     355.214458
+    ## NP_001001194.1                       0.000000
+    ## NP_001001195.1                       2.371163
+    ## NP_001001201.1                     121.321568
+    ##                r.r.x.ATLAS.R2XR_female_gonad_control
+    ## NP_001001127.1                            30.8498397
+    ## NP_001001129.1                            41.9574487
+    ## NP_001001189.1                           475.9403227
+    ## NP_001001194.1                            33.6264647
+    ## NP_001001195.1                             0.2128484
+    ## NP_001001201.1                            40.5948233
+    ##                r.r.x.ATLAS.R2XR_female_hypothalamus_control
+    ## NP_001001127.1                                 124.58959582
+    ## NP_001001129.1                                   0.29955135
+    ## NP_001001189.1                                 414.47632766
+    ## NP_001001194.1                                   0.02546480
+    ## NP_001001195.1                                   0.05051864
+    ## NP_001001201.1                                  44.55923336
+    ##                r.r.x.ATLAS.R2XR_female_pituitary_control
+    ## NP_001001127.1                               116.4198276
+    ## NP_001001129.1                                18.7749978
+    ## NP_001001189.1                               301.5726076
+    ## NP_001001194.1                                 0.0123585
+    ## NP_001001195.1                                 1.4119651
+    ## NP_001001201.1                                63.3623342
+    ##                r.r.x.ATLAS_female_gonad_control
+    ## NP_001001127.1                         73.21291
+    ## NP_001001129.1                         83.59120
+    ## NP_001001189.1                        418.33925
+    ## NP_001001194.1                        441.43068
+    ## NP_001001195.1                          0.00000
+    ## NP_001001201.1                         14.42834
+    ##                r.r.x.ATLAS_female_hypothalamus_control
+    ## NP_001001127.1                            124.70812845
+    ## NP_001001129.1                              0.29981128
+    ## NP_001001189.1                            414.87045360
+    ## NP_001001194.1                              0.02548564
+    ## NP_001001195.1                              0.05056020
+    ## NP_001001201.1                             44.59278488
+    ##                r.r.x.ATLAS_female_pituitary_control
+    ## NP_001001127.1                          88.36598493
+    ## NP_001001129.1                          20.08312213
+    ## NP_001001189.1                         265.38753204
+    ## NP_001001194.1                           0.04588063
+    ## NP_001001195.1                           0.43971360
+    ## NP_001001201.1                          46.65469179
+    ##                r.s005.pk.blk_male_gonad_lay
+    ## NP_001001127.1                   28.3023591
+    ## NP_001001129.1                    0.9401886
+    ## NP_001001189.1                  566.0436418
+    ## NP_001001194.1                    0.0000000
+    ## NP_001001195.1                    5.0584081
+    ## NP_001001201.1                  418.9224939
+    ##                r.s005.pk.blk_male_hypothalamus_lay
+    ## NP_001001127.1                         190.0319700
+    ## NP_001001129.1                           3.5994814
+    ## NP_001001189.1                         301.7953869
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.6544508
+    ## NP_001001201.1                          20.7535755
+    ##                r.s005.pk.blk_male_pituitary_lay
+    ## NP_001001127.1                        69.221268
+    ## NP_001001129.1                         4.405244
+    ## NP_001001189.1                       306.445569
+    ## NP_001001194.1                         0.000000
+    ## NP_001001195.1                         1.627975
+    ## NP_001001201.1                        68.953992
+    ##                r.s056.g.o_female_gonad_bldg
+    ## NP_001001127.1                   26.5342371
+    ## NP_001001129.1                   82.1753015
+    ## NP_001001189.1                  446.4054448
+    ## NP_001001194.1                  148.2566392
+    ## NP_001001195.1                    0.1328692
+    ## NP_001001201.1                   15.2773019
+    ##                r.s056.g.o_female_hypothalamus_bldg
+    ## NP_001001127.1                        294.24431020
+    ## NP_001001129.1                          0.27432957
+    ## NP_001001189.1                        454.32145077
+    ## NP_001001194.1                          0.00000000
+    ## NP_001001195.1                          0.04814634
+    ## NP_001001201.1                         30.56039645
+    ##                r.s056.g.o_female_pituitary_bldg r.s059.d.o_male_gonad_bldg
+    ## NP_001001127.1                     123.12692668                  8.4498421
+    ## NP_001001129.1                       9.80126457                  1.8468184
+    ## NP_001001189.1                     507.03235481                771.9477920
+    ## NP_001001194.1                       0.05025462                  0.1004257
+    ## NP_001001195.1                       0.08716871                  3.4844434
+    ## NP_001001201.1                      72.38102568                316.1587419
+    ##                r.s059.d.o_male_hypothalamus_bldg
+    ## NP_001001127.1                        208.304103
+    ## NP_001001129.1                          3.010164
+    ## NP_001001189.1                        363.812842
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          0.000000
+    ## NP_001001201.1                         27.998187
+    ##                r.s059.d.o_male_pituitary_bldg r.s116.blk.pu_male_gonad_lay
+    ## NP_001001127.1                   2.127983e+02                     7.563313
+    ## NP_001001129.1                   1.238218e+01                     1.652077
+    ## NP_001001189.1                   3.191257e+02                   689.493432
+    ## NP_001001194.1                   4.699337e-03                     0.000000
+    ## NP_001001195.1                   7.749037e-02                     3.409685
+    ## NP_001001201.1                   9.236026e+01                   260.337802
+    ##                r.s116.blk.pu_male_hypothalamus_lay
+    ## NP_001001127.1                         175.6787761
+    ## NP_001001129.1                           0.0000000
+    ## NP_001001189.1                         427.7046963
+    ## NP_001001194.1                           0.8355009
+    ## NP_001001195.1                           0.0000000
+    ## NP_001001201.1                          30.7570792
+    ##                r.s116.blk.pu_male_pituitary_lay r.s171.l.w_female_gonad_n9
+    ## NP_001001127.1                       186.982769                  71.241395
+    ## NP_001001129.1                        18.259092                  71.765236
+    ## NP_001001189.1                       329.304893                 355.008926
+    ## NP_001001194.1                         0.000000                   2.851921
+    ## NP_001001195.1                         1.398463                   2.667971
+    ## NP_001001201.1                        86.555559                 109.978497
+    ##                r.s171.l.w_female_hypothalamus_n9
+    ## NP_001001127.1                         168.85009
+    ## NP_001001129.1                           0.00000
+    ## NP_001001189.1                         426.77716
+    ## NP_001001194.1                           0.00000
+    ## NP_001001195.1                           0.00000
+    ## NP_001001201.1                          33.38166
+    ##                r.s171.l.w_female_pituitary_n9 r.y.s007.blk_male_gonad_n9
+    ## NP_001001127.1                    146.6507093                  16.933773
+    ## NP_001001129.1                     36.1414042                   2.488721
+    ## NP_001001189.1                    349.2102164                 927.254575
+    ## NP_001001194.1                      0.0000000                   1.189889
+    ## NP_001001195.1                      0.5069825                   5.923483
+    ## NP_001001201.1                    109.3440237                 304.303312
+    ##                r.y.s007.blk_male_hypothalamus_n9
+    ## NP_001001127.1                       197.3609091
+    ## NP_001001129.1                         2.0959088
+    ## NP_001001189.1                       444.8311007
+    ## NP_001001194.1                         0.0000000
+    ## NP_001001195.1                         0.1128751
+    ## NP_001001201.1                        18.2639353
+    ##                r.y.s007.blk_male_pituitary_n9
+    ## NP_001001127.1                    170.0302849
+    ## NP_001001129.1                     21.5955823
+    ## NP_001001189.1                    302.3292947
+    ## NP_001001194.1                      0.0000000
+    ## NP_001001195.1                      0.0714033
+    ## NP_001001201.1                    124.2155481
+    ##                r176.blu54_male_gonad_inc.d17
+    ## NP_001001127.1                    3.19258270
+    ## NP_001001129.1                    2.08649792
+    ## NP_001001189.1                  923.04836222
+    ## NP_001001194.1                    0.01016878
+    ## NP_001001195.1                    1.06962819
+    ## NP_001001201.1                  246.94572833
+    ##                r176.blu54_male_hypothalamus_inc.d17
+    ## NP_001001127.1                         269.41682512
+    ## NP_001001129.1                           0.28745743
+    ## NP_001001189.1                         479.14940173
+    ## NP_001001194.1                           0.01001341
+    ## NP_001001195.1                           0.15300352
+    ## NP_001001201.1                          17.40183710
+    ##                r176.blu54_male_pituitary_inc.d17
+    ## NP_001001127.1                      1.685101e+02
+    ## NP_001001129.1                      1.524691e+01
+    ## NP_001001189.1                      3.651713e+02
+    ## NP_001001194.1                      1.658725e-03
+    ## NP_001001195.1                      1.910478e-02
+    ## NP_001001201.1                      1.123004e+02
+    ##                r183.o22_female_gonad_hatch
+    ## NP_001001127.1                  90.5213267
+    ## NP_001001129.1                  25.7176724
+    ## NP_001001189.1                 299.3609426
+    ## NP_001001194.1                  17.2351435
+    ## NP_001001195.1                   0.1795582
+    ## NP_001001201.1                  35.4074356
+    ##                r183.o22_female_hypothalamus_hatch
+    ## NP_001001127.1                         222.620430
+    ## NP_001001129.1                           3.484964
+    ## NP_001001189.1                         431.019983
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           0.000000
+    ## NP_001001201.1                          30.069354
+    ##                r183.o22_female_pituitary_hatch r190.o43.x_male_gonad_lay
+    ## NP_001001127.1                    1.074285e+02                  3.039230
+    ## NP_001001129.1                    1.441329e+01                  3.024634
+    ## NP_001001189.1                    4.268726e+02                913.638743
+    ## NP_001001194.1                    8.667057e-03                  2.013419
+    ## NP_001001195.1                    5.727684e-02                  8.052348
+    ## NP_001001201.1                    9.897154e+01                236.990939
+    ##                r190.o43.x_male_hypothalamus_lay
+    ## NP_001001127.1                       166.026900
+    ## NP_001001129.1                         4.899394
+    ## NP_001001189.1                       422.916037
+    ## NP_001001194.1                         0.000000
+    ## NP_001001195.1                         1.369659
+    ## NP_001001201.1                        22.828319
+    ##                r190.o43.x_male_pituitary_lay r195.x_male_gonad_n9
+    ## NP_001001127.1                    114.711310           34.0814118
+    ## NP_001001129.1                     45.117699            4.6885646
+    ## NP_001001189.1                    466.638442          784.6210545
+    ## NP_001001194.1                      0.000000            0.5861631
+    ## NP_001001195.1                      1.811653            7.5544999
+    ## NP_001001201.1                     60.797332          350.7896509
+    ##                r195.x_male_hypothalamus_n9 r195.x_male_pituitary_n9
+    ## NP_001001127.1                  259.799137                167.95441
+    ## NP_001001129.1                    5.623145                 47.30069
+    ## NP_001001189.1                  391.590719                326.94367
+    ## NP_001001194.1                    0.000000                  0.00000
+    ## NP_001001195.1                    0.000000                  3.07211
+    ## NP_001001201.1                   21.982444                 92.67145
+    ##                r27.w111.blu125_female_gonad_inc.d3
+    ## NP_001001127.1                           74.150527
+    ## NP_001001129.1                          108.348555
+    ## NP_001001189.1                          364.063996
+    ## NP_001001194.1                            5.754251
+    ## NP_001001195.1                            1.550990
+    ## NP_001001201.1                           51.144790
+    ##                r27.w111.blu125_female_hypothalamus_inc.d3
+    ## NP_001001127.1                                 158.182913
+    ## NP_001001129.1                                   3.384943
+    ## NP_001001189.1                                 397.361726
+    ## NP_001001194.1                                   0.000000
+    ## NP_001001195.1                                   0.616654
+    ## NP_001001201.1                                  43.384750
+    ##                r27.w111.blu125_female_pituitary_inc.d3
+    ## NP_001001127.1                                83.22392
+    ## NP_001001129.1                                20.27233
+    ## NP_001001189.1                               801.97227
+    ## NP_001001194.1                                 0.00000
+    ## NP_001001195.1                                 0.00000
+    ## NP_001001201.1                               119.14047
+    ##                r30.w112.r46_female_gonad_inc.d9
+    ## NP_001001127.1                       43.1283786
+    ## NP_001001129.1                       76.4723140
+    ## NP_001001189.1                      310.7874404
+    ## NP_001001194.1                        6.8138147
+    ## NP_001001195.1                        0.9754354
+    ## NP_001001201.1                       42.1627359
+    ##                r30.w112.r46_female_hypothalamus_inc.d9
+    ## NP_001001127.1                              159.206448
+    ## NP_001001129.1                                6.508457
+    ## NP_001001189.1                              533.751041
+    ## NP_001001194.1                                0.000000
+    ## NP_001001195.1                                0.000000
+    ## NP_001001201.1                               51.960865
+    ##                r30.w112.r46_female_pituitary_inc.d9
+    ## NP_001001127.1                           208.644879
+    ## NP_001001129.1                             5.099804
+    ## NP_001001189.1                           343.292275
+    ## NP_001001194.1                             0.000000
+    ## NP_001001195.1                             4.911713
+    ## NP_001001201.1                           136.829123
+    ##                r36.w184.x_female_gonad_inc.d9
+    ## NP_001001127.1                      59.586734
+    ## NP_001001129.1                      47.013678
+    ## NP_001001189.1                     339.937736
+    ## NP_001001194.1                      24.944551
+    ## NP_001001195.1                       0.170262
+    ## NP_001001201.1                      30.022412
+    ##                r36.w184.x_female_hypothalamus_inc.d9
+    ## NP_001001127.1                            202.141201
+    ## NP_001001129.1                              1.772581
+    ## NP_001001189.1                            380.718385
+    ## NP_001001194.1                              0.000000
+    ## NP_001001195.1                              1.354240
+    ## NP_001001201.1                             30.097866
+    ##                r36.w184.x_female_pituitary_inc.d9 r37.w100.x_male_gonad_n9
+    ## NP_001001127.1                        149.4107373               9.59865006
+    ## NP_001001129.1                         20.0451750               3.90127842
+    ## NP_001001189.1                        338.0053982             744.60185855
+    ## NP_001001194.1                          0.0000000               0.04814845
+    ## NP_001001195.1                          0.1695013               1.55340086
+    ## NP_001001201.1                         69.2599859             305.59279806
+    ##                r37.w100.x_male_hypothalamus_n9
+    ## NP_001001127.1                      105.098277
+    ## NP_001001129.1                        1.535785
+    ## NP_001001189.1                      353.729751
+    ## NP_001001194.1                        0.000000
+    ## NP_001001195.1                        4.240469
+    ## NP_001001201.1                       30.965311
+    ##                r37.w100.x_male_pituitary_n9 r41.w99.x_male_gonad_hatch
+    ## NP_001001127.1                   111.558837                  11.514173
+    ## NP_001001129.1                    94.975360                   5.407342
+    ## NP_001001189.1                   347.758287                 782.080404
+    ## NP_001001194.1                     0.000000                   1.826326
+    ## NP_001001195.1                     1.789982                   3.404531
+    ## NP_001001201.1                   117.636059                 225.679656
+    ##                r41.w99.x_male_hypothalamus_hatch
+    ## NP_001001127.1                       127.4263803
+    ## NP_001001129.1                         0.6689618
+    ## NP_001001189.1                       280.8149179
+    ## NP_001001194.1                         0.0000000
+    ## NP_001001195.1                         0.0000000
+    ## NP_001001201.1                        26.7323720
+    ##                r41.w99.x_male_pituitary_hatch r45.X_male_gonad_inc.d9
+    ## NP_001001127.1                       171.7294              14.7673470
+    ## NP_001001129.1                        42.3668               0.1656945
+    ## NP_001001189.1                       389.3155             814.7229962
+    ## NP_001001194.1                         0.0000               0.1825929
+    ## NP_001001195.1                         0.0000               0.4109301
+    ## NP_001001201.1                       158.4325             476.0548171
+    ##                r45.X_male_pituitary_inc.d9 r45.x_male_hypothalamus_inc.d9
+    ## NP_001001127.1                183.77392259                   1.538320e+02
+    ## NP_001001129.1                 36.06459196                   1.089436e+00
+    ## NP_001001189.1                435.90624890                   4.124935e+02
+    ## NP_001001194.1                  0.01039822                   2.722553e-02
+    ## NP_001001195.1                  1.25960578                   5.174784e-03
+    ## NP_001001201.1                 79.97469690                   8.601715e+00
+    ##                r49.w189.x_female_gonad_inc.d17
+    ## NP_001001127.1                       68.604169
+    ## NP_001001129.1                      127.622627
+    ## NP_001001189.1                      295.771055
+    ## NP_001001194.1                       56.062400
+    ## NP_001001195.1                        2.914515
+    ## NP_001001201.1                       53.198738
+    ##                r49.w189.x_female_hypothalamus_inc.d17
+    ## NP_001001127.1                            148.8360119
+    ## NP_001001129.1                              3.9773184
+    ## NP_001001189.1                            359.2110065
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              0.9924117
+    ## NP_001001201.1                             32.7467308
+    ##                r49.w189.x_female_pituitary_inc.d17
+    ## NP_001001127.1                          119.689107
+    ## NP_001001129.1                            8.707057
+    ## NP_001001189.1                          303.579881
+    ## NP_001001194.1                            0.000000
+    ## NP_001001195.1                            3.635970
+    ## NP_001001201.1                          161.689876
+    ##                r6.x_female_gonad_control.NYNO
+    ## NP_001001127.1                     60.9553114
+    ## NP_001001129.1                     63.7038820
+    ## NP_001001189.1                    381.6493526
+    ## NP_001001194.1                     22.3354506
+    ## NP_001001195.1                      0.4255725
+    ## NP_001001201.1                     21.2675938
+    ##                r6.x_female_hypothalamus_control.NYNO
+    ## NP_001001127.1                            187.725279
+    ## NP_001001129.1                              3.444978
+    ## NP_001001189.1                            393.773626
+    ## NP_001001194.1                              0.000000
+    ## NP_001001195.1                              0.000000
+    ## NP_001001201.1                             19.777701
+    ##                r6.x_female_pituitary_control r72.y83.x_male_gonad_hatch
+    ## NP_001001127.1                   109.7396206                  4.5131796
+    ## NP_001001129.1                    22.8596745                  0.1748494
+    ## NP_001001189.1                   295.6075917                887.2152187
+    ## NP_001001194.1                     0.0598676                 25.1324241
+    ## NP_001001195.1                     4.1965227                  5.0480100
+    ## NP_001001201.1                    88.0094691                307.8147529
+    ##                r72.y83.x_male_hypothalamus_hatch
+    ## NP_001001127.1                        258.771811
+    ## NP_001001129.1                          1.363568
+    ## NP_001001189.1                        311.166267
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          1.305018
+    ## NP_001001201.1                         38.185717
+    ##                r72.y83.x_male_pituitary_hatch
+    ## NP_001001127.1                     77.7971139
+    ## NP_001001129.1                     17.8057115
+    ## NP_001001189.1                    396.9651967
+    ## NP_001001194.1                      0.6604454
+    ## NP_001001195.1                      1.4710353
+    ## NP_001001201.1                     86.4921458
+    ##                r73.g127.x_female_gonad_inc.d3
+    ## NP_001001127.1                     74.6961186
+    ## NP_001001129.1                     84.0111779
+    ## NP_001001189.1                    633.9980399
+    ## NP_001001194.1                     51.0532993
+    ## NP_001001195.1                      0.4609848
+    ## NP_001001201.1                     61.3651423
+    ##                r73.g127.x_female_hypothalamus_inc.d3
+    ## NP_001001127.1                            133.605508
+    ## NP_001001129.1                              1.014130
+    ## NP_001001189.1                            329.180260
+    ## NP_001001194.1                              0.000000
+    ## NP_001001195.1                              2.135622
+    ## NP_001001201.1                             32.799414
+    ##                r73.g127.x_female_pituitary_inc.d3
+    ## NP_001001127.1                         140.387292
+    ## NP_001001129.1                          73.906289
+    ## NP_001001189.1                         308.528962
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           1.384744
+    ## NP_001001201.1                         116.920285
+    ##                r83.g45_female_gonad_bldg r83.g45_female_hypothalamus_bldg
+    ## NP_001001127.1                54.4340407                     246.15005172
+    ## NP_001001129.1                16.1040498                       0.36193296
+    ## NP_001001189.1               605.4217632                     546.91397744
+    ## NP_001001194.1                 5.9269759                       0.00000000
+    ## NP_001001195.1                 0.2155312                       0.06253009
+    ## NP_001001201.1                88.2530334                      35.51270663
+    ##                r83.g45_female_pituitary_bldg r95.blu99_female_gonad_n9
+    ## NP_001001127.1                    163.514486                  86.98410
+    ## NP_001001129.1                     23.395668                 179.43163
+    ## NP_001001189.1                    281.504605                 339.30149
+    ## NP_001001194.1                      0.000000                  15.77894
+    ## NP_001001195.1                      2.415296                   3.17823
+    ## NP_001001201.1                     72.445345                  33.49509
+    ##                r95.blu99_female_hypothalamus_n9
+    ## NP_001001127.1                       191.720664
+    ## NP_001001129.1                         0.000000
+    ## NP_001001189.1                       421.631750
+    ## NP_001001194.1                         0.000000
+    ## NP_001001195.1                         2.502122
+    ## NP_001001201.1                        22.863280
+    ##                r95.blu99_female_pituitary_n9 s.o.pk_female_gonad_lay
+    ## NP_001001127.1                    142.432002             292.0833626
+    ## NP_001001129.1                     15.131591             198.5595141
+    ## NP_001001189.1                    335.536968             339.4624199
+    ## NP_001001194.1                      0.000000              77.3362507
+    ## NP_001001195.1                      2.463684               0.9777379
+    ## NP_001001201.1                     75.176482              32.9056208
+    ##                s.o.pk_female_hypothalamus_lay s.o.pk_female_pituitary_lay
+    ## NP_001001127.1                     205.885813                  138.543258
+    ## NP_001001129.1                       1.232091                   21.139762
+    ## NP_001001189.1                     371.177845                  301.963906
+    ## NP_001001194.1                       0.000000                    4.281927
+    ## NP_001001195.1                       0.000000                    2.239215
+    ## NP_001001201.1                      19.586331                   72.083843
+    ##                s.pu148.blk.r_male_gonad_bldg
+    ## NP_001001127.1                     8.2188695
+    ## NP_001001129.1                     2.1673283
+    ## NP_001001189.1                   696.7578972
+    ## NP_001001194.1                     0.1312433
+    ## NP_001001195.1                     0.4831586
+    ## NP_001001201.1                   211.9546103
+    ##                s.pu148.blk.r_male_hypothalamus_bldg
+    ## NP_001001127.1                          215.5071904
+    ## NP_001001129.1                            2.9902214
+    ## NP_001001189.1                          377.3966095
+    ## NP_001001194.1                            0.0000000
+    ## NP_001001195.1                            0.0198375
+    ## NP_001001201.1                           25.2521646
+    ##                s.pu148.blk.r_male_pituitary_bldg
+    ## NP_001001127.1                      1.137457e+02
+    ## NP_001001129.1                      7.343508e+01
+    ## NP_001001189.1                      4.115677e+02
+    ## NP_001001194.1                      8.119953e-03
+    ## NP_001001195.1                      1.623982e+00
+    ## NP_001001201.1                      8.101070e+01
+    ##                s.x.ATLAS_female_gonad_control
+    ## NP_001001127.1                      55.898929
+    ## NP_001001129.1                      86.428672
+    ## NP_001001189.1                     362.348126
+    ## NP_001001194.1                     450.860819
+    ## NP_001001195.1                       7.960992
+    ## NP_001001201.1                      20.402657
+    ##                s.x.ATLAS_female_hypothalamus_control
+    ## NP_001001127.1                          117.04149901
+    ## NP_001001129.1                            2.92313528
+    ## NP_001001189.1                          434.12214133
+    ## NP_001001194.1                            0.01371208
+    ## NP_001001195.1                            0.02712881
+    ## NP_001001201.1                           39.72533477
+    ##                s.x.ATLAS_female_pituitary_control
+    ## NP_001001127.1                        72.21521400
+    ## NP_001001129.1                         3.60190801
+    ## NP_001001189.1                       480.58366657
+    ## NP_001001194.1                         0.05020866
+    ## NP_001001195.1                         3.38674451
+    ## NP_001001201.1                        58.00603913
+    ##                s063.d.blk.l_female_gonad_bldg
+    ## NP_001001127.1                       75.21867
+    ## NP_001001129.1                       79.92131
+    ## NP_001001189.1                      341.43861
+    ## NP_001001194.1                      114.56384
+    ## NP_001001195.1                        2.21045
+    ## NP_001001201.1                      145.82969
+    ##                s063.d.blk.l_female_hypothalamus_bldg
+    ## NP_001001127.1                          227.84373060
+    ## NP_001001129.1                            4.19802328
+    ## NP_001001189.1                          440.24777783
+    ## NP_001001194.1                            0.00000000
+    ## NP_001001195.1                            0.03251602
+    ## NP_001001201.1                           24.59835555
+    ##                s063.d.blk.l_female_pituitary_bldg
+    ## NP_001001127.1                       103.47660254
+    ## NP_001001129.1                        27.06281551
+    ## NP_001001189.1                       405.52860138
+    ## NP_001001194.1                         0.07287031
+    ## NP_001001195.1                         0.12694865
+    ## NP_001001201.1                       120.49458597
+    ##                s065.l.d.o_male_gonad_bldg
+    ## NP_001001127.1                  10.118004
+    ## NP_001001129.1                   3.709713
+    ## NP_001001189.1                 424.821051
+    ## NP_001001194.1                   0.000000
+    ## NP_001001195.1                   6.499260
+    ## NP_001001201.1                 496.095624
+    ##                s065.l.d.o_male_hypothalamus_bldg
+    ## NP_001001127.1                        168.433068
+    ## NP_001001129.1                          2.018088
+    ## NP_001001189.1                        453.846783
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          1.005854
+    ## NP_001001201.1                         17.157135
+    ##                s065.l.d.o_male_pituitary_bldg s066.l.d.r_male_gonad_bldg
+    ## NP_001001127.1                      139.59468                16.99827143
+    ## NP_001001129.1                       12.50540                 0.19720758
+    ## NP_001001189.1                      385.18472               767.00022953
+    ## NP_001001194.1                        0.00000                 0.08247997
+    ## NP_001001195.1                        4.70146                 3.18018634
+    ## NP_001001201.1                       70.31364               256.50797699
+    ##                s066.l.d.r_male_hypothalamus_bldg
+    ## NP_001001127.1                      177.91514918
+    ## NP_001001129.1                        4.56028600
+    ## NP_001001189.1                      337.02729113
+    ## NP_001001194.1                        0.00000000
+    ## NP_001001195.1                        0.02400372
+    ## NP_001001201.1                       27.91388413
+    ##                s066.l.d.r_male_pituitary_bldg
+    ## NP_001001127.1                   1.151392e+02
+    ## NP_001001129.1                   1.442631e+01
+    ## NP_001001189.1                   3.484774e+02
+    ## NP_001001194.1                   5.496731e-03
+    ## NP_001001195.1                   9.093985e-02
+    ## NP_001001201.1                   8.611456e+01
+    ##                s092.blk.r.o_female_gonad_bldg
+    ## NP_001001127.1                       44.06821
+    ## NP_001001129.1                      134.38051
+    ## NP_001001189.1                      496.59276
+    ## NP_001001194.1                       30.58026
+    ## NP_001001195.1                        2.90536
+    ## NP_001001201.1                       73.81021
+    ##                s092.blk.r.o_female_hypothalamus_bldg
+    ## NP_001001127.1                            297.616048
+    ## NP_001001129.1                              3.731721
+    ## NP_001001189.1                            371.315546
+    ## NP_001001194.1                              0.000000
+    ## NP_001001195.1                              2.182770
+    ## NP_001001201.1                             31.936791
+    ##                s092.blk.r.o_female_pituitary_bldg
+    ## NP_001001127.1                       175.04675915
+    ## NP_001001129.1                        14.85227014
+    ## NP_001001189.1                       372.55789543
+    ## NP_001001194.1                         0.09502543
+    ## NP_001001195.1                         0.16622960
+    ## NP_001001201.1                       105.94204092
+    ##                s095.g.blk.o_female_gonad_lay
+    ## NP_001001127.1                     54.597519
+    ## NP_001001129.1                    120.174217
+    ## NP_001001189.1                    240.393131
+    ## NP_001001194.1                     28.920593
+    ## NP_001001195.1                      2.161621
+    ## NP_001001201.1                     22.880079
+    ##                s095.g.blk.o_female_hypothalamus_lay
+    ## NP_001001127.1                          191.9239672
+    ## NP_001001129.1                            1.4914212
+    ## NP_001001189.1                          374.0589322
+    ## NP_001001194.1                            0.5073610
+    ## NP_001001195.1                            0.2203826
+    ## NP_001001201.1                           33.3360254
+    ##                s095.g.blk.o_female_pituitary_lay
+    ## NP_001001127.1                        109.858722
+    ## NP_001001129.1                         26.191260
+    ## NP_001001189.1                        324.183971
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          1.444937
+    ## NP_001001201.1                         68.833149
+    ##                s136.d.w.o_female_gonad_lay
+    ## NP_001001127.1                  226.793321
+    ## NP_001001129.1                   63.040458
+    ## NP_001001189.1                  308.849169
+    ## NP_001001194.1                  122.938493
+    ## NP_001001195.1                    1.587565
+    ## NP_001001201.1                   46.511306
+    ##                s136.d.w.o_female_hypothalamus_lay
+    ## NP_001001127.1                         223.510275
+    ## NP_001001129.1                           5.360588
+    ## NP_001001189.1                         390.843980
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           0.000000
+    ## NP_001001201.1                          44.967049
+    ##                s136.d.w.o_female_pituitary_lay
+    ## NP_001001127.1                      152.320126
+    ## NP_001001129.1                        6.891919
+    ## NP_001001189.1                      281.462565
+    ## NP_001001194.1                        0.000000
+    ## NP_001001195.1                        2.492718
+    ## NP_001001201.1                      124.774913
+    ##                s142.o.pk.pu_female_gonad_lay
+    ## NP_001001127.1                     32.735998
+    ## NP_001001129.1                      0.000000
+    ## NP_001001189.1                    431.692025
+    ## NP_001001194.1                      4.099519
+    ## NP_001001195.1                      0.000000
+    ## NP_001001201.1                     15.522962
+    ##                s142.o.pk.pu_female_hypothalamus_lay
+    ## NP_001001127.1                          205.0038431
+    ## NP_001001129.1                            0.4198321
+    ## NP_001001189.1                          388.9943042
+    ## NP_001001194.1                            0.0000000
+    ## NP_001001195.1                            0.9815046
+    ## NP_001001201.1                           30.9516226
+    ##                s142.o.pk.pu_female_pituitary_lay
+    ## NP_001001127.1                        166.642503
+    ## NP_001001129.1                         17.984173
+    ## NP_001001189.1                        222.971360
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          1.074521
+    ## NP_001001201.1                         91.866686
+    ##                s150.w.g.blk_male_gonad_lay
+    ## NP_001001127.1                   13.264166
+    ## NP_001001129.1                    2.840341
+    ## NP_001001189.1                  612.391389
+    ## NP_001001194.1                    0.000000
+    ## NP_001001195.1                    0.000000
+    ## NP_001001201.1                  245.127692
+    ##                s150.w.g.blk_male_hypothalamus_lay
+    ## NP_001001127.1                        149.1558739
+    ## NP_001001129.1                          0.8502058
+    ## NP_001001189.1                        435.7339028
+    ## NP_001001194.1                          0.0000000
+    ## NP_001001195.1                          0.0000000
+    ## NP_001001201.1                         37.8913781
+    ##                s150.w.g.blk_male_pituitary_lay
+    ## NP_001001127.1                       183.18254
+    ## NP_001001129.1                        51.45516
+    ## NP_001001189.1                       332.45966
+    ## NP_001001194.1                         0.00000
+    ## NP_001001195.1                         0.00000
+    ## NP_001001201.1                        83.40814
+    ##                s176.blk.pu.r_female_gonad_lay
+    ## NP_001001127.1                       49.14780
+    ## NP_001001129.1                       57.76729
+    ## NP_001001189.1                      314.54734
+    ## NP_001001194.1                       16.75943
+    ## NP_001001195.1                        0.00000
+    ## NP_001001201.1                       23.86489
+    ##                s176.blk.pu.r_female_hypothalamus_lay
+    ## NP_001001127.1                           249.0166908
+    ## NP_001001129.1                             0.4613425
+    ## NP_001001189.1                           367.7709418
+    ## NP_001001194.1                             0.0000000
+    ## NP_001001195.1                             0.6874547
+    ## NP_001001201.1                            31.0482141
+    ##                s176.blk.pu.r_female_pituitary_lay s187.l.o.r_male_gonad_n9
+    ## NP_001001127.1                        152.4687885                30.296380
+    ## NP_001001129.1                         17.8748143                 4.434879
+    ## NP_001001189.1                        321.9989923               851.047809
+    ## NP_001001194.1                          0.0000000                 0.000000
+    ## NP_001001195.1                          0.1066946                 4.325277
+    ## NP_001001201.1                         93.4153359               458.556773
+    ##                s187.l.o.r_male_hypothalamus_n9
+    ## NP_001001127.1                     142.3423030
+    ## NP_001001129.1                       0.4134027
+    ## NP_001001189.1                     476.3601155
+    ## NP_001001194.1                       0.0000000
+    ## NP_001001195.1                       0.0000000
+    ## NP_001001201.1                      11.1562753
+    ##                s187.l.o.r_male_pituitary_n9 s243.blk.pk.r_male_gonad_lay
+    ## NP_001001127.1                  155.5331842                   13.1528648
+    ## NP_001001129.1                   31.6303908                    0.5286876
+    ## NP_001001189.1                  300.3095643                  754.4904438
+    ## NP_001001194.1                    0.0000000                    0.0000000
+    ## NP_001001195.1                    0.5274706                    7.7548592
+    ## NP_001001201.1                   56.7902074                  416.8277254
+    ##                s243.blk.pk.r_male_hypothalamus_lay
+    ## NP_001001127.1                          165.853394
+    ## NP_001001129.1                            2.920061
+    ## NP_001001189.1                          355.449421
+    ## NP_001001194.1                            0.000000
+    ## NP_001001195.1                            1.207402
+    ## NP_001001201.1                           28.742260
+    ##                s243.blk.pk.r_male_pituitary_lay
+    ## NP_001001127.1                        129.74945
+    ## NP_001001129.1                         31.32307
+    ## NP_001001189.1                        421.43762
+    ## NP_001001194.1                          0.00000
+    ## NP_001001195.1                          0.00000
+    ## NP_001001201.1                        103.09116
+    ##                w191.r1_female_gonad_control
+    ## NP_001001127.1                    53.529309
+    ## NP_001001129.1                   104.300096
+    ## NP_001001189.1                   349.810279
+    ## NP_001001194.1                    47.840372
+    ## NP_001001195.1                     3.430267
+    ## NP_001001201.1                    31.482000
+    ##                w191.r1_female_hypothalamus_control
+    ## NP_001001127.1                        269.29197950
+    ## NP_001001129.1                          0.53360856
+    ## NP_001001189.1                        275.34754553
+    ## NP_001001194.1                          0.04363624
+    ## NP_001001195.1                          0.08686916
+    ## NP_001001201.1                         19.81955765
+    ##                w191.r1_female_pituitary_control w34.x_male_gonad_inc.d9
+    ## NP_001001127.1                     206.22765055               10.327541
+    ## NP_001001129.1                      35.51032929                4.311593
+    ## NP_001001189.1                     263.16231695              801.009324
+    ## NP_001001194.1                       0.05664561                0.181168
+    ## NP_001001195.1                       3.90196005                5.038489
+    ## NP_001001201.1                      77.89909271              365.553657
+    ##                w34.x_male_hypothalamus_inc.d9 w34.x_male_pituitary_inc.d9
+    ## NP_001001127.1                     135.584661                   76.908692
+    ## NP_001001129.1                       1.067795                   46.461974
+    ## NP_001001189.1                     425.069128                  356.237289
+    ## NP_001001194.1                       0.000000                    2.449363
+    ## NP_001001195.1                       0.657220                    1.433674
+    ## NP_001001201.1                      25.376686                   83.628410
+    ##                x.blk.blk.ATLAS_male_gonad_control
+    ## NP_001001127.1                          23.939700
+    ## NP_001001129.1                           1.994713
+    ## NP_001001189.1                         929.423610
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           5.984936
+    ## NP_001001201.1                         212.413233
+    ##                x.blk.blk.ATLAS_male_hypothalamus_control
+    ## NP_001001127.1                              311.85972915
+    ## NP_001001129.1                                3.68287828
+    ## NP_001001189.1                              278.34763857
+    ## NP_001001194.1                                0.04403893
+    ## NP_001001195.1                                0.00000000
+    ## NP_001001201.1                               17.71664849
+    ##                x.blk.blk.ATLAS_male_pituitary_control
+    ## NP_001001127.1                             140.866615
+    ## NP_001001129.1                             109.220368
+    ## NP_001001189.1                             259.457891
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               2.692335
+    ## NP_001001201.1                              32.744050
+    ##                x.blk16_male_gonad_n9.NYNO
+    ## NP_001001127.1                  38.758521
+    ## NP_001001129.1                   3.562498
+    ## NP_001001189.1                 774.304103
+    ## NP_001001194.1                   0.000000
+    ## NP_001001195.1                   5.382409
+    ## NP_001001201.1                 256.846937
+    ##                x.blk16_male_hypothalamus_n9.NYNO x.blk16_male_pituitary_n9
+    ## NP_001001127.1                        129.654991                102.255480
+    ## NP_001001129.1                          2.462857                 34.025163
+    ## NP_001001189.1                        460.268059                333.232766
+    ## NP_001001194.1                          0.000000                  0.000000
+    ## NP_001001195.1                          0.000000                  2.150257
+    ## NP_001001201.1                         27.196888                103.055881
+    ##                x.blu.o.ATLAS_male_pituitary_control
+    ## NP_001001127.1                           124.169880
+    ## NP_001001129.1                            37.640959
+    ## NP_001001189.1                           302.591131
+    ## NP_001001194.1                             0.000000
+    ## NP_001001195.1                             2.062402
+    ## NP_001001201.1                            33.443227
+    ##                x.blu101.w43_female_gonad_inc.d9
+    ## NP_001001127.1                         39.26832
+    ## NP_001001129.1                        111.45354
+    ## NP_001001189.1                        328.57434
+    ## NP_001001194.1                         40.37905
+    ## NP_001001195.1                          1.47399
+    ## NP_001001201.1                         38.95077
+    ##                x.blu101.w43_female_hypothalamus_inc.d9
+    ## NP_001001127.1                            180.50431136
+    ## NP_001001129.1                              2.18405518
+    ## NP_001001189.1                            364.19890825
+    ## NP_001001194.1                              0.00000000
+    ## NP_001001195.1                              0.08337822
+    ## NP_001001201.1                             32.87103631
+    ##                x.blu101.w43_female_pituitary_inc.d9
+    ## NP_001001127.1                            147.51756
+    ## NP_001001129.1                             12.15051
+    ## NP_001001189.1                            372.36449
+    ## NP_001001194.1                              0.00000
+    ## NP_001001195.1                              0.00000
+    ## NP_001001201.1                             82.04427
+    ##                x.blu102.w105_female_gonad_inc.d3
+    ## NP_001001127.1                         37.542590
+    ## NP_001001129.1                         80.721688
+    ## NP_001001189.1                        511.722209
+    ## NP_001001194.1                         68.847397
+    ## NP_001001195.1                          1.271457
+    ## NP_001001201.1                         26.801742
+    ##                x.blu102.w105_female_hypothalamus_inc.d3
+    ## NP_001001127.1                              165.2784505
+    ## NP_001001129.1                                3.3730790
+    ## NP_001001189.1                              331.3128509
+    ## NP_001001194.1                                0.0000000
+    ## NP_001001195.1                                0.4566934
+    ## NP_001001201.1                               27.0701830
+    ##                x.blu102.w105_female_pituitary_inc.d3
+    ## NP_001001127.1                             99.134582
+    ## NP_001001129.1                             10.744058
+    ## NP_001001189.1                            483.872572
+    ## NP_001001194.1                              0.000000
+    ## NP_001001195.1                              3.128795
+    ## NP_001001201.1                             86.455959
+    ##                x.blu106.o153_male_gonad_inc.d9.NYNO
+    ## NP_001001127.1                           15.6228338
+    ## NP_001001129.1                            2.6370659
+    ## NP_001001189.1                          820.6988223
+    ## NP_001001194.1                            0.8007794
+    ## NP_001001195.1                            6.0831275
+    ## NP_001001201.1                          236.3825040
+    ##                x.blu106.o153_male_hypothalamus_inc.d9
+    ## NP_001001127.1                             158.661290
+    ## NP_001001129.1                               2.905147
+    ## NP_001001189.1                             366.293149
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               0.000000
+    ## NP_001001201.1                              22.731369
+    ##                x.blu106.o153_male_pituitary_inc.d9.NYNO
+    ## NP_001001127.1                                235.23682
+    ## NP_001001129.1                                 12.63733
+    ## NP_001001189.1                                406.05554
+    ## NP_001001194.1                                  0.00000
+    ## NP_001001195.1                                  0.00000
+    ## NP_001001201.1                                 69.54468
+    ##                x.blu109.w121_female_gonad_n5
+    ## NP_001001127.1                   78.58850088
+    ## NP_001001129.1                   37.32276883
+    ## NP_001001189.1                  313.57604217
+    ## NP_001001194.1                   23.49300516
+    ## NP_001001195.1                    0.04879878
+    ## NP_001001201.1                   48.42367343
+    ##                x.blu109.w121_female_hypothalamus_n5
+    ## NP_001001127.1                           185.621511
+    ## NP_001001129.1                             4.717543
+    ## NP_001001189.1                           334.290982
+    ## NP_001001194.1                             0.000000
+    ## NP_001001195.1                             1.975957
+    ## NP_001001201.1                            17.617078
+    ##                x.blu109.w121_female_pituitary_n5
+    ## NP_001001127.1                        151.158368
+    ## NP_001001129.1                         33.261427
+    ## NP_001001189.1                        310.982123
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          1.403632
+    ## NP_001001201.1                         89.493870
+    ##                x.blu116.w107_female_gonad_inc.d17
+    ## NP_001001127.1                         290.823774
+    ## NP_001001129.1                          56.233650
+    ## NP_001001189.1                         482.868408
+    ## NP_001001194.1                          26.163091
+    ## NP_001001195.1                           0.212896
+    ## NP_001001201.1                          15.013718
+    ##                x.blu116.w107_female_hypothalamus_inc.d17
+    ## NP_001001127.1                                233.001277
+    ## NP_001001129.1                                  3.130138
+    ## NP_001001189.1                                390.962771
+    ## NP_001001194.1                                  0.000000
+    ## NP_001001195.1                                  0.000000
+    ## NP_001001201.1                                 31.008534
+    ##                x.blu116.w107_female_pituitary_inc.d17.NYNO
+    ## NP_001001127.1                                   127.48627
+    ## NP_001001129.1                                    30.78593
+    ## NP_001001189.1                                   388.34423
+    ## NP_001001194.1                                     0.00000
+    ## NP_001001195.1                                     0.00000
+    ## NP_001001201.1                                   107.56205
+    ##                x.blu117.w89_male_gonad_inc.d17
+    ## NP_001001127.1                        8.176742
+    ## NP_001001129.1                        1.978003
+    ## NP_001001189.1                      827.109394
+    ## NP_001001194.1                        3.090469
+    ## NP_001001195.1                        2.173593
+    ## NP_001001201.1                      251.849826
+    ##                x.blu117.w89_male_hypothalamus_inc.d17
+    ## NP_001001127.1                             225.945718
+    ## NP_001001129.1                               0.000000
+    ## NP_001001189.1                             297.007687
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               2.692982
+    ## NP_001001201.1                              19.639220
+    ##                x.blu117.w89_male_pituitary_inc.d17
+    ## NP_001001127.1                        177.96464528
+    ## NP_001001129.1                         24.99740424
+    ## NP_001001189.1                        389.84952065
+    ## NP_001001194.1                          0.01325497
+    ## NP_001001195.1                          0.15768402
+    ## NP_001001201.1                        106.33047312
+    ##                x.blu122.r66_female_gonad_inc.d9
+    ## NP_001001127.1                       52.4684952
+    ## NP_001001129.1                       60.5527654
+    ## NP_001001189.1                      497.0896465
+    ## NP_001001194.1                        4.3331993
+    ## NP_001001195.1                        0.5074026
+    ## NP_001001201.1                       32.4701348
+    ##                x.blu122.r66_female_hypothalamus_inc.d9
+    ## NP_001001127.1                             155.6728465
+    ## NP_001001129.1                               0.2720742
+    ## NP_001001189.1                             411.9898920
+    ## NP_001001194.1                               0.0000000
+    ## NP_001001195.1                               0.5125157
+    ## NP_001001201.1                              14.5228652
+    ##                x.blu122.r66_female_pituitary_inc.d9
+    ## NP_001001127.1                         200.28856358
+    ## NP_001001129.1                           8.19773190
+    ## NP_001001189.1                         347.98835168
+    ## NP_001001194.1                           0.00000000
+    ## NP_001001195.1                           0.05384055
+    ## NP_001001201.1                          96.54956084
+    ##                x.blu23.w14_male_gonad_n9 x.blu23.w14_male_hypothalamus_n9
+    ## NP_001001127.1                21.3610382                      198.5668814
+    ## NP_001001129.1                 5.3705465                        0.2398835
+    ## NP_001001189.1               690.1932908                      441.7233390
+    ## NP_001001194.1                 1.7193469                        0.0000000
+    ## NP_001001195.1                 0.4983132                        1.5860115
+    ## NP_001001201.1               242.4806821                       19.5486777
+    ##                x.blu23.w14_male_pituitary_n9 x.blu30_male_gonad_n5
+    ## NP_001001127.1                    126.808269              9.819703
+    ## NP_001001129.1                     37.430236              0.000000
+    ## NP_001001189.1                    399.784464            635.288035
+    ## NP_001001194.1                      0.000000              0.000000
+    ## NP_001001195.1                      2.095789              6.373840
+    ## NP_001001201.1                    122.274941            328.019693
+    ##                x.blu30_male_hypothalamus_n5 x.blu30_male_pituitary_n5
+    ## NP_001001127.1                   131.365196                104.721792
+    ## NP_001001129.1                     1.216664                 28.197410
+    ## NP_001001189.1                   398.244317                331.335617
+    ## NP_001001194.1                     0.000000                  0.000000
+    ## NP_001001195.1                     1.107743                  2.434875
+    ## NP_001001201.1                    39.758415                206.846127
+    ##                x.blu42.o28_male_gonad_inc.d3
+    ## NP_001001127.1                     6.5031833
+    ## NP_001001129.1                     2.0723622
+    ## NP_001001189.1                   873.0017053
+    ## NP_001001194.1                     0.9732283
+    ## NP_001001195.1                     3.5850899
+    ## NP_001001201.1                   256.0159666
+    ##                x.blu42.o28_male_hypothalamus_inc.d3.NYNO
+    ## NP_001001127.1                                 199.27625
+    ## NP_001001129.1                                   0.00000
+    ## NP_001001189.1                                 456.54801
+    ## NP_001001194.1                                   0.00000
+    ## NP_001001195.1                                   0.00000
+    ## NP_001001201.1                                  36.95015
+    ##                x.blu42.o28_male_pituitary_inc.d3
+    ## NP_001001127.1                       144.0668596
+    ## NP_001001129.1                        25.5671278
+    ## NP_001001189.1                       438.3009082
+    ## NP_001001194.1                         0.0000000
+    ## NP_001001195.1                         0.1884567
+    ## NP_001001201.1                       114.1247205
+    ##                x.blu43.g132_female_gonad_n9
+    ## NP_001001127.1                    29.280890
+    ## NP_001001129.1                    36.340125
+    ## NP_001001189.1                   344.059569
+    ## NP_001001194.1                    16.116130
+    ## NP_001001195.1                     2.020457
+    ## NP_001001201.1                    81.732593
+    ##                x.blu43.g132_female_hypothalamus_n9
+    ## NP_001001127.1                          121.021127
+    ## NP_001001129.1                            1.643858
+    ## NP_001001189.1                          373.376811
+    ## NP_001001194.1                            0.000000
+    ## NP_001001195.1                            1.080153
+    ## NP_001001201.1                           35.701338
+    ##                x.blu43.g132_female_pituitary_n9
+    ## NP_001001127.1                       110.259894
+    ## NP_001001129.1                        50.328911
+    ## NP_001001189.1                       331.120525
+    ## NP_001001194.1                         0.000000
+    ## NP_001001195.1                         6.349136
+    ## NP_001001201.1                       108.982158
+    ##                x.blu6.y80_female_gonad_lay
+    ## NP_001001127.1                   57.051905
+    ## NP_001001129.1                  107.213881
+    ## NP_001001189.1                  435.684816
+    ## NP_001001194.1                    0.757882
+    ## NP_001001195.1                    4.710090
+    ## NP_001001201.1                   33.175455
+    ##                x.blu6.y80_female_hypothalamus_lay
+    ## NP_001001127.1                         232.739116
+    ## NP_001001129.1                           4.213903
+    ## NP_001001189.1                         369.886321
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           1.251854
+    ## NP_001001201.1                          27.951242
+    ##                x.blu6.y80_female_pituitary_lay
+    ## NP_001001127.1                    106.19730087
+    ## NP_001001129.1                     22.40242841
+    ## NP_001001189.1                    382.10662669
+    ## NP_001001194.1                      0.01498458
+    ## NP_001001195.1                      0.04237018
+    ## NP_001001201.1                     44.49135296
+    ##                x.g.ATLAS_male_gonad_control
+    ## NP_001001127.1                    2.7864620
+    ## NP_001001129.1                    0.4233531
+    ## NP_001001189.1                 1093.1771694
+    ## NP_001001194.1                    0.5729544
+    ## NP_001001195.1                    1.0543911
+    ## NP_001001201.1                  105.7017840
+    ##                x.g.ATLAS_male_hypothalamus_control
+    ## NP_001001127.1                          252.549186
+    ## NP_001001129.1                            2.591850
+    ## NP_001001189.1                          408.601109
+    ## NP_001001194.1                            1.816953
+    ## NP_001001195.1                            0.000000
+    ## NP_001001201.1                           21.754883
+    ##                x.g.ATLAS_male_pituitary_control
+    ## NP_001001127.1                     195.04764105
+    ## NP_001001129.1                      15.36761093
+    ## NP_001001189.1                     365.27402717
+    ## NP_001001194.1                       0.00000000
+    ## NP_001001195.1                       0.03498457
+    ## NP_001001201.1                      27.45461217
+    ##                x.g.g.ATLAS_female_gonad_control
+    ## NP_001001127.1                        57.858418
+    ## NP_001001129.1                        34.804679
+    ## NP_001001189.1                       391.512696
+    ## NP_001001194.1                         9.314169
+    ## NP_001001195.1                         1.373773
+    ## NP_001001201.1                        13.260869
+    ##                x.g.g.ATLAS_male_gonad_control
+    ## NP_001001127.1                     14.4567775
+    ## NP_001001129.1                      3.0786201
+    ## NP_001001189.1                   1162.7426909
+    ## NP_001001194.1                      0.0144001
+    ## NP_001001195.1                      2.0890076
+    ## NP_001001201.1                    295.2408392
+    ##                x.g.g.ATLAS_male_hypothalamus_control
+    ## NP_001001127.1                           52.74475826
+    ## NP_001001129.1                            4.43227857
+    ## NP_001001189.1                          586.23556603
+    ## NP_001001194.1                            0.05840544
+    ## NP_001001195.1                            0.00000000
+    ## NP_001001201.1                           11.29508918
+    ##                x.g.g.ATLAS_male_pituitary_control
+    ## NP_001001127.1                        25.35080800
+    ## NP_001001129.1                       101.79773255
+    ## NP_001001189.1                       427.01157659
+    ## NP_001001194.1                         0.00000000
+    ## NP_001001195.1                         0.09056121
+    ## NP_001001201.1                        38.16520941
+    ##                x.g.g.g.ATLAS_male_gonad_control
+    ## NP_001001127.1                     1.008645e+01
+    ## NP_001001129.1                     2.201948e+00
+    ## NP_001001189.1                     1.267919e+03
+    ## NP_001001194.1                     4.651048e-02
+    ## NP_001001195.1                     1.082730e+01
+    ## NP_001001201.1                     2.474381e+02
+    ##                x.g.g.g.ATLAS_male_pituitary_control
+    ## NP_001001127.1                         174.45653903
+    ## NP_001001129.1                          72.20294720
+    ## NP_001001189.1                         297.55968335
+    ## NP_001001194.1                           0.00000000
+    ## NP_001001195.1                           0.05418951
+    ## NP_001001201.1                          20.27148508
+    ##                x.g13.w109_male_gonad_inc.d9
+    ## NP_001001127.1                    7.2932674
+    ## NP_001001129.1                    0.1622919
+    ## NP_001001189.1                  958.4849410
+    ## NP_001001194.1                    1.7428249
+    ## NP_001001195.1                    2.1493047
+    ## NP_001001201.1                  250.1904281
+    ##                x.g13.w109_male_hypothalamus_inc.d9
+    ## NP_001001127.1                         141.3804583
+    ## NP_001001129.1                           0.0000000
+    ## NP_001001189.1                         292.7736585
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.6008076
+    ## NP_001001201.1                          27.0366754
+    ##                x.g13.w109_male_pituitary_inc.d9
+    ## NP_001001127.1                     205.59131634
+    ## NP_001001129.1                      15.05944595
+    ## NP_001001189.1                     460.19019622
+    ## NP_001001194.1                       0.01735502
+    ## NP_001001195.1                       1.45917700
+    ## NP_001001201.1                      99.19954123
+    ##                x.g14.w199_male_gonad_inc.d17
+    ## NP_001001127.1                      9.989932
+    ## NP_001001129.1                      2.014916
+    ## NP_001001189.1                    660.748009
+    ## NP_001001194.1                      3.130634
+    ## NP_001001195.1                      7.931256
+    ## NP_001001201.1                    232.933164
+    ##                x.g14.w199_male_hypothalamus_inc.d17
+    ## NP_001001127.1                          207.4828880
+    ## NP_001001129.1                            0.9625157
+    ## NP_001001189.1                          372.3356044
+    ## NP_001001194.1                            0.0000000
+    ## NP_001001195.1                            0.0000000
+    ## NP_001001201.1                           20.3813400
+    ##                x.g14.w199_male_pituitary_inc.d17
+    ## NP_001001127.1                        162.776302
+    ## NP_001001129.1                         26.634426
+    ## NP_001001189.1                        364.902779
+    ## NP_001001194.1                          0.000000
+    ## NP_001001195.1                          2.962196
+    ## NP_001001201.1                         80.193814
+    ##                x.g147.blu28_male_gonad_inc.d3
+    ## NP_001001127.1                       5.112706
+    ## NP_001001129.1                       1.742851
+    ## NP_001001189.1                     978.569255
+    ## NP_001001194.1                      85.625884
+    ## NP_001001195.1                       1.703849
+    ## NP_001001201.1                     347.607156
+    ##                x.g147.blu28_male_hypothalamus_inc.d3
+    ## NP_001001127.1                           122.3623575
+    ## NP_001001129.1                             2.2434726
+    ## NP_001001189.1                           464.9178409
+    ## NP_001001194.1                             0.0000000
+    ## NP_001001195.1                             0.8828823
+    ## NP_001001201.1                            19.7132165
+    ##                x.g147.blu28_male_pituitary_inc.d3 x.g37_female_gonad_n5
+    ## NP_001001127.1                       137.51243290             58.732485
+    ## NP_001001129.1                        17.41536869             72.364260
+    ## NP_001001189.1                       306.30510559            285.682747
+    ## NP_001001194.1                         0.01019559              3.519557
+    ## NP_001001195.1                         1.33768434              1.499338
+    ## NP_001001201.1                        70.33704861             57.157220
+    ##                x.g37_female_hypothalamus_n5 x.g37_female_pituitary_n5
+    ## NP_001001127.1                  147.3275032               148.4305664
+    ## NP_001001129.1                    0.8255949                63.1303239
+    ## NP_001001189.1                  366.1813085               417.6445617
+    ## NP_001001194.1                    0.0000000                 0.0000000
+    ## NP_001001195.1                    1.7729012                 0.1900277
+    ## NP_001001201.1                   24.1080576               113.3792168
+    ##                x.g4.w50_female_gonad_n9 x.g4.w50_female_hypothalamus_n9
+    ## NP_001001127.1                63.991561                     149.5132988
+    ## NP_001001129.1                44.391713                       0.9580033
+    ## NP_001001189.1               303.341590                     464.9408181
+    ## NP_001001194.1                 4.750598                       0.0000000
+    ## NP_001001195.1                 2.349983                       0.0000000
+    ## NP_001001201.1                71.056513                      34.7553632
+    ##                x.g4.w50_female_pituitary_n9 x.g43_female_gonad_n5
+    ## NP_001001127.1                   143.715596            110.625846
+    ## NP_001001129.1                    16.316473             78.577130
+    ## NP_001001189.1                   330.798403            265.361271
+    ## NP_001001194.1                     0.000000            129.917293
+    ## NP_001001195.1                     3.221079              0.111196
+    ## NP_001001201.1                    73.593933             24.307452
+    ##                x.g43_female_hypothalamus_n5 x.g43_female_pituitary_n5
+    ## NP_001001127.1                 153.54673550                126.676964
+    ## NP_001001129.1                   2.08432183                 12.949387
+    ## NP_001001189.1                 376.58209584                314.739437
+    ## NP_001001194.1                   1.02834862                  0.000000
+    ## NP_001001195.1                   0.01025724                  5.602115
+    ## NP_001001201.1                  21.81316161                111.068954
+    ##                x.g49_female_gonad_n5 x.g49_female_hypothalamus_n5
+    ## NP_001001127.1             63.860593                   152.720396
+    ## NP_001001129.1             59.567012                     1.733669
+    ## NP_001001189.1            331.140137                   421.907911
+    ## NP_001001194.1              0.000000                     3.781704
+    ## NP_001001195.1              2.298755                     3.681094
+    ## NP_001001201.1             41.537057                    32.045851
+    ##                x.g49_female_pituitary_n5.NYNO x.g70_male_gonad_hatch
+    ## NP_001001127.1                      88.011759             17.7711366
+    ## NP_001001129.1                       9.481077              0.1934582
+    ## NP_001001189.1                     344.844770            798.3631799
+    ## NP_001001194.1                       0.000000              0.3147437
+    ## NP_001001195.1                       1.764256              6.7327418
+    ## NP_001001201.1                     114.674562            273.8732032
+    ##                x.g70_male_hypothalamus_hatch x.g70_male_pituitary_hatch
+    ## NP_001001127.1                    168.673752               147.71265037
+    ## NP_001001129.1                      2.707588                14.96851143
+    ## NP_001001189.1                    417.893763               325.15012534
+    ## NP_001001194.1                      0.000000                 0.02096776
+    ## NP_001001195.1                      0.000000                 0.02073784
+    ## NP_001001201.1                     20.428395               116.60987941
+    ##                x.g9.o166_female_gonad_inc.d9.NYNO
+    ## NP_001001127.1                         53.2316706
+    ## NP_001001129.1                         38.3241761
+    ## NP_001001189.1                        409.8388441
+    ## NP_001001194.1                         20.2218129
+    ## NP_001001195.1                          0.5360989
+    ## NP_001001201.1                         23.6937958
+    ##                x.g9.o166_female_hypothalamus_inc.d9
+    ## NP_001001127.1                           266.349841
+    ## NP_001001129.1                             3.095086
+    ## NP_001001189.1                           308.127058
+    ## NP_001001194.1                             0.000000
+    ## NP_001001195.1                             0.000000
+    ## NP_001001201.1                            28.005913
+    ##                x.g9.o166_female_pituitary_inc.d9.NYNO
+    ## NP_001001127.1                            170.9429966
+    ## NP_001001129.1                              6.9654999
+    ## NP_001001189.1                            395.8364861
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              0.8847382
+    ## NP_001001201.1                             86.2907724
+    ##                x.o159.w90_female_gonad_inc.d17
+    ## NP_001001127.1                      71.4682617
+    ## NP_001001129.1                      15.8239703
+    ## NP_001001189.1                     347.4704396
+    ## NP_001001194.1                      35.6108196
+    ## NP_001001195.1                       0.1588292
+    ## NP_001001201.1                      41.1808999
+    ##                x.o159.w90_female_hypothalamus_inc.d17
+    ## NP_001001127.1                             234.039014
+    ## NP_001001129.1                               0.913928
+    ## NP_001001189.1                             296.426145
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               0.443200
+    ## NP_001001201.1                              40.544478
+    ##                x.o159.w90_female_pituitary_inc.d17
+    ## NP_001001127.1                         126.8272208
+    ## NP_001001129.1                          18.3970896
+    ## NP_001001189.1                         377.0017604
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.1458557
+    ## NP_001001201.1                         127.9580638
+    ##                x.o160.w102_male_gonad_hatch
+    ## NP_001001127.1                   21.9087959
+    ## NP_001001129.1                    4.6859838
+    ## NP_001001189.1                  699.5741561
+    ## NP_001001194.1                    0.3435388
+    ## NP_001001195.1                    2.4717765
+    ## NP_001001201.1                  290.3592291
+    ##                x.o160.w102_male_hypothalamus_hatch
+    ## NP_001001127.1                          209.036077
+    ## NP_001001129.1                            1.795579
+    ## NP_001001189.1                          387.575506
+    ## NP_001001194.1                            0.000000
+    ## NP_001001195.1                            0.000000
+    ## NP_001001201.1                           22.570004
+    ##                x.o160.w102_male_pituitary_hatch
+    ## NP_001001127.1                     193.14191259
+    ## NP_001001129.1                      33.11979701
+    ## NP_001001189.1                     312.29281239
+    ## NP_001001194.1                       0.02370048
+    ## NP_001001195.1                       0.02344042
+    ## NP_001001201.1                     104.83937810
+    ##                x.o163.w101_male_gonad_inc.d3
+    ## NP_001001127.1                     4.0869965
+    ## NP_001001129.1                     0.3889642
+    ## NP_001001189.1                  1049.7282581
+    ## NP_001001194.1                     1.3838113
+    ## NP_001001195.1                     2.6064610
+    ## NP_001001201.1                   232.8126942
+    ##                x.o163.w101_male_hypothalamus_inc.d3
+    ## NP_001001127.1                          164.8853306
+    ## NP_001001129.1                            3.9871221
+    ## NP_001001189.1                          303.6790326
+    ## NP_001001194.1                            0.0000000
+    ## NP_001001195.1                            0.8452254
+    ## NP_001001201.1                           21.0557873
+    ##                x.o163.w101_male_pituitary_inc.d3.NYNO
+    ## NP_001001127.1                            165.9482762
+    ## NP_001001129.1                              7.3354531
+    ## NP_001001189.1                            366.6535895
+    ## NP_001001194.1                              0.7535128
+    ## NP_001001195.1                              0.5422657
+    ## NP_001001201.1                             93.0447201
+    ##                x.o164.w123_male_gonad_n5 x.o164.w123_male_hypothalamus_n5
+    ## NP_001001127.1                 16.322486                      190.5932504
+    ## NP_001001129.1                  4.081305                        3.4616036
+    ## NP_001001189.1                720.323030                      351.5004775
+    ## NP_001001194.1                  4.275542                        0.0000000
+    ## NP_001001195.1                  6.391856                        0.6956585
+    ## NP_001001201.1                298.693111                       25.4572936
+    ##                x.o164.w123_male_pituitary_n5.NYNO
+    ## NP_001001127.1                         154.594026
+    ## NP_001001129.1                          22.866652
+    ## NP_001001189.1                         379.772932
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           1.913847
+    ## NP_001001201.1                          92.503309
+    ##                x.o175.g21_female_gonad_n5
+    ## NP_001001127.1                62.05754834
+    ## NP_001001129.1                53.53162206
+    ## NP_001001189.1               294.40831896
+    ## NP_001001194.1                 1.02462699
+    ## NP_001001195.1                 0.04695014
+    ## NP_001001201.1                44.42490512
+    ##                x.o175.g21_female_hypothalamus_n5
+    ## NP_001001127.1                      1.743050e+02
+    ## NP_001001129.1                      2.057442e+00
+    ## NP_001001189.1                      4.818920e+02
+    ## NP_001001194.1                      2.045220e-03
+    ## NP_001001195.1                      7.012349e-03
+    ## NP_001001201.1                      2.461852e+01
+    ##                x.o175.g21_female_pituitary_n5 x.o2_male_gonad_n9
+    ## NP_001001127.1                    117.8310495          13.882931
+    ## NP_001001129.1                     12.0394505           0.000000
+    ## NP_001001189.1                    370.2174813        1620.838504
+    ## NP_001001194.1                      0.0000000           2.633202
+    ## NP_001001195.1                      0.8822547           4.101181
+    ## NP_001001201.1                    120.7373346         290.895255
+    ##                x.o2_male_hypothalamus_n9 x.o2_male_pituitary_n9
+    ## NP_001001127.1               208.5929896              148.26980
+    ## NP_001001129.1                 4.7234962               24.14922
+    ## NP_001001189.1               369.4902431              361.45134
+    ## NP_001001194.1                 0.0000000                0.00000
+    ## NP_001001195.1                 0.9275215                0.00000
+    ## NP_001001201.1                27.9629767              106.28684
+    ##                x.o30.g134_male_gonad_bldg
+    ## NP_001001127.1                   6.640361
+    ## NP_001001129.1                   2.648691
+    ## NP_001001189.1                1113.273895
+    ## NP_001001194.1                   2.089046
+    ## NP_001001195.1                   6.193210
+    ## NP_001001201.1                 288.919158
+    ##                x.o30.g134_male_hypothalamus_bldg
+    ## NP_001001127.1                      1.828018e+02
+    ## NP_001001129.1                      1.047101e+00
+    ## NP_001001189.1                      3.769733e+02
+    ## NP_001001194.1                      0.000000e+00
+    ## NP_001001195.1                      1.573214e-03
+    ## NP_001001201.1                      3.097032e+01
+    ##                x.o30.g134_male_pituitary_bldg
+    ## NP_001001127.1                   1.487623e+02
+    ## NP_001001129.1                   5.808130e+01
+    ## NP_001001189.1                   3.145630e+02
+    ## NP_001001194.1                   8.463363e-03
+    ## NP_001001195.1                   1.417087e-01
+    ## NP_001001201.1                   7.804227e+01
+    ##                x.o37.blu50_female_gonad_hatch
+    ## NP_001001127.1                      62.600377
+    ## NP_001001129.1                      60.041637
+    ## NP_001001189.1                     328.520075
+    ## NP_001001194.1                      16.197031
+    ## NP_001001195.1                       1.704099
+    ## NP_001001201.1                      43.683204
+    ##                x.o37.blu50_female_hypothalamus_hatch.NYNO
+    ## NP_001001127.1                                 311.071328
+    ## NP_001001129.1                                   4.587026
+    ## NP_001001189.1                                 370.871134
+    ## NP_001001194.1                                   0.000000
+    ## NP_001001195.1                                   1.419290
+    ## NP_001001201.1                                  31.290036
+    ##                x.o37.blu50_female_pituitary_hatch
+    ## NP_001001127.1                       1.268739e+02
+    ## NP_001001129.1                       1.122775e+01
+    ## NP_001001189.1                       4.289634e+02
+    ## NP_001001194.1                       7.647586e-03
+    ## NP_001001195.1                       5.046334e-02
+    ## NP_001001201.1                       1.147596e+02
+    ##                x.o47.y82_male_gonad_inc.d9
+    ## NP_001001127.1                    7.420132
+    ## NP_001001129.1                    2.075666
+    ## NP_001001189.1                  957.965927
+    ## NP_001001194.1                    3.609502
+    ## NP_001001195.1                    7.639083
+    ## NP_001001201.1                  259.811200
+    ##                x.o47.y82_male_hypothalamus_inc.d9
+    ## NP_001001127.1                       245.71096239
+    ## NP_001001129.1                         1.43244455
+    ## NP_001001189.1                       343.61640004
+    ## NP_001001194.1                         0.12396942
+    ## NP_001001195.1                         0.02306244
+    ## NP_001001201.1                        22.46550047
+    ##                x.o47.y82_male_pituitary_inc.d9 x.o68_male_gonad_n5
+    ## NP_001001127.1                       142.88888          38.1333567
+    ## NP_001001129.1                        23.50811           0.3238753
+    ## NP_001001189.1                       382.44018         803.4675734
+    ## NP_001001194.1                         0.00000           0.3974420
+    ## NP_001001195.1                         0.00000           1.2790356
+    ## NP_001001201.1                        99.38274         249.2876102
+    ##                x.o68_male_hypothalamus_n5 x.o68_male_pituitary_n5
+    ## NP_001001127.1                205.5645852              153.131705
+    ## NP_001001129.1                  3.9924761               17.304505
+    ## NP_001001189.1                420.1055849              330.477124
+    ## NP_001001194.1                  0.0000000                0.000000
+    ## NP_001001195.1                  0.9982838                1.023121
+    ## NP_001001201.1                 20.9530006              126.545221
+    ##                x.o70_female_gonad_n5 x.o70_female_hypothalamus_n5.NYNO
+    ## NP_001001127.1             56.004864                        136.205957
+    ## NP_001001129.1             94.333319                          4.364866
+    ## NP_001001189.1            338.589021                        385.963342
+    ## NP_001001194.1              2.841647                          0.000000
+    ## NP_001001195.1              1.287021                          1.722448
+    ## NP_001001201.1             53.497933                         35.097173
+    ##                x.o70_female_pituitary_n5 x.r178_male_gonad_hatch
+    ## NP_001001127.1                 98.378539               15.183633
+    ## NP_001001129.1                  6.468999                1.431390
+    ## NP_001001189.1                436.266467              972.521114
+    ## NP_001001194.1                  0.000000                0.000000
+    ## NP_001001195.1                  2.613012                8.351668
+    ## NP_001001201.1                125.357845              344.662262
+    ##                x.r178_male_hypothalamus_hatch x.r178_male_pituitary_hatch
+    ## NP_001001127.1                     278.763614                147.69887678
+    ## NP_001001129.1                       1.122761                 21.44724815
+    ## NP_001001189.1                     380.226047                341.83914528
+    ## NP_001001194.1                       0.000000                  1.39734150
+    ## NP_001001195.1                       0.000000                  0.02483518
+    ## NP_001001201.1                      34.289956                145.12486237
+    ##                x.r181_male_gonad_n5 x.r181_male_hypothalamus_n5
+    ## NP_001001127.1           22.2604233                 179.3753193
+    ## NP_001001129.1            1.9927864                   3.1508367
+    ## NP_001001189.1          872.8485984                 466.1276216
+    ## NP_001001194.1            0.1499443                   0.0000000
+    ## NP_001001195.1            2.4744969                   0.3979233
+    ## NP_001001201.1          253.9398640                  20.3384270
+    ##                x.r181_male_pituitary_n5 x.r29.w96_male_gonad_inc.d17
+    ## NP_001001127.1              125.2874920                   16.1972790
+    ## NP_001001129.1                8.3165822                    0.2911296
+    ## NP_001001189.1              334.8856590                  798.8757149
+    ## NP_001001194.1                0.0000000                    0.1660861
+    ## NP_001001195.1                0.2035876                    0.4109606
+    ## NP_001001201.1              122.5800937                  448.6543752
+    ##                x.r29.w96_male_hypothalamus_inc.d17
+    ## NP_001001127.1                          166.541165
+    ## NP_001001129.1                            3.458514
+    ## NP_001001189.1                          393.716479
+    ## NP_001001194.1                            0.000000
+    ## NP_001001195.1                            0.000000
+    ## NP_001001201.1                           17.483633
+    ##                x.r29.w96_male_pituitary_inc.d17
+    ## NP_001001127.1                     166.39261737
+    ## NP_001001129.1                      28.67752508
+    ## NP_001001189.1                     356.20371446
+    ## NP_001001194.1                       0.01328903
+    ## NP_001001195.1                       0.15810298
+    ## NP_001001201.1                      77.10739812
+    ##                x.r33.w183_female_gonad_inc.d3
+    ## NP_001001127.1                      61.721380
+    ## NP_001001129.1                     157.526682
+    ## NP_001001189.1                     437.197283
+    ## NP_001001194.1                     395.200400
+    ## NP_001001195.1                       1.223208
+    ## NP_001001201.1                      52.466216
+    ##                x.r33.w183_female_hypothalamus_inc.d3
+    ## NP_001001127.1                           140.3264599
+    ## NP_001001129.1                             0.5649233
+    ## NP_001001189.1                           381.1992508
+    ## NP_001001194.1                             0.0000000
+    ## NP_001001195.1                             0.0000000
+    ## NP_001001201.1                            25.3154275
+    ##                x.r33.w183_female_pituitary_inc.d3
+    ## NP_001001127.1                         129.002417
+    ## NP_001001129.1                          20.570740
+    ## NP_001001189.1                         373.559731
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           2.513963
+    ## NP_001001201.1                          90.488497
+    ##                x.r39.g10_female_gonad_bldg
+    ## NP_001001127.1                   31.685002
+    ## NP_001001129.1                    9.337469
+    ## NP_001001189.1                  364.481360
+    ## NP_001001194.1                   68.647323
+    ## NP_001001195.1                    2.207623
+    ## NP_001001201.1                   51.897260
+    ##                x.r39.g10_female_hypothalamus_bldg
+    ## NP_001001127.1                       1.196675e+02
+    ## NP_001001129.1                       1.111782e+00
+    ## NP_001001189.1                       4.607472e+02
+    ## NP_001001194.1                       0.000000e+00
+    ## NP_001001195.1                       6.205707e-03
+    ## NP_001001201.1                       2.373880e+01
+    ##                x.r39.g10_female_pituitary_bldg
+    ## NP_001001127.1                      126.146575
+    ## NP_001001129.1                       46.532556
+    ## NP_001001189.1                      390.525812
+    ## NP_001001194.1                        8.893319
+    ## NP_001001195.1                        1.206654
+    ## NP_001001201.1                      126.632261
+    ##                x.r44.w95_female_gonad_hatch
+    ## NP_001001127.1                    91.664787
+    ## NP_001001129.1                   114.094781
+    ## NP_001001189.1                   420.698076
+    ## NP_001001194.1                    15.225559
+    ## NP_001001195.1                     6.957206
+    ## NP_001001201.1                    42.333750
+    ##                x.r44.w95_female_hypothalamus_hatch
+    ## NP_001001127.1                         120.8997713
+    ## NP_001001129.1                           0.7349416
+    ## NP_001001189.1                         461.5691213
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           2.9841747
+    ## NP_001001201.1                          28.4109489
+    ##                x.r44.w95_female_pituitary_hatch
+    ## NP_001001127.1                        74.869221
+    ## NP_001001129.1                         9.773477
+    ## NP_001001189.1                       591.034737
+    ## NP_001001194.1                         1.505550
+    ## NP_001001195.1                         0.113147
+    ## NP_001001201.1                       138.757642
+    ##                x.r48.y139_female_gonad_inc.d17
+    ## NP_001001127.1                       43.994041
+    ## NP_001001129.1                      124.793829
+    ## NP_001001189.1                      306.372967
+    ## NP_001001194.1                       65.801292
+    ## NP_001001195.1                        3.265043
+    ## NP_001001201.1                       25.233840
+    ##                x.r48.y139_female_hypothalamus_inc.d17
+    ## NP_001001127.1                            150.1856147
+    ## NP_001001129.1                              0.3140596
+    ## NP_001001189.1                            351.8532338
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              0.0000000
+    ## NP_001001201.1                             26.9813646
+    ##                x.r48.y139_female_pituitary_inc.d17.NYNO
+    ## NP_001001127.1                                121.50985
+    ## NP_001001129.1                                 27.62381
+    ## NP_001001189.1                                780.82812
+    ## NP_001001194.1                                  0.00000
+    ## NP_001001195.1                                  0.00000
+    ## NP_001001201.1                                158.66233
+    ##                x.r50.w97_female_gonad_n5 x.r50.w97_female_hypothalamus_n5
+    ## NP_001001127.1                43.1579447                       214.251626
+    ## NP_001001129.1                82.9012527                         3.390545
+    ## NP_001001189.1               423.5539225                       447.466262
+    ## NP_001001194.1                 0.8848915                         0.000000
+    ## NP_001001195.1                 5.2934016                         0.196197
+    ## NP_001001201.1               163.0511050                        22.143926
+    ##                x.r50.w97_female_pituitary_n5 x.r64.g140_male_gonad_inc.d3
+    ## NP_001001127.1                     179.45098                   16.1093615
+    ## NP_001001129.1                      30.49727                    4.7577541
+    ## NP_001001189.1                     396.06087                  843.5311047
+    ## NP_001001194.1                       0.00000                    2.5582894
+    ## NP_001001195.1                       0.00000                    0.5694724
+    ## NP_001001201.1                      90.90014                  253.7768126
+    ##                x.r64.g140_male_hypothalamus_inc.d3
+    ## NP_001001127.1                          153.056169
+    ## NP_001001129.1                            3.995048
+    ## NP_001001189.1                          309.757048
+    ## NP_001001194.1                            0.000000
+    ## NP_001001195.1                            5.711686
+    ## NP_001001201.1                           25.056579
+    ##                x.r64.g140_male_pituitary_inc.d3
+    ## NP_001001127.1                     1.155961e+02
+    ## NP_001001129.1                     6.696398e+01
+    ## NP_001001189.1                     4.137890e+02
+    ## NP_001001194.1                     5.410753e-03
+    ## NP_001001195.1                     3.320093e+00
+    ## NP_001001201.1                     1.334469e+02
+    ##                x.r67.blu35_male_gonad_bldg
+    ## NP_001001127.1                    2.993229
+    ## NP_001001129.1                    4.975896
+    ## NP_001001189.1                  871.521693
+    ## NP_001001194.1                    3.060999
+    ## NP_001001195.1                    6.893919
+    ## NP_001001201.1                  346.268998
+    ##                x.r67.blu35_male_hypothalamus_bldg
+    ## NP_001001127.1                          90.890310
+    ## NP_001001129.1                           2.856389
+    ## NP_001001189.1                         584.070849
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           0.000000
+    ## NP_001001201.1                          51.370968
+    ##                x.r67.blu35_male_pituitary_bldg.NYNO x.w178_female_gonad_n9
+    ## NP_001001127.1                           110.842579              54.947719
+    ## NP_001001129.1                            25.118456              58.650043
+    ## NP_001001189.1                           264.931849             315.508435
+    ## NP_001001194.1                             0.000000               0.000000
+    ## NP_001001195.1                             2.489925               1.804973
+    ## NP_001001201.1                            84.420453              59.488779
+    ##                x.w178_female_hypothalamus_n9 x.w178_female_pituitary_n9
+    ## NP_001001127.1                    165.283544                145.3940474
+    ## NP_001001129.1                      2.190031                 42.9429153
+    ## NP_001001189.1                    449.334734                400.3007368
+    ## NP_001001194.1                      0.000000                  0.0000000
+    ## NP_001001195.1                      0.000000                  0.1681505
+    ## NP_001001201.1                     26.891385                118.9121458
+    ##                x.w192.o157_male_gonad_inc.d9
+    ## NP_001001127.1                      9.149968
+    ## NP_001001129.1                      1.771490
+    ## NP_001001189.1                    870.685152
+    ## NP_001001194.1                      5.751952
+    ## NP_001001195.1                     10.716268
+    ## NP_001001201.1                    301.150450
+    ##                x.w192.o157_male_hypothalamus_inc.d9
+    ## NP_001001127.1                          205.0802762
+    ## NP_001001129.1                            4.0666950
+    ## NP_001001189.1                          347.4726430
+    ## NP_001001194.1                           26.1115789
+    ## NP_001001195.1                            0.5325935
+    ## NP_001001201.1                           35.1703677
+    ##                x.w192.o157_male_pituitary_inc.d9 x.w51_female_gonad_lay
+    ## NP_001001127.1                        99.8692646              81.707709
+    ## NP_001001129.1                        86.4157874              83.670003
+    ## NP_001001189.1                       329.4109778             345.110590
+    ## NP_001001194.1                         0.0000000              21.030890
+    ## NP_001001195.1                         0.5114906               2.498062
+    ## NP_001001201.1                       135.3393981              38.583638
+    ##                x.w51_female_hypothalamus_lay x.w51_female_pituitary_lay
+    ## NP_001001127.1                     254.09537                 59.4543977
+    ## NP_001001129.1                      12.50401                  8.7077441
+    ## NP_001001189.1                     316.57658                308.0121063
+    ## NP_001001194.1                       0.00000                  0.0000000
+    ## NP_001001195.1                       0.00000                  0.4352826
+    ## NP_001001201.1                      25.54127                133.8655545
+    ##                x.w6_female_gonad_n9 x.w6_female_hypothalamus_n9
+    ## NP_001001127.1            77.119209                 141.9206045
+    ## NP_001001129.1            14.848161                   0.0000000
+    ## NP_001001189.1           372.523912                 416.5057173
+    ## NP_001001194.1            10.418690                   0.0000000
+    ## NP_001001195.1             4.076607                   0.9249376
+    ## NP_001001201.1            87.505471                  18.4626693
+    ##                x.w6_female_pituitary_n9 x.y.s.ATLAS_male_gonad_control
+    ## NP_001001127.1               105.388730                    14.34267008
+    ## NP_001001129.1                23.488810                     0.03321058
+    ## NP_001001189.1               314.205882                   851.72797608
+    ## NP_001001194.1                 0.000000                    15.82777308
+    ## NP_001001195.1                 1.146433                     3.34825640
+    ## NP_001001201.1               105.186369                   150.12911334
+    ##                x.y.s.ATLAS_male_pituitary_control
+    ## NP_001001127.1                         98.7295360
+    ## NP_001001129.1                        176.6631792
+    ## NP_001001189.1                        488.5462629
+    ## NP_001001194.1                          0.0000000
+    ## NP_001001195.1                          0.1722365
+    ## NP_001001201.1                         37.7960750
+    ##                x.y109_female_gonad_inc.d9
+    ## NP_001001127.1                  31.002944
+    ## NP_001001129.1                  73.036551
+    ## NP_001001189.1                 353.569629
+    ## NP_001001194.1                  16.264843
+    ## NP_001001195.1                   2.244131
+    ## NP_001001201.1                  32.048430
+    ##                x.y109_female_hypothalamus_inc.d9
+    ## NP_001001127.1                      138.35796093
+    ## NP_001001129.1                        0.06724263
+    ## NP_001001189.1                      462.38493239
+    ## NP_001001194.1                        0.00000000
+    ## NP_001001195.1                        0.02178033
+    ## NP_001001201.1                       25.32311864
+    ##                x.y109_female_pituitary_inc.d9
+    ## NP_001001127.1                    149.5557374
+    ## NP_001001129.1                     22.3948361
+    ## NP_001001189.1                    362.4512478
+    ## NP_001001194.1                      0.0000000
+    ## NP_001001195.1                      0.1106454
+    ## NP_001001201.1                     59.8815198
+    ##                x.y132.w76_male_gonad_inc.d17
+    ## NP_001001127.1                   16.27054973
+    ## NP_001001129.1                    2.71014685
+    ## NP_001001189.1                  916.95508600
+    ## NP_001001194.1                    0.07711766
+    ## NP_001001195.1                    2.83417801
+    ## NP_001001201.1                  324.43605722
+    ##                x.y132.w76_male_hypothalamus_inc.d17
+    ## NP_001001127.1                           150.396139
+    ## NP_001001129.1                             2.136661
+    ## NP_001001189.1                           332.476160
+    ## NP_001001194.1                             0.000000
+    ## NP_001001195.1                             0.000000
+    ## NP_001001201.1                            35.870865
+    ##                x.y132.w76_male_pituitary_inc.d17
+    ## NP_001001127.1                      122.44750727
+    ## NP_001001129.1                       74.47472235
+    ## NP_001001189.1                      476.90282552
+    ## NP_001001194.1                        1.24755244
+    ## NP_001001195.1                        0.08990903
+    ## NP_001001201.1                      125.72399220
+    ##                x.y138.w176_female_gonad_n9
+    ## NP_001001127.1                  15.6003054
+    ## NP_001001129.1                  62.3834351
+    ## NP_001001189.1                 529.8966809
+    ## NP_001001194.1                   0.2264745
+    ## NP_001001195.1                   0.1095944
+    ## NP_001001201.1                 111.8962612
+    ##                x.y138.w176_female_hypothalamus_n9
+    ## NP_001001127.1                        176.8814256
+    ## NP_001001129.1                          4.6539038
+    ## NP_001001189.1                        387.4414036
+    ## NP_001001194.1                          0.0000000
+    ## NP_001001195.1                          0.6244519
+    ## NP_001001201.1                         32.6561930
+    ##                x.y138.w176_female_pituitary_n9
+    ## NP_001001127.1                       91.616883
+    ## NP_001001129.1                       37.848088
+    ## NP_001001189.1                      435.210638
+    ## NP_001001194.1                        0.000000
+    ## NP_001001195.1                        2.988496
+    ## NP_001001201.1                       69.707699
+    ##                x.y141.w116_male_gonad_inc.d9
+    ## NP_001001127.1                     13.721319
+    ## NP_001001129.1                      0.000000
+    ## NP_001001189.1                   1156.321621
+    ## NP_001001194.1                      5.313109
+    ## NP_001001195.1                      1.721532
+    ## NP_001001201.1                    294.650175
+    ##                x.y141.w116_male_hypothalamus_inc.d9
+    ## NP_001001127.1                         1.686347e+02
+    ## NP_001001129.1                         3.043884e+00
+    ## NP_001001189.1                         3.778786e+02
+    ## NP_001001194.1                         7.307241e-03
+    ## NP_001001195.1                         1.395368e-03
+    ## NP_001001201.1                         2.539296e+01
+    ##                x.y141.w116_male_pituitary_inc.d9 x.y90_female_gonad_hatch
+    ## NP_001001127.1                       191.9730390              37.94580256
+    ## NP_001001129.1                        38.0175649             111.38367313
+    ## NP_001001189.1                       378.2275024             355.46149420
+    ## NP_001001194.1                         0.0000000               7.46419852
+    ## NP_001001195.1                         0.4218629               0.02250673
+    ## NP_001001201.1                        88.6527819              21.12753925
+    ##                x.y90_female_hypothalamus_hatch
+    ## NP_001001127.1                    195.41674842
+    ## NP_001001129.1                      0.27091692
+    ## NP_001001189.1                    440.92766714
+    ## NP_001001194.1                      0.01050584
+    ## NP_001001195.1                      0.16937080
+    ## NP_001001201.1                     13.49296364
+    ##                x.y90_female_pituitary_hatch x.y93.g126_female_gonad_inc.d9
+    ## NP_001001127.1                   81.9861141                    34.32396524
+    ## NP_001001129.1                    6.0384066                   121.41780889
+    ## NP_001001189.1                  389.2518807                   303.31532602
+    ## NP_001001194.1                    0.0000000                    18.77198413
+    ## NP_001001195.1                    0.4901044                     0.01179919
+    ## NP_001001201.1                  140.4752266                    41.54124732
+    ##                x.y93.g126_female_hypothalamus_inc.d9
+    ## NP_001001127.1                          1.228957e+02
+    ## NP_001001129.1                          2.719744e-03
+    ## NP_001001189.1                          4.099544e+02
+    ## NP_001001194.1                          0.000000e+00
+    ## NP_001001195.1                          1.006277e+00
+    ## NP_001001201.1                          3.726034e+01
+    ##                x.y93.g126_female_pituitary_inc.d9 x.y9_female_gonad_n9
+    ## NP_001001127.1                         148.092436            56.997445
+    ## NP_001001129.1                          32.686284            36.455551
+    ## NP_001001189.1                         357.473287           406.198673
+    ## NP_001001194.1                           0.000000             9.725266
+    ## NP_001001195.1                           1.125793             0.000000
+    ## NP_001001201.1                         125.997377           226.245689
+    ##                x.y9_female_hypothalamus_n9 x.y9_female_pituitary_n9
+    ## NP_001001127.1                197.26412178               185.263687
+    ## NP_001001129.1                  0.02618492                15.366323
+    ## NP_001001189.1                425.77657804               254.823912
+    ## NP_001001194.1                  0.00000000                 0.000000
+    ## NP_001001195.1                  3.19081305                 2.465967
+    ## NP_001001201.1                 29.76489582               102.518461
+    ##                y.s156.o.r_female_gonad_lay
+    ## NP_001001127.1                   384.34608
+    ## NP_001001129.1                    45.49923
+    ## NP_001001189.1                   277.35104
+    ## NP_001001194.1                    41.32732
+    ## NP_001001195.1                    10.02578
+    ## NP_001001201.1                    32.44665
+    ##                y.s156.o.r_female_hypothalamus_lay
+    ## NP_001001127.1                         281.562339
+    ## NP_001001129.1                           1.115779
+    ## NP_001001189.1                         434.419829
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           1.143419
+    ## NP_001001201.1                          21.397018
+    ##                y.s156.o.r_female_pituitary_lay
+    ## NP_001001127.1                      186.166633
+    ## NP_001001129.1                       12.825314
+    ## NP_001001189.1                      340.518291
+    ## NP_001001194.1                        0.000000
+    ## NP_001001195.1                        0.195154
+    ## NP_001001201.1                       88.337394
+    ##                y126.w92.x_female_gonad_inc.d17
+    ## NP_001001127.1                       39.649368
+    ## NP_001001129.1                      104.119514
+    ## NP_001001189.1                      375.720870
+    ## NP_001001194.1                       30.455741
+    ## NP_001001195.1                        1.367435
+    ## NP_001001201.1                       47.982380
+    ##                y126.w92.x_female_hypothalamus_inc.d17
+    ## NP_001001127.1                             294.047679
+    ## NP_001001129.1                               5.252080
+    ## NP_001001189.1                             300.099360
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               2.226268
+    ## NP_001001201.1                              30.237945
+    ##                y126.w92.x_female_pituitary_inc.d17
+    ## NP_001001127.1                         139.4153305
+    ## NP_001001129.1                           7.2521027
+    ## NP_001001189.1                         335.3667733
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.1366806
+    ## NP_001001201.1                         129.2550063
+    ##                y128.g23.x_female_gonad_inc.d9
+    ## NP_001001127.1                      47.100317
+    ## NP_001001129.1                       6.137087
+    ## NP_001001189.1                     347.847428
+    ## NP_001001194.1                       8.398329
+    ## NP_001001195.1                       1.175051
+    ## NP_001001201.1                      90.968705
+    ##                y128.g23.x_female_pituitary_inc.d9 y129.x_male_gonad_n9
+    ## NP_001001127.1                          92.317503             8.380977
+    ## NP_001001129.1                          28.860176             1.272633
+    ## NP_001001189.1                         309.508225           795.532877
+    ## NP_001001194.1                           0.000000             2.225481
+    ## NP_001001195.1                           2.450021             2.424569
+    ## NP_001001201.1                         195.035991           286.464711
+    ##                y129.x_male_hypothalamus_n9 y129.x_male_pituitary_n9
+    ## NP_001001127.1                 109.8543756              143.3387842
+    ## NP_001001129.1                   0.0000000              105.6178428
+    ## NP_001001189.1                 394.4486284              267.3358112
+    ## NP_001001194.1                   0.0000000                0.0000000
+    ## NP_001001195.1                   0.7294967                0.1286363
+    ## NP_001001201.1                  25.1143673               95.1248935
+    ##                y13.x_female_gonad_inc.d3 y13.x_female_hypothalamus_inc.d3
+    ## NP_001001127.1               87.73066084                     1.873619e+02
+    ## NP_001001129.1               33.26061792                     8.733266e-03
+    ## NP_001001189.1              393.80525705                     4.402621e+02
+    ## NP_001001194.1                3.82477064                     0.000000e+00
+    ## NP_001001195.1                0.05065567                     2.695313e-03
+    ## NP_001001201.1               27.12385890                     3.990945e+01
+    ##                y13.x_female_pituitary_inc.d3
+    ## NP_001001127.1                   142.4610480
+    ## NP_001001129.1                    44.7519008
+    ## NP_001001189.1                   420.9724342
+    ## NP_001001194.1                     0.0000000
+    ## NP_001001195.1                     0.1331243
+    ## NP_001001201.1                    70.4415641
+    ##                y130.o170.x_female_gonad_inc.d17
+    ## NP_001001127.1                        71.514983
+    ## NP_001001129.1                       190.036414
+    ## NP_001001189.1                       276.895245
+    ## NP_001001194.1                        17.615999
+    ## NP_001001195.1                         0.166138
+    ## NP_001001201.1                        52.759347
+    ##                y130.o170.x_female_hypothalamus_inc.d17
+    ## NP_001001127.1                               166.07740
+    ## NP_001001129.1                                 0.00000
+    ## NP_001001189.1                               334.32514
+    ## NP_001001194.1                                 0.00000
+    ## NP_001001195.1                                 0.00000
+    ## NP_001001201.1                                38.02546
+    ##                y130.o170.x_female_pituitary_inc.d17
+    ## NP_001001127.1                            153.80628
+    ## NP_001001129.1                             24.66685
+    ## NP_001001189.1                            349.11624
+    ## NP_001001194.1                              0.00000
+    ## NP_001001195.1                              1.60654
+    ## NP_001001201.1                            123.46731
+    ##                y131.w185.x_male_gonad_n9 y131.w185.x_male_hypothalamus_n9
+    ## NP_001001127.1                  7.497258                      172.3445451
+    ## NP_001001129.1                  2.373932                        2.3155971
+    ## NP_001001189.1                997.058853                      412.4478614
+    ## NP_001001194.1                  1.728463                        0.0000000
+    ## NP_001001195.1                  7.137618                        0.4928112
+    ## NP_001001201.1                258.112850                       22.7521167
+    ##                y131.w185.x_male_pituitary_n9
+    ## NP_001001127.1                     123.99142
+    ## NP_001001129.1                     113.78088
+    ## NP_001001189.1                     403.38095
+    ## NP_001001194.1                       0.00000
+    ## NP_001001195.1                       0.00000
+    ## NP_001001201.1                      92.43927
+    ##                y133.w77.r58_male_gonad_inc.d17
+    ## NP_001001127.1                      18.8515624
+    ## NP_001001129.1                       0.1999571
+    ## NP_001001189.1                     851.9820884
+    ## NP_001001194.1                       0.1150985
+    ## NP_001001195.1                       0.2798543
+    ## NP_001001201.1                     227.7646727
+    ##                y133.w77.r58_male_hypothalamus_inc.d17
+    ## NP_001001127.1                             178.391662
+    ## NP_001001129.1                               5.569926
+    ## NP_001001189.1                             351.085222
+    ## NP_001001194.1                               0.000000
+    ## NP_001001195.1                               2.003379
+    ## NP_001001201.1                              31.132989
+    ##                y133.w77.r58_male_pituitary_inc.d17
+    ## NP_001001127.1                        175.59146964
+    ## NP_001001129.1                         35.46540191
+    ## NP_001001189.1                        355.59509980
+    ## NP_001001194.1                          0.01046691
+    ## NP_001001195.1                          1.64757767
+    ## NP_001001201.1                        128.31070673
+    ##                y135.blu107.x_female_gonad_inc.d17
+    ## NP_001001127.1                           57.65424
+    ## NP_001001129.1                          171.96489
+    ## NP_001001189.1                          471.25484
+    ## NP_001001194.1                           38.16628
+    ## NP_001001195.1                            1.69317
+    ## NP_001001201.1                           51.45742
+    ##                y135.blu107.x_female_hypothalamus_inc.d17
+    ## NP_001001127.1                                228.855780
+    ## NP_001001129.1                                  3.263448
+    ## NP_001001189.1                                380.531447
+    ## NP_001001194.1                                  0.000000
+    ## NP_001001195.1                                  1.250948
+    ## NP_001001201.1                                 32.425976
+    ##                y135.blu107.x_female_pituitary_inc.d17.NYNO
+    ## NP_001001127.1                                  168.191050
+    ## NP_001001129.1                                    6.879697
+    ## NP_001001189.1                                  356.854211
+    ## NP_001001194.1                                    0.000000
+    ## NP_001001195.1                                    0.000000
+    ## NP_001001201.1                                  131.134966
+    ##                y136.x_female_gonad_inc.d17
+    ## NP_001001127.1                   61.578944
+    ## NP_001001129.1                  119.084216
+    ## NP_001001189.1                  352.594082
+    ## NP_001001194.1                  101.671557
+    ## NP_001001195.1                    1.879047
+    ## NP_001001201.1                   37.199589
+    ##                y136.x_female_hypothalamus_inc.d17
+    ## NP_001001127.1                        155.2116090
+    ## NP_001001129.1                          0.4192147
+    ## NP_001001189.1                        365.9094738
+    ## NP_001001194.1                          0.0000000
+    ## NP_001001195.1                          0.0000000
+    ## NP_001001201.1                         22.9634206
+    ##                y136.x_female_pituitary_inc.d17
+    ## NP_001001127.1                     168.7555586
+    ## NP_001001129.1                      11.8219915
+    ## NP_001001189.1                     432.4763447
+    ## NP_001001194.1                       0.0000000
+    ## NP_001001195.1                       0.1006133
+    ## NP_001001201.1                      71.2974541
+    ##                y140.w119.x_female_gonad_inc.d9
+    ## NP_001001127.1                       69.581651
+    ## NP_001001129.1                      111.797654
+    ## NP_001001189.1                      312.547148
+    ## NP_001001194.1                       81.050155
+    ## NP_001001195.1                        6.201592
+    ## NP_001001201.1                       32.770912
+    ##                y140.w119.x_female_hypothalamus_inc.d9
+    ## NP_001001127.1                            158.1056798
+    ## NP_001001129.1                              0.5354818
+    ## NP_001001189.1                            383.7462906
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              0.0000000
+    ## NP_001001201.1                             21.2131776
+    ##                y140.w119.x_female_pituitary_inc.d9
+    ## NP_001001127.1                           132.80098
+    ## NP_001001129.1                            51.58394
+    ## NP_001001189.1                           445.54725
+    ## NP_001001194.1                             0.00000
+    ## NP_001001195.1                             0.00000
+    ## NP_001001201.1                            73.00557
+    ##                y149.r52.x_male_gonad_inc.d3
+    ## NP_001001127.1                   13.9158541
+    ## NP_001001129.1                    6.0867959
+    ## NP_001001189.1                  795.5976249
+    ## NP_001001194.1                    0.8933758
+    ## NP_001001195.1                    3.4560621
+    ## NP_001001201.1                  245.6526391
+    ##                y149.r52.x_male_hypothalamus_inc.d3
+    ## NP_001001127.1                         176.6862324
+    ## NP_001001129.1                           0.8904323
+    ## NP_001001189.1                         345.4456829
+    ## NP_001001194.1                           0.0000000
+    ## NP_001001195.1                           0.2172290
+    ## NP_001001201.1                          32.5155661
+    ##                y149.r52.x_male_pituitary_inc.d3 y15.x_female_gonad_hatch
+    ## NP_001001127.1                     202.21269058                58.681186
+    ## NP_001001129.1                      17.49638219                86.684098
+    ## NP_001001189.1                     334.54322926               328.921888
+    ## NP_001001194.1                       0.01550482                 2.645518
+    ## NP_001001195.1                       3.99225415                 3.769155
+    ## NP_001001201.1                      83.04351404                39.119089
+    ##                y15.x_female_hypothalamus_hatch
+    ## NP_001001127.1                       193.10841
+    ## NP_001001129.1                         4.99307
+    ## NP_001001189.1                       365.57775
+    ## NP_001001194.1                         0.00000
+    ## NP_001001195.1                         2.04338
+    ## NP_001001201.1                        43.24263
+    ##                y15.x_female_pituitary_hatch y6.o54_female_gonad_n5
+    ## NP_001001127.1                 147.73615702              76.655428
+    ## NP_001001129.1                  30.85459124             108.406171
+    ## NP_001001189.1                 410.27573914             259.197641
+    ## NP_001001194.1                   0.01539714               6.496414
+    ## NP_001001195.1                   4.29019251               4.667298
+    ## NP_001001201.1                 115.74160508              49.666973
+    ##                y6.o54_female_hypothalamus_n5 y6.o54_female_pituitary_n5
+    ## NP_001001127.1                    126.904677                 143.856766
+    ## NP_001001129.1                      3.029416                  20.361156
+    ## NP_001001189.1                    377.779204                 316.302593
+    ## NP_001001194.1                      0.000000                   0.000000
+    ## NP_001001195.1                      0.000000                   0.884314
+    ## NP_001001201.1                     33.693127                 164.967326
+    ##                y7.g58_female_gonad_hatch y7.g58_female_hypothalamus_hatch
+    ## NP_001001127.1                 40.146722                       188.551173
+    ## NP_001001129.1                 84.478591                         1.524163
+    ## NP_001001189.1                221.669381                       403.942709
+    ## NP_001001194.1                  4.235722                         0.000000
+    ## NP_001001195.1                  1.332912                         2.485993
+    ## NP_001001201.1                 31.315626                        38.481310
+    ##                y7.g58_female_pituitary_hatch y94.g133.x_female_gonad_n5
+    ## NP_001001127.1                    115.632472                  93.529502
+    ## NP_001001129.1                     21.198560                  79.503706
+    ## NP_001001189.1                    316.124944                 232.921066
+    ## NP_001001194.1                      0.000000                  17.070011
+    ## NP_001001195.1                      2.111161                   1.399727
+    ## NP_001001201.1                     79.956913                  35.756642
+    ##                y94.g133.x_female_hypothalamus_n5.NYNO
+    ## NP_001001127.1                            137.8206844
+    ## NP_001001129.1                              2.3300239
+    ## NP_001001189.1                            416.3837814
+    ## NP_001001194.1                              0.0000000
+    ## NP_001001195.1                              0.7268401
+    ## NP_001001201.1                             24.3533748
+    ##                y94.g133.x_female_pituitary_n5 y95.g131.x_male_gonad_inc.d9
+    ## NP_001001127.1                     176.492176                   6.09353502
+    ## NP_001001129.1                      25.939030                   1.21721318
+    ## NP_001001189.1                     358.846563                 659.74392863
+    ## NP_001001194.1                       0.000000                   0.06002374
+    ## NP_001001195.1                       1.049703                   6.93935436
+    ## NP_001001201.1                      82.770706                 461.33654968
+    ##                y95.g131.x_male_hypothalamus_inc.d9
+    ## NP_001001127.1                        168.06067115
+    ## NP_001001129.1                          2.17826113
+    ## NP_001001189.1                        349.23458824
+    ## NP_001001194.1                          0.00000000
+    ## NP_001001195.1                          0.07394516
+    ## NP_001001201.1                         19.37219871
+    ##                y95.g131.x_male_pituitary_inc.d9 y97.x_female_gonad_n9
+    ## NP_001001127.1                     166.63263265            171.527201
+    ## NP_001001129.1                      14.47724852            159.215178
+    ## NP_001001189.1                     266.89882676            262.517609
+    ## NP_001001194.1                       0.02303089              2.037689
+    ## NP_001001195.1                       0.10092617              6.317939
+    ## NP_001001201.1                      77.65918275             67.080453
+    ##                y97.x_female_hypothalamus_n9 y97.x_female_pituitary_n9
+    ## NP_001001127.1                 132.60808907                102.774777
+    ## NP_001001129.1                   0.10315291                 42.127058
+    ## NP_001001189.1                 364.42496162                295.438059
+    ## NP_001001194.1                   0.00000000                  0.000000
+    ## NP_001001195.1                   0.07112656                  1.469926
+    ## NP_001001201.1                  10.00911630                 70.669593
+    ##                y98.o50.x_male_gonad_inc.d3
+    ## NP_001001127.1                  11.4318032
+    ## NP_001001129.1                   1.8159019
+    ## NP_001001189.1                 753.3975266
+    ## NP_001001194.1                   0.7416263
+    ## NP_001001195.1                   4.5224205
+    ## NP_001001201.1                 283.3563543
+    ##                y98.o50.x_male_hypothalamus_inc.d3
+    ## NP_001001127.1                         148.967401
+    ## NP_001001129.1                           1.655387
+    ## NP_001001189.1                         345.063122
+    ## NP_001001194.1                           0.000000
+    ## NP_001001195.1                           1.239764
+    ## NP_001001201.1                          28.038657
+    ##                y98.o50.x_male_pituitary_inc.d3
+    ## NP_001001127.1                    170.68326157
+    ## NP_001001129.1                     15.10784148
+    ## NP_001001189.1                    293.63439255
+    ## NP_001001194.1                      0.01071526
+    ## NP_001001195.1                      2.51878511
+    ## NP_001001201.1                     89.48240480
 
-    ggsave("../figures/espanol/pca-en-es.png", width=6, height=3, dpi=300)
+    pca <- prcomp(t(pseudocounts))
 
-    pdf(file="../figures/espanol/pca-en-es.pdf", width=6, height=3)
-    plot(enes)    
-    dev.off()
+    p <- autoplot(pca, data = samples, colour = 'tissue', shape = "sex")
+    p
 
-    ## quartz_off_screen 
-    ##                 2
+![](../figures/pca/normalized-1.png)
 
+    edgRpca12 <- p + labs(subtitle = "Normalized counts from edgeR") +
+      scale_colour_discrete(name = "tissue", labels = c("hypothalamus", "pituitary", "gonad")) +
+      scale_shape_discrete(name = "sex", labels = c("female", "male")) +
+      #xlab(stringr::str_replace(p$labels$x, "PC", "Principle Component ")) +
+      #ylab(stringr::str_replace(p$labels$y, "PC", "Principle Component ")) +
+      theme_rmh() + guides(colour = guide_legend(order = 1), 
+                  shape = guide_legend(order = 2)) +
+      stat_ellipse(aes(linetype = sex, colour = tissue))
+    edgRpca12
+
+![](../figures/pca/normalized-2.png)
+
+    sidebyside <- plot_grid(rawPCA112 + theme(legend.position = "none"),
+                            edgRpca12,
+                            rel_widths = c(0.4,0.6))
+    sidebyside
+
+![](../figures/pca/sidebyside-1.png)
+
+subsets of normalized data show by tissue and sex
+-------------------------------------------------
+
+    plotlist = list()
     for (eachgroup in levels(samples$treatment)){
       
       print(eachgroup)
@@ -163,63 +3416,184 @@
       savecols <- as.character(colData$V1) 
       savecols <- as.vector(savecols) 
 
-      countData <- counts %>% dplyr::select(one_of(savecols)) 
+      countData <- pseudocounts %>% dplyr::select(one_of(savecols)) 
 
       # check that row and col lenghts are equal
       print(ncol(countData) == nrow(colData))
       
       pca <- prcomp(t(countData))
       
-      p <- autoplot(pca, data = colData, colour = 'tissue', shape = "sex")
+      p <- autoplot(pca, data = colData, alpha = 'tissue', shape = "sex", color = "treatment")
 
     en <- p + labs(subtitle = eachgroup) +
-      theme_rmh() 
+      theme_rmh() +
+        theme_rmh()  +
+      stat_ellipse(aes(linetype = sex, alpha = tissue, color = treatment)) +
+       theme_bw(base_size=8) +
+        theme(legend.position = "bottom") +
+      scale_color_manual(values = treatmentcolors) + 
+      guides(color = FALSE)
 
+    legend <- get_legend(en) 
 
-    plot(en) 
+    en <- en  + theme(legend.position = "none")
+
+    plotlist[[eachgroup]] = en
+
     }
-
-    ## [1] "bldg"
-    ## [1] TRUE
-
-![](../figures/pca/subset-1.png)
 
     ## [1] "control"
     ## [1] TRUE
 
-![](../figures/pca/subset-2.png)
+    ## Warning: Using alpha for a discrete variable is not advised.
 
-    ## [1] "hatch"
+    ## [1] "bldg"
     ## [1] TRUE
 
-![](../figures/pca/subset-3.png)
+    ## Warning: Using alpha for a discrete variable is not advised.
 
-    ## [1] "inc.d17"
-    ## [1] TRUE
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
-![](../figures/pca/subset-4.png)
-
-    ## [1] "inc.d3"
-    ## [1] TRUE
-
-![](../figures/pca/subset-5.png)
-
-    ## [1] "inc.d9"
-    ## [1] TRUE
-
-![](../figures/pca/subset-6.png)
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
     ## [1] "lay"
     ## [1] TRUE
 
-![](../figures/pca/subset-7.png)
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## [1] "inc.d3"
+    ## [1] TRUE
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## [1] "inc.d9"
+    ## [1] TRUE
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## [1] "inc.d17"
+    ## [1] TRUE
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## [1] "hatch"
+    ## [1] TRUE
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning: Probable convergence failure
 
     ## [1] "n5"
     ## [1] TRUE
 
-![](../figures/pca/subset-8.png)
+    ## Warning: Using alpha for a discrete variable is not advised.
 
     ## [1] "n9"
     ## [1] TRUE
 
-![](../figures/pca/subset-9.png)
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    main <- grid.arrange(grobs=plotlist,ncol=3)
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+    ## Warning: Using alpha for a discrete variable is not advised.
+
+![](../figures/pca/tissuesex-1.png)
+
+    withlegend <- plot_grid( main, legend, rel_heights  = c(3, .3), ncol = 1)
+    withlegend
+
+![](../figures/pca/tissuesex-2.png)
+
+sex and timepoint within a tissue
+---------------------------------
+
+    plotlist = list()
+    for (eachtissue in levels(samples$tissue)){
+      
+      print(eachtissue)
+      
+      colData <- samples %>%
+          dplyr::filter(tissue == eachtissue) %>%
+          droplevels()
+      row.names(colData) <- colData$V1
+      
+      savecols <- as.character(colData$V1) 
+      savecols <- as.vector(savecols) 
+
+      countData <- pseudocounts %>% dplyr::select(one_of(savecols)) 
+
+      # check that row and col lenghts are equal
+      print(ncol(countData) == nrow(colData))
+      
+      pca <- prcomp(t(countData))
+      
+      p <- autoplot(pca, data = colData, colour = 'treatment', shape = "sex")
+
+    en <- p + labs(subtitle = eachtissue) +
+      theme_rmh() +  guides(colour = guide_legend(order = 1), 
+                  shape = guide_legend(order = 2)) +
+      stat_ellipse(aes(linetype = sex, colour = treatment)) +
+      theme_bw(base_size=8) +
+        theme(legend.position = "bottom") +
+      scale_color_manual(values =  treatmentcolors)
+
+    legend <- get_legend(en)
+
+    en <- en  + theme(legend.position = "none")
+
+    plotlist[[eachtissue]] = en
+
+    #plot(en) 
+    }
+
+    ## [1] "hypothalamus"
+    ## [1] TRUE
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## [1] "pituitary"
+    ## [1] TRUE
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## [1] "gonad"
+    ## [1] TRUE
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    main <- grid.arrange(grobs=plotlist,ncol=3)
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+![](../figures/pca/timepointsex-1.png)
+
+    withlegend <- plot_grid( main, legend, rel_heights  = c(3, .3), ncol = 1)
+    withlegend
+
+![](../figures/pca/timepointsex-2.png)

@@ -20,10 +20,10 @@ First, I read in the data I processed in 00_datawrangling.Rmd.
 
 ```{r read}
 # import "colData" which contains sample information and "countData" which contains read counts
-colData <- read.csv("../results/00_colData_characterization.csv", header = T, row.names = 1)
+colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
 countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 head(colData)
-geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 ```
 
 Then, I followed the steps from <https://github.com/macmanes-lab/RockDove/blob/master/parental_care/parental_analysis.Rmd>.
@@ -53,10 +53,20 @@ parentalobject <- estimateGLMCommonDisp(parentalobject, parentaldesign, verbose=
 parentalobject <- estimateGLMTrendedDisp(parentalobject, parentaldesign)
 parentalobject <- estimateGLMTagwiseDisp(parentalobject, parentaldesign)
 
+# find and print data
+names(parentalobject)
+head(countData)
+head(parentalobject$counts)
+head(parentalobject$pseudo.counts)
+
+write.csv(parentalobject$pseudo.counts, "../results/01_pseudo.counts.csv")
+
+
 #  perform likelihood ratio test and thresholded testing
 fit <- glmFit( parentalobject, parentaldesign, robust=T)
 tr <- glmTreat(fit, lfc = 1)
 topTags(tr)
+tr$table
 ```
 
 
@@ -85,6 +95,7 @@ plotMDS(parentalobject,col=col.sex)
 legend("bottomright",fill=c("#5ab4ac","#d8b365"),legend=levels(colData$sex))
 title("Colored by Sex")
 ```
+
 ```{r plotMDS-colorshape}
 colData$sexTissue <- paste(colData$sex, colData$tissue, sep = "_")
 
@@ -153,18 +164,4 @@ summary(decideTestsDGE(
 	adjust.method="fdr", p.value=0.01))
 kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
 plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pituitary lay to hatch', frame.plot=F)
-```
-
-# volcano plots
-
-```{r volcanoplots}
-# from http://www.compbio.dundee.ac.uk/user/pschofield/Projects/teaching_pg/workshops/biocDGE.html#maplots
-
-lrt <- glmLRT(fit,coef=2)
-topTags(lrt)
-
-tt <- topTags(lrt,n=10000)$table
-
-ggplot(data=tt) + geom_point(aes(x=logFC,y=-log(FDR),color=logCPM)) +
-  scale_colour_gradientn(colours=c("#000000" ,"#FF0000" ))
 ```

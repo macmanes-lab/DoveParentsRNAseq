@@ -9,10 +9,12 @@ library(ggfortify) # for PCA analysis
 library(cluster)
 library(cowplot)
 library(stringr)
+library(gridExtra)
+library(grid)
 
 
 theme_rmh <- function(){ 
-    theme_bw(base_size=10) +
+    theme_bw(base_size=14) +
         theme(
             panel.grid.minor.x  = element_blank(),
            panel.grid.minor.y  = element_blank(),
@@ -22,6 +24,15 @@ theme_rmh <- function(){
            legend.key.size = unit(0.5, "cm"))
 }
 
+treatmentcolors <-  c("control" = "#bdbdbd", 
+                              "bldg" =  "#d95f02", 
+                              "lay"  = "#a1d99b", 
+                              "inc.d3" = "#74c476", 
+                              "inc.d9"  = "#41ab5d", 
+                              "inc.d17" = "#238b45", 
+                              "hatch"  = "#807dba", 
+                              "n5"  = "#6a51a3", 
+                               "n9" = "#4a1486")
 
 knitr::opts_chunk$set(echo = TRUE, cache = T, fig.path = '../figures/pca/')
 ```
@@ -30,64 +41,74 @@ knitr::opts_chunk$set(echo = TRUE, cache = T, fig.path = '../figures/pca/')
 counts <- read.csv("../results/00_countData_characterization.csv", row.names = 1, header = T)
 
 samples <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, header = T)
-geneinfo <- read.csv("../metadata//00_geneinfo.csv", row.names = 1, header = T)
 
-head(samples)
+samples$treatment <- factor(samples$treatment, levels = 
+                              c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                                "inc.d17", "hatch", "n5", "n9"))
+samples$tissue <- factor(samples$tissue, levels = 
+                              c("hypothalamus", "pituitary", "gonad"))
+
+
+geneinfo <- read.csv("../metadata//00_geneinfo.csv", row.names = 1, header = T)
 ```
 
-```{r pca}
+```{r raw}
 # https://cran.r-project.org/web/packages/ggfortify/vignettes/plot_pca.html
 
 # pca
 pca <- prcomp(t(counts))
 
-autoplot(pca, data = samples, colour = 'tissue') 
-autoplot(pca, data = samples, colour = 'sex') 
-autoplot(pca, data = samples, colour = 'treatment') 
-autoplot(pca, data = samples, colour = 'tissue', shape = "sex") 
-autoplot(pca, data = samples, colour = 'tissue', shape = "sex", alpha = "treatment")
-autoplot(pca, data = samples, colour = 'treatment', shape = "sex", alpha = "tissue")
+p <- autoplot(pca, data = samples, alpha = 'tissue', shape = "sex")
 
-# kmeans
-autoplot(clara(t(counts),3), frame = TRUE)
 
-# probability ellipse
-autoplot(pam(t(counts), 3), frame = TRUE, frame.type = 'norm')
-```
-
-```{r pca-es}
-p <- autoplot(pca, data = samples, colour = 'tissue', shape = "sex")
-
-en <- p + labs(subtitle = "Principle Component Analysis") +
+rawPCA112 <- p + labs(subtitle = "Raw counts") +
   scale_colour_discrete(name = "tissue", labels = c("hypothalamus", "pituitary", "gonad")) +
   scale_shape_discrete(name = "sex", labels = c("female", "male")) +
-  xlab(stringr::str_replace(p$labels$x, "PC", "Principle Component ")) +
-  ylab(stringr::str_replace(p$labels$y, "PC", "Principle Component ")) +
-  theme_rmh() + guides(colour = guide_legend(order = 2), 
-              shape = guide_legend(order = 1))
+  #xlab(stringr::str_replace(p$labels$x, "PC", "Principle Component ")) +
+  #ylab(stringr::str_replace(p$labels$y, "PC", "Principle Component ")) +
+  theme_rmh() + guides(alpha = guide_legend(order = 1), 
+              shape = guide_legend(order = 2)) +
+  stat_ellipse(aes(linetype = sex, colour = tissue)) 
+rawPCA112
 
-es <- p + labs(subtitle = "Análisis de Componentes Principales ") +
-  scale_colour_discrete(name = "tejido", labels = c("hipotálamo", "pituitaria", "gónada")) +
-  scale_shape_discrete(name = "sexo", labels = c("femenino", "masculino")) +
-  xlab(stringr::str_replace(p$labels$x, "PC", "Componente Principal ")) +
-  ylab(stringr::str_replace(p$labels$y, "PC", "Componente Principal ")) +
-  theme_rmh() + guides(colour = guide_legend(order = 2), 
-              shape = guide_legend(order = 1))
+```
 
-enes <- plot_grid(en,es)
+## with normalize edgeR data
 
-enes 
+```{r normalized}
 
-ggsave("../figures/espanol/pca-en-es.png", width=6, height=3, dpi=300)
+pseudocounts <- read.csv("../results/01_pseudo.counts.csv", row.names = 1)
+head(pseudocounts)
+pca <- prcomp(t(pseudocounts))
 
-pdf(file="../figures/espanol/pca-en-es.pdf", width=6, height=3)
-plot(enes)    
-dev.off()
+p <- autoplot(pca, data = samples, alpha = 'tissue', shape = "sex")
+p
+
+edgRpca12 <- p + labs(subtitle = "Normalized counts from edgeR") +
+  scale_alpha_discrete(name = "tissue", labels = c("hypothalamus", "pituitary", "gonad")) +
+  scale_shape_discrete(name = "sex", labels = c("female", "male")) +
+  #xlab(stringr::str_replace(p$labels$x, "PC", "Principle Component ")) +
+  #ylab(stringr::str_replace(p$labels$y, "PC", "Principle Component ")) +
+  theme_rmh() + guides(alpha = guide_legend(order = 1), 
+              shape = guide_legend(order = 2)) +
+  stat_ellipse(aes(linetype = sex, colour = tissue))
+edgRpca12
+```
+
+```{r sidebyside}
+
+sidebyside <- plot_grid(rawPCA112 + theme(legend.position = "none"),
+                        edgRpca12,
+                        rel_widths = c(0.4,0.6))
+sidebyside
+
 ```
 
 
+## subsets of normalized data show by tissue and sex
 
-```{r subset}
+```{r tissuesex}
+plotlist = list()
 for (eachgroup in levels(samples$treatment)){
   
   print(eachgroup)
@@ -100,22 +121,84 @@ for (eachgroup in levels(samples$treatment)){
   savecols <- as.character(colData$V1) 
   savecols <- as.vector(savecols) 
 
-  countData <- counts %>% dplyr::select(one_of(savecols)) 
+  countData <- pseudocounts %>% dplyr::select(one_of(savecols)) 
 
   # check that row and col lenghts are equal
   print(ncol(countData) == nrow(colData))
   
   pca <- prcomp(t(countData))
   
-  p <- autoplot(pca, data = colData, colour = 'tissue', shape = "sex")
+  p <- autoplot(pca, data = colData, alpha = 'tissue', shape = "sex", color = "treatment")
 
 en <- p + labs(subtitle = eachgroup) +
-  theme_rmh() 
+  theme_rmh() +
+    theme_rmh()  +
+  stat_ellipse(aes(linetype = sex, alpha = tissue, color = treatment)) +
+   theme_bw(base_size=8) +
+    theme(legend.position = "bottom") +
+  scale_color_manual(values = treatmentcolors) + 
+  guides(color = FALSE)
 
+legend <- get_legend(en) 
 
-plot(en) 
+en <- en  + theme(legend.position = "none")
+
+plotlist[[eachgroup]] = en
+
 }
+
+main <- grid.arrange(grobs=plotlist,ncol=3)
+
+withlegend <- plot_grid( main, legend, rel_heights  = c(3, .3), ncol = 1)
+withlegend
+
 ```
 
+## sex and timepoint within a tissue
 
+```{r timepointsex}
+plotlist = list()
+for (eachtissue in levels(samples$tissue)){
+  
+  print(eachtissue)
+  
+  colData <- samples %>%
+      dplyr::filter(tissue == eachtissue) %>%
+      droplevels()
+  row.names(colData) <- colData$V1
+  
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
 
+  countData <- pseudocounts %>% dplyr::select(one_of(savecols)) 
+
+  # check that row and col lenghts are equal
+  print(ncol(countData) == nrow(colData))
+  
+  pca <- prcomp(t(countData))
+  
+  p <- autoplot(pca, data = colData, colour = 'treatment', shape = "sex")
+
+en <- p + labs(subtitle = eachtissue) +
+  theme_rmh() +  guides(colour = guide_legend(order = 1), 
+              shape = guide_legend(order = 2)) +
+  stat_ellipse(aes(linetype = sex, colour = treatment)) +
+  theme_bw(base_size=8) +
+    theme(legend.position = "bottom") +
+  scale_color_manual(values =  treatmentcolors)
+
+legend <- get_legend(en)
+
+en <- en  + theme(legend.position = "none")
+
+plotlist[[eachtissue]] = en
+
+#plot(en) 
+}
+
+main <- grid.arrange(grobs=plotlist,ncol=3)
+
+withlegend <- plot_grid( main, legend, rel_heights  = c(3, .3), ncol = 1)
+withlegend
+
+```
