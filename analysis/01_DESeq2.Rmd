@@ -12,6 +12,9 @@ library(pheatmap)
 library(kableExtra)
 library(viridis)
 
+library("BiocParallel")
+register(MulticoreParam(4))
+
 # load custom functions  
 source("../R/functions.R") 
 
@@ -40,10 +43,20 @@ summary(samples)
 ```{r dds}
 dds <- DESeqDataSetFromMatrix(countData = counts,
                               colData = samples,
-                              design = ~ treatment * sex * tissue )
+                              design = ~ sex * tissue * treatment )
 
-dds <- dds[ rowSums(counts(dds)) > 10, ] ## pre-filter genes 
-dds <- DESeq(dds) # Differential expression analysis
+dds <- estimateSizeFactors(dds)
+dds
+
+# here filtering on moderate counts in 10 samples out of totla
+nsamp <- 24
+keep <- rowSums(counts(dds, normalized=TRUE) >= 10) >= nsamp
+table(keep)
+
+dds <- dds[keep,] 
+dds
+
+dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
 ```
 
 ```{r vsd}
