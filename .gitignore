@@ -5,3 +5,4 @@ mapping/
 analysis/*cache/
 */*html
 .Rproj.user
+results/01_pseudo.counts.csv
