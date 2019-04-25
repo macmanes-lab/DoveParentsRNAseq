@@ -61,7 +61,6 @@ head(parentalobject$pseudo.counts)
 
 write.csv(parentalobject$pseudo.counts, "../results/01_pseudo.counts.csv")
 
-
 #  perform likelihood ratio test and thresholded testing
 fit <- glmFit( parentalobject, parentaldesign, robust=T)
 tr <- glmTreat(fit, lfc = 1)

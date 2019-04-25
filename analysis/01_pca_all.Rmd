@@ -78,7 +78,7 @@ rawPCA112
 ```{r normalized}
 
 pseudocounts <- read.csv("../results/01_pseudo.counts.csv", row.names = 1)
-head(pseudocounts)
+#head(pseudocounts)
 pca <- prcomp(t(pseudocounts))
 
 p <- autoplot(pca, data = samples, alpha = 'tissue', shape = "sex")
