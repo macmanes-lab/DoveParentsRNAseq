@@ -39,6 +39,7 @@ dim(countData)
 # make a tibble for the sole purpose of previewing this huge df
 countDataTibble <- as.tbl(countData)
 print(countDataTibble, n_extra = 0)
+#rm(countDataTibble)
 ```
 
 ## wrangle colData 
@@ -83,12 +84,18 @@ colData$group <- paste(colData$sex, colData$tissue, colData$treatment, sep=".")
 # add variable to distinguish characterization study and manipulation
 colData$study <- ifelse(grepl("m.|extend|prolong", colData$treatment), "manipulation", "charcterization")
 
+colData$study <- factor(colData$study, 
+                         levels = c("charcterization", "manipulation"))
+
 ## view colData
 str(colData)
 head(colData, 5)
 
 # check that rownames and colnames match for DESeq
 ncol(countData) == nrow(colData)
+
+colData %>% select(sex, tissue, treatment, study)  %>%  summary()
+
 ```
 
 ## save bird and sample and count data 
@@ -99,7 +106,9 @@ samples <- colData
 birds <- colData %>%
   select(bird, sex, treatment) %>%
   distinct()
+
 ```
+
 
 
 ## subset for manipulation study
@@ -157,4 +166,5 @@ write.csv(countData_characterization, "../results/00_countData_characterization.
 
 write.csv(geneinfo, "../metadata/00_geneinfo.csv", row.names = TRUE)
 ```
+
 

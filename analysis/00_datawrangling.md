@@ -1,3 +1,17 @@
+    # https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+    library(tidyverse)
+
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+
+    ## ✔ ggplot2 3.1.0       ✔ purrr   0.3.1  
+    ## ✔ tibble  2.0.1       ✔ dplyr   0.8.0.1
+    ## ✔ tidyr   0.8.3       ✔ stringr 1.4.0  
+    ## ✔ readr   1.3.1       ✔ forcats 0.4.0
+
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+
 Data Wrangling
 ==============
 
@@ -57,6 +71,8 @@ countData and geneinfo
     ## 10                3                7                4                4
     ## # … with 14,927 more rows, and 983 more variables
 
+    #rm(countDataTibble)
+
 wrangle colData
 ---------------
 
@@ -99,6 +115,9 @@ wrangle colData
     # add variable to distinguish characterization study and manipulation
     colData$study <- ifelse(grepl("m.|extend|prolong", colData$treatment), "manipulation", "charcterization")
 
+    colData$study <- factor(colData$study, 
+                             levels = c("charcterization", "manipulation"))
+
     ## view colData
     str(colData)
 
@@ -109,7 +128,7 @@ wrangle colData
     ##  $ tissue   : Factor w/ 3 levels "hypothalamus",..: 3 1 2 3 1 2 3 1 2 3 ...
     ##  $ treatment: Factor w/ 16 levels "bldg","control",..: 2 2 2 2 2 2 2 2 2 2 ...
     ##  $ group    : chr  "male.gonad.control" "male.hypothalamus.control" "male.pituitary.control" "male.gonad.control" ...
-    ##  $ study    : chr  "charcterization" "charcterization" "charcterization" "charcterization" ...
+    ##  $ study    : Factor w/ 2 levels "charcterization",..: 1 1 1 1 1 1 1 1 1 1 ...
 
     head(colData, 5)
 
@@ -142,6 +161,17 @@ wrangle colData
     ncol(countData) == nrow(colData)
 
     ## [1] TRUE
+
+    colData %>% select(sex, tissue, treatment, study)  %>%  summary()
+
+    ##      sex               tissue        treatment               study    
+    ##  female:497   hypothalamus:327   control  : 73   charcterization:576  
+    ##  male  :490   pituitary   :330   inc.d9   : 71   manipulation   :411  
+    ##               gonad       :330   inc.d17  : 66                        
+    ##                                  n9       : 66                        
+    ##                                  m.inc.d17: 63                        
+    ##                                  bldg     : 60                        
+    ##                                  (Other)  :588
 
 save bird and sample and count data
 -----------------------------------
@@ -225,4 +255,4 @@ save files for downstream use
     write.csv(colData_characterization, "../metadata/00_colData_characterization.csv", row.names = TRUE) 
     write.csv(countData_characterization, "../results/00_countData_characterization.csv", row.names = TRUE) 
 
-    write.csv(geneinfo, "../results/00_geneinfo.csv", row.names = TRUE)
+    write.csv(geneinfo, "../metadata/00_geneinfo.csv", row.names = TRUE)
