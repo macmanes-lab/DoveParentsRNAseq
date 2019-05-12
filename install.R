@@ -1,11 +1,9 @@
-install.packages("tidyverse")
-install.packages("rmarkdown")
-install.packages("kableExtra")
-install.packages("cowplot")
-install.packages("RColorBrewer")
-install.packages("pheatmap")
-install.packages("kableExtra")
-install.packages("viridis")
+pkgs = c("BiocManager",
+         "tidyverse", "knitr", "rmarkdown",
+         "kableExtra", "cowplot", "RColorBrewer",
+         "pheatmap", "viridis" )
+ncores = parallel::detectCores()
+install.packages(pkgs, Ncpus = ncores)
 
 BiocManager::install("edgeR")
 BiocManager::install("Glimma")
