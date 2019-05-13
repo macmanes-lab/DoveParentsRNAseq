@@ -15,21 +15,21 @@ library(viridis)
 # load custom functions  
 source("../R/functions.R") 
 
-knitr::opts_chunk$set(fig.path = '../figures/manipulation/',cache=TRUE)
+knitr::opts_chunk$set(fig.path = '../figures/manipulation/')
 ```
 
 # Manipulation data
 
 ```{r readfiles}
 # import "colData" which contains sample information and "countData" which contains read counts
-m.colData <- read.csv("../results/00_colData_manipluation.csv", header = T, row.names = 1)
+m.colData <- read.csv("../metadata/00_colData_manipluation.csv", header = T, row.names = 1)
 m.countData <- read.csv("../results/00_countData_manipluation.csv", header = T, row.names = 1)
-geneinfo <- read.csv("../results/00_geneinfo.csv", row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
 # set levels
 m.colData$treatment <- factor(m.colData$treatment, levels = 
-                              c("m.inc.d3", "m.inc.d8", "m.inc.d9",
-                                "m.inc.d17",  "prolong", "extend", "m.n2"))
+                              c("m.inc.d3",  "m.inc.d9",
+                                "m.inc.d17", "m.inc.d8", "prolong", "extend", "m.n2"))
 
 m.colData$sextissue <- as.factor(paste(m.colData$sex, m.colData$tissue, sep = "_"))
 ```
@@ -130,7 +130,7 @@ pca34 <- ggplot(pcadata, aes(PC3, PC4,color = treatment)) +
   ylab(paste0("PC4: ", percentVar[4],"% variance")) +
   theme_cowplot(font_size = 8, line_size = 0.25) +
   labs(subtitle = eachgroup)
-print(pca34)
+#print(pca34)
 
 # see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
 sampleDists <- dist(t(assay(vsd)))
