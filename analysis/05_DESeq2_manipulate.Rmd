@@ -29,14 +29,25 @@ geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 # set levels
 m.colData$treatment <- factor(m.colData$treatment, levels = 
                               c("m.inc.d3",  "m.inc.d9",
-                                "m.inc.d17", "m.inc.d8", "prolong", "extend", "m.n2"))
+                                "m.inc.d17", "m.n2",
+                                "m.inc.d8", "prolong", "extend"))
 
 m.colData$sextissue <- as.factor(paste(m.colData$sex, m.colData$tissue, sep = "_"))
+
+m.colData$outcome <- ifelse(grepl("d3|d9|d17|n2", m.colData$treatment), "remove", 
+                     ifelse(grepl("d8", m.colData$treatment),"early",
+                     ifelse(grepl("prolong", m.colData$treatment),"prolong",
+                     ifelse(grepl("extend", m.colData$treatment),"extend", NA))))
+m.colData$outcome <- factor(m.colData$outcome, levels = 
+                              c("remove",  "prolong",
+                                "early", "extend"))
+summary(m.colData[c(7,3,4,5,9)])
 ```
 
 # Write for loop to do this one for every tissue and for every treatment
 
-```{r althings}
+```{r althings, eval = FALSE}
+
 for (eachgroup in levels(m.colData$sextissue)){
   
   print(eachgroup)
@@ -86,11 +97,13 @@ data_wide <- spread(dat, V2, V3)
 print(data_wide) 
 
 dat$V1 <- factor(dat$V1, levels = 
-                              c("m.inc.d3", "m.inc.d8", "m.inc.d9",
-                                "m.inc.d17",  "prolong", "extend", "m.n2"))
+                              c("m.inc.d3",  "m.inc.d9",
+                                "m.inc.d17", "m.n2",
+                                "m.inc.d8", "prolong", "extend"))
 dat$V2 <- factor(dat$V2, levels = 
-                              c("m.inc.d3", "m.inc.d8", "m.inc.d9",
-                                "m.inc.d17",  "prolong", "extend", "m.n2"))
+                              c("m.inc.d3",  "m.inc.d9",
+                                "m.inc.d17", "m.n2",
+                                "m.inc.d8", "prolong", "extend"))
 
 allcontrasts <- dat %>%
   ggplot( aes(V1, V2)) +
@@ -139,11 +152,117 @@ sampleDistMatrix <- as.matrix(sampleDists)
 rownames(sampleDistMatrix) <- NULL
 colnames(sampleDistMatrix) <- colData$treatment
 colors <- colorRampPalette(brewer.pal(9, "Blues"))(255)
-pheatmap(sampleDistMatrix,
-         clustering_distance_rows=sampleDists,
-         clustering_distance_cols=sampleDists,
-         col=colors,
-         fontsize = 6, 
-         main = eachgroup)
+
+#pheatmap(sampleDistMatrix,
+#         clustering_distance_rows=sampleDists,
+#         clustering_distance_cols=sampleDists,
+#         col=colors,
+ #        fontsize = 6, 
+ #        main = eachgroup)
+}
+```
+
+
+
+```{r allthings-outcome}
+
+for (eachgroup in levels(m.colData$sextissue)){
+  
+  print(eachgroup)
+  
+  colData <- m.colData %>%
+      dplyr::filter(sextissue == eachgroup) %>%
+      droplevels()
+  row.names(colData) <- colData$V1
+  
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+
+  countData <- m.countData %>% dplyr::select(one_of(savecols)) 
+
+  # check that row and col lenghts are equal
+  print(ncol(countData) == nrow(colData))
+
+  dds <- DESeqDataSetFromMatrix(countData = countData,
+                              colData = colData,
+                              design = ~ outcome )
+  dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
+  dds <- DESeq(dds) # Differential expression analysis
+  vsd <- vst(dds, blind=FALSE) # variance stabilized 
+head(vsd)
+
+numDEGs <- function(group1, group2){
+  res <- results(dds, contrast = c("outcome", group1, group2), independentFiltering = T)
+  sumpadj <- sum(res$padj < 0.1, na.rm = TRUE)
+  return(sumpadj)}
+
+#create list of groups
+a <- levels(colData$outcome)
+b <- levels(colData$outcome)
+
+# comapre all contrasts, save to datafrmes
+dat=data.frame()
+for (i in a){
+  for (j in b){
+    if (i != j) {
+      k <- paste(i,j, sep = "") #assigns usique rownames
+      dat[k,1]<-i               
+      dat[k,2]<-j
+      dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+    }
+  }
+}
+
+head(dat)
+
+# widen data to create table of degs
+rownames(dat) <- NULL #remove row names
+data_wide <- spread(dat, V2, V3)
+print(data_wide) 
+
+dat$V1 <- factor(dat$V1, levels = 
+                              c("remove",  "prolong",
+                                "early", "extend"))
+dat$V2 <- factor(dat$V2, levels = 
+                              c("remove",  "prolong",
+                                "early", "extend"))
+
+allcontrasts <- dat %>%
+  ggplot( aes(V1, V2)) +
+    geom_tile(aes(fill = V3)) +
+    scale_fill_viridis(na.value="#FFFFFF00") + 
+    xlab(" ") + ylab("Timepoint") +
+    labs(fill = "# of DEGs",
+         subtitle = eachgroup)
+plot(allcontrasts)
+
+# create the dataframe using my function pcadataframe
+pcadata <- pcadataframe(vsd, intgroup=c("outcome"), returnData=TRUE)
+percentVar <- round(100 * attr(pcadata, "percentVar"))
+percentVar
+
+pca12 <- ggplot(pcadata, aes(PC1, PC2,color = outcome)) + 
+  geom_point(size = 2, alpha = 1) +
+  stat_ellipse(type = "t") +
+  xlab(paste0("PC1: ", percentVar[1],"% variance")) +
+  ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+  theme_cowplot(font_size = 8, line_size = 0.25) +
+  labs(subtitle = eachgroup)
+print(pca12)
+
+print(summary(aov(PC1 ~ outcome, data=pcadata)))
+print(TukeyHSD(aov(PC1 ~ outcome, data=pcadata), which = "outcome"))
+
+print(summary(aov(PC2 ~ outcome, data=pcadata))) 
+print(TukeyHSD(aov(PC2 ~ outcome, data=pcadata), which = "outcome")) 
+
+pca34 <- ggplot(pcadata, aes(PC3, PC4,color = outcome)) + 
+  geom_point(size = 2, alpha = 1) +
+  stat_ellipse(type = "t") +
+  xlab(paste0("PC3: ", percentVar[3],"% variance")) +
+  ylab(paste0("PC4: ", percentVar[4],"% variance")) +
+  theme_cowplot(font_size = 8, line_size = 0.25) +
+  labs(subtitle = eachgroup)
+#print(pca34)
 }
 ```
