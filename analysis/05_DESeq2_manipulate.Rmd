@@ -47,12 +47,10 @@ summary(m.colData[c(7,3,4,5,8,9)])
 # Write for loop to do this one for every tissue and for every treatment
 
 ```{r althings, eval = T}
-
 ## subset for test 
-
-m.colData <- m.colData %>%
-  filter(sextissue == "female_pituitary") %>%
-  droplevels()
+#m.colData <- m.colData %>%
+#  filter(sextissue == "female_pituitary") %>%
+#  droplevels()
 
 for (eachgroup in levels(m.colData$sextissue)){
   
