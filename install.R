@@ -1,8 +1,7 @@
 pkgs = c("tidyverse", "knitr", "rmarkdown",
          "kableExtra", "cowplot", "RColorBrewer",
          "pheatmap", "viridis" )
-ncores = parallel::detectCores()
-install.packages(pkgs, Ncpus = ncores)
+install.packages(pkgs)
 
 source("https://bioconductor.org/biocLite.R")
 biocLite("edgeR")
