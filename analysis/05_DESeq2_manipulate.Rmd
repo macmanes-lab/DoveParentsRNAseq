@@ -41,12 +41,18 @@ m.colData$outcome <- ifelse(grepl("d3|d9|d17|n2", m.colData$treatment), "remove"
 m.colData$outcome <- factor(m.colData$outcome, levels = 
                               c("remove",  "prolong",
                                 "early", "extend"))
-summary(m.colData[c(7,3,4,5,9)])
+summary(m.colData[c(7,3,4,5,8,9)])
 ```
 
 # Write for loop to do this one for every tissue and for every treatment
 
 ```{r althings, eval = T}
+
+## subset for test 
+
+m.colData <- m.colData %>%
+  filter(sextissue == "female_pituitary") %>%
+  droplevels()
 
 for (eachgroup in levels(m.colData$sextissue)){
   
@@ -159,12 +165,116 @@ colors <- colorRampPalette(brewer.pal(9, "Blues"))(255)
 #         col=colors,
  #        fontsize = 6, 
  #        main = eachgroup)
+
+# Multi-factor designs
+# revals is my function easily calculate multiple multi factor designs
+# it is built around the documentaion from DESeq which looks more simply like
+# res <- results(dds,contrast=c("columnname", "factor1", "factor2"))
+# then I extract the p-values from within the results for showing number of DEGes
+resvals <- function(contrastvector, mypval){
+  res <- results(dds, contrast = c(contrastvector[1],contrastvector[2],contrastvector[3]), independentFiltering = T)
+  sumpvalue <- sum(res$pvalue < mypval, na.rm = TRUE)
+  #print(sumpvalue)
+  sumpadj <- sum(res$padj < mypval, na.rm = TRUE)
+  print(sumpadj)
+  vals <- cbind(res$pvalue, res$padj)
+  pvalcolname <- as.character(paste("pval",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
+  padjcolname <- as.character(paste("padj",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
+  colnames(vals) <- c(pvalcolname, padjcolname)
+  return(vals)
+}
+## DEG by contrasts at 0.1 pvalue
+contrast1 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d9'), mypval = 0.01) #12
+contrast2 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d17'), mypval = 0.01) #73
+contrast3 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.n2'), mypval = 0.01) #284
+contrast4 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d8'), mypval = 0.01) #15
+contrast5 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'prolong'), mypval = 0.01) #555
+contrast6 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'extend'), mypval = 0.01) #1109
+contrast7 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.inc.d17'), mypval = 0.01) #280
+contrast8 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.n2'), mypval = 0.01) #440
+contrast9 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.inc.d8'), mypval = 0.01) #484
+contrast10 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'prolong'), mypval = 0.01) #529
+contrast11 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'extend'), mypval = 0.01) #1177
+
+contrast12 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'm.n2'), mypval = 0.01) #5
+contrast13 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'm.inc.d8'), mypval = 0.01) #553
+contrast14 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'prolong'), mypval = 0.01) #339
+contrast15 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'extend'), mypval = 0.01) #782
+contrast16 <- resvals(contrastvector = c('treatment', 'm.n2', 'm.inc.d8'), mypval = 0.01) #1123
+contrast17 <- resvals(contrastvector = c('treatment', 'm.n2', 'prolong'), mypval = 0.01) #265
+contrast18 <- resvals(contrastvector = c('treatment', 'm.n2', 'extend'), mypval = 0.01) #552
+contrast19 <- resvals(contrastvector = c('treatment', 'm.inc.d8', 'prolong'), mypval = 0.01) #828
+contrast20 <- resvals(contrastvector = c('treatment', 'm.inc.d8', 'extend'), mypval = 0.01) #1110
+contrast21 <- resvals(contrastvector = c('treatment', 'prolong', 'extend'), mypval = 0.01) #64
+
+
+DEGs <- assay(vsd)
+DEGs <- cbind(DEGs, contrast1, contrast2, contrast3, contrast4, contrast5,
+              contrast6, contrast7, contrast8, contrast9, contrast10,
+              contrast11, contrast12, contrast13, contrast14, contrast15,
+              contrast16, contrast17, contrast18, contrast19, contrast20,contrast21)
+DEGs <- as.data.frame(DEGs) # convert matrix to dataframe
+DEGs$rownames <- rownames(DEGs)  # add the rownames to the dataframe
+
+#DEGs[is.na(DEGs)] <-  1
+
+
+DEGs$padjmin <- with(DEGs, pmin(pvaltreatmentm.inc.d3m.inc.d9, 
+  padjtreatmentm.inc.d3m.inc.d9,               
+  pvaltreatmentm.inc.d3m.inc.d17, padjtreatmentm.inc.d3m.inc.d17,              
+  pvaltreatmentm.inc.d3m.n2, padjtreatmentm.inc.d3m.n2,                  
+  pvaltreatmentm.inc.d3m.inc.d8, padjtreatmentm.inc.d3m.inc.d8,               
+  pvaltreatmentm.inc.d3prolong, padjtreatmentm.inc.d3prolong,               
+  pvaltreatmentm.inc.d3extend, padjtreatmentm.inc.d3extend,                
+  pvaltreatmentm.inc.d9m.inc.d17, padjtreatmentm.inc.d9m.inc.d17,             
+  pvaltreatmentm.inc.d9m.n2, padjtreatmentm.inc.d9m.n2,                  
+  pvaltreatmentm.inc.d9m.inc.d8, padjtreatmentm.inc.d9m.inc.d8,              
+  pvaltreatmentm.inc.d9prolong, padjtreatmentm.inc.d9prolong,               
+  pvaltreatmentm.inc.d9extend, padjtreatmentm.inc.d9extend,                
+  pvaltreatmentm.inc.d17m.n2, padjtreatmentm.inc.d17m.n2,                 
+  pvaltreatmentm.inc.d17m.inc.d8, padjtreatmentm.inc.d17m.inc.d8,             
+  pvaltreatmentm.inc.d17prolong, padjtreatmentm.inc.d17prolong,
+  pvaltreatmentm.inc.d17extend,padjtreatmentm.inc.d17extend, 
+  pvaltreatmentm.n2m.inc.d8, padjtreatmentm.n2m.inc.d8,                  
+  pvaltreatmentm.n2prolong, padjtreatmentm.n2prolong,                   
+  pvaltreatmentm.n2extend, padjtreatmentm.n2extend,                    
+  pvaltreatmentm.inc.d8prolong, padjtreatmentm.inc.d8prolong,               
+  pvaltreatmentm.inc.d8extend, padjtreatmentm.inc.d8extend,                
+  pvaltreatmentprolongextend, padjtreatmentprolongextend)) 
+
+sigDEGs <- DEGs %>% arrange(padjmin)
+sigDEGs <- head(sigDEGs,30)
+sigDEGs <- as.data.frame(sigDEGs)
+rownames(sigDEGs) <- sigDEGs$rownames
+drop.cols <-colnames(sigDEGs[,grep("padj|pval|pmin|rownames", colnames(sigDEGs))])
+sigDEGs <- sigDEGs %>% dplyr::select(-one_of(drop.cols))
+sigDEGs <- as.matrix(sigDEGs)
+sigDEGs <- sigDEGs - rowMeans(sigDEGs)
+
+paletteLength <- 30
+myBreaks <- c(seq(min(sigDEGs), 0, length.out=ceiling(paletteLength/2) + 1), 
+                seq(max(sigDEGs)/paletteLength, max(sigDEGs), length.out=floor(paletteLength/2)))
+
+anndf <- m.colData %>% dplyr::select(treatment)
+rownames(anndf) <- m.colData$V1
+
+sigDEGs <- as.matrix(sigDEGs) 
+pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
+         color = viridis(30),
+         breaks=myBreaks,
+         annotation_col=anndf)
+
+pheatmap(sigDEGs, kmeans_k = 5,
+         show_rownames = F, show_colnames = F,
+         color = viridis(30),
+         breaks=myBreaks,
+         annotation_col=anndf)
 }
 ```
 
 
 
-```{r allthings-outcome}
+```{r allthings-outcome, eval = F}
 
 for (eachgroup in levels(m.colData$sextissue)){
   
@@ -230,7 +340,9 @@ dat$V2 <- factor(dat$V2, levels =
 allcontrasts <- dat %>%
   ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
-    scale_fill_viridis(na.value="#FFFFFF00") + 
+    scale_fill_viridis(na.value="#FFFFFF00", 
+                     limits = c(0, 6000),
+                     breaks = c(0, 1000, 2000, 3000, 4000, 5000, 6000)) + 
     xlab(" ") + ylab("Timepoint") +
     labs(fill = "# of DEGs",
          subtitle = eachgroup)
@@ -264,5 +376,7 @@ pca34 <- ggplot(pcadata, aes(PC3, PC4,color = outcome)) +
   theme_cowplot(font_size = 8, line_size = 0.25) +
   labs(subtitle = eachgroup)
 #print(pca34)
+
 }
 ```
+
