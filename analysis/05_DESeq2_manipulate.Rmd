@@ -28,19 +28,20 @@ geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
 # set levels
 m.colData$treatment <- factor(m.colData$treatment, levels = 
-                              c("m.inc.d3",  "m.inc.d9",
-                                "m.inc.d17", "m.n2",
-                                "m.inc.d8", "prolong", "extend"))
+                              c("m.inc.d3",  "m.inc.d8",
+                                "m.inc.d9", "m.inc.d17",
+                                "prolong", "extend", "m.n2"))
 
 m.colData$sextissue <- as.factor(paste(m.colData$sex, m.colData$tissue, sep = "_"))
 
-m.colData$outcome <- ifelse(grepl("d3|d9|d17|n2", m.colData$treatment), "remove", 
-                     ifelse(grepl("d8", m.colData$treatment),"early",
-                     ifelse(grepl("prolong", m.colData$treatment),"prolong",
-                     ifelse(grepl("extend", m.colData$treatment),"extend", NA))))
+m.colData$outcome <- ifelse(grepl("d3|d9|d17", m.colData$treatment), "end inc", 
+                     ifelse(grepl("d8|n2", m.colData$treatment),"end hatch",
+                     ifelse(grepl("prolong", m.colData$treatment),"prolong inc",
+                     ifelse(grepl("extend", m.colData$treatment),"delay hatch", NA))))
+
 m.colData$outcome <- factor(m.colData$outcome, levels = 
-                              c("remove",  "prolong",
-                                "early", "extend"))
+                              c("end inc",  "end hatch",
+                                "prolong inc", "delay hatch"))
 summary(m.colData[c(7,3,4,5,8,9)])
 ```
 
@@ -101,13 +102,13 @@ data_wide <- spread(dat, V2, V3)
 print(data_wide) 
 
 dat$V1 <- factor(dat$V1, levels = 
-                              c("m.inc.d3",  "m.inc.d9",
-                                "m.inc.d17", "m.n2",
-                                "m.inc.d8", "prolong", "extend"))
+                              c("m.inc.d3",  "m.inc.d8",
+                                "m.inc.d9", "m.inc.d17",
+                                "prolong", "extend", "m.n2"))
 dat$V2 <- factor(dat$V2, levels = 
-                              c("m.inc.d3",  "m.inc.d9",
-                                "m.inc.d17", "m.n2",
-                                "m.inc.d8", "prolong", "extend"))
+                              c("m.inc.d3",  "m.inc.d8",
+                                "m.inc.d9", "m.inc.d17",
+                                "prolong", "extend", "m.n2"))
 
 allcontrasts <- dat %>%
   ggplot( aes(V1, V2)) +
@@ -329,11 +330,11 @@ data_wide <- spread(dat, V2, V3)
 print(data_wide) 
 
 dat$V1 <- factor(dat$V1, levels = 
-                              c("remove",  "prolong",
-                                "early", "extend"))
+                              c("end inc",  "end hatch",
+                                "prolong inc", "delay hatch"))
 dat$V2 <- factor(dat$V2, levels = 
-                              c("remove",  "prolong",
-                                "early", "extend"))
+                              c("end inc",  "end hatch",
+                                "prolong inc", "delay hatch"))
 
 allcontrasts <- dat %>%
   ggplot( aes(V1, V2)) +
