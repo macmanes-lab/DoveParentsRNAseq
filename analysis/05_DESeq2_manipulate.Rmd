@@ -242,7 +242,7 @@ DEGs$padjmin <- with(DEGs, pmin(pvaltreatmentm.inc.d3m.inc.d9,
   pvaltreatmentprolongextend, padjtreatmentprolongextend)) 
 
 sigDEGs <- DEGs %>% arrange(padjmin)
-sigDEGs <- head(sigDEGs,300)
+sigDEGs <- head(sigDEGs,500)
 sigDEGs <- as.data.frame(sigDEGs)
 rownames(sigDEGs) <- sigDEGs$rownames
 drop.cols <-colnames(sigDEGs[,grep("padj|pval|pmin|rownames", colnames(sigDEGs))])

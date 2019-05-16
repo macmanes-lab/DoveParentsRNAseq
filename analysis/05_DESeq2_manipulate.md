@@ -251,7 +251,7 @@ Write for loop to do this one for every tissue and for every treatment
       pvaltreatmentprolongextend, padjtreatmentprolongextend)) 
 
     sigDEGs <- DEGs %>% arrange(padjmin)
-    sigDEGs <- head(sigDEGs,300)
+    sigDEGs <- head(sigDEGs,500)
     sigDEGs <- as.data.frame(sigDEGs)
     rownames(sigDEGs) <- sigDEGs$rownames
     drop.cols <-colnames(sigDEGs[,grep("padj|pval|pmin|rownames", colnames(sigDEGs))])
