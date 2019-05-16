@@ -55,9 +55,9 @@ parentalobject <- estimateGLMTagwiseDisp(parentalobject, parentaldesign)
 
 # find and print data
 names(parentalobject)
-head(countData)
-head(parentalobject$counts)
-head(parentalobject$pseudo.counts)
+#head(countData)
+#head(parentalobject$counts)
+#head(parentalobject$pseudo.counts)
 
 write.csv(parentalobject$pseudo.counts, "../results/01_pseudo.counts.csv")
 
