@@ -65,7 +65,7 @@ write.csv(parentalobject$pseudo.counts, "../results/01_pseudo.counts.csv")
 fit <- glmFit( parentalobject, parentaldesign, robust=T)
 tr <- glmTreat(fit, lfc = 1)
 topTags(tr)
-tr$table
+#tr$table
 ```
 
 
