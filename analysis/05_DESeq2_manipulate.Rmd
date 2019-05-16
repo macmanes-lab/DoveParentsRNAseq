@@ -273,7 +273,7 @@ pheatmap(sigDEGs, kmeans_k = 5,
 
 
 
-```{r allthings-outcome, eval = F}
+```{r allthings-outcome, eval = T}
 
 for (eachgroup in levels(m.colData$sextissue)){
   
