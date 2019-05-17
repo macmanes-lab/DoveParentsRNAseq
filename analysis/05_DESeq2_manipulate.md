@@ -270,13 +270,15 @@ Write for loop to do this one for every tissue and for every treatment
     pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
              color = viridis(30),
              breaks=myBreaks,
-             annotation_col=anndf)
+             annotation_col=anndf,
+             main = eachgroup)
 
     pheatmap(sigDEGs, kmeans_k = 5,
              show_rownames = F, show_colnames = F,
              color = viridis(30),
              breaks=myBreaks,
-             annotation_col=anndf)
+             annotation_col=anndf,
+             main = eachgroup)
     }
 
     ## [1] "female_gonad"
