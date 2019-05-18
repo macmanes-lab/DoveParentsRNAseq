@@ -1144,6 +1144,75 @@ Write for loop to do this one for every tissue and for every treatment
       labs(subtitle = eachgroup)
     #print(pca34)
 
+
+
+    ## candidate genes
+
+    # make dataframe with geneids and names and counts
+    candidates <- cbind(geneinfo, countData)
+    candidates <- candidates %>%
+      filter(grepl("OXT|AVP|POMC|PRKCZ|GRM|JUN", Name)) 
+    row.names(candidates) <- candidates$Name
+    candidates <- candidates %>% select(-row.names, -Name, -geneid, -entrezid)
+
+    #head(candidates)
+
+    candidates <- as.data.frame(t(candidates))
+    candidates$RNAseqID <- rownames(candidates)
+    #head(candidates)
+
+    candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% # https://tidyr.tidyverse.org/reference/gather.html
+      filter(RNAseqID != "gene")
+    candidates$value <- as.numeric(candidates$value)
+    candidates$V1  <- candidates$RNAseqID
+    #head(candidates)
+
+    candidatecounts <- full_join(candidates, colData)
+    #head(candidatecounts)
+
+    candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
+    #head(candidatecounts)
+
+    candidatecounts$gene <- as.factor(candidatecounts$gene)
+    levels(candidatecounts$gene)
+
+    p1 <- candidatecounts %>%
+      filter(gene %in% c( "AVP", "AVPR1A", "AVPR1B", "AVPR2")) %>%
+      ggplot(aes(x = treatment, y = value, fill = treatment)) +
+      geom_boxplot() +
+      facet_wrap(~gene, scales = "free", nrow = 1) +
+      theme(axis.text.x = element_blank(),
+            legend.position = "bottom") +
+      labs(subtitle = eachgroup)
+    p1
+
+    print(p1)
+
+    p2 <- candidatecounts %>%
+      filter(gene %in% c( "GRM2", "GRM4", "GRM5", "GRM7", "GRM8")) %>%
+      ggplot(aes(x = treatment, y = value, fill = treatment)) +
+      geom_boxplot() +
+      facet_wrap(~gene, scales = "free", nrow = 1) +
+      theme(axis.text.x = element_blank(),
+            legend.position = "bottom") +
+      labs(subtitle = eachgroup)
+    p2
+
+    print(p2)
+
+    p3 <- candidatecounts %>%
+      filter(gene %in% c( "JUN", "JUND", "OXT", "POMC", "PRKCZ")) %>%
+      ggplot(aes(x = treatment, y = value, fill = treatment)) +
+      geom_boxplot() +
+      facet_wrap(~gene, scales = "free", nrow = 1) +
+      theme(axis.text.x = element_blank(),
+            legend.position = "bottom") +
+      labs(subtitle = eachgroup)
+    p3
+
+
+    print(p3)
+
     }
 
     ## [1] "female_gonad"
@@ -1247,7 +1316,14 @@ Write for loop to do this one for every tissue and for every treatment
     ## prolong inc-end hatch   -5.31577358 -14.393686  3.762139 0.4176365
     ## delay hatch-end hatch   -1.12127099 -10.199183  7.956641 0.9879587
     ## delay hatch-prolong inc  4.19450259  -6.287768 14.676773 0.7177604
-    ## 
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/manipulation/allthings-outcome-2.png)![](../figures/manipulation/allthings-outcome-3.png)![](../figures/manipulation/allthings-outcome-4.png)
+
     ## [1] "female_hypothalamus"
     ## [1] TRUE
 
@@ -1306,7 +1382,7 @@ Write for loop to do this one for every tissue and for every treatment
     ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
     ##   for column names in R. [This is a message, not an warning or error]
 
-![](../figures/manipulation/allthings-outcome-2.png)
+![](../figures/manipulation/allthings-outcome-5.png)
 
     ##            V1 delay hatch end hatch end inc prolong inc
     ## 1 delay hatch          NA         3     880           7
@@ -1314,7 +1390,7 @@ Write for loop to do this one for every tissue and for every treatment
     ## 3     end inc         880      1295      NA         169
     ## 4 prolong inc           7       191     169          NA
 
-![](../figures/manipulation/allthings-outcome-3.png)
+![](../figures/manipulation/allthings-outcome-6.png)
 
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## outcome      3   91.7   30.57   1.525  0.216
@@ -1349,7 +1425,14 @@ Write for loop to do this one for every tissue and for every treatment
     ## prolong inc-end hatch    0.8518248 -3.432087 5.135737 0.9529809
     ## delay hatch-end hatch    0.6420653 -3.641847 4.925977 0.9789266
     ## delay hatch-prolong inc -0.2097596 -5.156395 4.736876 0.9994953
-    ## 
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/manipulation/allthings-outcome-7.png)![](../figures/manipulation/allthings-outcome-8.png)![](../figures/manipulation/allthings-outcome-9.png)
+
     ## [1] "female_pituitary"
     ## [1] TRUE
 
@@ -1408,7 +1491,7 @@ Write for loop to do this one for every tissue and for every treatment
     ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
     ##   for column names in R. [This is a message, not an warning or error]
 
-![](../figures/manipulation/allthings-outcome-4.png)
+![](../figures/manipulation/allthings-outcome-10.png)
 
     ##            V1 delay hatch end hatch end inc prolong inc
     ## 1 delay hatch          NA      1477    2750         179
@@ -1416,7 +1499,7 @@ Write for loop to do this one for every tissue and for every treatment
     ## 3     end inc        2750        36      NA        1544
     ## 4 prolong inc         179      1048    1544          NA
 
-![](../figures/manipulation/allthings-outcome-5.png)
+![](../figures/manipulation/allthings-outcome-11.png)
 
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## outcome      3  980.1   326.7   31.45 1.12e-12 ***
@@ -1453,7 +1536,14 @@ Write for loop to do this one for every tissue and for every treatment
     ## prolong inc-end hatch   1.7024497 -2.554188 5.959088 0.7180740
     ## delay hatch-end hatch   2.1167441 -2.139894 6.373382 0.5592324
     ## delay hatch-prolong inc 0.4142944 -4.500848 5.329436 0.9960880
-    ## 
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/manipulation/allthings-outcome-12.png)![](../figures/manipulation/allthings-outcome-13.png)![](../figures/manipulation/allthings-outcome-14.png)
+
     ## [1] "male_gonad"
     ## [1] TRUE
 
@@ -1512,7 +1602,7 @@ Write for loop to do this one for every tissue and for every treatment
     ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
     ##   for column names in R. [This is a message, not an warning or error]
 
-![](../figures/manipulation/allthings-outcome-6.png)
+![](../figures/manipulation/allthings-outcome-15.png)
 
     ##            V1 delay hatch end hatch end inc prolong inc
     ## 1 delay hatch          NA         1      40         354
@@ -1520,7 +1610,7 @@ Write for loop to do this one for every tissue and for every treatment
     ## 3     end inc          40         0      NA        1050
     ## 4 prolong inc         354       357    1050          NA
 
-![](../figures/manipulation/allthings-outcome-7.png)
+![](../figures/manipulation/allthings-outcome-16.png)
 
     ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
@@ -1557,7 +1647,14 @@ Write for loop to do this one for every tissue and for every treatment
     ## prolong inc-end hatch    1.2534945 -4.794090 7.301079 0.9470286
     ## delay hatch-end hatch    2.8404707 -3.207114 8.888055 0.6043910
     ## delay hatch-prolong inc  1.5869761 -5.335712 8.509664 0.9301314
-    ## 
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/manipulation/allthings-outcome-17.png)![](../figures/manipulation/allthings-outcome-18.png)![](../figures/manipulation/allthings-outcome-19.png)
+
     ## [1] "male_hypothalamus"
     ## [1] TRUE
 
@@ -1616,7 +1713,7 @@ Write for loop to do this one for every tissue and for every treatment
     ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
     ##   for column names in R. [This is a message, not an warning or error]
 
-![](../figures/manipulation/allthings-outcome-8.png)
+![](../figures/manipulation/allthings-outcome-20.png)
 
     ##            V1 delay hatch end hatch end inc prolong inc
     ## 1 delay hatch          NA         1      26           0
@@ -1624,7 +1721,7 @@ Write for loop to do this one for every tissue and for every treatment
     ## 3     end inc          26      2431      NA           0
     ## 4 prolong inc           0         0       0          NA
 
-![](../figures/manipulation/allthings-outcome-9.png)
+![](../figures/manipulation/allthings-outcome-21.png)
 
     ##             Df Sum Sq Mean Sq F value Pr(>F)  
     ## outcome      3  268.4   89.46   3.427 0.0222 *
@@ -1661,7 +1758,14 @@ Write for loop to do this one for every tissue and for every treatment
     ## prolong inc-end hatch   -2.0848323 -5.646977 1.477313 0.4178253
     ## delay hatch-end hatch   -1.5185867 -5.080731 2.043558 0.6758529
     ## delay hatch-prolong inc  0.5662456 -3.546965 4.679456 0.9834720
-    ## 
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/manipulation/allthings-outcome-22.png)![](../figures/manipulation/allthings-outcome-23.png)![](../figures/manipulation/allthings-outcome-24.png)
+
     ## [1] "male_pituitary"
     ## [1] TRUE
 
@@ -1720,7 +1824,7 @@ Write for loop to do this one for every tissue and for every treatment
     ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
     ##   for column names in R. [This is a message, not an warning or error]
 
-![](../figures/manipulation/allthings-outcome-10.png)
+![](../figures/manipulation/allthings-outcome-25.png)
 
     ##            V1 delay hatch end hatch end inc prolong inc
     ## 1 delay hatch          NA       579     717           5
@@ -1728,7 +1832,7 @@ Write for loop to do this one for every tissue and for every treatment
     ## 3     end inc         717         6      NA         145
     ## 4 prolong inc           5       109     145          NA
 
-![](../figures/manipulation/allthings-outcome-11.png)![](../figures/manipulation/allthings-outcome-12.png)
+![](../figures/manipulation/allthings-outcome-26.png)
 
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## outcome      3    158   52.52   1.027  0.387
@@ -1765,3 +1869,10 @@ Write for loop to do this one for every tissue and for every treatment
     ## prolong inc-end hatch   -3.462163 -6.702887 -0.2214401 0.0317741
     ## delay hatch-end hatch   -5.439517 -8.680241 -2.1987938 0.0002181
     ## delay hatch-prolong inc -1.977354 -5.719419  1.7647113 0.5077900
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/manipulation/allthings-outcome-27.png)![](../figures/manipulation/allthings-outcome-28.png)![](../figures/manipulation/allthings-outcome-29.png)![](../figures/manipulation/allthings-outcome-30.png)
