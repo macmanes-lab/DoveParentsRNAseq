@@ -348,6 +348,9 @@ Write for loop to do this one for every tissue and for every treatment
     print(p3)
 
     }
+    
+Results
+======================================================================  
 
     ## [1] "female_gonad"
     ## [1] TRUE
@@ -395,29 +398,6 @@ Write for loop to do this one for every tissue and for every treatment
     ## 
     ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
     ## 
-    ## $treatment
-    ##                            diff        lwr      upr     p adj
-    ## m.inc.d8-m.inc.d3   3.985928139 -15.223924 23.19578 0.9954565
-    ## m.inc.d9-m.inc.d3   8.288419936 -12.086705 28.66355 0.8757811
-    ## m.inc.d17-m.inc.d3  9.170693472  -9.597494 27.93888 0.7501910
-    ## prolong-m.inc.d3    3.172718959 -16.037133 22.38257 0.9987228
-    ## extend-m.inc.d3     9.176996148 -10.032856 28.38685 0.7692394
-    ## m.n2-m.inc.d3       6.181970794 -13.027882 25.39182 0.9563682
-    ## m.inc.d9-m.inc.d8   4.302491797 -16.072634 24.67762 0.9950010
-    ## m.inc.d17-m.inc.d8  5.184765333 -13.583422 23.95295 0.9794158
-    ## prolong-m.inc.d8   -0.813209180 -20.023062 18.39664 0.9999996
-    ## extend-m.inc.d8     5.191068009 -14.018784 24.40092 0.9815988
-    ## m.n2-m.inc.d8       2.196042656 -17.013810 21.40590 0.9998461
-    ## m.inc.d17-m.inc.d9  0.882273535 -19.076989 20.84154 0.9999994
-    ## prolong-m.inc.d9   -5.115700977 -25.490826 15.25942 0.9874108
-    ## extend-m.inc.d9     0.888576212 -19.486549 21.26370 0.9999995
-    ## m.n2-m.inc.d9      -2.106449142 -22.481574 18.26868 0.9999145
-    ## prolong-m.inc.d17  -5.997974513 -24.766162 12.77021 0.9577923
-    ## extend-m.inc.d17    0.006302676 -18.761885 18.77449 1.0000000
-    ## m.n2-m.inc.d17     -2.988722677 -21.756910 15.77946 0.9989612
-    ## extend-prolong      6.004277189 -13.205575 25.21413 0.9620632
-    ## m.n2-prolong        3.009251835 -16.200601 22.21910 0.9990537
-    ## m.n2-extend        -2.995025353 -22.204878 16.21483 0.9990788
     ## 
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6    358   59.62   0.747  0.614
@@ -427,51 +407,7 @@ Write for loop to do this one for every tissue and for every treatment
     ## 
     ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
     ## 
-    ## $treatment
-    ##                          diff        lwr       upr     p adj
-    ## m.inc.d8-m.inc.d3   2.2245065  -9.953059 14.402072 0.9977509
-    ## m.inc.d9-m.inc.d3   3.2502224  -9.666037 16.166482 0.9872630
-    ## m.inc.d17-m.inc.d3  4.6824297  -7.215155 16.580014 0.8918193
-    ## prolong-m.inc.d3   -2.6957459 -14.873312  9.481820 0.9935459
-    ## extend-m.inc.d3     1.4553941 -10.722172 13.632960 0.9998007
-    ## m.n2-m.inc.d3       2.9309140  -9.246652 15.108480 0.9899169
-    ## m.inc.d9-m.inc.d8   1.0257159 -11.890543 13.941975 0.9999819
-    ## m.inc.d17-m.inc.d8  2.4579232  -9.439661 14.355508 0.9955635
-    ## prolong-m.inc.d8   -4.9202524 -17.097818  7.257314 0.8792194
-    ## extend-m.inc.d8    -0.7691124 -12.946678 11.408454 0.9999954
-    ## m.n2-m.inc.d8       0.7064075 -11.471158 12.883973 0.9999972
-    ## m.inc.d17-m.inc.d9  1.4322073 -11.220427 14.084842 0.9998547
-    ## prolong-m.inc.d9   -5.9459683 -18.862227  6.970291 0.7982752
-    ## extend-m.inc.d9    -1.7948282 -14.711087 11.121431 0.9995232
-    ## m.n2-m.inc.d9      -0.3193084 -13.235568 12.596951 1.0000000
-    ## prolong-m.inc.d17  -7.3781756 -19.275760  4.519409 0.4947226
-    ## extend-m.inc.d17   -3.2270355 -15.124620  8.670549 0.9812470
-    ## m.n2-m.inc.d17     -1.7515157 -13.649100 10.146069 0.9993360
-    ## extend-prolong      4.1511401  -8.026426 16.328706 0.9428206
-    ## m.n2-prolong        5.6266599  -6.550906 17.804226 0.7955043
-    ## m.n2-extend         1.4755198 -10.702046 13.653086 0.9997841
-    ## 
-    ## [1] 5
-    ## [1] 174
-    ## [1] 163
-    ## [1] 0
-    ## [1] 52
-    ## [1] 24
-    ## [1] 1
-    ## [1] 1
-    ## [1] 5
-    ## [1] 3
-    ## [1] 34
-    ## [1] 0
-    ## [1] 128
-    ## [1] 110
-    ## [1] 189
-    ## [1] 170
-    ## [1] 32
-    ## [1] 230
-    ## [1] 118
-    ## [1] 29
-    ## [1] 40
+
 
 ![](../figures/manipulation/althings-3.png)
 
@@ -480,7 +416,13 @@ Write for loop to do this one for every tissue and for every treatment
     ## Warning: Column `V1` joining character vector and factor, coercing into
     ## character vector
 
-![](../figures/manipulation/althings-4.png)![](../figures/manipulation/althings-5.png)![](../figures/manipulation/althings-6.png)
+![](../figures/manipulation/althings-4.png) 
+
+![](../figures/manipulation/althings-5.png) 
+
+![](../figures/manipulation/althings-6.png)
+
+![](../figures/manipulation/althings-7.png)
 
     ## [1] "female_hypothalamus"
     ## [1] TRUE
@@ -505,7 +447,7 @@ Write for loop to do this one for every tissue and for every treatment
 
     ## fitting model and testing
 
-![](../figures/manipulation/althings-7.png)
+
 
     ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
     ## 1    extend     NA       336     1051        0      609   16       6
@@ -560,51 +502,6 @@ Write for loop to do this one for every tissue and for every treatment
     ## 
     ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
     ## 
-    ## $treatment
-    ##                           diff       lwr      upr     p adj
-    ## m.inc.d8-m.inc.d3  -2.05879927 -7.806730 3.689132 0.9285318
-    ## m.inc.d9-m.inc.d3  -1.69811389 -7.603552 4.207324 0.9749032
-    ## m.inc.d17-m.inc.d3 -1.85827204 -7.474049 3.757505 0.9503765
-    ## prolong-m.inc.d3   -0.61830736 -6.366238 5.129624 0.9998926
-    ## extend-m.inc.d3    -0.79932757 -6.547259 4.948603 0.9995232
-    ## m.n2-m.inc.d3      -0.82437632 -6.572307 4.923555 0.9994307
-    ## m.inc.d9-m.inc.d8   0.36068538 -5.544752 6.266123 0.9999962
-    ## m.inc.d17-m.inc.d8  0.20052723 -5.415250 5.816304 0.9999998
-    ## prolong-m.inc.d8    1.44049191 -4.307439 7.188423 0.9875781
-    ## extend-m.inc.d8     1.25947170 -4.488459 7.007403 0.9939159
-    ## m.n2-m.inc.d8       1.23442295 -4.513508 6.982354 0.9945425
-    ## m.inc.d17-m.inc.d9 -0.16015815 -5.937046 5.616730 1.0000000
-    ## prolong-m.inc.d9    1.07980653 -4.825631 6.985244 0.9977479
-    ## extend-m.inc.d9     0.89878632 -5.006651 6.804224 0.9992004
-    ## m.n2-m.inc.d9       0.87373757 -5.031700 6.779175 0.9993196
-    ## prolong-m.inc.d17   1.23996468 -4.375812 6.855742 0.9936595
-    ## extend-m.inc.d17    1.05894447 -4.556833 6.674721 0.9973273
-    ## m.n2-m.inc.d17      1.03389573 -4.581881 6.649673 0.9976604
-    ## extend-prolong     -0.18102021 -5.928951 5.566911 0.9999999
-    ## m.n2-prolong       -0.20606896 -5.954000 5.541862 0.9999998
-    ## m.n2-extend        -0.02504874 -5.772980 5.722882 1.0000000
-    ## 
-    ## [1] 137
-    ## [1] 0
-    ## [1] 1
-    ## [1] 230
-    ## [1] 29
-    ## [1] 170
-    ## [1] 28
-    ## [1] 8
-    ## [1] 25
-    ## [1] 98
-    ## [1] 94
-    ## [1] 5
-    ## [1] 36
-    ## [1] 13
-    ## [1] 47
-    ## [1] 0
-    ## [1] 13
-    ## [1] 6
-    ## [1] 0
-    ## [1] 0
-    ## [1] 5
 
 ![](../figures/manipulation/althings-10.png)
 
@@ -613,7 +510,13 @@ Write for loop to do this one for every tissue and for every treatment
     ## Warning: Column `V1` joining character vector and factor, coercing into
     ## character vector
 
-![](../figures/manipulation/althings-11.png)![](../figures/manipulation/althings-12.png)![](../figures/manipulation/althings-13.png)
+![](../figures/manipulation/althings-11.png)
+
+![](../figures/manipulation/althings-12.png)
+
+![](../figures/manipulation/althings-13.png)
+
+![](../figures/manipulation/althings-14.png)
 
     ## [1] "female_pituitary"
     ## [1] TRUE
@@ -638,7 +541,6 @@ Write for loop to do this one for every tissue and for every treatment
 
     ## fitting model and testing
 
-![](../figures/manipulation/althings-14.png)
 
     ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
     ## 1    extend     NA      2014     2670     2837     2842 1381     284
@@ -649,7 +551,9 @@ Write for loop to do this one for every tissue and for every treatment
     ## 6      m.n2   1381        13     1249     3031     1621   NA     943
     ## 7   prolong    284      1272     1700     2380     1547  943      NA
 
-![](../figures/manipulation/althings-15.png)![](../figures/manipulation/althings-16.png)
+![](../figures/manipulation/althings-15.png)
+
+![](../figures/manipulation/althings-16.png)
 
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    6 1116.2  186.04   20.54 4.41e-13 ***
@@ -719,27 +623,6 @@ Write for loop to do this one for every tissue and for every treatment
     ## m.n2-prolong        1.85416866 -2.68434593  6.392683 0.8735637
     ## m.n2-extend         1.46324191 -3.07527268  6.001757 0.9559841
     ## 
-    ## [1] 12
-    ## [1] 73
-    ## [1] 348
-    ## [1] 15
-    ## [1] 555
-    ## [1] 1109
-    ## [1] 280
-    ## [1] 440
-    ## [1] 241
-    ## [1] 529
-    ## [1] 1177
-    ## [1] 5
-    ## [1] 553
-    ## [1] 339
-    ## [1] 782
-    ## [1] 1123
-    ## [1] 265
-    ## [1] 552
-    ## [1] 828
-    ## [1] 1010
-    ## [1] 62
 
 ![](../figures/manipulation/althings-17.png)
 
@@ -748,7 +631,10 @@ Write for loop to do this one for every tissue and for every treatment
     ## Warning: Column `V1` joining character vector and factor, coercing into
     ## character vector
 
-![](../figures/manipulation/althings-18.png)![](../figures/manipulation/althings-19.png)![](../figures/manipulation/althings-20.png)
+![](../figures/manipulation/althings-18.png)
+![](../figures/manipulation/althings-19.png)
+![](../figures/manipulation/althings-20.png)
+![](../figures/manipulation/althings-21.png)
 
     ## [1] "male_gonad"
     ## [1] TRUE
@@ -773,7 +659,7 @@ Write for loop to do this one for every tissue and for every treatment
 
     ## fitting model and testing
 
-![](../figures/manipulation/althings-21.png)
+
 
     ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
     ## 1    extend     NA         2       39      214       45    3     650
@@ -800,29 +686,6 @@ Write for loop to do this one for every tissue and for every treatment
     ## 
     ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
     ## 
-    ## $treatment
-    ##                          diff        lwr       upr     p adj
-    ## m.inc.d8-m.inc.d3   1.1960271 -11.448858 13.840912 0.9999488
-    ## m.inc.d9-m.inc.d3  -0.4910682 -13.902995 12.920858 0.9999998
-    ## m.inc.d17-m.inc.d3  0.6543716 -11.990514 13.299257 0.9999986
-    ## prolong-m.inc.d3    8.2976615  -4.347224 20.942547 0.4243613
-    ## extend-m.inc.d3     2.0009188 -10.643967 14.645804 0.9989889
-    ## m.n2-m.inc.d3       0.8730649 -12.118320 13.864450 0.9999932
-    ## m.inc.d9-m.inc.d8  -1.6870953 -15.099022 11.724831 0.9997292
-    ## m.inc.d17-m.inc.d8 -0.5416554 -13.186541 12.103230 0.9999995
-    ## prolong-m.inc.d8    7.1016345  -5.543251 19.746520 0.6100735
-    ## extend-m.inc.d8     0.8048917 -11.839994 13.449777 0.9999951
-    ## m.n2-m.inc.d8      -0.3229622 -13.314347 12.668423 1.0000000
-    ## m.inc.d17-m.inc.d9  1.1454399 -12.266486 14.557366 0.9999720
-    ## prolong-m.inc.d9    8.7887298  -4.623197 22.200656 0.4260734
-    ## extend-m.inc.d9     2.4919870 -10.919939 15.903913 0.9975063
-    ## m.n2-m.inc.d9       1.3641331 -12.374961 15.103228 0.9999319
-    ## prolong-m.inc.d17   7.6432899  -5.001595 20.288175 0.5246010
-    ## extend-m.inc.d17    1.3465471 -11.298338 13.991433 0.9998974
-    ## m.n2-m.inc.d17      0.2186933 -12.772691 13.210078 1.0000000
-    ## extend-prolong     -6.2967428 -18.941628  6.348143 0.7324015
-    ## m.n2-prolong       -7.4245966 -20.415981  5.566788 0.5903757
-    ## m.n2-extend        -1.1278539 -14.119239 11.863531 0.9999691
     ## 
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6  296.6   49.44   1.543   0.18
@@ -832,51 +695,7 @@ Write for loop to do this one for every tissue and for every treatment
     ## 
     ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
     ## 
-    ## $treatment
-    ##                           diff        lwr       upr     p adj
-    ## m.inc.d8-m.inc.d3  -2.28577754 -10.007611  5.436056 0.9707073
-    ## m.inc.d9-m.inc.d3  -2.36319936 -10.553441  5.827042 0.9741974
-    ## m.inc.d17-m.inc.d3  3.39787109  -4.323962 11.119705 0.8291233
-    ## prolong-m.inc.d3    1.03079949  -6.691034  8.752633 0.9996182
-    ## extend-m.inc.d3     2.61555489  -5.106279 10.337388 0.9441258
-    ## m.n2-m.inc.d3       2.07288480  -5.860545 10.006315 0.9844001
-    ## m.inc.d9-m.inc.d8  -0.07742183  -8.267663  8.112819 1.0000000
-    ## m.inc.d17-m.inc.d8  5.68364862  -2.038185 13.405482 0.2876953
-    ## prolong-m.inc.d8    3.31657702  -4.405256 11.038411 0.8445221
-    ## extend-m.inc.d8     4.90133242  -2.820501 12.623166 0.4651975
-    ## m.n2-m.inc.d8       4.35866234  -3.574767 12.292092 0.6342868
-    ## m.inc.d17-m.inc.d9  5.76107045  -2.429171 13.951312 0.3402203
-    ## prolong-m.inc.d9    3.39399885  -4.796242 11.584240 0.8652873
-    ## extend-m.inc.d9     4.97875425  -3.211487 13.168995 0.5177934
-    ## m.n2-m.inc.d9       4.43608416  -3.953948 12.826117 0.6746456
-    ## prolong-m.inc.d17  -2.36707160 -10.088905  5.354762 0.9652369
-    ## extend-m.inc.d17   -0.78231620  -8.504150  6.939517 0.9999234
-    ## m.n2-m.inc.d17     -1.32498629  -9.258416  6.608443 0.9986278
-    ## extend-prolong      1.58475540  -6.137078  9.306589 0.9956849
-    ## m.n2-prolong        1.04208531  -6.891344  8.975515 0.9996522
-    ## m.n2-extend        -0.54267009  -8.476100  7.390760 0.9999925
-    ## 
-    ## [1] 0
-    ## [1] 1
-    ## [1] 0
-    ## [1] 0
-    ## [1] 26
-    ## [1] 1
-    ## [1] 0
-    ## [1] 0
-    ## [1] 2
-    ## [1] 3
-    ## [1] 0
-    ## [1] 0
-    ## [1] 0
-    ## [1] 26
-    ## [1] 1
-    ## [1] 2
-    ## [1] 0
-    ## [1] 1
-    ## [1] 18
-    ## [1] 14
-    ## [1] 24
+
 
 ![](../figures/manipulation/althings-24.png)
 
@@ -885,7 +704,10 @@ Write for loop to do this one for every tissue and for every treatment
     ## Warning: Column `V1` joining character vector and factor, coercing into
     ## character vector
 
-![](../figures/manipulation/althings-25.png)![](../figures/manipulation/althings-26.png)![](../figures/manipulation/althings-27.png)
+![](../figures/manipulation/althings-25.png)
+![](../figures/manipulation/althings-26.png)
+![](../figures/manipulation/althings-27.png)
+![](../figures/manipulation/althings-28.png)
 
     ## [1] "male_hypothalamus"
     ## [1] TRUE
@@ -910,7 +732,7 @@ Write for loop to do this one for every tissue and for every treatment
 
     ## fitting model and testing
 
-![](../figures/manipulation/althings-28.png)
+
 
     ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
     ## 1    extend     NA         0        4        1     3575    1       0
@@ -921,7 +743,8 @@ Write for loop to do this one for every tissue and for every treatment
     ## 6      m.n2      1         0        0        0     3405   NA       0
     ## 7   prolong      0         0        0      129     2653    0      NA
 
-![](../figures/manipulation/althings-29.png)![](../figures/manipulation/althings-30.png)
+![](../figures/manipulation/althings-29.png)
+![](../figures/manipulation/althings-30.png)
 
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    6  672.9  112.15   5.567 0.000118 ***
@@ -965,51 +788,6 @@ Write for loop to do this one for every tissue and for every treatment
     ## 
     ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
     ## 
-    ## $treatment
-    ##                          diff       lwr      upr     p adj
-    ## m.inc.d8-m.inc.d3   0.2628505 -4.457010 4.982711 0.9999978
-    ## m.inc.d9-m.inc.d3  -0.4538550 -5.460023 4.552313 0.9999603
-    ## m.inc.d17-m.inc.d3 -0.3206954 -5.040556 4.399165 0.9999928
-    ## prolong-m.inc.d3   -2.6092873 -7.329148 2.110573 0.6280903
-    ## extend-m.inc.d3    -2.0837008 -6.803561 2.636160 0.8273739
-    ## m.n2-m.inc.d3      -1.5182015 -6.238062 3.201659 0.9563218
-    ## m.inc.d9-m.inc.d8  -0.7167055 -5.722874 4.289463 0.9994316
-    ## m.inc.d17-m.inc.d8 -0.5835459 -5.303406 4.136315 0.9997562
-    ## prolong-m.inc.d8   -2.8721378 -7.591998 1.847723 0.5171058
-    ## extend-m.inc.d8    -2.3465512 -7.066412 2.373309 0.7343801
-    ## m.n2-m.inc.d8      -1.7810520 -6.500912 2.938809 0.9094414
-    ## m.inc.d17-m.inc.d9  0.1331596 -4.873008 5.139328 1.0000000
-    ## prolong-m.inc.d9   -2.1554324 -7.161600 2.850736 0.8434127
-    ## extend-m.inc.d9    -1.6298458 -6.636014 3.376322 0.9537459
-    ## m.n2-m.inc.d9      -1.0643465 -6.070515 3.941822 0.9947914
-    ## prolong-m.inc.d17  -2.2885920 -7.008452 2.431269 0.7563124
-    ## extend-m.inc.d17   -1.7630054 -6.482866 2.956855 0.9133821
-    ## m.n2-m.inc.d17     -1.1975061 -5.917367 3.522354 0.9866549
-    ## extend-prolong      0.5255866 -4.194274 5.245447 0.9998674
-    ## m.n2-prolong        1.0910859 -3.628775 5.810946 0.9918272
-    ## m.n2-extend         0.5654993 -4.154361 5.285360 0.9997968
-    ## 
-    ## [1] 840
-    ## [1] 0
-    ## [1] 0
-    ## [1] 0
-    ## [1] 0
-    ## [1] 0
-    ## [1] 665
-    ## [1] 851
-    ## [1] 2927
-    ## [1] 545
-    ## [1] 1093
-    ## [1] 0
-    ## [1] 1
-    ## [1] 0
-    ## [1] 0
-    ## [1] 0
-    ## [1] 0
-    ## [1] 1
-    ## [1] 1
-    ## [1] 0
-    ## [1] 0
 
 ![](../figures/manipulation/althings-31.png)
 
@@ -1018,7 +796,10 @@ Write for loop to do this one for every tissue and for every treatment
     ## Warning: Column `V1` joining character vector and factor, coercing into
     ## character vector
 
-![](../figures/manipulation/althings-32.png)![](../figures/manipulation/althings-33.png)![](../figures/manipulation/althings-34.png)
+![](../figures/manipulation/althings-32.png)
+![](../figures/manipulation/althings-33.png)
+![](../figures/manipulation/althings-34.png)
+![](../figures/manipulation/althings-35.png)
 
     ## [1] "male_pituitary"
     ## [1] TRUE
@@ -1043,7 +824,7 @@ Write for loop to do this one for every tissue and for every treatment
 
     ## fitting model and testing
 
-![](../figures/manipulation/althings-35.png)
+
 
     ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
     ## 1    extend     NA        87     1070     2153     1605  292       6
@@ -1054,7 +835,8 @@ Write for loop to do this one for every tissue and for every treatment
     ## 6      m.n2    292         3      387     1569      579   NA     100
     ## 7   prolong      6        10      396     1140      570  100      NA
 
-![](../figures/manipulation/althings-36.png)![](../figures/manipulation/althings-37.png)
+![](../figures/manipulation/althings-36.png)
+![](../figures/manipulation/althings-37.png)
 
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6  546.2   91.03   1.873    0.1
@@ -1063,30 +845,8 @@ Write for loop to do this one for every tissue and for every treatment
     ##     95% family-wise confidence level
     ## 
     ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
-    ## 
-    ## $treatment
-    ##                          diff        lwr       upr     p adj
-    ## m.inc.d8-m.inc.d3  -6.1437379 -15.649206  3.361730 0.4434990
-    ## m.inc.d9-m.inc.d3  -5.0571546 -15.139226  5.024917 0.7262959
-    ## m.inc.d17-m.inc.d3  1.1121817  -8.393286 10.617649 0.9998230
-    ## prolong-m.inc.d3    0.4604334  -9.045034  9.965901 0.9999990
-    ## extend-m.inc.d3     1.4539679  -8.051500 10.959436 0.9991701
-    ## m.n2-m.inc.d3       0.1740609  -9.331407  9.679529 1.0000000
-    ## m.inc.d9-m.inc.d8   1.0865834  -8.995488 11.168654 0.9998904
-    ## m.inc.d17-m.inc.d8  7.2559196  -2.249548 16.761387 0.2481345
-    ## prolong-m.inc.d8    6.6041713  -2.901297 16.109639 0.3553840
-    ## extend-m.inc.d8     7.5977058  -1.907762 17.103174 0.2013881
-    ## m.n2-m.inc.d8       6.3177988  -3.187669 15.823267 0.4091962
-    ## m.inc.d17-m.inc.d9  6.1693362  -3.912735 16.251407 0.5103964
-    ## prolong-m.inc.d9    5.5175879  -4.564483 15.599659 0.6390724
-    ## extend-m.inc.d9     6.5111225  -3.570949 16.593194 0.4444981
-    ## m.n2-m.inc.d9       5.2312154  -4.850856 15.313287 0.6940780
-    ## prolong-m.inc.d17  -0.6517483 -10.157216  8.853719 0.9999924
-    ## extend-m.inc.d17    0.3417862  -9.163682  9.847254 0.9999998
-    ## m.n2-m.inc.d17     -0.9381208 -10.443589  8.567347 0.9999346
-    ## extend-prolong      0.9935345  -8.511933 10.499002 0.9999084
-    ## m.n2-prolong       -0.2863725  -9.791840  9.219095 0.9999999
-    ## m.n2-extend        -1.2799070 -10.785375  8.225561 0.9996005
+
+
     ## 
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    6  620.3  103.38   14.13 5.23e-10 ***
@@ -1121,28 +881,7 @@ Write for loop to do this one for every tissue and for every treatment
     ## extend-prolong     -2.0110167  -5.6991623  1.67712884 0.6430113
     ## m.n2-prolong        2.2138522  -1.4742934  5.90199775 0.5335139
     ## m.n2-extend         4.2248689   0.5367234  7.91301446 0.0148419
-    ## 
-    ## [1] 74
-    ## [1] 76
-    ## [1] 127
-    ## [1] 44
-    ## [1] 170
-    ## [1] 253
-    ## [1] 138
-    ## [1] 103
-    ## [1] 81
-    ## [1] 155
-    ## [1] 426
-    ## [1] 1
-    ## [1] 306
-    ## [1] 1
-    ## [1] 16
-    ## [1] 393
-    ## [1] 9
-    ## [1] 73
-    ## [1] 313
-    ## [1] 591
-    ## [1] 1
+
 
 ![](../figures/manipulation/althings-38.png)
 
@@ -1151,7 +890,15 @@ Write for loop to do this one for every tissue and for every treatment
     ## Warning: Column `V1` joining character vector and factor, coercing into
     ## character vector
 
-![](../figures/manipulation/althings-39.png)![](../figures/manipulation/althings-40.png)![](../figures/manipulation/althings-41.png)![](../figures/manipulation/althings-42.png)
+![](../figures/manipulation/althings-39.png)
+![](../figures/manipulation/althings-40.png)
+![](../figures/manipulation/althings-41.png)
+![](../figures/manipulation/althings-42.png)
+
+
+
+For loop part 2
+======================================================================
 
     for (eachgroup in levels(m.colData$sextissue)){
       
