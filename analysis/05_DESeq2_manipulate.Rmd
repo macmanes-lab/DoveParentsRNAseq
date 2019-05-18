@@ -270,6 +270,74 @@ pheatmap(sigDEGs, kmeans_k = 5,
          breaks=myBreaks,
          annotation_col=anndf,
          main = eachgroup)
+
+## candidate genes
+
+# make dataframe with geneids and names and counts
+candidates <- cbind(geneinfo, countData)
+candidates <- candidates %>%
+  filter(grepl("OXT|AVP|POMC|PRKCZ|GRM|JUN", Name)) 
+row.names(candidates) <- candidates$Name
+candidates <- candidates %>% select(-row.names, -Name, -geneid, -entrezid)
+
+#head(candidates)
+
+candidates <- as.data.frame(t(candidates))
+candidates$RNAseqID <- rownames(candidates)
+#head(candidates)
+
+candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% # https://tidyr.tidyverse.org/reference/gather.html
+  filter(RNAseqID != "gene")
+candidates$value <- as.numeric(candidates$value)
+candidates$V1  <- candidates$RNAseqID
+#head(candidates)
+
+candidatecounts <- full_join(candidates, colData)
+#head(candidatecounts)
+
+candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
+#head(candidatecounts)
+
+candidatecounts$gene <- as.factor(candidatecounts$gene)
+levels(candidatecounts$gene)
+
+p1 <- candidatecounts %>%
+  filter(gene %in% c( "AVP", "AVPR1A", "AVPR1B", "AVPR2")) %>%
+  ggplot(aes(x = treatment, y = value, fill = treatment)) +
+  geom_boxplot() +
+  facet_wrap(~gene, scales = "free", nrow = 1) +
+  theme(axis.text.x = element_blank(),
+        legend.position = "bottom") +
+  labs(subtitle = eachgroup)
+p1
+
+print(p1)
+
+p2 <- candidatecounts %>%
+  filter(gene %in% c( "GRM2", "GRM4", "GRM5", "GRM7", "GRM8")) %>%
+  ggplot(aes(x = treatment, y = value, fill = treatment)) +
+  geom_boxplot() +
+  facet_wrap(~gene, scales = "free", nrow = 1) +
+  theme(axis.text.x = element_blank(),
+        legend.position = "bottom") +
+  labs(subtitle = eachgroup)
+p2
+
+print(p2)
+
+p3 <- candidatecounts %>%
+  filter(gene %in% c( "JUN", "JUND", "OXT", "POMC", "PRKCZ")) %>%
+  ggplot(aes(x = treatment, y = value, fill = treatment)) +
+  geom_boxplot() +
+  facet_wrap(~gene, scales = "free", nrow = 1) +
+  theme(axis.text.x = element_blank(),
+        legend.position = "bottom") +
+  labs(subtitle = eachgroup)
+p3
+
+
+print(p3)
+
 }
 ```
 
@@ -377,75 +445,6 @@ pca34 <- ggplot(pcadata, aes(PC3, PC4,color = outcome)) +
   theme_cowplot(font_size = 8, line_size = 0.25) +
   labs(subtitle = eachgroup)
 #print(pca34)
-
-
-
-## candidate genes
-
-# make dataframe with geneids and names and counts
-candidates <- cbind(geneinfo, countData)
-candidates <- candidates %>%
-  filter(grepl("OXT|AVP|POMC|PRKCZ|GRM|JUN", Name)) 
-row.names(candidates) <- candidates$Name
-candidates <- candidates %>% select(-row.names, -Name, -geneid, -entrezid)
-
-#head(candidates)
-
-candidates <- as.data.frame(t(candidates))
-candidates$RNAseqID <- rownames(candidates)
-#head(candidates)
-
-candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% # https://tidyr.tidyverse.org/reference/gather.html
-  filter(RNAseqID != "gene")
-candidates$value <- as.numeric(candidates$value)
-candidates$V1  <- candidates$RNAseqID
-#head(candidates)
-
-candidatecounts <- full_join(candidates, colData)
-#head(candidatecounts)
-
-candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
-#head(candidatecounts)
-
-candidatecounts$gene <- as.factor(candidatecounts$gene)
-levels(candidatecounts$gene)
-
-p1 <- candidatecounts %>%
-  filter(gene %in% c( "AVP", "AVPR1A", "AVPR1B", "AVPR2")) %>%
-  ggplot(aes(x = treatment, y = value, fill = treatment)) +
-  geom_boxplot() +
-  facet_wrap(~gene, scales = "free", nrow = 1) +
-  theme(axis.text.x = element_blank(),
-        legend.position = "bottom") +
-  labs(subtitle = eachgroup)
-p1
-
-print(p1)
-
-p2 <- candidatecounts %>%
-  filter(gene %in% c( "GRM2", "GRM4", "GRM5", "GRM7", "GRM8")) %>%
-  ggplot(aes(x = treatment, y = value, fill = treatment)) +
-  geom_boxplot() +
-  facet_wrap(~gene, scales = "free", nrow = 1) +
-  theme(axis.text.x = element_blank(),
-        legend.position = "bottom") +
-  labs(subtitle = eachgroup)
-p2
-
-print(p2)
-
-p3 <- candidatecounts %>%
-  filter(gene %in% c( "JUN", "JUND", "OXT", "POMC", "PRKCZ")) %>%
-  ggplot(aes(x = treatment, y = value, fill = treatment)) +
-  geom_boxplot() +
-  facet_wrap(~gene, scales = "free", nrow = 1) +
-  theme(axis.text.x = element_blank(),
-        legend.position = "bottom") +
-  labs(subtitle = eachgroup)
-p3
-
-
-print(p3)
 
 }
 ```  
