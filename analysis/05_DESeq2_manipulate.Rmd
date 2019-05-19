@@ -11,14 +11,15 @@ library(RColorBrewer)
 library(pheatmap)
 library(kableExtra)
 library(viridis)
+library(edgeR)
 
 # load custom functions  
 source("../R/functions.R") 
 
-knitr::opts_chunk$set(fig.path = '../figures/manipulation/')
+knitr::opts_chunk$set(fig.path = '../figures/manipulation/', cache = TRUE)
 ```
 
-# Manipulation data
+## Manipulation data
 
 ```{r readfiles}
 # import "colData" which contains sample information and "countData" which contains read counts
@@ -45,13 +46,13 @@ m.colData$outcome <- factor(m.colData$outcome, levels =
 summary(m.colData[c(7,3,4,5,8,9)])
 ```
 
-# Write for loop to do this one for every tissue and for every treatment
+## Make a PCA plot, heat map, and box plots for each tissue for each sex
 
 ```{r althings, eval = T}
 ## subset for test 
 #m.colData <- m.colData %>%
-#  filter(sextissue == "female_pituitary") %>%
-#  droplevels()
+#  filter(sextissue == "male_hypothalamus") %>%
+# droplevels()
 
 for (eachgroup in levels(m.colData$sextissue)){
   
@@ -73,175 +74,129 @@ for (eachgroup in levels(m.colData$sextissue)){
   dds <- DESeqDataSetFromMatrix(countData = countData,
                               colData = colData,
                               design = ~ treatment )
-  dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
+  
+  print(dds)
+  nrow(colData) > 50
+  
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dds)
+  
   dds <- DESeq(dds) # Differential expression analysis
+  
   vsd <- vst(dds, blind=FALSE) # variance stabilized 
+
 
 #create list of groups
 a <- levels(colData$treatment)
 b <- levels(colData$treatment)
 
+
 # comapre all contrasts, save to datafrmes
-dat=data.frame()
+totalDEGS=data.frame()
 for (i in a){
   for (j in b){
     if (i != j) {
       k <- paste(i,j, sep = "") #assigns usique rownames
-      dat[k,1]<-i               
-      dat[k,2]<-j
-      dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+      print(k)
+      totalDEGS[k,1]<-i               
+      totalDEGS[k,2]<-j
+      totalDEGS[k,3]<- numDEGs(i,j) #caluculates number of DEGs
     }
   }
 }
 
-head(dat)
+head(totalDEGS)
 
 # widen data to create table of degs
-rownames(dat) <- NULL #remove row names
-data_wide <- spread(dat, V2, V3)
-print(data_wide) 
+rownames(totalDEGS) <- NULL #remove row names
+totalDEGS_wide <- spread(totalDEGS, V2, V3)
+print(totalDEGS_wide) 
 
-dat$V1 <- factor(dat$V1, levels = 
+totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
                               c("m.inc.d3",  "m.inc.d8",
                                 "m.inc.d9", "m.inc.d17",
                                 "prolong", "extend", "m.n2"))
-dat$V2 <- factor(dat$V2, levels = 
+totalDEGS$V2 <- factor(totalDEGS$V2, levels = 
                               c("m.inc.d3",  "m.inc.d8",
                                 "m.inc.d9", "m.inc.d17",
                                 "prolong", "extend", "m.n2"))
 
-allcontrasts <- dat %>%
+allcontrasts <- totalDEGS %>%
   ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
     scale_fill_viridis(na.value="#FFFFFF00", 
-                     limits = c(0, 6000),
-                     breaks = c(0, 1000, 2000, 3000, 4000, 5000, 6000)) + 
+                     limits = c(0, 3000),
+                     breaks = c(0, 1000, 2000, 3000)) + 
     xlab(" ") + ylab("Timepoint") +
     labs(fill = "# of DEGs",
-         subtitle = eachgroup)
+         subtitle = "eachgroup")
 plot(allcontrasts)
+
 
 # create the dataframe using my function pcadataframe
 pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
 percentVar <- round(100 * attr(pcadata, "percentVar"))
-percentVar
+print(percentVar)
 
-pca12 <- ggplot(pcadata, aes(PC1, PC2,color = treatment)) + 
-  geom_point(size = 2, alpha = 1) +
-  stat_ellipse(type = "t") +
-  xlab(paste0("PC1: ", percentVar[1],"% variance")) +
-  ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+
+pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) + 
+  geom_boxplot() +
+  ylab(paste0("PC1: ", percentVar[1],"% variance")) +
+  xlab(NULL) +
   theme_cowplot(font_size = 8, line_size = 0.25) +
-  labs(subtitle = eachgroup)
-print(pca12)
+  labs(subtitle = "eachgroup") +
+  theme(legend.position = "none")
+
+
+pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) + 
+  geom_boxplot() +
+  ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+  xlab(NULL) +
+  theme_cowplot(font_size = 8, line_size = 0.25) +
+  labs(subtitle = "eachgroup") +
+  theme(legend.position = "none")
+
+plot_grid(pca1, pca2)
+
+
 
 print(summary(aov(PC1 ~ treatment, data=pcadata)))
 print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
 
 print(summary(aov(PC2 ~ treatment, data=pcadata))) 
-print(TukeyHSD(aov(PC2 ~ treatment, data=pcadata), which = "treatment")) 
-
-pca34 <- ggplot(pcadata, aes(PC3, PC4,color = treatment)) + 
-  geom_point(size = 2, alpha = 1) +
-  stat_ellipse(type = "t") +
-  xlab(paste0("PC3: ", percentVar[3],"% variance")) +
-  ylab(paste0("PC4: ", percentVar[4],"% variance")) +
-  theme_cowplot(font_size = 8, line_size = 0.25) +
-  labs(subtitle = eachgroup)
-#print(pca34)
-
-# see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
-sampleDists <- dist(t(assay(vsd)))
-
-sampleDistMatrix <- as.matrix(sampleDists)
-rownames(sampleDistMatrix) <- NULL
-colnames(sampleDistMatrix) <- colData$treatment
-colors <- colorRampPalette(brewer.pal(9, "Blues"))(255)
-
-#pheatmap(sampleDistMatrix,
-#         clustering_distance_rows=sampleDists,
-#         clustering_distance_cols=sampleDists,
-#         col=colors,
- #        fontsize = 6, 
- #        main = eachgroup)
-
-# Multi-factor designs
-# revals is my function easily calculate multiple multi factor designs
-# it is built around the documentaion from DESeq which looks more simply like
-# res <- results(dds,contrast=c("columnname", "factor1", "factor2"))
-# then I extract the p-values from within the results for showing number of DEGes
-resvals <- function(contrastvector, mypval){
-  res <- results(dds, contrast = c(contrastvector[1],contrastvector[2],contrastvector[3]), independentFiltering = T)
-  sumpvalue <- sum(res$pvalue < mypval, na.rm = TRUE)
-  #print(sumpvalue)
-  sumpadj <- sum(res$padj < mypval, na.rm = TRUE)
-  print(sumpadj)
-  vals <- cbind(res$pvalue, res$padj)
-  pvalcolname <- as.character(paste("pval",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
-  padjcolname <- as.character(paste("padj",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
-  colnames(vals) <- c(pvalcolname, padjcolname)
-  return(vals)
-}
-## DEG by contrasts at 0.1 pvalue
-contrast1 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d9'), mypval = 0.01) #12
-contrast2 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d17'), mypval = 0.01) #73
-contrast3 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.n2'), mypval = 0.01) #284
-contrast4 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d8'), mypval = 0.01) #15
-contrast5 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'prolong'), mypval = 0.01) #555
-contrast6 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'extend'), mypval = 0.01) #1109
-contrast7 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.inc.d17'), mypval = 0.01) #280
-contrast8 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.n2'), mypval = 0.01) #440
-contrast9 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.inc.d8'), mypval = 0.01) #484
-contrast10 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'prolong'), mypval = 0.01) #529
-contrast11 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'extend'), mypval = 0.01) #1177
-
-contrast12 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'm.n2'), mypval = 0.01) #5
-contrast13 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'm.inc.d8'), mypval = 0.01) #553
-contrast14 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'prolong'), mypval = 0.01) #339
-contrast15 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'extend'), mypval = 0.01) #782
-contrast16 <- resvals(contrastvector = c('treatment', 'm.n2', 'm.inc.d8'), mypval = 0.01) #1123
-contrast17 <- resvals(contrastvector = c('treatment', 'm.n2', 'prolong'), mypval = 0.01) #265
-contrast18 <- resvals(contrastvector = c('treatment', 'm.n2', 'extend'), mypval = 0.01) #552
-contrast19 <- resvals(contrastvector = c('treatment', 'm.inc.d8', 'prolong'), mypval = 0.01) #828
-contrast20 <- resvals(contrastvector = c('treatment', 'm.inc.d8', 'extend'), mypval = 0.01) #1110
-contrast21 <- resvals(contrastvector = c('treatment', 'prolong', 'extend'), mypval = 0.01) #64
+print(summary(aov(PC3 ~ treatment, data=pcadata))) 
+print(summary(aov(PC4 ~ treatment, data=pcadata))) 
 
 
+## heamap with minimum pvalue
+
+# make dataframe counts
 DEGs <- assay(vsd)
-DEGs <- cbind(DEGs, contrast1, contrast2, contrast3, contrast4, contrast5,
-              contrast6, contrast7, contrast8, contrast9, contrast10,
-              contrast11, contrast12, contrast13, contrast14, contrast15,
-              contrast16, contrast17, contrast18, contrast19, contrast20,contrast21)
-DEGs <- as.data.frame(DEGs) # convert matrix to dataframe
-DEGs$rownames <- rownames(DEGs)  # add the rownames to the dataframe
+DEGs <- as.data.frame(DEGs)
 
-#DEGs[is.na(DEGs)] <-  1
+# add pvalues
+
+for (i in a){
+  for (j in b){
+    if (i != j) {
+      k <- paste(i,j, sep = " vs ")
+      print(k)
+      results <- resvals2(i,j)
+      DEGs <- cbind(DEGs,results)
+    }
+  }
+}
 
 
-DEGs$padjmin <- with(DEGs, pmin(pvaltreatmentm.inc.d3m.inc.d9, 
-  padjtreatmentm.inc.d3m.inc.d9,               
-  pvaltreatmentm.inc.d3m.inc.d17, padjtreatmentm.inc.d3m.inc.d17,              
-  pvaltreatmentm.inc.d3m.n2, padjtreatmentm.inc.d3m.n2,                  
-  pvaltreatmentm.inc.d3m.inc.d8, padjtreatmentm.inc.d3m.inc.d8,               
-  pvaltreatmentm.inc.d3prolong, padjtreatmentm.inc.d3prolong,               
-  pvaltreatmentm.inc.d3extend, padjtreatmentm.inc.d3extend,                
-  pvaltreatmentm.inc.d9m.inc.d17, padjtreatmentm.inc.d9m.inc.d17,             
-  pvaltreatmentm.inc.d9m.n2, padjtreatmentm.inc.d9m.n2,                  
-  pvaltreatmentm.inc.d9m.inc.d8, padjtreatmentm.inc.d9m.inc.d8,              
-  pvaltreatmentm.inc.d9prolong, padjtreatmentm.inc.d9prolong,               
-  pvaltreatmentm.inc.d9extend, padjtreatmentm.inc.d9extend,                
-  pvaltreatmentm.inc.d17m.n2, padjtreatmentm.inc.d17m.n2,                 
-  pvaltreatmentm.inc.d17m.inc.d8, padjtreatmentm.inc.d17m.inc.d8,             
-  pvaltreatmentm.inc.d17prolong, padjtreatmentm.inc.d17prolong,
-  pvaltreatmentm.inc.d17extend,padjtreatmentm.inc.d17extend, 
-  pvaltreatmentm.n2m.inc.d8, padjtreatmentm.n2m.inc.d8,                  
-  pvaltreatmentm.n2prolong, padjtreatmentm.n2prolong,                   
-  pvaltreatmentm.n2extend, padjtreatmentm.n2extend,                    
-  pvaltreatmentm.inc.d8prolong, padjtreatmentm.inc.d8prolong,               
-  pvaltreatmentm.inc.d8extend, padjtreatmentm.inc.d8extend,                
-  pvaltreatmentprolongextend, padjtreatmentprolongextend)) 
 
-sigDEGs <- DEGs %>% arrange(padjmin)
+DEGsmatrix <- DEGs
+DEGsmatrix <- as.matrix(DEGs)
+padjmin <- rowMins(DEGsmatrix, na.rm = T) 
+padjmin <- as.data.frame(padjmin)
+
+sigDEGs <- cbind(DEGs,padjmin)
+
+sigDEGs <- sigDEGs %>% arrange(padjmin)
 sigDEGs <- head(sigDEGs,500)
 sigDEGs <- as.data.frame(sigDEGs)
 rownames(sigDEGs) <- sigDEGs$rownames
@@ -262,37 +217,47 @@ pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
          color = viridis(30),
          breaks=myBreaks,
          annotation_col=anndf,
-         main = eachgroup)
+         main = "eachgroup")
 
 pheatmap(sigDEGs, kmeans_k = 5,
          show_rownames = F, show_colnames = F,
          color = viridis(30),
          breaks=myBreaks,
          annotation_col=anndf,
-         main = eachgroup)
+         main = "eachgroup")
 
 ## candidate genes
+names(geneinfo)
+names(geneinfo)[4] <- "rownames"
+DEGs$rownames <- row.names(DEGs)
 
 # make dataframe with geneids and names and counts
-candidates <- cbind(geneinfo, countData)
-candidates <- candidates %>%
-  filter(grepl("OXT|AVP|POMC|PRKCZ|GRM|JUN", Name)) 
-row.names(candidates) <- candidates$Name
-candidates <- candidates %>% select(-row.names, -Name, -geneid, -entrezid)
 
-#head(candidates)
+candidates <- full_join(geneinfo, DEGs)
+drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
+candidates <- candidates %>% dplyr::select(-one_of(drop.cols))
+candidates <- candidates %>%
+  filter(Name %in% c( #"JUN", "JUND", "EGR",  "AVP", "AVPR1A", "AVPR1B", "AVPR2", "OXT",  
+                     "AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
+                     "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
+                     "PGR", "PRL", "PRLR", "VIP", "VIPR1")) 
+row.names(candidates) <- candidates$Name
+candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
+candidates <- candidates %>% drop_na()
+
+head(candidates)
 
 candidates <- as.data.frame(t(candidates))
 candidates$RNAseqID <- rownames(candidates)
-#head(candidates)
+head(candidates)
 
 candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% # https://tidyr.tidyverse.org/reference/gather.html
   filter(RNAseqID != "gene")
 candidates$value <- as.numeric(candidates$value)
 candidates$V1  <- candidates$RNAseqID
-#head(candidates)
+head(candidates)
 
-candidatecounts <- full_join(candidates, colData)
+candidatecounts <- left_join(candidates, colData)
 #head(candidatecounts)
 
 candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
@@ -302,151 +267,52 @@ candidatecounts$gene <- as.factor(candidatecounts$gene)
 levels(candidatecounts$gene)
 
 p1 <- candidatecounts %>%
-  filter(gene %in% c( "AVP", "AVPR1A", "AVPR1B", "AVPR2")) %>%
+  filter(gene %in% c( "AR", "CYP19A1", "ESR1", "ESR2", "FSHR")) %>%
   ggplot(aes(x = treatment, y = value, fill = treatment)) +
   geom_boxplot() +
   facet_wrap(~gene, scales = "free", nrow = 1) +
   theme(axis.text.x = element_blank(),
         legend.position = "bottom") +
-  labs(subtitle = eachgroup)
+  labs(subtitle = "eachgroup")
 p1
 
 print(p1)
 
+cat("\n")
+
 p2 <- candidatecounts %>%
-  filter(gene %in% c( "GRM2", "GRM4", "GRM5", "GRM7", "GRM8")) %>%
+  filter(gene %in% c("GHRL", "GAL", "NPVF", "GNRH1", "LHCGR")) %>%
   ggplot(aes(x = treatment, y = value, fill = treatment)) +
   geom_boxplot() +
   facet_wrap(~gene, scales = "free", nrow = 1) +
   theme(axis.text.x = element_blank(),
         legend.position = "bottom") +
-  labs(subtitle = eachgroup)
+  labs(subtitle = "eachgroup")
 p2
 
 print(p2)
 
+cat("\n")
+
 p3 <- candidatecounts %>%
-  filter(gene %in% c( "JUN", "JUND", "OXT", "POMC", "PRKCZ")) %>%
+  filter(gene %in% c("PGR", "PRL", "PRLR", "VIP", "VIPR1")) %>%
   ggplot(aes(x = treatment, y = value, fill = treatment)) +
   geom_boxplot() +
   facet_wrap(~gene, scales = "free", nrow = 1) +
   theme(axis.text.x = element_blank(),
         legend.position = "bottom") +
-  labs(subtitle = eachgroup)
+  labs(subtitle = "eachgroup")
 p3
 
 
 print(p3)
 
+cat("\n")
+
+cat("Done with eachgroup")
+
+cat("\n")
+
 }
 ```
-
-
-
-```{r allthings-outcome, eval = T}
-
-for (eachgroup in levels(m.colData$sextissue)){
-  
-  print(eachgroup)
-  
-  colData <- m.colData %>%
-      dplyr::filter(sextissue == eachgroup) %>%
-      droplevels()
-  row.names(colData) <- colData$V1
-  
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
-
-  countData <- m.countData %>% dplyr::select(one_of(savecols)) 
-
-  # check that row and col lenghts are equal
-  print(ncol(countData) == nrow(colData))
-
-  dds <- DESeqDataSetFromMatrix(countData = countData,
-                              colData = colData,
-                              design = ~ outcome )
-  dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
-  dds <- DESeq(dds) # Differential expression analysis
-  vsd <- vst(dds, blind=FALSE) # variance stabilized 
-head(vsd)
-
-numDEGs <- function(group1, group2){
-  res <- results(dds, contrast = c("outcome", group1, group2), independentFiltering = T)
-  sumpadj <- sum(res$padj < 0.1, na.rm = TRUE)
-  return(sumpadj)}
-
-#create list of groups
-a <- levels(colData$outcome)
-b <- levels(colData$outcome)
-
-# comapre all contrasts, save to datafrmes
-dat=data.frame()
-for (i in a){
-  for (j in b){
-    if (i != j) {
-      k <- paste(i,j, sep = "") #assigns usique rownames
-      dat[k,1]<-i               
-      dat[k,2]<-j
-      dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
-    }
-  }
-}
-
-head(dat)
-
-# widen data to create table of degs
-rownames(dat) <- NULL #remove row names
-data_wide <- spread(dat, V2, V3)
-print(data_wide) 
-
-dat$V1 <- factor(dat$V1, levels = 
-                              c("end inc",  "end hatch",
-                                "prolong inc", "delay hatch"))
-dat$V2 <- factor(dat$V2, levels = 
-                              c("end inc",  "end hatch",
-                                "prolong inc", "delay hatch"))
-
-allcontrasts <- dat %>%
-  ggplot( aes(V1, V2)) +
-    geom_tile(aes(fill = V3)) +
-    scale_fill_viridis(na.value="#FFFFFF00", 
-                     limits = c(0, 6000),
-                     breaks = c(0, 1000, 2000, 3000, 4000, 5000, 6000)) + 
-    xlab(" ") + ylab("Timepoint") +
-    labs(fill = "# of DEGs",
-         subtitle = eachgroup)
-plot(allcontrasts)
-
-# create the dataframe using my function pcadataframe
-pcadata <- pcadataframe(vsd, intgroup=c("outcome"), returnData=TRUE)
-percentVar <- round(100 * attr(pcadata, "percentVar"))
-percentVar
-
-pca12 <- ggplot(pcadata, aes(PC1, PC2,color = outcome)) + 
-  geom_point(size = 2, alpha = 1) +
-  stat_ellipse(type = "t") +
-  xlab(paste0("PC1: ", percentVar[1],"% variance")) +
-  ylab(paste0("PC2: ", percentVar[2],"% variance")) +
-  theme_cowplot(font_size = 8, line_size = 0.25) +
-  labs(subtitle = eachgroup)
-print(pca12)
-
-print(summary(aov(PC1 ~ outcome, data=pcadata)))
-print(TukeyHSD(aov(PC1 ~ outcome, data=pcadata), which = "outcome"))
-
-print(summary(aov(PC2 ~ outcome, data=pcadata))) 
-print(TukeyHSD(aov(PC2 ~ outcome, data=pcadata), which = "outcome")) 
-
-pca34 <- ggplot(pcadata, aes(PC3, PC4,color = outcome)) + 
-  geom_point(size = 2, alpha = 1) +
-  stat_ellipse(type = "t") +
-  xlab(paste0("PC3: ", percentVar[3],"% variance")) +
-  ylab(paste0("PC4: ", percentVar[4],"% variance")) +
-  theme_cowplot(font_size = 8, line_size = 0.25) +
-  labs(subtitle = eachgroup)
-#print(pca34)
-
-}
-```  
-
 

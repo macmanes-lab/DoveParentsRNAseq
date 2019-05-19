@@ -5,14 +5,15 @@
     library(pheatmap)
     library(kableExtra)
     library(viridis)
+    library(edgeR)
 
     # load custom functions  
     source("../R/functions.R") 
 
-    knitr::opts_chunk$set(fig.path = '../figures/manipulation/')
+    knitr::opts_chunk$set(fig.path = '../figures/manipulation/', cache = TRUE)
 
 Manipulation data
-=================
+-----------------
 
     # import "colData" which contains sample information and "countData" which contains read counts
     m.colData <- read.csv("../metadata/00_colData_manipluation.csv", header = T, row.names = 1)
@@ -54,13 +55,13 @@ Manipulation data
     ##  male_pituitary     :68                    
     ## 
 
-Write for loop to do this one for every tissue and for every treatment
-======================================================================
+Make a PCA plot, heat map, and box plots for each tissue for each sex
+---------------------------------------------------------------------
 
     ## subset for test 
-    #m.colData <- m.colData %>%
-    #  filter(sextissue == "female_pituitary") %>%
-    #  droplevels()
+    m.colData <- m.colData %>%
+      filter(sextissue == "male_hypothalamus") %>%
+     droplevels()
 
     for (eachgroup in levels(m.colData$sextissue)){
       
@@ -82,175 +83,129 @@ Write for loop to do this one for every tissue and for every treatment
       dds <- DESeqDataSetFromMatrix(countData = countData,
                                   colData = colData,
                                   design = ~ treatment )
-      dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
+      
+      print(dds)
+      nrow(colData) > 50
+      
+      dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+      print(dds)
+      
       dds <- DESeq(dds) # Differential expression analysis
+      
       vsd <- vst(dds, blind=FALSE) # variance stabilized 
+
 
     #create list of groups
     a <- levels(colData$treatment)
     b <- levels(colData$treatment)
 
+
     # comapre all contrasts, save to datafrmes
-    dat=data.frame()
+    totalDEGS=data.frame()
     for (i in a){
       for (j in b){
         if (i != j) {
           k <- paste(i,j, sep = "") #assigns usique rownames
-          dat[k,1]<-i               
-          dat[k,2]<-j
-          dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+          print(k)
+          totalDEGS[k,1]<-i               
+          totalDEGS[k,2]<-j
+          totalDEGS[k,3]<- numDEGs(i,j) #caluculates number of DEGs
         }
       }
     }
 
-    head(dat)
+    head(totalDEGS)
 
     # widen data to create table of degs
-    rownames(dat) <- NULL #remove row names
-    data_wide <- spread(dat, V2, V3)
-    print(data_wide) 
+    rownames(totalDEGS) <- NULL #remove row names
+    totalDEGS_wide <- spread(totalDEGS, V2, V3)
+    print(totalDEGS_wide) 
 
-    dat$V1 <- factor(dat$V1, levels = 
+    totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
                                   c("m.inc.d3",  "m.inc.d8",
                                     "m.inc.d9", "m.inc.d17",
                                     "prolong", "extend", "m.n2"))
-    dat$V2 <- factor(dat$V2, levels = 
+    totalDEGS$V2 <- factor(totalDEGS$V2, levels = 
                                   c("m.inc.d3",  "m.inc.d8",
                                     "m.inc.d9", "m.inc.d17",
                                     "prolong", "extend", "m.n2"))
 
-    allcontrasts <- dat %>%
+    allcontrasts <- totalDEGS %>%
       ggplot( aes(V1, V2)) +
         geom_tile(aes(fill = V3)) +
         scale_fill_viridis(na.value="#FFFFFF00", 
-                         limits = c(0, 6000),
-                         breaks = c(0, 1000, 2000, 3000, 4000, 5000, 6000)) + 
+                         limits = c(0, 3000),
+                         breaks = c(0, 1000, 2000, 3000)) + 
         xlab(" ") + ylab("Timepoint") +
         labs(fill = "# of DEGs",
-             subtitle = eachgroup)
+             subtitle = "eachgroup")
     plot(allcontrasts)
+
 
     # create the dataframe using my function pcadataframe
     pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
     percentVar <- round(100 * attr(pcadata, "percentVar"))
-    percentVar
+    print(percentVar)
 
-    pca12 <- ggplot(pcadata, aes(PC1, PC2,color = treatment)) + 
-      geom_point(size = 2, alpha = 1) +
-      stat_ellipse(type = "t") +
-      xlab(paste0("PC1: ", percentVar[1],"% variance")) +
-      ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+
+    pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) + 
+      geom_boxplot() +
+      ylab(paste0("PC1: ", percentVar[1],"% variance")) +
+      xlab(NULL) +
       theme_cowplot(font_size = 8, line_size = 0.25) +
-      labs(subtitle = eachgroup)
-    print(pca12)
+      labs(subtitle = "eachgroup") +
+      theme(legend.position = "none")
+
+
+    pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) + 
+      geom_boxplot() +
+      ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+      xlab(NULL) +
+      theme_cowplot(font_size = 8, line_size = 0.25) +
+      labs(subtitle = "eachgroup") +
+      theme(legend.position = "none")
+
+    plot_grid(pca1, pca2)
+
+
 
     print(summary(aov(PC1 ~ treatment, data=pcadata)))
     print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
 
     print(summary(aov(PC2 ~ treatment, data=pcadata))) 
-    print(TukeyHSD(aov(PC2 ~ treatment, data=pcadata), which = "treatment")) 
-
-    pca34 <- ggplot(pcadata, aes(PC3, PC4,color = treatment)) + 
-      geom_point(size = 2, alpha = 1) +
-      stat_ellipse(type = "t") +
-      xlab(paste0("PC3: ", percentVar[3],"% variance")) +
-      ylab(paste0("PC4: ", percentVar[4],"% variance")) +
-      theme_cowplot(font_size = 8, line_size = 0.25) +
-      labs(subtitle = eachgroup)
-    #print(pca34)
-
-    # see http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html#heatmap-of-the-count-matrix
-    sampleDists <- dist(t(assay(vsd)))
-
-    sampleDistMatrix <- as.matrix(sampleDists)
-    rownames(sampleDistMatrix) <- NULL
-    colnames(sampleDistMatrix) <- colData$treatment
-    colors <- colorRampPalette(brewer.pal(9, "Blues"))(255)
-
-    #pheatmap(sampleDistMatrix,
-    #         clustering_distance_rows=sampleDists,
-    #         clustering_distance_cols=sampleDists,
-    #         col=colors,
-     #        fontsize = 6, 
-     #        main = eachgroup)
-
-    # Multi-factor designs
-    # revals is my function easily calculate multiple multi factor designs
-    # it is built around the documentaion from DESeq which looks more simply like
-    # res <- results(dds,contrast=c("columnname", "factor1", "factor2"))
-    # then I extract the p-values from within the results for showing number of DEGes
-    resvals <- function(contrastvector, mypval){
-      res <- results(dds, contrast = c(contrastvector[1],contrastvector[2],contrastvector[3]), independentFiltering = T)
-      sumpvalue <- sum(res$pvalue < mypval, na.rm = TRUE)
-      #print(sumpvalue)
-      sumpadj <- sum(res$padj < mypval, na.rm = TRUE)
-      print(sumpadj)
-      vals <- cbind(res$pvalue, res$padj)
-      pvalcolname <- as.character(paste("pval",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
-      padjcolname <- as.character(paste("padj",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
-      colnames(vals) <- c(pvalcolname, padjcolname)
-      return(vals)
-    }
-    ## DEG by contrasts at 0.1 pvalue
-    contrast1 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d9'), mypval = 0.01) #12
-    contrast2 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d17'), mypval = 0.01) #73
-    contrast3 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.n2'), mypval = 0.01) #284
-    contrast4 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'm.inc.d8'), mypval = 0.01) #15
-    contrast5 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'prolong'), mypval = 0.01) #555
-    contrast6 <- resvals(contrastvector = c('treatment', 'm.inc.d3', 'extend'), mypval = 0.01) #1109
-    contrast7 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.inc.d17'), mypval = 0.01) #280
-    contrast8 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.n2'), mypval = 0.01) #440
-    contrast9 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'm.inc.d8'), mypval = 0.01) #484
-    contrast10 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'prolong'), mypval = 0.01) #529
-    contrast11 <- resvals(contrastvector = c('treatment', 'm.inc.d9', 'extend'), mypval = 0.01) #1177
-
-    contrast12 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'm.n2'), mypval = 0.01) #5
-    contrast13 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'm.inc.d8'), mypval = 0.01) #553
-    contrast14 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'prolong'), mypval = 0.01) #339
-    contrast15 <- resvals(contrastvector = c('treatment', 'm.inc.d17', 'extend'), mypval = 0.01) #782
-    contrast16 <- resvals(contrastvector = c('treatment', 'm.n2', 'm.inc.d8'), mypval = 0.01) #1123
-    contrast17 <- resvals(contrastvector = c('treatment', 'm.n2', 'prolong'), mypval = 0.01) #265
-    contrast18 <- resvals(contrastvector = c('treatment', 'm.n2', 'extend'), mypval = 0.01) #552
-    contrast19 <- resvals(contrastvector = c('treatment', 'm.inc.d8', 'prolong'), mypval = 0.01) #828
-    contrast20 <- resvals(contrastvector = c('treatment', 'm.inc.d8', 'extend'), mypval = 0.01) #1110
-    contrast21 <- resvals(contrastvector = c('treatment', 'prolong', 'extend'), mypval = 0.01) #64
+    print(summary(aov(PC3 ~ treatment, data=pcadata))) 
+    print(summary(aov(PC4 ~ treatment, data=pcadata))) 
 
 
+    ## heamap with minimum pvalue
+
+    # make dataframe counts
     DEGs <- assay(vsd)
-    DEGs <- cbind(DEGs, contrast1, contrast2, contrast3, contrast4, contrast5,
-                  contrast6, contrast7, contrast8, contrast9, contrast10,
-                  contrast11, contrast12, contrast13, contrast14, contrast15,
-                  contrast16, contrast17, contrast18, contrast19, contrast20,contrast21)
-    DEGs <- as.data.frame(DEGs) # convert matrix to dataframe
-    DEGs$rownames <- rownames(DEGs)  # add the rownames to the dataframe
+    DEGs <- as.data.frame(DEGs)
 
-    #DEGs[is.na(DEGs)] <-  1
+    # add pvalues
+
+    for (i in a){
+      for (j in b){
+        if (i != j) {
+          k <- paste(i,j, sep = " vs ")
+          print(k)
+          results <- resvals2(i,j)
+          DEGs <- cbind(DEGs,results)
+        }
+      }
+    }
 
 
-    DEGs$padjmin <- with(DEGs, pmin(pvaltreatmentm.inc.d3m.inc.d9, 
-      padjtreatmentm.inc.d3m.inc.d9,               
-      pvaltreatmentm.inc.d3m.inc.d17, padjtreatmentm.inc.d3m.inc.d17,              
-      pvaltreatmentm.inc.d3m.n2, padjtreatmentm.inc.d3m.n2,                  
-      pvaltreatmentm.inc.d3m.inc.d8, padjtreatmentm.inc.d3m.inc.d8,               
-      pvaltreatmentm.inc.d3prolong, padjtreatmentm.inc.d3prolong,               
-      pvaltreatmentm.inc.d3extend, padjtreatmentm.inc.d3extend,                
-      pvaltreatmentm.inc.d9m.inc.d17, padjtreatmentm.inc.d9m.inc.d17,             
-      pvaltreatmentm.inc.d9m.n2, padjtreatmentm.inc.d9m.n2,                  
-      pvaltreatmentm.inc.d9m.inc.d8, padjtreatmentm.inc.d9m.inc.d8,              
-      pvaltreatmentm.inc.d9prolong, padjtreatmentm.inc.d9prolong,               
-      pvaltreatmentm.inc.d9extend, padjtreatmentm.inc.d9extend,                
-      pvaltreatmentm.inc.d17m.n2, padjtreatmentm.inc.d17m.n2,                 
-      pvaltreatmentm.inc.d17m.inc.d8, padjtreatmentm.inc.d17m.inc.d8,             
-      pvaltreatmentm.inc.d17prolong, padjtreatmentm.inc.d17prolong,
-      pvaltreatmentm.inc.d17extend,padjtreatmentm.inc.d17extend, 
-      pvaltreatmentm.n2m.inc.d8, padjtreatmentm.n2m.inc.d8,                  
-      pvaltreatmentm.n2prolong, padjtreatmentm.n2prolong,                   
-      pvaltreatmentm.n2extend, padjtreatmentm.n2extend,                    
-      pvaltreatmentm.inc.d8prolong, padjtreatmentm.inc.d8prolong,               
-      pvaltreatmentm.inc.d8extend, padjtreatmentm.inc.d8extend,                
-      pvaltreatmentprolongextend, padjtreatmentprolongextend)) 
 
-    sigDEGs <- DEGs %>% arrange(padjmin)
+    DEGsmatrix <- DEGs
+    DEGsmatrix <- as.matrix(DEGs)
+    padjmin <- rowMins(DEGsmatrix, na.rm = T) 
+    padjmin <- as.data.frame(padjmin)
+
+    sigDEGs <- cbind(DEGs,padjmin)
+
+    sigDEGs <- sigDEGs %>% arrange(padjmin)
     sigDEGs <- head(sigDEGs,500)
     sigDEGs <- as.data.frame(sigDEGs)
     rownames(sigDEGs) <- sigDEGs$rownames
@@ -271,37 +226,47 @@ Write for loop to do this one for every tissue and for every treatment
              color = viridis(30),
              breaks=myBreaks,
              annotation_col=anndf,
-             main = eachgroup)
+             main = "eachgroup")
 
     pheatmap(sigDEGs, kmeans_k = 5,
              show_rownames = F, show_colnames = F,
              color = viridis(30),
              breaks=myBreaks,
              annotation_col=anndf,
-             main = eachgroup)
+             main = "eachgroup")
 
     ## candidate genes
+    names(geneinfo)
+    names(geneinfo)[4] <- "rownames"
+    DEGs$rownames <- row.names(DEGs)
 
     # make dataframe with geneids and names and counts
-    candidates <- cbind(geneinfo, countData)
-    candidates <- candidates %>%
-      filter(grepl("OXT|AVP|POMC|PRKCZ|GRM|JUN", Name)) 
-    row.names(candidates) <- candidates$Name
-    candidates <- candidates %>% select(-row.names, -Name, -geneid, -entrezid)
 
-    #head(candidates)
+    candidates <- full_join(geneinfo, DEGs)
+    drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
+    candidates <- candidates %>% dplyr::select(-one_of(drop.cols))
+    candidates <- candidates %>%
+      filter(Name %in% c( #"JUN", "JUND", "EGR",  "AVP", "AVPR1A", "AVPR1B", "AVPR2", "OXT",  
+                         "AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
+                         "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
+                         "PGR", "PRL", "PRLR", "VIP", "VIPR1")) 
+    row.names(candidates) <- candidates$Name
+    candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
+    candidates <- candidates %>% drop_na()
+
+    head(candidates)
 
     candidates <- as.data.frame(t(candidates))
     candidates$RNAseqID <- rownames(candidates)
-    #head(candidates)
+    head(candidates)
 
     candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% # https://tidyr.tidyverse.org/reference/gather.html
       filter(RNAseqID != "gene")
     candidates$value <- as.numeric(candidates$value)
     candidates$V1  <- candidates$RNAseqID
-    #head(candidates)
+    head(candidates)
 
-    candidatecounts <- full_join(candidates, colData)
+    candidatecounts <- left_join(candidates, colData)
     #head(candidatecounts)
 
     candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
@@ -311,406 +276,80 @@ Write for loop to do this one for every tissue and for every treatment
     levels(candidatecounts$gene)
 
     p1 <- candidatecounts %>%
-      filter(gene %in% c( "AVP", "AVPR1A", "AVPR1B", "AVPR2")) %>%
+      filter(gene %in% c( "AR", "CYP19A1", "ESR1", "ESR2", "FSHR")) %>%
       ggplot(aes(x = treatment, y = value, fill = treatment)) +
       geom_boxplot() +
       facet_wrap(~gene, scales = "free", nrow = 1) +
       theme(axis.text.x = element_blank(),
             legend.position = "bottom") +
-      labs(subtitle = eachgroup)
+      labs(subtitle = "eachgroup")
     p1
 
     print(p1)
 
+    cat("\n")
+
     p2 <- candidatecounts %>%
-      filter(gene %in% c( "GRM2", "GRM4", "GRM5", "GRM7", "GRM8")) %>%
+      filter(gene %in% c("GHRL", "GAL", "NPVF", "GNRH1", "LHCGR")) %>%
       ggplot(aes(x = treatment, y = value, fill = treatment)) +
       geom_boxplot() +
       facet_wrap(~gene, scales = "free", nrow = 1) +
       theme(axis.text.x = element_blank(),
             legend.position = "bottom") +
-      labs(subtitle = eachgroup)
+      labs(subtitle = "eachgroup")
     p2
 
     print(p2)
 
+    cat("\n")
+
     p3 <- candidatecounts %>%
-      filter(gene %in% c( "JUN", "JUND", "OXT", "POMC", "PRKCZ")) %>%
+      filter(gene %in% c("PGR", "PRL", "PRLR", "VIP", "VIPR1")) %>%
       ggplot(aes(x = treatment, y = value, fill = treatment)) +
       geom_boxplot() +
       facet_wrap(~gene, scales = "free", nrow = 1) +
       theme(axis.text.x = element_blank(),
             legend.position = "bottom") +
-      labs(subtitle = eachgroup)
+      labs(subtitle = "eachgroup")
     p3
 
 
     print(p3)
 
+    cat("\n")
+
+    cat("Done with eachgroup")
+
+    cat("\n")
+
     }
-    
-Results
-======================================================================  
-
-    ## [1] "female_gonad"
-    ## [1] TRUE
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 507 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-    ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
-    ## 1    extend     NA       810      102      170      301  777     300
-    ## 2 m.inc.d17    810        NA      860      589        1    0     610
-    ## 3  m.inc.d3    102       860       NA        0       41  678     640
-    ## 4  m.inc.d8    170       589        0       NA       51  734    1440
-    ## 5  m.inc.d9    301         1       41       51       NA    3     129
-    ## 6      m.n2    777         0      678      734        3   NA     425
-    ## 7   prolong    300       610      640     1440      129  425      NA
-
-![](../figures/manipulation/althings-1.png)
-
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
-![](../figures/manipulation/althings-2.png)
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## treatment    6    727   121.2    0.61  0.721
-    ## Residuals   62  12320   198.7               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
-    ## 
-    ## 
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## treatment    6    358   59.62   0.747  0.614
-    ## Residuals   62   4951   79.85               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
-    ## 
-
-
-![](../figures/manipulation/althings-3.png)
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/manipulation/althings-4.png) 
-
-![](../figures/manipulation/althings-5.png) 
-
-![](../figures/manipulation/althings-6.png)
-
-![](../figures/manipulation/althings-7.png)
-
-    ## [1] "female_hypothalamus"
-    ## [1] TRUE
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 26 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-
-
-    ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
-    ## 1    extend     NA       336     1051        0      609   16       6
-    ## 2 m.inc.d17    336        NA        0      697      448   15      45
-    ## 3  m.inc.d3   1051         0       NA     1630     1276  239     116
-    ## 4  m.inc.d8      0       697     1630       NA      192    5      20
-    ## 5  m.inc.d9    609       448     1276      192       NA   88     935
-    ## 6      m.n2     16        15      239        5       88   NA     142
-    ## 7   prolong      6        45      116       20      935  142      NA
-
-![](../figures/manipulation/althings-8.png)![](../figures/manipulation/althings-9.png)
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)   
-    ## treatment    6  366.6   61.10    3.71 0.0032 **
-    ## Residuals   63 1037.6   16.47                  
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
-    ## 
-    ## $treatment
-    ##                          diff         lwr        upr     p adj
-    ## m.inc.d8-m.inc.d3  -5.0656415 -10.5931413  0.4618584 0.0934475
-    ## m.inc.d9-m.inc.d3  -6.5670766 -12.2460429 -0.8881103 0.0134194
-    ## m.inc.d17-m.inc.d3 -0.1061703  -5.5065842  5.2942436 1.0000000
-    ## prolong-m.inc.d3   -1.8940812  -7.4215810  3.6334187 0.9416039
-    ## extend-m.inc.d3    -4.0127781  -9.5402780  1.5147217 0.3045198
-    ## m.n2-m.inc.d3      -3.7030360  -9.2305358  1.8244639 0.4004577
-    ## m.inc.d9-m.inc.d8  -1.5014351  -7.1804014  4.1775311 0.9836074
-    ## m.inc.d17-m.inc.d8  4.9594711  -0.4409428 10.3598851 0.0921851
-    ## prolong-m.inc.d8    3.1715603  -2.3559396  8.6990602 0.5875109
-    ## extend-m.inc.d8     1.0528633  -4.4746365  6.5803632 0.9971735
-    ## m.n2-m.inc.d8       1.3626055  -4.1648944  6.8901054 0.9886051
-    ## m.inc.d17-m.inc.d9  6.4609063   0.9055599 12.0162527 0.0126456
-    ## prolong-m.inc.d9    4.6729954  -1.0059708 10.3519617 0.1747660
-    ## extend-m.inc.d9     2.5542985  -3.1246678  8.2332647 0.8154718
-    ## m.n2-m.inc.d9       2.8640406  -2.8149256  8.5430069 0.7222966
-    ## prolong-m.inc.d17  -1.7879108  -7.1883248  3.6125031 0.9502585
-    ## extend-m.inc.d17   -3.9066078  -9.3070217  1.4938061 0.3086197
-    ## m.n2-m.inc.d17     -3.5968656  -8.9972795  1.8035483 0.4076012
-    ## extend-prolong     -2.1186970  -7.6461968  3.4088029 0.9036262
-    ## m.n2-prolong       -1.8089548  -7.3364547  3.7185451 0.9528964
-    ## m.n2-extend         0.3097422  -5.2177577  5.8372420 0.9999977
-    ## 
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## treatment    6   34.8   5.796   0.325  0.921
-    ## Residuals   63 1122.0  17.809               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
-    ## 
-
-![](../figures/manipulation/althings-10.png)
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/manipulation/althings-11.png)
-
-![](../figures/manipulation/althings-12.png)
-
-![](../figures/manipulation/althings-13.png)
-
-![](../figures/manipulation/althings-14.png)
-
-    ## [1] "female_pituitary"
-    ## [1] TRUE
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 65 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-
-    ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
-    ## 1    extend     NA      2014     2670     2837     2842 1381     284
-    ## 2 m.inc.d17   2014        NA      317     1978     1525   13    1272
-    ## 3  m.inc.d3   2670       317       NA      187      522 1249    1700
-    ## 4  m.inc.d8   2837      1978      187       NA     1156 3031    2380
-    ## 5  m.inc.d9   2842      1525      522     1156       NA 1621    1547
-    ## 6      m.n2   1381        13     1249     3031     1621   NA     943
-    ## 7   prolong    284      1272     1700     2380     1547  943      NA
-
-![](../figures/manipulation/althings-15.png)
-
-![](../figures/manipulation/althings-16.png)
-
-    ##             Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## treatment    6 1116.2  186.04   20.54 4.41e-13 ***
-    ## Residuals   62  561.4    9.06                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
-    ## 
-    ## $treatment
-    ##                           diff         lwr        upr     p adj
-    ## m.inc.d8-m.inc.d3   -3.8655271  -7.9663469  0.2352927 0.0772733
-    ## m.inc.d9-m.inc.d3    1.8634057  -2.4861706  6.2129819 0.8468409
-    ## m.inc.d17-m.inc.d3   1.4336881  -2.5728474  5.4402236 0.9286328
-    ## prolong-m.inc.d3    -6.3960176 -10.4968374 -2.2951978 0.0002398
-    ## extend-m.inc.d3     -9.2890257 -13.3898455 -5.1882059 0.0000001
-    ## m.n2-m.inc.d3        0.7097154  -3.3911045  4.8105352 0.9983377
-    ## m.inc.d9-m.inc.d8    5.7289328   1.3793565 10.0785090 0.0029668
-    ## m.inc.d17-m.inc.d8   5.2992152   1.2926797  9.3057507 0.0028098
-    ## prolong-m.inc.d8    -2.5304905  -6.6313103  1.5703293 0.5007634
-    ## extend-m.inc.d8     -5.4234986  -9.5243184 -1.3226788 0.0028127
-    ## m.n2-m.inc.d8        4.5752424   0.4744226  8.6760623 0.0192398
-    ## m.inc.d17-m.inc.d9  -0.4297175  -4.6905176  3.8310825 0.9999261
-    ## prolong-m.inc.d9    -8.2594233 -12.6089996 -3.9098470 0.0000052
-    ## extend-m.inc.d9    -11.1524314 -15.5020077 -6.8028551 0.0000000
-    ## m.n2-m.inc.d9       -1.1536903  -5.5032666  3.1958859 0.9832727
-    ## prolong-m.inc.d17   -7.8297058 -11.8362413 -3.8231702 0.0000027
-    ## extend-m.inc.d17   -10.7227138 -14.7292494 -6.7161783 0.0000000
-    ## m.n2-m.inc.d17      -0.7239728  -4.7305083  3.2825627 0.9978832
-    ## extend-prolong      -2.8930081  -6.9938279  1.2078117 0.3376042
-    ## m.n2-prolong         7.1057330   3.0049131 11.2065528 0.0000351
-    ## m.n2-extend          9.9987411   5.8979212 14.0995609 0.0000000
-    ## 
-    ##             Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## treatment    6  526.8   87.79   7.915 2.38e-06 ***
-    ## Residuals   62  687.7   11.09                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
-    ## 
-    ## $treatment
-    ##                           diff         lwr       upr     p adj
-    ## m.inc.d8-m.inc.d3  -2.04335880 -6.58187340  2.495156 0.8143743
-    ## m.inc.d9-m.inc.d3  -1.95737666 -6.77119833  2.856445 0.8760019
-    ## m.inc.d17-m.inc.d3  4.34979304 -0.08437393  8.783960 0.0579389
-    ## prolong-m.inc.d3    3.24139278 -1.29712181  7.779907 0.3231200
-    ## extend-m.inc.d3     3.63231953 -0.90619507  8.170834 0.2003816
-    ## m.n2-m.inc.d3       5.09556144  0.55704685  9.634076 0.0180968
-    ## m.inc.d9-m.inc.d8   0.08598215 -4.72783952  4.899804 1.0000000
-    ## m.inc.d17-m.inc.d8  6.39315185  1.95898487 10.827319 0.0008394
-    ## prolong-m.inc.d8    5.28475159  0.74623699  9.823266 0.0125139
-    ## extend-m.inc.d8     5.67567833  1.13716374 10.214193 0.0056456
-    ## m.n2-m.inc.d8       7.13892025  2.60040565 11.677435 0.0002076
-    ## m.inc.d17-m.inc.d9  6.30716970  1.59159963 11.022740 0.0024250
-    ## prolong-m.inc.d9    5.19876944  0.38494777 10.012591 0.0261070
-    ## extend-m.inc.d9     5.58969618  0.77587451 10.403518 0.0128838
-    ## m.n2-m.inc.d9       7.05293810  2.23911643 11.866760 0.0006577
-    ## prolong-m.inc.d17  -1.10840026 -5.54256724  3.325767 0.9876982
-    ## extend-m.inc.d17   -0.71747352 -5.15164049  3.716693 0.9988628
-    ## m.n2-m.inc.d17      0.74576840 -3.68839858  5.179935 0.9985849
-    ## extend-prolong      0.39092675 -4.14758785  4.929441 0.9999708
-    ## m.n2-prolong        1.85416866 -2.68434593  6.392683 0.8735637
-    ## m.n2-extend         1.46324191 -3.07527268  6.001757 0.9559841
-    ## 
-
-![](../figures/manipulation/althings-17.png)
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/manipulation/althings-18.png)
-![](../figures/manipulation/althings-19.png)
-![](../figures/manipulation/althings-20.png)
-![](../figures/manipulation/althings-21.png)
-
-    ## [1] "male_gonad"
-    ## [1] TRUE
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 493 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-
-
-    ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
-    ## 1    extend     NA         2       39      214       45    3     650
-    ## 2 m.inc.d17      2        NA        1        0        0    1     577
-    ## 3  m.inc.d3     39         1       NA        0        6    0     556
-    ## 4  m.inc.d8    214         0        0       NA        7   19     679
-    ## 5  m.inc.d9     45         0        6        7       NA    0     378
-    ## 6      m.n2      3         1        0       19        0   NA     157
-    ## 7   prolong    650       577      556      679      378  157      NA
-
-![](../figures/manipulation/althings-22.png)
-
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
-![](../figures/manipulation/althings-23.png)
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## treatment    6    521   86.86   1.011  0.427
-    ## Residuals   60   5155   85.91               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
-    ## 
-    ## 
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## treatment    6  296.6   49.44   1.543   0.18
-    ## Residuals   60 1922.2   32.04               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
-    ## 
-
-
-![](../figures/manipulation/althings-24.png)
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/manipulation/althings-25.png)
-![](../figures/manipulation/althings-26.png)
-![](../figures/manipulation/althings-27.png)
-![](../figures/manipulation/althings-28.png)
 
     ## [1] "male_hypothalamus"
     ## [1] TRUE
+    ## class: DESeqDataSet 
+    ## dim: 14937 68 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
+    ##   XP_430508.3
+    ## rowData names(0):
+    ## colnames(68): blk.s030.o.g_male_hypothalamus_prolong
+    ##   blk5.x_male_hypothalamus_m.inc.d3 ...
+    ##   y55.x_male_hypothalamus_m.inc.d8
+    ##   y63.x_male_hypothalamus_m.inc.d9
+    ## colData names(9): V1 bird ... sextissue outcome
+    ## class: DESeqDataSet 
+    ## dim: 14339 68 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(14339): NP_001001127.1 NP_001001129.1 ... XP_430449.2
+    ##   XP_430508.3
+    ## rowData names(0):
+    ## colnames(68): blk.s030.o.g_male_hypothalamus_prolong
+    ##   blk5.x_male_hypothalamus_m.inc.d3 ...
+    ##   y55.x_male_hypothalamus_m.inc.d8
+    ##   y63.x_male_hypothalamus_m.inc.d9
+    ## colData names(9): V1 bird ... sextissue outcome
 
     ## estimating size factors
 
@@ -724,7 +363,7 @@ Results
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 13 genes
+    ## -- replacing outliers and refitting for 7 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -732,20 +371,60 @@ Results
 
     ## fitting model and testing
 
-
-
+    ## [1] "m.inc.d3m.inc.d8"
+    ## [1] "m.inc.d3m.inc.d9"
+    ## [1] "m.inc.d3m.inc.d17"
+    ## [1] "m.inc.d3prolong"
+    ## [1] "m.inc.d3extend"
+    ## [1] "m.inc.d3m.n2"
+    ## [1] "m.inc.d8m.inc.d3"
+    ## [1] "m.inc.d8m.inc.d9"
+    ## [1] "m.inc.d8m.inc.d17"
+    ## [1] "m.inc.d8prolong"
+    ## [1] "m.inc.d8extend"
+    ## [1] "m.inc.d8m.n2"
+    ## [1] "m.inc.d9m.inc.d3"
+    ## [1] "m.inc.d9m.inc.d8"
+    ## [1] "m.inc.d9m.inc.d17"
+    ## [1] "m.inc.d9prolong"
+    ## [1] "m.inc.d9extend"
+    ## [1] "m.inc.d9m.n2"
+    ## [1] "m.inc.d17m.inc.d3"
+    ## [1] "m.inc.d17m.inc.d8"
+    ## [1] "m.inc.d17m.inc.d9"
+    ## [1] "m.inc.d17prolong"
+    ## [1] "m.inc.d17extend"
+    ## [1] "m.inc.d17m.n2"
+    ## [1] "prolongm.inc.d3"
+    ## [1] "prolongm.inc.d8"
+    ## [1] "prolongm.inc.d9"
+    ## [1] "prolongm.inc.d17"
+    ## [1] "prolongextend"
+    ## [1] "prolongm.n2"
+    ## [1] "extendm.inc.d3"
+    ## [1] "extendm.inc.d8"
+    ## [1] "extendm.inc.d9"
+    ## [1] "extendm.inc.d17"
+    ## [1] "extendprolong"
+    ## [1] "extendm.n2"
+    ## [1] "m.n2m.inc.d3"
+    ## [1] "m.n2m.inc.d8"
+    ## [1] "m.n2m.inc.d9"
+    ## [1] "m.n2m.inc.d17"
+    ## [1] "m.n2prolong"
+    ## [1] "m.n2extend"
     ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
-    ## 1    extend     NA         0        4        1     3575    1       0
-    ## 2 m.inc.d17      0        NA        0      130     2721    0       0
-    ## 3  m.inc.d3      4         0       NA      254     2974    0       0
-    ## 4  m.inc.d8      1       130      254       NA     5669    0     129
-    ## 5  m.inc.d9   3575      2721     2974     5669       NA 3405    2653
-    ## 6      m.n2      1         0        0        0     3405   NA       0
-    ## 7   prolong      0         0        0      129     2653    0      NA
+    ## 1    extend     NA         0        0        0     1099    1       0
+    ## 2 m.inc.d17      0        NA        0        1      658    0       0
+    ## 3  m.inc.d3      0         0       NA        0      832    0       0
+    ## 4  m.inc.d8      0         1        0       NA     2934    0       1
+    ## 5  m.inc.d9   1099       658      832     2934       NA  853     550
+    ## 6      m.n2      1         0        0        0      853   NA       0
+    ## 7   prolong      0         0        0        1      550    0      NA
 
-![](../figures/manipulation/althings-29.png)
-![](../figures/manipulation/althings-30.png)
+![](../figures/manipulation/althings-1.png)
 
+    ## [1] 21  9  6  5  3  3
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    6  672.9  112.15   5.567 0.000118 ***
     ## Residuals   61 1228.8   20.14                     
@@ -783,842 +462,112 @@ Results
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6   73.2   12.21   1.019  0.422
     ## Residuals   61  730.9   11.98               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
-    ## 
+    ##             Df Sum Sq Mean Sq F value Pr(>F)
+    ## treatment    6   67.7  11.292   1.577  0.169
+    ## Residuals   61  436.7   7.159               
+    ##             Df Sum Sq Mean Sq F value Pr(>F)
+    ## treatment    6   28.6   4.768   0.745  0.616
+    ## Residuals   61  390.4   6.400               
+    ## [1] "m.inc.d3 vs m.inc.d8"
+    ## [1] 0
+    ## [1] "m.inc.d3 vs m.inc.d9"
+    ## [1] 832
+    ## [1] "m.inc.d3 vs m.inc.d17"
+    ## [1] 0
+    ## [1] "m.inc.d3 vs prolong"
+    ## [1] 0
+    ## [1] "m.inc.d3 vs extend"
+    ## [1] 0
+    ## [1] "m.inc.d3 vs m.n2"
+    ## [1] 0
+    ## [1] "m.inc.d8 vs m.inc.d3"
+    ## [1] 0
+    ## [1] "m.inc.d8 vs m.inc.d9"
+    ## [1] 2934
+    ## [1] "m.inc.d8 vs m.inc.d17"
+    ## [1] 1
+    ## [1] "m.inc.d8 vs prolong"
+    ## [1] 1
+    ## [1] "m.inc.d8 vs extend"
+    ## [1] 0
+    ## [1] "m.inc.d8 vs m.n2"
+    ## [1] 0
+    ## [1] "m.inc.d9 vs m.inc.d3"
+    ## [1] 832
+    ## [1] "m.inc.d9 vs m.inc.d8"
+    ## [1] 2934
+    ## [1] "m.inc.d9 vs m.inc.d17"
+    ## [1] 658
+    ## [1] "m.inc.d9 vs prolong"
+    ## [1] 550
+    ## [1] "m.inc.d9 vs extend"
+    ## [1] 1099
+    ## [1] "m.inc.d9 vs m.n2"
+    ## [1] 853
+    ## [1] "m.inc.d17 vs m.inc.d3"
+    ## [1] 0
+    ## [1] "m.inc.d17 vs m.inc.d8"
+    ## [1] 1
+    ## [1] "m.inc.d17 vs m.inc.d9"
+    ## [1] 658
+    ## [1] "m.inc.d17 vs prolong"
+    ## [1] 0
+    ## [1] "m.inc.d17 vs extend"
+    ## [1] 0
+    ## [1] "m.inc.d17 vs m.n2"
+    ## [1] 0
+    ## [1] "prolong vs m.inc.d3"
+    ## [1] 0
+    ## [1] "prolong vs m.inc.d8"
+    ## [1] 1
+    ## [1] "prolong vs m.inc.d9"
+    ## [1] 550
+    ## [1] "prolong vs m.inc.d17"
+    ## [1] 0
+    ## [1] "prolong vs extend"
+    ## [1] 0
+    ## [1] "prolong vs m.n2"
+    ## [1] 0
+    ## [1] "extend vs m.inc.d3"
+    ## [1] 0
+    ## [1] "extend vs m.inc.d8"
+    ## [1] 0
+    ## [1] "extend vs m.inc.d9"
+    ## [1] 1099
+    ## [1] "extend vs m.inc.d17"
+    ## [1] 0
+    ## [1] "extend vs prolong"
+    ## [1] 0
+    ## [1] "extend vs m.n2"
+    ## [1] 1
+    ## [1] "m.n2 vs m.inc.d3"
+    ## [1] 0
+    ## [1] "m.n2 vs m.inc.d8"
+    ## [1] 0
+    ## [1] "m.n2 vs m.inc.d9"
+    ## [1] 853
+    ## [1] "m.n2 vs m.inc.d17"
+    ## [1] 0
+    ## [1] "m.n2 vs prolong"
+    ## [1] 0
+    ## [1] "m.n2 vs extend"
+    ## [1] 1
 
-![](../figures/manipulation/althings-31.png)
+![](../figures/manipulation/althings-2.png)
+
+    ## Joining, by = "rownames"
+
+    ## Warning: Column `rownames` joining factor and character vector, coercing
+    ## into character vector
 
     ## Joining, by = "V1"
 
     ## Warning: Column `V1` joining character vector and factor, coercing into
     ## character vector
 
-![](../figures/manipulation/althings-32.png)
-![](../figures/manipulation/althings-33.png)
-![](../figures/manipulation/althings-34.png)
-![](../figures/manipulation/althings-35.png)
-
-    ## [1] "male_pituitary"
-    ## [1] TRUE
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 233 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-
-
-    ##          V1 extend m.inc.d17 m.inc.d3 m.inc.d8 m.inc.d9 m.n2 prolong
-    ## 1    extend     NA        87     1070     2153     1605  292       6
-    ## 2 m.inc.d17     87        NA      250     1165      865    3      10
-    ## 3  m.inc.d3   1070       250       NA      250      400  387     396
-    ## 4  m.inc.d8   2153      1165      250       NA      625 1569    1140
-    ## 5  m.inc.d9   1605       865      400      625       NA  579     570
-    ## 6      m.n2    292         3      387     1569      579   NA     100
-    ## 7   prolong      6        10      396     1140      570  100      NA
-
-![](../figures/manipulation/althings-36.png)
-![](../figures/manipulation/althings-37.png)
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## treatment    6  546.2   91.03   1.873    0.1
-    ## Residuals   61 2964.7   48.60               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ treatment, data = pcadata)
-
+![](../figures/manipulation/althings-3.png)![](../figures/manipulation/althings-4.png)
+![](../figures/manipulation/althings-5.png)
+![](../figures/manipulation/althings-6.png)
 
     ## 
-    ##             Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## treatment    6  620.3  103.38   14.13 5.23e-10 ***
-    ## Residuals   61  446.3    7.32                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ treatment, data = pcadata)
-    ## 
-    ## $treatment
-    ##                          diff         lwr         upr     p adj
-    ## m.inc.d8-m.inc.d3  -2.1456390  -5.8337846  1.54250651 0.5704396
-    ## m.inc.d9-m.inc.d3  -0.7454222  -4.6572913  3.16644693 0.9971438
-    ## m.inc.d17-m.inc.d3 -5.5922585  -9.2804040 -1.90411292 0.0003874
-    ## prolong-m.inc.d3   -6.8333494 -10.5214949 -3.14520383 0.0000091
-    ## extend-m.inc.d3    -8.8443661 -12.5325116 -5.15622054 0.0000000
-    ## m.n2-m.inc.d3      -4.6194972  -8.3076427 -0.93135163 0.0055643
-    ## m.inc.d9-m.inc.d8   1.4002169  -2.5116522  5.31208597 0.9283253
-    ## m.inc.d17-m.inc.d8 -3.4466194  -7.1347650  0.24152612 0.0819476
-    ## prolong-m.inc.d8   -4.6877103  -8.3758559 -0.99956479 0.0046655
-    ## extend-m.inc.d8    -6.6987271 -10.3868726 -3.01058150 0.0000139
-    ## m.n2-m.inc.d8      -2.4738581  -6.1620037  1.21428741 0.3980001
-    ## m.inc.d17-m.inc.d9 -4.8468363  -8.7587054 -0.93496721 0.0063216
-    ## prolong-m.inc.d9   -6.0879272  -9.9997963 -2.17605812 0.0002523
-    ## extend-m.inc.d9    -8.0989439 -12.0108130 -4.18707483 0.0000007
-    ## m.n2-m.inc.d9      -3.8740750  -7.7859441  0.03779408 0.0538991
-    ## prolong-m.inc.d17  -1.2410909  -4.9292365  2.44705464 0.9459795
-    ## extend-m.inc.d17   -3.2521076  -6.9402532  0.43603793 0.1187718
-    ## m.n2-m.inc.d17      0.9727613  -2.7153843  4.66090684 0.9836890
-    ## extend-prolong     -2.0110167  -5.6991623  1.67712884 0.6430113
-    ## m.n2-prolong        2.2138522  -1.4742934  5.90199775 0.5335139
-    ## m.n2-extend         4.2248689   0.5367234  7.91301446 0.0148419
-
-
-![](../figures/manipulation/althings-38.png)
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/manipulation/althings-39.png)
-![](../figures/manipulation/althings-40.png)
-![](../figures/manipulation/althings-41.png)
-![](../figures/manipulation/althings-42.png)
-
-
-
-For loop part 2
-======================================================================
-
-    for (eachgroup in levels(m.colData$sextissue)){
-      
-      print(eachgroup)
-      
-      colData <- m.colData %>%
-          dplyr::filter(sextissue == eachgroup) %>%
-          droplevels()
-      row.names(colData) <- colData$V1
-      
-      savecols <- as.character(colData$V1) 
-      savecols <- as.vector(savecols) 
-
-      countData <- m.countData %>% dplyr::select(one_of(savecols)) 
-
-      # check that row and col lenghts are equal
-      print(ncol(countData) == nrow(colData))
-
-      dds <- DESeqDataSetFromMatrix(countData = countData,
-                                  colData = colData,
-                                  design = ~ outcome )
-      dds <- dds[ rowSums(counts(dds)) > 2, ] ## pre-filter genes 
-      dds <- DESeq(dds) # Differential expression analysis
-      vsd <- vst(dds, blind=FALSE) # variance stabilized 
-    head(vsd)
-
-    numDEGs <- function(group1, group2){
-      res <- results(dds, contrast = c("outcome", group1, group2), independentFiltering = T)
-      sumpadj <- sum(res$padj < 0.1, na.rm = TRUE)
-      return(sumpadj)}
-
-    #create list of groups
-    a <- levels(colData$outcome)
-    b <- levels(colData$outcome)
-
-    # comapre all contrasts, save to datafrmes
-    dat=data.frame()
-    for (i in a){
-      for (j in b){
-        if (i != j) {
-          k <- paste(i,j, sep = "") #assigns usique rownames
-          dat[k,1]<-i               
-          dat[k,2]<-j
-          dat[k,3]<- numDEGs(i,j) #caluculates number of DEGs
-        }
-      }
-    }
-
-    head(dat)
-
-    # widen data to create table of degs
-    rownames(dat) <- NULL #remove row names
-    data_wide <- spread(dat, V2, V3)
-    print(data_wide) 
-
-    dat$V1 <- factor(dat$V1, levels = 
-                                  c("end inc",  "end hatch",
-                                    "prolong inc", "delay hatch"))
-    dat$V2 <- factor(dat$V2, levels = 
-                                  c("end inc",  "end hatch",
-                                    "prolong inc", "delay hatch"))
-
-    allcontrasts <- dat %>%
-      ggplot( aes(V1, V2)) +
-        geom_tile(aes(fill = V3)) +
-        scale_fill_viridis(na.value="#FFFFFF00", 
-                         limits = c(0, 6000),
-                         breaks = c(0, 1000, 2000, 3000, 4000, 5000, 6000)) + 
-        xlab(" ") + ylab("Timepoint") +
-        labs(fill = "# of DEGs",
-             subtitle = eachgroup)
-    plot(allcontrasts)
-
-    # create the dataframe using my function pcadataframe
-    pcadata <- pcadataframe(vsd, intgroup=c("outcome"), returnData=TRUE)
-    percentVar <- round(100 * attr(pcadata, "percentVar"))
-    percentVar
-
-    pca12 <- ggplot(pcadata, aes(PC1, PC2,color = outcome)) + 
-      geom_point(size = 2, alpha = 1) +
-      stat_ellipse(type = "t") +
-      xlab(paste0("PC1: ", percentVar[1],"% variance")) +
-      ylab(paste0("PC2: ", percentVar[2],"% variance")) +
-      theme_cowplot(font_size = 8, line_size = 0.25) +
-      labs(subtitle = eachgroup)
-    print(pca12)
-
-    print(summary(aov(PC1 ~ outcome, data=pcadata)))
-    print(TukeyHSD(aov(PC1 ~ outcome, data=pcadata), which = "outcome"))
-
-    print(summary(aov(PC2 ~ outcome, data=pcadata))) 
-    print(TukeyHSD(aov(PC2 ~ outcome, data=pcadata), which = "outcome")) 
-
-    pca34 <- ggplot(pcadata, aes(PC3, PC4,color = outcome)) + 
-      geom_point(size = 2, alpha = 1) +
-      stat_ellipse(type = "t") +
-      xlab(paste0("PC3: ", percentVar[3],"% variance")) +
-      ylab(paste0("PC4: ", percentVar[4],"% variance")) +
-      theme_cowplot(font_size = 8, line_size = 0.25) +
-      labs(subtitle = eachgroup)
-    #print(pca34)
-
-    }
-
-    ## [1] "female_gonad"
-    ## [1] TRUE
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating size factors
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## final dispersion estimates
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## -- replacing outliers and refitting for 854 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ##            V1 delay hatch end hatch end inc prolong inc
-    ## 1 delay hatch          NA       250     404          49
-    ## 2   end hatch         250        NA       0         431
-    ## 3     end inc         404         0      NA         371
-    ## 4 prolong inc          49       431     371          NA
-
-![](../figures/manipulation/allthings-outcome-1.png)
-
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3    195   64.95   0.326  0.807
-    ## Residuals   65  12965  199.46               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                               diff       lwr      upr     p adj
-    ## end hatch-end inc       -0.6794334 -11.50339 10.14453 0.9983703
-    ## prolong inc-end inc     -2.5923942 -16.24877 11.06398 0.9586561
-    ## delay hatch-end inc      3.4463699 -10.21001 17.10275 0.9096886
-    ## prolong inc-end hatch   -1.9129608 -16.33570 12.50978 0.9851837
-    ## delay hatch-end hatch    4.1258033 -10.29694 18.54854 0.8745113
-    ## delay hatch-prolong inc  6.0387641 -10.61518 22.69271 0.7746334
-    ## 
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3    240   79.95   1.012  0.393
-    ## Residuals   65   5136   79.02               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                                diff        lwr       upr     p adj
-    ## end hatch-end inc       -0.08568559  -6.898466  6.727095 0.9999868
-    ## prolong inc-end inc     -5.40145917 -13.997009  3.194091 0.3546702
-    ## delay hatch-end inc     -1.20695658  -9.802506  7.388593 0.9825204
-    ## prolong inc-end hatch   -5.31577358 -14.393686  3.762139 0.4176365
-    ## delay hatch-end hatch   -1.12127099 -10.199183  7.956641 0.9879587
-    ## delay hatch-prolong inc  4.19450259  -6.287768 14.676773 0.7177604
-    ## 
-    ## [1] "female_hypothalamus"
-    ## [1] TRUE
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating size factors
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## final dispersion estimates
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## -- replacing outliers and refitting for 34 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-![](../figures/manipulation/allthings-outcome-2.png)
-
-    ##            V1 delay hatch end hatch end inc prolong inc
-    ## 1 delay hatch          NA         3     880           7
-    ## 2   end hatch           3        NA    1295         191
-    ## 3     end inc         880      1295      NA         169
-    ## 4 prolong inc           7       191     169          NA
-
-![](../figures/manipulation/allthings-outcome-3.png)
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3   91.7   30.57   1.525  0.216
-    ## Residuals   66 1323.0   20.05               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                               diff       lwr      upr     p adj
-    ## end hatch-end inc       -2.3907771 -5.797370 1.015816 0.2597650
-    ## prolong inc-end inc      0.1226879 -4.186349 4.431725 0.9998468
-    ## delay hatch-end inc     -2.0278445 -6.336881 2.281192 0.6037066
-    ## prolong inc-end hatch    2.5134650 -2.056959 7.083889 0.4736011
-    ## delay hatch-end hatch    0.3629327 -4.207491 4.933356 0.9967262
-    ## delay hatch-prolong inc -2.1505323 -7.428003 3.126939 0.7064511
-    ## 
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3      6   1.987   0.113  0.952
-    ## Residuals   66   1162  17.611               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                               diff       lwr      upr     p adj
-    ## end hatch-end inc       -0.2764937 -3.469533 2.916546 0.9957686
-    ## prolong inc-end inc      0.5753312 -3.463580 4.614242 0.9818025
-    ## delay hatch-end inc      0.3655716 -3.673339 4.404483 0.9951767
-    ## prolong inc-end hatch    0.8518248 -3.432087 5.135737 0.9529809
-    ## delay hatch-end hatch    0.6420653 -3.641847 4.925977 0.9789266
-    ## delay hatch-prolong inc -0.2097596 -5.156395 4.736876 0.9994953
-    ## 
-    ## [1] "female_pituitary"
-    ## [1] TRUE
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating size factors
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## final dispersion estimates
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## -- replacing outliers and refitting for 122 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-![](../figures/manipulation/allthings-outcome-4.png)
-
-    ##            V1 delay hatch end hatch end inc prolong inc
-    ## 1 delay hatch          NA      1477    2750         179
-    ## 2   end hatch        1477        NA      36        1048
-    ## 3     end inc        2750        36      NA        1544
-    ## 4 prolong inc         179      1048    1544          NA
-
-![](../figures/manipulation/allthings-outcome-5.png)
-
-    ##             Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## outcome      3  980.1   326.7   31.45 1.12e-12 ***
-    ## Residuals   65  675.3    10.4                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                               diff        lwr        upr     p adj
-    ## end hatch-end inc        -2.603703  -5.074047 -0.1333591 0.0350096
-    ## prolong inc-end inc      -7.403707 -10.520491 -4.2869234 0.0000002
-    ## delay hatch-end inc     -10.273120 -13.389904 -7.1563363 0.0000000
-    ## prolong inc-end hatch    -4.800004  -8.091695 -1.5083137 0.0015444
-    ## delay hatch-end hatch    -7.669417 -10.961108 -4.3777266 0.0000003
-    ## delay hatch-prolong inc  -2.869413  -6.670330  0.9315039 0.2021225
-    ## 
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3   69.5   23.18   1.334  0.271
-    ## Residuals   65 1129.3   17.37               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                              diff       lwr      upr     p adj
-    ## end hatch-end inc       0.4293136 -2.765203 3.623830 0.9846070
-    ## prolong inc-end inc     2.1317633 -1.898695 6.162221 0.5072564
-    ## delay hatch-end inc     2.5460578 -1.484400 6.576516 0.3500262
-    ## prolong inc-end hatch   1.7024497 -2.554188 5.959088 0.7180740
-    ## delay hatch-end hatch   2.1167441 -2.139894 6.373382 0.5592324
-    ## delay hatch-prolong inc 0.4142944 -4.500848 5.329436 0.9960880
-    ## 
-    ## [1] "male_gonad"
-    ## [1] TRUE
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating size factors
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## final dispersion estimates
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## -- replacing outliers and refitting for 817 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-![](../figures/manipulation/allthings-outcome-6.png)
-
-    ##            V1 delay hatch end hatch end inc prolong inc
-    ## 1 delay hatch          NA         1      40         354
-    ## 2   end hatch           1        NA       0         357
-    ## 3     end inc          40         0      NA        1050
-    ## 4 prolong inc         354       357    1050          NA
-
-![](../figures/manipulation/allthings-outcome-7.png)
-
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3    515  171.65   2.094   0.11
-    ## Residuals   63   5164   81.97               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                               diff         lwr       upr     p adj
-    ## end hatch-end inc        0.9505855  -6.1511423  8.052313 0.9847440
-    ## prolong inc-end inc      8.2062930  -0.5957542 17.008340 0.0762961
-    ## delay hatch-end inc      1.9150849  -6.8869623 10.717132 0.9394390
-    ## prolong inc-end hatch    7.2557075  -2.0788366 16.590251 0.1805821
-    ## delay hatch-end hatch    0.9644993  -8.3700447 10.299043 0.9928434
-    ## delay hatch-prolong inc -6.2912081 -16.9764881  4.394072 0.4122309
-    ## 
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3   54.7   18.25    0.53  0.663
-    ## Residuals   63 2167.7   34.41               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                               diff       lwr      upr     p adj
-    ## end hatch-end inc       -0.7650759 -5.366083 3.835931 0.9715076
-    ## prolong inc-end inc      0.4884186 -5.214177 6.191014 0.9958868
-    ## delay hatch-end inc      2.0753948 -3.627200 7.777990 0.7722498
-    ## prolong inc-end hatch    1.2534945 -4.794090 7.301079 0.9470286
-    ## delay hatch-end hatch    2.8404707 -3.207114 8.888055 0.6043910
-    ## delay hatch-prolong inc  1.5869761 -5.335712 8.509664 0.9301314
-    ## 
-    ## [1] "male_hypothalamus"
-    ## [1] TRUE
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating size factors
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## final dispersion estimates
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## -- replacing outliers and refitting for 20 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-![](../figures/manipulation/allthings-outcome-8.png)
-
-    ##            V1 delay hatch end hatch end inc prolong inc
-    ## 1 delay hatch          NA         1      26           0
-    ## 2   end hatch           1        NA    2431           0
-    ## 3     end inc          26      2431      NA           0
-    ## 4 prolong inc           0         0       0          NA
-
-![](../figures/manipulation/allthings-outcome-9.png)
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)  
-    ## outcome      3  268.4   89.46   3.427 0.0222 *
-    ## Residuals   64 1670.8   26.11                 
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                              diff       lwr        upr     p adj
-    ## end hatch-end inc       -4.702370 -8.648299 -0.7564403 0.0131711
-    ## prolong inc-end inc     -1.503894 -6.469079  3.4612915 0.8546299
-    ## delay hatch-end inc     -2.890434 -7.855619  2.0747513 0.4226173
-    ## prolong inc-end hatch    3.198476 -2.021498  8.4184494 0.3768749
-    ## delay hatch-end hatch    1.811935 -3.408038  7.0319092 0.7965901
-    ## delay hatch-prolong inc -1.386540 -7.414047  4.6409663 0.9295590
-    ## 
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3   57.6   19.19   1.578  0.203
-    ## Residuals   64  778.1   12.16               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                               diff       lwr      upr     p adj
-    ## end hatch-end inc       -0.2936135 -2.986342 2.399115 0.9916288
-    ## prolong inc-end inc     -2.3784458 -5.766721 1.009830 0.2592163
-    ## delay hatch-end inc     -1.8122002 -5.200476 1.576075 0.4973429
-    ## prolong inc-end hatch   -2.0848323 -5.646977 1.477313 0.4178253
-    ## delay hatch-end hatch   -1.5185867 -5.080731 2.043558 0.6758529
-    ## delay hatch-prolong inc  0.5662456 -3.546965 4.679456 0.9834720
-    ## 
-    ## [1] "male_pituitary"
-    ## [1] TRUE
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating size factors
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## final dispersion estimates
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## -- replacing outliers and refitting for 445 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-    ## fitting model and testing
-
-    ##   Note: levels of factors in the design contain characters other than
-    ##   letters, numbers, '_' and '.'. It is recommended (but not required) to use
-    ##   only letters, numbers, and delimiters '_' or '.', as these are safe characters
-    ##   for column names in R. [This is a message, not an warning or error]
-
-![](../figures/manipulation/allthings-outcome-10.png)
-
-    ##            V1 delay hatch end hatch end inc prolong inc
-    ## 1 delay hatch          NA       579     717           5
-    ## 2   end hatch         579        NA       6         109
-    ## 3     end inc         717         6      NA         145
-    ## 4 prolong inc           5       109     145          NA
-
-![](../figures/manipulation/allthings-outcome-11.png)![](../figures/manipulation/allthings-outcome-12.png)
-
-    ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## outcome      3    158   52.52   1.027  0.387
-    ## Residuals   64   3274   51.15               
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC1 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                               diff       lwr       upr     p adj
-    ## end hatch-end inc       -1.9247598 -7.448080  3.598560 0.7946740
-    ## prolong inc-end inc      1.4847743 -5.465251  8.434799 0.9424817
-    ## delay hatch-end inc      2.4788329 -4.471192  9.428858 0.7830213
-    ## prolong inc-end hatch    3.4095341 -3.897131 10.716200 0.6097335
-    ## delay hatch-end hatch    4.4035927 -2.903073 11.710258 0.3916442
-    ## delay hatch-prolong inc  0.9940586 -7.442952  9.431069 0.9894957
-    ## 
-    ##             Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## outcome      3    407  135.68   13.48 6.41e-07 ***
-    ## Residuals   64    644   10.06                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = PC2 ~ outcome, data = pcadata)
-    ## 
-    ## $outcome
-    ##                              diff       lwr        upr     p adj
-    ## end hatch-end inc       -1.165516 -3.615273  1.2842404 0.5945990
-    ## prolong inc-end inc     -4.627680 -7.710222 -1.5451369 0.0010716
-    ## delay hatch-end inc     -6.605033 -9.687576 -3.5224906 0.0000023
-    ## prolong inc-end hatch   -3.462163 -6.702887 -0.2214401 0.0317741
-    ## delay hatch-end hatch   -5.439517 -8.680241 -2.1987938 0.0002181
-    ## delay hatch-prolong inc -1.977354 -5.719419  1.7647113 0.5077900
+    ## Done with eachgroup

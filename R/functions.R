@@ -1,65 +1,34 @@
-# printplotcontrasts prints 
-# 1) a summary of the DEGs for a given 2 way contrast
-# 3) a MDS plot of the 2 way contrast
-
-printplotcontrasts <- function(whichcontrast){
-  cont <- whichcontrast
-  print(summary(decideTestsDGE(
-    glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-    adjust.method="fdr", p.value=0.01)))
-  print(plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main=whichcontrast, frame.plot=F,
-               ylim=c(-40,20)))
-}
-
-# this custom function returns a dataframe 
-# with the pvalue,FDR, and LFC for all genes for a given contrast
-# not currently used, but was useful for working out the plotVolcano function
-
-returnDEGs <- function(whichcontrast){
-  cont <- whichcontrast
-  tt <- topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n= 14937)$table
-  return(tt)
-}
-
-
-# plots volcano-ish plots of LFC versus FDR
-plotVolcanos <- function(whichcontrast){
-  cont <- whichcontrast
-  tt <- topTags(glmTreat(fit, contrast=my.contrasts[,cont]),
-                n = 14937)$table
-  tt <- tt %>%
-    mutate(DEGs = ifelse(tt$logFC > 1 & tt$FDR < 0.05, 
-                         yes = "up", 
-                         no = ifelse(tt$logFC < -1 & tt$FDR < 0.05, 
-                                     yes = "down", 
-                                     no = "NS")))
-  tt$DEGs <- factor(tt$DEGs, levels = c("down", "NS","up"))
-
-  myplot <- ggplot(tt, aes(x = logFC, y = FDR, color = DEGs)) +
-    geom_point(size = 1.5, alpha = 0.8, na.rm = T) +
-    scale_y_reverse(limits = c(1,0)) +
-    scale_color_manual(values=c("down" = "#2166ac",
-                                "NS" = "#bdbdbd", 
-                                "up" = "#b2182b")) +
-    xlim(-40, 40)  + 
-    theme(legend.position = "bottom")
-  print(myplot)
-}
-
-# this is an old version
-totalDEGs <- function(contrastvector){
-  res <- results(dds, contrast = c(contrastvector[1],contrastvector[2],contrastvector[3]), independentFiltering = T)
-  sumpadj <- sum(res$padj < 0.1, na.rm = TRUE)
-  print(sumpadj)
-}
-
-# this is a new version
+# print total number of differntially expressed genes
+# numDEGs('m.inc.d3', 'm.inc.d9')
 numDEGs <- function(group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
-  sumpadj <- sum(res$padj < 0.1, na.rm = TRUE)
+  sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
   return(sumpadj)
 }
 
+
+resvals <- function(contrastvector, mypval){
+  res <- results(dds, contrast = c(contrastvector[1],contrastvector[2],contrastvector[3]), independentFiltering = T)
+  sumpvalue <- sum(res$pvalue < mypval, na.rm = TRUE)
+  #print(sumpvalue)
+  sumpadj <- sum(res$padj < mypval, na.rm = TRUE)
+  print(sumpadj)
+  vals <- cbind(res$pvalue, res$padj)
+  pvalcolname <- as.character(paste("pval",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
+  padjcolname <- as.character(paste("padj",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
+  colnames(vals) <- c(pvalcolname, padjcolname)
+  return(vals)
+}
+
+resvals2 <- function(group1, group2){
+  res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
+  sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
+  print(sumpadj)
+  vals <- as.data.frame(res$padj)
+  padjcolname <- as.character(paste("padj", group1, group2, sep=""))
+  colnames(vals) <- c(padjcolname)
+  return(vals)
+}
 
 ## I've taken the pca function from DESeq2 and elaborated it so that I could extract up to 6 PCs
 
