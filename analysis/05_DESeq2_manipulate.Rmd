@@ -112,6 +112,7 @@ rownames(totalDEGS) <- NULL #remove row names
 totalDEGS_wide <- spread(totalDEGS, V2, V3)
 print(totalDEGS_wide) 
 
+
 totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
                               c("m.inc.d3",  "m.inc.d8",
                                 "m.inc.d9", "m.inc.d17",
@@ -121,15 +122,17 @@ totalDEGS$V2 <- factor(totalDEGS$V2, levels =
                                 "m.inc.d9", "m.inc.d17",
                                 "prolong", "extend", "m.n2"))
 
+
+
 allcontrasts <- totalDEGS %>%
   ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
-    scale_fill_viridis(na.value="#FFFFFF00", 
+    scale_fill_viridis(na.value="#440154", 
                      limits = c(0, 3000),
                      breaks = c(0, 1000, 2000, 3000)) + 
     xlab(" ") + ylab("Timepoint") +
     labs(fill = "# of DEGs",
-         subtitle = "eachgroup")
+         subtitle = eachgroup)
 plot(allcontrasts)
 
 
@@ -144,7 +147,7 @@ pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) +
   ylab(paste0("PC1: ", percentVar[1],"% variance")) +
   xlab(NULL) +
   theme_cowplot(font_size = 8, line_size = 0.25) +
-  labs(subtitle = "eachgroup") +
+  labs(subtitle = eachgroup) +
   theme(legend.position = "none")
 
 
@@ -153,7 +156,7 @@ pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) +
   ylab(paste0("PC2: ", percentVar[2],"% variance")) +
   xlab(NULL) +
   theme_cowplot(font_size = 8, line_size = 0.25) +
-  labs(subtitle = "eachgroup") +
+  labs(subtitle = eachgroup) +
   theme(legend.position = "none")
 
 plot_grid(pca1, pca2)
@@ -187,8 +190,6 @@ for (i in a){
   }
 }
 
-
-
 DEGsmatrix <- DEGs
 DEGsmatrix <- as.matrix(DEGs)
 padjmin <- rowMins(DEGsmatrix, na.rm = T) 
@@ -217,14 +218,14 @@ pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
          color = viridis(30),
          breaks=myBreaks,
          annotation_col=anndf,
-         main = "eachgroup")
+         main = eachgroup)
 
 pheatmap(sigDEGs, kmeans_k = 5,
          show_rownames = F, show_colnames = F,
          color = viridis(30),
          breaks=myBreaks,
          annotation_col=anndf,
-         main = "eachgroup")
+         main = eachgroup)
 
 ## candidate genes
 names(geneinfo)
@@ -232,6 +233,7 @@ names(geneinfo)[4] <- "rownames"
 DEGs$rownames <- row.names(DEGs)
 
 # make dataframe with geneids and names and counts
+# how to gather: https://tidyr.tidyverse.org/reference/gather.html
 
 candidates <- full_join(geneinfo, DEGs)
 drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
@@ -244,27 +246,16 @@ candidates <- candidates %>%
 row.names(candidates) <- candidates$Name
 candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
 candidates <- candidates %>% drop_na()
-
-head(candidates)
-
 candidates <- as.data.frame(t(candidates))
 candidates$RNAseqID <- rownames(candidates)
-head(candidates)
-
-candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% # https://tidyr.tidyverse.org/reference/gather.html
+candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% 
   filter(RNAseqID != "gene")
 candidates$value <- as.numeric(candidates$value)
 candidates$V1  <- candidates$RNAseqID
-head(candidates)
-
 candidatecounts <- left_join(candidates, colData)
-#head(candidatecounts)
-
 candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
-#head(candidatecounts)
-
 candidatecounts$gene <- as.factor(candidatecounts$gene)
-levels(candidatecounts$gene)
+
 
 p1 <- candidatecounts %>%
   filter(gene %in% c( "AR", "CYP19A1", "ESR1", "ESR2", "FSHR")) %>%
@@ -273,7 +264,7 @@ p1 <- candidatecounts %>%
   facet_wrap(~gene, scales = "free", nrow = 1) +
   theme(axis.text.x = element_blank(),
         legend.position = "bottom") +
-  labs(subtitle = "eachgroup")
+  labs(subtitle = eachgroup)
 p1
 
 print(p1)
@@ -287,7 +278,7 @@ p2 <- candidatecounts %>%
   facet_wrap(~gene, scales = "free", nrow = 1) +
   theme(axis.text.x = element_blank(),
         legend.position = "bottom") +
-  labs(subtitle = "eachgroup")
+  labs(subtitle = eachgroup)
 p2
 
 print(p2)
@@ -301,7 +292,7 @@ p3 <- candidatecounts %>%
   facet_wrap(~gene, scales = "free", nrow = 1) +
   theme(axis.text.x = element_blank(),
         legend.position = "bottom") +
-  labs(subtitle = "eachgroup")
+  labs(subtitle = eachgroup)
 p3
 
 
