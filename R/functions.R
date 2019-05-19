@@ -1,3 +1,36 @@
+# run DESeq on subset of data
+# e.g. dds <- subsetDESeq("male_hypothalamus")
+subsetDESeq <- function(eachgroup){
+  
+  # subset to look within one tissue in one sex
+  colData <- m.colData %>%
+    dplyr::filter(sextissue == eachgroup) %>%
+    droplevels()
+  row.names(colData) <- colData$V1
+  
+  # which counts to save
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  # save counts that match colData
+  countData <- m.countData %>% dplyr::select(one_of(savecols)) 
+  
+  # check that row and col lenghts are equal
+  print(ncol(countData) == nrow(colData))
+  
+  dds <- DESeqDataSetFromMatrix(countData = countData,
+                                colData = colData,
+                                design = ~ treatment )
+  
+  print(dds)
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dds)
+  
+  dds <- DESeq(dds) # Differential expression analysis
+  return(dds)
+}
+
+
 # print total number of differntially expressed genes
 # numDEGs('m.inc.d3', 'm.inc.d9')
 numDEGs <- function(group1, group2){
@@ -7,20 +40,35 @@ numDEGs <- function(group1, group2){
 }
 
 
-resvals <- function(contrastvector, mypval){
-  res <- results(dds, contrast = c(contrastvector[1],contrastvector[2],contrastvector[3]), independentFiltering = T)
-  sumpvalue <- sum(res$pvalue < mypval, na.rm = TRUE)
-  #print(sumpvalue)
-  sumpadj <- sum(res$padj < mypval, na.rm = TRUE)
-  print(sumpadj)
-  vals <- cbind(res$pvalue, res$padj)
-  pvalcolname <- as.character(paste("pval",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
-  padjcolname <- as.character(paste("padj",contrastvector[1],contrastvector[2],contrastvector[3], sep=""))
-  colnames(vals) <- c(pvalcolname, padjcolname)
-  return(vals)
+## plot DEGs 
+
+plottotalDEGs <- function(totalDEGS, mysubtitle){
+  
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
+                           c("m.inc.d3",  "m.inc.d8",
+                             "m.inc.d9", "m.inc.d17",
+                             "prolong", "extend", "m.n2"))
+  totalDEGS$V2 <- factor(totalDEGS$V2, levels = 
+                           c("m.inc.d3",  "m.inc.d8",
+                             "m.inc.d9", "m.inc.d17",
+                             "prolong", "extend", "m.n2"))
+  
+  allcontrasts <- totalDEGS %>%
+    ggplot( aes(V1, V2)) +
+    geom_tile(aes(fill = V3)) +
+    scale_fill_viridis(na.value="#440154", 
+                       limits = c(0, 3000),
+                       breaks = c(0, 1000, 2000, 3000)) + 
+    xlab(" ") + ylab("Timepoint") +
+    labs(fill = "# of DEGs",
+         subtitle = mysubtitle)
+  
+  plot(allcontrasts)
 }
 
-resvals2 <- function(group1, group2){
+
+# resturn pvalues for all genes
+returnpadj <- function(group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
   sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
   print(sumpadj)
@@ -30,8 +78,8 @@ resvals2 <- function(group1, group2){
   return(vals)
 }
 
-## I've taken the pca function from DESeq2 and elaborated it so that I could extract up to 6 PCs
-
+## calculate principal components
+# I've taken the pca function from DESeq2 and elaborated it so that I could extract up to 6 PCs
 pcadataframe <- function (object, intgroup = "condition", ntop = 500, returnData = FALSE) 
 {
   rv <- rowVars(assay(object))

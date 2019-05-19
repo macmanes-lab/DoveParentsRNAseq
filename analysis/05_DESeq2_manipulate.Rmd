@@ -46,94 +46,102 @@ m.colData$outcome <- factor(m.colData$outcome, levels =
 summary(m.colData[c(7,3,4,5,8,9)])
 ```
 
-## Make a PCA plot, heat map, and box plots for each tissue for each sex
+## Run DESeq on all subsets of the data
 
-```{r althings, eval = T}
+```{r dds}
 ## subset for test 
 #m.colData <- m.colData %>%
 #  filter(sextissue == "male_hypothalamus") %>%
 # droplevels()
 
+levels(m.colData$sextissue)
+
 for (eachgroup in levels(m.colData$sextissue)){
   
   print(eachgroup)
+  dds <- subsetDESeq(eachgroup)
   
-  colData <- m.colData %>%
-      dplyr::filter(sextissue == eachgroup) %>%
-      droplevels()
-  row.names(colData) <- colData$V1
-  
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
+  dfname <- paste("dds", eachgroup, sep = "")
+  assign(paste("dds", eachgroup, sep = ""), dds)
 
-  countData <- m.countData %>% dplyr::select(one_of(savecols)) 
+  return(dfname)
+}   
 
-  # check that row and col lenghts are equal
-  print(ncol(countData) == nrow(colData))
+```
 
-  dds <- DESeqDataSetFromMatrix(countData = countData,
-                              colData = colData,
-                              design = ~ treatment )
-  
-  print(dds)
-  nrow(colData) > 50
-  
-  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
-  print(dds)
-  
-  dds <- DESeq(dds) # Differential expression analysis
-  
-  vsd <- vst(dds, blind=FALSE) # variance stabilized 
+## Create variance stabilized data
 
+```{r vsd}
+
+mydds <- list(ddsmale_hypothalamus) # for testing only
+#mydds <- list(ddsfemale_hypothalamus, ddsfemale_pituitary, ddsfemale_gondad,
+#              ddsmale_hypothalamus, ddsmale_pituitary, ddsmale_gondad)
+
+for (eachdds in mydds){
+  
+  vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
+  
+  vdsname <- paste("vsd", eachgroup, sep = "")
+  assign(paste("vsd", eachgroup, sep = ""), vsd)
+  return(vdsname)
+}
+
+```
+
+## Calculate and plot total DEGs
+
+```{r totalDEGs}
 
 #create list of groups
 a <- levels(colData$treatment)
 b <- levels(colData$treatment)
 
+for (eachdds in mydds){
 
-# comapre all contrasts, save to datafrmes
-totalDEGS=data.frame()
-for (i in a){
-  for (j in b){
-    if (i != j) {
-      k <- paste(i,j, sep = "") #assigns usique rownames
-      print(k)
-      totalDEGS[k,1]<-i               
-      totalDEGS[k,2]<-j
-      totalDEGS[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+  # comapre all contrasts, save to datafrmes
+  totalDEGS=data.frame()
+  for (i in a){
+    for (j in b){
+      if (i != j) {
+        k <- paste(i,j, sep = ".") #assigns usique rownames
+        print(k)
+        totalDEGS[k,1]<-i               
+        totalDEGS[k,2]<-j
+        totalDEGS[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+      }
     }
+        b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
   }
+
+
+  head(totalDEGS)
+
+  # widen data to create table of degs
+  rownames(totalDEGS) <- NULL #remove row names
+  totalDEGS_wide <- spread(totalDEGS, V2, V3)
+  print(totalDEGS_wide) 
+
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
+                              c("m.inc.d3",  "m.inc.d8",
+                                "m.inc.d9", "m.inc.d17",
+                                "prolong", "extend", "m.n2"))
+  totalDEGS$V2 <- factor(totalDEGS$V2, levels = 
+                              c("m.inc.d3",  "m.inc.d8",
+                                "m.inc.d9", "m.inc.d17",
+                                "prolong", "extend", "m.n2"))
+
+  allcontrasts <- totalDEGS %>%
+    ggplot( aes(V1, V2)) +
+      geom_tile(aes(fill = V3)) +
+      scale_fill_viridis(na.value="#440154", 
+                      limits = c(0, 3000),
+                      breaks = c(0, 1000, 2000, 3000)) + 
+      xlab(" ") + ylab("Timepoint") +
+      labs(fill = "# of DEGs",
+          subtitle = "eachgroup")
+  plot(allcontrasts)
 }
-
-head(totalDEGS)
-
-# widen data to create table of degs
-rownames(totalDEGS) <- NULL #remove row names
-totalDEGS_wide <- spread(totalDEGS, V2, V3)
-print(totalDEGS_wide) 
-
-
-totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
-                              c("m.inc.d3",  "m.inc.d8",
-                                "m.inc.d9", "m.inc.d17",
-                                "prolong", "extend", "m.n2"))
-totalDEGS$V2 <- factor(totalDEGS$V2, levels = 
-                              c("m.inc.d3",  "m.inc.d8",
-                                "m.inc.d9", "m.inc.d17",
-                                "prolong", "extend", "m.n2"))
-
-
-
-allcontrasts <- totalDEGS %>%
-  ggplot( aes(V1, V2)) +
-    geom_tile(aes(fill = V3)) +
-    scale_fill_viridis(na.value="#440154", 
-                     limits = c(0, 3000),
-                     breaks = c(0, 1000, 2000, 3000)) + 
-    xlab(" ") + ylab("Timepoint") +
-    labs(fill = "# of DEGs",
-         subtitle = eachgroup)
-plot(allcontrasts)
+```
 
 
 # create the dataframe using my function pcadataframe
@@ -184,7 +192,7 @@ for (i in a){
     if (i != j) {
       k <- paste(i,j, sep = " vs ")
       print(k)
-      results <- resvals2(i,j)
+      results <- returnpadj(i,j)
       DEGs <- cbind(DEGs,results)
     }
   }
