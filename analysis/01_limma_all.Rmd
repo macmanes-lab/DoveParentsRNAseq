@@ -12,7 +12,7 @@ library(edgeR)
 library(kableExtra)
 library(cowplot)
 
-knitr::opts_chunk$set(fig.path = '../figures/',cache=TRUE)
+knitr::opts_chunk$set(fig.path = '../figures/01_limma/',cache=TRUE)
 
 ```
 
