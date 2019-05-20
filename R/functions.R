@@ -35,8 +35,6 @@ subsetDESeq <- function(eachgroup){
 # numDEGs('m.inc.d3', 'm.inc.d9')
 
 
-
-
 numDEGs <- function(dds, group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
   sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
@@ -163,5 +161,151 @@ pcadataframe <- function (object, intgroup = "condition", ntop = 500, returnData
     return(d)
   }
 }
+
+# plot pcs 
+# eg. plotPCAs(dds.female_hypothalamus, "female hypothalamus")
+plotPCAs <- function(mydds, mysubtitle){
+  
+  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+  
+  # create the dataframe using my function pcadataframe
+  pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
+  percentVar <- round(100 * attr(pcadata, "percentVar"))
+  print(percentVar)
+  
+  print(summary(aov(PC1 ~ treatment, data=pcadata)))
+  print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
+  
+  print(summary(aov(PC2 ~ treatment, data=pcadata))) 
+  print(summary(aov(PC3 ~ treatment, data=pcadata))) 
+  print(summary(aov(PC4 ~ treatment, data=pcadata))) 
+  
+  pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) + 
+    geom_boxplot() +
+    ylab(paste0("PC1: ", percentVar[1],"% variance")) +
+    xlab(NULL) +
+    theme_cowplot(font_size = 8, line_size = 0.25) +
+    labs(subtitle = mysubtitle) +
+    theme(legend.position = "none")
+  
+  
+  pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) + 
+    geom_boxplot() +
+    ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+    xlab(NULL) +
+    theme_cowplot(font_size = 8, line_size = 0.25) +
+    labs(subtitle = " ") +
+    theme(legend.position = "none")
+  
+  mypca <- plot_grid(pca1, pca2)
+  return(mypca)
+}
+
+## plot candidate genes 
+# e.g. plotcandidates(dds.female_hypothalamus, "female hypothalamus")
+
+plotcandidates <- function(mydds, mysubtitle){
+  
+  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+  
+  # make dataframe counts
+  DEGs <- assay(vsd)
+  DEGs <- as.data.frame(DEGs)
+  
+  names(geneinfo)
+  names(geneinfo)[4] <- "rownames"
+  DEGs$rownames <- row.names(DEGs)
+  
+  # make dataframe with geneids and names and counts
+  # how to gather: https://tidyr.tidyverse.org/reference/gather.html
+  
+  candidates <- full_join(geneinfo, DEGs)
+  drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
+  candidates <- candidates %>% dplyr::select(-one_of(drop.cols))
+  candidates <- candidates %>%
+    filter(Name %in% c("AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
+                       "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
+                       "PGR", "PRL", "PRLR", "VIP", "VIPR1")) 
+  row.names(candidates) <- candidates$Name
+  candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
+  candidates <- candidates %>% drop_na()
+  candidates <- as.data.frame(t(candidates))
+  candidates$RNAseqID <- rownames(candidates)
+  candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% 
+    filter(RNAseqID != "gene")
+  candidates$value <- as.numeric(candidates$value)
+  candidates$V1  <- candidates$RNAseqID
+  
+  candidatecounts <- left_join(candidates, m.colData)
+  candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
+  candidatecounts$gene <- as.factor(candidatecounts$gene)
+  
+  p1 <- ggplot(candidatecounts, aes(x = treatment, y = value, fill = treatment)) +
+    geom_boxplot() +
+    facet_wrap(~gene, scales = "free") +
+    theme_bw(base_size = 8) +
+    theme(axis.text.x = element_blank(),
+          legend.position = "bottom") +
+    labs(x = NULL, subtitle = mysubtitle) +
+    guides(fill= guide_legend(nrow=1)) 
+  return(p1)
+}
+
+
+## make pheatmaps 
+# e.g. makepheatmap(dds.female_hypothalamus, "female hypothalamus")
+
+makepheatmap <- function(mydds, mysubtitle){
+  
+  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+  
+  # make dataframe counts
+  DEGs <- assay(vsd)
+  DEGs <- as.data.frame(DEGs)
+  
+  a <- levels(m.colData$treatment)
+  b <- a
+  
+  for (i in a){
+    for (j in b){
+      if (i != j) {
+        print(i)
+        results <- returnpadj(i,j)
+        DEGs <- cbind(DEGs,results)
+      }
+    }
+    b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
+  }
+  
+  DEGsmatrix <- DEGs
+  DEGsmatrix <- as.matrix(DEGs)
+  padjmin <- rowMins(DEGsmatrix, na.rm = T) 
+  padjmin <- as.data.frame(padjmin)
+  
+  sigDEGs <- cbind(DEGs,padjmin)
+  sigDEGs <- sigDEGs %>% arrange(padjmin)
+  sigDEGs <- head(sigDEGs,500)
+  sigDEGs <- as.data.frame(sigDEGs)
+  rownames(sigDEGs) <- sigDEGs$rownames
+  drop.cols <-colnames(sigDEGs[,grep("padj|pval|pmin|rownames", colnames(sigDEGs))])
+  sigDEGs <- sigDEGs %>% dplyr::select(-one_of(drop.cols))
+  sigDEGs <- as.matrix(sigDEGs)
+  sigDEGs <- sigDEGs - rowMeans(sigDEGs)
+  
+  paletteLength <- 30
+  myBreaks <- c(seq(min(sigDEGs), 0, length.out=ceiling(paletteLength/2) + 1), 
+                seq(max(sigDEGs)/paletteLength, max(sigDEGs), length.out=floor(paletteLength/2)))
+  
+  anndf <- m.colData %>% dplyr::select(treatment)
+  rownames(anndf) <- m.colData$V1
+  
+  sigDEGs <- as.matrix(sigDEGs) 
+  p1 <- pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
+           color = viridis(30),
+           breaks=myBreaks,
+           annotation_col=anndf,
+           main = mysubtitle)
+  return(p1)
+  }
 
 

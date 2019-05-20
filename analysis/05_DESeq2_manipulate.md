@@ -32,10 +32,7 @@ Manipulation data
                          ifelse(grepl("prolong", m.colData$treatment),"prolong inc",
                          ifelse(grepl("extend", m.colData$treatment),"delay hatch", NA))))
 
-    m.colData$outcome <- factor(m.colData$outcome, levels = 
-                                  c("end inc",  "end hatch",
-                                    "prolong inc", "delay hatch"))
-    summary(m.colData[c(7,3,4,5,8,9)])
+    summary(m.colData[c(7,3,4,5,8)])
 
     ##           study         sex               tissue        treatment 
     ##  manipulation:411   female:208   gonad       :136   m.inc.d3 :60  
@@ -45,13 +42,13 @@ Manipulation data
     ##                                                     prolong  :60  
     ##                                                     extend   :60  
     ##                                                     m.n2     :59  
-    ##                sextissue         outcome   
-    ##  female_gonad       :69   end inc    :172  
-    ##  female_hypothalamus:70   end hatch  :119  
-    ##  female_pituitary   :69   prolong inc: 60  
-    ##  male_gonad         :67   delay hatch: 60  
-    ##  male_hypothalamus  :68                    
-    ##  male_pituitary     :68                    
+    ##                sextissue 
+    ##  female_gonad       :69  
+    ##  female_hypothalamus:70  
+    ##  female_pituitary   :69  
+    ##  male_gonad         :67  
+    ##  male_hypothalamus  :68  
+    ##  male_pituitary     :68  
     ## 
 
 Run DESeq on all subsets of the data
@@ -307,54 +304,9 @@ Calculate and plot total DEGs
 Calculate and plot principal components
 ---------------------------------------
 
-    #mydds <- list(ddsmale_hypothalamus) # for testing only
-    mydds <- list(dds.female_hypothalamus, dds.female_pituitary, dds.female_gonad,
-                 dds.male_hypothalamus, dds.male_pituitary, dds.male_gondad)
-
-
-    for (eachdds in mydds){
-      
-      vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
-      
-      # create the dataframe using my function pcadataframe
-      pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
-      percentVar <- round(100 * attr(pcadata, "percentVar"))
-      print(percentVar)
-      
-
-      pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) + 
-        geom_boxplot() +
-        ylab(paste0("PC1: ", percentVar[1],"% variance")) +
-        xlab(NULL) +
-        theme_cowplot(font_size = 8, line_size = 0.25) +
-        labs(subtitle = "eachgroup") +
-        theme(legend.position = "none")
-
-
-      pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) + 
-        geom_boxplot() +
-        ylab(paste0("PC2: ", percentVar[2],"% variance")) +
-        xlab(NULL) +
-        theme_cowplot(font_size = 8, line_size = 0.25) +
-        labs(subtitle = "eachgroup") +
-        theme(legend.position = "none")
-
-      mypca <- plot_grid(pca1, pca2)
-      plot(mypca)
-
-      print(summary(aov(PC1 ~ treatment, data=pcadata)))
-      print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
-      
-      print(summary(aov(PC2 ~ treatment, data=pcadata))) 
-      print(summary(aov(PC3 ~ treatment, data=pcadata))) 
-      print(summary(aov(PC4 ~ treatment, data=pcadata))) 
-
-    }
+    plotPCAs(dds.female_hypothalamus, "female hypothalamus")
 
     ## [1] 16 13  6  4  3  3
-
-![](../figures/manipulation/pca-1.png)
-
     ##             Df Sum Sq Mean Sq F value  Pr(>F)   
     ## treatment    6  363.3   60.55    3.79 0.00276 **
     ## Residuals   63 1006.6   15.98                   
@@ -399,11 +351,13 @@ Calculate and plot principal components
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6  28.82   4.803   1.098  0.374
-    ## Residuals   63 275.68   4.376               
+    ## Residuals   63 275.68   4.376
+
+![](../figures/manipulation/pca-1.png)
+
+    plotPCAs(dds.female_pituitary, "female pituitary")
+
     ## [1] 15 11  6  4  3  3
-
-![](../figures/manipulation/pca-2.png)
-
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    6 1024.1  170.68   20.77 3.55e-13 ***
     ## Residuals   62  509.5    8.22                     
@@ -450,11 +404,13 @@ Calculate and plot principal components
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6   18.9   3.153   0.487  0.816
-    ## Residuals   62  401.5   6.476               
+    ## Residuals   62  401.5   6.476
+
+![](../figures/manipulation/pca-2.png)
+
+    plotPCAs(dds.female_gonad, "female gonad")
+
     ## [1] 32 13  9  7  4  4
-
-![](../figures/manipulation/pca-3.png)
-
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6    661   110.2   0.595  0.733
     ## Residuals   62  11479   185.1               
@@ -497,11 +453,13 @@ Calculate and plot principal components
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6   97.8   16.30   0.393  0.881
-    ## Residuals   62 2573.9   41.51               
+    ## Residuals   62 2573.9   41.51
+
+![](../figures/manipulation/pca-3.png)
+
+    plotPCAs(dds.male_hypothalamus, "male hypothalamus")
+
     ## [1] 21  9  6  5  3  3
-
-![](../figures/manipulation/pca-4.png)
-
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    6  672.9  112.15   5.567 0.000118 ***
     ## Residuals   61 1228.8   20.14                     
@@ -544,11 +502,13 @@ Calculate and plot principal components
     ## Residuals   61  436.7   7.159               
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6   28.6   4.768   0.745  0.616
-    ## Residuals   61  390.4   6.400               
+    ## Residuals   61  390.4   6.400
+
+![](../figures/manipulation/pca-4.png)
+
+    plotPCAs(dds.male_pituitary, "male pituitary")
+
     ## [1] 26  8  5  4  3  3
-
-![](../figures/manipulation/pca-5.png)
-
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6  489.4   81.57   1.856  0.103
     ## Residuals   61 2680.7   43.95               
@@ -596,10 +556,12 @@ Calculate and plot principal components
     ## Residuals   61  393.6   6.452                 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+![](../figures/manipulation/pca-5.png)
+
+    plotPCAs(dds.male_gondad, "male gonad")
+
     ## [1] 29 11  3  3  3  3
-
-![](../figures/manipulation/pca-6.png)
-
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6    529   88.19   1.009  0.428
     ## Residuals   60   5244   87.39               
@@ -644,277 +606,19 @@ Calculate and plot principal components
     ## treatment    6   46.6   7.769   0.806  0.569
     ## Residuals   60  578.5   9.642
 
+![](../figures/manipulation/pca-6.png)
+
 heamap with minimum pvalue
 --------------------------
 
-    for (eachdds in mydds){
-      
-      dds <- eachdds
-      
-      vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
+    makepheatmap(dds.female_hypothalamus, "female hypothalamus")
+    makepheatmap(dds.female_pituitary, "female pituitary")
+    makepheatmap(dds.female_gonad, "female gonad")
+    makepheatmap(dds.male_hypothalamus, "male hypothalamus")
+    makepheatmap(dds.male_pituitary, "male pituitary")
+    makepheatmap(dds.male_gondad, "male gonad")
 
-      # make dataframe counts
-      DEGs <- assay(vsd)
-      DEGs <- as.data.frame(DEGs)
-      
-      a <- levels(m.colData$treatment)
-      b <- a
-
-      for (i in a){
-        for (j in b){
-          if (i != j) {
-            print(i)
-            results <- returnpadj(i,j)
-            DEGs <- cbind(DEGs,results)
-          }
-        }
-         b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
-      }
-
-      DEGsmatrix <- DEGs
-      DEGsmatrix <- as.matrix(DEGs)
-      padjmin <- rowMins(DEGsmatrix, na.rm = T) 
-      padjmin <- as.data.frame(padjmin)
-
-      sigDEGs <- cbind(DEGs,padjmin)
-      sigDEGs <- sigDEGs %>% arrange(padjmin)
-      sigDEGs <- head(sigDEGs,500)
-      sigDEGs <- as.data.frame(sigDEGs)
-      rownames(sigDEGs) <- sigDEGs$rownames
-      drop.cols <-colnames(sigDEGs[,grep("padj|pval|pmin|rownames", colnames(sigDEGs))])
-      sigDEGs <- sigDEGs %>% dplyr::select(-one_of(drop.cols))
-      sigDEGs <- as.matrix(sigDEGs)
-      sigDEGs <- sigDEGs - rowMeans(sigDEGs)
-
-      paletteLength <- 30
-      myBreaks <- c(seq(min(sigDEGs), 0, length.out=ceiling(paletteLength/2) + 1), 
-                    seq(max(sigDEGs)/paletteLength, max(sigDEGs), length.out=floor(paletteLength/2)))
-
-      anndf <- m.colData %>% dplyr::select(treatment)
-      rownames(anndf) <- m.colData$V1
-
-      sigDEGs <- as.matrix(sigDEGs) 
-      pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
-             color = viridis(30),
-             breaks=myBreaks,
-             annotation_col=anndf,
-             main = "eachgroup")
-
-      pheatmap(sigDEGs, kmeans_k = 5,
-             show_rownames = F, show_colnames = F,
-             color = viridis(30),
-             breaks=myBreaks,
-             annotation_col=anndf,
-             main = "eachgroup")
-    }
-
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "prolong"
-    ## [1] "prolong"
-    ## [1] "extend"
-
-![](../figures/manipulation/pheatmap-1.png)![](../figures/manipulation/pheatmap-2.png)
-
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "prolong"
-    ## [1] "prolong"
-    ## [1] "extend"
-
-![](../figures/manipulation/pheatmap-3.png)![](../figures/manipulation/pheatmap-4.png)
-
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "prolong"
-    ## [1] "prolong"
-    ## [1] "extend"
-
-![](../figures/manipulation/pheatmap-5.png)![](../figures/manipulation/pheatmap-6.png)
-
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "prolong"
-    ## [1] "prolong"
-    ## [1] "extend"
-
-![](../figures/manipulation/pheatmap-7.png)![](../figures/manipulation/pheatmap-8.png)
-
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "prolong"
-    ## [1] "prolong"
-    ## [1] "extend"
-
-![](../figures/manipulation/pheatmap-9.png)![](../figures/manipulation/pheatmap-10.png)
-
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d3"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d8"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d9"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "m.inc.d17"
-    ## [1] "prolong"
-    ## [1] "prolong"
-    ## [1] "extend"
-
-![](../figures/manipulation/pheatmap-11.png)![](../figures/manipulation/pheatmap-12.png)
-
-    for (eachdds in mydds){
-      
-      vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
-
-      # make dataframe counts
-      DEGs <- assay(vsd)
-      DEGs <- as.data.frame(DEGs)
-
-    names(geneinfo)
-    names(geneinfo)[4] <- "rownames"
-    DEGs$rownames <- row.names(DEGs)
-
-    # make dataframe with geneids and names and counts
-    # how to gather: https://tidyr.tidyverse.org/reference/gather.html
-
-    candidates <- full_join(geneinfo, DEGs)
-    drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
-    candidates <- candidates %>% dplyr::select(-one_of(drop.cols))
-    candidates <- candidates %>%
-      filter(Name %in% c( #"JUN", "JUND", "EGR",  "AVP", "AVPR1A", "AVPR1B", "AVPR2", "OXT",  
-                         "AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
-                         "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
-                         "PGR", "PRL", "PRLR", "VIP", "VIPR1")) 
-    row.names(candidates) <- candidates$Name
-    candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
-    candidates <- candidates %>% drop_na()
-    candidates <- as.data.frame(t(candidates))
-    candidates$RNAseqID <- rownames(candidates)
-    candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% 
-      filter(RNAseqID != "gene")
-    candidates$value <- as.numeric(candidates$value)
-    candidates$V1  <- candidates$RNAseqID
-
-    candidatecounts <- left_join(candidates, m.colData)
-    candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
-    candidatecounts$gene <- as.factor(candidatecounts$gene)
-
-
-    p1 <- candidatecounts %>%
-      filter(gene %in% c( "AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
-                          "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
-                          "PGR", "PRL", "PRLR", "VIP", "VIPR1")) %>%
-      ggplot(aes(x = treatment, y = value, fill = treatment)) +
-      geom_boxplot() +
-      facet_wrap(~gene, scales = "free") +
-      theme_bw(base_size = 8) +
-      theme(axis.text.x = element_blank(),
-            legend.position = "bottom") +
-      labs(x = NULL) +
-      guides(fill= guide_legend(nrow=1))
-
-    plot(p1)
-    }
-
-    ## Joining, by = "rownames"
-
-    ## Warning: Column `rownames` joining factor and character vector, coercing
-    ## into character vector
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
+    plotcandidates(dds.female_hypothalamus, "female hypothalamus")
 
     ## Joining, by = "rownames"
 
@@ -928,6 +632,8 @@ heamap with minimum pvalue
 
 ![](../figures/manipulation/candidates-1.png)
 
+    plotcandidates(dds.female_pituitary, "female pituitary")
+
     ## Joining, by = "rownames"
 
     ## Warning: Column `rownames` joining factor and character vector, coercing
@@ -939,6 +645,8 @@ heamap with minimum pvalue
     ## character vector
 
 ![](../figures/manipulation/candidates-2.png)
+
+    plotcandidates(dds.female_gonad, "female gonad")
 
     ## Joining, by = "rownames"
 
@@ -952,6 +660,8 @@ heamap with minimum pvalue
 
 ![](../figures/manipulation/candidates-3.png)
 
+    plotcandidates(dds.male_hypothalamus, "male hypothalamus")
+
     ## Joining, by = "rownames"
 
     ## Warning: Column `rownames` joining factor and character vector, coercing
@@ -964,6 +674,8 @@ heamap with minimum pvalue
 
 ![](../figures/manipulation/candidates-4.png)
 
+    plotcandidates(dds.male_pituitary, "male pituitary")
+
     ## Joining, by = "rownames"
 
     ## Warning: Column `rownames` joining factor and character vector, coercing
@@ -974,4 +686,18 @@ heamap with minimum pvalue
     ## Warning: Column `V1` joining character vector and factor, coercing into
     ## character vector
 
-![](../figures/manipulation/candidates-5.png)![](../figures/manipulation/candidates-6.png)
+![](../figures/manipulation/candidates-5.png)
+
+    plotcandidates(dds.male_gondad, "male gonad")
+
+    ## Joining, by = "rownames"
+
+    ## Warning: Column `rownames` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/manipulation/candidates-6.png)
