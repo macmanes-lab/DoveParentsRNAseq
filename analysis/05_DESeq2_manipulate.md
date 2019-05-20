@@ -290,7 +290,19 @@ Calculate and plot total DEGs
     e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
     f <- plottotalDEGs(dds.male_gondad, "male gonad")
 
-    plot_grid(a,b,c,d,e,f, nrow = 2)
+    plot_grid(a,b,c,d,e,f, nrow = 2) 
+
+![](../figures/manipulation/totalDEGs-1.png)
+
+    plot_grid(a + theme_minimal(base_size = 8) + theme(legend.position = "none", axis.text.x = element_text(angle = 90)),
+              b + theme_minimal(base_size = 8) + theme(legend.position = "none", axis.text.x = element_text(angle = 90)),
+              c + theme_minimal(base_size = 8) + theme(axis.text.x = element_text(angle = 90)),
+              d + theme_minimal(base_size = 8) + theme(legend.position = "none",axis.text.x = element_text(angle = 90)),
+              e + theme_minimal(base_size = 8) + theme(legend.position = "none",axis.text.x = element_text(angle = 90)),
+              f + theme_minimal(base_size = 8) + theme(axis.text.x = element_text(angle = 90)),
+              nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
+
+![](../figures/manipulation/totalDEGs2-1.png)
 
 Calculate and plot principal components
 ---------------------------------------

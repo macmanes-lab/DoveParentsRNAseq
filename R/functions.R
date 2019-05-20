@@ -37,7 +37,7 @@ subsetDESeq <- function(eachgroup){
 
 
 
-numDEGs <- function(group1, group2){
+numDEGs <- function(dds, group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
   sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
   return(sumpadj)
@@ -60,7 +60,7 @@ plottotalDEGs <- function(dds, mysubtitle){
           #print(k)
           totalDEGS[k,1]<-i               
           totalDEGS[k,2]<-j
-          totalDEGS[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+          totalDEGS[k,3]<- numDEGs(dds, i,j) #caluculates number of DEGs
         }
       }
       b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
@@ -86,7 +86,7 @@ plottotalDEGs <- function(dds, mysubtitle){
     labs(fill = "# of DEGs",
          subtitle = mysubtitle)
   
-  plot(allcontrasts)
+  return(allcontrasts)
 }
 
 
