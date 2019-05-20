@@ -1,0 +1,250 @@
+---
+title: "02_DESeq_characterization"
+output: md_document
+---
+
+```{r setup, message=F, comment=FALSE, warning=FALSE, results='hide'}
+library(tidyverse)
+library(DESeq2)
+library(cowplot)
+library(RColorBrewer)
+library(pheatmap)
+library(kableExtra)
+library(viridis)
+
+# load custom functions  
+source("../R/functions.R") 
+
+knitr::opts_chunk$set(fig.path = '../figures/characterizatio/', cache = TRUE)
+```
+
+## Manipulation data
+
+```{r readfiles}
+# import "colData" which contains sample information and "countData" which contains read counts
+m.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
+m.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+
+# set levels
+levels(m.colData$treatment)
+m.colData$treatment <- factor(m.colData$treatment, levels = 
+                              c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+
+m.colData$sextissue <- as.factor(paste(m.colData$sex, m.colData$tissue, sep = "_"))
+summary(m.colData[c(7,3,4,5,8)])
+```
+
+## Run DESeq on all subsets of the data
+
+```{r dds, cache = T}
+dds.female_hypothalamus <- subsetDESeq("female_hypothalamus")
+dds.female_pituitary <- subsetDESeq("female_pituitary" )
+dds.female_gonad <- subsetDESeq("female_gonad" )
+dds.male_hypothalamus <- subsetDESeq("male_hypothalamus" )
+dds.male_pituitary <- subsetDESeq("male_pituitary"  )
+dds.male_gondad <- subsetDESeq("male_gonad")
+```
+
+
+## Calculate and plot total DEGs
+
+```{r totalDEGs, eval = T}
+#create list of groups for deseq contrasts
+group1 <- c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
+group2 <- group1
+
+a <- plottotalDEGschar(dds.female_hypothalamus, "female hypothalamus")
+b <- plottotalDEGschar(dds.female_pituitary, "female pituitary")
+c <- plottotalDEGschar(dds.female_gonad, "female gonad")
+d <- plottotalDEGschar(dds.male_hypothalamus, "male hypothalamus")
+e <- plottotalDEGschar(dds.male_pituitary, "male pituitary")
+f <- plottotalDEGschar(dds.male_gondad, "male gonad")
+
+plot_grid(a,b,c,d,e,f, nrow = 2) 
+```
+
+```{r totalDEGs2}
+plot_grid(a + theme_minimal(base_size = 8) + theme(legend.position = "none", axis.text.x = element_text(angle = 90)),
+          b + theme_minimal(base_size = 8) + theme(legend.position = "none", axis.text.x = element_text(angle = 90)),
+          c + theme_minimal(base_size = 8) + theme(axis.text.x = element_text(angle = 90)),
+          d + theme_minimal(base_size = 8) + theme(legend.position = "none",axis.text.x = element_text(angle = 90)),
+          e + theme_minimal(base_size = 8) + theme(legend.position = "none",axis.text.x = element_text(angle = 90)),
+          f + theme_minimal(base_size = 8) + theme(axis.text.x = element_text(angle = 90)),
+          nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
+```
+
+## Calculate and plot principal components
+
+
+```{r pca}
+
+#mydds <- list(ddsmale_hypothalamus) # for testing only
+mydds <- list(dds.female_hypothalamus, dds.female_pituitary, dds.female_gonad,
+             dds.male_hypothalamus, dds.male_pituitary, dds.male_gondad)
+
+
+for (eachdds in mydds){
+  
+  vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
+  
+  # create the dataframe using my function pcadataframe
+  pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
+  percentVar <- round(100 * attr(pcadata, "percentVar"))
+  print(percentVar)
+  
+
+  pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) + 
+    geom_boxplot() +
+    ylab(paste0("PC1: ", percentVar[1],"% variance")) +
+    xlab(NULL) +
+    theme_cowplot(font_size = 8, line_size = 0.25) +
+    labs(subtitle = "eachgroup") +
+    theme(legend.position = "none")
+
+
+  pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) + 
+    geom_boxplot() +
+    ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+    xlab(NULL) +
+    theme_cowplot(font_size = 8, line_size = 0.25) +
+    labs(subtitle = "eachgroup") +
+    theme(legend.position = "none")
+
+  mypca <- plot_grid(pca1, pca2)
+  plot(mypca)
+
+  print(summary(aov(PC1 ~ treatment, data=pcadata)))
+  print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
+  
+  print(summary(aov(PC2 ~ treatment, data=pcadata))) 
+  print(summary(aov(PC3 ~ treatment, data=pcadata))) 
+  print(summary(aov(PC4 ~ treatment, data=pcadata))) 
+
+}
+```
+
+## heamap with minimum pvalue
+
+```{r pheatmap, eval = T}
+
+for (eachdds in mydds){
+  
+  dds <- eachdds
+  
+  vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
+
+  # make dataframe counts
+  DEGs <- assay(vsd)
+  DEGs <- as.data.frame(DEGs)
+  
+  a <- levels(m.colData$treatment)
+  b <- a
+
+  for (i in a){
+    for (j in b){
+      if (i != j) {
+        print(i)
+        results <- returnpadj(i,j)
+        DEGs <- cbind(DEGs,results)
+      }
+    }
+     b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
+  }
+
+  DEGsmatrix <- DEGs
+  DEGsmatrix <- as.matrix(DEGs)
+  padjmin <- rowMins(DEGsmatrix, na.rm = T) 
+  padjmin <- as.data.frame(padjmin)
+
+  sigDEGs <- cbind(DEGs,padjmin)
+  sigDEGs <- sigDEGs %>% arrange(padjmin)
+  sigDEGs <- head(sigDEGs,500)
+  sigDEGs <- as.data.frame(sigDEGs)
+  rownames(sigDEGs) <- sigDEGs$rownames
+  drop.cols <-colnames(sigDEGs[,grep("padj|pval|pmin|rownames", colnames(sigDEGs))])
+  sigDEGs <- sigDEGs %>% dplyr::select(-one_of(drop.cols))
+  sigDEGs <- as.matrix(sigDEGs)
+  sigDEGs <- sigDEGs - rowMeans(sigDEGs)
+
+  paletteLength <- 30
+  myBreaks <- c(seq(min(sigDEGs), 0, length.out=ceiling(paletteLength/2) + 1), 
+                seq(max(sigDEGs)/paletteLength, max(sigDEGs), length.out=floor(paletteLength/2)))
+
+  anndf <- m.colData %>% dplyr::select(treatment)
+  rownames(anndf) <- m.colData$V1
+
+  sigDEGs <- as.matrix(sigDEGs) 
+  pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
+         color = viridis(30),
+         breaks=myBreaks,
+         annotation_col=anndf,
+         main = "eachgroup")
+
+  pheatmap(sigDEGs, kmeans_k = 5,
+         show_rownames = F, show_colnames = F,
+         color = viridis(30),
+         breaks=myBreaks,
+         annotation_col=anndf,
+         main = "eachgroup")
+}
+
+```
+
+
+```{r candidates}
+for (eachdds in mydds){
+  
+  vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
+
+  # make dataframe counts
+  DEGs <- assay(vsd)
+  DEGs <- as.data.frame(DEGs)
+
+names(geneinfo)
+names(geneinfo)[4] <- "rownames"
+DEGs$rownames <- row.names(DEGs)
+
+# make dataframe with geneids and names and counts
+# how to gather: https://tidyr.tidyverse.org/reference/gather.html
+
+candidates <- full_join(geneinfo, DEGs)
+drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
+candidates <- candidates %>% dplyr::select(-one_of(drop.cols))
+candidates <- candidates %>%
+  filter(Name %in% c( #"JUN", "JUND", "EGR",  "AVP", "AVPR1A", "AVPR1B", "AVPR2", "OXT",  
+                     "AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
+                     "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
+                     "PGR", "PRL", "PRLR", "VIP", "VIPR1")) 
+row.names(candidates) <- candidates$Name
+candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
+candidates <- candidates %>% drop_na()
+candidates <- as.data.frame(t(candidates))
+candidates$RNAseqID <- rownames(candidates)
+candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% 
+  filter(RNAseqID != "gene")
+candidates$value <- as.numeric(candidates$value)
+candidates$V1  <- candidates$RNAseqID
+
+candidatecounts <- left_join(candidates, m.colData)
+candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
+candidatecounts$gene <- as.factor(candidatecounts$gene)
+
+
+p1 <- candidatecounts %>%
+  filter(gene %in% c( "AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
+                      "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
+                      "PGR", "PRL", "PRLR", "VIP", "VIPR1")) %>%
+  ggplot(aes(x = treatment, y = value, fill = treatment)) +
+  geom_boxplot() +
+  facet_wrap(~gene, scales = "free") +
+  theme_bw(base_size = 8) +
+  theme(axis.text.x = element_blank(),
+        legend.position = "bottom") +
+  labs(x = NULL) +
+  guides(fill= guide_legend(nrow=1))
+
+plot(p1)
+}
+```
+

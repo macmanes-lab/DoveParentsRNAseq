@@ -89,6 +89,44 @@ plottotalDEGs <- function(dds, mysubtitle){
   return(allcontrasts)
 }
 
+plottotalDEGschar <- function(dds, mysubtitle){
+  
+  a <- group1
+  b <- group2
+  
+  # comapre all contrasts, save to datafrmes
+  totalDEGS=data.frame()
+  for (i in a){
+    for (j in b){
+      if (i != j) {
+        k <- paste(i,j, sep = ".") #assigns usique rownames
+        #print(k)
+        totalDEGS[k,1]<-i               
+        totalDEGS[k,2]<-j
+        totalDEGS[k,3]<- numDEGs(dds, i,j) #caluculates number of DEGs
+      }
+    }
+    b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
+  }
+  
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
+                           c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+  totalDEGS$V2 <- factor(totalDEGS$V2, levels = 
+                           c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+  
+  allcontrasts <- totalDEGS %>%
+    ggplot( aes(V1, V2)) +
+    geom_tile(aes(fill = V3)) +
+    scale_fill_viridis(na.value="#440154", 
+                       limits = c(0, 3000),
+                       breaks = c(0, 1000, 2000, 3000)) + 
+    xlab(" ") + ylab("Timepoint") +
+    labs(fill = "# of DEGs",
+         subtitle = mysubtitle)
+  
+  return(allcontrasts)
+}
+
 
 # resturn pvalues for all genes
 returnpadj <- function(group1, group2){
