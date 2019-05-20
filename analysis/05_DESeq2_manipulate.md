@@ -649,16 +649,16 @@ heamap with minimum pvalue
 
     for (eachdds in mydds){
       
+      dds <- eachdds
+      
       vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
 
       # make dataframe counts
       DEGs <- assay(vsd)
       DEGs <- as.data.frame(DEGs)
-
       
       a <- levels(m.colData$treatment)
       b <- a
-
 
       for (i in a){
         for (j in b){
@@ -671,14 +671,12 @@ heamap with minimum pvalue
          b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
       }
 
-      
       DEGsmatrix <- DEGs
       DEGsmatrix <- as.matrix(DEGs)
       padjmin <- rowMins(DEGsmatrix, na.rm = T) 
       padjmin <- as.data.frame(padjmin)
 
       sigDEGs <- cbind(DEGs,padjmin)
-
       sigDEGs <- sigDEGs %>% arrange(padjmin)
       sigDEGs <- head(sigDEGs,500)
       sigDEGs <- as.data.frame(sigDEGs)
@@ -709,6 +707,150 @@ heamap with minimum pvalue
              annotation_col=anndf,
              main = "eachgroup")
     }
+
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "prolong"
+    ## [1] "prolong"
+    ## [1] "extend"
+
+![](../figures/manipulation/pheatmap-1.png)![](../figures/manipulation/pheatmap-2.png)
+
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "prolong"
+    ## [1] "prolong"
+    ## [1] "extend"
+
+![](../figures/manipulation/pheatmap-3.png)![](../figures/manipulation/pheatmap-4.png)
+
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "prolong"
+    ## [1] "prolong"
+    ## [1] "extend"
+
+![](../figures/manipulation/pheatmap-5.png)![](../figures/manipulation/pheatmap-6.png)
+
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "prolong"
+    ## [1] "prolong"
+    ## [1] "extend"
+
+![](../figures/manipulation/pheatmap-7.png)![](../figures/manipulation/pheatmap-8.png)
+
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "prolong"
+    ## [1] "prolong"
+    ## [1] "extend"
+
+![](../figures/manipulation/pheatmap-9.png)![](../figures/manipulation/pheatmap-10.png)
+
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d3"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d8"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d9"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "m.inc.d17"
+    ## [1] "prolong"
+    ## [1] "prolong"
+    ## [1] "extend"
+
+![](../figures/manipulation/pheatmap-11.png)![](../figures/manipulation/pheatmap-12.png)
 
     for (eachdds in mydds){
       

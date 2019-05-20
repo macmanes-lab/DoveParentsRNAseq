@@ -136,20 +136,20 @@ for (eachdds in mydds){
 
 ## heamap with minimum pvalue
 
-```{r pheatmap, eval = F}
+```{r pheatmap, eval = T}
 
 for (eachdds in mydds){
+  
+  dds <- eachdds
   
   vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
 
   # make dataframe counts
   DEGs <- assay(vsd)
   DEGs <- as.data.frame(DEGs)
-
   
   a <- levels(m.colData$treatment)
   b <- a
-
 
   for (i in a){
     for (j in b){
@@ -162,14 +162,12 @@ for (eachdds in mydds){
      b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
   }
 
-  
   DEGsmatrix <- DEGs
   DEGsmatrix <- as.matrix(DEGs)
   padjmin <- rowMins(DEGsmatrix, na.rm = T) 
   padjmin <- as.data.frame(padjmin)
 
   sigDEGs <- cbind(DEGs,padjmin)
-
   sigDEGs <- sigDEGs %>% arrange(padjmin)
   sigDEGs <- head(sigDEGs,500)
   sigDEGs <- as.data.frame(sigDEGs)
