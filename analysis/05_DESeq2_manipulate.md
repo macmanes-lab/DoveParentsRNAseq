@@ -614,7 +614,7 @@ heamap with minimum pvalue
     makepheatmap(dds.female_gonad, "female gonad")
     makepheatmap(dds.male_hypothalamus, "male hypothalamus")
     makepheatmap(dds.male_pituitary, "male pituitary")
-    makepheatmap(dds.male_gondad, "male gonad")
+    makepheatmap(dds.male_gondad, "male gonad")        
 
 candidate genes
 ---------------

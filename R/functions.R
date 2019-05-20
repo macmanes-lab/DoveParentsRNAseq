@@ -274,8 +274,9 @@ plotcandidates <- function(mydds, mysubtitle){
 # e.g. makepheatmap(dds.female_hypothalamus, "female hypothalamus")
 
 makepheatmap <- function(mydds, mysubtitle){
+  dds <- mydds
   
-  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+  vsd <- vst(dds, blind=FALSE) # variance stabilized 
   
   # make dataframe counts
   DEGs <- assay(vsd)

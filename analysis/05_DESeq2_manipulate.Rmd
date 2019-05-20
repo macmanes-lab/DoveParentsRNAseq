@@ -98,7 +98,7 @@ makepheatmap(dds.female_pituitary, "female pituitary")
 makepheatmap(dds.female_gonad, "female gonad")
 makepheatmap(dds.male_hypothalamus, "male hypothalamus")
 makepheatmap(dds.male_pituitary, "male pituitary")
-makepheatmap(dds.male_gondad, "male gonad")
+makepheatmap(dds.male_gondad, "male gonad")        
 ```
 
 ## candidate genes
