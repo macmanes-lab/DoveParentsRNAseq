@@ -82,12 +82,12 @@ plot_grid(a + theme(legend.position = "none"),
 
 
 ```{r pca}
-plotPCAs(dds.female_hypothalamus, "female hypothalamus")
+plotPCAs(dds.female_hypothalamus, "female hypothalamus") 
 plotPCAs(dds.female_pituitary, "female pituitary")
-plotPCAs(dds.female_gonad, "female gonad")
+plotPCAs(dds.female_gonad, "female gonad")     
 plotPCAs(dds.male_hypothalamus, "male hypothalamus")
 plotPCAs(dds.male_pituitary, "male pituitary")
-plotPCAs(dds.male_gondad, "male gonad")
+plotPCAs(dds.male_gondad, "male gonad")  
 ```
 
 ## heamap with minimum pvalue

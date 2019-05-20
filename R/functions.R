@@ -123,7 +123,9 @@ plottotalDEGschar <- function(dds, mysubtitle){
                        breaks = c(0, 1000, 2000, 3000)) + 
     xlab(" ") + ylab("Timepoint") +
     labs(fill = "# of DEGs",
-         subtitle = mysubtitle)
+         subtitle = mysubtitle) +
+    theme_minimal(base_size = 8) + 
+    theme(axis.text.x = element_text(angle = 90))
   
   return(allcontrasts)
 }
@@ -200,7 +202,16 @@ plotPCAs <- function(mydds, mysubtitle){
     labs(subtitle = " ") +
     theme(legend.position = "none")
   
-  mypca <- plot_grid(pca1, pca2)
+  pca12 <- ggplot(pcadata, aes(PC1, PC2,color = treatment)) + 
+    geom_point() +
+    stat_ellipse() +
+    ylab(paste0("PC2: ", percentVar[2],"% variance")) +
+    xlab(paste0("PC1: ", percentVar[1],"% variance")) +
+    theme_cowplot(font_size = 8, line_size = 0.25) +
+    labs(subtitle = mysubtitle) +
+    theme(legend.position = "none")
+  
+  mypca <- plot_grid(pca12, pca1, pca2)
   return(mypca)
 }
 

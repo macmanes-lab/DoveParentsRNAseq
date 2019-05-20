@@ -300,7 +300,7 @@ Calculate and plot total DEGs
 Calculate and plot principal components
 ---------------------------------------
 
-    plotPCAs(dds.female_hypothalamus, "female hypothalamus")
+    plotPCAs(dds.female_hypothalamus, "female hypothalamus") 
 
     ## [1] 16 13  6  4  3  3
     ##             Df Sum Sq Mean Sq F value  Pr(>F)   
@@ -404,7 +404,7 @@ Calculate and plot principal components
 
 ![](../figures/manipulation/pca-2.png)
 
-    plotPCAs(dds.female_gonad, "female gonad")
+    plotPCAs(dds.female_gonad, "female gonad")     
 
     ## [1] 32 13  9  7  4  4
     ##             Df Sum Sq Mean Sq F value Pr(>F)
@@ -555,7 +555,7 @@ Calculate and plot principal components
 
 ![](../figures/manipulation/pca-5.png)
 
-    plotPCAs(dds.male_gondad, "male gonad")
+    plotPCAs(dds.male_gondad, "male gonad")  
 
     ## [1] 29 11  3  3  3  3
     ##             Df Sum Sq Mean Sq F value Pr(>F)
@@ -601,6 +601,8 @@ Calculate and plot principal components
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    6   46.6   7.769   0.806  0.569
     ## Residuals   60  578.5   9.642
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
 ![](../figures/manipulation/pca-6.png)
 
