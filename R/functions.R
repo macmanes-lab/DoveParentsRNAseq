@@ -82,11 +82,14 @@ plottotalDEGs <- function(dds, mysubtitle){
                        breaks = c(0, 1000, 2000, 3000)) + 
     xlab(" ") + ylab("Timepoint") +
     labs(fill = "# of DEGs",
-         subtitle = mysubtitle)
+         subtitle = mysubtitle) +
+    theme_minimal(base_size = 8) + 
+    theme(axis.text.x = element_text(angle = 90))
   
   return(allcontrasts)
 }
 
+# plot DEGs just for characterization study
 plottotalDEGschar <- function(dds, mysubtitle){
   
   a <- group1
@@ -269,7 +272,6 @@ makepheatmap <- function(mydds, mysubtitle){
   for (i in a){
     for (j in b){
       if (i != j) {
-        print(i)
         results <- returnpadj(i,j)
         DEGs <- cbind(DEGs,results)
       }
