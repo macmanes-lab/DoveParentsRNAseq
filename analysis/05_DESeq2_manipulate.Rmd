@@ -47,69 +47,29 @@ summary(m.colData[c(7,3,4,5,8,9)])
 
 ## Run DESeq on all subsets of the data
 
-```{r dds}
-## subset for test 
-#m.colData <- m.colData %>%
-#  filter(sextissue == "male_hypothalamus") %>%
-# droplevels()
-
-levels(m.colData$sextissue)
-
-for (eachgroup in levels(m.colData$sextissue)){
-  
-  print(eachgroup)
-  dds <- subsetDESeq(eachgroup)
-  
-  dfname <- paste("dds", eachgroup, sep = "")
-  assign(paste("dds", eachgroup, sep = ""), dds)
-
-  return(dfname)
-}   
-
+```{r dds, cache = T}
+dds.female_hypothalamus <- subsetDESeq("female_hypothalamus")
+dds.female_pituitary <- subsetDESeq("female_pituitary" )
+dds.female_gonad <- subsetDESeq("female_gonad" )
+dds.male_hypothalamus <- subsetDESeq("male_hypothalamus" )
+dds.male_pituitary <- subsetDESeq("male_pituitary"  )
+dds.male_gondad <- subsetDESeq("male_gonad")
 ```
 
 
 ## Calculate and plot total DEGs
 
-```{r totalDEGs}
-#mydds <- list(ddsmale_hypothalamus) # for testing only
-mydds <- list(ddsfemale_hypothalamus, ddsfemale_pituitary, ddsfemale_gondad,
-              ddsmale_hypothalamus, ddsmale_pituitary, ddsmale_gondad)
+```{r totalDEGs, eval = F}
+#create list of groups for deseq contrasts
+group1 <- c("m.inc.d3","m.inc.d8", "m.inc.d9", "m.inc.d17", "prolong","extend", "m.n2" ) 
+group2 <- group1
 
-
-
-#create list of groups
-a <- levels(colData$treatment)
-b <- levels(colData$treatment)
-
-for (eachdds in mydds){
-
-  # comapre all contrasts, save to datafrmes
-  totalDEGS=data.frame()
-  for (i in a){
-    for (j in b){
-      if (i != j) {
-        k <- paste(i,j, sep = ".") #assigns usique rownames
-        print(k)
-        totalDEGS[k,1]<-i               
-        totalDEGS[k,2]<-j
-        totalDEGS[k,3]<- numDEGs(i,j) #caluculates number of DEGs
-      }
-    }
-        b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
-  }
-  
-  totalDEGSname <- paste("totalDEGS", eachgroup, sep = "")
-  assign(paste("totalDEGS", eachgroup, sep = ""), totalDEGS)
-  return(totalDEGSname)
-}
-
-a <- plottotalDEGs(totalDEGSfemale_hypothalamus, "female hypothalamus")
-b <- plottotalDEGs(totalDEGSfefemale_pituitary, "female pituitary")
-c <- plottotalDEGs(totalDEGSmale_gonad, "female gonad")
-d <- plottotalDEGs(totalDEGSmale_hypothalamus, "male hypothalamus")
-e <- plottotalDEGs(totalDEGSmale_pituitary, "male pituitary")
-f <- plottotalDEGs(totalDEGSmale_gonad, "male gonad")
+a <- plottotalDEGs(dds.female_hypothalamus, "female hypothalamus")
+b <- plottotalDEGs(dds.female_pituitary, "female pituitary")
+c <- plottotalDEGs(dds.female_gonad, "female gonad")
+d <- plottotalDEGs(dds.male_hypothalamus, "male hypothalamus")
+e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
+f <- plottotalDEGs(dds.male_gondad, "male gonad")
 
 plot_grid(a,b,c,d,e,f, nrow = 2)
 ```
@@ -118,6 +78,11 @@ plot_grid(a,b,c,d,e,f, nrow = 2)
 
 
 ```{r pca}
+
+#mydds <- list(ddsmale_hypothalamus) # for testing only
+mydds <- list(dds.female_hypothalamus, dds.female_pituitary, dds.female_gonad,
+             dds.male_hypothalamus, dds.male_pituitary, dds.male_gondad)
+
 
 for (eachdds in mydds){
   
@@ -134,7 +99,7 @@ for (eachdds in mydds){
     ylab(paste0("PC1: ", percentVar[1],"% variance")) +
     xlab(NULL) +
     theme_cowplot(font_size = 8, line_size = 0.25) +
-    labs(subtitle = eachgroup) +
+    labs(subtitle = "eachgroup") +
     theme(legend.position = "none")
 
 
@@ -143,7 +108,7 @@ for (eachdds in mydds){
     ylab(paste0("PC2: ", percentVar[2],"% variance")) +
     xlab(NULL) +
     theme_cowplot(font_size = 8, line_size = 0.25) +
-    labs(subtitle = eachgroup) +
+    labs(subtitle = "eachgroup") +
     theme(legend.position = "none")
 
   mypca <- plot_grid(pca1, pca2)
@@ -161,7 +126,7 @@ for (eachdds in mydds){
 
 ## heamap with minimum pvalue
 
-```{r pheatmap}
+```{r pheatmap, eval = F}
 
 for (eachdds in mydds){
   
@@ -172,8 +137,8 @@ for (eachdds in mydds){
   DEGs <- as.data.frame(DEGs)
 
   
-  a <- levels(colData$treatment)
-  b <- levels(colData$treatment)
+  a <- levels(m.colData$treatment)
+  b <- a
 
 
   for (i in a){
@@ -216,14 +181,14 @@ for (eachdds in mydds){
          color = viridis(30),
          breaks=myBreaks,
          annotation_col=anndf,
-         main = eachgroup)
+         main = "eachgroup")
 
   pheatmap(sigDEGs, kmeans_k = 5,
          show_rownames = F, show_colnames = F,
          color = viridis(30),
          breaks=myBreaks,
          annotation_col=anndf,
-         main = eachgroup)
+         main = "eachgroup")
 }
 
 ```
@@ -262,7 +227,8 @@ candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>%
   filter(RNAseqID != "gene")
 candidates$value <- as.numeric(candidates$value)
 candidates$V1  <- candidates$RNAseqID
-candidatecounts <- left_join(candidates, colData)
+
+candidatecounts <- left_join(candidates, m.colData)
 candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
 candidatecounts$gene <- as.factor(candidatecounts$gene)
 
@@ -277,11 +243,10 @@ p1 <- candidatecounts %>%
   theme_bw(base_size = 8) +
   theme(axis.text.x = element_blank(),
         legend.position = "bottom") +
-  labs(subtitle = eachgroup, x = NULL) +
+  labs(x = NULL) +
   guides(fill= guide_legend(nrow=1))
-p1
 
-
+plot(p1)
 }
 ```
 

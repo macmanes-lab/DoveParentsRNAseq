@@ -24,7 +24,7 @@ subsetDESeq <- function(eachgroup){
   
   print(dds)
   dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
-  print(dds)
+  print(dim(dds))
   
   dds <- DESeq(dds) # Differential expression analysis
   return(dds)
@@ -33,6 +33,10 @@ subsetDESeq <- function(eachgroup){
 
 # print total number of differntially expressed genes
 # numDEGs('m.inc.d3', 'm.inc.d9')
+
+
+
+
 numDEGs <- function(group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
   sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
@@ -42,7 +46,26 @@ numDEGs <- function(group1, group2){
 
 ## plot DEGs 
 
-plottotalDEGs <- function(totalDEGS, mysubtitle){
+plottotalDEGs <- function(dds, mysubtitle){
+  
+  a <- group1
+  b <- group2
+    
+    # comapre all contrasts, save to datafrmes
+    totalDEGS=data.frame()
+    for (i in a){
+      for (j in b){
+        if (i != j) {
+          k <- paste(i,j, sep = ".") #assigns usique rownames
+          #print(k)
+          totalDEGS[k,1]<-i               
+          totalDEGS[k,2]<-j
+          totalDEGS[k,3]<- numDEGs(i,j) #caluculates number of DEGs
+        }
+      }
+      b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
+    }
+    
   
   totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
                            c("m.inc.d3",  "m.inc.d8",
@@ -70,12 +93,10 @@ plottotalDEGs <- function(totalDEGS, mysubtitle){
 # resturn pvalues for all genes
 returnpadj <- function(group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
-  sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
-  print(sumpadj)
-  vals <- as.data.frame(res$padj)
+  pvals <- as.data.frame(res$padj)
   padjcolname <- as.character(paste("padj", group1, group2, sep=""))
-  colnames(vals) <- c(padjcolname)
-  return(vals)
+  colnames(pvals) <- c(padjcolname)
+  return(pvals)
 }
 
 ## calculate principal components
