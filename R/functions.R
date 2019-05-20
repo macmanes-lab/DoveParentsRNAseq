@@ -169,9 +169,9 @@ pcadataframe <- function (object, intgroup = "condition", ntop = 500, returnData
 
 # plot pcs 
 # eg. plotPCAs(dds.female_hypothalamus, "female hypothalamus")
-plotPCAs <- function(mydds, mysubtitle){
+plotPCAs <- function(dds, mysubtitle){
   
-  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+  vsd <- vst(dds, blind=FALSE) # variance stabilized 
   
   # create the dataframe using my function pcadataframe
   pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
@@ -187,20 +187,24 @@ plotPCAs <- function(mydds, mysubtitle){
   
   pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) + 
     geom_boxplot() +
+    geom_point() +
     ylab(paste0("PC1: ", percentVar[1],"% variance")) +
     xlab(NULL) +
     theme_cowplot(font_size = 8, line_size = 0.25) +
-    labs(subtitle = mysubtitle) +
-    theme(legend.position = "none")
+    labs(subtitle = " ") +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 90))
   
   
   pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) + 
     geom_boxplot() +
+    geom_point() +
     ylab(paste0("PC2: ", percentVar[2],"% variance")) +
     xlab(NULL) +
     theme_cowplot(font_size = 8, line_size = 0.25) +
     labs(subtitle = " ") +
-    theme(legend.position = "none")
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 90))
   
   pca12 <- ggplot(pcadata, aes(PC1, PC2,color = treatment)) + 
     geom_point() +
@@ -211,7 +215,7 @@ plotPCAs <- function(mydds, mysubtitle){
     labs(subtitle = mysubtitle) +
     theme(legend.position = "none")
   
-  mypca <- plot_grid(pca12, pca1, pca2)
+  mypca <- plot_grid(pca12, pca1, pca2, nrow = 1)
   return(mypca)
 }
 

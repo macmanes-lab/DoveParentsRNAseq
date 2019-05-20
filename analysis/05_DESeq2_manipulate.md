@@ -300,7 +300,7 @@ Calculate and plot total DEGs
 Calculate and plot principal components
 ---------------------------------------
 
-    plotPCAs(dds.female_hypothalamus, "female hypothalamus") 
+    plotPCAs(dds.female_hypothalamus, "female hypothalamus")
 
     ## [1] 16 13  6  4  3  3
     ##             Df Sum Sq Mean Sq F value  Pr(>F)   
@@ -351,7 +351,7 @@ Calculate and plot principal components
 
 ![](../figures/manipulation/pca-1.png)
 
-    plotPCAs(dds.female_pituitary, "female pituitary")
+    plotPCAs(dds.female_pituitary, "female pituitary")      
 
     ## [1] 15 11  6  4  3  3
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
@@ -404,7 +404,7 @@ Calculate and plot principal components
 
 ![](../figures/manipulation/pca-2.png)
 
-    plotPCAs(dds.female_gonad, "female gonad")     
+    plotPCAs(dds.female_gonad, "female gonad")
 
     ## [1] 32 13  9  7  4  4
     ##             Df Sum Sq Mean Sq F value Pr(>F)
@@ -555,7 +555,7 @@ Calculate and plot principal components
 
 ![](../figures/manipulation/pca-5.png)
 
-    plotPCAs(dds.male_gondad, "male gonad")  
+    plotPCAs(dds.male_gondad, "male gonad")
 
     ## [1] 29 11  3  3  3  3
     ##             Df Sum Sq Mean Sq F value Pr(>F)
@@ -615,6 +615,9 @@ heamap with minimum pvalue
     makepheatmap(dds.male_hypothalamus, "male hypothalamus")
     makepheatmap(dds.male_pituitary, "male pituitary")
     makepheatmap(dds.male_gondad, "male gonad")
+
+candidate genes
+---------------
 
     plotcandidates(dds.female_hypothalamus, "female hypothalamus")
 
