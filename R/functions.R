@@ -175,18 +175,17 @@ plotPCAs <- function(dds, mysubtitle){
   
   
   pca1 <- ggplot(pcadata, aes(treatment, PC1, color = penultimate ,fill = lastday )) + 
-    geom_boxplot(lwd=1.1) +
+    geom_boxplot() +
     #geom_point() +
     ylab(paste0("PC1: ", percentVar[1],"% variance")) +
     xlab(NULL) +
     theme_cowplot(font_size = 8, line_size = 0.25) +
     labs(subtitle = mysubtitle) +
-    theme(legend.position = "bottom",
-          axis.text.x = element_text(angle = 90)) +
+    theme(axis.text.x = element_text(angle = 90)) +
     scale_color_manual(values = colorpenultimatebad) +
     scale_fill_manual(values = colorlastdaybad) +
-    guides(color = guide_legend(ncol = 3, order = 1), 
-           fill = guide_legend(ncol = 2, order = 1)) + 
+    guides(color = guide_legend(order = 1), 
+           fill = guide_legend(order = 2)) + 
       facet_wrap(~study, scales = "free_x")
   
 
