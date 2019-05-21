@@ -1,0 +1,205 @@
+---
+title: "04_DESeq_sexes"
+output: md_document
+---
+
+```{r setup, message=F, comment=FALSE, warning=FALSE, results='hide'}
+
+library(tidyverse)
+library(DESeq2)
+library(cowplot)
+library(RColorBrewer)
+library(pheatmap)
+library(kableExtra)
+library(viridis)
+
+
+# load custom functions  
+source("../R/functions.R")   
+
+knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE)
+```
+
+## Starting with all the data
+
+```{r readfiles}
+# import "colData" which contains sample information and "countData" which contains read counts
+a.colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+a.countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+
+# set levels
+levels(a.colData$treatment)
+
+a.colData$treatment <- factor(a.colData$treatment, levels = 
+                             c("control", "bldg", "lay",
+                               "inc.d3", "m.inc.d3", 
+                               "inc.d9", "m.inc.d8", "m.inc.d9",
+                               "inc.d17", "m.inc.d17",
+                               "hatch",  "m.n2"  ,
+                               "n5", "prolong", "extend", "n9" ))
+                               
+                               
+a.colData$sextissue <- as.factor(paste(a.colData$sex, a.colData$tissue, sep = "_"))
+
+a.colData$lastday <- ifelse(grepl("m.inc.d3|m.inc.d9|m.inc.d17|m.n2", a.colData$treatment), "empty nest", 
+                    ifelse(grepl("m.inc.d8|hatch|extend", a.colData$treatment),"nestlings hatch",      
+                     ifelse(grepl("n5", a.colData$treatment),"nestlings early",
+                     ifelse(grepl("n9", a.colData$treatment),"nestlings later",
+                     ifelse(grepl("control", a.colData$treatment),"control",
+                     ifelse(grepl("bldg", a.colData$treatment),"nest building",
+                     ifelse(grepl("prolong", a.colData$treatment),"incubation delay",
+                      ifelse(grepl("lay", a.colData$treatment),"incubation lay",
+                      ifelse(grepl("inc.d3", a.colData$treatment),"incubation early",
+                     ifelse(grepl("inc.d9", a.colData$treatment),"incubation middle",
+                    ifelse(grepl("inc.d17", a.colData$treatment),"incubation later", NA)))))))))))
+
+a.colData$penultimate <-  ifelse(grepl("extend", a.colData$treatment),"incubation delay",  
+                          ifelse(grepl("m.n2", a.colData$treatment),"nestlings hatch",
+                     ifelse(grepl("n5", a.colData$treatment),"nestlings early",
+                     ifelse(grepl("n9", a.colData$treatment),"nestlings later",
+                     ifelse(grepl("control", a.colData$treatment),"control",
+                     ifelse(grepl("bldg|lay", a.colData$treatment),"nest building",
+                     ifelse(grepl("prolong", a.colData$treatment),"incubation delay",
+                      ifelse(grepl("inc.d3|m.inc.d3", a.colData$treatment),"incubation early",
+                     ifelse(grepl("inc.d9|m.inc.d9|m.inc.d8", a.colData$treatment),"incubation middle",
+                    ifelse(grepl("inc.d17|hatch", a.colData$treatment),"incubation later", NA))))))))))
+
+
+a.colData$lastday <- factor(a.colData$lastday, levels =  c("control", "nest building", "incubation lay",
+                               "incubation early",  
+                               "incubation middle", 
+                               "incubation later", 
+                               "incubation delay",
+                               "nestlings hatch",
+                               "nestlings early", 
+                               "nestlings later", 
+                               "empty nest"))
+
+a.colData$penultimate <- factor(a.colData$penultimate, levels =  c("control", "nest building",
+                               "incubation early",  
+                               "incubation middle", 
+                               "incubation later", 
+                               "incubation delay",
+                               "nestlings hatch",
+                               "nestlings early", 
+                               "nestlings later"))
+
+colorlastday <-  c("control" = "#636363", 
+                   "nest building" = "#fb6a4a", 
+                   "incubation lay" = "#c7e9c0",
+                   "incubation early" = "#a1d99b",
+                   "incubation middle" = "#74c476", 
+                   "incubation later" = "#31a354",  
+                   "incubation delay" = "#006d2c",
+                   "nestlings hatch" = "#cbc9e2",   
+                   "nestlings early" = "#9e9ac8", 
+                   "nestlings later" = "#6a51a3",
+                   "empty nest" = "#a50f15")
+
+colorpenultimate <- c("control" = "#636363", 
+                      "nest building" = "#fb6a4a", 
+                      "incubation early" = "#a1d99b",
+                   "incubation middle" = "#74c476", 
+                   "incubation later" = "#31a354",  
+                   "incubation delay" = "#006d2c",
+                   "nestlings hatch" = "#cbc9e2",   
+                   "nestlings early" = "#9e9ac8", 
+                   "nestlings later" = "#6a51a3")
+
+colorlastdaybad <-  c("control" = "#636363", 
+                   "nest bldg" = "#fb6a4a", 
+                   "lay" = "#c7e9c0",
+                   "incubate begin" = "#a1d99b",
+                   "incubate middle" = "#74c476", 
+                   "incubate end" = "#31a354",  
+                   "incubation late" = "#006d2c",
+                   "nestling being" = "#cbc9e2",  
+                   "nestling begin" = "#cbc9e2",   
+                   "nestling middle" = "#9e9ac8", 
+                   "nestling end" = "#6a51a3",
+                   "empty nest" = "#a50f15")
+
+colorpenultimatebad <- c("control" = "#636363", 
+                      "nestbldg" = "#fb6a4a", 
+                      "incubate begin" = "#a1d99b",
+                   "incubate middle" = "#74c476", 
+                   "incubate end" = "#31a354",  
+                   "incubation late" = "#006d2c",
+                   "nestling begin" = "#cbc9e2",   
+                   "nestling middle" = "#9e9ac8", 
+                   "nestling end" = "#6a51a3")
+
+summary(a.colData[c(7,3,4,5,8,9, 10)])
+```
+
+## Run DESeq on all subsets of the data
+
+
+```{r dds, cache = T}
+dds.female_hypothalamus <- subsetDESeq(a.colData, a.countData, "female_hypothalamus")
+dds.female_pituitary <- subsetDESeq(a.colData, a.countData, "female_pituitary" )
+dds.female_gonad <- subsetDESeq(a.colData, a.countData, "female_gonad" )
+dds.male_hypothalamus <- subsetDESeq(a.colData, a.countData, "male_hypothalamus" )
+dds.male_pituitary <- subsetDESeq(a.colData, a.countData, "male_pituitary"  )
+dds.male_gondad <- subsetDESeq(a.colData, a.countData, "male_gonad")
+```
+
+
+## Calculate and plot total DEGs
+
+```{r totalDEGs, eval = F}
+
+#create list of groups for deseq contrasts
+group1 <- levels(a.colData$treatment)
+group2 <- group1
+
+a <- plottotalDEGs(dds.female_hypothalamus, "female hypothalamus")
+b <- plottotalDEGs(dds.female_pituitary, "female pituitary")
+c <- plottotalDEGs(dds.female_gonad, "female gonad")
+d <- plottotalDEGs(dds.male_hypothalamus, "male hypothalamus")
+e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
+f <- plottotalDEGs(dds.male_gondad, "male gonad")
+
+plot_grid(a + theme(legend.position = "none"),
+          b + theme(legend.position = "none"),
+          c,
+          d + theme(legend.position = "none"),
+          e + theme(legend.position = "none"),
+          f,
+          nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
+```
+
+## Calculate and plot principal components
+
+```{r pca}
+plotPCAs(dds.female_hypothalamus, "female hypothalamus")
+plotPCAs(dds.female_pituitary, "female pituitary")      
+plotPCAs(dds.female_gonad, "female gonad")
+plotPCAs(dds.male_hypothalamus, "male hypothalamus")
+plotPCAs(dds.male_pituitary, "male pituitary")
+plotPCAs(dds.male_gondad, "male gonad")
+```
+
+## heamap with minimum pvalue
+
+```{r pheatmap, eval = F}
+makepheatmap(dds.female_hypothalamus, a.colData, "female hypothalamus")
+makepheatmap(dds.female_pituitary, "female pituitary")
+makepheatmap(dds.female_gonad, "female gonad")
+makepheatmap(dds.male_hypothalamus, "male hypothalamus")
+makepheatmap(dds.male_pituitary, "male pituitary")
+makepheatmap(dds.male_gondad, "male gonad")        
+```
+
+## candidate genes
+
+```{r candidates, eval =F}
+plotcandidates(dds.female_hypothalamus, a.colData, "female hypothalamus")
+plotcandidates(dds.female_pituitary, "female pituitary")
+plotcandidates(dds.female_gonad, "female gonad")
+plotcandidates(dds.male_hypothalamus, "male hypothalamus")
+plotcandidates(dds.male_pituitary, "male pituitary")
+plotcandidates(dds.male_gondad, "male gonad")
+```
+

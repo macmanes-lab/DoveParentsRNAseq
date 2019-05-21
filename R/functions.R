@@ -1,9 +1,9 @@
 # run DESeq on subset of data
 # e.g. dds <- subsetDESeq("male_hypothalamus")
-subsetDESeq <- function(eachgroup){
+subsetDESeq <- function(colData, countData, eachgroup){
   
   # subset to look within one tissue in one sex
-  colData <- m.colData %>%
+  colData <- colData %>%
     dplyr::filter(sextissue == eachgroup) %>%
     droplevels()
   row.names(colData) <- colData$V1
@@ -13,7 +13,7 @@ subsetDESeq <- function(eachgroup){
   savecols <- as.vector(savecols) 
   
   # save counts that match colData
-  countData <- m.countData %>% dplyr::select(one_of(savecols)) 
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
   
   # check that row and col lenghts are equal
   print(ncol(countData) == nrow(colData))
@@ -48,39 +48,31 @@ plottotalDEGs <- function(dds, mysubtitle){
   
   a <- group1
   b <- group2
-    
-    # comapre all contrasts, save to datafrmes
-    totalDEGS=data.frame()
-    for (i in a){
-      for (j in b){
-        if (i != j) {
-          k <- paste(i,j, sep = ".") #assigns usique rownames
-          #print(k)
-          totalDEGS[k,1]<-i               
-          totalDEGS[k,2]<-j
-          totalDEGS[k,3]<- numDEGs(dds, i,j) #caluculates number of DEGs
-        }
-      }
-      b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
-    }
-    
   
-  totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
-                           c("m.inc.d3",  "m.inc.d8",
-                             "m.inc.d9", "m.inc.d17",
-                             "prolong", "extend", "m.n2"))
-  totalDEGS$V2 <- factor(totalDEGS$V2, levels = 
-                           c("m.inc.d3",  "m.inc.d8",
-                             "m.inc.d9", "m.inc.d17",
-                             "prolong", "extend", "m.n2"))
+  # comapre all contrasts, save to datafrmes
+  totalDEGS=data.frame()
+  for (i in a){
+    for (j in b){
+      if (i != j) {
+        k <- paste(i,j, sep = ".") #assigns usique rownames
+        print(k)
+        totalDEGS[k,1]<-i               
+        totalDEGS[k,2]<-j
+        totalDEGS[k,3]<- numDEGs(dds, i,j) #caluculates number of DEGs
+      }
+    }
+    b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
+  }
+  
+  
+  totalDEGS$V1 <- as.factor(totalDEGS$V1)
+  totalDEGS$V2 <- as.factor(totalDEGS$V2)
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
-    scale_fill_viridis(na.value="#440154", 
-                       limits = c(0, 3000),
-                       breaks = c(0, 1000, 2000, 3000)) + 
-    xlab(" ") + ylab("Timepoint") +
+    scale_fill_viridis(na.value="#440154") + 
+    xlab(" ") + ylab("Treatment") +
     labs(fill = "# of DEGs",
          subtitle = mysubtitle) +
     theme_minimal(base_size = 8) + 
@@ -110,18 +102,14 @@ plottotalDEGschar <- function(dds, mysubtitle){
     b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
   }
   
-  totalDEGS$V1 <- factor(totalDEGS$V1, levels = 
-                           c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
-  totalDEGS$V2 <- factor(totalDEGS$V2, levels = 
-                           c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+  totalDEGS$V1 <- as.factor(totalDEGS$V1)
+  totalDEGS$V2 <- as.factor(totalDEGS$V2)
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
-    scale_fill_viridis(na.value="#440154", 
-                       limits = c(0, 3000),
-                       breaks = c(0, 1000, 2000, 3000)) + 
-    xlab(" ") + ylab("Timepoint") +
+    scale_fill_viridis(na.value="#440154") + 
+    xlab(" ") + ylab("Treatment") +
     labs(fill = "# of DEGs",
          subtitle = mysubtitle) +
     theme_minimal(base_size = 8) + 
@@ -142,7 +130,7 @@ returnpadj <- function(group1, group2){
 
 ## calculate principal components
 # I've taken the pca function from DESeq2 and elaborated it so that I could extract up to 6 PCs
-pcadataframe <- function (object, intgroup = "condition", ntop = 500, returnData = FALSE) 
+pcadataframe <- function (object, intgroup, ntop = 500, returnData = FALSE) 
 {
   rv <- rowVars(assay(object))
   select <- order(rv, decreasing = TRUE)[seq_len(min(ntop, length(rv)))]
@@ -174,55 +162,75 @@ plotPCAs <- function(dds, mysubtitle){
   vsd <- vst(dds, blind=FALSE) # variance stabilized 
   
   # create the dataframe using my function pcadataframe
-  pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
+  pcadata <- pcadataframe(vsd, intgroup=c("lastday", "penultimate", "treatment", "study"), returnData=TRUE)
   percentVar <- round(100 * attr(pcadata, "percentVar"))
   print(percentVar)
   
   print(summary(aov(PC1 ~ treatment, data=pcadata)))
-  print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
+  #print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
   
-  print(summary(aov(PC2 ~ treatment, data=pcadata))) 
-  print(summary(aov(PC3 ~ treatment, data=pcadata))) 
-  print(summary(aov(PC4 ~ treatment, data=pcadata))) 
+  print(summary(aov(PC2 ~ lastday, data=pcadata))) 
+  print(summary(aov(PC3 ~ lastday, data=pcadata))) 
+  print(summary(aov(PC4 ~ lastday, data=pcadata))) 
   
-  pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) + 
-    geom_boxplot() +
-    geom_point() +
+  
+  pca1 <- ggplot(pcadata, aes(treatment, PC1, color = penultimate ,fill = lastday )) + 
+    geom_boxplot(lwd=1.1) +
+    #geom_point() +
     ylab(paste0("PC1: ", percentVar[1],"% variance")) +
     xlab(NULL) +
     theme_cowplot(font_size = 8, line_size = 0.25) +
-    labs(subtitle = " ") +
-    theme(legend.position = "none",
-          axis.text.x = element_text(angle = 90))
+    labs(subtitle = mysubtitle) +
+    theme(legend.position = "bottom",
+          axis.text.x = element_text(angle = 90)) +
+    scale_color_manual(values = colorpenultimatebad) +
+    scale_fill_manual(values = colorlastdaybad) +
+    guides(color = guide_legend(ncol = 3, order = 1), 
+           fill = guide_legend(ncol = 2, order = 1)) + 
+      facet_wrap(~study, scales = "free_x")
   
-  
-  pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) + 
+
+  pca2 <- ggplot(pcadata, aes(treatment, PC2, color = penultimate ,fill = lastday)) + 
     geom_boxplot() +
-    geom_point() +
+    #geom_point() +
     ylab(paste0("PC2: ", percentVar[2],"% variance")) +
     xlab(NULL) +
     theme_cowplot(font_size = 8, line_size = 0.25) +
-    labs(subtitle = " ") +
-    theme(legend.position = "none",
-          axis.text.x = element_text(angle = 90))
+    labs(subtitle = mysubtitle) +
+    theme(axis.text.x = element_text(angle = 90))  +
+    scale_color_manual(values = colorpenultimatebad) +
+    guides(color = guide_legend(order = 1), 
+           fill = guide_legend(order = 2)) + 
+    scale_fill_manual(values = colorlastdaybad) + 
+    facet_wrap(~study, scales = "free_x")
   
-  pca12 <- ggplot(pcadata, aes(PC1, PC2,color = treatment)) + 
-    geom_point() +
-    stat_ellipse() +
+  
+  pca12 <- ggplot(pcadata, aes(PC1, PC2, color = penultimate ,fill = lastday)) + 
+    geom_point(pch=21, size = 2) +
+    #stat_ellipse() +
     ylab(paste0("PC2: ", percentVar[2],"% variance")) +
     xlab(paste0("PC1: ", percentVar[1],"% variance")) +
     theme_cowplot(font_size = 8, line_size = 0.25) +
     labs(subtitle = mysubtitle) +
-    theme(legend.position = "none")
+    #theme(legend.position = "bottom") +
+    scale_color_manual(values = colorpenultimatebad) +
+    scale_fill_manual(values = colorlastdaybad)  +
+    guides(color = guide_legend(order = 1), 
+           fill = guide_legend(order = 2)) 
   
-  mypca <- plot_grid(pca12, pca1, pca2, nrow = 1)
-  return(mypca)
+  #legend <- get_legend(pca1)
+  #mypcatop <- plot_grid(pca1 + theme(legend.position = "none"), pca2, nrow = 1)  
+  #mypca <- plot_grid(mypcatop, legend, ncol = 1, rel_heights = c(1,0.2))
+  
+  plot(pca1)
+  plot(pca2)
+  plot(pca12)
 }
 
 ## plot candidate genes 
 # e.g. plotcandidates(dds.female_hypothalamus, "female hypothalamus")
 
-plotcandidates <- function(mydds, mysubtitle){
+plotcandidates <- function(mydds, colData, mysubtitle){
   
   vsd <- vst(mydds, blind=FALSE) # variance stabilized 
   
@@ -254,7 +262,7 @@ plotcandidates <- function(mydds, mysubtitle){
   candidates$value <- as.numeric(candidates$value)
   candidates$V1  <- candidates$RNAseqID
   
-  candidatecounts <- left_join(candidates, m.colData)
+  candidatecounts <- left_join(candidates, colData)
   candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
   candidatecounts$gene <- as.factor(candidatecounts$gene)
   
@@ -265,7 +273,7 @@ plotcandidates <- function(mydds, mysubtitle){
     theme(axis.text.x = element_blank(),
           legend.position = "bottom") +
     labs(x = NULL, subtitle = mysubtitle) +
-    guides(fill= guide_legend(nrow=1)) 
+    guides(fill= guide_legend(nrow=2)) 
   return(p1)
 }
 
@@ -273,7 +281,7 @@ plotcandidates <- function(mydds, mysubtitle){
 ## make pheatmaps 
 # e.g. makepheatmap(dds.female_hypothalamus, "female hypothalamus")
 
-makepheatmap <- function(mydds, mysubtitle){
+makepheatmap <- function(mydds, colData, mysubtitle){
   dds <- mydds
   
   vsd <- vst(dds, blind=FALSE) # variance stabilized 
@@ -282,7 +290,7 @@ makepheatmap <- function(mydds, mysubtitle){
   DEGs <- assay(vsd)
   DEGs <- as.data.frame(DEGs)
   
-  a <- levels(m.colData$treatment)
+  a <- levels(colData$treatment)
   b <- a
   
   for (i in a){
@@ -314,8 +322,8 @@ makepheatmap <- function(mydds, mysubtitle){
   myBreaks <- c(seq(min(sigDEGs), 0, length.out=ceiling(paletteLength/2) + 1), 
                 seq(max(sigDEGs)/paletteLength, max(sigDEGs), length.out=floor(paletteLength/2)))
   
-  anndf <- m.colData %>% dplyr::select(treatment)
-  rownames(anndf) <- m.colData$V1
+  anndf <- colData %>% dplyr::select(treatment)
+  rownames(anndf) <- colData$V1
   
   sigDEGs <- as.matrix(sigDEGs) 
   p1 <- pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
