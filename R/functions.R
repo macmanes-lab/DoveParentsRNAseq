@@ -245,12 +245,19 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   # how to gather: https://tidyr.tidyverse.org/reference/gather.html
   
   candidates <- full_join(geneinfo, DEGs)
+  candidates <- candidates %>%
+    filter(pmin < 0.01) 
   drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
   candidates <- candidates %>% dplyr::select(-one_of(drop.cols))
   candidates <- candidates %>%
-    filter(Name %in% c("AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
-                       "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
-                       "PGR", "PRL", "PRLR", "VIP", "VIPR1")) 
+    filter(Name %in% c("AVP", "AVPR1A", "AVPR1B", "AVPR2",
+                      "SERPINA4", "CRH", "CRHR1", "DRD1", "DRD2",
+                      "DRD3",  "DRD4",  "DRD5",  "GABRQ",  "NR3C1",  "HSD11B1a", 
+                      "HSD11B1b", "HSD11B2L",  "HSD11B1L",  "MC2R", "NR3C2",
+                      "OXTR", "POMC",  "AR", "CYP19A1", "ESR1",  "ESR2", "FSHR", 
+                      "FSHB", "GHRL", "GAL", "NPVF",  "NPFFR1", "GNRH1",  "GNRHR", 
+                      "LEPR",  "LHCGR", "PGR", "PRL", "PRLR", "VIP", "VIPR1"))
+  
   row.names(candidates) <- candidates$Name
   candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
   candidates <- candidates %>% drop_na()
