@@ -40,69 +40,80 @@ Starting with all the data
     a.colData$sextissue <- as.factor(paste(a.colData$sex, a.colData$tissue, sep = "_"))
 
     a.colData$lastday <- ifelse(grepl("m.inc.d3|m.inc.d9|m.inc.d17|m.n2", a.colData$treatment), "empty nest", 
-                        ifelse(grepl("m.inc.d8|hatch|extend", a.colData$treatment),"nestlings hatch",      
-                         ifelse(grepl("n5", a.colData$treatment),"nestlings early",
-                         ifelse(grepl("n9", a.colData$treatment),"nestlings later",
+                        ifelse(grepl("m.inc.d8|hatch|extend", a.colData$treatment),"chicks hatch",      
+                         ifelse(grepl("n5", a.colData$treatment),"chicks early",
+                         ifelse(grepl("n9", a.colData$treatment),"chicks later",
                          ifelse(grepl("control", a.colData$treatment),"control",
                          ifelse(grepl("bldg", a.colData$treatment),"nest building",
-                         ifelse(grepl("prolong", a.colData$treatment),"incubation delay",
-                          ifelse(grepl("lay", a.colData$treatment),"incubation lay",
-                          ifelse(grepl("inc.d3", a.colData$treatment),"incubation early",
-                         ifelse(grepl("inc.d9", a.colData$treatment),"incubation middle",
-                        ifelse(grepl("inc.d17", a.colData$treatment),"incubation later", NA)))))))))))
+                         ifelse(grepl("prolong", a.colData$treatment),"eggs delay",
+                          ifelse(grepl("lay", a.colData$treatment),"eggs lay",
+                          ifelse(grepl("inc.d3", a.colData$treatment),"eggs early",
+                         ifelse(grepl("inc.d9", a.colData$treatment),"eggs middle",
+                        ifelse(grepl("inc.d17", a.colData$treatment),"eggs later", NA)))))))))))
 
-    a.colData$penultimate <-  ifelse(grepl("extend", a.colData$treatment),"incubation delay",  
-                              ifelse(grepl("m.n2", a.colData$treatment),"nestlings hatch",
-                         ifelse(grepl("n5", a.colData$treatment),"nestlings early",
-                         ifelse(grepl("n9", a.colData$treatment),"nestlings later",
+    a.colData$penultimate <-  ifelse(grepl("extend", a.colData$treatment),"eggs delay",  
+                              ifelse(grepl("m.n2", a.colData$treatment),"chicks hatch",
+                         ifelse(grepl("n5", a.colData$treatment),"chicks early",
+                         ifelse(grepl("n9", a.colData$treatment),"chicks later",
                          ifelse(grepl("control", a.colData$treatment),"control",
                          ifelse(grepl("bldg|lay", a.colData$treatment),"nest building",
-                         ifelse(grepl("prolong", a.colData$treatment),"incubation delay",
-                          ifelse(grepl("inc.d3|m.inc.d3", a.colData$treatment),"incubation early",
-                         ifelse(grepl("inc.d9|m.inc.d9|m.inc.d8", a.colData$treatment),"incubation middle",
-                        ifelse(grepl("inc.d17|hatch", a.colData$treatment),"incubation later", NA))))))))))
+                         ifelse(grepl("prolong", a.colData$treatment),"eggs delay",
+                          ifelse(grepl("inc.d3|m.inc.d3", a.colData$treatment),"eggs early",
+                         ifelse(grepl("inc.d9|m.inc.d9|m.inc.d8", a.colData$treatment),"eggs middle",
+                        ifelse(grepl("inc.d17|hatch", a.colData$treatment),"eggs later", NA))))))))))
 
 
-    a.colData$lastday <- factor(a.colData$lastday, levels =  c("control", "nest building", "incubation lay",
-                                   "incubation early",  
-                                   "incubation middle", 
-                                   "incubation later", 
-                                   "incubation delay",
-                                   "nestlings hatch",
-                                   "nestlings early", 
-                                   "nestlings later", 
+
+    a.colData$xlabel <- a.colData$treatment
+    levels(a.colData$xlabel) <-  c("control", "nest building", "egg lay",
+                                   "eggs early", "eggs early remove", 
+                                   "eggs mid", "eggs mid hatch", "eggs mid remove",
+                                   "eggs end", "eggs end remove",
+                                   "chicks hatch",  "chicks hatch remove"  ,
+                                   "chicks mid", "eggs delay", "eggs delay hatch", "chicks end")
+
+
+
+    a.colData$lastday <- factor(a.colData$lastday, levels =  c("control", "nest building", "eggs lay",
+                                   "eggs early",  
+                                   "eggs middle", 
+                                   "eggs later", 
+                                   "eggs delay",
+                                   "chicks hatch",
+                                   "chicks early", 
+                                   "chicks later", 
                                    "empty nest"))
 
     a.colData$penultimate <- factor(a.colData$penultimate, levels =  c("control", "nest building",
-                                   "incubation early",  
-                                   "incubation middle", 
-                                   "incubation later", 
-                                   "incubation delay",
-                                   "nestlings hatch",
-                                   "nestlings early", 
-                                   "nestlings later"))
+                                   "eggs early",  
+                                   "eggs middle", 
+                                   "eggs later", 
+                                   "eggs delay",
+                                   "chicks hatch",
+                                   "chicks early", 
+                                   "chicks later"))
 
     colorlastday <-  c("control" = "#636363", 
                        "nest building" = "#fb6a4a", 
-                       "incubation lay" = "#c7e9c0",
-                       "incubation early" = "#a1d99b",
-                       "incubation middle" = "#74c476", 
-                       "incubation later" = "#31a354",  
-                       "incubation delay" = "#006d2c",
-                       "nestlings hatch" = "#cbc9e2",   
-                       "nestlings early" = "#9e9ac8", 
-                       "nestlings later" = "#6a51a3",
+                       "eggs lay" = "#c7e9c0",
+                       "eggs early" = "#a1d99b",
+                       "eggs middle" = "#74c476", 
+                       "eggs later" = "#31a354",  
+                       "eggs delay" = "#006d2c",
+                       "chicks hatch" = "#cbc9e2",   
+                       "chicks early" = "#9e9ac8", 
+                       "chicks later" = "#6a51a3",
                        "empty nest" = "#a50f15")
 
     colorpenultimate <- c("control" = "#636363", 
                           "nest building" = "#fb6a4a", 
-                          "incubation early" = "#a1d99b",
-                       "incubation middle" = "#74c476", 
-                       "incubation later" = "#31a354",  
-                       "incubation delay" = "#006d2c",
-                       "nestlings hatch" = "#cbc9e2",   
-                       "nestlings early" = "#9e9ac8", 
-                       "nestlings later" = "#6a51a3")
+                          "eggs early" = "#a1d99b",
+                       "eggs middle" = "#74c476", 
+                       "eggs later" = "#31a354",  
+                       "eggs delay" = "#006d2c",
+                       "chicks hatch" = "#cbc9e2",   
+                       "chicks early" = "#9e9ac8", 
+                       "chicks later" = "#6a51a3")
 
     colorlastdaybad <-  c("control" = "#636363", 
                        "nest bldg" = "#fb6a4a", 
@@ -110,7 +121,7 @@ Starting with all the data
                        "incubate begin" = "#a1d99b",
                        "incubate middle" = "#74c476", 
                        "incubate end" = "#31a354",  
-                       "incubation late" = "#006d2c",
+                       "eggs late" = "#006d2c",
                        "nestling being" = "#cbc9e2",  
                        "nestling begin" = "#cbc9e2",   
                        "nestling middle" = "#9e9ac8", 
@@ -122,12 +133,12 @@ Starting with all the data
                           "incubate begin" = "#a1d99b",
                        "incubate middle" = "#74c476", 
                        "incubate end" = "#31a354",  
-                       "incubation late" = "#006d2c",
+                       "eggs late" = "#006d2c",
                        "nestling begin" = "#cbc9e2",   
                        "nestling middle" = "#9e9ac8", 
                        "nestling end" = "#6a51a3")
 
-    summary(a.colData[c(7,3,4,5,8,9, 10)])
+    summary(a.colData[c(7,3,4,5,8,9, 10,11)])
 
     ##              study         sex               tissue        treatment  
     ##  charcterization:576   female:497   gonad       :330   control  : 73  
@@ -137,14 +148,22 @@ Starting with all the data
     ##                                                        m.inc.d17: 63  
     ##                                                        bldg     : 60  
     ##                                                        (Other)  :588  
-    ##                sextissue                lastday               penultimate 
-    ##  female_gonad       :167   empty nest       :231   incubation later :189  
-    ##  female_hypothalamus:165   nestlings hatch  :180   incubation middle:180  
-    ##  female_pituitary   :165   control          : 73   nest building    :120  
-    ##  male_gonad         :163   incubation middle: 71   incubation early :120  
-    ##  male_hypothalamus  :162   incubation later : 66   incubation delay :120  
-    ##  male_pituitary     :165   nestlings later  : 66   control          : 73  
-    ##                            (Other)          :300   (Other)          :185
+    ##                sextissue           lastday           penultimate 
+    ##  female_gonad       :167   empty nest  :231   eggs later   :189  
+    ##  female_hypothalamus:165   chicks hatch:180   eggs middle  :180  
+    ##  female_pituitary   :165   control     : 73   nest building:120  
+    ##  male_gonad         :163   eggs middle : 71   eggs early   :120  
+    ##  male_hypothalamus  :162   eggs later  : 66   eggs delay   :120  
+    ##  male_pituitary     :165   chicks later: 66   control      : 73  
+    ##                            (Other)     :300   (Other)      :185  
+    ##              xlabel   
+    ##  control        : 73  
+    ##  eggs mid       : 71  
+    ##  eggs end       : 66  
+    ##  chicks end     : 66  
+    ##  eggs end remove: 63  
+    ##  nest building  : 60  
+    ##  (Other)        :588
 
 Run DESeq on all subsets of the data
 ------------------------------------
@@ -162,7 +181,7 @@ Run DESeq on all subsets of the data
     ## colnames(165): L.G118_female_hypothalamus_control.NYNO
     ##   R.G106_female_hypothalamus_control ...
     ##   y97.x_female_hypothalamus_n9 y98.g54_female_hypothalamus_m.hatch
-    ## colData names(11): V1 bird ... lastday penultimate
+    ## colData names(11): V1 bird ... penultimate xlabel
     ## [1] 14576   165
 
     ## estimating size factors
@@ -198,7 +217,7 @@ Run DESeq on all subsets of the data
     ## colnames(165): L.G118_female_pituitary_control.NYNO
     ##   R.G106_female_pituitary_control ... y97.x_female_pituitary_n9
     ##   y98.g54_female_pituitary_m.hatch
-    ## colData names(11): V1 bird ... lastday penultimate
+    ## colData names(11): V1 bird ... penultimate xlabel
     ## [1] 14496   165
 
     ## estimating size factors
@@ -234,7 +253,7 @@ Run DESeq on all subsets of the data
     ## colnames(167): L.G118_female_gonad_control
     ##   R.G106_female_gonad_control ... y97.x_female_gonad_n9
     ##   y98.g54_female_gonad_m.hatch
-    ## colData names(11): V1 bird ... lastday penultimate
+    ## colData names(11): V1 bird ... penultimate xlabel
     ## [1] 14746   167
 
     ## estimating size factors
@@ -271,7 +290,7 @@ Run DESeq on all subsets of the data
     ##   L.G107_male_hypothalamus_control ...
     ##   y95.g131.x_male_hypothalamus_inc.d9
     ##   y98.o50.x_male_hypothalamus_inc.d3
-    ## colData names(11): V1 bird ... lastday penultimate
+    ## colData names(11): V1 bird ... penultimate xlabel
     ## [1] 14536   162
 
     ## estimating size factors
@@ -307,7 +326,7 @@ Run DESeq on all subsets of the data
     ## colnames(165): L.Blu13_male_pituitary_control.NYNO
     ##   L.G107_male_pituitary_control ...
     ##   y95.g131.x_male_pituitary_inc.d9 y98.o50.x_male_pituitary_inc.d3
-    ## colData names(11): V1 bird ... lastday penultimate
+    ## colData names(11): V1 bird ... penultimate xlabel
     ## [1] 14480   165
 
     ## estimating size factors
@@ -343,7 +362,7 @@ Run DESeq on all subsets of the data
     ## colnames(163): L.Blu13_male_gonad_control.NYNO
     ##   L.G107_male_gonad_control ... y95.g131.x_male_gonad_inc.d9
     ##   y98.o50.x_male_gonad_inc.d3
-    ## colData names(11): V1 bird ... lastday penultimate
+    ## colData names(11): V1 bird ... penultimate xlabel
     ## [1] 14765   163
 
     ## estimating size factors
@@ -391,157 +410,208 @@ Calculate and plot total DEGs
 Calculate and plot principal components
 ---------------------------------------
 
-    plotPCAs(dds.female_hypothalamus, "female hypothalamus")
+    p1 <- plotPCAs(dds.female_hypothalamus, "female hypothalamus")
 
     ## [1] 26  9  8  4  3  3
     ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## treatment    15   6078   405.2   18.67 <2e-16 ***
+    ## xlabel       15   6078   405.2   18.67 <2e-16 ***
     ## Residuals   149   3235    21.7                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value Pr(>F)  
-    ## lastday      11  438.5   39.86   2.071 0.0256 *
-    ## Residuals   153 2944.9   19.25                 
+    ## xlabel       15  490.5   32.70   1.684 0.0596 .
+    ## Residuals   149 2892.8   19.41                 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11    657   59.73   4.447 8.36e-06 ***
-    ## Residuals   153   2055   13.43                     
+    ## xlabel       15  749.2   49.95   3.791 1.12e-05 ***
+    ## Residuals   149 1963.1   13.18                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11  246.4  22.401   3.361 0.000353 ***
-    ## Residuals   153 1019.7   6.665                     
+    ## xlabel       15  294.6   19.64   3.012 0.000306 ***
+    ## Residuals   149  971.5    6.52                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pca-1.png)![](../figures/sexes/pca-2.png)![](../figures/sexes/pca-3.png)
+![](../figures/sexes/pcadf-1.png)![](../figures/sexes/pcadf-2.png)![](../figures/sexes/pcadf-3.png)
 
-    plotPCAs(dds.female_pituitary, "female pituitary")      
+    p2 <- plotPCAs(dds.female_pituitary, "female pituitary")      
 
     ## [1] 11  8  7  6  4  3
     ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## treatment    15   2480  165.31   13.99 <2e-16 ***
+    ## xlabel       15   2480  165.31   13.99 <2e-16 ***
     ## Residuals   149   1761   11.82                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11  893.5   81.23   5.673 1.27e-07 ***
-    ## Residuals   153 2190.9   14.32                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11   1166  106.01      11 8.09e-15 ***
-    ## Residuals   153   1475    9.64                     
+    ## xlabel       15   1076   71.70   5.318 1.83e-08 ***
+    ## Residuals   149   2009   13.48                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## lastday      11   1157  105.15   15.65 <2e-16 ***
-    ## Residuals   153   1028    6.72                   
+    ## xlabel       15   1342   89.46   10.26 <2e-16 ***
+    ## Residuals   149   1300    8.72                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value Pr(>F)    
+    ## xlabel       15 1195.8   79.72   12.02 <2e-16 ***
+    ## Residuals   149  988.5    6.63                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pca-4.png)![](../figures/sexes/pca-5.png)![](../figures/sexes/pca-6.png)
+![](../figures/sexes/pcadf-4.png)![](../figures/sexes/pcadf-5.png)![](../figures/sexes/pcadf-6.png)
 
-    plotPCAs(dds.female_gonad, "female gonad")
+    p3 <- plotPCAs(dds.female_gonad, "female gonad")
 
     ## [1] 37 12  7  4  4  3
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## treatment    15  11694   779.6   3.644 2.04e-05 ***
+    ## xlabel       15  11694   779.6   3.644 2.04e-05 ***
     ## Residuals   151  32303   213.9                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11   2621   238.3   3.173 0.000665 ***
-    ## Residuals   155  11641    75.1                     
+    ## xlabel       15   3103  206.83   2.799 0.000738 ***
+    ## Residuals   151  11160   73.91                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value Pr(>F)
-    ## lastday      11    686   62.34   1.304  0.227
-    ## Residuals   155   7412   47.82               
+    ## xlabel       15    803   53.56   1.109  0.353
+    ## Residuals   151   7294   48.31               
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11   1189  108.13   4.293 1.39e-05 ***
-    ## Residuals   155   3905   25.19                     
+    ## xlabel       15   1487   99.11   4.148 2.37e-06 ***
+    ## Residuals   151   3607   23.89                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pca-7.png)![](../figures/sexes/pca-8.png)![](../figures/sexes/pca-9.png)
+![](../figures/sexes/pcadf-7.png)![](../figures/sexes/pcadf-8.png)![](../figures/sexes/pcadf-9.png)
 
-    plotPCAs(dds.male_hypothalamus, "male hypothalamus")
+    p4 <- plotPCAs(dds.male_hypothalamus, "male hypothalamus")
 
     ## [1] 28  9  6  4  3  3
     ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## treatment    15   5836   389.1   10.54 <2e-16 ***
+    ## xlabel       15   5836   389.1   10.54 <2e-16 ***
     ## Residuals   146   5388    36.9                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11   1095   99.55   5.768 9.78e-08 ***
-    ## Residuals   150   2589   17.26                     
+    ## xlabel       15   1230   82.00   4.879 1.21e-07 ***
+    ## Residuals   146   2454   16.81                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value Pr(>F)
-    ## lastday      11  161.3   14.66    0.95  0.495
-    ## Residuals   150 2314.6   15.43               
+    ## xlabel       15  222.1   14.81   0.959  0.501
+    ## Residuals   146 2253.7   15.44               
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11  410.8   37.35   4.407 9.91e-06 ***
-    ## Residuals   150 1271.2    8.47                     
+    ## xlabel       15  419.1  27.938    3.23 0.000125 ***
+    ## Residuals   146 1263.0   8.651                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pca-10.png)![](../figures/sexes/pca-11.png)![](../figures/sexes/pca-12.png)
+![](../figures/sexes/pcadf-10.png)![](../figures/sexes/pcadf-11.png)![](../figures/sexes/pcadf-12.png)
 
-    plotPCAs(dds.male_pituitary, "male pituitary")
+    p5 <- plotPCAs(dds.male_pituitary, "male pituitary")
 
     ## [1] 11  9  7  5  4  3
     ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## treatment    15 2676.7  178.44   30.47 <2e-16 ***
+    ## xlabel       15 2676.7  178.44   30.47 <2e-16 ***
     ## Residuals   149  872.6    5.86                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11   1181  107.35   9.555 5.42e-13 ***
-    ## Residuals   153   1719   11.23                     
+    ##              Df Sum Sq Mean Sq F value  Pr(>F)    
+    ## xlabel       15   1412   94.15   9.431 2.8e-15 ***
+    ## Residuals   149   1488    9.98                    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11  661.2   60.11   5.665 1.31e-07 ***
-    ## Residuals   153 1623.4   10.61                     
+    ## xlabel       15  762.4   50.82   4.975 7.58e-08 ***
+    ## Residuals   149 1522.3   10.22                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11  401.2   36.47   4.315 1.31e-05 ***
-    ## Residuals   153 1293.2    8.45                     
+    ## xlabel       15  549.6   36.64   4.769 1.79e-07 ***
+    ## Residuals   149 1144.8    7.68                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pca-13.png)![](../figures/sexes/pca-14.png)![](../figures/sexes/pca-15.png)
+![](../figures/sexes/pcadf-13.png)![](../figures/sexes/pcadf-14.png)![](../figures/sexes/pcadf-15.png)
 
-    plotPCAs(dds.male_gondad, "male gonad")
+    p6 <- plotPCAs(dds.male_gondad, "male gonad")
 
     ## [1] 14 10  5  3  3  2
     ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## treatment    15   1476   98.37   3.674 1.89e-05 ***
+    ## xlabel       15   1476   98.37   3.674 1.89e-05 ***
     ## Residuals   147   3936   26.77                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11  715.7   65.06   3.116 0.000826 ***
-    ## Residuals   151 3153.4   20.88                     
+    ##              Df Sum Sq Mean Sq F value  Pr(>F)   
+    ## xlabel       15  830.7   55.38   2.679 0.00124 **
+    ## Residuals   147 3038.4   20.67                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## lastday      11 1452.8  132.08   31.19 <2e-16 ***
-    ## Residuals   151  639.5    4.23                   
+    ## xlabel       15 1459.0   97.27   22.58 <2e-16 ***
+    ## Residuals   147  633.3    4.31                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## lastday      11  215.7  19.613   3.126 0.000796 ***
-    ## Residuals   151  947.3   6.273                     
+    ##              Df Sum Sq Mean Sq F value  Pr(>F)   
+    ## xlabel       15  235.5   15.70   2.488 0.00273 **
+    ## Residuals   147  927.6    6.31                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pca-16.png)![](../figures/sexes/pca-17.png)![](../figures/sexes/pca-18.png)
+![](../figures/sexes/pcadf-16.png)![](../figures/sexes/pcadf-17.png)![](../figures/sexes/pcadf-18.png)
+
+    p1
+
+![](../figures/sexes/pcadf-19.png)
+
+    p2
+
+![](../figures/sexes/pcadf-20.png)
+
+    p3
+
+![](../figures/sexes/pcadf-21.png)
+
+    p4
+
+![](../figures/sexes/pcadf-22.png)
+
+    p5
+
+![](../figures/sexes/pcadf-23.png)
+
+    p6
+
+![](../figures/sexes/pcadf-24.png)
+
+    mylegend <- get_legend(p1)
+
+
+    allPC1s <- plot_grid(p1 +  theme(legend.position = "none",
+                   axis.title.x=element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank()), 
+        p4 + theme(legend.position = "none",
+                   axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()), 
+        p2 + theme(legend.position = "none",
+                   axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()),
+        p5 + theme(legend.position = "none",
+                   axis.title.x=element_blank(), axis.text.x=element_blank(),axis.ticks.x=element_blank()),
+        p3 + theme(legend.position = "none", axis.ticks.x=element_blank()),
+        p6 + theme(legend.position = "none", axis.ticks.x=element_blank()),
+        nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
+
+    pc1grid <- plot_grid(allPC1s, mylegend, ncol = 2, rel_widths = c(1.0, 0.15))
+    pc1grid
+
+![](../figures/sexes/pca-1.png)
+
+    pdf("../figures/sexes/pc1grid.pdf", width = 12, height = 10)
+    plot(pc1grid)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
 
 heamap with minimum pvalue
 --------------------------

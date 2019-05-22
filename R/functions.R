@@ -162,60 +162,79 @@ plotPCAs <- function(dds, mysubtitle){
   vsd <- vst(dds, blind=FALSE) # variance stabilized 
   
   # create the dataframe using my function pcadataframe
-  pcadata <- pcadataframe(vsd, intgroup=c("lastday", "penultimate", "treatment", "study"), returnData=TRUE)
+  pcadata <- pcadataframe(vsd, intgroup=c("lastday", "penultimate", "xlabel", "study"), returnData=TRUE)
   percentVar <- round(100 * attr(pcadata, "percentVar"))
   print(percentVar)
   
-  print(summary(aov(PC1 ~ treatment, data=pcadata)))
-  #print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
+  print(summary(aov(PC1 ~ xlabel, data=pcadata)))
+  #print(TukeyHSD(aov(PC1 ~ xlabel, data=pcadata), which = "xlabel"))
   
-  print(summary(aov(PC2 ~ lastday, data=pcadata))) 
-  print(summary(aov(PC3 ~ lastday, data=pcadata))) 
-  print(summary(aov(PC4 ~ lastday, data=pcadata))) 
+  print(summary(aov(PC2 ~ xlabel, data=pcadata))) 
+  print(summary(aov(PC3 ~ xlabel, data=pcadata))) 
+  print(summary(aov(PC4 ~ xlabel, data=pcadata))) 
   
   
-  pca1 <- ggplot(pcadata, aes(treatment, PC1, color = penultimate ,fill = lastday )) + 
+  pca1 <- ggplot(pcadata, aes(xlabel, PC1, color = penultimate ,fill = lastday )) + 
     geom_boxplot() +
     #geom_point() +
     ylab(paste0("PC1: ", percentVar[1],"% variance")) +
     xlab(NULL) +
-    theme_cowplot(font_size = 8, line_size = 0.25) +
+    theme_bw(base_size = 12) +
     labs(subtitle = mysubtitle) +
-    theme(axis.text.x = element_text(angle = 90)) +
-    scale_color_manual(values = colorpenultimatebad) +
-    scale_fill_manual(values = colorlastdaybad) +
+    theme(axis.text.x = element_text(angle = 90),
+          legend.text = element_text(size=10)) +
+    scale_color_manual(values = colorpenultimate) +
+    scale_fill_manual(values = colorlastday) +
     guides(color = guide_legend(order = 1), 
            fill = guide_legend(order = 2)) + 
       facet_wrap(~study, scales = "free_x")
+
   
 
-  pca2 <- ggplot(pcadata, aes(treatment, PC2, color = penultimate ,fill = lastday)) + 
+  pca2 <- ggplot(pcadata, aes(xlabel, PC2, color = penultimate ,fill = lastday)) + 
     geom_boxplot() +
     #geom_point() +
+    theme_bw(base_size = 12) +
     ylab(paste0("PC2: ", percentVar[2],"% variance")) +
     xlab(NULL) +
-    theme_cowplot(font_size = 8, line_size = 0.25) +
     labs(subtitle = mysubtitle) +
-    theme(axis.text.x = element_text(angle = 90))  +
-    scale_color_manual(values = colorpenultimatebad) +
+    theme(axis.text.x = element_text(angle = 90),
+          legend.text = element_text(size=10))  +
+    scale_color_manual(values = colorpenultimate) +
     guides(color = guide_legend(order = 1), 
            fill = guide_legend(order = 2)) + 
-    scale_fill_manual(values = colorlastdaybad) + 
+    scale_fill_manual(values = colorlastday) + 
     facet_wrap(~study, scales = "free_x")
   
   
   pca12 <- ggplot(pcadata, aes(PC1, PC2, color = penultimate ,fill = lastday)) + 
-    geom_point(pch=21, size = 2) +
+    geom_point(pch=21, size = 3) +
     #stat_ellipse() +
+    theme_bw(base_size = 12) +
     ylab(paste0("PC2: ", percentVar[2],"% variance")) +
     xlab(paste0("PC1: ", percentVar[1],"% variance")) +
-    theme_cowplot(font_size = 8, line_size = 0.25) +
     labs(subtitle = mysubtitle) +
     #theme(legend.position = "bottom") +
-    scale_color_manual(values = colorpenultimatebad) +
-    scale_fill_manual(values = colorlastdaybad)  +
-    guides(color = guide_legend(order = 1), 
-           fill = guide_legend(order = 2)) 
+    scale_color_manual(values = colorpenultimate) +
+    scale_fill_manual(values = colorlastday)  +
+    guides(color = guide_legend(order = 1, ncol=2), 
+           fill = guide_legend(order = 2, ncol=2)) +
+    theme(legend.text = element_text(size=10)) 
+  
+  pca1b <- ggplot(pcadata, aes(xlabel, PC1, fill = penultimate)) + 
+    geom_boxplot() +
+    theme_bw(base_size = 12) +
+    geom_point(aes(color = lastday)) +
+    ylab(paste0("PC1: ", percentVar[1],"% variance")) +
+    xlab("Parental stage with increasing time ->") +
+    labs(subtitle = mysubtitle) +
+    theme(axis.text.x = element_text(angle = 90),
+          legend.text = element_text(size=10)) +
+    scale_fill_manual(values = colorpenultimate) +
+    scale_color_manual(values = colorlastday) +
+    guides(color = guide_legend(order = 2), 
+           fill = guide_legend(order = 1)) + 
+    facet_wrap(~study, scales = "free_x")
   
   #legend <- get_legend(pca1)
   #mypcatop <- plot_grid(pca1 + theme(legend.position = "none"), pca2, nrow = 1)  
@@ -224,6 +243,7 @@ plotPCAs <- function(dds, mysubtitle){
   plot(pca1)
   plot(pca2)
   plot(pca12)
+  return(pca1b)
 }
 
 ## plot candidate genes 
@@ -240,7 +260,8 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   names(geneinfo)
   names(geneinfo)[4] <- "rownames"
   DEGs$rownames <- row.names(DEGs)
-  
+  print(head(DEGS))
+
   # make dataframe with geneids and names and counts
   # how to gather: https://tidyr.tidyverse.org/reference/gather.html
   
@@ -257,7 +278,6 @@ plotcandidates <- function(mydds, colData, mysubtitle){
                       "OXTR", "POMC",  "AR", "CYP19A1", "ESR1",  "ESR2", "FSHR", 
                       "FSHB", "GHRL", "GAL", "NPVF",  "NPFFR1", "GNRH1",  "GNRHR", 
                       "LEPR",  "LHCGR", "PGR", "PRL", "PRLR", "VIP", "VIPR1"))
-  
   row.names(candidates) <- candidates$Name
   candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
   candidates <- candidates %>% drop_na()
@@ -282,7 +302,6 @@ plotcandidates <- function(mydds, colData, mysubtitle){
     guides(fill= guide_legend(nrow=2)) 
   return(p1)
 }
-
 
 ## make pheatmaps 
 # e.g. makepheatmap(dds.female_hypothalamus, "female hypothalamus")
