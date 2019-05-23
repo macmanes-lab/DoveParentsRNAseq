@@ -137,9 +137,9 @@ colorpenultimatebad <- c("control" = "#636363",
                    "incubate middle" = "#74c476", 
                    "incubate end" = "#31a354",  
                    "eggs late" = "#006d2c",
-                   "nestling begin" = "#cbc9e2",   
-                   "nestling middle" = "#9e9ac8", 
-                   "nestling end" = "#6a51a3")
+                   "nestling begin" = "#9e9ac8",   
+                   "nestling middle" = "#6a51a3", 
+                   "nestling end" = "#3f007d")
 
 summary(a.colData[c(7,3,4,5,8,9, 10,11)])
 
@@ -197,31 +197,29 @@ p3
 p4
 p5
 p6
+
 ```
 
-```{r pca, fig.dim = c(12, 10)}
+```{r pca, fig.dim = c(12, 10), eval=T}
 mylegend <- get_legend(p1)
 
 
-allPC1s <- plot_grid(p1 +  theme(legend.position = "none",
-               axis.title.x=element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank()), 
-    p4 + theme(legend.position = "none",
-               axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()), 
-    p2 + theme(legend.position = "none",
-               axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()),
-    p5 + theme(legend.position = "none",
-               axis.title.x=element_blank(), axis.text.x=element_blank(),axis.ticks.x=element_blank()),
-    p3 + theme(legend.position = "none", axis.ticks.x=element_blank()),
-    p6 + theme(legend.position = "none", axis.ticks.x=element_blank()),
-    nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
+theme_noaxislabels <- theme(legend.position = "none", axis.title.x=element_blank(),axis.text.x=element_blank())
 
-pc1grid <- plot_grid(allPC1s, mylegend, ncol = 2, rel_widths = c(1.0, 0.15))
-pc1grid
+allPC1s <- plot_grid(p1 + theme_noaxislabels, 
+                     p1 + theme_noaxislabels, 
+                     p1 + theme_noaxislabels,
+                     p1 + theme_noaxislabels,
+                     p1 + theme(legend.position = "none"),
+                     p1 + theme(legend.position = "none"),
+                     nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
 
-pdf("../figures/sexes/pc1grid.pdf", width = 12, height = 10)
-plot(pc1grid)
+pc1 <- plot_grid(mylegend, allPC1s, nrow = 2, rel_heights = c(0.15, 1.0))
+pc1
+
+pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
+plot(pc1)
 dev.off()
-
 ```
 
 ## heamap with minimum pvalue
