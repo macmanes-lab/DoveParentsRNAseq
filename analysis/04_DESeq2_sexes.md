@@ -134,9 +134,9 @@ Starting with all the data
                        "incubate middle" = "#74c476", 
                        "incubate end" = "#31a354",  
                        "eggs late" = "#006d2c",
-                       "nestling begin" = "#cbc9e2",   
-                       "nestling middle" = "#9e9ac8", 
-                       "nestling end" = "#6a51a3")
+                       "nestling begin" = "#9e9ac8",   
+                       "nestling middle" = "#6a51a3", 
+                       "nestling end" = "#3f007d")
 
     summary(a.colData[c(7,3,4,5,8,9, 10,11)])
 
@@ -434,7 +434,7 @@ Calculate and plot principal components
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pcadf-1.png)![](../figures/sexes/pcadf-2.png)![](../figures/sexes/pcadf-3.png)
+![](../figures/sexes/pcadf-1.png)![](../figures/sexes/pcadf-2.png)![](../figures/sexes/pcadf-3.png)![](../figures/sexes/pcadf-4.png)
 
     p2 <- plotPCAs(dds.female_pituitary, "female pituitary")      
 
@@ -460,7 +460,7 @@ Calculate and plot principal components
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pcadf-4.png)![](../figures/sexes/pcadf-5.png)![](../figures/sexes/pcadf-6.png)
+![](../figures/sexes/pcadf-5.png)![](../figures/sexes/pcadf-6.png)![](../figures/sexes/pcadf-7.png)![](../figures/sexes/pcadf-8.png)
 
     p3 <- plotPCAs(dds.female_gonad, "female gonad")
 
@@ -484,7 +484,7 @@ Calculate and plot principal components
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pcadf-7.png)![](../figures/sexes/pcadf-8.png)![](../figures/sexes/pcadf-9.png)
+![](../figures/sexes/pcadf-9.png)![](../figures/sexes/pcadf-10.png)![](../figures/sexes/pcadf-11.png)![](../figures/sexes/pcadf-12.png)
 
     p4 <- plotPCAs(dds.male_hypothalamus, "male hypothalamus")
 
@@ -508,7 +508,7 @@ Calculate and plot principal components
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pcadf-10.png)![](../figures/sexes/pcadf-11.png)![](../figures/sexes/pcadf-12.png)
+![](../figures/sexes/pcadf-13.png)![](../figures/sexes/pcadf-14.png)![](../figures/sexes/pcadf-15.png)![](../figures/sexes/pcadf-16.png)
 
     p5 <- plotPCAs(dds.male_pituitary, "male pituitary")
 
@@ -534,7 +534,7 @@ Calculate and plot principal components
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pcadf-13.png)![](../figures/sexes/pcadf-14.png)![](../figures/sexes/pcadf-15.png)
+![](../figures/sexes/pcadf-17.png)![](../figures/sexes/pcadf-18.png)![](../figures/sexes/pcadf-19.png)![](../figures/sexes/pcadf-20.png)
 
     p6 <- plotPCAs(dds.male_gondad, "male gonad")
 
@@ -560,54 +560,52 @@ Calculate and plot principal components
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-![](../figures/sexes/pcadf-16.png)![](../figures/sexes/pcadf-17.png)![](../figures/sexes/pcadf-18.png)
+![](../figures/sexes/pcadf-21.png)![](../figures/sexes/pcadf-22.png)![](../figures/sexes/pcadf-23.png)![](../figures/sexes/pcadf-24.png)
 
     p1
 
-![](../figures/sexes/pcadf-19.png)
+![](../figures/sexes/pcadf-25.png)
 
     p2
 
-![](../figures/sexes/pcadf-20.png)
+![](../figures/sexes/pcadf-26.png)
 
     p3
 
-![](../figures/sexes/pcadf-21.png)
+![](../figures/sexes/pcadf-27.png)
 
     p4
 
-![](../figures/sexes/pcadf-22.png)
+![](../figures/sexes/pcadf-28.png)
 
     p5
 
-![](../figures/sexes/pcadf-23.png)
+![](../figures/sexes/pcadf-29.png)
 
     p6
 
-![](../figures/sexes/pcadf-24.png)
+![](../figures/sexes/pcadf-30.png)
 
     mylegend <- get_legend(p1)
 
 
-    allPC1s <- plot_grid(p1 +  theme(legend.position = "none",
-                   axis.title.x=element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank()), 
-        p4 + theme(legend.position = "none",
-                   axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()), 
-        p2 + theme(legend.position = "none",
-                   axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank()),
-        p5 + theme(legend.position = "none",
-                   axis.title.x=element_blank(), axis.text.x=element_blank(),axis.ticks.x=element_blank()),
-        p3 + theme(legend.position = "none", axis.ticks.x=element_blank()),
-        p6 + theme(legend.position = "none", axis.ticks.x=element_blank()),
-        nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
+    theme_noaxislabels <- theme(legend.position = "none", axis.title.x=element_blank(),axis.text.x=element_blank())
 
-    pc1grid <- plot_grid(allPC1s, mylegend, ncol = 2, rel_widths = c(1.0, 0.15))
-    pc1grid
+    allPC1s <- plot_grid(p1 + theme_noaxislabels, 
+                         p1 + theme_noaxislabels, 
+                         p1 + theme_noaxislabels,
+                         p1 + theme_noaxislabels,
+                         p1 + theme(legend.position = "none"),
+                         p1 + theme(legend.position = "none"),
+                         nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
+
+    pc1 <- plot_grid(mylegend, allPC1s, nrow = 2, rel_heights = c(0.15, 1.0))
+    pc1
 
 ![](../figures/sexes/pca-1.png)
 
-    pdf("../figures/sexes/pc1grid.pdf", width = 12, height = 10)
-    plot(pc1grid)
+    pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
+    plot(pc1)
     dev.off()
 
     ## quartz_off_screen 
