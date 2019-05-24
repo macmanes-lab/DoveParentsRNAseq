@@ -61,15 +61,14 @@ Starting with all the data
                          ifelse(grepl("inc.d9|m.inc.d9|m.inc.d8", a.colData$treatment),"eggs middle",
                         ifelse(grepl("inc.d17|hatch", a.colData$treatment),"eggs later", NA))))))))))
 
-
-
     a.colData$xlabel <- a.colData$treatment
-    levels(a.colData$xlabel) <-  c("control", "nest building", "egg lay",
-                                   "eggs early", "eggs early remove", 
-                                   "eggs mid", "eggs mid hatch", "eggs mid remove",
-                                   "eggs end", "eggs end remove",
-                                   "chicks hatch",  "chicks hatch remove"  ,
-                                   "chicks mid", "eggs delay", "eggs delay hatch", "chicks end")
+
+    levels(a.colData$xlabel) <-  c("control", "nest.building", "egg.lay",
+                                   "eggs.early", "eggs.early.remove", 
+                                   "eggs.mid", "eggs.mid.hatch", "eggs.mid.remove",
+                                   "eggs.end", "eggs.end.remove",
+                                   "chicks.hatch",  "chicks.hatch.remove"  ,
+                                   "chicks.mid", "eggs.delay", "eggs.delay.hatch", "chicks.end")
 
 
     a.colData$lastday <- factor(a.colData$lastday, levels =  c("control", "nest building", "eggs lay",
@@ -100,37 +99,31 @@ Starting with all the data
     ##                            (Other)     :300   (Other)      :185  
     ##              xlabel   
     ##  control        : 73  
-    ##  eggs mid       : 71  
-    ##  eggs end       : 66  
-    ##  chicks end     : 66  
-    ##  eggs end remove: 63  
-    ##  nest building  : 60  
+    ##  eggs.mid       : 71  
+    ##  eggs.end       : 66  
+    ##  chicks.end     : 66  
+    ##  eggs.end.remove: 63  
+    ##  nest.building  : 60  
     ##  (Other)        :588
 
 Run DESeq on all subsets of the data
 ------------------------------------
 
-    # subset to look within one tissue in one sex
-    a.colData <- a.colData %>%
-        dplyr::filter(treatment %in% c( "control", "lay" , "inc.d17", "hatch", "m.n2")) %>%
-        droplevels()
-
     dds.female_hypothalamus <- subsetDESeq(a.colData, a.countData, "female_hypothalamus")
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 52 
+    ## dim: 14937 165 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(52): L.G118_female_hypothalamus_control.NYNO
+    ## colnames(165): L.G118_female_hypothalamus_control.NYNO
     ##   R.G106_female_hypothalamus_control ...
-    ##   y7.g58_female_hypothalamus_hatch
-    ##   y98.g54_female_hypothalamus_m.hatch
+    ##   y97.x_female_hypothalamus_n9 y98.g54_female_hypothalamus_m.hatch
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14293    52
+    ## [1] 14576   165
 
     ## estimating size factors
 
@@ -144,7 +137,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 19 genes
+    ## -- replacing outliers and refitting for 9 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -156,17 +149,17 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 52 
+    ## dim: 14937 165 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(52): L.G118_female_pituitary_control.NYNO
-    ##   R.G106_female_pituitary_control ...
-    ##   y7.g58_female_pituitary_hatch y98.g54_female_pituitary_m.hatch
+    ## colnames(165): L.G118_female_pituitary_control.NYNO
+    ##   R.G106_female_pituitary_control ... y97.x_female_pituitary_n9
+    ##   y98.g54_female_pituitary_m.hatch
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14099    52
+    ## [1] 14496   165
 
     ## estimating size factors
 
@@ -180,7 +173,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 124 genes
+    ## -- replacing outliers and refitting for 49 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -192,17 +185,17 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 54 
+    ## dim: 14937 167 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(54): L.G118_female_gonad_control
-    ##   R.G106_female_gonad_control ... y7.g58_female_gonad_hatch
+    ## colnames(167): L.G118_female_gonad_control
+    ##   R.G106_female_gonad_control ... y97.x_female_gonad_n9
     ##   y98.g54_female_gonad_m.hatch
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14482    54
+    ## [1] 14746   167
 
     ## estimating size factors
 
@@ -216,7 +209,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 57 genes
+    ## -- replacing outliers and refitting for 156 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -228,18 +221,18 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 52 
+    ## dim: 14937 162 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(52): L.Blu13_male_hypothalamus_control.NYNO
+    ## colnames(162): L.Blu13_male_hypothalamus_control.NYNO
     ##   L.G107_male_hypothalamus_control ...
-    ##   x.y132.w76_male_hypothalamus_inc.d17
-    ##   y133.w77.r58_male_hypothalamus_inc.d17
+    ##   y95.g131.x_male_hypothalamus_inc.d9
+    ##   y98.o50.x_male_hypothalamus_inc.d3
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14259    52
+    ## [1] 14536   162
 
     ## estimating size factors
 
@@ -253,7 +246,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 26 genes
+    ## -- replacing outliers and refitting for 7 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -265,18 +258,17 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 55 
+    ## dim: 14937 165 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(55): L.Blu13_male_pituitary_control.NYNO
+    ## colnames(165): L.Blu13_male_pituitary_control.NYNO
     ##   L.G107_male_pituitary_control ...
-    ##   x.y132.w76_male_pituitary_inc.d17
-    ##   y133.w77.r58_male_pituitary_inc.d17
+    ##   y95.g131.x_male_pituitary_inc.d9 y98.o50.x_male_pituitary_inc.d3
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14132    55
+    ## [1] 14480   165
 
     ## estimating size factors
 
@@ -290,7 +282,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 57 genes
+    ## -- replacing outliers and refitting for 51 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -302,17 +294,17 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 53 
+    ## dim: 14937 163 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(53): L.Blu13_male_gonad_control.NYNO
-    ##   L.G107_male_gonad_control ... x.y132.w76_male_gonad_inc.d17
-    ##   y133.w77.r58_male_gonad_inc.d17
+    ## colnames(163): L.Blu13_male_gonad_control.NYNO
+    ##   L.G107_male_gonad_control ... y95.g131.x_male_gonad_inc.d9
+    ##   y98.o50.x_male_gonad_inc.d3
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14436    53
+    ## [1] 14765   163
 
     ## estimating size factors
 
@@ -326,7 +318,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 26 genes
+    ## -- replacing outliers and refitting for 123 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -341,171 +333,271 @@ Calculate and plot total DEGs
     group1 <- levels(a.colData$treatment)
     group2 <- group1
 
-    a <- plottotalDEGs(dds.female_hypothalamus, "female hypothalamus")
+    b <- plottotalDEGs(dds.female_pituitary, "female pituitary")
 
+    ## [1] "control.bldg"
     ## [1] "control.lay"
+    ## [1] "control.inc.d3"
+    ## [1] "control.m.inc.d3"
+    ## [1] "control.inc.d9"
+    ## [1] "control.m.inc.d8"
+    ## [1] "control.m.inc.d9"
     ## [1] "control.inc.d17"
+    ## [1] "control.m.inc.d17"
     ## [1] "control.hatch"
     ## [1] "control.m.n2"
+    ## [1] "control.n5"
+    ## [1] "control.prolong"
+    ## [1] "control.extend"
+    ## [1] "control.n9"
+    ## [1] "bldg.lay"
+    ## [1] "bldg.inc.d3"
+    ## [1] "bldg.m.inc.d3"
+    ## [1] "bldg.inc.d9"
+    ## [1] "bldg.m.inc.d8"
+    ## [1] "bldg.m.inc.d9"
+    ## [1] "bldg.inc.d17"
+    ## [1] "bldg.m.inc.d17"
+    ## [1] "bldg.hatch"
+    ## [1] "bldg.m.n2"
+    ## [1] "bldg.n5"
+    ## [1] "bldg.prolong"
+    ## [1] "bldg.extend"
+    ## [1] "bldg.n9"
+    ## [1] "lay.inc.d3"
+    ## [1] "lay.m.inc.d3"
+    ## [1] "lay.inc.d9"
+    ## [1] "lay.m.inc.d8"
+    ## [1] "lay.m.inc.d9"
     ## [1] "lay.inc.d17"
+    ## [1] "lay.m.inc.d17"
     ## [1] "lay.hatch"
     ## [1] "lay.m.n2"
+    ## [1] "lay.n5"
+    ## [1] "lay.prolong"
+    ## [1] "lay.extend"
+    ## [1] "lay.n9"
+    ## [1] "inc.d3.m.inc.d3"
+    ## [1] "inc.d3.inc.d9"
+    ## [1] "inc.d3.m.inc.d8"
+    ## [1] "inc.d3.m.inc.d9"
+    ## [1] "inc.d3.inc.d17"
+    ## [1] "inc.d3.m.inc.d17"
+    ## [1] "inc.d3.hatch"
+    ## [1] "inc.d3.m.n2"
+    ## [1] "inc.d3.n5"
+    ## [1] "inc.d3.prolong"
+    ## [1] "inc.d3.extend"
+    ## [1] "inc.d3.n9"
+    ## [1] "m.inc.d3.inc.d9"
+    ## [1] "m.inc.d3.m.inc.d8"
+    ## [1] "m.inc.d3.m.inc.d9"
+    ## [1] "m.inc.d3.inc.d17"
+    ## [1] "m.inc.d3.m.inc.d17"
+    ## [1] "m.inc.d3.hatch"
+    ## [1] "m.inc.d3.m.n2"
+    ## [1] "m.inc.d3.n5"
+    ## [1] "m.inc.d3.prolong"
+    ## [1] "m.inc.d3.extend"
+    ## [1] "m.inc.d3.n9"
+    ## [1] "inc.d9.m.inc.d8"
+    ## [1] "inc.d9.m.inc.d9"
+    ## [1] "inc.d9.inc.d17"
+    ## [1] "inc.d9.m.inc.d17"
+    ## [1] "inc.d9.hatch"
+    ## [1] "inc.d9.m.n2"
+    ## [1] "inc.d9.n5"
+    ## [1] "inc.d9.prolong"
+    ## [1] "inc.d9.extend"
+    ## [1] "inc.d9.n9"
+    ## [1] "m.inc.d8.m.inc.d9"
+    ## [1] "m.inc.d8.inc.d17"
+    ## [1] "m.inc.d8.m.inc.d17"
+    ## [1] "m.inc.d8.hatch"
+    ## [1] "m.inc.d8.m.n2"
+    ## [1] "m.inc.d8.n5"
+    ## [1] "m.inc.d8.prolong"
+    ## [1] "m.inc.d8.extend"
+    ## [1] "m.inc.d8.n9"
+    ## [1] "m.inc.d9.inc.d17"
+    ## [1] "m.inc.d9.m.inc.d17"
+    ## [1] "m.inc.d9.hatch"
+    ## [1] "m.inc.d9.m.n2"
+    ## [1] "m.inc.d9.n5"
+    ## [1] "m.inc.d9.prolong"
+    ## [1] "m.inc.d9.extend"
+    ## [1] "m.inc.d9.n9"
+    ## [1] "inc.d17.m.inc.d17"
     ## [1] "inc.d17.hatch"
     ## [1] "inc.d17.m.n2"
+    ## [1] "inc.d17.n5"
+    ## [1] "inc.d17.prolong"
+    ## [1] "inc.d17.extend"
+    ## [1] "inc.d17.n9"
+    ## [1] "m.inc.d17.hatch"
+    ## [1] "m.inc.d17.m.n2"
+    ## [1] "m.inc.d17.n5"
+    ## [1] "m.inc.d17.prolong"
+    ## [1] "m.inc.d17.extend"
+    ## [1] "m.inc.d17.n9"
     ## [1] "hatch.m.n2"
-    ##                      V1      V2   V3
-    ## control.lay     control     lay 3476
-    ## control.inc.d17 control inc.d17 3822
-    ## control.hatch   control   hatch 3245
-    ## control.m.n2    control    m.n2 4850
-    ## lay.inc.d17         lay inc.d17    0
-    ## lay.hatch           lay   hatch    1
-    ## lay.m.n2            lay    m.n2   15
-    ## inc.d17.hatch   inc.d17   hatch    0
-    ## inc.d17.m.n2    inc.d17    m.n2   50
-    ## hatch.m.n2        hatch    m.n2 1082
+    ## [1] "hatch.n5"
+    ## [1] "hatch.prolong"
+    ## [1] "hatch.extend"
+    ## [1] "hatch.n9"
+    ## [1] "m.n2.n5"
+    ## [1] "m.n2.prolong"
+    ## [1] "m.n2.extend"
+    ## [1] "m.n2.n9"
+    ## [1] "n5.prolong"
+    ## [1] "n5.extend"
+    ## [1] "n5.n9"
+    ## [1] "prolong.extend"
+    ## [1] "prolong.n9"
+    ## [1] "extend.n9"
+    ##                           V1   V2   V3
+    ## control.bldg         control <NA> 4533
+    ## control.lay          control <NA> 4357
+    ## control.inc.d3       control <NA> 3642
+    ## control.m.inc.d3     control <NA> 4420
+    ## control.inc.d9       control <NA> 4297
+    ## control.m.inc.d8     control <NA> 4590
+    ## control.m.inc.d9     control <NA> 3406
+    ## control.inc.d17      control <NA> 3425
+    ## control.m.inc.d17    control <NA> 4325
+    ## control.hatch        control <NA> 4019
+    ## control.m.n2         control <NA> 3810
+    ## control.n5           control <NA> 4083
+    ## control.prolong      control <NA> 3983
+    ## control.extend       control <NA> 4012
+    ## control.n9           control <NA> 4196
+    ## bldg.lay                bldg <NA>  127
+    ## bldg.inc.d3             bldg <NA>    9
+    ## bldg.m.inc.d3           bldg <NA>   16
+    ## bldg.inc.d9             bldg <NA>   28
+    ## bldg.m.inc.d8           bldg <NA>   36
+    ## bldg.m.inc.d9           bldg <NA>    1
+    ## bldg.inc.d17            bldg <NA> 1843
+    ## bldg.m.inc.d17          bldg <NA>  418
+    ## bldg.hatch              bldg <NA> 1367
+    ## bldg.m.n2               bldg <NA>  658
+    ## bldg.n5                 bldg <NA>  227
+    ## bldg.prolong            bldg <NA>  569
+    ## bldg.extend             bldg <NA> 1077
+    ## bldg.n9                 bldg <NA>  106
+    ## lay.inc.d3               lay <NA>  131
+    ## lay.m.inc.d3             lay <NA>  126
+    ## lay.inc.d9               lay <NA>   59
+    ## lay.m.inc.d8             lay <NA>   19
+    ## lay.m.inc.d9             lay <NA>  124
+    ## lay.inc.d17              lay <NA> 2380
+    ## lay.m.inc.d17            lay <NA>  618
+    ## lay.hatch                lay <NA> 1895
+    ## lay.m.n2                 lay <NA>  776
+    ## lay.n5                   lay <NA>  149
+    ## lay.prolong              lay <NA>  564
+    ## lay.extend               lay <NA>  616
+    ## lay.n9                   lay <NA>  268
+    ## inc.d3.m.inc.d3       inc.d3 <NA>  369
+    ## inc.d3.inc.d9         inc.d3 <NA>    1
+    ## inc.d3.m.inc.d8       inc.d3 <NA>  235
+    ## inc.d3.m.inc.d9       inc.d3 <NA>    1
+    ## inc.d3.inc.d17        inc.d3 <NA>  570
+    ## inc.d3.m.inc.d17      inc.d3 <NA> 1062
+    ## inc.d3.hatch          inc.d3 <NA>  597
+    ## inc.d3.m.n2           inc.d3 <NA>  860
+    ## inc.d3.n5             inc.d3 <NA>   71
+    ## inc.d3.prolong        inc.d3 <NA>  472
+    ## inc.d3.extend         inc.d3 <NA> 1123
+    ## inc.d3.n9             inc.d3 <NA>   79
+    ## m.inc.d3.inc.d9     m.inc.d3 <NA>   27
+    ## m.inc.d3.m.inc.d8   m.inc.d3 <NA>    3
+    ## m.inc.d3.m.inc.d9   m.inc.d3 <NA>    2
+    ## m.inc.d3.inc.d17    m.inc.d3 <NA> 2030
+    ## m.inc.d3.m.inc.d17  m.inc.d3 <NA>   37
+    ## m.inc.d3.hatch      m.inc.d3 <NA> 2056
+    ## m.inc.d3.m.n2       m.inc.d3 <NA>  137
+    ## m.inc.d3.n5         m.inc.d3 <NA>   47
+    ## m.inc.d3.prolong    m.inc.d3 <NA>  324
+    ## m.inc.d3.extend     m.inc.d3 <NA>  614
+    ## m.inc.d3.n9         m.inc.d3 <NA>    0
+    ## inc.d9.m.inc.d8       inc.d9 <NA>    0
+    ## inc.d9.m.inc.d9       inc.d9 <NA>    9
+    ## inc.d9.inc.d17        inc.d9 <NA> 1038
+    ## inc.d9.m.inc.d17      inc.d9 <NA>  670
+    ## inc.d9.hatch          inc.d9 <NA>  895
+    ## inc.d9.m.n2           inc.d9 <NA>  641
+    ## inc.d9.n5             inc.d9 <NA>   29
+    ## inc.d9.prolong        inc.d9 <NA>  404
+    ## inc.d9.extend         inc.d9 <NA>  749
+    ## inc.d9.n9             inc.d9 <NA>   75
+    ## m.inc.d8.m.inc.d9   m.inc.d8 <NA>   17
+    ## m.inc.d8.inc.d17    m.inc.d8 <NA> 2440
+    ## m.inc.d8.m.inc.d17  m.inc.d8 <NA>  234
+    ## m.inc.d8.hatch      m.inc.d8 <NA> 2132
+    ## m.inc.d8.m.n2       m.inc.d8 <NA>  476
+    ## m.inc.d8.n5         m.inc.d8 <NA>   17
+    ## m.inc.d8.prolong    m.inc.d8 <NA>  347
+    ## m.inc.d8.extend     m.inc.d8 <NA>  417
+    ## m.inc.d8.n9         m.inc.d8 <NA>   27
+    ## m.inc.d9.inc.d17    m.inc.d9 <NA> 1008
+    ## m.inc.d9.m.inc.d17  m.inc.d9 <NA>   78
+    ## m.inc.d9.hatch      m.inc.d9 <NA>  970
+    ## m.inc.d9.m.n2       m.inc.d9 <NA>  183
+    ## m.inc.d9.n5         m.inc.d9 <NA>   52
+    ## m.inc.d9.prolong    m.inc.d9 <NA>  287
+    ## m.inc.d9.extend     m.inc.d9 <NA>  651
+    ## m.inc.d9.n9         m.inc.d9 <NA>   10
+    ## inc.d17.m.inc.d17    inc.d17 <NA> 1911
+    ## inc.d17.hatch        inc.d17 <NA>    3
+    ## inc.d17.m.n2         inc.d17 <NA> 1233
+    ## inc.d17.n5           inc.d17 <NA>  790
+    ## inc.d17.prolong      inc.d17 <NA>  115
+    ## inc.d17.extend       inc.d17 <NA>  859
+    ## inc.d17.n9           inc.d17 <NA> 1632
+    ## m.inc.d17.hatch    m.inc.d17 <NA> 2001
+    ## m.inc.d17.m.n2     m.inc.d17 <NA>   10
+    ## m.inc.d17.n5       m.inc.d17 <NA>  134
+    ## m.inc.d17.prolong  m.inc.d17 <NA>  195
+    ## m.inc.d17.extend   m.inc.d17 <NA>  496
+    ## m.inc.d17.n9       m.inc.d17 <NA>   22
+    ## hatch.m.n2             hatch <NA> 1312
+    ## hatch.n5               hatch <NA>  545
+    ## hatch.prolong          hatch <NA>   56
+    ## hatch.extend           hatch <NA>  539
+    ## hatch.n9               hatch <NA> 1286
+    ## m.n2.n5                 m.n2 <NA>   86
+    ## m.n2.prolong            m.n2 <NA>  138
+    ## m.n2.extend             m.n2 <NA>  333
+    ## m.n2.n9                 m.n2 <NA>   19
+    ## n5.prolong                n5 <NA>   48
+    ## n5.extend                 n5 <NA>   51
+    ## n5.n9                     n5 <NA>    4
+    ## prolong.extend       prolong <NA>   25
+    ## prolong.n9           prolong <NA>  221
+    ## extend.n9             extend <NA>  336
 
 ![](../figures/sexes/totalDEGs-1.png)
 
-    b <- plottotalDEGs(dds.female_pituitary, "female pituitary")
-
-    ## [1] "control.lay"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.m.n2"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.m.n2"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.m.n2"
-    ## [1] "hatch.m.n2"
-    ##                      V1      V2   V3
-    ## control.lay     control     lay 3340
-    ## control.inc.d17 control inc.d17 2410
-    ## control.hatch   control   hatch 3019
-    ## control.m.n2    control    m.n2 2716
-    ## lay.inc.d17         lay inc.d17 1303
-    ## lay.hatch           lay   hatch 1063
-    ## lay.m.n2            lay    m.n2  489
-    ## inc.d17.hatch   inc.d17   hatch    0
-    ## inc.d17.m.n2    inc.d17    m.n2  507
-    ## hatch.m.n2        hatch    m.n2  667
+    b
 
 ![](../figures/sexes/totalDEGs-2.png)
 
+    a <- plottotalDEGs(dds.female_hypothalamus, "female hypothalamus")
+    a
+
     c <- plottotalDEGs(dds.female_gonad, "female gonad")
-
-    ## [1] "control.lay"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.m.n2"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.m.n2"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.m.n2"
-    ## [1] "hatch.m.n2"
-    ##                      V1      V2   V3
-    ## control.lay     control     lay 4031
-    ## control.inc.d17 control inc.d17  523
-    ## control.hatch   control   hatch 1102
-    ## control.m.n2    control    m.n2 2639
-    ## lay.inc.d17         lay inc.d17 1412
-    ## lay.hatch           lay   hatch  379
-    ## lay.m.n2            lay    m.n2  881
-    ## inc.d17.hatch   inc.d17   hatch    1
-    ## inc.d17.m.n2    inc.d17    m.n2  166
-    ## hatch.m.n2        hatch    m.n2   42
-
-![](../figures/sexes/totalDEGs-3.png)
-
     d <- plottotalDEGs(dds.male_hypothalamus, "male hypothalamus")
-
-    ## [1] "control.lay"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.m.n2"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.m.n2"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.m.n2"
-    ## [1] "hatch.m.n2"
-    ##                      V1      V2   V3
-    ## control.lay     control     lay 4480
-    ## control.inc.d17 control inc.d17 4994
-    ## control.hatch   control   hatch 4196
-    ## control.m.n2    control    m.n2 5472
-    ## lay.inc.d17         lay inc.d17    0
-    ## lay.hatch           lay   hatch    0
-    ## lay.m.n2            lay    m.n2    0
-    ## inc.d17.hatch   inc.d17   hatch    0
-    ## inc.d17.m.n2    inc.d17    m.n2   51
-    ## hatch.m.n2        hatch    m.n2  136
-
-![](../figures/sexes/totalDEGs-4.png)
-
     e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
-
-    ## [1] "control.lay"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.m.n2"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.m.n2"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.m.n2"
-    ## [1] "hatch.m.n2"
-    ##                      V1      V2   V3
-    ## control.lay     control     lay 4102
-    ## control.inc.d17 control inc.d17 3484
-    ## control.hatch   control   hatch 3794
-    ## control.m.n2    control    m.n2 3788
-    ## lay.inc.d17         lay inc.d17  194
-    ## lay.hatch           lay   hatch  444
-    ## lay.m.n2            lay    m.n2   98
-    ## inc.d17.hatch   inc.d17   hatch   11
-    ## inc.d17.m.n2    inc.d17    m.n2   45
-    ## hatch.m.n2        hatch    m.n2  178
-
-![](../figures/sexes/totalDEGs-5.png)
-
     f <- plottotalDEGs(dds.male_gondad, "male gonad")
-
-    ## [1] "control.lay"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.m.n2"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.m.n2"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.m.n2"
-    ## [1] "hatch.m.n2"
-    ##                      V1      V2   V3
-    ## control.lay     control     lay 3104
-    ## control.inc.d17 control inc.d17 1582
-    ## control.hatch   control   hatch 2118
-    ## control.m.n2    control    m.n2 2524
-    ## lay.inc.d17         lay inc.d17   28
-    ## lay.hatch           lay   hatch    6
-    ## lay.m.n2            lay    m.n2    0
-    ## inc.d17.hatch   inc.d17   hatch    0
-    ## inc.d17.m.n2    inc.d17    m.n2   15
-    ## hatch.m.n2        hatch    m.n2    2
-
-![](../figures/sexes/totalDEGs-6.png)
 
     plot_grid(a + theme(legend.position = "none"),
               b + theme(legend.position = "none"),
-              c,
+              c + theme(legend.position = "none"),
               d + theme(legend.position = "none"),
               e + theme(legend.position = "none"),
-              f,
-              nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
-
-![](../figures/sexes/totalDEGs-7.png)
+              f + theme(legend.position = "none"),
+              nrow = 2) 
 
 Calculate and plot principal components
 ---------------------------------------
@@ -532,8 +624,8 @@ Calculate and plot principal components
                          p1 + theme_noaxislabels, 
                          p1 + theme_noaxislabels,
                          p1 + theme_noaxislabels,
-                         p1 + theme(legend.position = "none"),
-                         p1 + theme(legend.position = "none"),
+                         p1 + theme_noaxislabels,
+                         p1 + theme_noaxislabels),
                          nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
 
     pc1 <- plot_grid(mylegend, allPC1s, nrow = 2, rel_heights = c(0.15, 1.0))
