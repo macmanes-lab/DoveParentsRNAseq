@@ -152,8 +152,8 @@ allPC1s <- plot_grid(p1 + theme_noaxislabels,
                      p1 + theme_noaxislabels, 
                      p1 + theme_noaxislabels,
                      p1 + theme_noaxislabels,
-                     p1 + theme(legend.position = "none"),
-                     p1 + theme(legend.position = "none"),
+                     p1 + theme_noaxislabels,
+                     p1 + theme_noaxislabels),
                      nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
 
 pc1 <- plot_grid(mylegend, allPC1s, nrow = 2, rel_heights = c(0.15, 1.0))
