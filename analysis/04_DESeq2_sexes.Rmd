@@ -13,6 +13,9 @@ library(pheatmap)
 library(kableExtra)
 library(viridis)
 
+library("BiocParallel")
+register(MulticoreParam(4))
+
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
 
@@ -101,17 +104,22 @@ dds.male_gondad <- subsetDESeq(a.colData, a.countData, "male_gonad")
 ## Calculate and plot total DEGs
 
 
-```{r totalDEGs, eval = T}
-#create list of groups for deseq contrasts
-group1 <- levels(a.colData$treatment)
-group2 <- group1
+```{r returntotalDEGs, eval = T}
+DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
+DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
+DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
+DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
+DEGss.male_pituitary <- returntotalDEGs(dds.male_pituitary)
+DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
+```
 
-a <- plottotalDEGs(dds.female_hypothalamus, "female hypothalamus")
-b <- plottotalDEGs(dds.female_pituitary, "female pituitary")
-c <- plottotalDEGs(dds.female_gonad, "female gonad")
-d <- plottotalDEGs(dds.male_hypothalamus, "male hypothalamus")
-e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
-f <- plottotalDEGs(dds.male_gondad, "male gonad")
+```{r plotDEGs, eval = T}
+a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
+b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
+c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
+d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
+e <- plottotalDEGs(DEGss.male_pituitary, "male pituitary")
+f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
 ```
 
 ```{r plottotalDEGs, eval = T}
