@@ -44,10 +44,16 @@ numDEGs <- function(dds, group1, group2){
 
 ## plot DEGs 
 
-plottotalDEGs <- function(dds, mysubtitle){
+returntotalDEGs <- function(dds){
   
+  colData <- a.colData %>%
+    filter(treatment %in% c("control", "bldg", "n9")) %>%
+    droplevels()
+  
+  group1 <- levels(colData$treatment)
+
   a <- group1
-  b <- group2
+  b <- group1
   
   # comapre all contrasts, save to datafrmes
   totalDEGS=data.frame()
@@ -64,22 +70,27 @@ plottotalDEGs <- function(dds, mysubtitle){
     b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
   }
   
+ print(totalDEGS)  
+ return(totalDEGS)
   
-  
-  
-  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", "lay",
-                                                   "inc.d3", "m.inc.d3", 
-                                                   "inc.d9", "m.inc.d8", "m.inc.d9",
-                                                   "inc.d17", "m.inc.d17",
-                                                   "hatch",  "m.n2"  ,
-                                                   "n5", "prolong", "extend", "n9" ))
-  totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "nest.building", "egg.lay",
-                                                   "eggs.early", "eggs.early.remove", 
-                                                   "eggs.mid", "eggs.mid.hatch", "eggs.mid.remove",
-                                                   "eggs.end", "eggs.end.remove",
-                                                   "chicks.hatch",  "chicks.hatch.remove"  ,
-                                                   "chicks.mid", "eggs.delay", "eggs.delay.hatch", "chicks.end"))
-  
+}
+
+plottotalDEGs <- function(myDEGS, mysubtitle){  
+  totalDEGS <- myDEGS
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", 
+                                                 #  "lay", "inc.d3", "m.inc.d3", 
+                                                 #  "inc.d9", "m.inc.d8", "m.inc.d9",
+                                                 #  "inc.d17", "m.inc.d17",
+                                                 #  "hatch",  "m.n2"  ,
+                                                 #  "n5", "prolong", "extend",
+                                                   "n9"))
+  totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", 
+                                                 #  "lay", "inc.d3", "m.inc.d3", 
+                                                 #  "inc.d9", "m.inc.d8", "m.inc.d9",
+                                                 #  "inc.d17", "m.inc.d17",
+                                                 #  "hatch",  "m.n2"  ,
+                                                 #  "n5", "prolong", "extend",
+                                                   "n9"))
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
