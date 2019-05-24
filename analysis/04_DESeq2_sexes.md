@@ -365,7 +365,7 @@ Calculate and plot total DEGs
     ## control.n9   control   n9 4196
     ## bldg.n9         bldg   n9  106
 
-![](../figures/sexes/plotDEGspart-1.png)
+![](../figures/sexes/plotDEGs-1.png)
 
     #c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
     #d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
@@ -376,7 +376,7 @@ Calculate and plot total DEGs
     ## control.n9   control   n9 5020
     ## bldg.n9         bldg   n9   38
 
-![](../figures/sexes/plotDEGspart-2.png)
+![](../figures/sexes/plotDEGs-2.png)
 
     #f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
 
@@ -407,7 +407,6 @@ Calculate and plot principal components
     p6
 
     mylegend <- get_legend(p1)
-
 
     theme_noaxislabels <- theme(legend.position = "none", axis.title.x=element_blank(),axis.text.x=element_blank())
 
