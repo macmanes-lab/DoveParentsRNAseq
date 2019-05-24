@@ -47,7 +47,9 @@ numDEGs <- function(dds, group1, group2){
 returntotalDEGs <- function(dds){
   
   colData <- a.colData %>%
-    filter(treatment %in% c("control", "bldg", "n9")) %>%
+    filter(treatment %in% c("control", "bldg", "n9",
+                            "inc.d17", "m.inc.d17",
+                            "hatch",  "m.n2")) %>%
     droplevels()
   
   group1 <- levels(colData$treatment)
@@ -78,17 +80,17 @@ returntotalDEGs <- function(dds){
 plottotalDEGs <- function(myDEGS, mysubtitle){  
   totalDEGS <- myDEGS
   totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", 
-                                                 #  "lay", "inc.d3", "m.inc.d3", 
+                                                 # "lay", "inc.d3", "m.inc.d3", 
                                                  #  "inc.d9", "m.inc.d8", "m.inc.d9",
-                                                 #  "inc.d17", "m.inc.d17",
-                                                 #  "hatch",  "m.n2"  ,
+                                                  "inc.d17", "m.inc.d17",
+                                                   "hatch",  "m.n2"  ,
                                                  #  "n5", "prolong", "extend",
                                                    "n9"))
   totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", 
                                                  #  "lay", "inc.d3", "m.inc.d3", 
                                                  #  "inc.d9", "m.inc.d8", "m.inc.d9",
-                                                 #  "inc.d17", "m.inc.d17",
-                                                 #  "hatch",  "m.n2"  ,
+                                                   "inc.d17", "m.inc.d17",
+                                                   "hatch",  "m.n2"  ,
                                                  #  "n5", "prolong", "extend",
                                                    "n9"))
   
