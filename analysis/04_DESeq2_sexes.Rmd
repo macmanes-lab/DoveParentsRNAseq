@@ -13,9 +13,8 @@ library(pheatmap)
 library(kableExtra)
 library(viridis)
 
-
-# load custom functions  
-source("../R/functions.R")   
+source("../R/functions.R")  # load custom functions 
+source("../R/themes.R")  # load custom themes and color palletes
 
 knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE)
 ```
@@ -65,84 +64,25 @@ a.colData$penultimate <-  ifelse(grepl("extend", a.colData$treatment),"eggs dela
                      ifelse(grepl("inc.d9|m.inc.d9|m.inc.d8", a.colData$treatment),"eggs middle",
                     ifelse(grepl("inc.d17|hatch", a.colData$treatment),"eggs later", NA))))))))))
 
-
-
 a.colData$xlabel <- a.colData$treatment
-levels(a.colData$xlabel) <-  c("control", "nest building", "egg lay",
-                               "eggs early", "eggs early remove", 
-                               "eggs mid", "eggs mid hatch", "eggs mid remove",
-                               "eggs end", "eggs end remove",
-                               "chicks hatch",  "chicks hatch remove"  ,
-                               "chicks mid", "eggs delay", "eggs delay hatch", "chicks end")
 
+levels(a.colData$xlabel) <-  c("control", "nest.building", "egg.lay",
+                               "eggs.early", "eggs.early.remove", 
+                               "eggs.mid", "eggs.mid.hatch", "eggs.mid.remove",
+                               "eggs.end", "eggs.end.remove",
+                               "chicks.hatch",  "chicks.hatch.remove"  ,
+                               "chicks.mid", "eggs.delay", "eggs.delay.hatch", "chicks.end")
 
 
 a.colData$lastday <- factor(a.colData$lastday, levels =  c("control", "nest building", "eggs lay",
-                               "eggs early",  
-                               "eggs middle", 
-                               "eggs later", 
-                               "eggs delay",
-                               "chicks hatch",
-                               "chicks early", 
-                               "chicks later", 
-                               "empty nest"))
+                               "eggs early", "eggs middle",  "eggs later","eggs delay",
+                               "chicks hatch", "chicks early",  "chicks later", "empty nest"))
 
 a.colData$penultimate <- factor(a.colData$penultimate, levels =  c("control", "nest building",
-                               "eggs early",  
-                               "eggs middle", 
-                               "eggs later", 
-                               "eggs delay",
-                               "chicks hatch",
-                               "chicks early", 
-                               "chicks later"))
-
-colorlastday <-  c("control" = "#636363", 
-                   "nest building" = "#fb6a4a", 
-                   "eggs lay" = "#c7e9c0",
-                   "eggs early" = "#a1d99b",
-                   "eggs middle" = "#74c476", 
-                   "eggs later" = "#31a354",  
-                   "eggs delay" = "#006d2c",
-                   "chicks hatch" = "#cbc9e2",   
-                   "chicks early" = "#9e9ac8", 
-                   "chicks later" = "#6a51a3",
-                   "empty nest" = "#a50f15")
-
-colorpenultimate <- c("control" = "#636363", 
-                      "nest building" = "#fb6a4a", 
-                      "eggs early" = "#a1d99b",
-                   "eggs middle" = "#74c476", 
-                   "eggs later" = "#31a354",  
-                   "eggs delay" = "#006d2c",
-                   "chicks hatch" = "#cbc9e2",   
-                   "chicks early" = "#9e9ac8", 
-                   "chicks later" = "#6a51a3")
-
-colorlastdaybad <-  c("control" = "#636363", 
-                   "nest bldg" = "#fb6a4a", 
-                   "lay" = "#c7e9c0",
-                   "incubate begin" = "#a1d99b",
-                   "incubate middle" = "#74c476", 
-                   "incubate end" = "#31a354",  
-                   "eggs late" = "#006d2c",
-                   "nestling being" = "#cbc9e2",  
-                   "nestling begin" = "#cbc9e2",   
-                   "nestling middle" = "#9e9ac8", 
-                   "nestling end" = "#6a51a3",
-                   "empty nest" = "#a50f15")
-
-colorpenultimatebad <- c("control" = "#636363", 
-                      "nestbldg" = "#fb6a4a", 
-                      "incubate begin" = "#a1d99b",
-                   "incubate middle" = "#74c476", 
-                   "incubate end" = "#31a354",  
-                   "eggs late" = "#006d2c",
-                   "nestling begin" = "#9e9ac8",   
-                   "nestling middle" = "#6a51a3", 
-                   "nestling end" = "#3f007d")
+                               "eggs early",  "eggs middle",  "eggs later",  "eggs delay",
+                               "chicks hatch", "chicks early",  "chicks later"))
 
 summary(a.colData[c(7,3,4,5,8,9, 10,11)])
-
 ```
 
 ## Run DESeq on all subsets of the data
@@ -160,8 +100,8 @@ dds.male_gondad <- subsetDESeq(a.colData, a.countData, "male_gonad")
 
 ## Calculate and plot total DEGs
 
-```{r totalDEGs, eval = F}
 
+```{r totalDEGs, eval = T}
 #create list of groups for deseq contrasts
 group1 <- levels(a.colData$treatment)
 group2 <- group1
@@ -172,19 +112,21 @@ c <- plottotalDEGs(dds.female_gonad, "female gonad")
 d <- plottotalDEGs(dds.male_hypothalamus, "male hypothalamus")
 e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
 f <- plottotalDEGs(dds.male_gondad, "male gonad")
+```
 
+```{r plottotalDEGs, eval = T}
 plot_grid(a + theme(legend.position = "none"),
           b + theme(legend.position = "none"),
-          c,
+          c + theme(legend.position = "none"),
           d + theme(legend.position = "none"),
           e + theme(legend.position = "none"),
-          f,
-          nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
+          f + theme(legend.position = "none"),
+          nrow = 2) 
 ```
 
 ## Calculate and plot principal components
 
-```{r pcadf}
+```{r pcadf, eval=F}
 p1 <- plotPCAs(dds.female_hypothalamus, "female hypothalamus")
 p2 <- plotPCAs(dds.female_pituitary, "female pituitary")      
 p3 <- plotPCAs(dds.female_gonad, "female gonad")
@@ -200,7 +142,7 @@ p6
 
 ```
 
-```{r pca, fig.dim = c(12, 10), eval=T}
+```{r pca, fig.dim = c(12, 10), eval=F}
 mylegend <- get_legend(p1)
 
 

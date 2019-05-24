@@ -6,9 +6,8 @@
     library(kableExtra)
     library(viridis)
 
-
-    # load custom functions  
-    source("../R/functions.R")   
+    source("../R/functions.R")  # load custom functions 
+    source("../R/themes.R")  # load custom themes and color palletes
 
     knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE)
 
@@ -73,70 +72,13 @@ Starting with all the data
                                    "chicks mid", "eggs delay", "eggs delay hatch", "chicks end")
 
 
-
     a.colData$lastday <- factor(a.colData$lastday, levels =  c("control", "nest building", "eggs lay",
-                                   "eggs early",  
-                                   "eggs middle", 
-                                   "eggs later", 
-                                   "eggs delay",
-                                   "chicks hatch",
-                                   "chicks early", 
-                                   "chicks later", 
-                                   "empty nest"))
+                                   "eggs early", "eggs middle",  "eggs later","eggs delay",
+                                   "chicks hatch", "chicks early",  "chicks later", "empty nest"))
 
     a.colData$penultimate <- factor(a.colData$penultimate, levels =  c("control", "nest building",
-                                   "eggs early",  
-                                   "eggs middle", 
-                                   "eggs later", 
-                                   "eggs delay",
-                                   "chicks hatch",
-                                   "chicks early", 
-                                   "chicks later"))
-
-    colorlastday <-  c("control" = "#636363", 
-                       "nest building" = "#fb6a4a", 
-                       "eggs lay" = "#c7e9c0",
-                       "eggs early" = "#a1d99b",
-                       "eggs middle" = "#74c476", 
-                       "eggs later" = "#31a354",  
-                       "eggs delay" = "#006d2c",
-                       "chicks hatch" = "#cbc9e2",   
-                       "chicks early" = "#9e9ac8", 
-                       "chicks later" = "#6a51a3",
-                       "empty nest" = "#a50f15")
-
-    colorpenultimate <- c("control" = "#636363", 
-                          "nest building" = "#fb6a4a", 
-                          "eggs early" = "#a1d99b",
-                       "eggs middle" = "#74c476", 
-                       "eggs later" = "#31a354",  
-                       "eggs delay" = "#006d2c",
-                       "chicks hatch" = "#cbc9e2",   
-                       "chicks early" = "#9e9ac8", 
-                       "chicks later" = "#6a51a3")
-
-    colorlastdaybad <-  c("control" = "#636363", 
-                       "nest bldg" = "#fb6a4a", 
-                       "lay" = "#c7e9c0",
-                       "incubate begin" = "#a1d99b",
-                       "incubate middle" = "#74c476", 
-                       "incubate end" = "#31a354",  
-                       "eggs late" = "#006d2c",
-                       "nestling being" = "#cbc9e2",  
-                       "nestling begin" = "#cbc9e2",   
-                       "nestling middle" = "#9e9ac8", 
-                       "nestling end" = "#6a51a3",
-                       "empty nest" = "#a50f15")
-
-    colorpenultimatebad <- c("control" = "#636363", 
-                          "nestbldg" = "#fb6a4a", 
-                          "incubate begin" = "#a1d99b",
-                       "incubate middle" = "#74c476", 
-                       "incubate end" = "#31a354",  
-                       "eggs late" = "#006d2c",
-                       "nestling begin" = "#9e9ac8",   
-                       "nestling middle" = "#6a51a3", 
-                       "nestling end" = "#3f007d")
+                                   "eggs early",  "eggs middle",  "eggs later",  "eggs delay",
+                                   "chicks hatch", "chicks early",  "chicks later"))
 
     summary(a.colData[c(7,3,4,5,8,9, 10,11)])
 
@@ -168,21 +110,27 @@ Starting with all the data
 Run DESeq on all subsets of the data
 ------------------------------------
 
+    # subset to look within one tissue in one sex
+    a.colData <- a.colData %>%
+        dplyr::filter(treatment %in% c( "control", "lay" , "inc.d17", "hatch", "m.n2")) %>%
+        droplevels()
+
     dds.female_hypothalamus <- subsetDESeq(a.colData, a.countData, "female_hypothalamus")
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 165 
+    ## dim: 14937 52 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(165): L.G118_female_hypothalamus_control.NYNO
+    ## colnames(52): L.G118_female_hypothalamus_control.NYNO
     ##   R.G106_female_hypothalamus_control ...
-    ##   y97.x_female_hypothalamus_n9 y98.g54_female_hypothalamus_m.hatch
+    ##   y7.g58_female_hypothalamus_hatch
+    ##   y98.g54_female_hypothalamus_m.hatch
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14576   165
+    ## [1] 14293    52
 
     ## estimating size factors
 
@@ -196,7 +144,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 9 genes
+    ## -- replacing outliers and refitting for 19 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -208,17 +156,17 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 165 
+    ## dim: 14937 52 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(165): L.G118_female_pituitary_control.NYNO
-    ##   R.G106_female_pituitary_control ... y97.x_female_pituitary_n9
-    ##   y98.g54_female_pituitary_m.hatch
+    ## colnames(52): L.G118_female_pituitary_control.NYNO
+    ##   R.G106_female_pituitary_control ...
+    ##   y7.g58_female_pituitary_hatch y98.g54_female_pituitary_m.hatch
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14496   165
+    ## [1] 14099    52
 
     ## estimating size factors
 
@@ -232,7 +180,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 49 genes
+    ## -- replacing outliers and refitting for 124 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -244,17 +192,17 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 167 
+    ## dim: 14937 54 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(167): L.G118_female_gonad_control
-    ##   R.G106_female_gonad_control ... y97.x_female_gonad_n9
+    ## colnames(54): L.G118_female_gonad_control
+    ##   R.G106_female_gonad_control ... y7.g58_female_gonad_hatch
     ##   y98.g54_female_gonad_m.hatch
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14746   167
+    ## [1] 14482    54
 
     ## estimating size factors
 
@@ -268,7 +216,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 156 genes
+    ## -- replacing outliers and refitting for 57 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -280,18 +228,18 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 162 
+    ## dim: 14937 52 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(162): L.Blu13_male_hypothalamus_control.NYNO
+    ## colnames(52): L.Blu13_male_hypothalamus_control.NYNO
     ##   L.G107_male_hypothalamus_control ...
-    ##   y95.g131.x_male_hypothalamus_inc.d9
-    ##   y98.o50.x_male_hypothalamus_inc.d3
+    ##   x.y132.w76_male_hypothalamus_inc.d17
+    ##   y133.w77.r58_male_hypothalamus_inc.d17
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14536   162
+    ## [1] 14259    52
 
     ## estimating size factors
 
@@ -305,7 +253,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 7 genes
+    ## -- replacing outliers and refitting for 26 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -317,17 +265,18 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 165 
+    ## dim: 14937 55 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(165): L.Blu13_male_pituitary_control.NYNO
+    ## colnames(55): L.Blu13_male_pituitary_control.NYNO
     ##   L.G107_male_pituitary_control ...
-    ##   y95.g131.x_male_pituitary_inc.d9 y98.o50.x_male_pituitary_inc.d3
+    ##   x.y132.w76_male_pituitary_inc.d17
+    ##   y133.w77.r58_male_pituitary_inc.d17
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14480   165
+    ## [1] 14132    55
 
     ## estimating size factors
 
@@ -341,7 +290,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 51 genes
+    ## -- replacing outliers and refitting for 57 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -353,17 +302,17 @@ Run DESeq on all subsets of the data
 
     ## [1] TRUE
     ## class: DESeqDataSet 
-    ## dim: 14937 163 
+    ## dim: 14937 53 
     ## metadata(1): version
     ## assays(1): counts
     ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
     ##   XP_430508.3
     ## rowData names(0):
-    ## colnames(163): L.Blu13_male_gonad_control.NYNO
-    ##   L.G107_male_gonad_control ... y95.g131.x_male_gonad_inc.d9
-    ##   y98.o50.x_male_gonad_inc.d3
+    ## colnames(53): L.Blu13_male_gonad_control.NYNO
+    ##   L.G107_male_gonad_control ... x.y132.w76_male_gonad_inc.d17
+    ##   y133.w77.r58_male_gonad_inc.d17
     ## colData names(11): V1 bird ... penultimate xlabel
-    ## [1] 14765   163
+    ## [1] 14436    53
 
     ## estimating size factors
 
@@ -377,7 +326,7 @@ Run DESeq on all subsets of the data
 
     ## fitting model and testing
 
-    ## -- replacing outliers and refitting for 123 genes
+    ## -- replacing outliers and refitting for 26 genes
     ## -- DESeq argument 'minReplicatesForReplace' = 7 
     ## -- original counts are preserved in counts(dds)
 
@@ -393,11 +342,160 @@ Calculate and plot total DEGs
     group2 <- group1
 
     a <- plottotalDEGs(dds.female_hypothalamus, "female hypothalamus")
+
+    ## [1] "control.lay"
+    ## [1] "control.inc.d17"
+    ## [1] "control.hatch"
+    ## [1] "control.m.n2"
+    ## [1] "lay.inc.d17"
+    ## [1] "lay.hatch"
+    ## [1] "lay.m.n2"
+    ## [1] "inc.d17.hatch"
+    ## [1] "inc.d17.m.n2"
+    ## [1] "hatch.m.n2"
+    ##                      V1      V2   V3
+    ## control.lay     control     lay 3476
+    ## control.inc.d17 control inc.d17 3822
+    ## control.hatch   control   hatch 3245
+    ## control.m.n2    control    m.n2 4850
+    ## lay.inc.d17         lay inc.d17    0
+    ## lay.hatch           lay   hatch    1
+    ## lay.m.n2            lay    m.n2   15
+    ## inc.d17.hatch   inc.d17   hatch    0
+    ## inc.d17.m.n2    inc.d17    m.n2   50
+    ## hatch.m.n2        hatch    m.n2 1082
+
+![](../figures/sexes/totalDEGs-1.png)
+
     b <- plottotalDEGs(dds.female_pituitary, "female pituitary")
+
+    ## [1] "control.lay"
+    ## [1] "control.inc.d17"
+    ## [1] "control.hatch"
+    ## [1] "control.m.n2"
+    ## [1] "lay.inc.d17"
+    ## [1] "lay.hatch"
+    ## [1] "lay.m.n2"
+    ## [1] "inc.d17.hatch"
+    ## [1] "inc.d17.m.n2"
+    ## [1] "hatch.m.n2"
+    ##                      V1      V2   V3
+    ## control.lay     control     lay 3340
+    ## control.inc.d17 control inc.d17 2410
+    ## control.hatch   control   hatch 3019
+    ## control.m.n2    control    m.n2 2716
+    ## lay.inc.d17         lay inc.d17 1303
+    ## lay.hatch           lay   hatch 1063
+    ## lay.m.n2            lay    m.n2  489
+    ## inc.d17.hatch   inc.d17   hatch    0
+    ## inc.d17.m.n2    inc.d17    m.n2  507
+    ## hatch.m.n2        hatch    m.n2  667
+
+![](../figures/sexes/totalDEGs-2.png)
+
     c <- plottotalDEGs(dds.female_gonad, "female gonad")
+
+    ## [1] "control.lay"
+    ## [1] "control.inc.d17"
+    ## [1] "control.hatch"
+    ## [1] "control.m.n2"
+    ## [1] "lay.inc.d17"
+    ## [1] "lay.hatch"
+    ## [1] "lay.m.n2"
+    ## [1] "inc.d17.hatch"
+    ## [1] "inc.d17.m.n2"
+    ## [1] "hatch.m.n2"
+    ##                      V1      V2   V3
+    ## control.lay     control     lay 4031
+    ## control.inc.d17 control inc.d17  523
+    ## control.hatch   control   hatch 1102
+    ## control.m.n2    control    m.n2 2639
+    ## lay.inc.d17         lay inc.d17 1412
+    ## lay.hatch           lay   hatch  379
+    ## lay.m.n2            lay    m.n2  881
+    ## inc.d17.hatch   inc.d17   hatch    1
+    ## inc.d17.m.n2    inc.d17    m.n2  166
+    ## hatch.m.n2        hatch    m.n2   42
+
+![](../figures/sexes/totalDEGs-3.png)
+
     d <- plottotalDEGs(dds.male_hypothalamus, "male hypothalamus")
+
+    ## [1] "control.lay"
+    ## [1] "control.inc.d17"
+    ## [1] "control.hatch"
+    ## [1] "control.m.n2"
+    ## [1] "lay.inc.d17"
+    ## [1] "lay.hatch"
+    ## [1] "lay.m.n2"
+    ## [1] "inc.d17.hatch"
+    ## [1] "inc.d17.m.n2"
+    ## [1] "hatch.m.n2"
+    ##                      V1      V2   V3
+    ## control.lay     control     lay 4480
+    ## control.inc.d17 control inc.d17 4994
+    ## control.hatch   control   hatch 4196
+    ## control.m.n2    control    m.n2 5472
+    ## lay.inc.d17         lay inc.d17    0
+    ## lay.hatch           lay   hatch    0
+    ## lay.m.n2            lay    m.n2    0
+    ## inc.d17.hatch   inc.d17   hatch    0
+    ## inc.d17.m.n2    inc.d17    m.n2   51
+    ## hatch.m.n2        hatch    m.n2  136
+
+![](../figures/sexes/totalDEGs-4.png)
+
     e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
+
+    ## [1] "control.lay"
+    ## [1] "control.inc.d17"
+    ## [1] "control.hatch"
+    ## [1] "control.m.n2"
+    ## [1] "lay.inc.d17"
+    ## [1] "lay.hatch"
+    ## [1] "lay.m.n2"
+    ## [1] "inc.d17.hatch"
+    ## [1] "inc.d17.m.n2"
+    ## [1] "hatch.m.n2"
+    ##                      V1      V2   V3
+    ## control.lay     control     lay 4102
+    ## control.inc.d17 control inc.d17 3484
+    ## control.hatch   control   hatch 3794
+    ## control.m.n2    control    m.n2 3788
+    ## lay.inc.d17         lay inc.d17  194
+    ## lay.hatch           lay   hatch  444
+    ## lay.m.n2            lay    m.n2   98
+    ## inc.d17.hatch   inc.d17   hatch   11
+    ## inc.d17.m.n2    inc.d17    m.n2   45
+    ## hatch.m.n2        hatch    m.n2  178
+
+![](../figures/sexes/totalDEGs-5.png)
+
     f <- plottotalDEGs(dds.male_gondad, "male gonad")
+
+    ## [1] "control.lay"
+    ## [1] "control.inc.d17"
+    ## [1] "control.hatch"
+    ## [1] "control.m.n2"
+    ## [1] "lay.inc.d17"
+    ## [1] "lay.hatch"
+    ## [1] "lay.m.n2"
+    ## [1] "inc.d17.hatch"
+    ## [1] "inc.d17.m.n2"
+    ## [1] "hatch.m.n2"
+    ##                      V1      V2   V3
+    ## control.lay     control     lay 3104
+    ## control.inc.d17 control inc.d17 1582
+    ## control.hatch   control   hatch 2118
+    ## control.m.n2    control    m.n2 2524
+    ## lay.inc.d17         lay inc.d17   28
+    ## lay.hatch           lay   hatch    6
+    ## lay.m.n2            lay    m.n2    0
+    ## inc.d17.hatch   inc.d17   hatch    0
+    ## inc.d17.m.n2    inc.d17    m.n2   15
+    ## hatch.m.n2        hatch    m.n2    2
+
+![](../figures/sexes/totalDEGs-6.png)
 
     plot_grid(a + theme(legend.position = "none"),
               b + theme(legend.position = "none"),
@@ -407,184 +505,23 @@ Calculate and plot total DEGs
               f,
               nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
 
+![](../figures/sexes/totalDEGs-7.png)
+
 Calculate and plot principal components
 ---------------------------------------
 
     p1 <- plotPCAs(dds.female_hypothalamus, "female hypothalamus")
-
-    ## [1] 26  9  8  4  3  3
-    ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## xlabel       15   6078   405.2   18.67 <2e-16 ***
-    ## Residuals   149   3235    21.7                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value Pr(>F)  
-    ## xlabel       15  490.5   32.70   1.684 0.0596 .
-    ## Residuals   149 2892.8   19.41                 
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15  749.2   49.95   3.791 1.12e-05 ***
-    ## Residuals   149 1963.1   13.18                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15  294.6   19.64   3.012 0.000306 ***
-    ## Residuals   149  971.5    6.52                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-![](../figures/sexes/pcadf-1.png)![](../figures/sexes/pcadf-2.png)![](../figures/sexes/pcadf-3.png)![](../figures/sexes/pcadf-4.png)
-
     p2 <- plotPCAs(dds.female_pituitary, "female pituitary")      
-
-    ## [1] 11  8  7  6  4  3
-    ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## xlabel       15   2480  165.31   13.99 <2e-16 ***
-    ## Residuals   149   1761   11.82                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15   1076   71.70   5.318 1.83e-08 ***
-    ## Residuals   149   2009   13.48                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## xlabel       15   1342   89.46   10.26 <2e-16 ***
-    ## Residuals   149   1300    8.72                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## xlabel       15 1195.8   79.72   12.02 <2e-16 ***
-    ## Residuals   149  988.5    6.63                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-![](../figures/sexes/pcadf-5.png)![](../figures/sexes/pcadf-6.png)![](../figures/sexes/pcadf-7.png)![](../figures/sexes/pcadf-8.png)
-
     p3 <- plotPCAs(dds.female_gonad, "female gonad")
-
-    ## [1] 37 12  7  4  4  3
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15  11694   779.6   3.644 2.04e-05 ***
-    ## Residuals   151  32303   213.9                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15   3103  206.83   2.799 0.000738 ***
-    ## Residuals   151  11160   73.91                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value Pr(>F)
-    ## xlabel       15    803   53.56   1.109  0.353
-    ## Residuals   151   7294   48.31               
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15   1487   99.11   4.148 2.37e-06 ***
-    ## Residuals   151   3607   23.89                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-![](../figures/sexes/pcadf-9.png)![](../figures/sexes/pcadf-10.png)![](../figures/sexes/pcadf-11.png)![](../figures/sexes/pcadf-12.png)
-
     p4 <- plotPCAs(dds.male_hypothalamus, "male hypothalamus")
-
-    ## [1] 28  9  6  4  3  3
-    ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## xlabel       15   5836   389.1   10.54 <2e-16 ***
-    ## Residuals   146   5388    36.9                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15   1230   82.00   4.879 1.21e-07 ***
-    ## Residuals   146   2454   16.81                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value Pr(>F)
-    ## xlabel       15  222.1   14.81   0.959  0.501
-    ## Residuals   146 2253.7   15.44               
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15  419.1  27.938    3.23 0.000125 ***
-    ## Residuals   146 1263.0   8.651                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-![](../figures/sexes/pcadf-13.png)![](../figures/sexes/pcadf-14.png)![](../figures/sexes/pcadf-15.png)![](../figures/sexes/pcadf-16.png)
-
     p5 <- plotPCAs(dds.male_pituitary, "male pituitary")
-
-    ## [1] 11  9  7  5  4  3
-    ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## xlabel       15 2676.7  178.44   30.47 <2e-16 ***
-    ## Residuals   149  872.6    5.86                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value  Pr(>F)    
-    ## xlabel       15   1412   94.15   9.431 2.8e-15 ***
-    ## Residuals   149   1488    9.98                    
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15  762.4   50.82   4.975 7.58e-08 ***
-    ## Residuals   149 1522.3   10.22                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15  549.6   36.64   4.769 1.79e-07 ***
-    ## Residuals   149 1144.8    7.68                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-![](../figures/sexes/pcadf-17.png)![](../figures/sexes/pcadf-18.png)![](../figures/sexes/pcadf-19.png)![](../figures/sexes/pcadf-20.png)
-
     p6 <- plotPCAs(dds.male_gondad, "male gonad")
-
-    ## [1] 14 10  5  3  3  2
-    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
-    ## xlabel       15   1476   98.37   3.674 1.89e-05 ***
-    ## Residuals   147   3936   26.77                     
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value  Pr(>F)   
-    ## xlabel       15  830.7   55.38   2.679 0.00124 **
-    ## Residuals   147 3038.4   20.67                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## xlabel       15 1459.0   97.27   22.58 <2e-16 ***
-    ## Residuals   147  633.3    4.31                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-    ##              Df Sum Sq Mean Sq F value  Pr(>F)   
-    ## xlabel       15  235.5   15.70   2.488 0.00273 **
-    ## Residuals   147  927.6    6.31                   
-    ## ---
-    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-![](../figures/sexes/pcadf-21.png)![](../figures/sexes/pcadf-22.png)![](../figures/sexes/pcadf-23.png)![](../figures/sexes/pcadf-24.png)
-
     p1
-
-![](../figures/sexes/pcadf-25.png)
-
     p2
-
-![](../figures/sexes/pcadf-26.png)
-
     p3
-
-![](../figures/sexes/pcadf-27.png)
-
     p4
-
-![](../figures/sexes/pcadf-28.png)
-
     p5
-
-![](../figures/sexes/pcadf-29.png)
-
     p6
-
-![](../figures/sexes/pcadf-30.png)
 
     mylegend <- get_legend(p1)
 
@@ -602,14 +539,9 @@ Calculate and plot principal components
     pc1 <- plot_grid(mylegend, allPC1s, nrow = 2, rel_heights = c(0.15, 1.0))
     pc1
 
-![](../figures/sexes/pca-1.png)
-
     pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
     plot(pc1)
     dev.off()
-
-    ## quartz_off_screen 
-    ##                 2
 
 heamap with minimum pvalue
 --------------------------
