@@ -65,20 +65,34 @@ plottotalDEGs <- function(dds, mysubtitle){
   }
   
   
-  totalDEGS$V1 <- as.factor(totalDEGS$V1)
-  totalDEGS$V2 <- as.factor(totalDEGS$V2)
+  
+  
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", "lay",
+                                                   "inc.d3", "m.inc.d3", 
+                                                   "inc.d9", "m.inc.d8", "m.inc.d9",
+                                                   "inc.d17", "m.inc.d17",
+                                                   "hatch",  "m.n2"  ,
+                                                   "n5", "prolong", "extend", "n9" ))
+  totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "nest.building", "egg.lay",
+                                                   "eggs.early", "eggs.early.remove", 
+                                                   "eggs.mid", "eggs.mid.hatch", "eggs.mid.remove",
+                                                   "eggs.end", "eggs.end.remove",
+                                                   "chicks.hatch",  "chicks.hatch.remove"  ,
+                                                   "chicks.mid", "eggs.delay", "eggs.delay.hatch", "chicks.end"))
+  
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
-    scale_fill_viridis(na.value="#440154") + 
-    xlab(" ") + ylab("Treatment") +
+    geom_text(aes(label = round(V3, 1)), color = "black") +
+    scale_fill_viridis() + 
+    xlab(NULL) + ylab(NULL) +
     labs(fill = "# of DEGs",
          subtitle = mysubtitle) +
-    theme_minimal(base_size = 8) + 
+    theme_minimal(base_size = 6) + 
     theme(axis.text.x = element_text(angle = 90))
-  
-  return(allcontrasts)
+  print(totalDEGS)
+  plot(allcontrasts)
 }
 
 # plot DEGs just for characterization study
@@ -114,7 +128,6 @@ plottotalDEGschar <- function(dds, mysubtitle){
          subtitle = mysubtitle) +
     theme_minimal(base_size = 8) + 
     theme(axis.text.x = element_text(angle = 90))
-  
   return(allcontrasts)
 }
 
