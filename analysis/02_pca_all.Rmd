@@ -12,44 +12,67 @@ library(stringr)
 library(gridExtra)
 library(grid)
 
-
-theme_rmh <- function(){ 
-    theme_bw(base_size=14) +
-        theme(
-            panel.grid.minor.x  = element_blank(),
-           panel.grid.minor.y  = element_blank(),
-            strip.background = element_rect(colour="white", fill="white"),
-              legend.position = "right",           
-           legend.margin=margin(t=-0.1, r=0, b=-0.1, l=-0.1, unit="cm"),
-           legend.key.size = unit(0.5, "cm"))
-}
-
-treatmentcolors <-  c("control" = "#bdbdbd", 
-                              "bldg" =  "#d95f02", 
-                              "lay"  = "#a1d99b", 
-                              "inc.d3" = "#74c476", 
-                              "inc.d9"  = "#41ab5d", 
-                              "inc.d17" = "#238b45", 
-                              "hatch"  = "#807dba", 
-                              "n5"  = "#6a51a3", 
-                               "n9" = "#4a1486")
+source("../R/themes.R")  # load custom themes and color palletes
 
 knitr::opts_chunk$set(echo = TRUE, cache = T, fig.path = '../figures/pca/')
 ```
 
 ```{r rawdata}
-counts <- read.csv("../results/00_countData_characterization.csv", row.names = 1, header = T)
-
-samples <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, header = T)
+samples <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+counts <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1, header = T)
 
 samples$treatment <- factor(samples$treatment, levels = 
-                              c("control", "bldg", "lay", "inc.d3", "inc.d9", 
-                                "inc.d17", "hatch", "n5", "n9"))
+                             c("control", "bldg", "lay",
+                               "inc.d3", "inc.d9", "inc.d17", 
+                               "hatch", "n5",  "n9",
+                               "m.inc.d3", "m.inc.d8","m.inc.d9",
+                               "m.inc.d17","m.n2" ,"prolong", "extend"))
 samples$tissue <- factor(samples$tissue, levels = 
-                              c("hypothalamus", "pituitary", "gonad"))
+                             c("hypothalamus", "pituitary", "gonad" ))
+
+samples$lastday <- ifelse(grepl("m.inc.d3|m.inc.d9|m.inc.d17|m.n2", samples$treatment), "empty nest", 
+                    ifelse(grepl("m.inc.d8|hatch|extend", samples$treatment),"chicks hatch",      
+                     ifelse(grepl("n5", samples$treatment),"chicks early",
+                     ifelse(grepl("n9", samples$treatment),"chicks later",
+                     ifelse(grepl("control", samples$treatment),"control",
+                     ifelse(grepl("bldg", samples$treatment),"nest building",
+                     ifelse(grepl("prolong", samples$treatment),"eggs delay",
+                      ifelse(grepl("lay", samples$treatment),"eggs lay",
+                      ifelse(grepl("inc.d3", samples$treatment),"eggs early",
+                     ifelse(grepl("inc.d9", samples$treatment),"eggs middle",
+                    ifelse(grepl("inc.d17", samples$treatment),"eggs later", NA)))))))))))
+
+samples$penultimate <-  ifelse(grepl("extend", samples$treatment),"eggs delay",  
+                          ifelse(grepl("m.n2", samples$treatment),"chicks hatch",
+                     ifelse(grepl("n5", samples$treatment),"chicks early",
+                     ifelse(grepl("n9", samples$treatment),"chicks later",
+                     ifelse(grepl("control", samples$treatment),"control",
+                     ifelse(grepl("bldg|lay", samples$treatment),"nest building",
+                     ifelse(grepl("prolong", samples$treatment),"eggs delay",
+                      ifelse(grepl("inc.d3|m.inc.d3", samples$treatment),"eggs early",
+                     ifelse(grepl("inc.d9|m.inc.d9|m.inc.d8", samples$treatment),"eggs middle",
+                    ifelse(grepl("inc.d17|hatch", samples$treatment),"eggs later", NA))))))))))
+
+samples$xlabel <- samples$treatment
+
+levels(samples$xlabel) <-  c("control", "nest.building", "egg.lay",
+                               "eggs.early", "eggs.early.remove", 
+                               "eggs.mid", "eggs.mid.hatch", "eggs.mid.remove",
+                               "eggs.end", "eggs.end.remove",
+                               "chicks.hatch",  "chicks.hatch.remove"  ,
+                               "chicks.mid", "eggs.delay", "eggs.delay.hatch", "chicks.end")
 
 
-geneinfo <- read.csv("../metadata//00_geneinfo.csv", row.names = 1, header = T)
+samples$lastday <- factor(samples$lastday, levels =  c("control", "nest building", "eggs lay",
+                               "eggs early", "eggs middle",  "eggs later","eggs delay",
+                               "chicks hatch", "chicks early",  "chicks later", "empty nest"))
+
+samples$penultimate <- factor(samples$penultimate, levels =  c("control", "nest building",
+                               "eggs early",  "eggs middle",  "eggs later",  "eggs delay",
+                               "chicks hatch", "chicks early",  "chicks later"))
+
+
 ```
 
 ```{r raw}
@@ -105,54 +128,7 @@ sidebyside
 ```
 
 
-## subsets of normalized data show by tissue and sex
 
-```{r tissuesex}
-plotlist = list()
-for (eachgroup in levels(samples$treatment)){
-  
-  print(eachgroup)
-  
-  colData <- samples %>%
-      dplyr::filter(treatment == eachgroup) %>%
-      droplevels()
-  row.names(colData) <- colData$V1
-  
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
-
-  countData <- pseudocounts %>% dplyr::select(one_of(savecols)) 
-
-  # check that row and col lenghts are equal
-  print(ncol(countData) == nrow(colData))
-  
-  pca <- prcomp(t(countData))
-  
-  p <- autoplot(pca, data = colData, alpha = 'tissue', shape = "sex", color = "treatment")
-
-en <- p + labs(subtitle = eachgroup) +
-  theme_rmh() +
-    theme_rmh()  +
-  stat_ellipse(aes(linetype = sex, alpha = tissue, color = treatment)) +
-   theme_bw(base_size=8) +
-    theme(legend.position = "bottom") +
-  scale_color_manual(values = treatmentcolors) + 
-  guides(color = FALSE)
-
-legend <- get_legend(en) 
-
-en <- en  + theme(legend.position = "none")
-
-plotlist[[eachgroup]] = en
-
-}
-
-main <- grid.arrange(grobs=plotlist,ncol=3)
-
-withlegend <- plot_grid( main, legend, rel_heights  = c(3, .3), ncol = 1)
-withlegend
-
-```
 
 ## sex and timepoint within a tissue
 
@@ -170,22 +146,23 @@ for (eachtissue in levels(samples$tissue)){
   savecols <- as.character(colData$V1) 
   savecols <- as.vector(savecols) 
 
-  countData <- pseudocounts %>% dplyr::select(one_of(savecols)) 
+  countData <- counts %>% dplyr::select(one_of(savecols)) 
 
   # check that row and col lenghts are equal
   print(ncol(countData) == nrow(colData))
   
   pca <- prcomp(t(countData))
   
-  p <- autoplot(pca, data = colData, colour = 'treatment', shape = "sex")
+  p <- autoplot(pca, data = colData, fill = lastday, color = penultimate, shape = "tissue")
 
 en <- p + labs(subtitle = eachtissue) +
-  theme_rmh() +  guides(colour = guide_legend(order = 1), 
+  theme_rmh() +  guides(color = guide_legend(order = 1), 
               shape = guide_legend(order = 2)) +
-  stat_ellipse(aes(linetype = sex, colour = treatment)) +
   theme_bw(base_size=8) +
-    theme(legend.position = "bottom") +
-  scale_color_manual(values =  treatmentcolors)
+    theme(legend.position = "bottom") + 
+  scale_fill_manual(values = colorlastday) +
+  scale_color_manual(values = colorpenultimate)
+
 
 legend <- get_legend(en)
 
