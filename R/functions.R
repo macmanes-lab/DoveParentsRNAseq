@@ -209,22 +209,30 @@ plotPCAs <- function(pcadata, mysubtitle){
   #percentVar <- round(100 * attr(pcadata, "percentVar"))
 
   pca1 <- ggplot(pcadata, aes(xlabel, PC1, fill = lastday, color = penultimate)) + 
-    geom_violin( size = 1.5) +
+    geom_violin() +
     #geom_point() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC1 % variance")) +
+    ylab(paste0("PC1")) +
     xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
-    scale_fill_manual(values = colorlastday) +
-    scale_color_manual(values = colorpenultimate) +
-    facet_wrap(~study, scales = "free_x") 
-    
+    scale_fill_manual(values = colorlastday, 
+                      guide = guide_legend(
+                        direction = "horizontal",
+                        label.position = "bottom")) +
+    scale_color_manual(values = colorpenultimate,
+                       guide = guide_legend(
+                         direction = "horizontal",
+                         label.position = "bottom")) +
+    facet_wrap(~study, scales = "free_x")  +
+    guides(col = guide_legend(nrow = 1),
+           fill = guide_legend(nrow = 1))
+
 
   pca2 <- ggplot(pcadata, aes(xlabel, PC2, color = penultimate, fill = lastday)) + 
-    geom_violin(size = 1.5) +
+    geom_violin() +
     #geom_point() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC2 % variance")) +
+    ylab(paste0("PC1")) +
     xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
     scale_fill_manual(values = colorlastday) +
@@ -236,8 +244,8 @@ plotPCAs <- function(pcadata, mysubtitle){
     geom_point(pch=21, size = 3) +
     #stat_ellipse() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC2 % variance")) +
-    xlab(paste0("PC1 % variance")) +
+    ylab(paste0("PC2")) +
+    xlab(paste0("PC1")) +
     labs(subtitle = mysubtitle) +
     theme(legend.position = "bottom") +
     scale_color_manual(values = colorpenultimate) +
@@ -252,7 +260,7 @@ plotPCAs <- function(pcadata, mysubtitle){
   #mypca <- plot_grid(mypcatop, legend, ncol = 1, rel_heights = c(1,0.2))
   
   plot(pca1)
-  plot(pca2)
+  #plot(pca2)
   plot(pca12)
   
   return(pca1)

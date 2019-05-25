@@ -156,24 +156,27 @@ p3 + theme_noaxislabels
 p4 + theme_noaxislabels
 p5 + theme_noaxislabels
 p6 + theme_noaxislabels
+
 ```
-```{r temp, eval = F}
+```{r pca, eval = T}
 mylegend <- get_legend(p1)
 
-allPC1s <- plot_grid(p1 + theme_noaxislabels, 
-                     p2 + theme_noaxislabels, 
-                     p3 + theme_noaxislabels,
-                     p4 + theme_noaxislabels,
-                     p5 + theme_noaxislabels,
-                     p6 + theme_noaxislabels,
-                     nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
+allPC1s <- plot_grid(p1 + theme_noaxislabels + ylim(c(-40,40)), 
+                     p4 + theme_noaxislabels + ylim(c(-40,40)), 
+                     p2 + theme_noaxislabels + ylim(c(-40,40)),
+                     p5 + theme_noaxislabels + ylim(c(-40,40)),
+                     p3 + theme_nolegend + ylim(c(-40,40)) ,
+                     p6 + theme_nolegend + ylim(c(-40,40)) ,
+                     ncol = 2)
 
-pc1 <- plot_grid(allPC1s,mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
+pc1 <- plot_grid(allPC1s, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
 pc1
 
 pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
 plot(pc1)
 dev.off()
+
+
 ```
 
 ## heamap with minimum pvalue

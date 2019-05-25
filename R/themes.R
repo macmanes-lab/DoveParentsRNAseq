@@ -26,4 +26,5 @@ colorpenultimate <- c("control" = "#77787A",
                       "chicks early" = "#9993C3", 
                       "chicks later" = "#7874B0")
 
-theme_noaxislabels <- theme(legend.position = "none", axis.title.x=element_blank(),axis.text.x=element_blank())
+theme_noaxislabels <- theme(legend.position = "none", axis.title.x=element_blank(), axis.ticks = element_blank(), axis.text.x=element_blank()) 
+theme_nolegend <- theme(legend.position = "none",  axis.text.x=element_blank(), axis.ticks = element_blank()) 
