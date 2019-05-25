@@ -332,22 +332,93 @@ Run DESeq on all subsets of the data
 Calculate and plot total DEGs
 -----------------------------
 
-    DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
-    DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
-    DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
-    DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
+    #DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
+    #DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
+    #DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
+    #DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
     DEGs.male_pituitary <- returntotalDEGs(dds.male_pituitary)
-    DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
+
+    ## [1] "control.bldg"
+    ## [1] "control.inc.d17"
+    ## [1] "control.m.inc.d17"
+    ## [1] "control.hatch"
+    ## [1] "control.m.n2"
+    ## [1] "control.n9"
+    ## [1] "bldg.inc.d17"
+    ## [1] "bldg.m.inc.d17"
+    ## [1] "bldg.hatch"
+    ## [1] "bldg.m.n2"
+    ## [1] "bldg.n9"
+    ## [1] "inc.d17.m.inc.d17"
+    ## [1] "inc.d17.hatch"
+    ## [1] "inc.d17.m.n2"
+    ## [1] "inc.d17.n9"
+    ## [1] "m.inc.d17.hatch"
+    ## [1] "m.inc.d17.m.n2"
+    ## [1] "m.inc.d17.n9"
+    ## [1] "hatch.m.n2"
+    ## [1] "hatch.n9"
+    ## [1] "m.n2.n9"
+    ##                          V1        V2   V3
+    ## control.bldg        control      bldg 4969
+    ## control.inc.d17     control   inc.d17 4567
+    ## control.m.inc.d17   control m.inc.d17 4893
+    ## control.hatch       control     hatch 4877
+    ## control.m.n2        control      m.n2 4815
+    ## control.n9          control        n9 5020
+    ## bldg.inc.d17           bldg   inc.d17  342
+    ## bldg.m.inc.d17         bldg m.inc.d17  163
+    ## bldg.hatch             bldg     hatch  840
+    ## bldg.m.n2              bldg      m.n2  171
+    ## bldg.n9                bldg        n9   38
+    ## inc.d17.m.inc.d17   inc.d17 m.inc.d17  278
+    ## inc.d17.hatch       inc.d17     hatch    9
+    ## inc.d17.m.n2        inc.d17      m.n2  201
+    ## inc.d17.n9          inc.d17        n9  166
+    ## m.inc.d17.hatch   m.inc.d17     hatch  737
+    ## m.inc.d17.m.n2    m.inc.d17      m.n2    4
+    ## m.inc.d17.n9      m.inc.d17        n9    8
+    ## hatch.m.n2            hatch      m.n2  688
+    ## hatch.n9              hatch        n9  433
+    ## m.n2.n9                m.n2        n9   19
+
+    #DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
 
     #a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
     #b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
     #c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
     #d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
     e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
+
+    ##                          V1        V2   V3
+    ## control.bldg        control      bldg 4969
+    ## control.inc.d17     control   inc.d17 4567
+    ## control.m.inc.d17   control m.inc.d17 4893
+    ## control.hatch       control     hatch 4877
+    ## control.m.n2        control      m.n2 4815
+    ## control.n9          control        n9 5020
+    ## bldg.inc.d17           bldg   inc.d17  342
+    ## bldg.m.inc.d17         bldg m.inc.d17  163
+    ## bldg.hatch             bldg     hatch  840
+    ## bldg.m.n2              bldg      m.n2  171
+    ## bldg.n9                bldg        n9   38
+    ## inc.d17.m.inc.d17   inc.d17 m.inc.d17  278
+    ## inc.d17.hatch       inc.d17     hatch    9
+    ## inc.d17.m.n2        inc.d17      m.n2  201
+    ## inc.d17.n9          inc.d17        n9  166
+    ## m.inc.d17.hatch   m.inc.d17     hatch  737
+    ## m.inc.d17.m.n2    m.inc.d17      m.n2    4
+    ## m.inc.d17.n9      m.inc.d17        n9    8
+    ## hatch.m.n2            hatch      m.n2  688
+    ## hatch.n9              hatch        n9  433
+    ## m.n2.n9                m.n2        n9   19
+
+![](../figures/sexes/plotDEGs-1.png)
+
     #f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
 
     plot_grid(#a + theme(legend.position = "none"),
-              b + theme(legend.position = "none"),
+              #b + theme(legend.position = "none"),
               #c + theme(legend.position = "none"),
               #d + theme(legend.position = "none"),
               e + theme(legend.position = "none"),
