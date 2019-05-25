@@ -332,52 +332,18 @@ Run DESeq on all subsets of the data
 Calculate and plot total DEGs
 -----------------------------
 
-    #DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
+    DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
     DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
-
-    ## [1] "control.bldg"
-    ## [1] "control.n9"
-    ## [1] "bldg.n9"
-    ##                   V1   V2   V3
-    ## control.bldg control bldg 4533
-    ## control.n9   control   n9 4196
-    ## bldg.n9         bldg   n9  106
-
-    #DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
-    #DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
-    DEGss.male_pituitary <- returntotalDEGs(dds.male_pituitary)
-
-    ## [1] "control.bldg"
-    ## [1] "control.n9"
-    ## [1] "bldg.n9"
-    ##                   V1   V2   V3
-    ## control.bldg control bldg 4969
-    ## control.n9   control   n9 5020
-    ## bldg.n9         bldg   n9   38
-
-    #DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
+    DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
+    DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
+    DEGs.male_pituitary <- returntotalDEGs(dds.male_pituitary)
+    DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
 
     #a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
-    b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
-
-    ##                   V1   V2   V3
-    ## control.bldg control bldg 4533
-    ## control.n9   control   n9 4196
-    ## bldg.n9         bldg   n9  106
-
-![](../figures/sexes/plotDEGs-1.png)
-
+    #b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
     #c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
     #d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
-    e <- plottotalDEGs(DEGss.male_pituitary, "male pituitary")
-
-    ##                   V1   V2   V3
-    ## control.bldg control bldg 4969
-    ## control.n9   control   n9 5020
-    ## bldg.n9         bldg   n9   38
-
-![](../figures/sexes/plotDEGs-2.png)
-
+    e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
     #f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
 
     plot_grid(#a + theme(legend.position = "none"),
@@ -393,32 +359,205 @@ Calculate and plot total DEGs
 Calculate and plot principal components
 ---------------------------------------
 
-    p1 <- plotPCAs(dds.female_hypothalamus, "female hypothalamus")
-    p2 <- plotPCAs(dds.female_pituitary, "female pituitary")      
-    p3 <- plotPCAs(dds.female_gonad, "female gonad")
-    p4 <- plotPCAs(dds.male_hypothalamus, "male hypothalamus")
-    p5 <- plotPCAs(dds.male_pituitary, "male pituitary")
-    p6 <- plotPCAs(dds.male_gondad, "male gonad")
-    p1
-    p2
-    p3
-    p4
-    p5
-    p6
+    pcas.female_hypothalamus <- returnPCAs(dds.female_hypothalamus)
+
+    ## [1] 26  9  8  4  3  3
+    ##              Df Sum Sq Mean Sq F value Pr(>F)    
+    ## xlabel       15   6078   405.2   18.67 <2e-16 ***
+    ## Residuals   149   3235    21.7                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value Pr(>F)  
+    ## xlabel       15  490.5   32.70   1.684 0.0596 .
+    ## Residuals   149 2892.8   19.41                 
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15  749.2   49.95   3.791 1.12e-05 ***
+    ## Residuals   149 1963.1   13.18                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15  294.6   19.64   3.012 0.000306 ***
+    ## Residuals   149  971.5    6.52                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    pcas.female_pituitary <- returnPCAs(dds.female_pituitary)      
+
+    ## [1] 11  8  7  6  4  3
+    ##              Df Sum Sq Mean Sq F value Pr(>F)    
+    ## xlabel       15   2480  165.31   13.99 <2e-16 ***
+    ## Residuals   149   1761   11.82                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15   1076   71.70   5.318 1.83e-08 ***
+    ## Residuals   149   2009   13.48                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value Pr(>F)    
+    ## xlabel       15   1342   89.46   10.26 <2e-16 ***
+    ## Residuals   149   1300    8.72                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value Pr(>F)    
+    ## xlabel       15 1195.8   79.72   12.02 <2e-16 ***
+    ## Residuals   149  988.5    6.63                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    pcas.female_gonad <- returnPCAs(dds.female_gonad)
+
+    ## [1] 37 12  7  4  4  3
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15  11694   779.6   3.644 2.04e-05 ***
+    ## Residuals   151  32303   213.9                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15   3103  206.83   2.799 0.000738 ***
+    ## Residuals   151  11160   73.91                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value Pr(>F)
+    ## xlabel       15    803   53.56   1.109  0.353
+    ## Residuals   151   7294   48.31               
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15   1487   99.11   4.148 2.37e-06 ***
+    ## Residuals   151   3607   23.89                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    pcas.male_hypothalamus <- returnPCAs(dds.male_hypothalamus)
+
+    ## [1] 28  9  6  4  3  3
+    ##              Df Sum Sq Mean Sq F value Pr(>F)    
+    ## xlabel       15   5836   389.1   10.54 <2e-16 ***
+    ## Residuals   146   5388    36.9                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15   1230   82.00   4.879 1.21e-07 ***
+    ## Residuals   146   2454   16.81                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value Pr(>F)
+    ## xlabel       15  222.1   14.81   0.959  0.501
+    ## Residuals   146 2253.7   15.44               
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15  419.1  27.938    3.23 0.000125 ***
+    ## Residuals   146 1263.0   8.651                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    pcas.male_pituitary <- returnPCAs(dds.male_pituitary)
+
+    ## [1] 11  9  7  5  4  3
+    ##              Df Sum Sq Mean Sq F value Pr(>F)    
+    ## xlabel       15 2676.7  178.44   30.47 <2e-16 ***
+    ## Residuals   149  872.6    5.86                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value  Pr(>F)    
+    ## xlabel       15   1412   94.15   9.431 2.8e-15 ***
+    ## Residuals   149   1488    9.98                    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15  762.4   50.82   4.975 7.58e-08 ***
+    ## Residuals   149 1522.3   10.22                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15  549.6   36.64   4.769 1.79e-07 ***
+    ## Residuals   149 1144.8    7.68                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    pcas.male_gondad <- returnPCAs(dds.male_gondad)
+
+    ## [1] 14 10  5  3  3  2
+    ##              Df Sum Sq Mean Sq F value   Pr(>F)    
+    ## xlabel       15   1476   98.37   3.674 1.89e-05 ***
+    ## Residuals   147   3936   26.77                     
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value  Pr(>F)   
+    ## xlabel       15  830.7   55.38   2.679 0.00124 **
+    ## Residuals   147 3038.4   20.67                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value Pr(>F)    
+    ## xlabel       15 1459.0   97.27   22.58 <2e-16 ***
+    ## Residuals   147  633.3    4.31                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ##              Df Sum Sq Mean Sq F value  Pr(>F)   
+    ## xlabel       15  235.5   15.70   2.488 0.00273 **
+    ## Residuals   147  927.6    6.31                   
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    p1 <- plotPCAs(pcas.female_hypothalamus, "female hypothalamus") 
+
+![](../figures/sexes/plotpca-1.png)![](../figures/sexes/plotpca-2.png)![](../figures/sexes/plotpca-3.png)
+
+    p2 <- plotPCAs(pcas.female_pituitary, "female pituitary")   
+
+![](../figures/sexes/plotpca-4.png)![](../figures/sexes/plotpca-5.png)![](../figures/sexes/plotpca-6.png)
+
+    p3 <- plotPCAs(pcas.female_gonad, "female gonad") 
+
+![](../figures/sexes/plotpca-7.png)![](../figures/sexes/plotpca-8.png)![](../figures/sexes/plotpca-9.png)
+
+    p4 <- plotPCAs(pcas.male_hypothalamus, "male hypothalamus") 
+
+![](../figures/sexes/plotpca-10.png)![](../figures/sexes/plotpca-11.png)![](../figures/sexes/plotpca-12.png)
+
+    p5 <- plotPCAs(pcas.male_pituitary, "male pituitary") 
+
+![](../figures/sexes/plotpca-13.png)![](../figures/sexes/plotpca-14.png)![](../figures/sexes/plotpca-15.png)
+
+    p6 <- plotPCAs(pcas.male_gondad, "male gonad") 
+
+![](../figures/sexes/plotpca-16.png)![](../figures/sexes/plotpca-17.png)![](../figures/sexes/plotpca-18.png)
+
+    p1 + theme_noaxislabels
+
+![](../figures/sexes/plotpca-19.png)
+
+    p2 + theme_noaxislabels
+
+![](../figures/sexes/plotpca-20.png)
+
+    p3 + theme_noaxislabels
+
+![](../figures/sexes/plotpca-21.png)
+
+    p4 + theme_noaxislabels
+
+![](../figures/sexes/plotpca-22.png)
+
+    p5 + theme_noaxislabels
+
+![](../figures/sexes/plotpca-23.png)
+
+    p6 + theme_noaxislabels
+
+![](../figures/sexes/plotpca-24.png)
 
     mylegend <- get_legend(p1)
 
-    theme_noaxislabels <- theme(legend.position = "none", axis.title.x=element_blank(),axis.text.x=element_blank())
-
     allPC1s <- plot_grid(p1 + theme_noaxislabels, 
-                         p1 + theme_noaxislabels, 
-                         p1 + theme_noaxislabels,
-                         p1 + theme_noaxislabels,
-                         p1 + theme_noaxislabels,
-                         p1 + theme_noaxislabels),
+                         p2 + theme_noaxislabels, 
+                         p3 + theme_noaxislabels,
+                         p4 + theme_noaxislabels,
+                         p5 + theme_noaxislabels,
+                         p6 + theme_noaxislabels,
                          nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
 
-    pc1 <- plot_grid(mylegend, allPC1s, nrow = 2, rel_heights = c(0.15, 1.0))
+    pc1 <- plot_grid(allPC1s,mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
     pc1
 
     pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)

@@ -104,13 +104,13 @@ dds.male_gondad <- subsetDESeq(a.colData, a.countData, "male_gonad")
 ## Calculate and plot total DEGs
 
 
-```{r returntotalDEGs, eval = T}
-#DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
+```{r returntotalDEGs, eval = F}
+DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
 DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
-#DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
-#DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
-DEGss.male_pituitary <- returntotalDEGs(dds.male_pituitary)
-#DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
+DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
+DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
+DEGs.male_pituitary <- returntotalDEGs(dds.male_pituitary)
+DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
 ```
 
 ```{r plotDEGs, eval = T}
@@ -118,7 +118,7 @@ DEGss.male_pituitary <- returntotalDEGs(dds.male_pituitary)
 b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
 #c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
 #d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
-e <- plottotalDEGs(DEGss.male_pituitary, "male pituitary")
+e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
 #f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
 ```
 
@@ -134,36 +134,41 @@ plot_grid(#a + theme(legend.position = "none"),
 
 ## Calculate and plot principal components
 
-```{r pcadf, eval=F}
-p1 <- plotPCAs(dds.female_hypothalamus, "female hypothalamus")
-p2 <- plotPCAs(dds.female_pituitary, "female pituitary")      
-p3 <- plotPCAs(dds.female_gonad, "female gonad")
-p4 <- plotPCAs(dds.male_hypothalamus, "male hypothalamus")
-p5 <- plotPCAs(dds.male_pituitary, "male pituitary")
-p6 <- plotPCAs(dds.male_gondad, "male gonad")
-p1
-p2
-p3
-p4
-p5
-p6
-
+```{r returnPCAs, eval=T}
+pcas.female_hypothalamus <- returnPCAs(dds.female_hypothalamus)
+pcas.female_pituitary <- returnPCAs(dds.female_pituitary)      
+pcas.female_gonad <- returnPCAs(dds.female_gonad)
+pcas.male_hypothalamus <- returnPCAs(dds.male_hypothalamus)
+pcas.male_pituitary <- returnPCAs(dds.male_pituitary)
+pcas.male_gondad <- returnPCAs(dds.male_gondad)
 ```
 
-```{r pca, fig.dim = c(12, 10), eval=F}
+```{r plotpca, fig.dim = c(12, 10), eval=T}
+p1 <- plotPCAs(pcas.female_hypothalamus, "female hypothalamus") 
+p2 <- plotPCAs(pcas.female_pituitary, "female pituitary")   
+p3 <- plotPCAs(pcas.female_gonad, "female gonad") 
+p4 <- plotPCAs(pcas.male_hypothalamus, "male hypothalamus") 
+p5 <- plotPCAs(pcas.male_pituitary, "male pituitary") 
+p6 <- plotPCAs(pcas.male_gondad, "male gonad") 
+p1 + theme_noaxislabels
+p2 + theme_noaxislabels
+p3 + theme_noaxislabels
+p4 + theme_noaxislabels
+p5 + theme_noaxislabels
+p6 + theme_noaxislabels
+```
+```{r temp, eval = F}
 mylegend <- get_legend(p1)
 
-theme_noaxislabels <- theme(legend.position = "none", axis.title.x=element_blank(),axis.text.x=element_blank())
-
 allPC1s <- plot_grid(p1 + theme_noaxislabels, 
-                     p1 + theme_noaxislabels, 
-                     p1 + theme_noaxislabels,
-                     p1 + theme_noaxislabels,
-                     p1 + theme_noaxislabels,
-                     p1 + theme_noaxislabels),
+                     p2 + theme_noaxislabels, 
+                     p3 + theme_noaxislabels,
+                     p4 + theme_noaxislabels,
+                     p5 + theme_noaxislabels,
+                     p6 + theme_noaxislabels,
                      nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
 
-pc1 <- plot_grid(mylegend, allPC1s, nrow = 2, rel_heights = c(0.15, 1.0))
+pc1 <- plot_grid(allPC1s,mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
 pc1
 
 pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
