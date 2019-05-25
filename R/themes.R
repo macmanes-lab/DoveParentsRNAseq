@@ -28,3 +28,14 @@ colorpenultimate <- c("control" = "#77787A",
 
 theme_noaxislabels <- theme(legend.position = "none", axis.title.x=element_blank(), axis.ticks = element_blank(), axis.text.x=element_blank()) 
 theme_nolegend <- theme(legend.position = "none",  axis.text.x=element_blank(), axis.ticks = element_blank()) 
+
+theme_rmh <- function(){ 
+  theme_bw(base_size=14) +
+    theme(
+      panel.grid.minor.x  = element_blank(),
+      panel.grid.minor.y  = element_blank(),
+      strip.background = element_rect(colour="white", fill="white"),
+      legend.position = "right",           
+      legend.margin=margin(t=-0.1, r=0, b=-0.1, l=-0.1, unit="cm"),
+      legend.key.size = unit(0.5, "cm"))
+}
