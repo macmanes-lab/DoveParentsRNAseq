@@ -183,7 +183,9 @@ pcadataframe <- function (object, intgroup, ntop = 500, returnData = FALSE)
 
 # plot pcs 
 # eg. plotPCAs(dds.female_hypothalamus, "female hypothalamus")
-plotPCAs <- function(dds, mysubtitle){
+returnPCAs <- function(dds){
+  
+  dds <- dds
   
   vsd <- vst(dds, blind=FALSE) # variance stabilized 
   
@@ -194,50 +196,39 @@ plotPCAs <- function(dds, mysubtitle){
   
   print(summary(aov(PC1 ~ xlabel, data=pcadata)))
   #print(TukeyHSD(aov(PC1 ~ xlabel, data=pcadata), which = "xlabel"))
-  
   print(summary(aov(PC2 ~ xlabel, data=pcadata))) 
   print(summary(aov(PC3 ~ xlabel, data=pcadata))) 
   print(summary(aov(PC4 ~ xlabel, data=pcadata))) 
+  return(pcadata)
+}
+
+plotPCAs <- function(pcadata, mysubtitle){ 
   
+  pcadata <- pcadata
   
-  pca1 <- ggplot(pcadata, aes(xlabel, PC1, fill = lastday)) + 
-    geom_boxplot(aes(color = penultimate, alpha = 0.9)) +
+  #percentVar <- round(100 * attr(pcadata, "percentVar"))
+
+  pca1 <- ggplot(pcadata, aes(xlabel, PC1, fill = lastday, color = penultimate)) + 
+    geom_violin( size = 1.5) +
     #geom_point() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC1: ", percentVar[1],"% variance")) +
-    xlab("Parental stages, with increasing time ->") +
+    ylab(paste0("PC1 % variance")) +
+    xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
-    theme(axis.text.x = element_text(angle = 90),
-          legend.text = element_text(size=10),
-          legend.position = "bottom",
-          legend.box = "vertical",
-          legend.margin = margin(0,0,0,0, "cm"))  +
+    scale_fill_manual(values = colorlastday) +
     scale_color_manual(values = colorpenultimate) +
-    scale_fill_manual(values = colorlastday) + 
-    guides(alpha=FALSE) + 
-    facet_wrap(~study, scales = "free_x") +
-      guides(color = guide_legend(order = 1, title = "pentultimate day", 
-                                  direction = "horizontal", 
-                                  nrow=1, label.position = "bottom"),
-             fill = guide_legend(order = 2,  title = "last day", 
-                                  direction = "horizontal", 
-                                  nrow=1, label.position = "bottom")) 
+    facet_wrap(~study, scales = "free_x") 
     
 
-  pca2 <- ggplot(pcadata, aes(xlabel, PC2, color = penultimate)) + 
-    geom_boxplot(aes(fill = lastday, alpha = 0.9)) +
+  pca2 <- ggplot(pcadata, aes(xlabel, PC2, color = penultimate, fill = lastday)) + 
+    geom_violin(size = 1.5) +
     #geom_point() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC2: ", percentVar[2],"% variance")) +
-    xlab(NULL) +
+    ylab(paste0("PC2 % variance")) +
+    xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
-    theme(axis.text.x = element_text(angle = 90),
-          legend.text = element_text(size=10),
-          legend.position = "bottom")  +
+    scale_fill_manual(values = colorlastday) +
     scale_color_manual(values = colorpenultimate) +
-    guides(color = guide_legend(order = 1), 
-           fill = guide_legend(order = 2)) + 
-    scale_fill_manual(values = colorlastday) + 
     facet_wrap(~study, scales = "free_x")
   
   
@@ -245,32 +236,16 @@ plotPCAs <- function(dds, mysubtitle){
     geom_point(pch=21, size = 3) +
     #stat_ellipse() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC2: ", percentVar[2],"% variance")) +
-    xlab(paste0("PC1: ", percentVar[1],"% variance")) +
+    ylab(paste0("PC2 % variance")) +
+    xlab(paste0("PC1 % variance")) +
     labs(subtitle = mysubtitle) +
-    #theme(legend.position = "bottom") +
+    theme(legend.position = "bottom") +
     scale_color_manual(values = colorpenultimate) +
     scale_fill_manual(values = colorlastday)  +
     guides(color = guide_legend(order = 1, ncol=2), 
            fill = guide_legend(order = 2, ncol=2)) +
     theme(legend.text = element_text(size=10)) 
   
-  pca1b <- ggplot(pcadata, aes(xlabel, PC1, fill = penultimate)) + 
-    geom_boxplot() +
-    theme_bw(base_size = 12) +
-    geom_point(aes(color = lastday)) +
-    ylab(paste0("PC1: ", percentVar[1],"% variance")) +
-    xlab("Parental stage with increasing time ->") +
-    labs(subtitle = mysubtitle) +
-    theme(axis.text.x = element_text(angle = 90),
-          legend.text = element_text(size=10),
-          legend.position = "bottom") +
-    scale_fill_manual(values = colorpenultimate) +
-    scale_color_manual(values = colorlastday) +
-    guides(color = guide_legend(order = 2), 
-           fill = guide_legend(order = 1),
-           alpha=FALSE) + 
-    facet_wrap(~study, scales = "free_x")
   
   #legend <- get_legend(pca1)
   #mypcatop <- plot_grid(pca1 + theme(legend.position = "none"), pca2, nrow = 1)  
@@ -278,7 +253,6 @@ plotPCAs <- function(dds, mysubtitle){
   
   plot(pca1)
   plot(pca2)
-  plot(pca1b)
   plot(pca12)
   
   return(pca1)
