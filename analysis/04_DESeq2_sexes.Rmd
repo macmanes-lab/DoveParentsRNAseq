@@ -104,18 +104,18 @@ dds.male_gondad <- subsetDESeq(a.colData, a.countData, "male_gonad")
 ## Calculate and plot total DEGs
 
 
-```{r returntotalDEGs, eval = F}
-DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
-DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
-DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
-DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
+```{r returntotalDEGs, eval = T}
+#DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
+#DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
+#DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
+#DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
 DEGs.male_pituitary <- returntotalDEGs(dds.male_pituitary)
-DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
+#DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
 ```
 
 ```{r plotDEGs, eval = T}
 #a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
-b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
+#b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
 #c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
 #d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
 e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
@@ -124,7 +124,7 @@ e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
 
 ```{r plottotalDEGs, eval = T}
 plot_grid(#a + theme(legend.position = "none"),
-          b + theme(legend.position = "none"),
+          #b + theme(legend.position = "none"),
           #c + theme(legend.position = "none"),
           #d + theme(legend.position = "none"),
           e + theme(legend.position = "none"),
