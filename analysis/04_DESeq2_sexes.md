@@ -572,68 +572,77 @@ Calculate and plot principal components
 
     p1 <- plotPCAs(pcas.female_hypothalamus, "female hypothalamus") 
 
-![](../figures/sexes/plotpca-1.png)![](../figures/sexes/plotpca-2.png)![](../figures/sexes/plotpca-3.png)
+![](../figures/sexes/plotpca-1.png)![](../figures/sexes/plotpca-2.png)
 
     p2 <- plotPCAs(pcas.female_pituitary, "female pituitary")   
 
-![](../figures/sexes/plotpca-4.png)![](../figures/sexes/plotpca-5.png)![](../figures/sexes/plotpca-6.png)
+![](../figures/sexes/plotpca-3.png)![](../figures/sexes/plotpca-4.png)
 
     p3 <- plotPCAs(pcas.female_gonad, "female gonad") 
 
-![](../figures/sexes/plotpca-7.png)![](../figures/sexes/plotpca-8.png)![](../figures/sexes/plotpca-9.png)
+![](../figures/sexes/plotpca-5.png)![](../figures/sexes/plotpca-6.png)
 
     p4 <- plotPCAs(pcas.male_hypothalamus, "male hypothalamus") 
 
-![](../figures/sexes/plotpca-10.png)![](../figures/sexes/plotpca-11.png)![](../figures/sexes/plotpca-12.png)
+![](../figures/sexes/plotpca-7.png)![](../figures/sexes/plotpca-8.png)
 
     p5 <- plotPCAs(pcas.male_pituitary, "male pituitary") 
 
-![](../figures/sexes/plotpca-13.png)![](../figures/sexes/plotpca-14.png)![](../figures/sexes/plotpca-15.png)
+![](../figures/sexes/plotpca-9.png)![](../figures/sexes/plotpca-10.png)
 
     p6 <- plotPCAs(pcas.male_gondad, "male gonad") 
 
-![](../figures/sexes/plotpca-16.png)![](../figures/sexes/plotpca-17.png)![](../figures/sexes/plotpca-18.png)
+![](../figures/sexes/plotpca-11.png)![](../figures/sexes/plotpca-12.png)
 
     p1 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-19.png)
+![](../figures/sexes/plotpca-13.png)
 
     p2 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-20.png)
+![](../figures/sexes/plotpca-14.png)
 
     p3 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-21.png)
+![](../figures/sexes/plotpca-15.png)
 
     p4 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-22.png)
+![](../figures/sexes/plotpca-16.png)
 
     p5 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-23.png)
+![](../figures/sexes/plotpca-17.png)
 
     p6 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-24.png)
+![](../figures/sexes/plotpca-18.png)
 
     mylegend <- get_legend(p1)
 
-    allPC1s <- plot_grid(p1 + theme_noaxislabels, 
-                         p2 + theme_noaxislabels, 
-                         p3 + theme_noaxislabels,
-                         p4 + theme_noaxislabels,
-                         p5 + theme_noaxislabels,
-                         p6 + theme_noaxislabels,
-                         nrow = 3, rel_heights = c(0.3, 0.3, 0.4))
+    allPC1s <- plot_grid(p1 + theme_noaxislabels + ylim(c(-40,40)), 
+                         p4 + theme_noaxislabels + ylim(c(-40,40)), 
+                         p2 + theme_noaxislabels + ylim(c(-40,40)),
+                         p5 + theme_noaxislabels + ylim(c(-40,40)),
+                         p3 + theme_nolegend + ylim(c(-40,40)) ,
+                         p6 + theme_nolegend + ylim(c(-40,40)) ,
+                         ncol = 2)
 
-    pc1 <- plot_grid(allPC1s,mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_ydensity).
+
+    pc1 <- plot_grid(allPC1s, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
     pc1
+
+![](../figures/sexes/pca-1.png)
 
     pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
     plot(pc1)
     dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
 
 heamap with minimum pvalue
 --------------------------
