@@ -35,12 +35,12 @@ levels(a.colData$treatment)
 
 a.colData$treatment <- factor(a.colData$treatment, levels = 
                              c("control", "bldg", "lay",
-                               "inc.d3", "m.inc.d3", 
-                               "inc.d9", "m.inc.d8", "m.inc.d9",
-                               "inc.d17", "m.inc.d17",
-                               "hatch",  "m.n2"  ,
-                               "n5", "prolong", "extend", "n9" ))
-                               
+                               "inc.d3", "inc.d9", "inc.d17",
+                               "hatch", "n5", "n9",
+                              
+                               "m.inc.d3", "m.inc.d8", "m.inc.d9",
+                               "m.inc.d17",  "m.n2"  ,
+                                "prolong", "extend" ))
                                
 a.colData$sextissue <- as.factor(paste(a.colData$sex, a.colData$tissue, sep = "_"))
 
@@ -105,31 +105,35 @@ dds.male_gondad <- subsetDESeq(a.colData, a.countData, "male_gonad")
 
 
 ```{r returntotalDEGs, eval = T}
-#DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
-#DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
-#DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
-#DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
+DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
+DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
+DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
+DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
 DEGs.male_pituitary <- returntotalDEGs(dds.male_pituitary)
-#DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
-```
+DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
 
-```{r plotDEGs, eval = T}
-#a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
-#b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
-#c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
-#d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
-e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
-#f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
 ```
 
 ```{r plottotalDEGs, eval = T}
-plot_grid(#a + theme(legend.position = "none"),
-          #b + theme(legend.position = "none"),
-          #c + theme(legend.position = "none"),
-          #d + theme(legend.position = "none"),
-          e + theme(legend.position = "none"),
-          #f + theme(legend.position = "none"),
-          nrow = 2) 
+a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
+b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
+c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
+d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
+e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
+f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
+
+myDEGs <- plot_grid(a + theme_noaxislabels,
+          d + theme_noaxislabels,
+          b + theme_noaxislabels,
+          e + theme_noaxislabels,
+          c + theme_nolegend,
+          f + theme_nolegend,
+          nrow = 3) 
+myDEGs
+
+pdf("../figures/sexes/plottotalDEGs-1.pdf", width = 12, height = 10)
+plot(myDEGs)
+dev.off()
 ```
 
 ## Calculate and plot principal components
@@ -143,7 +147,7 @@ pcas.male_pituitary <- returnPCAs(dds.male_pituitary)
 pcas.male_gondad <- returnPCAs(dds.male_gondad)
 ```
 
-```{r plotpca, fig.dim = c(12, 10), eval=T}
+```{r plotpca, eval=T}
 p1 <- plotPCAs(pcas.female_hypothalamus, "female hypothalamus") 
 p2 <- plotPCAs(pcas.female_pituitary, "female pituitary")   
 p3 <- plotPCAs(pcas.female_gonad, "female gonad") 
@@ -161,12 +165,12 @@ p6 + theme_noaxislabels
 ```{r pca, eval = T}
 mylegend <- get_legend(p1)
 
-allPC1s <- plot_grid(p1 + theme_noaxislabels + ylim(c(-40,40)), 
-                     p4 + theme_noaxislabels + ylim(c(-40,40)), 
-                     p2 + theme_noaxislabels + ylim(c(-40,40)),
-                     p5 + theme_noaxislabels + ylim(c(-40,40)),
-                     p3 + theme_nolegend + ylim(c(-40,40)) ,
-                     p6 + theme_nolegend + ylim(c(-40,40)) ,
+allPC1s <- plot_grid(p1 + theme_noaxislabels + ylim(c(-35,35)), 
+                     p4 + theme_noaxislabels + ylim(c(-35,35)), 
+                     p2 + theme_noaxislabels + ylim(c(-35,35)),
+                     p5 + theme_noaxislabels + ylim(c(-35,35)),
+                     p3 + theme_nolegend + ylim(c(-35,35)) ,
+                     p6 + theme_nolegend + ylim(c(-35,35)) ,
                      ncol = 2)
 
 pc1 <- plot_grid(allPC1s, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
@@ -175,8 +179,6 @@ pc1
 pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
 plot(pc1)
 dev.off()
-
-
 ```
 
 ## heamap with minimum pvalue
