@@ -46,11 +46,11 @@ numDEGs <- function(dds, group1, group2){
 
 returntotalDEGs <- function(dds){
   
-  colData <- a.colData %>%
-    filter(treatment %in% c("control", "bldg", "n9",
-                            "inc.d17", "m.inc.d17",
-                            "hatch",  "m.n2")) %>%
-    droplevels()
+  colData <- a.colData # %>%
+   # filter(treatment %in% c("control", "bldg", "n9",
+   #                         "inc.d17", "m.inc.d17",
+   #                         "hatch",  "m.n2")) %>%
+   # droplevels()
   
   group1 <- levels(colData$treatment)
 
@@ -79,30 +79,35 @@ returntotalDEGs <- function(dds){
 
 plottotalDEGs <- function(myDEGS, mysubtitle){  
   totalDEGS <- myDEGS
-  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", 
-                                                 # "lay", "inc.d3", "m.inc.d3", 
-                                                 #  "inc.d9", "m.inc.d8", "m.inc.d9",
-                                                  "inc.d17", "m.inc.d17",
-                                                   "hatch",  "m.n2"  ,
-                                                 #  "n5", "prolong", "extend",
-                                                   "n9"))
-  totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", 
-                                                 #  "lay", "inc.d3", "m.inc.d3", 
-                                                 #  "inc.d9", "m.inc.d8", "m.inc.d9",
-                                                   "inc.d17", "m.inc.d17",
-                                                   "hatch",  "m.n2"  ,
-                                                 #  "n5", "prolong", "extend",
-                                                   "n9"))
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", "lay",
+                                                   "inc.d3", "inc.d9", "inc.d17",
+                                                   "hatch", "n5", "n9",
+                                                   
+                                                   "m.inc.d3", "m.inc.d8", "m.inc.d9",
+                                                   "m.inc.d17",  "m.n2"  ,
+                                                   "prolong", "extend" ))
+  totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", "lay",
+                                                   "inc.d3", "inc.d9", "inc.d17",
+                                                   "hatch", "n5", "n9",
+                                                   
+                                                   "m.inc.d3", "m.inc.d8", "m.inc.d9",
+                                                   "m.inc.d17",  "m.n2"  ,
+                                                   "prolong", "extend" ))
+
+  totalDEGS <- totalDEGS %>% dplyr::na_if(0)
+  
+  print(str(totalDEGS))
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
-    geom_text(aes(label = round(V3, 1)), color = "black") +
-    scale_fill_viridis() + 
+    theme_minimal(base_size = 12) + 
+    geom_text(aes(label = round(V3, 1)), color = "black")+
+    scale_fill_viridis(na.value="#bdbdbd", 
+                       limits = c(0,7000)) +
     xlab(NULL) + ylab(NULL) +
     labs(fill = "# of DEGs",
-         subtitle = mysubtitle) +
-    theme_minimal(base_size = 6) + 
+         title = mysubtitle, subtitle = "  ", caption = "  ") +
     theme(axis.text.x = element_text(angle = 90))
   print(totalDEGS)
   plot(allcontrasts)
@@ -133,13 +138,14 @@ plottotalDEGschar <- function(dds, mysubtitle){
   totalDEGS$V2 <- as.factor(totalDEGS$V2)
   
   allcontrasts <- totalDEGS %>%
+    theme_minimal(base_size = 12) + 
     ggplot( aes(V1, V2)) +
-    geom_tile(aes(fill = V3)) +
+    geom_tile(aes(fill = V3), size=6) +
     scale_fill_viridis(na.value="#440154") + 
     xlab(" ") + ylab("Treatment") +
     labs(fill = "# of DEGs",
          subtitle = mysubtitle) +
-    theme_minimal(base_size = 8) + 
+    
     theme(axis.text.x = element_text(angle = 90))
   return(allcontrasts)
 }
@@ -232,12 +238,20 @@ plotPCAs <- function(pcadata, mysubtitle){
     geom_violin() +
     #geom_point() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC1")) +
+    ylab(paste0("PC2")) +
     xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
-    scale_fill_manual(values = colorlastday) +
-    scale_color_manual(values = colorpenultimate) +
-    facet_wrap(~study, scales = "free_x")
+    scale_fill_manual(values = colorlastday, 
+                      guide = guide_legend(
+                        direction = "horizontal",
+                        label.position = "bottom")) +
+    scale_color_manual(values = colorpenultimate,
+                       guide = guide_legend(
+                         direction = "horizontal",
+                         label.position = "bottom")) +
+    facet_wrap(~study, scales = "free_x")  +
+    guides(col = guide_legend(nrow = 1),
+           fill = guide_legend(nrow = 1))
   
   
   pca12 <- ggplot(pcadata, aes(PC1, PC2, color = penultimate ,fill = lastday)) + 
@@ -260,7 +274,7 @@ plotPCAs <- function(pcadata, mysubtitle){
   #mypca <- plot_grid(mypcatop, legend, ncol = 1, rel_heights = c(1,0.2))
   
   plot(pca1)
-  #plot(pca2)
+  plot(pca2)
   plot(pca12)
   
   return(pca1)
