@@ -147,13 +147,13 @@ pcas.male_pituitary <- returnPCAs(dds.male_pituitary)
 pcas.male_gondad <- returnPCAs(dds.male_gondad)
 ```
 
-```{r plotpca, eval=T}
-p1 <- plotPCAs(pcas.female_hypothalamus, "female hypothalamus") 
-p2 <- plotPCAs(pcas.female_pituitary, "female pituitary")   
-p3 <- plotPCAs(pcas.female_gonad, "female gonad") 
-p4 <- plotPCAs(pcas.male_hypothalamus, "male hypothalamus") 
-p5 <- plotPCAs(pcas.male_pituitary, "male pituitary") 
-p6 <- plotPCAs(pcas.male_gondad, "male gonad") 
+```{r pca, eval=T}
+p1 <- plotPC1(pcas.female_hypothalamus, "female hypothalamus", "26% PC1 variance explained") 
+p2 <- plotPC1(pcas.female_pituitary, "female pituitary", "11% PC1 variance explained")   
+p3 <- plotPC1(pcas.female_gonad, "female gonad", "37% PC1 variance explained") 
+p4 <- plotPC1(pcas.male_hypothalamus, "male hypothalamus", "28% PC1 variance explained") 
+p5 <- plotPC1(pcas.male_pituitary, "male pituitary" , "11% PC1 variance explained") 
+p6 <- plotPC1(pcas.male_gondad, "male gonad", "14% PC1 variance explained") 
 p1 + theme_noaxislabels
 p2 + theme_noaxislabels
 p3 + theme_noaxislabels
@@ -161,8 +161,6 @@ p4 + theme_noaxislabels
 p5 + theme_noaxislabels
 p6 + theme_noaxislabels
 
-```
-```{r pca, eval = T}
 mylegend <- get_legend(p1)
 
 allPC1s <- plot_grid(p1 + theme_noaxislabels + ylim(c(-35,35)), 
@@ -176,9 +174,39 @@ allPC1s <- plot_grid(p1 + theme_noaxislabels + ylim(c(-35,35)),
 pc1 <- plot_grid(allPC1s, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
 pc1
 
-pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
+pdf("../figures/sexes/pca-1.pdf", width = 12, height = 14)
 plot(pc1)
 dev.off()
+
+p11 <- plotPC1(pcas.female_hypothalamus, "female hypothalamus", "26% PC1 variance explained") 
+p12 <- plotPC1(pcas.female_pituitary, "female pituitary", "11% PC1 variance explained")   
+p13 <- plotPC1(pcas.female_gonad, "female gonad", "37% PC1 variance explained") 
+p14 <- plotPC1(pcas.male_hypothalamus, "male hypothalamus", "28% PC1 variance explained") 
+p15 <- plotPC1(pcas.male_pituitary, "male pituitary" , "11% PC1 variance explained") 
+p16 <- plotPC1(pcas.male_gondad, "male gonad", "14% PC1 variance explained") 
+p11 + theme_noaxislabels
+p12 + theme_noaxislabels
+p13 + theme_noaxislabels
+p14 + theme_noaxislabels
+p15 + theme_noaxislabels
+p16 + theme_noaxislabels
+
+allPC12 <- plot_grid(p1 + theme_noaxislabels + ylim(c(-35,35)), 
+                     p4 + theme_noaxislabels + ylim(c(-35,35)), 
+                     p2 + theme_noaxislabels + ylim(c(-35,35)),
+                     p5 + theme_noaxislabels + ylim(c(-35,35)),
+                     p3 + theme_nolegend + ylim(c(-35,35)) ,
+                     p6 + theme_nolegend + ylim(c(-35,35)) ,
+                     ncol = 2)
+
+pc12 <- plot_grid(allPC12, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
+pc12
+
+pdf("../figures/sexes/pca-12.pdf", width = 12, height = 14)
+plot(pc12)
+dev.off()
+
+
 ```
 
 ## heamap with minimum pvalue

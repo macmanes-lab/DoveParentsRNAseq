@@ -6,6 +6,11 @@ output: md_document
 DESeq2 is _not_ recommended for experiments with more than 100 samples ([see Mike Love's post](https://mikelove.wordpress.com/2016/09/28/deseq2-or-edger/)), so I decided to try the limma package. I followed [this tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq123/inst/doc/limmaWorkflow.html).
 
 ```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("Glimma")
+
 library(limma)
 library(Glimma)
 library(edgeR)
@@ -20,10 +25,11 @@ First, I read in the data I processed in 00_datawrangling.Rmd.
 
 ```{r read}
 # import "colData" which contains sample information and "countData" which contains read counts
-colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
-countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
 head(colData)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+
 ```
 
 Then, I followed the steps from <https://github.com/macmanes-lab/RockDove/blob/master/parental_care/parental_analysis.Rmd>.
@@ -73,6 +79,27 @@ topTags(tr)
 
 ```{r plotMDS}
 plotMDS(parentalobject, cex = 0.5)
+```
+
+```{r newRplot}
+
+myMDSplot <- plotMDS(parentalobject, cex = 0.5)
+
+names(myMDSplot$x)
+names(myMDSplot$y)
+
+mergedMDS <- data.frame(myMDSplot$x, myMDSplot$y)
+
+head(mergedMDS)
+
+names(mergedMDS) <- c("x", "y", "par", "treatment", "rep", "tissue")
+mds_GC_final_merged <- ggplot(mergedMDS, aes(x, y)) + 
+  geom_point(aes(color = treatment, shape = rep)) + 
+  geom_rug(aes(colour = treatment)) + 
+  facet_grid(par ~ tissue) + 
+  labs(title = "ggplot of GC new ref samples") + 
+  theme(strip.text.x = element_text(size = 8))
+mds_GC_final_merged
 ```
 
 ```{r plotMDS-colored}
