@@ -2764,53 +2764,35 @@ Calculate and plot principal components
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-    p1 <- plotPCAs(pcas.female_hypothalamus, "female hypothalamus") 
-
-![](../figures/sexes/plotpca-1.png)![](../figures/sexes/plotpca-2.png)![](../figures/sexes/plotpca-3.png)
-
-    p2 <- plotPCAs(pcas.female_pituitary, "female pituitary")   
-
-![](../figures/sexes/plotpca-4.png)![](../figures/sexes/plotpca-5.png)![](../figures/sexes/plotpca-6.png)
-
-    p3 <- plotPCAs(pcas.female_gonad, "female gonad") 
-
-![](../figures/sexes/plotpca-7.png)![](../figures/sexes/plotpca-8.png)![](../figures/sexes/plotpca-9.png)
-
-    p4 <- plotPCAs(pcas.male_hypothalamus, "male hypothalamus") 
-
-![](../figures/sexes/plotpca-10.png)![](../figures/sexes/plotpca-11.png)![](../figures/sexes/plotpca-12.png)
-
-    p5 <- plotPCAs(pcas.male_pituitary, "male pituitary") 
-
-![](../figures/sexes/plotpca-13.png)![](../figures/sexes/plotpca-14.png)![](../figures/sexes/plotpca-15.png)
-
-    p6 <- plotPCAs(pcas.male_gondad, "male gonad") 
-
-![](../figures/sexes/plotpca-16.png)![](../figures/sexes/plotpca-17.png)![](../figures/sexes/plotpca-18.png)
-
+    p1 <- plotPC1(pcas.female_hypothalamus, "female hypothalamus", "26% PC1 variance explained") 
+    p2 <- plotPC1(pcas.female_pituitary, "female pituitary", "11% PC1 variance explained")   
+    p3 <- plotPC1(pcas.female_gonad, "female gonad", "37% PC1 variance explained") 
+    p4 <- plotPC1(pcas.male_hypothalamus, "male hypothalamus", "28% PC1 variance explained") 
+    p5 <- plotPC1(pcas.male_pituitary, "male pituitary" , "11% PC1 variance explained") 
+    p6 <- plotPC1(pcas.male_gondad, "male gonad", "14% PC1 variance explained") 
     p1 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-19.png)
+![](../figures/sexes/pca-1.png)
 
     p2 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-20.png)
+![](../figures/sexes/pca-2.png)
 
     p3 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-21.png)
+![](../figures/sexes/pca-3.png)
 
     p4 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-22.png)
+![](../figures/sexes/pca-4.png)
 
     p5 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-23.png)
+![](../figures/sexes/pca-5.png)
 
     p6 + theme_noaxislabels
 
-![](../figures/sexes/plotpca-24.png)
+![](../figures/sexes/pca-6.png)
 
     mylegend <- get_legend(p1)
 
@@ -2831,10 +2813,66 @@ Calculate and plot principal components
     pc1 <- plot_grid(allPC1s, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
     pc1
 
-![](../figures/sexes/pca-1.png)
+![](../figures/sexes/pca-7.png)
 
-    pdf("../figures/sexes/pca-1.pdf", width = 12, height = 10)
+    pdf("../figures/sexes/pca-1.pdf", width = 12, height = 14)
     plot(pc1)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    p11 <- plotPC1(pcas.female_hypothalamus, "female hypothalamus", "26% PC1 variance explained") 
+    p12 <- plotPC1(pcas.female_pituitary, "female pituitary", "11% PC1 variance explained")   
+    p13 <- plotPC1(pcas.female_gonad, "female gonad", "37% PC1 variance explained") 
+    p14 <- plotPC1(pcas.male_hypothalamus, "male hypothalamus", "28% PC1 variance explained") 
+    p15 <- plotPC1(pcas.male_pituitary, "male pituitary" , "11% PC1 variance explained") 
+    p16 <- plotPC1(pcas.male_gondad, "male gonad", "14% PC1 variance explained") 
+    p11 + theme_noaxislabels
+
+![](../figures/sexes/pca-8.png)
+
+    p12 + theme_noaxislabels
+
+![](../figures/sexes/pca-9.png)
+
+    p13 + theme_noaxislabels
+
+![](../figures/sexes/pca-10.png)
+
+    p14 + theme_noaxislabels
+
+![](../figures/sexes/pca-11.png)
+
+    p15 + theme_noaxislabels
+
+![](../figures/sexes/pca-12.png)
+
+    p16 + theme_noaxislabels
+
+![](../figures/sexes/pca-13.png)
+
+    allPC12 <- plot_grid(p1 + theme_noaxislabels + ylim(c(-35,35)), 
+                         p4 + theme_noaxislabels + ylim(c(-35,35)), 
+                         p2 + theme_noaxislabels + ylim(c(-35,35)),
+                         p5 + theme_noaxislabels + ylim(c(-35,35)),
+                         p3 + theme_nolegend + ylim(c(-35,35)) ,
+                         p6 + theme_nolegend + ylim(c(-35,35)) ,
+                         ncol = 2)
+
+    ## Warning: Removed 2 rows containing non-finite values (stat_ydensity).
+
+    ## Warning: Removed 4 rows containing non-finite values (stat_ydensity).
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_ydensity).
+
+    pc12 <- plot_grid(allPC12, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
+    pc12
+
+![](../figures/sexes/pca-14.png)
+
+    pdf("../figures/sexes/pca-12.pdf", width = 12, height = 14)
+    plot(pc12)
     dev.off()
 
     ## quartz_off_screen 

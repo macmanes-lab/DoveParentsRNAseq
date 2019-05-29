@@ -104,15 +104,13 @@ pseudocounts <- read.csv("../results/01_pseudo.counts.csv", row.names = 1)
 #head(pseudocounts)
 pca <- prcomp(t(pseudocounts))
 
-p <- autoplot(pca, data = samples, alpha = 'tissue', shape = "sex")
+p <- autoplot(pca, data = samples, colour = 'tissue', shape = "sex")
 p
 
 edgRpca12 <- p + labs(subtitle = "Normalized counts from edgeR") +
-  scale_alpha_discrete(name = "tissue", labels = c("hypothalamus", "pituitary", "gonad")) +
-  scale_shape_discrete(name = "sex", labels = c("female", "male")) +
-  #xlab(stringr::str_replace(p$labels$x, "PC", "Principle Component ")) +
-  #ylab(stringr::str_replace(p$labels$y, "PC", "Principle Component ")) +
-  theme_rmh() + guides(alpha = guide_legend(order = 1), 
+  scale_colour_discrete(name = "tissue", labels = c("hypothalamus", "pituitary", "gonad")) +
+  scale_shape_manual(name = "sex", labels = c("female", "male"), values = c(21,19)) +
+  theme_rmh() + guides(color = guide_legend(order = 1), 
               shape = guide_legend(order = 2)) +
   stat_ellipse(aes(linetype = sex, colour = tissue))
 edgRpca12
@@ -128,54 +126,3 @@ sidebyside
 ```
 
 
-
-
-## sex and timepoint within a tissue
-
-```{r timepointsex}
-plotlist = list()
-for (eachtissue in levels(samples$tissue)){
-  
-  print(eachtissue)
-  
-  colData <- samples %>%
-      dplyr::filter(tissue == eachtissue) %>%
-      droplevels()
-  row.names(colData) <- colData$V1
-  
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
-
-  countData <- counts %>% dplyr::select(one_of(savecols)) 
-
-  # check that row and col lenghts are equal
-  print(ncol(countData) == nrow(colData))
-  
-  pca <- prcomp(t(countData))
-  
-  p <- autoplot(pca, data = colData, fill = lastday, color = penultimate, shape = "tissue")
-
-en <- p + labs(subtitle = eachtissue) +
-  theme_rmh() +  guides(color = guide_legend(order = 1), 
-              shape = guide_legend(order = 2)) +
-  theme_bw(base_size=8) +
-    theme(legend.position = "bottom") + 
-  scale_fill_manual(values = colorlastday) +
-  scale_color_manual(values = colorpenultimate)
-
-
-legend <- get_legend(en)
-
-en <- en  + theme(legend.position = "none")
-
-plotlist[[eachtissue]] = en
-
-#plot(en) 
-}
-
-main <- grid.arrange(grobs=plotlist,ncol=3)
-
-withlegend <- plot_grid( main, legend, rel_heights  = c(3, .3), ncol = 1)
-withlegend
-
-```

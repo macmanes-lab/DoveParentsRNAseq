@@ -208,7 +208,7 @@ returnPCAs <- function(dds){
   return(pcadata)
 }
 
-plotPCAs <- function(pcadata, mysubtitle){ 
+plotPC1 <- function(pcadata, mysubtitle, myxlab){ 
   
   pcadata <- pcadata
   
@@ -218,7 +218,7 @@ plotPCAs <- function(pcadata, mysubtitle){
     geom_violin() +
     #geom_point() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC1")) +
+    ylab(myxlab) +
     xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
     scale_fill_manual(values = colorlastday, 
@@ -232,8 +232,14 @@ plotPCAs <- function(pcadata, mysubtitle){
     facet_wrap(~study, scales = "free_x")  +
     guides(col = guide_legend(nrow = 1),
            fill = guide_legend(nrow = 1))
+  return(pca1)
+}
 
 
+plotPC2 <- function(pcadata, mysubtitle){ 
+    
+    pcadata <- pcadata
+    
   pca2 <- ggplot(pcadata, aes(xlabel, PC2, color = penultimate, fill = lastday)) + 
     geom_violin() +
     #geom_point() +
@@ -252,14 +258,18 @@ plotPCAs <- function(pcadata, mysubtitle){
     facet_wrap(~study, scales = "free_x")  +
     guides(col = guide_legend(nrow = 1),
            fill = guide_legend(nrow = 1))
+}  
+ 
+plotPC12 <- function(pcadata, mysubtitle){ 
   
+  pcadata <- pcadata
   
-  pca12 <- ggplot(pcadata, aes(PC1, PC2, color = penultimate ,fill = lastday)) + 
+  pca12 <- ggplot(pcadata, aes(PC3, PC2, color = penultimate ,fill = lastday)) + 
     geom_point(pch=21, size = 3) +
     #stat_ellipse() +
     theme_bw(base_size = 12) +
     ylab(paste0("PC2")) +
-    xlab(paste0("PC1")) +
+    xlab(paste0("PC3")) +
     labs(subtitle = mysubtitle) +
     theme(legend.position = "bottom") +
     scale_color_manual(values = colorpenultimate) +
@@ -268,18 +278,11 @@ plotPCAs <- function(pcadata, mysubtitle){
            fill = guide_legend(order = 2, ncol=2)) +
     theme(legend.text = element_text(size=10)) 
   
-  
+}  
   #legend <- get_legend(pca1)
   #mypcatop <- plot_grid(pca1 + theme(legend.position = "none"), pca2, nrow = 1)  
   #mypca <- plot_grid(mypcatop, legend, ncol = 1, rel_heights = c(1,0.2))
   
-  plot(pca1)
-  plot(pca2)
-  plot(pca12)
-  
-  return(pca1)
-}
-
 ## plot candidate genes 
 # e.g. plotcandidates(dds.female_hypothalamus, "female hypothalamus")
 
