@@ -9,6 +9,7 @@
     library("BiocParallel")
     register(MulticoreParam(4))
 
+
     source("../R/functions.R")  # load custom functions 
     source("../R/themes.R")  # load custom themes and color palletes
 
@@ -1796,10 +1797,10 @@ Calculate and plot total DEGs
     ## m.n2.extend             m.n2    extend    6
     ## prolong.extend       prolong    extend  621
 
-    a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
+    a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus: hatch is most unique parental stage")
 
     ## 'data.frame':    120 obs. of  3 variables:
-    ##  $ V1: Factor w/ 16 levels "control","bldg",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ V1: Factor w/ 16 levels "extend","prolong",..: 16 16 16 16 16 16 16 16 16 16 ...
     ##  $ V2: Factor w/ 16 levels "control","bldg",..: 2 3 4 5 6 7 8 9 10 11 ...
     ##  $ V3: int  4173 4563 4968 5197 4938 4452 5122 5195 6382 5740 ...
     ## NULL
@@ -1929,10 +1930,10 @@ Calculate and plot total DEGs
 
 ![](../figures/sexes/plottotalDEGs-1.png)
 
-    b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
+    b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary: hatch and day before are most unique")
 
     ## 'data.frame':    120 obs. of  3 variables:
-    ##  $ V1: Factor w/ 16 levels "control","bldg",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ V1: Factor w/ 16 levels "extend","prolong",..: 16 16 16 16 16 16 16 16 16 16 ...
     ##  $ V2: Factor w/ 16 levels "control","bldg",..: 2 3 4 5 6 7 8 9 10 11 ...
     ##  $ V3: int  4533 4357 3642 4297 3425 4019 4083 4196 4420 4590 ...
     ## NULL
@@ -2062,10 +2063,10 @@ Calculate and plot total DEGs
 
 ![](../figures/sexes/plottotalDEGs-2.png)
 
-    c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
+    c <- plottotalDEGs(DEGs.female_gonad, "female gonad: variable across all parental stages")
 
     ## 'data.frame':    120 obs. of  3 variables:
-    ##  $ V1: Factor w/ 16 levels "control","bldg",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ V1: Factor w/ 16 levels "extend","prolong",..: 16 16 16 16 16 16 16 16 16 16 ...
     ##  $ V2: Factor w/ 16 levels "control","bldg",..: 2 3 4 5 6 7 8 9 10 11 ...
     ##  $ V3: int  4734 4277 2489 2864 804 1364 2289 4383 3461 2804 ...
     ## NULL
@@ -2195,10 +2196,10 @@ Calculate and plot total DEGs
 
 ![](../figures/sexes/plottotalDEGs-3.png)
 
-    d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
+    d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus: many parental contrasts yield 0 DEGs")
 
     ## 'data.frame':    120 obs. of  3 variables:
-    ##  $ V1: Factor w/ 16 levels "control","bldg",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ V1: Factor w/ 16 levels "extend","prolong",..: 16 16 16 16 16 16 16 16 16 16 ...
     ##  $ V2: Factor w/ 16 levels "control","bldg",..: 2 3 4 5 6 7 8 9 10 11 ...
     ##  $ V3: int  5105 5795 5711 5563 6191 5559 5781 5829 6601 6900 ...
     ## NULL
@@ -2328,10 +2329,10 @@ Calculate and plot total DEGs
 
 ![](../figures/sexes/plottotalDEGs-4.png)
 
-    e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
+    e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary: peaks at hatch")
 
     ## 'data.frame':    120 obs. of  3 variables:
-    ##  $ V1: Factor w/ 16 levels "control","bldg",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ V1: Factor w/ 16 levels "extend","prolong",..: 16 16 16 16 16 16 16 16 16 16 ...
     ##  $ V2: Factor w/ 16 levels "control","bldg",..: 2 3 4 5 6 7 8 9 10 11 ...
     ##  $ V3: int  4969 5175 4900 4912 4567 4877 5159 5020 5193 5797 ...
     ## NULL
@@ -2459,10 +2460,10 @@ Calculate and plot total DEGs
 
 ![](../figures/sexes/plottotalDEGs-5.png)
 
-    f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
+    f <- plottotalDEGs(DEGs.male_gondad, "male gonad: most parental contrasts yield 0 DEGs")
 
     ## 'data.frame':    120 obs. of  3 variables:
-    ##  $ V1: Factor w/ 16 levels "control","bldg",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ V1: Factor w/ 16 levels "extend","prolong",..: 16 16 16 16 16 16 16 16 16 16 ...
     ##  $ V2: Factor w/ 16 levels "control","bldg",..: 2 3 4 5 6 7 8 9 10 11 ...
     ##  $ V3: int  1940 2785 1576 1944 1416 1889 2287 2565 2204 2602 ...
     ## NULL
@@ -2593,11 +2594,11 @@ Calculate and plot total DEGs
 ![](../figures/sexes/plottotalDEGs-6.png)
 
     myDEGs <- plot_grid(a + theme_noaxislabels,
-              d + theme_noaxislabels,
+              d + theme_siggenes,
               b + theme_noaxislabels,
               e + theme_noaxislabels,
-              c + theme_nolegend,
-              f + theme_nolegend,
+              c + theme_noaxislabels,
+              f + theme_noaxislabels,
               nrow = 3) 
 
     ## Warning: Removed 18 rows containing missing values (geom_text).
@@ -2770,36 +2771,13 @@ Calculate and plot principal components
     p4 <- plotPC1(pcas.male_hypothalamus, "male hypothalamus", "28% PC1 variance explained") 
     p5 <- plotPC1(pcas.male_pituitary, "male pituitary" , "11% PC1 variance explained") 
     p6 <- plotPC1(pcas.male_gondad, "male gonad", "14% PC1 variance explained") 
-    p1 + theme_noaxislabels
-
-![](../figures/sexes/pca-1.png)
-
-    p2 + theme_noaxislabels
-
-![](../figures/sexes/pca-2.png)
-
-    p3 + theme_noaxislabels
-
-![](../figures/sexes/pca-3.png)
-
-    p4 + theme_noaxislabels
-
-![](../figures/sexes/pca-4.png)
-
-    p5 + theme_noaxislabels
-
-![](../figures/sexes/pca-5.png)
-
-    p6 + theme_noaxislabels
-
-![](../figures/sexes/pca-6.png)
 
     mylegend <- get_legend(p1)
 
-    allPC1s <- plot_grid(p1 + theme_noaxislabels + ylim(c(-35,35)), 
-                         p4 + theme_noaxislabels + ylim(c(-35,35)), 
-                         p2 + theme_noaxislabels + ylim(c(-35,35)),
-                         p5 + theme_noaxislabels + ylim(c(-35,35)),
+    allPC1s <- plot_grid(p1 + theme_nolegend + ylim(c(-35,35)), 
+                         p4 + theme_nolegend + ylim(c(-35,35)), 
+                         p2 + theme_nolegend + ylim(c(-35,35)),
+                         p5 + theme_nolegend + ylim(c(-35,35)),
                          p3 + theme_nolegend + ylim(c(-35,35)) ,
                          p6 + theme_nolegend + ylim(c(-35,35)) ,
                          ncol = 2)
@@ -2813,7 +2791,7 @@ Calculate and plot principal components
     pc1 <- plot_grid(allPC1s, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
     pc1
 
-![](../figures/sexes/pca-7.png)
+![](../figures/sexes/pca-1.png)
 
     pdf("../figures/sexes/pca-1.pdf", width = 12, height = 14)
     plot(pc1)
@@ -2822,57 +2800,29 @@ Calculate and plot principal components
     ## quartz_off_screen 
     ##                 2
 
-    p11 <- plotPC1(pcas.female_hypothalamus, "female hypothalamus", "26% PC1 variance explained") 
-    p12 <- plotPC1(pcas.female_pituitary, "female pituitary", "11% PC1 variance explained")   
-    p13 <- plotPC1(pcas.female_gonad, "female gonad", "37% PC1 variance explained") 
-    p14 <- plotPC1(pcas.male_hypothalamus, "male hypothalamus", "28% PC1 variance explained") 
-    p15 <- plotPC1(pcas.male_pituitary, "male pituitary" , "11% PC1 variance explained") 
-    p16 <- plotPC1(pcas.male_gondad, "male gonad", "14% PC1 variance explained") 
-    p11 + theme_noaxislabels
+    p11 <- plotPC2(pcas.female_hypothalamus, "female hypothalamus", "9% PC2 variance explained") 
+    p12 <- plotPC2(pcas.female_pituitary, "female pituitary", "8% PC2 variance explained")   
+    p13 <- plotPC2(pcas.female_gonad, "female gonad", "12 PC2 variance explained") 
+    p14 <- plotPC2(pcas.male_hypothalamus, "male hypothalamus", "9% PC2 variance explained") 
+    p15 <- plotPC2(pcas.male_pituitary, "male pituitary" , "9% PC2 variance explained") 
+    p16 <- plotPC2(pcas.male_gondad, "male gonad", "10% PC2 variance explained") 
 
-![](../figures/sexes/pca-8.png)
 
-    p12 + theme_noaxislabels
-
-![](../figures/sexes/pca-9.png)
-
-    p13 + theme_noaxislabels
-
-![](../figures/sexes/pca-10.png)
-
-    p14 + theme_noaxislabels
-
-![](../figures/sexes/pca-11.png)
-
-    p15 + theme_noaxislabels
-
-![](../figures/sexes/pca-12.png)
-
-    p16 + theme_noaxislabels
-
-![](../figures/sexes/pca-13.png)
-
-    allPC12 <- plot_grid(p1 + theme_noaxislabels + ylim(c(-35,35)), 
-                         p4 + theme_noaxislabels + ylim(c(-35,35)), 
-                         p2 + theme_noaxislabels + ylim(c(-35,35)),
-                         p5 + theme_noaxislabels + ylim(c(-35,35)),
-                         p3 + theme_nolegend + ylim(c(-35,35)) ,
-                         p6 + theme_nolegend + ylim(c(-35,35)) ,
+    allPC2 <- plot_grid(p11 + theme_nolegend + ylim(c(-35,35)), 
+                         p14 + theme_nolegend + ylim(c(-35,35)), 
+                         p12 + theme_nolegend + ylim(c(-35,35)),
+                         p15 + theme_nolegend + ylim(c(-35,35)),
+                         p13 + theme_nolegend + ylim(c(-35,35)) ,
+                         p16 + theme_nolegend + ylim(c(-35,35)) ,
                          ncol = 2)
 
-    ## Warning: Removed 2 rows containing non-finite values (stat_ydensity).
+    pc2 <- plot_grid(allPC2, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
+    pc2
 
-    ## Warning: Removed 4 rows containing non-finite values (stat_ydensity).
+![](../figures/sexes/pca-2.png)
 
-    ## Warning: Removed 1 rows containing non-finite values (stat_ydensity).
-
-    pc12 <- plot_grid(allPC12, mylegend,  nrow = 2, rel_heights = c(1.0, 0.15))
-    pc12
-
-![](../figures/sexes/pca-14.png)
-
-    pdf("../figures/sexes/pca-12.pdf", width = 12, height = 14)
-    plot(pc12)
+    pdf("../figures/sexes/pca-2.pdf", width = 12, height = 14)
+    plot(pc2)
     dev.off()
 
     ## quartz_off_screen 
@@ -2901,44 +2851,6 @@ candidate genes
 new heat maps
 -------------
 
-    plotcorrelationheatmaps <- function(mydds, mycoldata, mysubtitle){
-      dds <- mydds
-      vsd <- vst(dds, blind=FALSE) # variance stabilized 
-
-      colnames(vsd) = mycoldata$treatment # set col names to group name
-
-      vsdm <- assay(vsd) # create matrix
-
-      vsdmmean <-sapply(unique(colnames(vsdm)), function(i)
-      rowMeans(vsdm[,colnames(vsdm) == i]))
-      
-      myannotations <- mycoldata %>% 
-        dplyr::distinct(lastday, penultimate, treatment) 
-      rownames(myannotations) <- myannotations$treatment
-      myannotations$treatment <- NULL
-      
-      mycor <- cor(vsdmmean)
-      str(mycor)
-      
-      paletteLength <- 10
-      myBreaks = c(0.91,0.92,0.93,0.94,0.95, 0.96, 0.97,0.98, 0.99, 1.0)
-      
-      
-      myBreaks <-seq(0.95, 1.0, length.out = 10)
-      myBreaks
-
-      pheatmap(cor(vsdmmean),
-              annotation_row = myannotations,
-              annotation_col = myannotations,
-              annotation_colors = myannotationscolors,
-              annotation_names_row = F,
-              main= mysubtitle,
-              color = inferno(10),
-              show_rowname= F, show_colnames = F,
-              breaks = myBreaks
-              )
-    }
-
     colData.female_hypothalamus <- subsetcolData(a.colData,  "female_hypothalamus")
     colData.female_pituitary <- subsetcolData(a.colData,  "female_pituitary" )
     colData.female_gonad <- subsetcolData(a.colData,  "female_gonad" )
@@ -2946,56 +2858,26 @@ new heat maps
     colData.male_pituitary <- subsetcolData(a.colData,  "male_pituitary"  )
     colData.male_gondad <- subsetcolData(a.colData,  "male_gonad")
 
-    plotcorrelationheatmaps(dds.female_hypothalamus, colData.female_hypothalamus ,"female hypothalamus: hatch, nest building, lay and day-before-hatch cluster")
-
-    ##  num [1:16, 1:16] 1 0.972 0.975 0.97 0.98 ...
-    ##  - attr(*, "dimnames")=List of 2
-    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
-    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
+    plotcorrelationheatmaps(dds.female_hypothalamus, colData.female_hypothalamus ,"female hypothalamus: hatch, nest bldg., lay and day-before-hatch cluster")
 
 ![](../figures/sexes/correlationheatmaps-1.png)
 
     plotcorrelationheatmaps(dds.female_pituitary, colData.female_pituitary, "female pituitary: clustering suggests an internal clock effect")
 
-    ##  num [1:16, 1:16] 1 0.984 0.985 0.984 0.984 ...
-    ##  - attr(*, "dimnames")=List of 2
-    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
-    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
-
 ![](../figures/sexes/correlationheatmaps-2.png)
 
     plotcorrelationheatmaps(dds.female_gonad, colData.female_gonad,  "female gonad: highly correlated across incubation and early nestling care")
-
-    ##  num [1:16, 1:16] 1 0.975 0.976 0.971 0.974 ...
-    ##  - attr(*, "dimnames")=List of 2
-    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
-    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
 
 ![](../figures/sexes/correlationheatmaps-3.png)
 
     plotcorrelationheatmaps(dds.male_hypothalamus, colData.male_hypothalamus, "male hypothalamus: 100% correlated across most parental care stages")
 
-    ##  num [1:16, 1:16] 1 0.967 0.974 0.972 0.965 ...
-    ##  - attr(*, "dimnames")=List of 2
-    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
-    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
-
 ![](../figures/sexes/correlationheatmaps-4.png)
 
     plotcorrelationheatmaps(dds.male_pituitary, colData.male_pituitary, "male pituitary: non-parental males are most different")
 
-    ##  num [1:16, 1:16] 1 0.978 0.977 0.981 0.977 ...
-    ##  - attr(*, "dimnames")=List of 2
-    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
-    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
-
 ![](../figures/sexes/correlationheatmaps-5.png)
 
     plotcorrelationheatmaps(dds.male_gondad, colData.male_gondad, "male gonad: non-parental males are most different")
-
-    ##  num [1:16, 1:16] 1 0.986 0.99 0.992 0.99 ...
-    ##  - attr(*, "dimnames")=List of 2
-    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
-    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
 
 ![](../figures/sexes/correlationheatmaps-6.png)

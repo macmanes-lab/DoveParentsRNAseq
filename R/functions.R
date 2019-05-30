@@ -90,13 +90,6 @@ returntotalDEGs <- function(dds){
 
 plottotalDEGs <- function(myDEGS, mysubtitle){  
   totalDEGS <- myDEGS
-  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", "lay",
-                                                   "inc.d3", "inc.d9", "inc.d17",
-                                                   "hatch", "n5", "n9",
-                                                   
-                                                   "m.inc.d3", "m.inc.d8", "m.inc.d9",
-                                                   "m.inc.d17",  "m.n2"  ,
-                                                   "prolong", "extend" ))
   totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", "lay",
                                                    "inc.d3", "inc.d9", "inc.d17",
                                                    "hatch", "n5", "n9",
@@ -104,10 +97,19 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
                                                    "m.inc.d3", "m.inc.d8", "m.inc.d9",
                                                    "m.inc.d17",  "m.n2"  ,
                                                    "prolong", "extend" ))
+  
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("extend", "prolong",  
+                                                    "m.n2"  , "m.inc.d17",  
+                                                    "m.inc.d9", "m.inc.d8",  "m.inc.d3",    
+                                                    "n9", "n5", "hatch",
+                                                    "inc.d17",  "inc.d9", "inc.d3",
+                                                    "lay", "bldg",
+                                                    "control"))
 
   totalDEGS <- totalDEGS %>% dplyr::na_if(0)
   
   print(str(totalDEGS))
+  
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
@@ -120,47 +122,12 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
     xlab(NULL) + ylab(NULL) +
     labs(fill = "# of DEGs",
          title = mysubtitle, subtitle = "  ", caption = "  ") +
-    theme(axis.text.x = element_text(angle = 90))
+    theme(axis.text.x = element_text(angle = 90)) +
+    coord_flip()
   print(totalDEGS)
   plot(allcontrasts)
 }
 
-# plot DEGs just for characterization study
-plottotalDEGschar <- function(dds, mysubtitle){
-  
-  a <- group1
-  b <- group2
-  
-  # comapre all contrasts, save to datafrmes
-  totalDEGS=data.frame()
-  for (i in a){
-    for (j in b){
-      if (i != j) {
-        k <- paste(i,j, sep = ".") #assigns usique rownames
-        #print(k)
-        totalDEGS[k,1]<-i               
-        totalDEGS[k,2]<-j
-        totalDEGS[k,3]<- numDEGs(dds, i,j) #caluculates number of DEGs
-      }
-    }
-    b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
-  }
-  
-  totalDEGS$V1 <- as.factor(totalDEGS$V1)
-  totalDEGS$V2 <- as.factor(totalDEGS$V2)
-  
-  allcontrasts <- totalDEGS %>%
-    theme_minimal(base_size = 12) + 
-    ggplot( aes(V1, V2)) +
-    geom_tile(aes(fill = V3), size=6) +
-    scale_fill_viridis(na.value="#440154") + 
-    xlab(" ") + ylab("Treatment") +
-    labs(fill = "# of DEGs",
-         subtitle = mysubtitle) +
-    
-    theme(axis.text.x = element_text(angle = 90))
-  return(allcontrasts)
-}
 
 
 # resturn pvalues for all genes
@@ -248,15 +215,15 @@ plotPC1 <- function(pcadata, mysubtitle, myxlab){
 }
 
 
-plotPC2 <- function(pcadata, mysubtitle){ 
+plotPC2 <- function(pcadata, mysubtitle, myxlab){ 
     
     pcadata <- pcadata
     
-  pca2 <- ggplot(pcadata, aes(xlabel, PC2, color = penultimate, fill = lastday)) + 
+  pca2 <- ggplot(pcadata, aes(xlabel, PC2, fill = lastday, color = penultimate)) + 
     geom_violin() +
     #geom_point() +
     theme_bw(base_size = 12) +
-    ylab(paste0("PC2")) +
+    ylab(myxlab) +
     xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
     scale_fill_manual(values = colorlastday, 
@@ -270,6 +237,7 @@ plotPC2 <- function(pcadata, mysubtitle){
     facet_wrap(~study, scales = "free_x")  +
     guides(col = guide_legend(nrow = 1),
            fill = guide_legend(nrow = 1))
+  return(pca2)
 }  
  
 plotPC12 <- function(pcadata, mysubtitle){ 
@@ -408,4 +376,41 @@ makepheatmap <- function(mydds, colData, mysubtitle){
   return(p1)
   }
 
+
+## new correlation heatmap
+
+plotcorrelationheatmaps <- function(mydds, mycoldata, mysubtitle){
+  dds <- mydds
+  vsd <- vst(dds, blind=FALSE) # variance stabilized 
+  
+  colnames(vsd) = mycoldata$treatment # set col names to group name
+  
+  vsdm <- assay(vsd) # create matrix
+  
+  vsdmmean <-sapply(unique(colnames(vsdm)), function(i)
+    rowMeans(vsdm[,colnames(vsdm) == i]))
+  
+  myannotations <- mycoldata %>% 
+    dplyr::distinct(lastday, penultimate, treatment) 
+  rownames(myannotations) <- myannotations$treatment
+  myannotations$treatment <- NULL
+  
+  mycor <- cor(vsdmmean)
+  
+  myBreaks = c(0.91,0.92,0.93,0.94,0.95, 0.96, 0.97,0.98, 0.99, 1.0)
+  
+  myBreaks <-seq(0.95, 1.0, length.out = 10)
+  myBreaks
+  
+  pheatmap(cor(vsdmmean),
+           annotation_row = myannotations,
+           annotation_col = myannotations,
+           annotation_colors = myannotationscolors,
+           annotation_names_row = F,
+           main= mysubtitle,
+           color = inferno(10),
+           show_rowname= F, show_colnames = F,
+           breaks = myBreaks
+  )
+}
 
