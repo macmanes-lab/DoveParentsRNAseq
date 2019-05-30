@@ -53,7 +53,13 @@ myannotationscolors <- list(lastday = c("control" = "#77787A",
 # themes for whole plots
 
 theme_noaxislabels <- theme(legend.position = "none", 
-                            axis.title.x=element_blank(), axis.ticks = element_blank(), axis.text.x=element_blank()) 
+                            axis.title=element_blank(), axis.ticks = element_blank(), axis.text=element_blank(),
+                            panel.background = element_blank()) 
+
+theme_siggenes <- theme(legend.position = c(0.2,0.3), 
+                            #axis.title.x=element_blank(), 
+                        axis.ticks = element_blank(), axis.text=element_blank(),
+                        panel.background = element_blank())
 
 theme_nolegend <- theme(legend.position = "none",  axis.text.x=element_blank(), axis.ticks = element_blank()) 
 
