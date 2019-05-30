@@ -1,3 +1,14 @@
+# subset col for heatmap
+subsetcolData <- function(colData, eachgroup){
+  
+  # subset to look within one tissue in one sex
+  colData <- colData %>%
+    dplyr::filter(sextissue == eachgroup) %>%
+    droplevels()
+  row.names(colData) <- colData$V1
+  return(colData)
+}
+
 # run DESeq on subset of data
 # e.g. dds <- subsetDESeq("male_hypothalamus")
 subsetDESeq <- function(colData, countData, eachgroup){
