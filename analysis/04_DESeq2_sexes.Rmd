@@ -231,3 +231,60 @@ plotcandidates(dds.male_pituitary, "male pituitary")
 plotcandidates(dds.male_gondad, "male gonad")
 ```
 
+
+## new heat maps
+
+```{r correlationheatmaps, eval = T}
+
+plotcorrelationheatmaps <- function(mydds, mycoldata, mysubtitle){
+  dds <- mydds
+  vsd <- vst(dds, blind=FALSE) # variance stabilized 
+
+  colnames(vsd) = mycoldata$treatment # set col names to group name
+
+  vsdm <- assay(vsd) # create matrix
+
+  vsdmmean <-sapply(unique(colnames(vsdm)), function(i)
+  rowMeans(vsdm[,colnames(vsdm) == i]))
+  
+  myannotations <- mycoldata %>% 
+    dplyr::distinct(lastday, penultimate, treatment) 
+  rownames(myannotations) <- myannotations$treatment
+  myannotations$treatment <- NULL
+  
+  mycor <- cor(vsdmmean)
+  str(mycor)
+  
+  paletteLength <- 10
+  myBreaks = c(0.91,0.92,0.93,0.94,0.95, 0.96, 0.97,0.98, 0.99, 1.0)
+  
+  
+  myBreaks <-seq(0.95, 1.0, length.out = 10)
+  myBreaks
+
+  pheatmap(cor(vsdmmean),
+          annotation_row = myannotations,
+          annotation_col = myannotations,
+          annotation_colors = myannotationscolors,
+          annotation_names_row = F,
+          main= mysubtitle,
+          color = inferno(10),
+          show_rowname= F, show_colnames = F,
+          breaks = myBreaks
+          )
+}
+
+colData.female_hypothalamus <- subsetcolData(a.colData,  "female_hypothalamus")
+colData.female_pituitary <- subsetcolData(a.colData,  "female_pituitary" )
+colData.female_gonad <- subsetcolData(a.colData,  "female_gonad" )
+colData.male_hypothalamus <- subsetcolData(a.colData,  "male_hypothalamus" )
+colData.male_pituitary <- subsetcolData(a.colData,  "male_pituitary"  )
+colData.male_gondad <- subsetcolData(a.colData,  "male_gonad")
+
+plotcorrelationheatmaps(dds.female_hypothalamus, colData.female_hypothalamus ,"female hypothalamus: hatch, nest building, lay and day-before-hatch cluster")
+plotcorrelationheatmaps(dds.female_pituitary, colData.female_pituitary, "female pituitary: clustering suggests an internal clock effect")
+plotcorrelationheatmaps(dds.female_gonad, colData.female_gonad,  "female gonad: highly correlated across incubation and early nestling care")
+plotcorrelationheatmaps(dds.male_hypothalamus, colData.male_hypothalamus, "male hypothalamus: 100% correlated across most parental care stages")
+plotcorrelationheatmaps(dds.male_pituitary, colData.male_pituitary, "male pituitary: non-parental males are most different")
+plotcorrelationheatmaps(dds.male_gondad, colData.male_gondad, "male gonad: non-parental males are most different")
+```

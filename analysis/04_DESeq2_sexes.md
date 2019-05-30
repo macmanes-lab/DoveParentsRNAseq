@@ -2897,3 +2897,105 @@ candidate genes
     plotcandidates(dds.male_hypothalamus, "male hypothalamus")
     plotcandidates(dds.male_pituitary, "male pituitary")
     plotcandidates(dds.male_gondad, "male gonad")
+
+new heat maps
+-------------
+
+    plotcorrelationheatmaps <- function(mydds, mycoldata, mysubtitle){
+      dds <- mydds
+      vsd <- vst(dds, blind=FALSE) # variance stabilized 
+
+      colnames(vsd) = mycoldata$treatment # set col names to group name
+
+      vsdm <- assay(vsd) # create matrix
+
+      vsdmmean <-sapply(unique(colnames(vsdm)), function(i)
+      rowMeans(vsdm[,colnames(vsdm) == i]))
+      
+      myannotations <- mycoldata %>% 
+        dplyr::distinct(lastday, penultimate, treatment) 
+      rownames(myannotations) <- myannotations$treatment
+      myannotations$treatment <- NULL
+      
+      mycor <- cor(vsdmmean)
+      str(mycor)
+      
+      paletteLength <- 10
+      myBreaks = c(0.91,0.92,0.93,0.94,0.95, 0.96, 0.97,0.98, 0.99, 1.0)
+      
+      
+      myBreaks <-seq(0.95, 1.0, length.out = 10)
+      myBreaks
+
+      pheatmap(cor(vsdmmean),
+              annotation_row = myannotations,
+              annotation_col = myannotations,
+              annotation_colors = myannotationscolors,
+              annotation_names_row = F,
+              main= mysubtitle,
+              color = inferno(10),
+              show_rowname= F, show_colnames = F,
+              breaks = myBreaks
+              )
+    }
+
+    colData.female_hypothalamus <- subsetcolData(a.colData,  "female_hypothalamus")
+    colData.female_pituitary <- subsetcolData(a.colData,  "female_pituitary" )
+    colData.female_gonad <- subsetcolData(a.colData,  "female_gonad" )
+    colData.male_hypothalamus <- subsetcolData(a.colData,  "male_hypothalamus" )
+    colData.male_pituitary <- subsetcolData(a.colData,  "male_pituitary"  )
+    colData.male_gondad <- subsetcolData(a.colData,  "male_gonad")
+
+    plotcorrelationheatmaps(dds.female_hypothalamus, colData.female_hypothalamus ,"female hypothalamus: hatch, nest building, lay and day-before-hatch cluster")
+
+    ##  num [1:16, 1:16] 1 0.972 0.975 0.97 0.98 ...
+    ##  - attr(*, "dimnames")=List of 2
+    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
+    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
+
+![](../figures/sexes/correlationheatmaps-1.png)
+
+    plotcorrelationheatmaps(dds.female_pituitary, colData.female_pituitary, "female pituitary: clustering suggests an internal clock effect")
+
+    ##  num [1:16, 1:16] 1 0.984 0.985 0.984 0.984 ...
+    ##  - attr(*, "dimnames")=List of 2
+    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
+    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
+
+![](../figures/sexes/correlationheatmaps-2.png)
+
+    plotcorrelationheatmaps(dds.female_gonad, colData.female_gonad,  "female gonad: highly correlated across incubation and early nestling care")
+
+    ##  num [1:16, 1:16] 1 0.975 0.976 0.971 0.974 ...
+    ##  - attr(*, "dimnames")=List of 2
+    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
+    ##   ..$ : chr [1:16] "control" "prolong" "m.n2" "m.inc.d3" ...
+
+![](../figures/sexes/correlationheatmaps-3.png)
+
+    plotcorrelationheatmaps(dds.male_hypothalamus, colData.male_hypothalamus, "male hypothalamus: 100% correlated across most parental care stages")
+
+    ##  num [1:16, 1:16] 1 0.967 0.974 0.972 0.965 ...
+    ##  - attr(*, "dimnames")=List of 2
+    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
+    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
+
+![](../figures/sexes/correlationheatmaps-4.png)
+
+    plotcorrelationheatmaps(dds.male_pituitary, colData.male_pituitary, "male pituitary: non-parental males are most different")
+
+    ##  num [1:16, 1:16] 1 0.978 0.977 0.981 0.977 ...
+    ##  - attr(*, "dimnames")=List of 2
+    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
+    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
+
+![](../figures/sexes/correlationheatmaps-5.png)
+
+    plotcorrelationheatmaps(dds.male_gondad, colData.male_gondad, "male gonad: non-parental males are most different")
+
+    ##  num [1:16, 1:16] 1 0.986 0.99 0.992 0.99 ...
+    ##  - attr(*, "dimnames")=List of 2
+    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
+    ##   ..$ : chr [1:16] "control" "prolong" "n5" "inc.d17" ...
+
+![](../figures/sexes/correlationheatmaps-6.png)
