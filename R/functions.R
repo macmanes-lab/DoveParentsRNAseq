@@ -115,7 +115,8 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
     theme_minimal(base_size = 12) + 
     geom_text(aes(label = round(V3, 1)), color = "black")+
     scale_fill_viridis(na.value="#bdbdbd", 
-                       limits = c(0,7000)) +
+                       limits = c(0,7000),
+                       option = "C") +
     xlab(NULL) + ylab(NULL) +
     labs(fill = "# of DEGs",
          title = mysubtitle, subtitle = "  ", caption = "  ") +
