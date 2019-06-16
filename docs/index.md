@@ -50,14 +50,8 @@ These functions utilize exciting R functions and for loops to compare gene expre
 
 ### Determine the extent of correlation in gene expression variation  
 
-![image](correlationheatmaps-1.png) 
-![image](correlationheatmaps-4.png) 
+![image](DoveParentsRNAseq_correlations.png) 
 
-![image](correlationheatmaps-2.png) 
-![image](correlationheatmaps-5.png) 
-
-![image](correlationheatmaps-3.png) 
-![image](correlationheatmaps-6.png) 
 
 ## Preliminary interpretations 
 
