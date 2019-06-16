@@ -19,6 +19,7 @@ This repository contains the data and analysis for a collaboration between Drs. 
 
 ![poseter](./docs/DoveParentsRNAseqSBN.png)
 
+See also <https://macmanes-lab.github.io/DoveParentsRNAseq/> for a more user-friendly way to read the information on the poster. 
 
 
 ## Organization
