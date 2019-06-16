@@ -59,7 +59,7 @@ These functions utilize exciting R functions and for loops to compare gene expre
 ![image](correlationheatmaps-3.png) 
 ![image](correlationheatmaps-6.png) 
 
-## Preliminary interpreations 
+## Preliminary interpretations 
 
 ![image](DoveParentsRNAseq_summary.png)
 
