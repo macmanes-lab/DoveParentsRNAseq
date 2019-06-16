@@ -69,9 +69,17 @@ These functions utilize exciting R functions and for loops to compare gene expre
 
 -   **Zoom in:** examine effects of specific manipulations in greater detail.
 
--   **Create** and open source R package that can be peer reviewed.
+-   **Test** specific hypotheses.
+
+-   **Incorporate** code-review and peer-review.
+
+-   **Create** and open source R package.
 
 -   **Share** tutorials for how to use the function.
+
+
+\item \textbf{Incorporate} code-review and peer-review . 
+\item \textbf{Create} and open source R package
 
 ## Acknowledgements 
 
