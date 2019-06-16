@@ -110,5 +110,6 @@ plotcandidates(dds.female_gonad, "female gonad")
 plotcandidates(dds.male_hypothalamus, "male hypothalamus")
 plotcandidates(dds.male_pituitary, "male pituitary")
 plotcandidates(dds.male_gondad, "male gonad")
+
 ```
 
