@@ -24,8 +24,6 @@ Data and analyses are available at <https://github.com/macmanes-lab/DoveParentsR
 
 ## Goal: Minimize hand-typing comparison, maximize reproducibility. 
 
-[t,totalwidth=]
-
 ### New R functions to automate DESeq2  
 
 -    subsetcolData <- function(colData, eachgroup){} 
