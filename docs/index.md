@@ -14,13 +14,13 @@ Many differential genes expression profiling tools are designed to analyze simpl
 
 ## *Case study:* How and why do biological systems change over the course of parental care? 
 
-![image](DoveParentsRNAseq_approach-3.png){width="0.9linewidth"}
+![image](DoveParentsRNAseq_approach-3.png)
 
-![image](DoveParentsRNAseq_design.png){width="1linewidth"}
+![image](DoveParentsRNAseq_design.png)
 
 Data and analyses are available at <https://github.com/macmanes-lab/DoveParentsRNAseq>. For more information visit <http://calisilab.ucdavis.edu/>.
 
-![image](b3.jpg){width="0.55linewidth"}
+![image](b3.jpg)
 
 ## Goal: Minimize hand-typing comparison, maximize reproducibility. 
 
@@ -40,27 +40,30 @@ Data and analyses are available at <https://github.com/macmanes-lab/DoveParentsR
 
 These functions utilize exciting R functions and for loops to compare gene expression across levels.
 
-![image](DoveParentsRNAseq_approach-2.png){width="0.75linewidth"}
+![image](DoveParentsRNAseq_approach-2.png)
 
 ### Quickly explore variation using the top 500 differentially expressed genes  
 
-![image](pca-1.pdf){width="0.9linewidth"}
+![image](pca-1.pdf)
 
 ### Calculate and visualize the total number of differentially expressed genes for each two-way comparison  
 
-![image](DoveParentsRNAseq_totalDEGs.png){width="1linewidth"}
+![image](DoveParentsRNAseq_totalDEGs.png)
 
 ### Deteremine the extent of correlation in gene expression variation  
 
-![image](correlationheatmaps-1.png){width="0.5linewidth"} ![image](correlationheatmaps-4.png){width="0.5linewidth"}
+![image](correlationheatmaps-1.png) 
+![image](correlationheatmaps-4.png) 
 
-![image](correlationheatmaps-2.png){width="0.5linewidth"} ![image](correlationheatmaps-5.png){width="0.5linewidth"}
+![image](correlationheatmaps-2.png) 
+![image](correlationheatmaps-5.png) 
 
-![image](correlationheatmaps-3.png){width="0.5linewidth"} ![image](correlationheatmaps-6.png){width="0.5linewidth"}
+![image](correlationheatmaps-3.png) 
+![image](correlationheatmaps-6.png) 
 
 ## Preliminary interpreations 
 
-![image](DoveParentsRNAseq_summary.png){width="1linewidth"}
+![image](DoveParentsRNAseq_summary.png)
 
 ## Next steps 
 
