@@ -135,7 +135,6 @@ myDEGs
 pdf("../figures/sexes/plottotalDEGs-1.pdf", width = 12, height = 10)
 plot(myDEGs)
 dev.off()
-
 ```
 
 ## Calculate and plot principal components
@@ -211,28 +210,33 @@ makepheatmap(dds.male_pituitary, "male pituitary")
 makepheatmap(dds.male_gondad, "male gonad")        
 ```
 
-## candidate genes
+## make col data for candidate genes and heatmaps
 
-```{r candidates, eval =F}
-plotcandidates(dds.female_hypothalamus, a.colData, "female hypothalamus")
-plotcandidates(dds.female_pituitary, "female pituitary")
-plotcandidates(dds.female_gonad, "female gonad")
-plotcandidates(dds.male_hypothalamus, "male hypothalamus")
-plotcandidates(dds.male_pituitary, "male pituitary")
-plotcandidates(dds.male_gondad, "male gonad")
-```
-
-
-## new heat maps
-
-```{r correlationheatmaps, eval = T}
+```{r coldata, eval =T}
 colData.female_hypothalamus <- subsetcolData(a.colData,  "female_hypothalamus")
 colData.female_pituitary <- subsetcolData(a.colData,  "female_pituitary" )
 colData.female_gonad <- subsetcolData(a.colData,  "female_gonad" )
 colData.male_hypothalamus <- subsetcolData(a.colData,  "male_hypothalamus" )
 colData.male_pituitary <- subsetcolData(a.colData,  "male_pituitary"  )
 colData.male_gondad <- subsetcolData(a.colData,  "male_gonad")
+```
 
+
+## candidate genes
+
+```{r candidates, eval =T}
+plotcandidates(dds.female_hypothalamus, colData.female_hypothalamus, "female hypothalamus")
+plotcandidates(dds.female_pituitary, colData.female_pituitary,  "female pituitary")
+plotcandidates(dds.female_gonad, colData.female_gonad,  "female gonad")
+plotcandidates(dds.male_hypothalamus, colData.male_hypothalamus, "male hypothalamus")
+plotcandidates(dds.male_pituitary,  colData.male_pituitary, "male pituitary")
+plotcandidates(dds.male_gondad, colData.male_hypothalamus , "male gonad")
+```
+
+
+## new heat maps
+
+```{r correlationheatmaps, eval = F}
 plotcorrelationheatmaps(dds.female_hypothalamus, colData.female_hypothalamus ,"female hypothalamus: hatch, nest bldg., lay and day-before-hatch cluster")
 plotcorrelationheatmaps(dds.female_pituitary, colData.female_pituitary, "female pituitary: clustering suggests an internal clock effect")
 plotcorrelationheatmaps(dds.female_gonad, colData.female_gonad,  "female gonad: highly correlated across incubation and early nestling care")

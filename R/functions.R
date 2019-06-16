@@ -121,7 +121,7 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
                        option = "C") +
     xlab(NULL) + ylab(NULL) +
     labs(fill = "# of DEGs",
-         title = mysubtitle, subtitle = "  ", caption = "  ") +
+         title = mysubtitle, caption = "  ") +
     theme(axis.text.x = element_text(angle = 90)) +
     coord_flip()
   print(totalDEGS)
@@ -309,15 +309,23 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
   candidatecounts$gene <- as.factor(candidatecounts$gene)
   
-  p1 <- ggplot(candidatecounts, aes(x = treatment, y = value, fill = treatment)) +
+  p1 <- ggplot(candidatecounts, aes(x = treatment, y = value, fill = lastday, color = penultimate)) +
     geom_boxplot() +
     facet_wrap(~gene, scales = "free") +
     theme_bw(base_size = 8) +
     theme(axis.text.x = element_blank(),
           legend.position = "bottom") +
     labs(x = NULL, subtitle = mysubtitle) +
-    guides(fill= guide_legend(nrow=2)) 
+    scale_fill_manual(values = colorlastday, 
+                      guide = guide_legend(
+                        direction = "horizontal",
+                        label.position = "bottom")) +
+    scale_color_manual(values = colorpenultimate,
+                       guide = guide_legend(
+                         direction = "horizontal",
+                         label.position = "bottom")) 
   return(p1)
+  
 }
 
 ## make pheatmaps 
