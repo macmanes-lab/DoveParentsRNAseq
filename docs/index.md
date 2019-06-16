@@ -44,7 +44,7 @@ These functions utilize exciting R functions and for loops to compare gene expre
 
 ### Quickly explore variation using the top 500 differentially expressed genes  
 
-![image](pca-1.pdf)
+![image](pca-1.png)
 
 ### Calculate and visualize the total number of differentially expressed genes for each two-way comparison  
 
