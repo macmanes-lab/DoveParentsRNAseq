@@ -15,6 +15,11 @@ This repository contains the data and analysis for a collaboration between Drs. 
 1. How do tissues differ?
 1. What is the relationship between genes and hormones across timepoints?
  
+## Preliminary analyses, results and interpretations presented as a poster at the Society for Behavioral Neuroendocrinology Annual Meeting
+
+![poseter](./docs/DoveParentsRNAseqSBN.png)
+
+
 
 ## Organization
 
