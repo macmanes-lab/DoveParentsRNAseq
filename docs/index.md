@@ -26,10 +26,9 @@ All the data and analyses are available on GitHub at <https://github.com/macmane
 ## Creating open access, user-friendly, multivariate, behaioral and -omics analyses to accelerate discoveries and advance science.
 
 
-
 ### Increasing the reproducbility of RNA-seq
 
-![image](DoveParentsRNAseq_approach-2.png){width="0.7linewidth"}
+![image](DoveParentsRNAseq_approach-2.png)
 
 Our approach automatically compares all levels of a given variable to minimize errors and save time.
 
@@ -43,7 +42,7 @@ Our approach automatically compares all levels of a given variable to minimize e
 
 ### Quickly explore variation explained by the top differentially expressed genes
 
-![image](pca-1.pdf)
+![image](pca-1.png)
 
 ### Calculate and visualize the total number of differentially expressed genes for each two-way comparison
 
