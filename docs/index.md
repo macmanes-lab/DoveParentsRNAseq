@@ -26,7 +26,7 @@ All the data and analyses are available on GitHub at <https://github.com/macmane
 ## Creating open access, user-friendly, multivariate, behaioral and -omics analyses to accelerate discoveries and advance science.
 
 
-### Increasing the reproducbility of RNA-seq
+### Increasing the reproducibility of RNA-seq
 
 ![image](DoveParentsRNAseq_approach-2.png)
 
