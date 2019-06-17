@@ -1,6 +1,6 @@
 # Improving RNA-seq workflows for behavioral transcriptomics
 
-Rayna M. Harris (@raynamharris), Suzanne H. Austin, Andrew Lang, Matthew MacManes, Rebecca M. Calisi
+Rayna M. Harris [@raynamharris](https://twitter.com/raynamharris), Suzanne H. Austin, Andrew Lang, Matthew MacManes, Rebecca M. Calisi [@BeccaCalisi](https://twitter.com/BeccaCalisi)
 
 1. University of California, Davis
 2. Oregon State University
