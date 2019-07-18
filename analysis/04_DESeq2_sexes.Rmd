@@ -12,10 +12,10 @@ library(RColorBrewer)
 library(pheatmap)
 library(kableExtra)
 library(viridis)
+library(forcats)
 
 library("BiocParallel")
 register(MulticoreParam(4))
-
 
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
@@ -123,19 +123,39 @@ d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus: many parental con
 e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary: peaks at hatch")
 f <- plottotalDEGs(DEGs.male_gondad, "male gonad: most parental contrasts yield 0 DEGs")
 
-myDEGs <- plot_grid(a,
-          #d + theme_siggenes,
-          #b + theme_noaxislabels,
-          #e + theme_noaxislabels,
-          c ,
-          #f + theme_noaxislabels,
-          nrow = 1) 
+myDEGs <- plot_grid(a + theme_noaxislabels,
+          d + theme_siggenes,
+          b + theme_noaxislabels,
+          e + theme_noaxislabels,
+          c + theme_noaxislabels,
+          f + theme_noaxislabels,
+          nrow = 3) 
 myDEGs
 
 pdf("../figures/sexes/plottotalDEGs-1.pdf", width = 12, height = 10)
 plot(myDEGs)
 dev.off()
 ```
+
+## Plot only a subset of DEGs that relate to hypotheses
+
+
+```{r totalDEGbarsplots}
+g <- plotserialDEGs(DEGs.female_hypothalamus, "Female hypothalamus")
+h <- plotserialDEGs(DEGs.female_pituitary, "Female pituitary")
+i <- plotserialDEGs(DEGs.female_gonad, "Female gonad")
+j <- plotserialDEGs(DEGs.male_hypothalamus, "Male hypothalamus")
+k <- plotserialDEGs(DEGs.male_pituitary, "Male pituitary")
+l <- plotserialDEGs(DEGs.male_gondad, "Male gonad")
+
+mybarplots <- plot_grid(g, h , i , j ,k , l, nrow = 2) 
+mybarplots
+
+pdf("../figures/sexes/totalDEGbarsplots-1.pdf", width = 10, height = 6)
+plot(mybarplots)
+dev.off()
+```
+
 
 ## Calculate and plot principal components
 
@@ -224,7 +244,7 @@ colData.male_gondad <- subsetcolData(a.colData,  "male_gonad")
 
 ## candidate genes
 
-```{r candidates, eval =T}
+```{r candidates, eval =F}
 plotcandidates(dds.female_hypothalamus, colData.female_hypothalamus, "female hypothalamus")
 plotcandidates(dds.female_pituitary, colData.female_pituitary,  "female pituitary")
 plotcandidates(dds.female_gonad, colData.female_gonad,  "female gonad")

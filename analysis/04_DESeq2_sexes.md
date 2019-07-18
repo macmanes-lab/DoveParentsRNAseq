@@ -5,10 +5,10 @@
     library(pheatmap)
     library(kableExtra)
     library(viridis)
+    library(forcats)
 
     library("BiocParallel")
     register(MulticoreParam(4))
-
 
     source("../R/functions.R")  # load custom functions 
     source("../R/themes.R")  # load custom themes and color palletes
@@ -1797,7 +1797,7 @@ Calculate and plot total DEGs
     ## m.n2.extend             m.n2    extend    6
     ## prolong.extend       prolong    extend  621
 
-    a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus: hatch is most unique parental stage")
+    a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
 
     ## 'data.frame':    120 obs. of  3 variables:
     ##  $ V1: Factor w/ 16 levels "extend","prolong",..: 16 16 16 16 16 16 16 16 16 16 ...
@@ -2063,7 +2063,7 @@ Calculate and plot total DEGs
 
 ![](../figures/sexes/plottotalDEGs-2.png)
 
-    c <- plottotalDEGs(DEGs.female_gonad, "female gonad: variable across all parental stages")
+    c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
 
     ## 'data.frame':    120 obs. of  3 variables:
     ##  $ V1: Factor w/ 16 levels "extend","prolong",..: 16 16 16 16 16 16 16 16 16 16 ...
@@ -2622,6 +2622,28 @@ Calculate and plot total DEGs
     ## quartz_off_screen 
     ##                 2
 
+Plot only a subset of DEGs that relate to hypotheses
+----------------------------------------------------
+
+    g <- plotserialDEGs(DEGs.female_hypothalamus, "Female hypothalamus")
+    h <- plotserialDEGs(DEGs.female_pituitary, "Female pituitary")
+    i <- plotserialDEGs(DEGs.female_gonad, "Female gonad")
+    j <- plotserialDEGs(DEGs.male_hypothalamus, "Male hypothalamus")
+    k <- plotserialDEGs(DEGs.male_pituitary, "Male pituitary")
+    l <- plotserialDEGs(DEGs.male_gondad, "Male gonad")
+
+    mybarplots <- plot_grid(g, h , i , j ,k , l, nrow = 2) 
+    mybarplots
+
+![](../figures/sexes/totalDEGbarsplots-1.png)
+
+    pdf("../figures/sexes/totalDEGbarsplots-1.pdf", width = 10, height = 6)
+    plot(mybarplots)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
 Calculate and plot principal components
 ---------------------------------------
 
@@ -2838,18 +2860,8 @@ heamap with minimum pvalue
     makepheatmap(dds.male_pituitary, "male pituitary")
     makepheatmap(dds.male_gondad, "male gonad")        
 
-candidate genes
----------------
-
-    plotcandidates(dds.female_hypothalamus, a.colData, "female hypothalamus")
-    plotcandidates(dds.female_pituitary, "female pituitary")
-    plotcandidates(dds.female_gonad, "female gonad")
-    plotcandidates(dds.male_hypothalamus, "male hypothalamus")
-    plotcandidates(dds.male_pituitary, "male pituitary")
-    plotcandidates(dds.male_gondad, "male gonad")
-
-new heat maps
--------------
+make col data for candidate genes and heatmaps
+----------------------------------------------
 
     colData.female_hypothalamus <- subsetcolData(a.colData,  "female_hypothalamus")
     colData.female_pituitary <- subsetcolData(a.colData,  "female_pituitary" )
@@ -2858,26 +2870,22 @@ new heat maps
     colData.male_pituitary <- subsetcolData(a.colData,  "male_pituitary"  )
     colData.male_gondad <- subsetcolData(a.colData,  "male_gonad")
 
+candidate genes
+---------------
+
+    plotcandidates(dds.female_hypothalamus, colData.female_hypothalamus, "female hypothalamus")
+    plotcandidates(dds.female_pituitary, colData.female_pituitary,  "female pituitary")
+    plotcandidates(dds.female_gonad, colData.female_gonad,  "female gonad")
+    plotcandidates(dds.male_hypothalamus, colData.male_hypothalamus, "male hypothalamus")
+    plotcandidates(dds.male_pituitary,  colData.male_pituitary, "male pituitary")
+    plotcandidates(dds.male_gondad, colData.male_hypothalamus , "male gonad")
+
+new heat maps
+-------------
+
     plotcorrelationheatmaps(dds.female_hypothalamus, colData.female_hypothalamus ,"female hypothalamus: hatch, nest bldg., lay and day-before-hatch cluster")
-
-![](../figures/sexes/correlationheatmaps-1.png)
-
     plotcorrelationheatmaps(dds.female_pituitary, colData.female_pituitary, "female pituitary: clustering suggests an internal clock effect")
-
-![](../figures/sexes/correlationheatmaps-2.png)
-
     plotcorrelationheatmaps(dds.female_gonad, colData.female_gonad,  "female gonad: highly correlated across incubation and early nestling care")
-
-![](../figures/sexes/correlationheatmaps-3.png)
-
     plotcorrelationheatmaps(dds.male_hypothalamus, colData.male_hypothalamus, "male hypothalamus: 100% correlated across most parental care stages")
-
-![](../figures/sexes/correlationheatmaps-4.png)
-
     plotcorrelationheatmaps(dds.male_pituitary, colData.male_pituitary, "male pituitary: non-parental males are most different")
-
-![](../figures/sexes/correlationheatmaps-5.png)
-
     plotcorrelationheatmaps(dds.male_gondad, colData.male_gondad, "male gonad: non-parental males are most different")
-
-![](../figures/sexes/correlationheatmaps-6.png)
