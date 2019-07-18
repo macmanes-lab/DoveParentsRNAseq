@@ -268,6 +268,8 @@ plotPC12 <- function(pcadata, mysubtitle){
 
 plotcandidates <- function(mydds, colData, mysubtitle){
   
+  mydds <- mydds
+  
   vsd <- vst(mydds, blind=FALSE) # variance stabilized 
   
   # make dataframe counts
@@ -277,10 +279,11 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   names(geneinfo)
   names(geneinfo)[4] <- "rownames"
   DEGs$rownames <- row.names(DEGs)
-  print(head(DEGS))
+  print(head(DEGs))
 
   # make dataframe with geneids and names and counts
   # how to gather: https://tidyr.tidyverse.org/reference/gather.html
+}  
   
   candidates <- full_join(geneinfo, DEGs)
   candidates <- candidates %>%
@@ -338,6 +341,7 @@ makepheatmap <- function(mydds, colData, mysubtitle){
   
   # make dataframe counts
   DEGs <- assay(vsd)
+  
   DEGs <- as.data.frame(DEGs)
   
   a <- levels(colData$treatment)
