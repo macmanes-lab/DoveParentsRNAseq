@@ -130,7 +130,36 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
 
 
 
+# bar plot with subset of comparisons
+
+serialtimepoints <- c("control.bldg" , "bldg.lay", "lay.inc.d3", "inc.d3.inc.d9", 
+                      "inc.d9.inc.d17", "inc.d17.hatch", "hatch.n5", "n5.n9")
+
+plotserialDEGs <- function(DEGs, mysubtitle){
+  
+  # subset to look within one tissue in one sex
+  DEGs <- DEGs %>%
+    dplyr::mutate(comparison = row.names(.)) %>%
+    dplyr::filter(comparison %in% serialtimepoints) 
+  
+  DEGs$comparison <- factor(DEGs$comparison, levels = serialtimepoints)
+  
+  mybarplot <- ggplot(DEGs, aes(comparison)) +
+    geom_bar(aes(weight = V3)) +
+    theme_minimal(base_size = 8) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
+    ylim(0, 5500) +
+    geom_text(aes(label = V3, y = V3 + 200, x = comparison),  
+              stat = "identity")
+  
+  return(mybarplot)
+}
+
+
+
 # resturn pvalues for all genes
+
 returnpadj <- function(group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
   pvals <- as.data.frame(res$padj)
@@ -140,6 +169,7 @@ returnpadj <- function(group1, group2){
 }
 
 ## calculate principal components
+
 # I've taken the pca function from DESeq2 and elaborated it so that I could extract up to 6 PCs
 pcadataframe <- function (object, intgroup, ntop = 500, returnData = FALSE) 
 {
