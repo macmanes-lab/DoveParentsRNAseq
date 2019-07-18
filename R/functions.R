@@ -283,7 +283,7 @@ plotcandidates <- function(mydds, colData, mysubtitle){
 
   # make dataframe with geneids and names and counts
   # how to gather: https://tidyr.tidyverse.org/reference/gather.html
-}  
+ 
   
   candidates <- full_join(geneinfo, DEGs)
   candidates <- candidates %>%
