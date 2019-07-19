@@ -156,43 +156,8 @@ plot(mybarplots)
 dev.off()
 ```
 
-```{r manipulationVcontrol}
-versuscontrol <- c("control.m.inc.d3" , "control.m.inc.d8", "control.m.inc.d9", "control.m.inc.d17", 
-                      "control.m.n2", "control.prolong", "control.extend")
-
-manipulationVcontrol <- function(DEGs, mysubtitle, myfill){
-  
-  # subset to look within one tissue in one sex
-  DEGs <- DEGs %>%
-    dplyr::mutate(comparison = row.names(.)) %>%
-    dplyr::filter(comparison %in% versuscontrol) 
-  
-  DEGs$comparison <- factor(DEGs$comparison, levels = versuscontrol)
-  
-  mybarplot <- ggplot(DEGs, aes(comparison)) +
-    geom_bar(aes(weight = V3), fill = myfill) +
-    theme_minimal(base_size = 8) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
-    #ylim(0, 5105) +
-    geom_line(aes(x=comparison, y=V3, group = 1))
-
-  return(mybarplot)
-}
-
-g <- manipulationVcontrol(DEGs.female_hypothalamus, "Female hypothalamus", "#00A08A")
-h <- manipulationVcontrol(DEGs.female_pituitary, "Female pituitary", "#00A08A")
-i <- manipulationVcontrol(DEGs.female_gonad, "Female gonad", "#00A08A")
-j <- manipulationVcontrol(DEGs.male_hypothalamus, "Male hypothalamus", "#F98400")
-k <- manipulationVcontrol(DEGs.male_pituitary, "Male pituitary", "#F98400")
-l <- manipulationVcontrol(DEGs.male_gondad, "Male gonad", "#F98400")
-
-mybarplots <- plot_grid(g, h , i , j ,k , l, nrow = 2) 
-mybarplots
-
-pdf("../figures/sexes/manipulationVcontrol-1.pdf", width = 10, height = 6)
-plot(mybarplots)
-dev.off()
+```{r manipVchar, eval=F}
+manipVchar <- c("inc.d3.m.inc.d3")
 
 ```
 
