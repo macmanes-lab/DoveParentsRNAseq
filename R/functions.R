@@ -156,9 +156,57 @@ plotserialDEGs <- function(DEGs, mysubtitle, myfill){
 }
 
 
+## characterization line graphs
+
+
+subsetDEGs <- function(DEGs, groupname){
+  DEGs <- DEGs %>%
+    dplyr::mutate(comparison = row.names(.),
+                  sextissue = groupname) %>%
+    dplyr::filter(comparison %in% serialtimepoints) 
+  DEGs$comparison <- factor(DEGs$comparison, levels = serialtimepoints)
+  return(DEGs)
+}
+  
+  
+
 # bar plot with manipulations
 
+manipVchar <- c("inc.d3.m.inc.d3",
+                "inc.d9.m.inc.d8", "inc.d9.m.inc.d9",
+                "inc.d17.m.inc.d17",
+                "hatch.prolong", "hatch.extend", "hatch.m.n2")
 
+plotmanipDEGs <- function(DEGs, mysubtitle, legendornot){
+  
+  # subset to look within one tissue in one sex
+  DEGs <- DEGs %>%
+    dplyr::mutate(comparison = row.names(.)) %>%
+    dplyr::filter(comparison %in% manipVchar) 
+  
+  DEGs$description <- ifelse(grepl("inc.d9.m.inc.d8", DEGs$comparison),"early chicks", 
+                             ifelse(grepl("d3|d17|d9", DEGs$comparison),"remove eggs",
+                                    ifelse(grepl("n2", DEGs$comparison),"remove chicks",
+                                           ifelse(grepl("prolong", DEGs$comparison),"prolong inc.",
+                                                  ifelse(grepl("extend", DEGs$comparison),"extend inc.", NA)))))
+  
+  DEGs$comparison <- factor(DEGs$comparison, levels = manipVchar)
+  
+  mybarplot <- ggplot(DEGs, aes(comparison)) +
+    geom_bar(aes(weight = V3, fill = description)) +
+    theme_minimal(base_size = 8) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
+    #ylim(0, 5105) +
+    #geom_line(aes(x=comparison, y=V3, group = 1)) +
+    scale_x_discrete(labels=c("Day 3\nRemove eggs", "Day 9\nAdd chicks", "Day 9\nRemove eggs",
+                              "Day 17\nRemove eggs", "~Hatch\nProlong", "~Hatch\nExtend", "~Hatch\nRemove chicks")) +
+    theme(legend.position = legendornot,
+          legend.title = element_blank()) +
+    scale_fill_manual(values = wes_palette("Darjeeling1"))
+  
+  return(mybarplot)
+}
 
 # resturn pvalues for all genes
 
