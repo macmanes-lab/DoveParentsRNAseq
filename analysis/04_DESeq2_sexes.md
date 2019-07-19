@@ -6,6 +6,7 @@
     library(kableExtra)
     library(viridis)
     library(forcats)
+    library("wesanderson")
 
     library("BiocParallel")
     register(MulticoreParam(4))
@@ -2625,6 +2626,7 @@ Calculate and plot total DEGs
 Plot only a subset of DEGs that relate to hypotheses
 ----------------------------------------------------
 
+    # bars with lines
     g <- plotserialDEGs(DEGs.female_hypothalamus, "Female hypothalamus", "#00A08A")
     h <- plotserialDEGs(DEGs.female_pituitary, "Female pituitary", "#00A08A")
     i <- plotserialDEGs(DEGs.female_gonad, "Female gonad", "#00A08A")
@@ -2644,47 +2646,68 @@ Plot only a subset of DEGs that relate to hypotheses
     ## quartz_off_screen 
     ##                 2
 
-    versuscontrol <- c("control.m.inc.d3" , "control.m.inc.d8", "control.m.inc.d9", "control.m.inc.d17", 
-                          "control.m.n2", "control.prolong", "control.extend")
+    # lines only, different colors for different sex tissue groups
+    FH <- subsetDEGs(DEGs.female_hypothalamus, "Female hypothalamus")
+    FP <- subsetDEGs(DEGs.female_pituitary, "Female pituitary")
+    FG <- subsetDEGs(DEGs.female_gonad, "Female gonad")
+    MH <- subsetDEGs(DEGs.male_hypothalamus, "Male hypothalamus")
+    MP <- subsetDEGs(DEGs.male_pituitary, "Male pituitary")
+    MG <- subsetDEGs(DEGs.male_gondad, "Male gonad")
 
-    manipulationVcontrol <- function(DEGs, mysubtitle, myfill){
-      
-      # subset to look within one tissue in one sex
-      DEGs <- DEGs %>%
-        dplyr::mutate(comparison = row.names(.)) %>%
-        dplyr::filter(comparison %in% versuscontrol) 
-      
-      DEGs$comparison <- factor(DEGs$comparison, levels = versuscontrol)
-      
-      mybarplot <- ggplot(DEGs, aes(comparison)) +
-        geom_bar(aes(weight = V3), fill = myfill) +
-        theme_minimal(base_size = 8) +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-        labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
-        #ylim(0, 5105) +
-        geom_line(aes(x=comparison, y=V3, group = 1))
+    specificDEGs <- rbind(FH, FP, FG, MH, MP, MG)
 
-      return(mybarplot)
-    }
+    specificDEGs$sextissue <- factor(specificDEGs$sextissue, levels = c("Female hypothalamus", "Female pituitary", "Female gonad",
+                                                                        "Male hypothalamus", "Male pituitary", "Male gonad"))
+    mylinegraph <- ggplot(specificDEGs, aes(x=comparison, y=V3, group = sextissue)) +
+        geom_line(aes(color=sextissue)) +
+        geom_point(aes(color=sextissue)) + 
+        theme_minimal(base_size = 10) +
+        #theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+        labs(x = "Parental stage transitions", y= "No. of differentially expressed genes ",
+             title = "Gene expression changes during parental care transitions") + 
+        scale_x_discrete(labels=c("Control to\nNest bldg", "Nest bldg. to\nLay", "Lay to\nInc. day 3",
+                                  "Inc. day 3 to\nInc. day 9", "Inc. day 9 to\nInc. day 17",
+                                  "Inc. day 17 to\nHatch", "Hatch to\nNestling day 5", "Nestling day 5 to\n Nestling day 9")) +
+       theme(legend.title = element_blank(),
+             legend.position = c(0.8, 0.8))
 
-    g <- manipulationVcontrol(DEGs.female_hypothalamus, "Female hypothalamus", "#00A08A")
-    h <- manipulationVcontrol(DEGs.female_pituitary, "Female pituitary", "#00A08A")
-    i <- manipulationVcontrol(DEGs.female_gonad, "Female gonad", "#00A08A")
-    j <- manipulationVcontrol(DEGs.male_hypothalamus, "Male hypothalamus", "#F98400")
-    k <- manipulationVcontrol(DEGs.male_pituitary, "Male pituitary", "#F98400")
-    l <- manipulationVcontrol(DEGs.male_gondad, "Male gonad", "#F98400")
+    mylinegraph
 
-    mybarplots <- plot_grid(g, h , i , j ,k , l, nrow = 2) 
-    mybarplots
+![](../figures/sexes/characterization-2.png)
 
-![](../figures/sexes/manipulationVcontrol-1.png)
-
-    pdf("../figures/sexes/manipulationVcontrol-1.pdf", width = 10, height = 6)
-    plot(mybarplots)
+    pdf("../figures/sexes/characterization-2.pdf", width = 8, height = 4)
+    plot(mylinegraph)
     dev.off()
 
     ## quartz_off_screen 
     ##                 2
+
+    g <- plotmanipDEGs(DEGs.female_hypothalamus, "Female hypothalamus", "bottom")
+    h <- plotmanipDEGs(DEGs.female_pituitary, "Female pituitary", "none")
+    i <- plotmanipDEGs(DEGs.female_gonad, "Female gonad",  "none")
+    j <- plotmanipDEGs(DEGs.male_hypothalamus, "Male hypothalamus", "none")
+    k <- plotmanipDEGs(DEGs.male_pituitary, "Male pituitary", "none")
+    l <- plotmanipDEGs(DEGs.male_gondad, "Male gonad", "none")
+
+    legend <- get_legend(g)
+
+    mybarplots <- plot_grid(g + theme(legend.position = "none"), h , i , j ,k , l, nrow = 2) 
+
+    mybarplots2 <- plot_grid(mybarplots, legend, ncol = 1, rel_heights = c(1,0.1))
+    mybarplots2
+
+![](../figures/sexes/manipVchar-1.png)
+
+    pdf("../figures/sexes/manipVchar-1.pdf", width = 10, height = 6)
+    plot(mybarplots2)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    plotmanipDEGs(DEGs.male_pituitary, "Male pituitary", "bottom")
+
+![](../figures/sexes/manipVchar-2.png)
 
 Calculate and plot principal components
 ---------------------------------------
