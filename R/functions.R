@@ -135,7 +135,7 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
 serialtimepoints <- c("control.bldg" , "bldg.lay", "lay.inc.d3", "inc.d3.inc.d9", 
                       "inc.d9.inc.d17", "inc.d17.hatch", "hatch.n5", "n5.n9")
 
-plotserialDEGs <- function(DEGs, mysubtitle){
+plotserialDEGs <- function(DEGs, mysubtitle, myfill){
   
   # subset to look within one tissue in one sex
   DEGs <- DEGs %>%
@@ -145,16 +145,16 @@ plotserialDEGs <- function(DEGs, mysubtitle){
   DEGs$comparison <- factor(DEGs$comparison, levels = serialtimepoints)
   
   mybarplot <- ggplot(DEGs, aes(comparison)) +
-    geom_bar(aes(weight = V3)) +
+    geom_bar(aes(weight = V3), fill = myfill) +
     theme_minimal(base_size = 8) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
-    ylim(0, 5500) +
-    geom_text(aes(label = V3, y = V3 + 200, x = comparison),  
-              stat = "identity")
-  
+    ylim(0, 5105) +
+    geom_line(aes(x=comparison, y=V3, group = 1))
+
   return(mybarplot)
 }
+
 
 
 
