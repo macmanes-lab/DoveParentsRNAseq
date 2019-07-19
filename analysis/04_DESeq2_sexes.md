@@ -2625,25 +2625,6 @@ Calculate and plot total DEGs
 Plot only a subset of DEGs that relate to hypotheses
 ----------------------------------------------------
 
-    g <- plotserialDEGs(DEGs.female_hypothalamus, "Female hypothalamus", "#969696")
-    h <- plotserialDEGs(DEGs.female_pituitary, "Female pituitary", "#969696")
-    i <- plotserialDEGs(DEGs.female_gonad, "Female gonad", "#969696")
-    j <- plotserialDEGs(DEGs.male_hypothalamus, "Male hypothalamus", "#969696")
-    k <- plotserialDEGs(DEGs.male_pituitary, "Male pituitary", "#969696")
-    l <- plotserialDEGs(DEGs.male_gondad, "Male gonad", "#969696")
-
-    mybarplots <- plot_grid(g, h , i , j ,k , l, nrow = 2) 
-    mybarplots
-
-![](../figures/sexes/totalDEGbarsplots-1.png)
-
-    pdf("../figures/sexes/totalDEGbarsplots-1.pdf", width = 10, height = 6)
-    plot(mybarplots)
-    dev.off()
-
-    ## quartz_off_screen 
-    ##                 2
-
     g <- plotserialDEGs(DEGs.female_hypothalamus, "Female hypothalamus", "#00A08A")
     h <- plotserialDEGs(DEGs.female_pituitary, "Female pituitary", "#00A08A")
     i <- plotserialDEGs(DEGs.female_gonad, "Female gonad", "#00A08A")
@@ -2654,9 +2635,9 @@ Plot only a subset of DEGs that relate to hypotheses
     mybarplots <- plot_grid(g, h , i , j ,k , l, nrow = 2) 
     mybarplots
 
-![](../figures/sexes/totalDEGbarsplots-2.png)
+![](../figures/sexes/characterization-1.png)
 
-    pdf("../figures/sexes/totalDEGbarsplots-2.pdf", width = 10, height = 6)
+    pdf("../figures/sexes/characterization-1.pdf", width = 10, height = 6)
     plot(mybarplots)
     dev.off()
 
