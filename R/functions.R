@@ -130,7 +130,7 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
 
 
 
-# bar plot with subset of comparisons
+# bar plot with subset of characterization
 
 serialtimepoints <- c("control.bldg" , "bldg.lay", "lay.inc.d3", "inc.d3.inc.d9", 
                       "inc.d9.inc.d17", "inc.d17.hatch", "hatch.n5", "n5.n9")
@@ -155,6 +155,8 @@ plotserialDEGs <- function(DEGs, mysubtitle, myfill){
   return(mybarplot)
 }
 
+
+# bar plot with manipulations
 
 
 
