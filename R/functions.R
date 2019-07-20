@@ -52,8 +52,17 @@ numDEGs <- function(dds, group1, group2){
   return(sumpadj)
 }
 
+# resturn pvalues for all genes
 
-## plot DEGs 
+returnpadj <- function(group1, group2){
+  res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
+  pvals <- as.data.frame(res$padj)
+  padjcolname <- as.character(paste("padj", group1, group2, sep=""))
+  colnames(pvals) <- c(padjcolname)
+  return(pvals)
+}
+
+################## ALL DEG comparisons
 
 returntotalDEGs <- function(dds){
   
@@ -128,7 +137,7 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
   plot(allcontrasts)
 }
 
-
+################## characterization comparisons only
 
 # bar plot with subset of characterization
 
@@ -171,7 +180,7 @@ subsetDEGs <- function(DEGs, groupname){
   
   
 
-# bar plot with manipulations
+########################### manipulations comparisons
 
 manipVchar <- c("inc.d3.m.inc.d3",
                 "inc.d9.m.inc.d8", "inc.d9.m.inc.d9",
@@ -186,12 +195,12 @@ plotmanipDEGs <- function(DEGs, mysubtitle, legendornot){
     dplyr::filter(comparison %in% manipVchar) 
   
   DEGs$description <- ifelse(grepl("inc.d9.m.inc.d8", DEGs$comparison),"early chicks", 
-                             ifelse(grepl("d3|d17|d9", DEGs$comparison),"remove eggs",
-                                    ifelse(grepl("n2", DEGs$comparison),"remove chicks",
+                             ifelse(grepl("d3|d17|d9|n2", DEGs$comparison),"remove offspring",
                                            ifelse(grepl("prolong", DEGs$comparison),"prolong inc.",
-                                                  ifelse(grepl("extend", DEGs$comparison),"extend inc.", NA)))))
+                                                  ifelse(grepl("extend", DEGs$comparison),"extend inc.", NA))))
   
   DEGs$comparison <- factor(DEGs$comparison, levels = manipVchar)
+  DEGs$description <- factor(DEGs$description, levels = c("remove offspring", "early chicks", "prolong inc.", "extend inc."))
   
   mybarplot <- ggplot(DEGs, aes(comparison)) +
     geom_bar(aes(weight = V3, fill = description)) +
@@ -205,19 +214,79 @@ plotmanipDEGs <- function(DEGs, mysubtitle, legendornot){
     theme(legend.position = legendornot,
           legend.title = element_blank(),
           panel.grid = element_blank()) +
-    scale_fill_manual(values = wes_palette("Darjeeling1"))
+    scale_fill_manual(values = c("#FF0000", "#00A08A", "#F2AD00", "#5BBCD6"))
   
   return(mybarplot)
 }
 
-# resturn pvalues for all genes
 
-returnpadj <- function(group1, group2){
-  res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
-  pvals <- as.data.frame(res$padj)
-  padjcolname <- as.character(paste("padj", group1, group2, sep=""))
-  colnames(pvals) <- c(padjcolname)
-  return(pvals)
+
+######### offspring removal
+
+
+offspringremoval <- c("lay.inc.d3", "inc.d3.m.inc.d3", 
+                      "inc.d3.inc.d9", "inc.d9.m.inc.d9",
+                      "inc.d9.inc.d17", "inc.d17.m.inc.d17", 
+                      "hatch.n5", "hatch.m.n2")
+
+plotremoval <- function(DEGs, mysubtitle, legendornot){
+  
+  # subset to look within one tissue in one sex
+  DEGs <- DEGs %>%
+    dplyr::mutate(comparison = row.names(.)) %>%
+    dplyr::filter(comparison %in% offspringremoval) 
+  
+  DEGs$description <- ifelse(grepl(".m.", DEGs$comparison),"offspring removal", "normal transition")
+  
+  DEGs$comparison <- factor(DEGs$comparison, levels = offspringremoval)
+
+  mybarplot <- ggplot(DEGs, aes(comparison)) +
+    geom_bar(aes(weight = V3, fill = description)) +
+    theme_minimal(base_size = 8) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
+    ylim(0, 2800) +
+    theme(legend.position = legendornot,
+          legend.title = element_blank(),
+          panel.grid = element_blank()) 
+  
+  return(mybarplot)
+}
+
+######### prolong delay
+
+prolongdelay <- c( "inc.d3.inc.d9", "inc.d9.inc.d17", 
+                   "inc.d9.m.inc.d8",
+                   "inc.d17.hatch", "hatch.n5",
+                   "hatch.prolong", "hatch.extend")
+
+
+plotprolongdelay <- function(DEGs, mysubtitle, legendornot){
+  
+  # subset to look within one tissue in one sex
+  DEGs <- DEGs %>%
+    dplyr::mutate(comparison = row.names(.)) %>%
+    dplyr::filter(comparison %in% prolongdelay) 
+  
+  DEGs$description <- ifelse(grepl(".m.", DEGs$comparison),"chicks hatch early", 
+                             ifelse(grepl("hatch.prolong", DEGs$comparison),"prolong inc",  
+                                    ifelse(grepl("hatch.extend", DEGs$comparison),"extend hatch", "normal transition")))
+  
+  DEGs$comparison <- factor(DEGs$comparison, levels = prolongdelay)
+  DEGs$description <- factor(DEGs$description, levels = c("normal transition", "chicks hatch early", "prolong inc", "extend hatch"))
+  
+  
+  mybarplot <- ggplot(DEGs, aes(comparison)) +
+    geom_bar(aes(weight = V3, fill = description)) +
+    theme_minimal(base_size = 8) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
+    ylim(0, 2800) +
+    theme(legend.position = legendornot,
+          legend.title = element_blank(),
+          panel.grid = element_blank()) 
+  
+  return(mybarplot)
 }
 
 ## calculate principal components
