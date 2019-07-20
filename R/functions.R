@@ -114,7 +114,7 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
-    theme_minimal(base_size = 12) + 
+     theme_minimal(base_size = 12) + 
     geom_text(aes(label = round(V3, 1)), color = "black")+
     scale_fill_viridis(na.value="#bdbdbd", 
                        limits = c(0,7000),
@@ -146,8 +146,9 @@ plotserialDEGs <- function(DEGs, mysubtitle, myfill){
   
   mybarplot <- ggplot(DEGs, aes(comparison)) +
     geom_bar(aes(weight = V3), fill = myfill) +
-    theme_minimal(base_size = 8) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+     theme_minimal(base_size = 8) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          panel.grid = element_blank()) +
     labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
     ylim(0, 5105) +
     geom_line(aes(x=comparison, y=V3, group = 1))
@@ -194,7 +195,7 @@ plotmanipDEGs <- function(DEGs, mysubtitle, legendornot){
   
   mybarplot <- ggplot(DEGs, aes(comparison)) +
     geom_bar(aes(weight = V3, fill = description)) +
-    theme_minimal(base_size = 8) +
+     theme_minimal(base_size = 8) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
     labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
     #ylim(0, 5105) +
@@ -202,7 +203,8 @@ plotmanipDEGs <- function(DEGs, mysubtitle, legendornot){
     scale_x_discrete(labels=c("Day 3\nRemove eggs", "Day 9\nAdd chicks", "Day 9\nRemove eggs",
                               "Day 17\nRemove eggs", "~Hatch\nProlong", "~Hatch\nExtend", "~Hatch\nRemove chicks")) +
     theme(legend.position = legendornot,
-          legend.title = element_blank()) +
+          legend.title = element_blank(),
+          panel.grid = element_blank()) +
     scale_fill_manual(values = wes_palette("Darjeeling1"))
   
   return(mybarplot)
@@ -276,7 +278,7 @@ plotPC1 <- function(pcadata, mysubtitle, myxlab){
   pca1 <- ggplot(pcadata, aes(xlabel, PC1, fill = lastday, color = penultimate)) + 
     geom_violin() +
     #geom_point() +
-    theme_bw(base_size = 12) +
+     theme_minimal(base_size = 12) +
     ylab(myxlab) +
     xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
@@ -290,7 +292,8 @@ plotPC1 <- function(pcadata, mysubtitle, myxlab){
                          label.position = "bottom")) +
     facet_wrap(~study, scales = "free_x")  +
     guides(col = guide_legend(nrow = 1),
-           fill = guide_legend(nrow = 1))
+           fill = guide_legend(nrow = 1)) +
+    theme(panel.grid = element_blank())
   return(pca1)
 }
 
@@ -302,7 +305,7 @@ plotPC2 <- function(pcadata, mysubtitle, myxlab){
   pca2 <- ggplot(pcadata, aes(xlabel, PC2, fill = lastday, color = penultimate)) + 
     geom_violin() +
     #geom_point() +
-    theme_bw(base_size = 12) +
+     theme_minimal(base_size = 12) +
     ylab(myxlab) +
     xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
@@ -316,7 +319,8 @@ plotPC2 <- function(pcadata, mysubtitle, myxlab){
                          label.position = "bottom")) +
     facet_wrap(~study, scales = "free_x")  +
     guides(col = guide_legend(nrow = 1),
-           fill = guide_legend(nrow = 1))
+           fill = guide_legend(nrow = 1)) +
+    theme(panel.grid = element_blank())
   return(pca2)
 }  
  
@@ -327,7 +331,7 @@ plotPC12 <- function(pcadata, mysubtitle){
   pca12 <- ggplot(pcadata, aes(PC3, PC2, color = penultimate ,fill = lastday)) + 
     geom_point(pch=21, size = 3) +
     #stat_ellipse() +
-    theme_bw(base_size = 12) +
+     theme_minimal(base_size = 12) +
     ylab(paste0("PC2")) +
     xlab(paste0("PC3")) +
     labs(subtitle = mysubtitle) +
@@ -395,7 +399,7 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   p1 <- ggplot(candidatecounts, aes(x = treatment, y = value, fill = lastday, color = penultimate)) +
     geom_boxplot() +
     facet_wrap(~gene, scales = "free") +
-    theme_bw(base_size = 8) +
+     theme_minimal(base_size = 8) +
     theme(axis.text.x = element_blank(),
           legend.position = "bottom") +
     labs(x = NULL, subtitle = mysubtitle) +
