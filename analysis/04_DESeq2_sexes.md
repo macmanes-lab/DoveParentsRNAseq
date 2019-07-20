@@ -2708,6 +2708,52 @@ Plot only a subset of DEGs that relate to hypotheses
 
 ![](../figures/sexes/manipVchar-2.png)
 
+    g <- plotremoval(DEGs.female_hypothalamus, "Female hypothalamus", "bottom")
+    h <- plotremoval(DEGs.female_pituitary, "Female pituitary", "none")
+    i <- plotremoval(DEGs.female_gonad, "Female gonad",  "none")
+    j <- plotremoval(DEGs.male_hypothalamus, "Male hypothalamus", "none")
+    k <- plotremoval(DEGs.male_pituitary, "Male pituitary", "none")
+    l <- plotremoval(DEGs.male_gondad, "Male gonad", "none")
+
+    legend <- get_legend(g)
+
+    mybarplots <- plot_grid(g + theme(legend.position = "none"), h , i , j ,k , l, nrow = 2) 
+
+    mybarplots2 <- plot_grid(mybarplots, legend, ncol = 1, rel_heights = c(1,0.1))
+    mybarplots2
+
+![](../figures/sexes/offspringremoval-1.png)
+
+    pdf("../figures/sexes/offspringremoval-1.pdf", width = 10, height = 6)
+    plot(mybarplots2)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    g <- plotprolongdelay(DEGs.female_hypothalamus, "Female hypothalamus", "bottom")
+    h <- plotprolongdelay(DEGs.female_pituitary, "Female pituitary", "none")
+    i <- plotprolongdelay(DEGs.female_gonad, "Female gonad",  "none")
+    j <- plotprolongdelay(DEGs.male_hypothalamus, "Male hypothalamus", "none")
+    k <- plotprolongdelay(DEGs.male_pituitary, "Male pituitary", "none")
+    l <- plotprolongdelay(DEGs.male_gondad, "Male gonad", "none")
+
+    legend <- get_legend(g)
+
+    mybarplots <- plot_grid(g + theme(legend.position = "none"), h , i , j ,k , l, nrow = 2) 
+
+    mybarplots2 <- plot_grid(mybarplots, legend, ncol = 1, rel_heights = c(1,0.1))
+    mybarplots2
+
+![](../figures/sexes/prolongextend-1.png)
+
+    pdf("../figures/sexes/prolongextend-1.pdf", width = 10, height = 6)
+    plot(mybarplots2)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
 Calculate and plot principal components
 ---------------------------------------
 
