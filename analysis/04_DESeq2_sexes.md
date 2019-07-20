@@ -2670,7 +2670,6 @@ Plot only a subset of DEGs that relate to hypotheses
                                   "Inc. day 17 to\nHatch", "Hatch to\nNestling day 5", "Nestling day 5 to\n Nestling day 9")) +
        theme(legend.title = element_blank(),
              legend.position = c(0.8, 0.8))
-
     mylinegraph
 
 ![](../figures/sexes/characterization-2.png)
