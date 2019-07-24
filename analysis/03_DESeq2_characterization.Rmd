@@ -95,6 +95,34 @@ pdf("../figures/characterization/musicalgenes-1.pdf", width = 8, height = 6)
 plot(c)
 dev.off()
 
+
+musicgenes2 <- function(mygroup, mysusbtitle){
+
+myplot <- candidataCountsTcol2 %>%
+  filter(sextissue %in% c(mygroup)) %>%
+ggplot(aes(x = treatment, y = mean)) +
+  geom_point(colour = "white") + 
+  theme_bw() +
+  facet_wrap(~gene, scales = "free", ncol = 1) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_image(aes(image="https://storage.needpix.com/rsynced_images/music-34177_1280.png")) +
+  labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL) +
+  
+  
+  return(myplot)
+  
+}
+
+a <- musicgenes2("female_hypothalamus", "female hypothalamus")
+b <- musicgenes2("male_hypothalamus", "male hypothalamus")
+
+c <- plot_grid(a,b)
+c
+
+pdf("../figures/characterization/musicalgenes-2.pdf", width = 8, height = 6)
+plot(c)
+dev.off()
+
 ```
 
 
