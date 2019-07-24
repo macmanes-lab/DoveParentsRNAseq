@@ -96,30 +96,33 @@ plot(c)
 dev.off()
 
 
-musicgenes2 <- function(mygroup, mysusbtitle){
-
-myplot <- candidataCountsTcol2 %>%
-  filter(sextissue %in% c(mygroup)) %>%
-ggplot(aes(x = treatment, y = mean)) +
-  geom_point(colour = "white") + 
-  theme_bw() +
-  facet_wrap(~gene, scales = "free", ncol = 1) +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_image(aes(image="https://storage.needpix.com/rsynced_images/music-34177_1280.png")) +
-  labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL) +
+musicgenes5 <- function(mygroup, mysusbtitle){
+  myplot <- candidataCountsTcol2 %>%
+  filter(sextissue %in% c(mygroup),
+         gene == "GAL") %>%
+    ggplot(aes(x = treatment, y = mean)) +
+    geom_point(colour = "white") + 
+    theme_minimal() +
+    facet_wrap(~gene,  ncol = 1) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.text = element_text(face = "italic"),
+          panel.grid = element_blank()) +
+    geom_image(aes(image="https://storage.needpix.com/rsynced_images/music-34177_1280.png")) +
+   labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL) +
+    ylim(c(20,70))
   
   
   return(myplot)
   
 }
 
-a <- musicgenes2("female_hypothalamus", "female hypothalamus")
-b <- musicgenes2("male_hypothalamus", "male hypothalamus")
+a <- musicgenes5("female_hypothalamus", "female hypothalamus")
+b <- musicgenes5("male_hypothalamus", "male hypothalamus")
 
 c <- plot_grid(a,b)
 c
 
-pdf("../figures/characterization/musicalgenes-2.pdf", width = 8, height = 6)
+pdf("../figures/characterization/musicalgenes-6.pdf", width = 6, height = 3)
 plot(c)
 dev.off()
 
