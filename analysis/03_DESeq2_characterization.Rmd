@@ -13,6 +13,7 @@ library(kableExtra)
 library(viridis)
 library("ggimage")
 
+
 # load custom functions  
 source("../R/functions.R") 
 
@@ -39,13 +40,14 @@ summary(c.colData[c(7,3,4,5,8)])
 ## plot raw counts
 
 ```{r musicalgenes, cache = T, eval=T}
-head(countData)
-head(geneinfo)
+countData <- c.countData
+colData <- c.colData
+
 
 candidataCounts <- countData
 candidataCounts$Name <- row.names(candidataCounts)
 candidataCounts <- candidataCounts %>%
-  filter(Name %in% c("NP_990797.2", "NP_001138861.1"))
+  filter(Name %in% c("NP_990797.2", "NP_001138861.1", "NP_001107180.1"))
 row.names(candidataCounts) <- candidataCounts$Name
 candidataCounts$Name <- NULL
 candidataCountsT <- t(candidataCounts)
@@ -62,8 +64,9 @@ str(candidataCountsTcol)
 candidataCountsTcol2 <- candidataCountsTcol %>%
   group_by(sextissue, treatment) %>%
   summarize(GAL = mean(NP_001138861.1, na.rm = TRUE),
-            PRL = mean(NP_990797.2, na.rm = TRUE)) %>%
-  gather(GAL, PRL, key = "gene", value = "mean")
+            PRL = mean(NP_990797.2, na.rm = TRUE),
+            CALCA = mean(NP_001107180.1, na.rm = TRUE)) %>%
+  gather(GAL, PRL, CALCA, key = "gene", value = "mean")
  
 candidataCountsTcol2 <- as.data.frame(candidataCountsTcol2)
   
@@ -78,7 +81,7 @@ ggplot(aes(x = treatment, y = mean)) +
   theme_bw() +
   facet_wrap(~gene, scales = "free", ncol = 1) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-  geom_image(aes(image="https://storage.needpix.com/rsynced_images/music-34177_1280.png")) +
+  geom_image(aes(image="../figures/characterization/note-black-04.png")) +
   labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL)
   
   return(myplot)
@@ -96,34 +99,84 @@ plot(c)
 dev.off()
 
 
-musicgenes5 <- function(mygroup, mysusbtitle){
+musicgeneslines <- function(mygroup, mysusbtitle, mygene, myimage, myylim, myhline){
   myplot <- candidataCountsTcol2 %>%
   filter(sextissue %in% c(mygroup),
-         gene == "GAL") %>%
+         gene == mygene) %>%
     ggplot(aes(x = treatment, y = mean)) +
     geom_point(colour = "white") + 
     theme_minimal() +
-    facet_wrap(~gene,  ncol = 1) +
+    #facet_wrap(~gene,  ncol = 1) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           strip.text = element_text(face = "italic"),
-          panel.grid = element_blank()) +
-    geom_image(aes(image="https://storage.needpix.com/rsynced_images/music-34177_1280.png")) +
+          panel.grid = element_blank(),
+          axis.text.y = element_blank()) +
+    geom_image(aes(image=myimage)) +
    labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL) +
-    ylim(c(20,70))
-  
-  
+    ylim(myylim) + 
+    geom_hline(yintercept = myhline, colour="grey")
   return(myplot)
-  
 }
 
-a <- musicgenes5("female_hypothalamus", "female hypothalamus")
-b <- musicgenes5("male_hypothalamus", "male hypothalamus")
+musicgenesnolines <- function(mygroup, mysusbtitle, mygene, myimage, myylim, myhline){
+  myplot <- candidataCountsTcol2 %>%
+  filter(sextissue %in% c(mygroup),
+         gene == mygene) %>%
+    ggplot(aes(x = treatment, y = mean)) +
+    geom_point(colour = "white") + 
+    theme_minimal(base_size = 10) +
+    #facet_wrap(~gene,  ncol = 1) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.text = element_text(face = "italic"),
+          panel.grid = element_blank(),
+          axis.text.y = element_blank()) +
+    geom_image(aes(image=myimage)) +
+   labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL) +
+    ylim(myylim) 
 
-c <- plot_grid(a,b)
+  return(myplot)
+}
+
+
+a <- musicgenesnolines("female_hypothalamus", "female hypothalamus", "GAL", "../figures/characterization/note-orange-04.png", c(15,75))
+a
+
+b <- musicgenesnolines("male_hypothalamus", "male hypothalamus", "GAL", "../figures/characterization/note-orange-04.png", c(15,75))
+b
+
+
+ab <- plot_grid(a,b) + cowplot::draw_text("GAL", x = 0.925, y = 0.9, size = 8, colour = "#d95f02")
+ab
+
+c <- musicgenesnolines("female_hypothalamus", "female hypothalamus", "CALCA", "../figures/characterization/note-teal-04.png", c(0,100))
 c
 
-pdf("../figures/characterization/musicalgenes-6.pdf", width = 6, height = 3)
-plot(c)
+d <- musicgenesnolines("male_hypothalamus", "male hypothalamus", "CALCA", "../figures/characterization/note-teal-04.png", c(0,100))
+d
+
+cd <- plot_grid(c,d)  + cowplot::draw_text("CALCA", x = 0.925, y = 0.85, size = 8, colour = "#1b9e77")
+cd
+
+e <- musicgenesnolines("female_hypothalamus", "female hypothalamus", "PRL", "../figures/characterization/note-purple-04.png", c(800,3000) )
+e
+
+f <- musicgenesnolines("male_hypothalamus", "male hypothalamus", "PRL", "../figures/characterization/note-purple-04.png", c(800,3000))
+f
+
+
+ef <- plot_grid(e,f) + cowplot::draw_text("PRL", x = 0.925, y = 0.8, size = 8, colour = "#7570b3")
+ef
+
+pdf("../figures/characterization/musicalgenes-ab.pdf", width = 4, height = 2)
+plot(ab)
+dev.off()
+
+pdf("../figures/characterization/musicalgenes-cd.pdf", width = 4, height = 2)
+plot(cd)
+dev.off()
+
+pdf("../figures/characterization/musicalgenes-ef.pdf", width = 4, height = 2)
+plot(ef)
 dev.off()
 
 ```
@@ -131,7 +184,7 @@ dev.off()
 
 ## Run DESeq on all subsets of the data
 
-```{r dds, cache = T}
+```{r dds, cache = T, eval = F}
 dds.female_hypothalamus <- subsetDESeq(c.colData,  c.countData, "female_hypothalamus")
 dds.female_pituitary <- subsetDESeq(c.colData,  c.countData, "female_pituitary" )
 dds.female_gonad <- subsetDESeq(c.colData,  c.countData, "female_gonad" )

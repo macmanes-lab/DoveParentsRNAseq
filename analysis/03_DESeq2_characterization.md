@@ -5,31 +5,32 @@
     library(pheatmap)
     library(kableExtra)
     library(viridis)
+    library("ggimage")
+
 
     # load custom functions  
     source("../R/functions.R") 
 
     knitr::opts_chunk$set(fig.path = '../figures/characterizatio/', cache = TRUE)
 
-Manipulation data
------------------
+Characterization data
+---------------------
 
     # import "colData" which contains sample information and "countData" which contains read counts
-    m.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
-    m.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+    c.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
+    c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
     geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
     # set levels
-    levels(m.colData$treatment)
+    c.colData$treatment <- factor(c.colData$treatment, levels = 
+                                  c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+    levels(c.colData$treatment)
 
-    ## [1] "bldg"    "control" "hatch"   "inc.d17" "inc.d3"  "inc.d9"  "lay"    
+    ## [1] "control" "bldg"    "lay"     "inc.d3"  "inc.d9"  "inc.d17" "hatch"  
     ## [8] "n5"      "n9"
 
-    m.colData$treatment <- factor(m.colData$treatment, levels = 
-                                  c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
-
-    m.colData$sextissue <- as.factor(paste(m.colData$sex, m.colData$tissue, sep = "_"))
-    summary(m.colData[c(7,3,4,5,8)])
+    c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
+    summary(c.colData[c(7,3,4,5,8)])
 
     ##              study         sex               tissue      treatment  
     ##  charcterization:576   female:289   gonad       :194   control: 73  
@@ -48,226 +49,201 @@ Manipulation data
     ##  male_pituitary     :97  
     ## 
 
+plot raw counts
+---------------
+
+    countData <- c.countData
+    colData <- c.colData
+
+
+    candidataCounts <- countData
+    candidataCounts$Name <- row.names(candidataCounts)
+    candidataCounts <- candidataCounts %>%
+      filter(Name %in% c("NP_990797.2", "NP_001138861.1", "NP_001107180.1"))
+    row.names(candidataCounts) <- candidataCounts$Name
+    candidataCounts$Name <- NULL
+    candidataCountsT <- t(candidataCounts)
+    candidataCountsT <- as.data.frame(candidataCountsT)
+
+    candidataCountsT$entrez <- row.names(candidataCountsT)
+    colData$entrez <- row.names(colData)
+
+    candidataCountsTcol <- full_join(colData, candidataCountsT)
+
+    ## Joining, by = "entrez"
+
+    str(candidataCountsTcol)
+
+    ## 'data.frame':    576 obs. of  12 variables:
+    ##  $ V1            : Factor w/ 576 levels "blk.s061.pu.y_female_gonad_inc.d9",..: 131 132 133 134 135 136 137 138 139 140 ...
+    ##  $ bird          : Factor w/ 195 levels "blk.s061.pu.y",..: 45 45 45 46 46 46 47 47 47 48 ...
+    ##  $ sex           : Factor w/ 2 levels "female","male": 2 2 2 2 2 2 1 1 1 2 ...
+    ##  $ tissue        : Factor w/ 3 levels "gonad","hypothalamus",..: 1 2 3 1 2 3 1 2 3 1 ...
+    ##  $ treatment     : Factor w/ 9 levels "control","bldg",..: 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ group         : Factor w/ 54 levels "female.gonad.bldg",..: 29 38 47 29 38 47 2 11 20 29 ...
+    ##  $ study         : Factor w/ 1 level "charcterization": 1 1 1 1 1 1 1 1 1 1 ...
+    ##  $ sextissue     : Factor w/ 6 levels "female_gonad",..: 4 5 6 4 5 6 1 2 3 4 ...
+    ##  $ entrez        : chr  "L.Blu13_male_gonad_control.NYNO" "L.Blu13_male_hypothalamus_control.NYNO" "L.Blu13_male_pituitary_control.NYNO" "L.G107_male_gonad_control" ...
+    ##  $ NP_001107180.1: int  15 4 0 19 4 0 528 20 0 10 ...
+    ##  $ NP_001138861.1: int  0 6 2 2 11 8 182 1 0 0 ...
+    ##  $ NP_990797.2   : int  2008 744 50521 484 578 92426 844 1255 146214 1258 ...
+
+    candidataCountsTcol2 <- candidataCountsTcol %>%
+      group_by(sextissue, treatment) %>%
+      summarize(GAL = mean(NP_001138861.1, na.rm = TRUE),
+                PRL = mean(NP_990797.2, na.rm = TRUE),
+                CALCA = mean(NP_001107180.1, na.rm = TRUE)) %>%
+      gather(GAL, PRL, CALCA, key = "gene", value = "mean")
+     
+    candidataCountsTcol2 <- as.data.frame(candidataCountsTcol2)
+      
+
+    musicgenes <- function(mygroup, mysusbtitle){
+
+    myplot <- candidataCountsTcol2 %>%
+      filter(sextissue %in% c(mygroup)) %>%
+    ggplot(aes(x = treatment, y = mean)) +
+      geom_point(colour = "white") + 
+      geom_line(group = 1, color='grey') +
+      theme_bw() +
+      facet_wrap(~gene, scales = "free", ncol = 1) +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      geom_image(aes(image="../figures/characterization/note-black-04.png")) +
+      labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL)
+      
+      return(myplot)
+      
+    }
+
+    a <- musicgenes("female_hypothalamus", "female hypothalamus")
+    b <- musicgenes("male_hypothalamus", "male hypothalamus")
+
+    c <- plot_grid(a,b)
+    c
+
+![](../figures/characterizatio/musicalgenes-1.png)
+
+    pdf("../figures/characterization/musicalgenes-1.pdf", width = 8, height = 6)
+    plot(c)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    musicgeneslines <- function(mygroup, mysusbtitle, mygene, myimage, myylim, myhline){
+      myplot <- candidataCountsTcol2 %>%
+      filter(sextissue %in% c(mygroup),
+             gene == mygene) %>%
+        ggplot(aes(x = treatment, y = mean)) +
+        geom_point(colour = "white") + 
+        theme_minimal() +
+        #facet_wrap(~gene,  ncol = 1) +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+              strip.text = element_text(face = "italic"),
+              panel.grid = element_blank(),
+              axis.text.y = element_blank()) +
+        geom_image(aes(image=myimage)) +
+       labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL) +
+        ylim(myylim) + 
+        geom_hline(yintercept = myhline, colour="grey")
+      return(myplot)
+    }
+
+    musicgenesnolines <- function(mygroup, mysusbtitle, mygene, myimage, myylim, myhline){
+      myplot <- candidataCountsTcol2 %>%
+      filter(sextissue %in% c(mygroup),
+             gene == mygene) %>%
+        ggplot(aes(x = treatment, y = mean)) +
+        geom_point(colour = "white") + 
+        theme_minimal(base_size = 10) +
+        #facet_wrap(~gene,  ncol = 1) +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+              strip.text = element_text(face = "italic"),
+              panel.grid = element_blank(),
+              axis.text.y = element_blank()) +
+        geom_image(aes(image=myimage)) +
+       labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL) +
+        ylim(myylim) 
+
+      return(myplot)
+    }
+
+
+    a <- musicgenesnolines("female_hypothalamus", "female hypothalamus", "GAL", "../figures/characterization/note-orange-04.png", c(15,75))
+    a
+
+![](../figures/characterizatio/musicalgenes-2.png)
+
+    b <- musicgenesnolines("male_hypothalamus", "male hypothalamus", "GAL", "../figures/characterization/note-orange-04.png", c(15,75))
+    b
+
+![](../figures/characterizatio/musicalgenes-3.png)
+
+    ab <- plot_grid(a,b) + cowplot::draw_text("GAL", x = 0.925, y = 0.9, size = 8, colour = "#d95f02")
+    ab
+
+![](../figures/characterizatio/musicalgenes-4.png)
+
+    c <- musicgenesnolines("female_hypothalamus", "female hypothalamus", "CALCA", "../figures/characterization/note-teal-04.png", c(0,100))
+    c
+
+![](../figures/characterizatio/musicalgenes-5.png)
+
+    d <- musicgenesnolines("male_hypothalamus", "male hypothalamus", "CALCA", "../figures/characterization/note-teal-04.png", c(0,100))
+    d
+
+![](../figures/characterizatio/musicalgenes-6.png)
+
+    cd <- plot_grid(c,d)  + cowplot::draw_text("CALCA", x = 0.925, y = 0.85, size = 8, colour = "#1b9e77")
+    cd
+
+![](../figures/characterizatio/musicalgenes-7.png)
+
+    e <- musicgenesnolines("female_hypothalamus", "female hypothalamus", "PRL", "../figures/characterization/note-purple-04.png", c(800,3000) )
+    e
+
+![](../figures/characterizatio/musicalgenes-8.png)
+
+    f <- musicgenesnolines("male_hypothalamus", "male hypothalamus", "PRL", "../figures/characterization/note-purple-04.png", c(800,3000))
+    f
+
+![](../figures/characterizatio/musicalgenes-9.png)
+
+    ef <- plot_grid(e,f) + cowplot::draw_text("PRL", x = 0.925, y = 0.8, size = 8, colour = "#7570b3")
+    ef
+
+![](../figures/characterizatio/musicalgenes-10.png)
+
+    pdf("../figures/characterization/musicalgenes-ab.pdf", width = 4, height = 2)
+    plot(ab)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    pdf("../figures/characterization/musicalgenes-cd.pdf", width = 4, height = 2)
+    plot(cd)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    pdf("../figures/characterization/musicalgenes-ef.pdf", width = 4, height = 2)
+    plot(ef)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
 Run DESeq on all subsets of the data
 ------------------------------------
 
-    dds.female_hypothalamus <- subsetDESeq("female_hypothalamus")
-
-    ## [1] TRUE
-    ## class: DESeqDataSet 
-    ## dim: 14937 95 
-    ## metadata(1): version
-    ## assays(1): counts
-    ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
-    ##   XP_430508.3
-    ## rowData names(0):
-    ## colnames(95): L.G118_female_hypothalamus_control.NYNO
-    ##   R.G106_female_hypothalamus_control ...
-    ##   y94.g133.x_female_hypothalamus_n5.NYNO
-    ##   y97.x_female_hypothalamus_n9
-    ## colData names(8): V1 bird ... study sextissue
-    ## [1] 14469    95
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 6 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-    dds.female_pituitary <- subsetDESeq("female_pituitary" )
-
-    ## [1] TRUE
-    ## class: DESeqDataSet 
-    ## dim: 14937 96 
-    ## metadata(1): version
-    ## assays(1): counts
-    ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
-    ##   XP_430508.3
-    ## rowData names(0):
-    ## colnames(96): L.G118_female_pituitary_control.NYNO
-    ##   R.G106_female_pituitary_control ...
-    ##   y94.g133.x_female_pituitary_n5 y97.x_female_pituitary_n9
-    ## colData names(8): V1 bird ... study sextissue
-    ## [1] 14322    96
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 68 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-    dds.female_gonad <- subsetDESeq("female_gonad" )
-
-    ## [1] TRUE
-    ## class: DESeqDataSet 
-    ## dim: 14937 98 
-    ## metadata(1): version
-    ## assays(1): counts
-    ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
-    ##   XP_430508.3
-    ## rowData names(0):
-    ## colnames(98): L.G118_female_gonad_control
-    ##   R.G106_female_gonad_control ... y94.g133.x_female_gonad_n5
-    ##   y97.x_female_gonad_n9
-    ## colData names(8): V1 bird ... study sextissue
-    ## [1] 14605    98
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 34 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-    dds.male_hypothalamus <- subsetDESeq("male_hypothalamus" )
-
-    ## [1] TRUE
-    ## class: DESeqDataSet 
-    ## dim: 14937 94 
-    ## metadata(1): version
-    ## assays(1): counts
-    ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
-    ##   XP_430508.3
-    ## rowData names(0):
-    ## colnames(94): L.Blu13_male_hypothalamus_control.NYNO
-    ##   L.G107_male_hypothalamus_control ...
-    ##   y95.g131.x_male_hypothalamus_inc.d9
-    ##   y98.o50.x_male_hypothalamus_inc.d3
-    ## colData names(8): V1 bird ... study sextissue
-    ## [1] 14416    94
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 8 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-    dds.male_pituitary <- subsetDESeq("male_pituitary"  )
-
-    ## [1] TRUE
-    ## class: DESeqDataSet 
-    ## dim: 14937 97 
-    ## metadata(1): version
-    ## assays(1): counts
-    ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
-    ##   XP_430508.3
-    ## rowData names(0):
-    ## colnames(97): L.Blu13_male_pituitary_control.NYNO
-    ##   L.G107_male_pituitary_control ...
-    ##   y95.g131.x_male_pituitary_inc.d9 y98.o50.x_male_pituitary_inc.d3
-    ## colData names(8): V1 bird ... study sextissue
-    ## [1] 14298    97
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 50 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
-
-    dds.male_gondad <- subsetDESeq("male_gonad")
-
-    ## [1] TRUE
-    ## class: DESeqDataSet 
-    ## dim: 14937 96 
-    ## metadata(1): version
-    ## assays(1): counts
-    ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
-    ##   XP_430508.3
-    ## rowData names(0):
-    ## colnames(96): L.Blu13_male_gonad_control.NYNO
-    ##   L.G107_male_gonad_control ... y95.g131.x_male_gonad_inc.d9
-    ##   y98.o50.x_male_gonad_inc.d3
-    ## colData names(8): V1 bird ... study sextissue
-    ## [1] 14614    96
-
-    ## estimating size factors
-
-    ## estimating dispersions
-
-    ## gene-wise dispersion estimates
-
-    ## mean-dispersion relationship
-
-    ## final dispersion estimates
-
-    ## fitting model and testing
-
-    ## -- replacing outliers and refitting for 8 genes
-    ## -- DESeq argument 'minReplicatesForReplace' = 7 
-    ## -- original counts are preserved in counts(dds)
-
-    ## estimating dispersions
-
-    ## fitting model and testing
+    dds.female_hypothalamus <- subsetDESeq(c.colData,  c.countData, "female_hypothalamus")
+    dds.female_pituitary <- subsetDESeq(c.colData,  c.countData, "female_pituitary" )
+    dds.female_gonad <- subsetDESeq(c.colData,  c.countData, "female_gonad" )
+    dds.male_hypothalamus <- subsetDESeq(c.colData,  c.countData, "male_hypothalamus" )
+    dds.male_pituitary <- subsetDESeq(c.colData,  c.countData, "male_pituitary"  )
+    dds.male_gondad <- subsetDESeq(c.colData,  c.countData, "male_gonad")
 
 Calculate and plot total DEGs
 -----------------------------
@@ -283,71 +259,22 @@ Calculate and plot total DEGs
     e <- plottotalDEGschar(dds.male_pituitary, "male pituitary")
     f <- plottotalDEGschar(dds.male_gondad, "male gonad")
 
-    plot_grid(a,b,c,d,e,f, nrow = 2) 
+    plot_grid(a + theme(legend.position = "none"),
+              b + theme(legend.position = "none"),
+              c,
+              d + theme(legend.position = "none"),
+              e + theme(legend.position = "none"),
+              f,
+              nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
 
 ![](../figures/characterizatio/totalDEGs-1.png)
 
-    plot_grid(a + theme_minimal(base_size = 8) + theme(legend.position = "none", axis.text.x = element_text(angle = 90)),
-              b + theme_minimal(base_size = 8) + theme(legend.position = "none", axis.text.x = element_text(angle = 90)),
-              c + theme_minimal(base_size = 8) + theme(axis.text.x = element_text(angle = 90)),
-              d + theme_minimal(base_size = 8) + theme(legend.position = "none",axis.text.x = element_text(angle = 90)),
-              e + theme_minimal(base_size = 8) + theme(legend.position = "none",axis.text.x = element_text(angle = 90)),
-              f + theme_minimal(base_size = 8) + theme(axis.text.x = element_text(angle = 90)),
-              nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
+Calculate and plot principal component
+--------------------------------------
 
-![](../figures/characterizatio/totalDEGs2-1.png)
-
-Calculate and plot principal components
----------------------------------------
-
-    #mydds <- list(ddsmale_hypothalamus) # for testing only
-    mydds <- list(dds.female_hypothalamus, dds.female_pituitary, dds.female_gonad,
-                 dds.male_hypothalamus, dds.male_pituitary, dds.male_gondad)
-
-
-    for (eachdds in mydds){
-      
-      vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
-      
-      # create the dataframe using my function pcadataframe
-      pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
-      percentVar <- round(100 * attr(pcadata, "percentVar"))
-      print(percentVar)
-      
-
-      pca1 <- ggplot(pcadata, aes(treatment, PC1,color = treatment)) + 
-        geom_boxplot() +
-        ylab(paste0("PC1: ", percentVar[1],"% variance")) +
-        xlab(NULL) +
-        theme_cowplot(font_size = 8, line_size = 0.25) +
-        labs(subtitle = "eachgroup") +
-        theme(legend.position = "none")
-
-
-      pca2 <- ggplot(pcadata, aes(treatment, PC2,color = treatment)) + 
-        geom_boxplot() +
-        ylab(paste0("PC2: ", percentVar[2],"% variance")) +
-        xlab(NULL) +
-        theme_cowplot(font_size = 8, line_size = 0.25) +
-        labs(subtitle = "eachgroup") +
-        theme(legend.position = "none")
-
-      mypca <- plot_grid(pca1, pca2)
-      plot(mypca)
-
-      print(summary(aov(PC1 ~ treatment, data=pcadata)))
-      print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
-      
-      print(summary(aov(PC2 ~ treatment, data=pcadata))) 
-      print(summary(aov(PC3 ~ treatment, data=pcadata))) 
-      print(summary(aov(PC4 ~ treatment, data=pcadata))) 
-
-    }
+    plotPCAs(dds.female_hypothalamus, "female hypothalamus")
 
     ## [1] 23 12  9  4  4  3
-
-![](../figures/characterizatio/pca-1.png)
-
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    8   3351   418.8   17.58 3.02e-15 ***
     ## Residuals   86   2049    23.8                     
@@ -407,11 +334,13 @@ Calculate and plot principal components
     ## Residuals   86   1870   21.74               
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    8   80.8   10.10   0.978  0.459
-    ## Residuals   86  888.0   10.33               
+    ## Residuals   86  888.0   10.33
+
+![](../figures/characterizatio/pca-1.png)
+
+    plotPCAs(dds.female_pituitary, "female pituitary")      
+
     ## [1] 12 10  8  6  4  3
-
-![](../figures/characterizatio/pca-2.png)
-
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    8   1498  187.18    14.5 3.03e-13 ***
     ## Residuals   87   1123   12.91                     
@@ -476,10 +405,12 @@ Calculate and plot principal components
     ## Residuals   87  999.4   11.49                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+![](../figures/characterizatio/pca-2.png)
+
+    plotPCAs(dds.female_gonad, "female gonad")
+
     ## [1] 40 13  6  4  4  3
-
-![](../figures/characterizatio/pca-3.png)
-
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    8  11387  1423.4   6.155 2.64e-06 ***
     ## Residuals   89  20583   231.3                     
@@ -542,10 +473,12 @@ Calculate and plot principal components
     ## Residuals   89   2280   25.62                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+![](../figures/characterizatio/pca-3.png)
+
+    plotPCAs(dds.male_hypothalamus, "male hypothalamus")
+
     ## [1] 28 12  7  5  4  3
-
-![](../figures/characterizatio/pca-4.png)
-
     ##             Df Sum Sq Mean Sq F value   Pr(>F)    
     ## treatment    8   3384   423.0   8.582 1.69e-08 ***
     ## Residuals   85   4190    49.3                     
@@ -608,10 +541,12 @@ Calculate and plot principal components
     ## Residuals   85  973.5   11.45                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+![](../figures/characterizatio/pca-4.png)
+
+    plotPCAs(dds.male_pituitary, "male pituitary")
+
     ## [1] 18  9  6  4  4  3
-
-![](../figures/characterizatio/pca-5.png)
-
     ##             Df Sum Sq Mean Sq F value Pr(>F)    
     ## treatment    8   3500   437.5   28.24 <2e-16 ***
     ## Residuals   88   1363    15.5                   
@@ -676,10 +611,12 @@ Calculate and plot principal components
     ## Residuals   88  991.9   11.27                 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+![](../figures/characterizatio/pca-5.png)
+
+    plotPCAs(dds.male_gondad, "male gonad")
+
     ## [1] 13  9  5  4  3  3
-
-![](../figures/characterizatio/pca-6.png)
-
     ##             Df Sum Sq Mean Sq F value Pr(>F)    
     ## treatment    8 1540.6  192.58   18.24  1e-15 ***
     ## Residuals   87  918.7   10.56                   
@@ -743,424 +680,24 @@ Calculate and plot principal components
     ## treatment    8   67.5   8.433   0.979  0.458
     ## Residuals   87  749.1   8.611
 
+![](../figures/characterizatio/pca-6.png)
+
 heamap with minimum pvalue
 --------------------------
 
-    for (eachdds in mydds){
-      
-      dds <- eachdds
-      
-      vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
+    makepheatmap(dds.female_hypothalamus, "female hypothalamus")
+    makepheatmap(dds.female_pituitary, "female pituitary")
+    makepheatmap(dds.female_gonad, "female gonad")
+    makepheatmap(dds.male_hypothalamus, "male hypothalamus")
+    makepheatmap(dds.male_pituitary, "male pituitary")
+    makepheatmap(dds.male_gondad, "male gonad")
 
-      # make dataframe counts
-      DEGs <- assay(vsd)
-      DEGs <- as.data.frame(DEGs)
-      
-      a <- levels(m.colData$treatment)
-      b <- a
+plot candidate genes
+--------------------
 
-      for (i in a){
-        for (j in b){
-          if (i != j) {
-            print(i)
-            results <- returnpadj(i,j)
-            DEGs <- cbind(DEGs,results)
-          }
-        }
-         b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
-      }
-
-      DEGsmatrix <- DEGs
-      DEGsmatrix <- as.matrix(DEGs)
-      padjmin <- rowMins(DEGsmatrix, na.rm = T) 
-      padjmin <- as.data.frame(padjmin)
-
-      sigDEGs <- cbind(DEGs,padjmin)
-      sigDEGs <- sigDEGs %>% arrange(padjmin)
-      sigDEGs <- head(sigDEGs,500)
-      sigDEGs <- as.data.frame(sigDEGs)
-      rownames(sigDEGs) <- sigDEGs$rownames
-      drop.cols <-colnames(sigDEGs[,grep("padj|pval|pmin|rownames", colnames(sigDEGs))])
-      sigDEGs <- sigDEGs %>% dplyr::select(-one_of(drop.cols))
-      sigDEGs <- as.matrix(sigDEGs)
-      sigDEGs <- sigDEGs - rowMeans(sigDEGs)
-
-      paletteLength <- 30
-      myBreaks <- c(seq(min(sigDEGs), 0, length.out=ceiling(paletteLength/2) + 1), 
-                    seq(max(sigDEGs)/paletteLength, max(sigDEGs), length.out=floor(paletteLength/2)))
-
-      anndf <- m.colData %>% dplyr::select(treatment)
-      rownames(anndf) <- m.colData$V1
-
-      sigDEGs <- as.matrix(sigDEGs) 
-      pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
-             color = viridis(30),
-             breaks=myBreaks,
-             annotation_col=anndf,
-             main = "eachgroup")
-
-      pheatmap(sigDEGs, kmeans_k = 5,
-             show_rownames = F, show_colnames = F,
-             color = viridis(30),
-             breaks=myBreaks,
-             annotation_col=anndf,
-             main = "eachgroup")
-    }
-
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "hatch"
-    ## [1] "hatch"
-    ## [1] "n5"
-
-![](../figures/characterizatio/pheatmap-1.png)![](../figures/characterizatio/pheatmap-2.png)
-
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "hatch"
-    ## [1] "hatch"
-    ## [1] "n5"
-
-![](../figures/characterizatio/pheatmap-3.png)![](../figures/characterizatio/pheatmap-4.png)
-
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "hatch"
-    ## [1] "hatch"
-    ## [1] "n5"
-
-![](../figures/characterizatio/pheatmap-5.png)![](../figures/characterizatio/pheatmap-6.png)
-
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "hatch"
-    ## [1] "hatch"
-    ## [1] "n5"
-
-![](../figures/characterizatio/pheatmap-7.png)![](../figures/characterizatio/pheatmap-8.png)
-
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "hatch"
-    ## [1] "hatch"
-    ## [1] "n5"
-
-![](../figures/characterizatio/pheatmap-9.png)![](../figures/characterizatio/pheatmap-10.png)
-
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "control"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "bldg"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "lay"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d3"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d9"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "inc.d17"
-    ## [1] "hatch"
-    ## [1] "hatch"
-    ## [1] "n5"
-
-![](../figures/characterizatio/pheatmap-11.png)![](../figures/characterizatio/pheatmap-12.png)
-
-    for (eachdds in mydds){
-      
-      vsd <- vst(eachdds, blind=FALSE) # variance stabilized 
-
-      # make dataframe counts
-      DEGs <- assay(vsd)
-      DEGs <- as.data.frame(DEGs)
-
-    names(geneinfo)
-    names(geneinfo)[4] <- "rownames"
-    DEGs$rownames <- row.names(DEGs)
-
-    # make dataframe with geneids and names and counts
-    # how to gather: https://tidyr.tidyverse.org/reference/gather.html
-
-    candidates <- full_join(geneinfo, DEGs)
-    drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
-    candidates <- candidates %>% dplyr::select(-one_of(drop.cols))
-    candidates <- candidates %>%
-      filter(Name %in% c( #"JUN", "JUND", "EGR",  "AVP", "AVPR1A", "AVPR1B", "AVPR2", "OXT",  
-                         "AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
-                         "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
-                         "PGR", "PRL", "PRLR", "VIP", "VIPR1")) 
-    row.names(candidates) <- candidates$Name
-    candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
-    candidates <- candidates %>% drop_na()
-    candidates <- as.data.frame(t(candidates))
-    candidates$RNAseqID <- rownames(candidates)
-    candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% 
-      filter(RNAseqID != "gene")
-    candidates$value <- as.numeric(candidates$value)
-    candidates$V1  <- candidates$RNAseqID
-
-    candidatecounts <- left_join(candidates, m.colData)
-    candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
-    candidatecounts$gene <- as.factor(candidatecounts$gene)
-
-
-    p1 <- candidatecounts %>%
-      filter(gene %in% c( "AR", "CYP19A1", "ESR1", "ESR2", "FSHR",
-                          "GHRL", "GAL", "NPVF", "GNRH1", "LHCGR",
-                          "PGR", "PRL", "PRLR", "VIP", "VIPR1")) %>%
-      ggplot(aes(x = treatment, y = value, fill = treatment)) +
-      geom_boxplot() +
-      facet_wrap(~gene, scales = "free") +
-      theme_bw(base_size = 8) +
-      theme(axis.text.x = element_blank(),
-            legend.position = "bottom") +
-      labs(x = NULL) +
-      guides(fill= guide_legend(nrow=1))
-
-    plot(p1)
-    }
-
-    ## Joining, by = "rownames"
-
-    ## Warning: Column `rownames` joining factor and character vector, coercing
-    ## into character vector
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-    ## Joining, by = "rownames"
-
-    ## Warning: Column `rownames` joining factor and character vector, coercing
-    ## into character vector
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/characterizatio/candidates-1.png)
-
-    ## Joining, by = "rownames"
-
-    ## Warning: Column `rownames` joining factor and character vector, coercing
-    ## into character vector
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/characterizatio/candidates-2.png)
-
-    ## Joining, by = "rownames"
-
-    ## Warning: Column `rownames` joining factor and character vector, coercing
-    ## into character vector
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/characterizatio/candidates-3.png)
-
-    ## Joining, by = "rownames"
-
-    ## Warning: Column `rownames` joining factor and character vector, coercing
-    ## into character vector
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/characterizatio/candidates-4.png)
-
-    ## Joining, by = "rownames"
-
-    ## Warning: Column `rownames` joining factor and character vector, coercing
-    ## into character vector
-
-    ## Joining, by = "V1"
-
-    ## Warning: Column `V1` joining character vector and factor, coercing into
-    ## character vector
-
-![](../figures/characterizatio/candidates-5.png)![](../figures/characterizatio/candidates-6.png)
+    plotcandidates(dds.female_hypothalamus, "female hypothalamus")
+    plotcandidates(dds.female_pituitary, "female pituitary")
+    plotcandidates(dds.female_gonad, "female gonad")
+    plotcandidates(dds.male_hypothalamus, "male hypothalamus")
+    plotcandidates(dds.male_pituitary, "male pituitary")
+    plotcandidates(dds.male_gondad, "male gonad")
