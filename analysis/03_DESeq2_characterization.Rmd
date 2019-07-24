@@ -11,6 +11,7 @@ library(RColorBrewer)
 library(pheatmap)
 library(kableExtra)
 library(viridis)
+library("ggimage")
 
 # load custom functions  
 source("../R/functions.R") 
@@ -18,32 +19,94 @@ source("../R/functions.R")
 knitr::opts_chunk$set(fig.path = '../figures/characterizatio/', cache = TRUE)
 ```
 
-## Manipulation data
+## Characterization data
 
 ```{r readfiles}
 # import "colData" which contains sample information and "countData" which contains read counts
-m.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
-m.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+c.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
+c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
 # set levels
-levels(m.colData$treatment)
-m.colData$treatment <- factor(m.colData$treatment, levels = 
+c.colData$treatment <- factor(c.colData$treatment, levels = 
                               c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
-
-m.colData$sextissue <- as.factor(paste(m.colData$sex, m.colData$tissue, sep = "_"))
-summary(m.colData[c(7,3,4,5,8)])
+levels(c.colData$treatment)
+c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
+summary(c.colData[c(7,3,4,5,8)])
 ```
+
+
+## plot raw counts
+
+```{r musicalgenes, cache = T, eval=T}
+head(countData)
+head(geneinfo)
+
+candidataCounts <- countData
+candidataCounts$Name <- row.names(candidataCounts)
+candidataCounts <- candidataCounts %>%
+  filter(Name %in% c("NP_990797.2", "NP_001138861.1"))
+row.names(candidataCounts) <- candidataCounts$Name
+candidataCounts$Name <- NULL
+candidataCountsT <- t(candidataCounts)
+candidataCountsT <- as.data.frame(candidataCountsT)
+
+candidataCountsT$entrez <- row.names(candidataCountsT)
+colData$entrez <- row.names(colData)
+
+candidataCountsTcol <- full_join(colData, candidataCountsT)
+
+str(candidataCountsTcol)
+
+
+candidataCountsTcol2 <- candidataCountsTcol %>%
+  group_by(sextissue, treatment) %>%
+  summarize(GAL = mean(NP_001138861.1, na.rm = TRUE),
+            PRL = mean(NP_990797.2, na.rm = TRUE)) %>%
+  gather(GAL, PRL, key = "gene", value = "mean")
+ 
+candidataCountsTcol2 <- as.data.frame(candidataCountsTcol2)
+  
+
+musicgenes <- function(mygroup, mysusbtitle){
+
+myplot <- candidataCountsTcol2 %>%
+  filter(sextissue %in% c(mygroup)) %>%
+ggplot(aes(x = treatment, y = mean)) +
+  geom_point(colour = "white") + 
+  geom_line(group = 1, color='grey') +
+  theme_bw() +
+  facet_wrap(~gene, scales = "free", ncol = 1) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  geom_image(aes(image="https://storage.needpix.com/rsynced_images/music-34177_1280.png")) +
+  labs(y = "mean gene expression", subtitle = mysusbtitle, x = NULL)
+  
+  return(myplot)
+  
+}
+
+a <- musicgenes("female_hypothalamus", "female hypothalamus")
+b <- musicgenes("male_hypothalamus", "male hypothalamus")
+
+c <- plot_grid(a,b)
+c
+
+pdf("../figures/characterization/musicalgenes-1.pdf", width = 8, height = 6)
+plot(c)
+dev.off()
+
+```
+
 
 ## Run DESeq on all subsets of the data
 
 ```{r dds, cache = T}
-dds.female_hypothalamus <- subsetDESeq("female_hypothalamus")
-dds.female_pituitary <- subsetDESeq("female_pituitary" )
-dds.female_gonad <- subsetDESeq("female_gonad" )
-dds.male_hypothalamus <- subsetDESeq("male_hypothalamus" )
-dds.male_pituitary <- subsetDESeq("male_pituitary"  )
-dds.male_gondad <- subsetDESeq("male_gonad")
+dds.female_hypothalamus <- subsetDESeq(c.colData,  c.countData, "female_hypothalamus")
+dds.female_pituitary <- subsetDESeq(c.colData,  c.countData, "female_pituitary" )
+dds.female_gonad <- subsetDESeq(c.colData,  c.countData, "female_gonad" )
+dds.male_hypothalamus <- subsetDESeq(c.colData,  c.countData, "male_hypothalamus" )
+dds.male_pituitary <- subsetDESeq(c.colData,  c.countData, "male_pituitary"  )
+dds.male_gondad <- subsetDESeq(c.colData,  c.countData, "male_gonad")
 ```
 
 ## Calculate and plot total DEGs
@@ -82,7 +145,7 @@ plotPCAs(dds.male_gondad, "male gonad")
 
 ## heamap with minimum pvalue
 
-```{r pheatmap, eval = T}
+```{r pheatmap, eval = F}
 makepheatmap(dds.female_hypothalamus, "female hypothalamus")
 makepheatmap(dds.female_pituitary, "female pituitary")
 makepheatmap(dds.female_gonad, "female gonad")
@@ -92,7 +155,7 @@ makepheatmap(dds.male_gondad, "male gonad")
 ```
 ## plot candidate genes
 
-```{r candidates}
+```{r candidates, eval = F}
 plotcandidates(dds.female_hypothalamus, "female hypothalamus")
 plotcandidates(dds.female_pituitary, "female pituitary")
 plotcandidates(dds.female_gonad, "female gonad")
