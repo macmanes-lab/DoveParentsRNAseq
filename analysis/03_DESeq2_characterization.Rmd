@@ -37,7 +37,7 @@ summary(c.colData[c(7,3,4,5,8)])
 ```
 
 
-## plot raw counts
+## Musical genes
 
 ```{r musicalgenes, cache = T, eval=T}
 countData <- c.countData
@@ -170,6 +170,7 @@ ef
 pdf("../figures/characterization/musicalgenes-ab.pdf", width = 4, height = 2)
 plot(ab)
 dev.off()
+
 
 pdf("../figures/characterization/musicalgenes-cd.pdf", width = 4, height = 2)
 plot(cd)
