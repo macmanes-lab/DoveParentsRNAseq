@@ -49,8 +49,8 @@ Characterization data
     ##  male_pituitary     :97  
     ## 
 
-plot raw counts
----------------
+Musical genes
+-------------
 
     countData <- c.countData
     colData <- c.colData
