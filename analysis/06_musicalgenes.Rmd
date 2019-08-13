@@ -1,18 +1,12 @@
 ---
-title: "02_DESeq_characterization"
+title: "06_musicalgenes"
 output: md_document
 ---
 
 ```{r setup, message=F, comment=FALSE, warning=FALSE, results='hide'}
 library(tidyverse)
-library(DESeq2)
 library(cowplot)
-library(RColorBrewer)
-library(pheatmap)
-library(kableExtra)
-library(viridis)
-library("ggimage")
-
+library(ggimage)
 
 # load custom functions  
 source("../R/functions.R") 
@@ -181,71 +175,3 @@ plot(ef)
 dev.off()
 
 ```
-
-
-## Run DESeq on all subsets of the data
-
-```{r dds, cache = T, eval = F}
-dds.female_hypothalamus <- subsetDESeq(c.colData,  c.countData, "female_hypothalamus")
-dds.female_pituitary <- subsetDESeq(c.colData,  c.countData, "female_pituitary" )
-dds.female_gonad <- subsetDESeq(c.colData,  c.countData, "female_gonad" )
-dds.male_hypothalamus <- subsetDESeq(c.colData,  c.countData, "male_hypothalamus" )
-dds.male_pituitary <- subsetDESeq(c.colData,  c.countData, "male_pituitary"  )
-dds.male_gondad <- subsetDESeq(c.colData,  c.countData, "male_gonad")
-```
-
-## Calculate and plot total DEGs
-
-```{r totalDEGs, eval = T}
-#create list of groups for deseq contrasts
-group1 <- c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
-group2 <- group1
-
-a <- plottotalDEGschar(dds.female_hypothalamus, "female hypothalamus")
-b <- plottotalDEGschar(dds.female_pituitary, "female pituitary")
-c <- plottotalDEGschar(dds.female_gonad, "female gonad")
-d <- plottotalDEGschar(dds.male_hypothalamus, "male hypothalamus")
-e <- plottotalDEGschar(dds.male_pituitary, "male pituitary")
-f <- plottotalDEGschar(dds.male_gondad, "male gonad")
-
-plot_grid(a + theme(legend.position = "none"),
-          b + theme(legend.position = "none"),
-          c,
-          d + theme(legend.position = "none"),
-          e + theme(legend.position = "none"),
-          f,
-          nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
-```
-
-## Calculate and plot principal component
-
-```{r pca}
-plotPCAs(dds.female_hypothalamus, "female hypothalamus")
-plotPCAs(dds.female_pituitary, "female pituitary")      
-plotPCAs(dds.female_gonad, "female gonad")
-plotPCAs(dds.male_hypothalamus, "male hypothalamus")
-plotPCAs(dds.male_pituitary, "male pituitary")
-plotPCAs(dds.male_gondad, "male gonad")
-```
-
-## heamap with minimum pvalue
-
-```{r pheatmap, eval = F}
-makepheatmap(dds.female_hypothalamus, "female hypothalamus")
-makepheatmap(dds.female_pituitary, "female pituitary")
-makepheatmap(dds.female_gonad, "female gonad")
-makepheatmap(dds.male_hypothalamus, "male hypothalamus")
-makepheatmap(dds.male_pituitary, "male pituitary")
-makepheatmap(dds.male_gondad, "male gonad")
-```
-## plot candidate genes
-
-```{r candidates, eval = F}
-plotcandidates(dds.female_hypothalamus, "female hypothalamus")
-plotcandidates(dds.female_pituitary, "female pituitary")
-plotcandidates(dds.female_gonad, "female gonad")
-plotcandidates(dds.male_hypothalamus, "male hypothalamus")
-plotcandidates(dds.male_pituitary, "male pituitary")
-plotcandidates(dds.male_gondad, "male gonad")
-```
-
