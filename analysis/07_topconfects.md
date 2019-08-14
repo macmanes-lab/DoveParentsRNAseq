@@ -2,8 +2,8 @@ Based on a discussion on Twitter, <a href="https://twitter.com/Jared_Mamrot/stat
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
     library(DESeq2)
-    library(topconfects)
     library(tidyverse)
+    library(topconfects)
 
     knitr::opts_chunk$set(fig.path = '../figures/topconfects/', cache = TRUE, message = F, echo = T)
 
@@ -33,18 +33,20 @@ This is a demo from the vignette showing how the tool works.
 
     ## $table
     ##  rank index confect effect    baseMean  filtered
-    ##   1    1    -4.0    -9.878848  64.62188 FALSE   
-    ##   2   20     4.0     9.823914 112.24929 FALSE   
-    ##   3    3    -2.3    -7.394712  28.49645 FALSE   
-    ##   4    2    -1.5    -5.650758  33.29627 FALSE   
-    ##   5    4    -1.5    -6.168161  20.64310 FALSE   
-    ##   6   19     0.9     5.631786  19.74557 FALSE   
-    ##   7    5    -0.7    -4.524756  19.06267 FALSE   
-    ##   8   18     0.3     4.511203  16.27254 FALSE   
-    ##   9    6    -0.3    -3.787986  19.08218 FALSE   
-    ##  10   14     0.1     4.184367  13.26778 FALSE   
+    ##   1   18     5.6    10.277392 93.588768 FALSE   
+    ##   2   19     4.5     7.828128 94.517448 FALSE   
+    ##   3   20     4.2     8.699898 31.525759 FALSE   
+    ##   4   17     4.2     8.225876 60.944194 FALSE   
+    ##   5   15     2.5     5.194451 38.460041 FALSE   
+    ##   6   16     2.5     5.954003 25.077792 FALSE   
+    ##   7    2    -1.8    -5.896977 19.872687 FALSE   
+    ##   8   14     1.2     3.935115 22.443317 FALSE   
+    ##   9    3    -0.7    -5.977252  7.319253 FALSE   
+    ##  10    4    -0.4    -4.161852 11.908750 FALSE   
     ## ...
-    ## 10 of 20 non-zero effect size at FDR 0.05
+    ## 11 of 20 non-zero effect size at FDR 0.05
+
+    #deseq2_confects(dds, name="group_A_vs_B", step=0.1) # Error: subscript contains invalid names
 
 Now I import the gene expression data and order the treatment according the the parentatl care cycle
 ----------------------------------------------------------------------------------------------------
