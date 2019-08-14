@@ -7,8 +7,8 @@ output: md_document
 
 ```{r setup, message=F, comment=FALSE, warning=FALSE, results='hide'}
 library(DESeq2)
-library(topconfects)
 library(tidyverse)
+library(topconfects)
 
 knitr::opts_chunk$set(fig.path = '../figures/topconfects/', cache = TRUE, message = F, echo = T)
 ```
@@ -37,6 +37,8 @@ dds <- DESeq(dds)
 # Find top confident effect sizes
 deseq2_confects(dds, name="group_B_vs_A", step=0.1)
 
+#deseq2_confects(dds, name="group_A_vs_B", step=0.1) # Error: subscript contains invalid names
+
 ```
 
 ## Now I import the gene expression data and order the treatment according the the parentatl care cycle
@@ -57,7 +59,8 @@ levels(c.colData$treatment)
 
 ## This is a function to subset the data to look compare one transition (eg. incubation day 17 to lay) in a single "sex tissue" group (e.g. female pitutiary)
 
-```{r subsetnconfects}
+```{r subsetnconfects2}
+
 subsetnconfects <- function(mygroup, mytreatments, mycomparison){
   # subset col and count data
   colData <- c.colData %>%
