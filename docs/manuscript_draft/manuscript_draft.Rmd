@@ -24,6 +24,19 @@ output: rticles::plos_article
 csl: plos.csl
 ---
 
+```{r, include=F}
+## got error LaTeX Error: File `changepage.sty' not found 
+## googled LaTeX Error: File `changepage.sty' not found Rmarkdown
+## found this https://stackoverflow.com/questions/34252903/knit-pdf-file-from-rstudio
+## ran the following
+
+# install.packages(c('tinytex', 'rmarkdown'))
+# tinytex::install_tinytex()
+
+```
+
+
+
 _Text based on plos sample manuscript, see [http://journals.plos.org/ploscompbiol/s/latex](http://journals.plos.org/ploscompbiol/s/latex)_
 
 # Introduction
