@@ -17,7 +17,7 @@ abstract: |
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eget porta erat. Morbi consectetur est vel gravida pretium. Suspendisse ut dui eu ante cursus gravida non sed sem. Nullam sapien tellus, commodo id velit id, eleifend volutpat quam. Phasellus mauris velit, dapibus finibus elementum vel, pulvinar non tellus. Nunc pellentesque pretium diam, quis maximus dolor faucibus id. Nunc convallis sodales ante, ut ullamcorper est egestas vitae. Nam sit amet enim ultrices, ultrices elit pulvinar, volutpat risus.
   
 author_summary: |
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eget porta erat. Morbi consectetur est vel gravida pretium. Suspendisse ut dui eu ante cursus gravida non sed sem. Nullam sapien tellus, commodo id velit id, eleifend volutpat quam. Phasellus mauris velit, dapibus finibus elementum vel, pulvinar non tellus. Nunc pellentesque pretium diam, quis maximus dolor faucibus id. Nunc convallis sodales ante, ut ullamcorper est egestas vitae. Nam sit amet enim ultrices, ultrices elit pulvinar, volutpat risus.
+  One of the central questions of animal behavior is how biological mechanisms mediate and respond to behavior. Successful rearing of offspring involves a shift from aggressive and sexual behaviors to more caring and nurturing ones, but what neural substrates mediate this transition? How flexible are these changes in response to unpredictable environmental perturbations, and how is behavior altered because of them? In a rapidly changing world, understanding how the environment affects the brain and how, in turn, the brain affects the behavioral transition into parental care will shed light on how changes in environment can ultimately affect fitness. Previous discoveries have implicated particular hormones that play a role in the maintenance of parental care behavior in vertebrates, such as: oxytocin and vasopressin (avian homologs: mesotocin and vasotocin), vasoactive intestinal peptide, and prolactin. However, we know very little about when and how the brain transitions into parental care behaviors in any vertebrate, and this knowledge is fundamentally important to our understanding of the mechanisms mediating parental care. Here, we propose to expand our knowledge by using classic offspring replacement and removal manipulations to uncover the role of GnIH during the transition to parental care behaviors. In addition to this targeted approach, we propose a powerful untargeted approach to explore what other changes in the brain may be occurring during this transition. We will use high-throughput sequencing technology and immunohistochemistry to uncover all genetic changes and specific proteomic changes in the brain, along with their relationship with GnIH, which occur during the transition to parental care. Our long-term goal is to understand the interplay of genes, proteins, and parental care. Specifically, we aim to understand the genetic and physiological mechanisms driving parental care behaviors in all vertebrates, and to document this knowledge in a rich, open database. This knowledge would enable manipulation of specific parental care behaviors and their activation using emerging powerful genetic technologies.
 
 bibliography: mybibfile.bib
 output: rticles::plos_article
@@ -50,4 +50,22 @@ A list
 
 Here are two sample references: @Feynman1963118 [@Dirac1953888].
 
+## Funding Statment
+
+```{r, include=F}
+## Disclosure of Funding Sources
+## All PLOS authors are required to declare what support they received to carry out their research. Declaring funding sources acknowledges funders’ contributions, fulfills funding requirements, and promotes greater transparency in the research process.
+## Each author must individually declare all sources of funding received for the research submitted to the journal. This information includes the name of granting agencies, grant numbers, and a description of each funder’s role. If the funder has played no role in the research, this must be stated as well. Authors are not required to provide the complete list of every single grant that supports them if the grant is not related to the research published.
+## A Funding Statement is included in the metadata of each published article. The Funding Statement includes the funding information declared by the authors. Inaccurate information about funding discovered after publication may require a correction. 
+## from https://journals.plos.org/plosone/s/disclosure-of-funding-sources
+
+## See https://www.nsf.gov/awardsearch/showAward?AWpD_ID=1455957&HistoricalAwards=false
+```
+
+1. Collaborative Research: RUI: The Neural Basis of Becoming a Parent: From Genotype to Phenotype. NSF-IOS:1455957. 
+
+
+
+
 # References {#references .unnumbered}
+
