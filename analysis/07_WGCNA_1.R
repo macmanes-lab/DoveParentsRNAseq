@@ -5,21 +5,15 @@
 #=====================================================================================
 
 
-# Display the current working directory
-getwd();
-# If necessary, change the path below to the directory where the data files are stored. 
-# "." means current directory. On Windows use a forward slash / instead of the usual \.
-workingDir = ".";
-setwd(workingDir); 
 # Load the WGCNA package
 library(WGCNA);
 # The following setting is important, do not omit.
 options(stringsAsFactors = FALSE);
-#Read in the female liver data set
-femData = read.csv("./data/LiverFemale3600.csv");
-# Take a quick look at what is in the data set:
-dim(femData);
-names(femData);
+
+#Read in the data set
+colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1)
+countData <- read.csv("../results/00_countData_characterization.csv", row.names = 1)
+
 
 
 #=====================================================================================
@@ -29,9 +23,10 @@ names(femData);
 #=====================================================================================
 
 
-datExpr0 = as.data.frame(t(femData[, -c(1:8)]));
-names(datExpr0) = femData$substanceBXH;
-rownames(datExpr0) = names(femData)[-c(1:8)];
+datExpr0 <- as.data.frame(t(countData))
+
+head(names(datExpr0))  # columns are genes
+head(rownames(datExpr0)) # rows are samples
 
 
 #=====================================================================================
@@ -63,6 +58,12 @@ if (!gsg$allOK)
   datExpr0 = datExpr0[gsg$goodSamples, gsg$goodGenes]
 }
 
+# Flagging genes and samples with too many missing values...
+# ..step 1
+#..Excluding 15 genes from the calculation due to too many missing samples or zero variance.
+#..step 2
+
+# Removing genes: NP_001005571.1, NP_001292076.1, NP_989761.2, NP_990385.1, XP_015129157.1, XP_015129381.1, XP_015130369.1, XP_015130427.1, XP_015130613.1, XP_015136658.1, XP_015145985.1, XP_015149350.1, XP_015151860.1, XP_015152548.1, XP_425714.3
 
 #=====================================================================================
 #
