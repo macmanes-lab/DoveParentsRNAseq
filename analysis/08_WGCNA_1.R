@@ -1,3 +1,5 @@
+
+
 #=====================================================================================
 #
 #  Code chunk 1
@@ -163,8 +165,9 @@ plotDendroAndColors(sampleTree2, traitColors,
 #
 #=====================================================================================
 
-
-save(datExpr, datTraits, file = "08_WGCNA_1.RData")
+write.csv(datExpr, "../results/08_datExpr")
+write.csv(datTraits, "../results/08_datTraits")
+save(datExpr, datTraits, file = "../results/08_WGCNA_1.RData")
 
 
 
