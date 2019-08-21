@@ -7,3 +7,4 @@ analysis/*cache/
 .Rproj.user
 results/01_pseudo.counts.csv
 analysis/*.RData
+results/*.RData
