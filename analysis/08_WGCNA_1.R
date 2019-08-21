@@ -135,6 +135,7 @@ Samples <- rownames(datExpr)
 traitRows <-  match(Samples, allTraits$samples)
 datTraits <-  allTraits[traitRows, ]
 rownames(datTraits) <-  allTraits[traitRows, 6];  #using column 5 as row name
+datTraits$samples <- NULL
 
 collectGarbage()
 
@@ -163,7 +164,7 @@ plotDendroAndColors(sampleTree2, traitColors,
 #=====================================================================================
 
 
-save(datExpr, datTraits, file = "FemaleLiver-01-dataInput.RData")
+save(datExpr, datTraits, file = "08_WGCNA_1.RData")
 
 
 
