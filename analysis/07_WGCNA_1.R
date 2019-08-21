@@ -5,16 +5,14 @@
 #=====================================================================================
 
 
-# Load the WGCNA package
-library(WGCNA);
-# The following setting is important, do not omit.
-options(stringsAsFactors = FALSE);
+# Load the packages
+library(WGCNA)
+library(dplyr)
+library(magrittr)
 
 #Read in the data set
-colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1)
+colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, stringsAsFactors = T)
 countData <- read.csv("../results/00_countData_characterization.csv", row.names = 1)
-
-
 
 #=====================================================================================
 #
@@ -91,10 +89,11 @@ plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="",
 
 
 # Plot a line to show the cut
-abline(h = 15, col = "red");
+abline(h = 20000, col = "red");
 # Determine cluster under the line
-clust = cutreeStatic(sampleTree, cutHeight = 15, minSize = 10)
+clust = cutreeStatic(sampleTree, cutHeight = 2000000, minSize = 10)
 table(clust)
+
 # clust 1 contains the samples we want to keep.
 keepSamples = (clust==1)
 datExpr = datExpr0[keepSamples, ]
@@ -109,22 +108,35 @@ nSamples = nrow(datExpr)
 #=====================================================================================
 
 
-traitData = read.csv("./FemaleLiver-Data/ClinicalTraits.csv");
-dim(traitData)
-names(traitData)
+traitData <- colData[c(2:6)]
 
-# remove columns that hold information we do not need.
-allTraits = traitData[, -c(31, 16)];
-allTraits = allTraits[, c(2, 11:36) ];
-dim(allTraits)
-names(allTraits)
+traitData$treatment <- factor(traitData$treatment, 
+                              levels =c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+traitData$tissue <- factor(traitData$tissue, 
+                              levels =c("hypothalamus", "pituitary", "gonad"))
+
+
+
+# solution
+str(traitData)
+traitData %<>% mutate_if(is.factor,as.numeric)
+str(traitData)
+
+
+# remove columns that hold information we do not need, if necessary
+allTraits <- traitData
+row.names(allTraits) <- colData$V1
+allTraits$samples <- colData$V1
+
+head(allTraits)
 
 # Form a data frame analogous to expression data that will hold the clinical traits.
 
-femaleSamples = rownames(datExpr);
-traitRows = match(femaleSamples, allTraits$Mice);
-datTraits = allTraits[traitRows, -1];
-rownames(datTraits) = allTraits[traitRows, 1];
+Samples = rownames(datExpr);
+traitRows = match(Samples, allTraits$samples);
+
+datTraits = allTraits[traitRows, ];
+rownames(datTraits) = allTraits[traitRows, 6];
 
 collectGarbage();
 
