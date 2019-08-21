@@ -40,9 +40,10 @@ gsg = goodSamplesGenes(datExpr0, verbose = 3);
 gsg$allOK
 
 
+
 #=====================================================================================
 #
-#  Code chunk 4
+#  Code chunk 4 removing genes
 #
 #=====================================================================================
 
@@ -75,12 +76,13 @@ if (!gsg$allOK)
 sampleTree = hclust(dist(datExpr0), method = "average");
 # Plot the sample tree: Open a graphic output window of size 12 by 9 inches
 # The user should change the dimensions if the window is too large or too small.
-sizeGrWindow(12,9)
-#pdf(file = "Plots/sampleClustering.pdf", width = 12, height = 9);
+pdf(file = "../figures/wgcna/sampleClustering.pdf", width = 12, height = 9);
 par(cex = 0.6);
 par(mar = c(0,4,2,0))
 plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
      cex.axis = 1.5, cex.main = 2)
+abline(h = 2000000, col = "red");
+dev.off();
 
 
 #=====================================================================================
@@ -91,7 +93,7 @@ plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="",
 
 
 # Plot a line to show the cut
-abline(h = 20000, col = "red");
+
 # Determine cluster under the line
 clust = cutreeStatic(sampleTree, cutHeight = 2000000, minSize = 10)
 table(clust)
@@ -118,35 +120,38 @@ traitData$tissue <- factor(traitData$tissue,
                               levels =c("hypothalamus", "pituitary", "gonad"))
 
 
-
-# solution
+# numeric
 str(traitData)
 traitData %<>% mutate_if(is.factor,as.numeric)
 str(traitData)
 
+# remove columns or add that hold information we do not need, if necessary
 
-# remove columns that hold information we do not need, if necessary
 allTraits <- traitData
-row.names(allTraits) <- colData$V1
-allTraits$samples <- colData$V1
-
-head(allTraits)
-
+allTraits$V1 <- colData$V1
+row.names(allTraits) <- allTraits$V1
 # subset to keep only the "good samples"
 Samples <- rownames(datExpr)
-traitRows <-  match(Samples, allTraits$samples)
+traitRows <-  match(Samples, allTraits$V1)
 datTraits <-  allTraits[traitRows, ]
-rownames(datTraits) <-  allTraits[traitRows, 6];  #using column 5 as row name
-datTraits$samples <- NULL
+head(datTraits)
+
 
 collectGarbage()
 
 
-#=====================================================================================
-#
-#  Code chunk 8
-#
-#=====================================================================================
+# create new, slim label
+datTraits2 <- inner_join(datTraits, colData, by = "V1")
+head(datTraits2)
+datTraits2$group_bird <- paste(datTraits2$group.y, datTraits2$bird.x, sep = ".")
+head(datTraits2$group_bird)
+sampleTree$labels <- datTraits2$group_bird
+head(sampleTree$labels)
+
+## remove non-numeric columns
+datTraits <- datTraits[c(1:5)]
+row.names(datTraits) <- datTraits2$group_bird
+head(datTraits)
 
 
 # Re-cluster samples
@@ -157,6 +162,8 @@ traitColors = numbers2colors(datTraits, signed = FALSE);
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
                     main = "Sample dendrogram and trait heatmap")
+
+
 
 
 #=====================================================================================
