@@ -130,15 +130,13 @@ allTraits$samples <- colData$V1
 
 head(allTraits)
 
-# Form a data frame analogous to expression data that will hold the clinical traits.
+# subset to keep only the "good samples"
+Samples <- rownames(datExpr)
+traitRows <-  match(Samples, allTraits$samples)
+datTraits <-  allTraits[traitRows, ]
+rownames(datTraits) <-  allTraits[traitRows, 6];  #using column 5 as row name
 
-Samples = rownames(datExpr);
-traitRows = match(Samples, allTraits$samples);
-
-datTraits = allTraits[traitRows, ];
-rownames(datTraits) = allTraits[traitRows, 6];
-
-collectGarbage();
+collectGarbage()
 
 
 #=====================================================================================
