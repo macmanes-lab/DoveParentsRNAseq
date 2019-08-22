@@ -5,27 +5,23 @@
 #=====================================================================================
 
 
-# Display the current working directory
-getwd();
-# If necessary, change the path below to the directory where the data files are stored. 
-# "." means current directory. On Windows use a forward slash / instead of the usual \.
-workingDir = ".";
-setwd(workingDir); 
+
 # Load the WGCNA package
 library(WGCNA)
 # The following setting is important, do not omit.
-options(stringsAsFactors = FALSE);
+
 # Allow multi-threading within WGCNA. This helps speed up certain calculations.
 # At present this call is necessary.
 # Any error here may be ignored but you may want to update WGCNA if you see one.
 # Caution: skip this line if you run RStudio or other third-party R environments.
 # See note above.
-enableWGCNAThreads()
+
 # Load the data saved in the first part
-lnames = load(file = "FemaleLiver-01-dataInput.RData");
+lnames = load(file = "../results/08_WGCNA_1.RData");
 #The variable lnames contains the names of loaded variables.
 lnames
 
+str(datTraits)
 
 #=====================================================================================
 #
@@ -64,12 +60,15 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
 #=====================================================================================
 
 
+enableWGCNAThreads()
+
 bwnet = blockwiseModules(datExpr, maxBlockSize = 2000,
                          power = 6, TOMType = "unsigned", minModuleSize = 30,
-                         reassignThreshold = 0, mergeCutHeight = 0.25,
-                         numericLabels = TRUE,
-                         saveTOMs = TRUE,
-                         saveTOMFileBase = "femaleMouseTOM-blockwise",
+                        # reassignThreshold = 0, 
+                         #mergeCutHeight = 0.25,
+                        # numericLabels = TRUE,
+                         #saveTOMs = TRUE,
+                        # saveTOMFileBase = "femaleMouseTOM-blockwise",
                          verbose = 3)
 
 
