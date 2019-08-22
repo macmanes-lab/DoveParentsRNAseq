@@ -1,6 +1,6 @@
 ---
 title: "wgcna"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
@@ -17,7 +17,7 @@ source("08_WGCNA_1.R")
 
 ```
 
-## hypothalas
+## hypothalamus
 
 ```{r wgcna-hyp, message=FALSE, warning=FALSE, cache=TRUE}
 source("08_WGCNA_1_params.R")
