@@ -1,0 +1,18 @@
+---
+title: "wgcna"
+output: html_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = FALSE, fig.path = '../figures/wgcna/')
+
+```
+
+## WGCNA
+
+
+
+```{r wgcna, message=FALSE, warning=FALSE, cache=TRUE}
+source("08_WGCNA_1.R")
+
+```

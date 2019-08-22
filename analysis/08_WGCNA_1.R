@@ -36,7 +36,7 @@ head(rownames(datExpr0)) # rows are samples
 #=====================================================================================
 
 
-gsg = goodSamplesGenes(datExpr0, verbose = 3);
+gsg = goodSamplesGenes(datExpr0, verbose = 4);
 gsg$allOK
 
 
@@ -114,16 +114,18 @@ nSamples = nrow(datExpr)
 
 traitData <- colData[c(2:6)]
 
-traitData$treatment <- factor(traitData$treatment, 
-                              levels =c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
-traitData$tissue <- factor(traitData$tissue, 
-                              levels =c("hypothalamus", "pituitary", "gonad"))
+#traitData$treatment <- factor(traitData$treatment, 
+#                              levels =c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+#traitData$tissue <- factor(traitData$tissue, 
+ #                             levels =c("hypothalamus", "pituitary", "gonad"))
 
 
 # numeric
 str(traitData)
 traitData %<>% mutate_if(is.factor,as.numeric)
-str(traitData)
+head(traitData)
+
+
 
 # remove columns or add that hold information we do not need, if necessary
 
@@ -134,24 +136,13 @@ row.names(allTraits) <- allTraits$V1
 Samples <- rownames(datExpr)
 traitRows <-  match(Samples, allTraits$V1)
 datTraits <-  allTraits[traitRows, ]
-head(datTraits)
+datTraits$V1 <- NULL
 
 
 collectGarbage()
 
 
-# create new, slim label
-datTraits2 <- inner_join(datTraits, colData, by = "V1")
-head(datTraits2)
-datTraits2$group_bird <- paste(datTraits2$group.y, datTraits2$bird.x, sep = ".")
-head(datTraits2$group_bird)
-sampleTree$labels <- datTraits2$group_bird
-head(sampleTree$labels)
 
-## remove non-numeric columns
-datTraits <- datTraits[c(1:5)]
-row.names(datTraits) <- datTraits2$group_bird
-head(datTraits)
 
 
 # Re-cluster samples
@@ -161,7 +152,8 @@ traitColors = numbers2colors(datTraits, signed = FALSE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
-                    main = "Sample dendrogram and trait heatmap")
+                    main = "Sample dendrogram and trait heatmap",
+                    dendroLabels = FALSE)
 
 
 
@@ -172,8 +164,8 @@ plotDendroAndColors(sampleTree2, traitColors,
 #
 #=====================================================================================
 
-write.csv(datExpr, "../results/08_datExpr")
-write.csv(datTraits, "../results/08_datTraits")
+write.csv(datExpr, "../results/08_datExpr.csv")
+write.csv(datTraits, "../results/08_datTraits.csv")
 save(datExpr, datTraits, file = "../results/08_WGCNA_1.RData")
 
 
