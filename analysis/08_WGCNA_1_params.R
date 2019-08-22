@@ -12,9 +12,28 @@ library(WGCNA)
 library(dplyr)
 library(magrittr)
 
+subsetWGCNA <- function(eachgroup){
+
 #Read in the data set
 colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, stringsAsFactors = T)
 countData <- read.csv("../results/00_countData_characterization.csv", row.names = 1)
+
+colData$sextissue <-  paste(colData$sex, colData$tissue, sep = ".")
+
+# subset to look within one tissue in one sex
+colData <- colData %>%
+  dplyr::filter(tissue == eachgroup) %>%
+  droplevels()
+row.names(colData) <- colData$V1
+head(colData)
+  
+# which counts to save
+savecols <- as.character(colData$V1) 
+savecols <- as.vector(savecols) 
+  
+# save counts that match colData
+countDatatemp <- countData %>% dplyr::select(one_of(savecols)) 
+  
 
 #=====================================================================================
 #
@@ -23,7 +42,7 @@ countData <- read.csv("../results/00_countData_characterization.csv", row.names 
 #=====================================================================================
 
 
-datExpr0 <- as.data.frame(t(countData))
+datExpr0 <- as.data.frame(t(countDatatemp))
 
 head(names(datExpr0))  # columns are genes
 head(rownames(datExpr0)) # rows are samples
@@ -37,7 +56,7 @@ head(rownames(datExpr0)) # rows are samples
 
 
 gsg = goodSamplesGenes(datExpr0, verbose = 0);
-#gsg$allOK
+gsg$allOK
 
 
 
@@ -51,20 +70,14 @@ gsg = goodSamplesGenes(datExpr0, verbose = 0);
 if (!gsg$allOK)
 {
   # Optionally, print the gene and sample names that were removed:
- # if (sum(!gsg$goodGenes)>0) 
+  #if (sum(!gsg$goodGenes)>0) 
   #  printFlush(paste("Removing genes:", paste(names(datExpr0)[!gsg$goodGenes], collapse = ", ")));
- # if (sum(!gsg$goodSamples)>0) 
- #   printFlush(paste("Removing samples:", paste(rownames(datExpr0)[!gsg$goodSamples], collapse = ", ")));
+  #if (sum(!gsg$goodSamples)>0) 
+  #  printFlush(paste("Removing samples:", paste(rownames(datExpr0)[!gsg$goodSamples], collapse = ", ")));
   # Remove the offending genes and samples from the data:
   datExpr0 = datExpr0[gsg$goodSamples, gsg$goodGenes]
 }
 
-# Flagging genes and samples with too many missing values...
-# ..step 1
-#..Excluding 15 genes from the calculation due to too many missing samples or zero variance.
-#..step 2
-
-# Removing genes: NP_001005571.1, NP_001292076.1, NP_989761.2, NP_990385.1, XP_015129157.1, XP_015129381.1, XP_015130369.1, XP_015130427.1, XP_015130613.1, XP_015136658.1, XP_015145985.1, XP_015149350.1, XP_015151860.1, XP_015152548.1, XP_425714.3
 
 #=====================================================================================
 #
@@ -76,13 +89,11 @@ if (!gsg$allOK)
 sampleTree = hclust(dist(datExpr0), method = "average");
 # Plot the sample tree: Open a graphic output window of size 12 by 9 inches
 # The user should change the dimensions if the window is too large or too small.
-pdf(file = "../figures/wgcna/sampleClustering.pdf", width = 12, height = 9);
-par(cex = 0.6);
-par(mar = c(0,4,2,0))
-plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
-     cex.axis = 1.5, cex.main = 2)
-abline(h = 2000000, col = "red");
-dev.off();
+
+#plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
+  #   cex.axis = 1.5, cex.main = 2)
+#abline(h = 1000000, col = "red");
+
 
 
 #=====================================================================================
@@ -95,7 +106,7 @@ dev.off();
 # Plot a line to show the cut
 
 # Determine cluster under the line
-clust = cutreeStatic(sampleTree, cutHeight = 2000000, minSize = 10)
+clust = cutreeStatic(sampleTree, cutHeight = 1000000, minSize = 3)
 table(clust)
 
 # clust 1 contains the samples we want to keep.
@@ -112,7 +123,7 @@ nSamples = nrow(datExpr)
 #=====================================================================================
 
 
-traitData <- colData[c(2:6)]
+traitData <- colData[c(5,3)]
 
 #traitData$treatment <- factor(traitData$treatment, 
 #                              levels =c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
@@ -124,7 +135,6 @@ traitData <- colData[c(2:6)]
 head(traitData)
 traitData %<>% mutate_if(is.factor,as.numeric)
 head(traitData)
-
 
 
 # remove columns or add that hold information we do not need, if necessary
@@ -142,9 +152,6 @@ datTraits$V1 <- NULL
 collectGarbage()
 
 
-
-
-
 # Re-cluster samples
 sampleTree2 = hclust(dist(datExpr), method = "average")
 # Convert traits to a color representation: white means low, red means high, grey means missing entry
@@ -153,20 +160,8 @@ traitColors = numbers2colors(datTraits, signed = FALSE);
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
                     main = "Sample dendrogram and trait heatmap",
-                    dendroLabels = FALSE)
+                    dendroLabels = FALSE
+                    )
 
-
-
-
-#=====================================================================================
-#
-#  Code chunk 9
-#
-#=====================================================================================
-
-write.csv(datExpr, "../results/08_datExpr.csv")
-write.csv(datTraits, "../results/08_datTraits.csv")
-save(datExpr, datTraits, file = "../results/08_WGCNA_1.RData")
-
-
+}
 
