@@ -11,30 +11,51 @@
 library(WGCNA)
 library(dplyr)
 library(magrittr)
+library(forcats)
 
-subsetWGCNA <- function(eachgroup){
+subsetWGCNA <- function(whichgroups){
 
 #Read in the data set
 colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, stringsAsFactors = T)
 countData <- read.csv("../results/00_countData_characterization.csv", row.names = 1)
 
+# create new grouping for subsets
 colData$sextissue <-  paste(colData$sex, colData$tissue, sep = ".")
+
+## rename rownames and colnames for better vizualiation
+colData <- colData %>%
+  mutate(sex = fct_recode(sex,
+                              "F" = "female",
+                              "M" = "male"),
+         tissue = fct_recode(tissue,
+                             "pit" = "pituitary",
+                             "hyp" = "hypothalamus",
+                             "gon" = "gonad"))
+
+colData$ID <- as.numeric(colData$bird)
+colData$sample <- paste(colData$sex, colData$tissue, colData$treatment, colData$ID, sep = ".")
+head(colData$sample)
+
+row.names(colData) <- colData$sample
+colnames(countData) <- colData$sample
+
+
 
 # subset to look within one tissue in one sex
 colData <- colData %>%
-  dplyr::filter(tissue == eachgroup) %>%
+  dplyr::filter(sextissue %in% whichgroups) %>%
   droplevels()
-row.names(colData) <- colData$V1
+row.names(colData) <- colData$sample
 head(colData)
   
 # which counts to save
-savecols <- as.character(colData$V1) 
+savecols <- as.character(colData$sample) 
 savecols <- as.vector(savecols) 
   
 # save counts that match colData
-countDatatemp <- countData %>% dplyr::select(one_of(savecols)) 
-  
+countData <- countData %>% dplyr::select(one_of(savecols)) 
 
+  
 #=====================================================================================
 #
 #  Code chunk 2
@@ -42,10 +63,11 @@ countDatatemp <- countData %>% dplyr::select(one_of(savecols))
 #=====================================================================================
 
 
-datExpr0 <- as.data.frame(t(countDatatemp))
+datExpr0 <- as.data.frame(t(countData))
 
 head(names(datExpr0))  # columns are genes
 head(rownames(datExpr0)) # rows are samples
+
 
 
 #=====================================================================================
@@ -123,7 +145,7 @@ nSamples = nrow(datExpr)
 #=====================================================================================
 
 
-traitData <- colData[c(5,3)]
+traitData <- colData[c(5,3,4)]
 
 #traitData$treatment <- factor(traitData$treatment, 
 #                              levels =c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
@@ -140,13 +162,13 @@ head(traitData)
 # remove columns or add that hold information we do not need, if necessary
 
 allTraits <- traitData
-allTraits$V1 <- colData$V1
-row.names(allTraits) <- allTraits$V1
+allTraits$sample <- colData$sample
+row.names(allTraits) <- allTraits$sample
 # subset to keep only the "good samples"
 Samples <- rownames(datExpr)
-traitRows <-  match(Samples, allTraits$V1)
+traitRows <-  match(Samples, allTraits$sample)
 datTraits <-  allTraits[traitRows, ]
-datTraits$V1 <- NULL
+datTraits$sample <- NULL
 
 
 collectGarbage()
@@ -159,8 +181,7 @@ traitColors = numbers2colors(datTraits, signed = FALSE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
-                    main = "Sample dendrogram and trait heatmap",
-                    dendroLabels = FALSE
+                    main = "Sample dendrogram and trait heatmap"
                     )
 
 }

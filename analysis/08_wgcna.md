@@ -11,6 +11,16 @@ comparison of sample cluster to sample meta data.
 
 ![](../figures/wgcna/wgcna-1.png)
 
+Females
+-------
+
+![](../figures/wgcna/wgcna-female-1.png)
+
+Males
+-----
+
+![](../figures/wgcna/wgcna-male-1.png)
+
 hypothalamus
 ------------
 
@@ -18,8 +28,6 @@ hypothalamus
 
 pituitary
 ---------
-
-![](../figures/wgcna/wgcna-pit-1.png)
 
 gonads
 ------
