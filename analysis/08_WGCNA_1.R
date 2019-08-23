@@ -148,9 +148,9 @@ nSamples = nrow(datExpr)
 traitData <- colData[c(5,3,4)]
 
 # numeric
-print(head(traitData))
+head(traitData)
 traitData %<>% mutate_if(is.factor,as.numeric)
-print(head(traitData))
+head(traitData)
 
 
 # remove columns or add that hold information we do not need, if necessary
