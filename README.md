@@ -17,7 +17,7 @@ This repository contains the data and analysis for a collaboration between Drs. 
  
 ## Preliminary analyses, results and interpretations presented as a poster at the Society for Behavioral Neuroendocrinology Annual Meeting
 
-![poseter](./docs/DoveParentsRNAseqSBN.png)
+![poseter](./figures/sbnposter/SBN.png)
 
 See also <https://macmanes-lab.github.io/DoveParentsRNAseq/> for a more user-friendly way to read the information on the poster. The bulk of the analysis for the SBN poster were created using the script [analysis/04_DESeq2_sexes.Rmd](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/04_DESeq2_sexes.Rmd), which really needs a different name. 
 
