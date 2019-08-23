@@ -20,9 +20,9 @@ pattern:
 
 ![](../figures/wgcna/wgcna-1.png)
 
-**Fig 1. Characterization dendrogram with trait heatmap.**. Most hyp.
-and pit. samples separte form the gon. samples, but some are clusters
-contain samples from all tissues.
+**Fig 1. Characterization dendrogram with trait heatmap.**. Most
+hypothalamus and pituitary samples separte form the gonad samples, but
+some are clusters contain samples from all tissues.
 
 Females
 -------
@@ -30,8 +30,8 @@ Females
 ![](../figures/wgcna/wgcna-female-1.png)
 
 **Fig 2. Female characterization dendrogram with trait heatmap.**. Most
-pit samples form a single cluster. More hyp samples cluster with gonads
-than with pituitary.
+pituitary samples form a single cluster. More hypothalamus samples
+cluster with gonads than with pituitary.
 
 Males
 -----
@@ -39,8 +39,8 @@ Males
 ![](../figures/wgcna/wgcna-male-1.png)
 
 **Fig 3. Male characterization dendrogram with trait heatmap.**. As with
-females, most pit samples form a single cluster, and More hyp samples
-cluster with gonads than with pituitary.
+females, most pituitary samples form a single cluster, while more
+hypothalamus samples cluster with gonads than with pituitary.
 
 gonads
 ------
