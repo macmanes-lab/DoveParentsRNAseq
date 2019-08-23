@@ -24,6 +24,7 @@ source("08_WGCNA_1.R")
 source("08_WGCNA_1_params.R")
 subsetWGCNA(c("female.gonad", "female.hypothalamus", "female.pituitary"))
 
+
 ```
 
 
@@ -32,6 +33,7 @@ subsetWGCNA(c("female.gonad", "female.hypothalamus", "female.pituitary"))
 ```{r wgcna-male, message=FALSE, warning=FALSE, cache=TRUE}
 source("08_WGCNA_1_params.R")
 subsetWGCNA(c("male.gonad", "male.hypothalamus", "male.pituitary"))
+
 ```
 
 
@@ -40,6 +42,7 @@ subsetWGCNA(c("male.gonad", "male.hypothalamus", "male.pituitary"))
 ```{r wgcna-hyp, message=FALSE, warning=FALSE, cache=TRUE}
 source("08_WGCNA_1_params.R")
 subsetWGCNA(c("male.hypothalamus", "female.hypothalamus"))
+
 ```
 
 ## pituitary
@@ -52,4 +55,5 @@ subsetWGCNA(c("male.hypothalamus", "female.hypothalamus"))
 
 ```{r wgcna-gon, message=FALSE, warning=FALSE, cache=TRUE}
 subsetWGCNA(c("female.gonad", "male.gonad"))
+
 ```
