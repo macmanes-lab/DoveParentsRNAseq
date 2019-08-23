@@ -9,102 +9,55 @@ The first tutorial focuses on data input, cleaning and pre-processing;
 outlier removal; clustering of samples by their Euclidean distance; a
 comparison of sample cluster to sample meta data.
 
-    ##                  treatment sex tissue
-    ## M.gon.control.45   control   M    gon
-    ## M.hyp.control.45   control   M    hyp
-    ## M.pit.control.45   control   M    pit
-    ## M.gon.control.46   control   M    gon
-    ## M.hyp.control.46   control   M    hyp
-    ## M.pit.control.46   control   M    pit
-    ##   treatment sex tissue
-    ## 1         2   2      1
-    ## 2         2   2      2
-    ## 3         2   2      3
-    ## 4         2   2      1
-    ## 5         2   2      2
-    ## 6         2   2      3
+For the following figures, the top panel is a dendrogram showing
+Euclidean distance of sample. Because the labeling of samples is hard to
+read, the colored rows can be used to visualize traits. Here, both sex
+and tissues are colored in a white to red scaled with the following
+pattern:
+
+-   sex: females (white), males (red),
+-   tissue: gonad (white), hypothalamus (pink), pituitary (red).
 
 ![](../figures/wgcna/wgcna-1.png)
+
+**Fig 1. Characterization dendrogram with trait heatmap.**. Most hyp.
+and pit. samples separte form the gon. samples, but some are clusters
+contain samples from all tissues.
 
 Females
 -------
 
-    ##                  treatment sex tissue
-    ## F.gon.control.47   control   F    gon
-    ## F.hyp.control.47   control   F    hyp
-    ## F.pit.control.47   control   F    pit
-    ## F.gon.control.71   control   F    gon
-    ## F.hyp.control.71   control   F    hyp
-    ## F.pit.control.71   control   F    pit
-    ##   treatment sex tissue
-    ## 1         2   1      1
-    ## 2         2   1      2
-    ## 3         2   1      3
-    ## 4         2   1      1
-    ## 5         2   1      2
-    ## 6         2   1      3
-
 ![](../figures/wgcna/wgcna-female-1.png)
+
+**Fig 2. Female characterization dendrogram with trait heatmap.**. Most
+pit samples form a single cluster. More hyp samples cluster with gonads
+than with pituitary.
 
 Males
 -----
 
-    ##                  treatment sex tissue
-    ## M.gon.control.45   control   M    gon
-    ## M.hyp.control.45   control   M    hyp
-    ## M.pit.control.45   control   M    pit
-    ## M.gon.control.46   control   M    gon
-    ## M.hyp.control.46   control   M    hyp
-    ## M.pit.control.46   control   M    pit
-    ##   treatment sex tissue
-    ## 1         2   1      1
-    ## 2         2   1      2
-    ## 3         2   1      3
-    ## 4         2   1      1
-    ## 5         2   1      2
-    ## 6         2   1      3
-
 ![](../figures/wgcna/wgcna-male-1.png)
 
-hypothalamus
-------------
-
-    ##                  treatment sex tissue
-    ## M.hyp.control.45   control   M    hyp
-    ## M.hyp.control.46   control   M    hyp
-    ## F.hyp.control.47   control   F    hyp
-    ## M.hyp.control.48   control   M    hyp
-    ## M.hyp.control.49   control   M    hyp
-    ## M.hyp.control.52   control   M    hyp
-    ##   treatment sex tissue
-    ## 1         2   2      1
-    ## 2         2   2      1
-    ## 3         2   1      1
-    ## 4         2   2      1
-    ## 5         2   2      1
-    ## 6         2   2      1
-
-![](../figures/wgcna/wgcna-hyp-1.png)
-
-pituitary
----------
+**Fig 3. Male characterization dendrogram with trait heatmap.**. As with
+females, most pit samples form a single cluster, and More hyp samples
+cluster with gonads than with pituitary.
 
 gonads
 ------
 
-    ##                  treatment sex tissue
-    ## M.gon.control.45   control   M    gon
-    ## M.gon.control.46   control   M    gon
-    ## F.gon.control.47   control   F    gon
-    ## M.gon.control.48   control   M    gon
-    ## M.gon.control.49   control   M    gon
-    ## M.gon.control.52   control   M    gon
-    ##   treatment sex tissue
-    ## 1         2   2      1
-    ## 2         2   2      1
-    ## 3         2   1      1
-    ## 4         2   2      1
-    ## 5         2   2      1
-    ## 6         2   2      1
-
 ![](../figures/wgcna/wgcna-gon-1.png)
+
+**Fig 3. Gonad characterization dendrogram with trait heatmap.**. Male
+and female samples cluster together, but with large, sex-specific
+regions…. maybe there is a strong treatment effect here.
+
+hypothalamus
+------------
+
+![](../figures/wgcna/wgcna-hyp-1.png)
+
+Male and female samples cluster together, but with very small,
+sex-specific regions…. maybe there is a small treatment effect here.
+
+pituitary (not working)
+-----------------------
