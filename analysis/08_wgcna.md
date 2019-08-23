@@ -1,13 +1,14 @@
-All characterization data
--------------------------
+WGCNA analysis, first pass
+==========================
 
-This first image was made using
-[`08_WGCNA_1.R`](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/08_WGCNA_1.R),
-which was modified from the [first in a series of WGCNA
+The anlayses and image was made by following along with and modifing the
+[first in a series of WGCNA
 tutorial](https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/Tutorials/Consensus-DataInput.R).
 The first tutorial focuses on data input, cleaning and pre-processing;
 outlier removal; clustering of samples by their Euclidean distance; a
-comparison of sample cluster to sample meta data.
+comparison of sample cluster to sample meta data. I put pretty much the
+whole script into a single function that I source with
+[`08_WGCNA_1.R`](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/08_WGCNA_1.R).
 
 For the following figures, the top panel is a dendrogram showing
 Euclidean distance of sample. Because the labeling of samples is hard to
@@ -17,6 +18,9 @@ pattern:
 
 -   sex: females (white), males (red),
 -   tissue: gonad (white), hypothalamus (pink), pituitary (red).
+
+All characterization data
+-------------------------
 
 ![](../figures/wgcna/wgcna-1.png)
 
