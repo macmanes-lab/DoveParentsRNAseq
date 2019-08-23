@@ -181,7 +181,8 @@ traitColors = numbers2colors(datTraits, signed = FALSE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
-                    main = "Sample dendrogram and trait heatmap"
+                    main = "Sample dendrogram and trait heatmap",
+                    cex.dendroLabels = 0.4
                     )
 
 }
