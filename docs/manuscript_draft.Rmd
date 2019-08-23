@@ -42,22 +42,15 @@ _Text based on plos sample manuscript, see [http://journals.plos.org/ploscompbio
 # Introduction
 
 
-Understanding the mechanisms underlying parental care are critical to circumventing issues with parent-newborn bonding as well, where ultimate explanations are obvious, but specific mechanisms remain elusive.
-
-
-The rock dove (_Columba livia_) is an ideal system to characterize changes in genetic expression during parental care transitions because: 1) ample genomic resources are available, including a complete annotated genome assembly (Gillespie et al. 2013; Shapiro et al. 2013) and methodology concerning reproductive physiology and behavior (Dong et al. 2012); and 2) rock doves are prolific, year-round breeders that thrive in captivity, making observation, manipulation, and sampling highly feasible year-round. 
+Understanding the mechanisms underlying parental care are critical to circumventing issues with parent-newborn bonding as well, where ultimate explanations are obvious, but specific mechanisms remain elusive. The rock dove (_Columba livia_) is an ideal system to characterize changes in genetic expression during parental care transitions because: 1) ample genomic resources are available (Gillespie et al. 2013), including a complete annotated genome assembly @Shapiro1063 and methodology concerning reproductive physiology and behavior (Dong et al. 2012); and 2) rock doves are prolific, year-round breeders that thrive in captivity, making observation, manipulation, and sampling highly feasible year-round. 
 
 ```{r, out.width = "360px", echo = F}
 knitr::include_graphics("../figures/images/PigeonHPGaxis.png")
 ```
 
-Rock doves are socially monogamous and offer bi-parental care, making inter- and intra-sexual comparisons possible. Birds offer two important behavioral transition points into parental care: the incubation of eggs and the caring for chicks. This produces two unique opportunities to study how the brain transitions into two different suites of parental care behaviors. Additionally, rock doves exhibit a parental care strategy analogous to mammals in that they, too, ‘lactate’ to feed their young (Gillespie et al. 2011, 2012). This lactation, unlike simple regurgitation of food, consists of the production and sloughing off of skin cells inside the crop sac of females and males, creating a protein-rich milk-like substance on which they rear their chicks. Many functional similarities between rock dove and mammalian lactation exist concerning the mediation of this event by the hormone prolactin (Dumont 1965). Additionally, like mammalian milk, rock dove milk delivers essential immunoglobulins and nutritional benefits to young, aiding in their immune function and development of microbiota (Gillespie et al. 2012). Thus, because rock doves incubate eggs and exhibit mammalian-like mediation and function of lactation for young, they have the potential to serve as a powerful theoretical bridge to understand the neurobiology of both avian and mammalian transitions into parental care.
+Rock doves are socially monogamous and offer bi-parental care, making inter- and intra-sexual comparisons possible. Birds offer two important behavioral transition points into parental care: the incubation of eggs and the caring for chicks. This produces two unique opportunities to study how the brain transitions into two different suites of parental care behaviors. Additionally, rock doves exhibit a parental care strategy analogous to mammals in that they, too, ‘lactate’ to feed their young (Gillespie et al. 2011, 2012). This lactation, unlike simple regurgitation of food, consists of the production and sloughing off of skin cells inside the crop sac of females and males, creating a protein-rich milk-like substance on which they rear their chicks. Many functional similarities between rock dove and mammalian lactation exist concerning the mediation of this event by the hormone prolactin (Dumont 1965). Additionally, like mammalian milk, rock dove milk delivers essential immunoglobulins and nutritional benefits to young, aiding in their immune function and development of microbiota @Gillespie2012. Thus, because rock doves incubate eggs and exhibit mammalian-like mediation and function of lactation for young, they have the potential to serve as a powerful theoretical bridge to understand the neurobiology of both avian and mammalian transitions into parental care.
 
 # Materials and Methods
-
-
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eget porta erat. Morbi consectetur est vel gravida pretium. Suspendisse ut dui eu ante cursus gravida non sed sem. Phasellus mauris velit, dapibus finibus elementum vel, pulvinar non tellus. Nunc pellentesque pretium diam, quis maximus dolor faucibus id. Nunc convallis sodales ante, ut ullamcorper est egestas vitae. Nam sit amet enim ultrices, ultrices elit pulvinar, volutpat risus.
 
 ```{r, out.width = "360px", echo = F}
 knitr::include_graphics("../figures/images/samplingtimepoints.png")
@@ -89,10 +82,11 @@ We will remove newly, naturally hatched chick(s) on Day 2: second chick hatches 
 
 # Results
 
-Here are two sample references: @Feynman1963118 [@Dirac1953888].
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eget porta erat. Morbi consectetur est vel gravida pretium. Suspendisse ut dui eu ante cursus gravida non sed sem. Phasellus mauris velit, dapibus finibus elementum vel, pulvinar non tellus. Nunc pellentesque pretium diam, quis maximus dolor faucibus id. Nunc convallis sodales ante, ut ullamcorper est egestas vitae. Nam sit amet enim ultrices, ultrices elit pulvinar, volutpat risus.
+
 
 # Figures
-
 
 
 ```{r wgcna, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
@@ -130,9 +124,9 @@ subsetWGCNA(c("male.gonad", "male.hypothalamus", "male.pituitary"),
 
 This project is a synergistic collaboration between the PI, Rebecca Calisi-Rodríguez (expertise in avian behavior, parental care and neurobiology), co-PI, Matthew MacManes (expertise in next-generation sequencing, transcriptome assembly, and gene expression analyses), and Collaborator, Rae Silver (expertise in neurobiology, dove behavior, and decades of successful breeding and maintenance of dove colonies at Barnard College).
 
-# Metadata and extras
+<!--
 
-## Funding Statment
+# Funding Statment
 
 ```{r, include=F}
 ## Disclosure of Funding Sources
@@ -145,6 +139,8 @@ This project is a synergistic collaboration between the PI, Rebecca Calisi-Rodr�
 ```
 
 1. Collaborative Research: RUI: The Neural Basis of Becoming a Parent: From Genotype to Phenotype. NSF-IOS:1455957. 
+
+-->
 
 
 ```{r include=F}
