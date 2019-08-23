@@ -4,3 +4,4 @@ fastcluster
 WGCNA
 dplyr
 magrittr
+forcats

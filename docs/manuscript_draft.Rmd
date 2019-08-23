@@ -91,14 +91,40 @@ We will remove newly, naturally hatched chick(s) on Day 2: second chick hatches 
 
 Here are two sample references: @Feynman1963118 [@Dirac1953888].
 
-## WGCNA characterization
+# Figures
 
-This first image was made using [`08_WGCNA_1.R`](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/08_WGCNA_1.R), which was modified from the [first in a series of WGCNA tutorial](https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/Tutorials/Consensus-DataInput.R). The first tutorial focuses on data input, cleaning and pre-processing; outlier removal; clustering of samples by their Euclidean distance; a comparison of sample cluster to sample meta data.
+
 
 ```{r wgcna, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
 source("../analysis/08_WGCNA_1.R")
-
+subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pituitary",
+                           "male.gonad", "male.hypothalamus", "male.pituitary"),
+            mytitle = "Characterization dendrogram with trait heatmap")
 ```
+
+**Fig 1. Characterization dendrogram with trait heatmap.**.
+Most hypothalamus and pituitary samples separte form the gonad samples, but some are clusters contain samples from all tissues.The top panel is a dendrogram showing Euclidean distance of sample. Females (white), males (red), gonad (white), hypothalamus (pink), pituitary (red).  
+
+
+
+```{r wgcna-female, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pituitary"),
+            mytitle = "Female sample dendrogram with trait heatmap")
+```
+
+
+**Fig 2. Female characterization dendrogram with trait heatmap.**. 
+Most pituitary samples form a single cluster. More hypothalamus samples cluster with gonads than with pituitary. The top panel is a dendrogram showing Euclidean distance of sample. Females (white), males (red), gonad (white), hypothalamus (pink), pituitary (red).  
+
+```{r wgcna-male, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+subsetWGCNA(c("male.gonad", "male.hypothalamus", "male.pituitary"),
+            mytitle = "Male sample dendrogram with trait heatmap")
+```
+
+**Fig 3. Male characterization dendrogram with trait heatmap.**. 
+ As with females, most pituitary samples form a single cluster, while more hypothalamus samples cluster with gonads than with pituitary. 
+
+
 
 # Acknowledgments
 
