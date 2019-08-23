@@ -10,3 +10,6 @@ analysis/*.RData
 results/*.RData
 analysis/*files
 docs/manuscript_draft_cache/*
+docs/manuscript_draft_cache*
+docs/manuscript_draft_cache/*/*
+docs/manuscript_draft_cache/*/*/*
