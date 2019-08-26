@@ -5,3 +5,5 @@ WGCNA
 dplyr
 magrittr
 forcats
+ggplot2
+cowplot
