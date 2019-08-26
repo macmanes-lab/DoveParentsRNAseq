@@ -87,6 +87,20 @@ ggdraw() + draw_image("../figures/sexes/characterization-2.png")
 **Fig 2. The magnitude of gene expression changes between each parental transition**.
 4-5K genes are differentially expressed beteen control birds and their nest buliding conspecifics in all tissues except the male gonad. 500 - 1000 genes are differentially expressed in the female pituitary from mid-late incubation as well as in the female hypothalamus and pituitary from hatch to nestingly care day 5. 
 
+
+
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+a <- ggdraw() + draw_image("../figures/characterization/pca-2.png") 
+b <- ggdraw() + draw_image("../figures/characterization/pca-5.png") 
+
+plot_grid(a,b)
+```
+
+
+
+
+
 ![](../figures/characterization/musicalgenes-05.png)
 
 ## Elucidate cause of transcription & protein changes during parental care transitions
