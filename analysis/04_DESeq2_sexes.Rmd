@@ -141,56 +141,6 @@ plot(myDEGs)
 dev.off()
 ```
 
-## Plot only a subset of DEGs that relate to hypotheses
-
-
-```{r characterization}
-# bars with lines
-g <- plotserialDEGs(DEGs.female_hypothalamus, "Female hypothalamus", "#00A08A")
-h <- plotserialDEGs(DEGs.female_pituitary, "Female pituitary", "#00A08A")
-i <- plotserialDEGs(DEGs.female_gonad, "Female gonad", "#00A08A")
-j <- plotserialDEGs(DEGs.male_hypothalamus, "Male hypothalamus", "#F98400")
-k <- plotserialDEGs(DEGs.male_pituitary, "Male pituitary", "#F98400")
-l <- plotserialDEGs(DEGs.male_gondad, "Male gonad", "#F98400")
-
-mybarplots <- plot_grid(g, h , i , j ,k , l, nrow = 2) 
-mybarplots
-
-pdf("../figures/sexes/characterization-1.pdf", width = 10, height = 6)
-plot(mybarplots)
-dev.off()
-
-# lines only, different colors for different sex tissue groups
-FH <- subsetDEGs(DEGs.female_hypothalamus, "Female hypothalamus")
-FP <- subsetDEGs(DEGs.female_pituitary, "Female pituitary")
-FG <- subsetDEGs(DEGs.female_gonad, "Female gonad")
-MH <- subsetDEGs(DEGs.male_hypothalamus, "Male hypothalamus")
-MP <- subsetDEGs(DEGs.male_pituitary, "Male pituitary")
-MG <- subsetDEGs(DEGs.male_gondad, "Male gonad")
-
-specificDEGs <- rbind(FH, FP, FG, MH, MP, MG)
-
-specificDEGs$sextissue <- factor(specificDEGs$sextissue, levels = c("Female hypothalamus", "Female pituitary", "Female gonad",
-                                                                    "Male hypothalamus", "Male pituitary", "Male gonad"))
-mylinegraph <- ggplot(specificDEGs, aes(x=comparison, y=V3, group = sextissue)) +
-    geom_line(aes(color=sextissue)) +
-    geom_point(aes(color=sextissue)) + 
-    theme_minimal(base_size = 10) +
-    #theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(x = "Parental stage transitions", y= "No. of differentially expressed genes ",
-         title = "Gene expression changes during parental care transitions") + 
-    scale_x_discrete(labels=c("Control to\nNest bldg", "Nest bldg. to\nLay", "Lay to\nInc. day 3",
-                              "Inc. day 3 to\nInc. day 9", "Inc. day 9 to\nInc. day 17",
-                              "Inc. day 17 to\nHatch", "Hatch to\nNestling day 5", "Nestling day 5 to\n Nestling day 9")) +
-   theme(legend.title = element_blank(),
-         legend.position = c(0.8, 0.8))
-mylinegraph
-
-pdf("../figures/sexes/characterization-2.pdf", width = 8, height = 4)
-plot(mylinegraph)
-dev.off()
-```
-
 ```{r manipVchar}
 g <- plotmanipDEGs(DEGs.female_hypothalamus, "Female hypothalamus", "bottom")
 h <- plotmanipDEGs(DEGs.female_pituitary, "Female pituitary", "none")

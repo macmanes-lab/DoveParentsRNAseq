@@ -40,7 +40,7 @@ summary(c.colData[c(7,3,4,5,8)])
 
 ## Run DESeq on all subsets of the data
 
-```{r dds, cache = T, eval = F}
+```{r dds, cache = T, eval = T}
 dds.female_hypothalamus <- subsetDESeq(c.colData,  c.countData, "female_hypothalamus")
 dds.female_pituitary <- subsetDESeq(c.colData,  c.countData, "female_pituitary" )
 dds.female_gonad <- subsetDESeq(c.colData,  c.countData, "female_gonad" )
@@ -51,17 +51,28 @@ dds.male_gondad <- subsetDESeq(c.colData,  c.countData, "male_gonad")
 
 ## Calculate and plot total DEGs
 
-```{r totalDEGs, eval = F}
+
+```{r returntotalDEGs, eval = T}
+DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
+DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
+DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
+DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
+DEGs.male_pituitary <- returntotalDEGs(dds.male_pituitary)
+DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
+```
+
+```{r totalDEGs, eval = T}
 #create list of groups for deseq contrasts
 group1 <- c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
 group2 <- group1
 
-a <- plottotalDEGs(dds.female_hypothalamus, "female hypothalamus")
-b <- plottotalDEGs(dds.female_pituitary, "female pituitary")
-c <- plottotalDEGs(dds.female_gonad, "female gonad")
-d <- plottotalDEGs(dds.male_hypothalamus, "male hypothalamus")
-e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
-f <- plottotalDEGs(dds.male_gondad, "male gonad")
+
+a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
+b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
+c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
+d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
+e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
+f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
 
 plot_grid(a + theme(legend.position = "none"),
           b + theme(legend.position = "none"),
@@ -72,15 +83,78 @@ plot_grid(a + theme(legend.position = "none"),
           nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
 ```
 
+
+
+## Plot only a subset of DEGs that relate to hypotheses as bar and line graphs
+
+```{r barplots}
+# bars with lines
+g <- plotserialDEGs(DEGs.female_hypothalamus, "Female hypothalamus", "#00A08A")
+h <- plotserialDEGs(DEGs.female_pituitary, "Female pituitary", "#00A08A")
+i <- plotserialDEGs(DEGs.female_gonad, "Female gonad", "#00A08A")
+j <- plotserialDEGs(DEGs.male_hypothalamus, "Male hypothalamus", "#F98400")
+k <- plotserialDEGs(DEGs.male_pituitary, "Male pituitary", "#F98400")
+l <- plotserialDEGs(DEGs.male_gondad, "Male gonad", "#F98400")
+
+mybarplots <- plot_grid(g, h , i , j ,k , l, nrow = 2) 
+mybarplots
+
+pdf("../figures/characterization/barplots.pdf", width = 10, height = 6)
+plot(mybarplots)
+dev.off()
+```
+
+
+```{r linegraphs}
+
+# lines only, different colors for different sex tissue groups
+FH <- subsetDEGs(DEGs.female_hypothalamus, "Female hypothalamus")
+FP <- subsetDEGs(DEGs.female_pituitary, "Female pituitary")
+FG <- subsetDEGs(DEGs.female_gonad, "Female gonad")
+MH <- subsetDEGs(DEGs.male_hypothalamus, "Male hypothalamus")
+MP <- subsetDEGs(DEGs.male_pituitary, "Male pituitary")
+MG <- subsetDEGs(DEGs.male_gondad, "Male gonad")
+
+specificDEGs <- rbind(FH, FP, FG, MH, MP, MG)
+
+specificDEGs$sextissue <- factor(specificDEGs$sextissue, levels = c("Female hypothalamus", "Female pituitary", "Female gonad",
+                                                                    "Male hypothalamus", "Male pituitary", "Male gonad"))
+mylinegraph <- ggplot(specificDEGs, aes(x=comparison, y=V3, group = sextissue)) +
+    geom_line(aes(color=sextissue)) +
+    geom_point(aes(color=sextissue)) + 
+    theme_minimal(base_size = 10) +
+    #theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(x = "Parental stage transitions", y= "No. of differentially expressed genes ",
+         title = "Gene expression changes during parental care transitions") + 
+    scale_x_discrete(labels=c("Control to\nNest bldg", "Nest bldg. to\nLay", "Lay to\nInc. day 3",
+                              "Inc. day 3 to\nInc. day 9", "Inc. day 9 to\nInc. day 17",
+                              "Inc. day 17 to\nHatch", "Hatch to\nNestling day 5", "Nestling day 5 to\n Nestling day 9")) +
+   theme(legend.title = element_blank(),
+         legend.position = c(0.8, 0.8))
+mylinegraph
+
+pdf("../figures/characterization/linegraphs.pdf", width = 8, height = 4)
+plot(mylinegraph)
+dev.off()
+```
+
+
 ## Calculate and plot principal component
 
-```{r pca, eval = F}
-plotPCAs(dds.female_hypothalamus, "female hypothalamus")
-plotPCAs(dds.female_pituitary, "female pituitary")      
-plotPCAs(dds.female_gonad, "female gonad")
-plotPCAs(dds.male_hypothalamus, "male hypothalamus")
-plotPCAs(dds.male_pituitary, "male pituitary")
-plotPCAs(dds.male_gondad, "male gonad")
+```{r pca, eval = T}
+FhypPCA <- returnPCAs(dds.female_hypothalamus)
+FpitPCA <- returnPCAs(dds.female_pituitary)      
+FgonPCA <- returnPCAs(dds.female_gonad)
+MhypPCA <- returnPCAs(dds.male_hypothalamus)
+MpitPCA <- returnPCAs(dds.male_pituitary)
+MgonPCA <- returnPCAs(dds.male_gondad)
+
+plotPC12(FhypPCA, "female hypothalamus")
+plotPC12(FpitPCA, "female pituitary")
+plotPC12(FgonPCA, "female gonad")
+plotPC12(MhypPCA, "male hypothalamus")
+plotPC12(MpitPCA, "male pituitary")
+plotPC12(MgonPCA, "male gonad")
 ```
 
 ## heamap with minimum pvalue
