@@ -7,6 +7,7 @@ output: md_document
 knitr::opts_chunk$set(echo = FALSE, fig.path = '../figures/wgcna/')
 
 source("08_WGCNA_1.R")
+
 ```
 
 # WGCNA analysis, first pass
@@ -28,6 +29,7 @@ For the following figures, the top panel is a dendrogram showing Euclidean dista
 subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pituitary",
                            "male.gonad", "male.hypothalamus", "male.pituitary"),
             mytitle = "Characterization dendrogram with trait heatmap")
+
 ```
 
 **Fig 1. Characterization dendrogram with trait heatmap.**. 
@@ -39,6 +41,7 @@ subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pitui
 ```{r wgcna-female, message=FALSE, warning=FALSE, cache=TRUE}
 subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pituitary"),
             mytitle = "Female sample dendrogram with trait heatmap")
+
 ```
 
 
@@ -51,6 +54,7 @@ Most pituitary samples form a single cluster. More hypothalamus samples cluster 
 ```{r wgcna-male, message=FALSE, warning=FALSE, cache=TRUE}
 subsetWGCNA(c("male.gonad", "male.hypothalamus", "male.pituitary"),
             mytitle = "Male sample dendrogram with trait heatmap")
+
 ```
 
 **Fig 3. Male characterization dendrogram with trait heatmap.**. 
@@ -87,4 +91,22 @@ Male and female samples cluster together, but with very small, sex-specific regi
 
 #subsetWGCNA(c("female.pitutary", "male.pitutary"),
 #            mytitle = "Pituitary dendrogram with trait heatmap")
+```
+
+## female hypothalamus
+
+
+
+```{r wgcna-f-hyp, message=FALSE, warning=FALSE, cache=TRUE}
+subsetWGCNA(c("female.hypothalamus"),
+            mytitle = "Female hypothalamus sample dendrogram")
+```
+
+## female gonad
+
+
+
+```{r wgcna-f-gon, message=FALSE, warning=FALSE, cache=TRUE}
+subsetWGCNA(c("female.gonad"),
+            mytitle = "Female gonad sample dendrogram")
 ```

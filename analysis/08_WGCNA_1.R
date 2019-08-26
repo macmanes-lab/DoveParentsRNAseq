@@ -21,6 +21,7 @@ countData <- read.csv("../results/00_countData_characterization.csv", row.names 
 
 # create new grouping for subsets
 colData$sextissue <-  paste(colData$sex, colData$tissue, sep = ".")
+levels(colData$treatment)
 
 ## rename rownames and colnames for better vizualiation
 colData <- colData %>%
@@ -30,7 +31,17 @@ colData <- colData %>%
          tissue = fct_recode(tissue,
                              "pit" = "pituitary",
                              "hyp" = "hypothalamus",
-                             "gon" = "gonad"))
+                             "gon" = "gonad"),
+         hypothesis = fct_recode(treatment,
+                                 "anticipation" = "control",
+                                 "anticipation" = "bldg",
+                                 "incubation" = "lay",
+                                 "incubation" = "inc.d3",
+                                 "incubation" = "inc.d9",
+                                 "incubation" = "inc.d17",
+                                 "hatchling.care" = "hatch",
+                                 "hatchling.care" = "n5",
+                                 "hatchling.care" = "n9"))
 
 colData$ID <- as.numeric(colData$bird)
 colData$sample <- paste(colData$sex, colData$tissue, colData$treatment, colData$ID, sep = ".")
@@ -145,7 +156,7 @@ nSamples = nrow(datExpr)
 #=====================================================================================
 
 
-traitData <- colData[c(5,3,4)]
+traitData <- colData[c(4,3,5,9)]
 
 # numeric
 head(traitData)

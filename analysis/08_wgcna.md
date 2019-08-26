@@ -65,3 +65,13 @@ sex-specific regions…. maybe there is a small treatment effect here.
 
 pituitary (not working)
 -----------------------
+
+female hypothalamus
+-------------------
+
+![](../figures/wgcna/wgcna-f-hyp-1.png)
+
+female gonad
+------------
+
+![](../figures/wgcna/wgcna-f-gon-1.png)
