@@ -66,12 +66,8 @@ returnpadj <- function(group1, group2){
 
 returntotalDEGs <- function(dds){
   
-  colData <- a.colData # %>%
-   # filter(treatment %in% c("control", "bldg", "n9",
-   #                         "inc.d17", "m.inc.d17",
-   #                         "hatch",  "m.n2")) %>%
-   # droplevels()
-  
+  colData <- c.colData # %>%
+
   group1 <- levels(colData$treatment)
 
   a <- group1
@@ -101,19 +97,11 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
   totalDEGS <- myDEGS
   totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", "lay",
                                                    "inc.d3", "inc.d9", "inc.d17",
-                                                   "hatch", "n5", "n9",
-                                                   
-                                                   "m.inc.d3", "m.inc.d8", "m.inc.d9",
-                                                   "m.inc.d17",  "m.n2"  ,
-                                                   "prolong", "extend" ))
+                                                   "hatch", "n5", "n9"))
   
-  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("extend", "prolong",  
-                                                    "m.n2"  , "m.inc.d17",  
-                                                    "m.inc.d9", "m.inc.d8",  "m.inc.d3",    
-                                                    "n9", "n5", "hatch",
-                                                    "inc.d17",  "inc.d9", "inc.d3",
-                                                    "lay", "bldg",
-                                                    "control"))
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", "lay",
+                                                   "inc.d3", "inc.d9", "inc.d17",
+                                                   "hatch", "n5", "n9"))
 
   totalDEGS <- totalDEGS %>% dplyr::na_if(0)
   
@@ -126,7 +114,7 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
      theme_minimal(base_size = 12) + 
     geom_text(aes(label = round(V3, 1)), color = "black")+
     scale_fill_viridis(na.value="#bdbdbd", 
-                       limits = c(0,7000),
+                      # limits = c(0,7000),
                        option = "C") +
     xlab(NULL) + ylab(NULL) +
     labs(fill = "# of DEGs",
@@ -326,17 +314,44 @@ returnPCAs <- function(dds){
   vsd <- vst(dds, blind=FALSE) # variance stabilized 
   
   # create the dataframe using my function pcadataframe
-  pcadata <- pcadataframe(vsd, intgroup=c("lastday", "penultimate", "xlabel", "study"), returnData=TRUE)
+  pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
   percentVar <- round(100 * attr(pcadata, "percentVar"))
   print(percentVar)
   
-  print(summary(aov(PC1 ~ xlabel, data=pcadata)))
-  #print(TukeyHSD(aov(PC1 ~ xlabel, data=pcadata), which = "xlabel"))
-  print(summary(aov(PC2 ~ xlabel, data=pcadata))) 
-  print(summary(aov(PC3 ~ xlabel, data=pcadata))) 
-  print(summary(aov(PC4 ~ xlabel, data=pcadata))) 
+  print(summary(aov(PC1 ~ treatment, data=pcadata)))
+  print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
+  print(summary(aov(PC2 ~ treatment, data=pcadata))) 
+  print(summary(aov(PC3 ~ treatment, data=pcadata))) 
+  print(summary(aov(PC4 ~ treatment, data=pcadata))) 
   return(pcadata)
 }
+
+plotPC12 <- function(pcadata, mysubtitle){ 
+  
+  pcadata <- pcadata %>%
+    mutate(hypothesis = fct_recode(treatment,
+                            "anticipation" = "control",
+                            "anticipation" = "bldg",
+                            "incubation" = "lay",
+                            "incubation" = "inc.d3",
+                            "incubation" = "inc.d9",
+                            "incubation" = "inc.d17",
+                            "hatchling.care" = "hatch",
+                            "hatchling.care" = "n5",
+                            "hatchling.care" = "n9"))
+  
+  pca12 <- ggplot(pcadata, aes(PC1, PC2, fill = hypothesis)) + 
+    geom_point(pch=21, size = 3) +
+    #stat_ellipse() +
+    theme_minimal(base_size = 12) +
+    ylab(paste0("PC2")) +
+    xlab(paste0("PC1")) +
+    labs(subtitle = mysubtitle) +
+    #theme(legend.position = "bottom") +
+    #guides( fill = guide_legend(order = 2, ncol=2)) +
+    theme(legend.text = element_text(size=10)) 
+  pca12
+}  
 
 plotPC1 <- function(pcadata, mysubtitle, myxlab){ 
   
@@ -371,21 +386,17 @@ plotPC2 <- function(pcadata, mysubtitle, myxlab){
     
     pcadata <- pcadata
     
-  pca2 <- ggplot(pcadata, aes(xlabel, PC2, fill = lastday, color = penultimate)) + 
+  pca2 <- ggplot(pcadata, aes(xlabel, PC2, fill = treatment)) + 
     geom_violin() +
     #geom_point() +
      theme_minimal(base_size = 12) +
     ylab(myxlab) +
     xlab("Parental stages, with increasing days ->") +
     labs(subtitle = mysubtitle) +
-    scale_fill_manual(values = colorlastday, 
+    scale_fill_manual(#values = colorlastday, 
                       guide = guide_legend(
                         direction = "horizontal",
                         label.position = "bottom")) +
-    scale_color_manual(values = colorpenultimate,
-                       guide = guide_legend(
-                         direction = "horizontal",
-                         label.position = "bottom")) +
     facet_wrap(~study, scales = "free_x")  +
     guides(col = guide_legend(nrow = 1),
            fill = guide_legend(nrow = 1)) +
@@ -393,29 +404,10 @@ plotPC2 <- function(pcadata, mysubtitle, myxlab){
   return(pca2)
 }  
  
-plotPC12 <- function(pcadata, mysubtitle){ 
+
+
   
-  pcadata <- pcadata
-  
-  pca12 <- ggplot(pcadata, aes(PC3, PC2, color = penultimate ,fill = lastday)) + 
-    geom_point(pch=21, size = 3) +
-    #stat_ellipse() +
-     theme_minimal(base_size = 12) +
-    ylab(paste0("PC2")) +
-    xlab(paste0("PC3")) +
-    labs(subtitle = mysubtitle) +
-    theme(legend.position = "bottom") +
-    scale_color_manual(values = colorpenultimate) +
-    scale_fill_manual(values = colorlastday)  +
-    guides(color = guide_legend(order = 1, ncol=2), 
-           fill = guide_legend(order = 2, ncol=2)) +
-    theme(legend.text = element_text(size=10)) 
-  
-}  
-  #legend <- get_legend(pca1)
-  #mypcatop <- plot_grid(pca1 + theme(legend.position = "none"), pca2, nrow = 1)  
-  #mypca <- plot_grid(mypcatop, legend, ncol = 1, rel_heights = c(1,0.2))
-  
+
 ## plot candidate genes 
 # e.g. plotcandidates(dds.female_hypothalamus, "female hypothalamus")
 
