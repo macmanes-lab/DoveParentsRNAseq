@@ -50,12 +50,15 @@ knitr::include_graphics("../figures/images/PigeonHPGaxis.png")
 
 Rock doves are socially monogamous and offer bi-parental care, making inter- and intra-sexual comparisons possible. Birds offer two important behavioral transition points into parental care: the incubation of eggs and the caring for chicks. This produces two unique opportunities to study how the brain transitions into two different suites of parental care behaviors. Additionally, rock doves exhibit a parental care strategy analogous to mammals in that they, too, ‘lactate’ to feed their young (Gillespie et al. 2011, 2012). This lactation, unlike simple regurgitation of food, consists of the production and sloughing off of skin cells inside the crop sac of females and males, creating a protein-rich milk-like substance on which they rear their chicks. Many functional similarities between rock dove and mammalian lactation exist concerning the mediation of this event by the hormone prolactin (Dumont 1965). Additionally, like mammalian milk, rock dove milk delivers essential immunoglobulins and nutritional benefits to young, aiding in their immune function and development of microbiota @Gillespie2012. Thus, because rock doves incubate eggs and exhibit mammalian-like mediation and function of lactation for young, they have the potential to serve as a powerful theoretical bridge to understand the neurobiology of both avian and mammalian transitions into parental care.
 
-# Materials and Methods
+# Materials and Methods and Results
 
 ```{r, out.width = "360px", echo = F}
 knitr::include_graphics("../figures/images/samplingtimepoints.png")
 ```
 
+## Characterize changes in neural-gene expression during parental care transitions
+
+Our working hypothesis is that distinct changes in transcription occur in the brain at the anticipation of, during, and in response to two different types of parental care: incubation behavior and hatchling care 
 
 ## Elucidate cause of transcription & protein changes during parental care transitions
 
@@ -80,7 +83,6 @@ hatches, supporting our working hypothesis. Alternatively, if profiles remain si
 ### Remove chicks
 We will remove newly, naturally hatched chick(s) on Day 2: second chick hatches and sample brains from parents the following day (Day 2 post (second) egg hatching). Prediction: Behavior, transcription and translation are sensory driven and will revert to a pattern characteristic of the ‘Nesting, prior to lay’ point, supporting our working hypothesis. Alternatively, if an internal clock mechanism is at play, we would expect to see a pattern similar to birds caring for chicks on Day 2 post (second) egg hatching.
 
-# Results
 
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur eget porta erat. Morbi consectetur est vel gravida pretium. Suspendisse ut dui eu ante cursus gravida non sed sem. Phasellus mauris velit, dapibus finibus elementum vel, pulvinar non tellus. Nunc pellentesque pretium diam, quis maximus dolor faucibus id. Nunc convallis sodales ante, ut ullamcorper est egestas vitae. Nam sit amet enim ultrices, ultrices elit pulvinar, volutpat risus.
