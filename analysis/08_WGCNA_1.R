@@ -187,7 +187,8 @@ traitColors = numbers2colors(datTraits, signed = FALSE);
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
                     main = mytitle,
-                    cex.dendroLabels = 0.4
+                    cex.dendroLabels = 0.4,
+                    dendroLabels = FALSE
                     )
 
 }
