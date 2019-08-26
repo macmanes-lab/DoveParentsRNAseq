@@ -62,7 +62,6 @@ knitr::include_graphics("../figures/images/samplingtimepoints.png")
 
 Our working hypothesis is that distinct changes in transcription occur in the brain at the anticipation of, during, and in response to two different types of parental care: incubation behavior and hatchling care.
 
-### overall patterns of sample similarity
 
 This ecludian clustering shows many clusters are heterogenous, consisting of sames from all tissues types, both sexes, and from multiple treatment groups. 
 
@@ -71,15 +70,12 @@ This ecludian clustering shows many clusters are heterogenous, consisting of sam
 source("../analysis/08_WGCNA_1.R")
 subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pituitary",
                            "male.gonad", "male.hypothalamus", "male.pituitary"),
-            mytitle = "Characterization dendrogram with trait heatmap")
-
+            mytitle = "Characterization dendrogram of samples")
 ```
 
 **Fig 1. Characterization dendrogram with trait heatmap.**.
 Most hypothalamus and pituitary samples separte form the gonad samples, but some are clusters contain samples from all tissues.The top panel is a dendrogram showing Euclidean distance of sample. Females (white), males (red), gonad (white), hypothalamus (pink), pituitary (red).  
 
-
-## subset by sex and tissue
 
 The rest of the analyses are peformed on each sex and tissue group separately, a 2 x 3 design.  
 
