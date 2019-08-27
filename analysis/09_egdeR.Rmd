@@ -5,24 +5,31 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(edgeR)
+library(org.Gg.eg.db)
 ```
 
-## R Markdown
+# edgeR: differential expression analysis of digital gene expression data
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+https://www.bioconductor.org/packages/release/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+## quick start
 
-```{r cars}
-summary(cars)
+```{r}
+x <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
+group <- colData$treatment
+
+y <- DGEList(counts=x,group=group)
+y <- calcNormFactors(y)
+design <- model.matrix(~group)
+y <- estimateDisp(y,design)
+
+# To perform quasi-likelihood F-tests:
+fit <- glmQLFit(y,design)
+qlf <- glmQLFTest(fit,coef=2)
+topqlf <- as.data.frame(topTags(qlf))
+
+topqlf$entrezid <- row.names(topqlf)
+left_join(topqlf, geneinfo, by = "entrezid")
 ```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
