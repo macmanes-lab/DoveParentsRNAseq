@@ -7,6 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(edgeR)
 library(org.Gg.eg.db)
+library(dplyr)
 ```
 
 # edgeR: differential expression analysis of digital gene expression data
@@ -20,6 +21,16 @@ x <- read.csv("../results/00_countData_characterization.csv", header = T, row.na
 colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
 group <- colData$treatment
 
+# to make go work, I need to swap out row names
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+head(geneinfo)
+x$entrezid <- row.names(x)
+x <- left_join(x, geneinfo)
+x <- subset(x, !duplicated(subset(x, select=c(row.names))))
+row.names(x) <- x$row.names
+x <- x[ -c(577:580) ]
+
+
 y <- DGEList(counts=x,group=group)
 y <- calcNormFactors(y)
 design <- model.matrix(~group)
@@ -28,8 +39,15 @@ y <- estimateDisp(y,design)
 # To perform quasi-likelihood F-tests:
 fit <- glmQLFit(y,design)
 qlf <- glmQLFTest(fit,coef=2)
-topqlf <- as.data.frame(topTags(qlf))
+as.data.frame(topTags(qlf))
+```
 
-topqlf$entrezid <- row.names(topqlf)
-left_join(topqlf, geneinfo, by = "entrezid")
+## Gene ontology (GO) and pathway analysis
+
+```{r}
+go <- goana(qlf, species="Gg", geneid = rownames(x))
+topGO(go, sort="up")
+
+keg <- kegga(qlf, species="Gg")
+topKEGG(keg, sort="up")
 ```
