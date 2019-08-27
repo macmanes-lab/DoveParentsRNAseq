@@ -463,6 +463,56 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   
 }
 
+
+plotprolactin <- function(mydds, colData, mysubtitle){
+  
+  mydds <- mydds
+  
+  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+  
+  # make dataframe counts
+  DEGs <- assay(vsd)
+  DEGs <- as.data.frame(DEGs)
+  DEGs$entrezid <- row.names(DEGs)
+  
+  # make dataframe with geneids and names and counts
+  # how to gather: https://tidyr.tidyverse.org/reference/gather.html
+  
+  candidates <- full_join(geneinfo, DEGs, by = "entrezid")
+  head(candidates)
+  
+  candidates <- candidates %>%
+    filter(Name %in% c( "PRL"))
+  row.names(candidates) <- candidates$Name
+  candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -Name, -geneid)
+  candidates <- candidates %>% drop_na()
+  candidates <- as.data.frame(t(candidates))
+  candidates$RNAseqID <- rownames(candidates)
+  candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% 
+    filter(RNAseqID != "gene")
+  candidates$value <- as.numeric(candidates$value)
+  candidates$V1  <- candidates$RNAseqID
+  
+  candidatecounts <- left_join(candidates, colData, by = "V1")
+  candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
+  candidatecounts$gene <- as.factor(candidatecounts$gene)
+  
+  p1 <- ggplot(candidatecounts, aes(x = treatment, y = value, fill = treatment)) +
+    geom_boxplot() +
+    facet_wrap(~gene, scales = "free") +
+    theme_minimal(base_size = 8) +
+    theme(axis.text.x = element_blank(),
+          legend.position = "bottom") +
+    labs(x = NULL, subtitle = mysubtitle) +
+    guides(fill = guide_legend(nrow = 1))
+  return(p1)
+  
+}
+
+
+
+
+
 ## make pheatmaps 
 # e.g. makepheatmap(dds.female_hypothalamus, "female hypothalamus")
 
