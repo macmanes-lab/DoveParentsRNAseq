@@ -19,7 +19,7 @@ https://www.bioconductor.org/packages/release/bioc/vignettes/edgeR/inst/doc/edge
 ```{r}
 x <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
-group <- colData$treatment
+group <- factor(paste(colData$sex, colData$tissue, colData$treatment, sep = "."))
 
 # to make go work, I need to swap out row names
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
@@ -30,7 +30,6 @@ x <- subset(x, !duplicated(subset(x, select=c(row.names))))
 row.names(x) <- x$row.names
 x <- x[ -c(577:580) ]
 
-
 y <- DGEList(counts=x,group=group)
 y <- calcNormFactors(y)
 design <- model.matrix(~group)
@@ -39,7 +38,7 @@ y <- estimateDisp(y,design)
 # To perform quasi-likelihood F-tests:
 fit <- glmQLFit(y,design)
 qlf <- glmQLFTest(fit,coef=2)
-as.data.frame(topTags(qlf))
+topTags(qlf)
 ```
 
 ## Gene ontology (GO) and pathway analysis
@@ -51,3 +50,4 @@ topGO(go, sort="up")
 keg <- kegga(qlf, species="Gg")
 topKEGG(keg, sort="up")
 ```
+
