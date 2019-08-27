@@ -159,13 +159,20 @@ plotPC12(MgonPCA, "male gonad")
 
 ## heamap with minimum pvalue
 
-```{r pheatmap, eval = F}
-makepheatmap(dds.female_hypothalamus, "female hypothalamus")
-makepheatmap(dds.female_pituitary, "female pituitary")
-makepheatmap(dds.female_gonad, "female gonad")
-makepheatmap(dds.male_hypothalamus, "male hypothalamus")
-makepheatmap(dds.male_pituitary, "male pituitary")
-makepheatmap(dds.male_gondad, "male gonad")
+```{r pheatmap, eval = T}
+colDataFH <- subsetcolData(c.colData, "female_hypothalamus")
+colDataFP <- subsetcolData(c.colData, "female_pituitary")
+colDataFG <- subsetcolData(c.colData, "female_gonad")
+colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
+colDataMP <- subsetcolData(c.colData, "male_pituitary")
+colDataMG <- subsetcolData(c.colData, "male_gonad")
+
+makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
+makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
+makepheatmap(dds.female_gonad, colDataFG, "female gonad")
+makepheatmap(dds.male_hypothalamus, colDataMH,  "male hypothalamus")
+makepheatmap(dds.male_pituitary, colDataMP, "male pituitary")
+makepheatmap(dds.male_gondad, colDataMG, "male gonad")
 ```
 ## plot candidate genes
 
