@@ -1529,8 +1529,8 @@ Calculate and plot principal component
 
 ![](../figures/characterization/pca-6.png)
 
-heamap with minimum pvalue
---------------------------
+heamap of candidate genes
+-------------------------
 
     colDataFH <- subsetcolData(c.colData, "female_hypothalamus")
     colDataFP <- subsetcolData(c.colData, "female_pituitary")
@@ -1539,15 +1539,48 @@ heamap with minimum pvalue
     colDataMP <- subsetcolData(c.colData, "male_pituitary")
     colDataMG <- subsetcolData(c.colData, "male_gonad")
 
-    #makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
-    #makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
-    #makepheatmap(dds.female_gonad, colDataFG, "female gonad")
-    #makepheatmap(dds.male_hypothalamus, colDataMH,  "male hypothalamus")
-    #makepheatmap(dds.male_pituitary, colDataMP, "male pituitary")
-    #makepheatmap(dds.male_gondad, colDataMG, "male gonad")
+    makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
 
-plot candidate genes
---------------------
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+![](../figures/characterization/pheatmap-1.png)
+
+    makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+![](../figures/characterization/pheatmap-2.png)
+
+    makepheatmap(dds.female_gonad, colDataFG, "female gonad")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+![](../figures/characterization/pheatmap-3.png)
+
+    makepheatmap(dds.male_hypothalamus, colDataMH,  "male hypothalamus")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+![](../figures/characterization/pheatmap-4.png)
+
+    makepheatmap(dds.male_pituitary, colDataMP, "male pituitary")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+![](../figures/characterization/pheatmap-5.png)
+
+    makepheatmap(dds.male_gondad, colDataMG, "male gonad")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+![](../figures/characterization/pheatmap-6.png) \#\# plot candidate
+genes
 
     plotcandidates(dds.female_hypothalamus, colDataFH,"female hypothalamus")
 
