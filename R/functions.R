@@ -421,21 +421,14 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   # make dataframe counts
   DEGs <- assay(vsd)
   DEGs <- as.data.frame(DEGs)
-  
-  names(geneinfo)
-  names(geneinfo)[4] <- "rownames"
-  DEGs$rownames <- row.names(DEGs)
-  print(head(DEGs))
+  DEGs$entrezid <- row.names(DEGs)
 
   # make dataframe with geneids and names and counts
   # how to gather: https://tidyr.tidyverse.org/reference/gather.html
  
+  candidates <- full_join(geneinfo, DEGs, by = "entrezid")
+  head(candidates)
   
-  candidates <- full_join(geneinfo, DEGs)
-  candidates <- candidates %>%
-    filter(pmin < 0.01) 
-  drop.cols <-colnames(candidates[,grep("padj|pval|pmin", colnames(candidates))])
-  candidates <- candidates %>% dplyr::select(-one_of(drop.cols))
   candidates <- candidates %>%
     filter(Name %in% c("AVP", "AVPR1A", "AVPR1B", "AVPR2",
                       "SERPINA4", "CRH", "CRHR1", "DRD1", "DRD2",
@@ -445,7 +438,7 @@ plotcandidates <- function(mydds, colData, mysubtitle){
                       "FSHB", "GHRL", "GAL", "NPVF",  "NPFFR1", "GNRH1",  "GNRHR", 
                       "LEPR",  "LHCGR", "PGR", "PRL", "PRLR", "VIP", "VIPR1"))
   row.names(candidates) <- candidates$Name
-  candidates <- candidates %>% select(-row.names, -rownames, -Name, -geneid)
+  candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -Name, -geneid)
   candidates <- candidates %>% drop_na()
   candidates <- as.data.frame(t(candidates))
   candidates$RNAseqID <- rownames(candidates)
@@ -454,25 +447,18 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   candidates$value <- as.numeric(candidates$value)
   candidates$V1  <- candidates$RNAseqID
   
-  candidatecounts <- left_join(candidates, colData)
+  candidatecounts <- left_join(candidates, colData, by = "V1")
   candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
   candidatecounts$gene <- as.factor(candidatecounts$gene)
   
-  p1 <- ggplot(candidatecounts, aes(x = treatment, y = value, fill = lastday, color = penultimate)) +
+  p1 <- ggplot(candidatecounts, aes(x = treatment, y = value, fill = treatment)) +
     geom_boxplot() +
     facet_wrap(~gene, scales = "free") +
      theme_minimal(base_size = 8) +
     theme(axis.text.x = element_blank(),
           legend.position = "bottom") +
     labs(x = NULL, subtitle = mysubtitle) +
-    scale_fill_manual(values = colorlastday, 
-                      guide = guide_legend(
-                        direction = "horizontal",
-                        label.position = "bottom")) +
-    scale_color_manual(values = colorpenultimate,
-                       guide = guide_legend(
-                         direction = "horizontal",
-                         label.position = "bottom")) 
+    guides(fill = guide_legend(nrow = 1))
   return(p1)
   
 }

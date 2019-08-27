@@ -1533,16 +1533,13 @@ heamap with minimum pvalue
 --------------------------
 
     colDataFH <- subsetcolData(c.colData, "female_hypothalamus")
-    #colDataFP <- subsetcolData(c.colData, "female_pituitary")
-    #colDataFG <- subsetcolData(c.colData, "female_gonad")
-    #colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
-    #colDataMP <- subsetcolData(c.colData, "male_pituitary")
-    #colDataMG <- subsetcolData(c.colData, "male_gonad")
+    colDataFP <- subsetcolData(c.colData, "female_pituitary")
+    colDataFG <- subsetcolData(c.colData, "female_gonad")
+    colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
+    colDataMP <- subsetcolData(c.colData, "male_pituitary")
+    colDataMG <- subsetcolData(c.colData, "male_gonad")
 
-    makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
-
-![](../figures/characterization/pheatmap-1.png)
-
+    #makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
     #makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
     #makepheatmap(dds.female_gonad, colDataFG, "female gonad")
     #makepheatmap(dds.male_hypothalamus, colDataMH,  "male hypothalamus")
@@ -1552,9 +1549,62 @@ heamap with minimum pvalue
 plot candidate genes
 --------------------
 
-    plotcandidates(dds.female_hypothalamus, "female hypothalamus")
-    plotcandidates(dds.female_pituitary, "female pituitary")
-    plotcandidates(dds.female_gonad, "female gonad")
-    plotcandidates(dds.male_hypothalamus, "male hypothalamus")
-    plotcandidates(dds.male_pituitary, "male pituitary")
-    plotcandidates(dds.male_gondad, "male gonad")
+    plotcandidates(dds.female_hypothalamus, colDataFH,"female hypothalamus")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/characterization/candidates-1.png)
+
+    plotcandidates(dds.female_pituitary, colDataFP, "female pituitary")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/characterization/candidates-2.png)
+
+    plotcandidates(dds.female_gonad, colDataFG,"female gonad")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/characterization/candidates-3.png)
+
+    plotcandidates(dds.male_hypothalamus, colDataMH,"male hypothalamus")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/characterization/candidates-4.png)
+
+    plotcandidates(dds.male_pituitary,colDataMP, "male pituitary")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/characterization/candidates-5.png)
+
+    plotcandidates(dds.male_gondad,colDataMG, "male gonad")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+![](../figures/characterization/candidates-6.png)
