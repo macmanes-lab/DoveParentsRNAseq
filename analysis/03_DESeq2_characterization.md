@@ -1171,6 +1171,10 @@ Calculate and plot principal component
     ## treatment    8   80.8   10.10   0.978  0.459
     ## Residuals   86  888.0   10.33
 
+    plotPC12(FhypPCA, "female hypothalamus")
+
+![](../figures/characterization/pca-1.png)
+
     FpitPCA <- returnPCAs(dds.female_pituitary)      
 
     ## [1] 12 10  8  6  4  3
@@ -1239,6 +1243,10 @@ Calculate and plot principal component
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
+    plotPC12(FpitPCA, "female pituitary")
+
+![](../figures/characterization/pca-2.png)
+
     FgonPCA <- returnPCAs(dds.female_gonad)
 
     ## [1] 40 13  6  4  4  3
@@ -1305,6 +1313,10 @@ Calculate and plot principal component
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
+    plotPC12(FgonPCA, "female gonad")
+
+![](../figures/characterization/pca-3.png)
+
     MhypPCA <- returnPCAs(dds.male_hypothalamus)
 
     ## [1] 28 12  7  5  4  3
@@ -1370,6 +1382,10 @@ Calculate and plot principal component
     ## Residuals   85  973.5   11.45                     
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+    plotPC12(MhypPCA, "male hypothalamus")
+
+![](../figures/characterization/pca-4.png)
 
     MpitPCA <- returnPCAs(dds.male_pituitary)
 
@@ -1439,6 +1455,10 @@ Calculate and plot principal component
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
+    plotPC12(MpitPCA, "male pituitary")
+
+![](../figures/characterization/pca-5.png)
+
     MgonPCA <- returnPCAs(dds.male_gondad)
 
     ## [1] 13  9  5  4  3  3
@@ -1505,26 +1525,6 @@ Calculate and plot principal component
     ## treatment    8   67.5   8.433   0.979  0.458
     ## Residuals   87  749.1   8.611
 
-    plotPC12(FhypPCA, "female hypothalamus")
-
-![](../figures/characterization/pca-1.png)
-
-    plotPC12(FpitPCA, "female pituitary")
-
-![](../figures/characterization/pca-2.png)
-
-    plotPC12(FgonPCA, "female gonad")
-
-![](../figures/characterization/pca-3.png)
-
-    plotPC12(MhypPCA, "male hypothalamus")
-
-![](../figures/characterization/pca-4.png)
-
-    plotPC12(MpitPCA, "male pituitary")
-
-![](../figures/characterization/pca-5.png)
-
     plotPC12(MgonPCA, "male gonad")
 
 ![](../figures/characterization/pca-6.png)
@@ -1532,12 +1532,22 @@ Calculate and plot principal component
 heamap with minimum pvalue
 --------------------------
 
-    makepheatmap(dds.female_hypothalamus, "female hypothalamus")
-    makepheatmap(dds.female_pituitary, "female pituitary")
-    makepheatmap(dds.female_gonad, "female gonad")
-    makepheatmap(dds.male_hypothalamus, "male hypothalamus")
-    makepheatmap(dds.male_pituitary, "male pituitary")
-    makepheatmap(dds.male_gondad, "male gonad")
+    colDataFH <- subsetcolData(c.colData, "female_hypothalamus")
+    #colDataFP <- subsetcolData(c.colData, "female_pituitary")
+    #colDataFG <- subsetcolData(c.colData, "female_gonad")
+    #colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
+    #colDataMP <- subsetcolData(c.colData, "male_pituitary")
+    #colDataMG <- subsetcolData(c.colData, "male_gonad")
+
+    makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
+
+![](../figures/characterization/pheatmap-1.png)
+
+    #makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
+    #makepheatmap(dds.female_gonad, colDataFG, "female gonad")
+    #makepheatmap(dds.male_hypothalamus, colDataMH,  "male hypothalamus")
+    #makepheatmap(dds.male_pituitary, colDataMP, "male pituitary")
+    #makepheatmap(dds.male_gondad, colDataMG, "male gonad")
 
 plot candidate genes
 --------------------

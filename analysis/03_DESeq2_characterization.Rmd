@@ -141,38 +141,43 @@ dev.off()
 
 ## Calculate and plot principal component
 
-```{r pca, eval = T}
-FhypPCA <- returnPCAs(dds.female_hypothalamus)
-FpitPCA <- returnPCAs(dds.female_pituitary)      
-FgonPCA <- returnPCAs(dds.female_gonad)
-MhypPCA <- returnPCAs(dds.male_hypothalamus)
-MpitPCA <- returnPCAs(dds.male_pituitary)
-MgonPCA <- returnPCAs(dds.male_gondad)
+```{r pca, eval = T, cache = TRUE}
 
+FhypPCA <- returnPCAs(dds.female_hypothalamus)
 plotPC12(FhypPCA, "female hypothalamus")
+
+FpitPCA <- returnPCAs(dds.female_pituitary)      
 plotPC12(FpitPCA, "female pituitary")
+
+FgonPCA <- returnPCAs(dds.female_gonad)
 plotPC12(FgonPCA, "female gonad")
+
+MhypPCA <- returnPCAs(dds.male_hypothalamus)
 plotPC12(MhypPCA, "male hypothalamus")
+
+MpitPCA <- returnPCAs(dds.male_pituitary)
 plotPC12(MpitPCA, "male pituitary")
+
+MgonPCA <- returnPCAs(dds.male_gondad)
 plotPC12(MgonPCA, "male gonad")
 ```
 
 ## heamap with minimum pvalue
 
-```{r pheatmap, eval = T}
+```{r pheatmap, eval = T, cache = TRUE}
 colDataFH <- subsetcolData(c.colData, "female_hypothalamus")
-colDataFP <- subsetcolData(c.colData, "female_pituitary")
-colDataFG <- subsetcolData(c.colData, "female_gonad")
-colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
-colDataMP <- subsetcolData(c.colData, "male_pituitary")
-colDataMG <- subsetcolData(c.colData, "male_gonad")
+#colDataFP <- subsetcolData(c.colData, "female_pituitary")
+#colDataFG <- subsetcolData(c.colData, "female_gonad")
+#colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
+#colDataMP <- subsetcolData(c.colData, "male_pituitary")
+#colDataMG <- subsetcolData(c.colData, "male_gonad")
 
 makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
-makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
-makepheatmap(dds.female_gonad, colDataFG, "female gonad")
-makepheatmap(dds.male_hypothalamus, colDataMH,  "male hypothalamus")
-makepheatmap(dds.male_pituitary, colDataMP, "male pituitary")
-makepheatmap(dds.male_gondad, colDataMG, "male gonad")
+#makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
+#makepheatmap(dds.female_gonad, colDataFG, "female gonad")
+#makepheatmap(dds.male_hypothalamus, colDataMH,  "male hypothalamus")
+#makepheatmap(dds.male_pituitary, colDataMP, "male pituitary")
+#makepheatmap(dds.male_gondad, colDataMG, "male gonad")
 ```
 ## plot candidate genes
 
