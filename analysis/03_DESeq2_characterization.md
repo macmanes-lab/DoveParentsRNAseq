@@ -1642,3 +1642,66 @@ genes
     ## character vector
 
 ![](../figures/characterization/candidates-6.png)
+
+plot prolactin
+--------------
+
+    a <- plotprolactin(dds.female_hypothalamus, colDataFH,"female hypothalamus")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+    b <- plotprolactin(dds.female_pituitary, colDataFP, "female pituitary")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+    c <- plotprolactin(dds.female_gonad, colDataFG,"female gonad")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+    d <- plotprolactin(dds.male_hypothalamus, colDataMH,"male hypothalamus")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+    e <- plotprolactin(dds.male_pituitary,colDataMP, "male pituitary")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+    f <- plotprolactin(dds.male_gondad,colDataMG, "male gonad")
+
+    ## Warning: Column `entrezid` joining factor and character vector, coercing
+    ## into character vector
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+    mylegend <- get_legend(f)
+
+    plots <- plot_grid(a + theme(legend.position = "none"),
+              b + theme(legend.position = "none"),
+              c + theme(legend.position = "none"),
+              d + theme(legend.position = "none"), 
+              e + theme(legend.position = "none"),
+              f + theme(legend.position = "none"))
+    plot_grid(plots, mylegend, nrow = 2, rel_heights = c(1,0.1))
+
+![](../figures/characterization/prolactin-1.png)
