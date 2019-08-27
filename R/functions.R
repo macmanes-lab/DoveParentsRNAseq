@@ -62,15 +62,6 @@ returnpadj <- function(group1, group2){
   return(pvals)
 }
 
-returnpadj2 <- function(group1, group2){
-  res <- results(mydds, contrast = c("treatment", group1, group2), independentFiltering = T)
-  pvals <- as.data.frame(res$padj)
-  padjcolname <- as.character(paste("padj", group1, group2, sep=""))
-  colnames(pvals) <- c(padjcolname)
-  return(pvals)
-}
-
-
 
 ################## ALL DEG comparisons
 
@@ -490,22 +481,26 @@ plotcandidates <- function(mydds, colData, mysubtitle){
 # e.g. makepheatmap(dds.female_hypothalamus, "female hypothalamus")
 
 makepheatmap <- function(mydds, colData, mysubtitle){
-  
-  mydds <- mydds
-  vsd <- vst(dds, blind=FALSE) # variance stabilized 
+
+  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
   
   # make dataframe counts
   DEGs <- assay(vsd)
   
   DEGs <- as.data.frame(DEGs)
   
-  a <- levels(colDataFP$treatment)
+  a <- levels(colData$treatment)
   b <- a
   
   for (i in a){
     for (j in b){
       if (i != j) {
-        results <- returnpadj2(i,j)
+        
+        res <- results(mydds, contrast = c("treatment", i, j), independentFiltering = T)
+        results <- as.data.frame(res$padj)
+        padjcolname <- as.character(paste("padj", i, j, sep=""))
+        colnames(results) <- c(padjcolname)
+
         DEGs <- cbind(DEGs,results)
       }
     }
