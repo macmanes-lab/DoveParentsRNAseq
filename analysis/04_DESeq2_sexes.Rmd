@@ -28,80 +28,37 @@ knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE)
 
 ```{r readfiles}
 # import "colData" which contains sample information and "countData" which contains read counts
-a.colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
-a.countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
+c.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
+c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
 # set levels
-levels(a.colData$treatment)
-
-a.colData$treatment <- factor(a.colData$treatment, levels = 
-                             c("control", "bldg", "lay",
-                               "inc.d3", "inc.d9", "inc.d17",
-                               "hatch", "n5", "n9",
-                              
-                               "m.inc.d3", "m.inc.d8", "m.inc.d9",
-                               "m.inc.d17",  "m.n2"  ,
-                                "prolong", "extend" ))
-                               
-a.colData$sextissue <- as.factor(paste(a.colData$sex, a.colData$tissue, sep = "_"))
-
-a.colData$lastday <- ifelse(grepl("m.inc.d3|m.inc.d9|m.inc.d17|m.n2", a.colData$treatment), "empty nest", 
-                    ifelse(grepl("m.inc.d8|hatch|extend", a.colData$treatment),"chicks hatch",      
-                     ifelse(grepl("n5", a.colData$treatment),"chicks early",
-                     ifelse(grepl("n9", a.colData$treatment),"chicks later",
-                     ifelse(grepl("control", a.colData$treatment),"control",
-                     ifelse(grepl("bldg", a.colData$treatment),"nest building",
-                     ifelse(grepl("prolong", a.colData$treatment),"eggs delay",
-                      ifelse(grepl("lay", a.colData$treatment),"eggs lay",
-                      ifelse(grepl("inc.d3", a.colData$treatment),"eggs early",
-                     ifelse(grepl("inc.d9", a.colData$treatment),"eggs middle",
-                    ifelse(grepl("inc.d17", a.colData$treatment),"eggs later", NA)))))))))))
-
-a.colData$penultimate <-  ifelse(grepl("extend", a.colData$treatment),"eggs delay",  
-                          ifelse(grepl("m.n2", a.colData$treatment),"chicks hatch",
-                     ifelse(grepl("n5", a.colData$treatment),"chicks early",
-                     ifelse(grepl("n9", a.colData$treatment),"chicks later",
-                     ifelse(grepl("control", a.colData$treatment),"control",
-                     ifelse(grepl("bldg|lay", a.colData$treatment),"nest building",
-                     ifelse(grepl("prolong", a.colData$treatment),"eggs delay",
-                      ifelse(grepl("inc.d3|m.inc.d3", a.colData$treatment),"eggs early",
-                     ifelse(grepl("inc.d9|m.inc.d9|m.inc.d8", a.colData$treatment),"eggs middle",
-                    ifelse(grepl("inc.d17|hatch", a.colData$treatment),"eggs later", NA))))))))))
-
-a.colData$xlabel <- a.colData$treatment
-
-levels(a.colData$xlabel) <-  c("control", "nest.building", "egg.lay",
-                               "eggs.early", "eggs.early.remove", 
-                               "eggs.mid", "eggs.mid.hatch", "eggs.mid.remove",
-                               "eggs.end", "eggs.end.remove",
-                               "chicks.hatch",  "chicks.hatch.remove"  ,
-                               "chicks.mid", "eggs.delay", "eggs.delay.hatch", "chicks.end")
-
-
-a.colData$lastday <- factor(a.colData$lastday, levels =  c("control", "nest building", "eggs lay",
-                               "eggs early", "eggs middle",  "eggs later","eggs delay",
-                               "chicks hatch", "chicks early",  "chicks later", "empty nest"))
-
-a.colData$penultimate <- factor(a.colData$penultimate, levels =  c("control", "nest building",
-                               "eggs early",  "eggs middle",  "eggs later",  "eggs delay",
-                               "chicks hatch", "chicks early",  "chicks later"))
-
-summary(a.colData[c(7,3,4,5,8,9, 10,11)])
+c.colData$treatment <- factor(c.colData$treatment, levels = 
+                              c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+levels(c.colData$treatment)
+c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
+summary(c.colData[c(7,3,4,5,8)])
 ```
 
 ## Run DESeq on all subsets of the data
 
 
-```{r dds, cache = T}
-dds.female_hypothalamus <- subsetDESeq(a.colData, a.countData, "female_hypothalamus")
-dds.female_pituitary <- subsetDESeq(a.colData, a.countData, "female_pituitary" )
-dds.female_gonad <- subsetDESeq(a.colData, a.countData, "female_gonad" )
-dds.male_hypothalamus <- subsetDESeq(a.colData, a.countData, "male_hypothalamus" )
-dds.male_pituitary <- subsetDESeq(a.colData, a.countData, "male_pituitary"  )
-dds.male_gondad <- subsetDESeq(a.colData, a.countData, "male_gonad")
+```{r dds}
+dds.hypothalamus <- subsetDESeq2(c.colData,  c.countData, c("female_hypothalamus","male_hypothalamus") )
+dds.pituitary <- subsetDESeq2(c.colData,  c.countData, c("female_pituitary", "male_pituitary" ) )
+dds.gonad <- subsetDESeq2(c.colData,  c.countData, c("female_gonad", "male_gonad") )
 ```
 
+```{r pca}
+hypPCA <- returnPCAs2(dds.hypothalamus)
+plotPC12(hypPCA, "female and male hypothalamus")
+
+pitPCA <- returnPCAs2(dds.pituitary)
+plotPC12(pitPCA, "female and male pituitary")
+
+gonPCA <- returnPCAs2(dds.gonad)
+plotPC12(gonPCA, "female and male gonad")
+```
 
 
 

@@ -42,6 +42,37 @@ subsetDESeq <- function(colData, countData, eachgroup){
 }
 
 
+subsetDESeq2 <- function(colData, countData, eachgroup){
+  
+  # subset to look within one tissue in one sex
+  colData <- colData %>%
+    dplyr::filter(sextissue %in% eachgroup) %>%
+    droplevels()
+  row.names(colData) <- colData$V1
+  
+  # which counts to save
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  # save counts that match colData
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  
+  # check that row and col lenghts are equal
+  print(ncol(countData) == nrow(colData))
+  
+  dds <- DESeqDataSetFromMatrix(countData = countData,
+                                colData = colData,
+                                design = ~ treatment * sex )
+  
+  print(dds)
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dim(dds))
+  
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  return(dds)
+}
+
+
 # print total number of differntially expressed genes
 # numDEGs('m.inc.d3', 'm.inc.d9')
 
@@ -327,6 +358,26 @@ returnPCAs <- function(dds){
   return(pcadata)
 }
 
+
+returnPCAs2 <- function(dds){
+  
+  dds <- dds
+  
+  vsd <- vst(dds, blind=FALSE) # variance stabilized 
+  
+  # create the dataframe using my function pcadataframe
+  pcadata <- pcadataframe(vsd, intgroup=c("sex", "treatment"), returnData=TRUE)
+  percentVar <- round(100 * attr(pcadata, "percentVar"))
+  print(percentVar)
+  
+  print(summary(aov(PC1 ~ treatment * sex, data=pcadata)))
+  print(summary(aov(PC2 ~ treatment * sex, data=pcadata))) 
+  print(summary(aov(PC3 ~ treatment * sex, data=pcadata))) 
+  print(summary(aov(PC4 ~ treatment * sex, data=pcadata))) 
+  return(pcadata)
+}
+
+
 plotPC12 <- function(pcadata, mysubtitle){ 
   
   pcadata <- pcadata %>%
@@ -341,9 +392,9 @@ plotPC12 <- function(pcadata, mysubtitle){
                             "hatchling.care" = "n5",
                             "hatchling.care" = "n9"))
   
-  pca12 <- ggplot(pcadata, aes(PC1, PC2, fill = hypothesis)) + 
-    geom_point(pch=21, size = 3) +
-    #stat_ellipse() +
+  pca12 <- ggplot(pcadata, aes(PC1, PC2, color = treatment, shape = sex)) + 
+    geom_point( size = 3) +
+    stat_ellipse() +
     theme_minimal(base_size = 12) +
     ylab(paste0("PC2")) +
     xlab(paste0("PC1")) +
