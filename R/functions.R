@@ -474,52 +474,51 @@ makepheatmap <- function(mydds, colData, mysubtitle){
   DEGs <- assay(vsd)
   
   DEGs <- as.data.frame(DEGs)
+  DEGs$entrezid <- row.names(DEGs)
   
-  a <- levels(colData$treatment)
-  b <- a
+  candidates <- full_join(geneinfo, DEGs, by = "entrezid")
   
-  for (i in a){
-    for (j in b){
-      if (i != j) {
-        
-        res <- results(mydds, contrast = c("treatment", i, j), independentFiltering = T)
-        results <- as.data.frame(res$padj)
-        padjcolname <- as.character(paste("padj", i, j, sep=""))
-        colnames(results) <- c(padjcolname)
+  candidates <- candidates %>%
+    filter(Name %in% c("AVP", "AVPR1A", "AVPR1B", "AVPR2",
+                       "SERPINA4", "CRH", "CRHR1", "DRD1", "DRD2",
+                       "DRD3",  "DRD4",  "DRD5",  "GABRQ",  "NR3C1",  "HSD11B1a", 
+                       "HSD11B1b", "HSD11B2L",  "HSD11B1L",  "MC2R", "NR3C2",
+                       "OXTR", "POMC",  "AR", "CYP19A1", "ESR1",  "ESR2", "FSHR", 
+                       "FSHB", "GHRL", "GAL", "NPVF",  "NPFFR1", "GNRH1",  "GNRHR", 
+                       "LEPR",  "LHCGR", "PGR", "PRL", "PRLR", "VIP", "VIPR1"))
+  
+  row.names(candidates) <- candidates$Name
+  candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -Name, -geneid)
+  candidates <- candidates %>% drop_na()
+  
+  DEGsmatrix <- as.matrix(candidates)
+  head(DEGsmatrix)
+  
+  DEGsmatrix <- DEGsmatrix - rowMeans(DEGsmatrix)
 
-        DEGs <- cbind(DEGs,results)
-      }
-    }
-    b <- b[-1]  # drop 1st element of second string to not recalculate DEGs
-  }
-  
-  DEGsmatrix <- DEGs
-  DEGsmatrix <- as.matrix(DEGs)
-  padjmin <- rowMins(DEGsmatrix, na.rm = T) 
-  padjmin <- as.data.frame(padjmin)
-  
-  sigDEGs <- cbind(DEGs,padjmin)
-  sigDEGs <- sigDEGs %>% arrange(padjmin)
-  sigDEGs <- head(sigDEGs,500)
-  sigDEGs <- as.data.frame(sigDEGs)
-  rownames(sigDEGs) <- sigDEGs$rownames
-  drop.cols <-colnames(sigDEGs[,grep("padj|pval|pmin|rownames", colnames(sigDEGs))])
-  sigDEGs <- sigDEGs %>% dplyr::select(-one_of(drop.cols))
-  sigDEGs <- as.matrix(sigDEGs)
-  sigDEGs <- sigDEGs - rowMeans(sigDEGs)
-  
-  paletteLength <- 30
-  myBreaks <- c(seq(min(sigDEGs), 0, length.out=ceiling(paletteLength/2) + 1), 
-                seq(max(sigDEGs)/paletteLength, max(sigDEGs), length.out=floor(paletteLength/2)))
+  #paletteLength <- 30
+  #myBreaks <- c(seq(min(DEGsmatrix), 0, length.out=ceiling(paletteLength/2) + 1), 
+  #              seq(max(DEGsmatrix)/paletteLength, max(DEGsmatrix), length.out=floor(paletteLength/2)))
   
   anndf <- colData %>% dplyr::select(treatment)
   rownames(anndf) <- colData$V1
+  anncolors <- list(treatment = c("control" = "#F8766D",
+                                          "bldg" = "#D39200" ,
+                                          "lay"  = "#93AA00",
+                                          "inc.d3" =  "#00BA38" ,
+                                          "inc.d9" = "#00C19F",
+                                          "inc.d17" = "#00B9E3",
+                                          "hatch"  = "#619CFF",
+                                          "n5"   = "#DB72FB",
+                                          "n9" = "#FF61C3"))
   
-  sigDEGs <- as.matrix(sigDEGs) 
-  p1 <- pheatmap(sigDEGs, show_rownames = F, show_colnames = F,
+  levels(c.colData$treatment)
+  
+  p1 <- pheatmap(DEGsmatrix, show_rownames = T, show_colnames = F,
            color = viridis(30),
-           breaks=myBreaks,
-           annotation_col=anndf,
+           #breaks=myBreaks,
+           annotation_col = anndf,
+           annotation_colors = anncolors,
            main = mysubtitle)
   return(p1)
   }
