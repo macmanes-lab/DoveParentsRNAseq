@@ -166,13 +166,13 @@ plotPC12(MgonPCA, "male gonad")
 
 ```{r pheatmap, eval = T, cache = TRUE}
 colDataFH <- subsetcolData(c.colData, "female_hypothalamus")
-#colDataFP <- subsetcolData(c.colData, "female_pituitary")
-#colDataFG <- subsetcolData(c.colData, "female_gonad")
-#colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
-#colDataMP <- subsetcolData(c.colData, "male_pituitary")
-#colDataMG <- subsetcolData(c.colData, "male_gonad")
+colDataFP <- subsetcolData(c.colData, "female_pituitary")
+colDataFG <- subsetcolData(c.colData, "female_gonad")
+colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
+colDataMP <- subsetcolData(c.colData, "male_pituitary")
+colDataMG <- subsetcolData(c.colData, "male_gonad")
 
-makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
+#makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
 #makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
 #makepheatmap(dds.female_gonad, colDataFG, "female gonad")
 #makepheatmap(dds.male_hypothalamus, colDataMH,  "male hypothalamus")
@@ -181,12 +181,12 @@ makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
 ```
 ## plot candidate genes
 
-```{r candidates, eval = F}
-plotcandidates(dds.female_hypothalamus, "female hypothalamus")
-plotcandidates(dds.female_pituitary, "female pituitary")
-plotcandidates(dds.female_gonad, "female gonad")
-plotcandidates(dds.male_hypothalamus, "male hypothalamus")
-plotcandidates(dds.male_pituitary, "male pituitary")
-plotcandidates(dds.male_gondad, "male gonad")
+```{r candidates, eval = T}
+plotcandidates(dds.female_hypothalamus, colDataFH,"female hypothalamus")
+plotcandidates(dds.female_pituitary, colDataFP, "female pituitary")
+plotcandidates(dds.female_gonad, colDataFG,"female gonad")
+plotcandidates(dds.male_hypothalamus, colDataMH,"male hypothalamus")
+plotcandidates(dds.male_pituitary,colDataMP, "male pituitary")
+plotcandidates(dds.male_gondad,colDataMG, "male gonad")
 ```
 
