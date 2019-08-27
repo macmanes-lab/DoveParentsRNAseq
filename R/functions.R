@@ -496,9 +496,9 @@ makepheatmap <- function(mydds, colData, mysubtitle){
   
   DEGsmatrix <- DEGsmatrix - rowMeans(DEGsmatrix)
 
-  #paletteLength <- 30
-  #myBreaks <- c(seq(min(DEGsmatrix), 0, length.out=ceiling(paletteLength/2) + 1), 
-  #              seq(max(DEGsmatrix)/paletteLength, max(DEGsmatrix), length.out=floor(paletteLength/2)))
+  paletteLength <- 30
+  myBreaks <- c(seq(min(DEGsmatrix), 0, length.out=ceiling(paletteLength/2) + 1), 
+                seq(max(DEGsmatrix)/paletteLength, max(DEGsmatrix), length.out=floor(paletteLength/2)))
   
   anndf <- colData %>% dplyr::select(treatment)
   rownames(anndf) <- colData$V1

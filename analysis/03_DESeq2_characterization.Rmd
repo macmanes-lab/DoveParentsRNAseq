@@ -172,6 +172,7 @@ colDataMH <- subsetcolData(c.colData, "male_hypothalamus")
 colDataMP <- subsetcolData(c.colData, "male_pituitary")
 colDataMG <- subsetcolData(c.colData, "male_gonad")
 
+
 makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
 makepheatmap(dds.female_pituitary, colDataFP, "female pituitary")
 makepheatmap(dds.female_gonad, colDataFG, "female gonad")

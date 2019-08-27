@@ -1539,6 +1539,7 @@ heamap of candidate genes
     colDataMP <- subsetcolData(c.colData, "male_pituitary")
     colDataMG <- subsetcolData(c.colData, "male_gonad")
 
+
     makepheatmap(dds.female_hypothalamus, colDataFH, "female hypothalamus")
 
     ## Warning: Column `entrezid` joining factor and character vector, coercing
