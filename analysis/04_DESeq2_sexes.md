@@ -1,3 +1,170 @@
+    library(tidyverse)
+
+    ## ── Attaching packages ───────────────────── tidyverse 1.2.1 ──
+
+    ## ✔ ggplot2 3.2.0     ✔ purrr   0.3.2
+    ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
+    ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
+    ## ✔ readr   1.3.1     ✔ forcats 0.4.0
+
+    ## ── Conflicts ──────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+
+    library(DESeq2)
+
+    ## Loading required package: S4Vectors
+
+    ## Loading required package: stats4
+
+    ## Loading required package: BiocGenerics
+
+    ## Loading required package: parallel
+
+    ## 
+    ## Attaching package: 'BiocGenerics'
+
+    ## The following objects are masked from 'package:parallel':
+    ## 
+    ##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    ##     clusterExport, clusterMap, parApply, parCapply, parLapply,
+    ##     parLapplyLB, parRapply, parSapply, parSapplyLB
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     combine, intersect, setdiff, union
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     IQR, mad, sd, var, xtabs
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     anyDuplicated, append, as.data.frame, basename, cbind,
+    ##     colnames, dirname, do.call, duplicated, eval, evalq, Filter,
+    ##     Find, get, grep, grepl, intersect, is.unsorted, lapply, Map,
+    ##     mapply, match, mget, order, paste, pmax, pmax.int, pmin,
+    ##     pmin.int, Position, rank, rbind, Reduce, rownames, sapply,
+    ##     setdiff, sort, table, tapply, union, unique, unsplit, which,
+    ##     which.max, which.min
+
+    ## 
+    ## Attaching package: 'S4Vectors'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     first, rename
+
+    ## The following object is masked from 'package:tidyr':
+    ## 
+    ##     expand
+
+    ## The following object is masked from 'package:base':
+    ## 
+    ##     expand.grid
+
+    ## Loading required package: IRanges
+
+    ## 
+    ## Attaching package: 'IRanges'
+
+    ## The following objects are masked from 'package:dplyr':
+    ## 
+    ##     collapse, desc, slice
+
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     reduce
+
+    ## Loading required package: GenomicRanges
+
+    ## Loading required package: GenomeInfoDb
+
+    ## Loading required package: SummarizedExperiment
+
+    ## Loading required package: Biobase
+
+    ## Welcome to Bioconductor
+    ## 
+    ##     Vignettes contain introductory material; view with
+    ##     'browseVignettes()'. To cite Bioconductor, see
+    ##     'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+    ## Loading required package: DelayedArray
+
+    ## Loading required package: matrixStats
+
+    ## 
+    ## Attaching package: 'matrixStats'
+
+    ## The following objects are masked from 'package:Biobase':
+    ## 
+    ##     anyMissing, rowMedians
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     count
+
+    ## Loading required package: BiocParallel
+
+    ## 
+    ## Attaching package: 'DelayedArray'
+
+    ## The following objects are masked from 'package:matrixStats':
+    ## 
+    ##     colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges
+
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     simplify
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     aperm, apply, rowsum
+
+    library(cowplot)
+
+    ## 
+    ## Attaching package: 'cowplot'
+
+    ## The following object is masked from 'package:ggplot2':
+    ## 
+    ##     ggsave
+
+    library(pheatmap)
+    library(viridis)
+
+    ## Loading required package: viridisLite
+
+    library(forcats)
+    library(caret) # LDA analysis
+
+    ## Loading required package: lattice
+
+    ## 
+    ## Attaching package: 'caret'
+
+    ## The following object is masked from 'package:purrr':
+    ## 
+    ##     lift
+
+    library(MASS) # LDA analysis
+
+    ## 
+    ## Attaching package: 'MASS'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     select
+
+    library(BiocParallel)
+    register(MulticoreParam(6))
+
+    source("../R/functions.R")  # load custom functions 
+    source("../R/themes.R")  # load custom themes and color palletes
+
+    knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE,  message=F, comment=FALSE, warning=FALSE)
+
 DEseq2 analysis on characterization. Looking at treatment AND sex for each tissue
 ---------------------------------------------------------------------------------
 
@@ -6,12 +173,14 @@ DEseq2 analysis on characterization. Looking at treatment AND sex for each tissu
     c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
     geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
-    # set levels
+    # set treatment levels
     c.colData$treatment <- factor(c.colData$treatment, levels = 
                                   c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
 
+    # craete variable that will be critical for subset later on
     c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
 
+    # ceate new variable for hypothesis testing
     c.colData <- c.colData %>%
         mutate(hypothesis = fct_recode(treatment,
                                 "anticipation" = "control",
