@@ -106,11 +106,9 @@ returnpadj <- function(group1, group2){
 returntotalDEGs <- function(dds){
   
   colData <- c.colData # %>%
-
-  group1 <- levels(colData$treatment)
-
-  a <- group1
-  b <- group1
+  
+  a <- levels(colData$treatment)
+  b <- levels(colData$treatment)
   
   # comapre all contrasts, save to datafrmes
   totalDEGS=data.frame()
@@ -135,7 +133,9 @@ returntotalDEGs <- function(dds){
 ############ plottotalDEGs ############ 
 
 plottotalDEGs <- function(myDEGS, mysubtitle){  
+  
   totalDEGS <- myDEGS
+  
   totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", "lay",
                                                    "inc.d3", "inc.d9", "inc.d17",
                                                    "hatch", "n5", "n9"))
@@ -144,7 +144,7 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
                                                    "inc.d3", "inc.d9", "inc.d17",
                                                    "hatch", "n5", "n9"))
 
-  totalDEGS <- totalDEGS %>% dplyr::na_if(0)
+  #totalDEGS <- totalDEGS %>% dplyr::na_if(0)
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
