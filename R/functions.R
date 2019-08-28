@@ -1,19 +1,19 @@
 # subset col for heatmap
-subsetcolData <- function(colData, eachgroup){
+subsetcolData <- function(colData, whichgroup){
   
   # subset to look within one tissue in one sex
   colData <- colData %>%
-    dplyr::filter(sextissue == eachgroup) %>%
+    dplyr::filter(sextissue == whichgroup) %>%
     droplevels()
   row.names(colData) <- colData$V1
   return(colData)
 }
 
-subsetcolData2 <- function(colData, eachgroup){
+subsetcolData2 <- function(colData, whichgroups){
   
   # subset to look within one tissue in two sexes
   colData <- colData %>%
-    dplyr::filter(sextissue %in% eachgroup) %>%
+    dplyr::filter(sextissue %in% whichgroup) %>%
     droplevels()
   row.names(colData) <- colData$V1
   return(colData)
