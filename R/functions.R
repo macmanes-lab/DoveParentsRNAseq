@@ -414,11 +414,7 @@ plotPC12 <- function(pcadata, mysubtitle){
 
 ######### plotcandidates ######### 
 
-plotcandidates <- function(mydds, colData, mysubtitle){
-  
-  mydds <- mydds
-  
-  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+plotcandidates <- function(vsd, colData, mysubtitle){
   
   # make dataframe counts
   DEGs <- assay(vsd)
