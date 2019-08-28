@@ -463,11 +463,7 @@ plotcandidates <- function(vsd, colData, mysubtitle){
 
 ######### plotcandidates ######### 
 
-plotprolactin <- function(mydds, colData, mysubtitle){
-  
-  mydds <- mydds
-  
-  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+plotprolactin <- function(vsd, colData, mysubtitle){
   
   # make dataframe counts
   DEGs <- assay(vsd)
