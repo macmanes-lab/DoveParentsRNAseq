@@ -335,7 +335,7 @@ Linear discriminant analysis (LDA)
 
       # LDA plot using ggplot2 
       lda.data <- cbind(train.transformed, predict(model)$x)
-      p<-ggplot(data=lda.data, aes(x=treatment, y=LD1, fill = treatment)) +
+      p <- ggplot(data=lda.data, aes(x=treatment, y=LD1, fill = treatment)) +
         geom_bar( stat = "summary", fun.y = "mean")
       plot(p)
 
