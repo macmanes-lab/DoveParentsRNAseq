@@ -37,10 +37,8 @@ geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 # set levels
 c.colData$treatment <- factor(c.colData$treatment, levels = 
                               c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
-levels(c.colData$treatment)
-c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
 
-summary(c.colData[c(7,3,4,5,8)])
+c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
 
 c.colData <- c.colData %>%
     mutate(hypothesis = fct_recode(treatment,
@@ -54,7 +52,12 @@ c.colData <- c.colData %>%
                             "hatchling.care" = "n5",
                             "hatchling.care" = "n9"))
 
-
+# drop columsn that are bad for model
+c.colData$bird <- NULL
+c.colData$tissue <- NULL
+c.colData$study <- NULL
+c.colData$group <- NULL
+head(c.colData)
 ```
 
 
@@ -86,7 +89,7 @@ http://www.sthda.com/english/articles/36-classification-methods-essentials/146-d
 ```{r LDA}
 theme_set(theme_classic())
 
-LDAanalysis <- function(mydds, mycolData){
+LDAanalysis <- function(mydds, mycolData, mysubtitle){
   # data prep
   vsd <- vst(mydds, blind=FALSE) # variance stabilized 
   tvsd <- as.data.frame(t(assay(vsd)))   # get vsd counts and transform
@@ -95,6 +98,7 @@ LDAanalysis <- function(mydds, mycolData){
   tvsd$V1 <- row.names(tvsd)             # prep for joining
 
   mydata <- left_join(tvsd, mycolData, by = "V1")  # merge counts and variables
+  mydata$V1 <- NULL
   
   # Split the data into training (80%) and test set (20%)
   set.seed(175)
@@ -115,11 +119,11 @@ LDAanalysis <- function(mydds, mycolData){
 
   # LDA analysis
   # Fit the model
-  model <- lda(treatment~ sex, data = train.transformed)
+  model <- lda(hypothesis~ ., data = train.transformed)
   # Make predictions
   predictions <- model %>% predict(test.transformed)
   # Model accuracy
-  mean(predictions$class==test.transformed$treatment)
+  mean(predictions$class==test.transformed$hypothesis)
 
   # results
   print(model)
@@ -128,29 +132,30 @@ LDAanalysis <- function(mydds, mycolData){
   predictions <- model %>% predict(test.transformed)
   
   # Predicted classes
-  print(head(predictions$class, 6))
+  head(predictions$class, 6)
   # Predicted probabilities of class memebership.
-  print(head(predictions$posterior, 6) )
+  head(predictions$posterior, 6) 
   # Linear discriminants
-  print(head(predictions$x, 3) )
+  head(predictions$x, 3)
 
   # LDA plot using ggplot2 
   lda.data <- cbind(train.transformed, predict(model)$x)
-  p <- ggplot(data=lda.data, aes(x=treatment, y=LD1, fill = treatment)) +
-    geom_bar( stat = "summary", fun.y = "mean")
+  p <- ggplot(data = lda.data, aes(LD1, LD2, color = hypothesis, shape = sex)) +
+    geom_point() +
+    labs(subtitle = mysubtitle)
   plot(p)
 
   # model accuracy 
-  print(mean(predictions$class==test.transformed$treatment))
+  print(mean(predictions$class==test.transformed$hypothesis))
 }
 
 colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
 colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
 colDataGon <- subsetcolData2(c.colData, c("female_gonad", "male_gonad"))
 
-LDAanalysis(dds.hypothalamus, colDataHyp)
-LDAanalysis(dds.pituitary, colDataPit)
-LDAanalysis(dds.gonad, colDataGon)
+LDAanalysis(dds.hypothalamus, colDataHyp, "Hypothalamus")
+LDAanalysis(dds.pituitary, colDataPit, "Pituitary")
+LDAanalysis(dds.gonad, colDataGon, "Gonad")
 ```
 
 
