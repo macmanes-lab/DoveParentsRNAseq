@@ -115,11 +115,11 @@ LDAanalysis <- function(mydds, mycolData){
 
   # LDA analysis
   # Fit the model
-  print(model <- lda(treatment~ sex, data = train.transformed))
+  model <- lda(treatment~ sex, data = train.transformed)
   # Make predictions
-  print(predictions <- model %>% predict(test.transformed))
-# Model accuracy
-  print(mean(predictions$class==test.transformed$treatment))
+  predictions <- model %>% predict(test.transformed)
+  # Model accuracy
+  mean(predictions$class==test.transformed$treatment)
 
   # results
   print(model)
