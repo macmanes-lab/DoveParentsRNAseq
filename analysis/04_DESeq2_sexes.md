@@ -1,170 +1,3 @@
-    library(tidyverse)
-
-    ## ── Attaching packages ───────────────────── tidyverse 1.2.1 ──
-
-    ## ✔ ggplot2 3.2.0     ✔ purrr   0.3.2
-    ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
-    ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
-    ## ✔ readr   1.3.1     ✔ forcats 0.4.0
-
-    ## ── Conflicts ──────────────────────── tidyverse_conflicts() ──
-    ## ✖ dplyr::filter() masks stats::filter()
-    ## ✖ dplyr::lag()    masks stats::lag()
-
-    library(DESeq2)
-
-    ## Loading required package: S4Vectors
-
-    ## Loading required package: stats4
-
-    ## Loading required package: BiocGenerics
-
-    ## Loading required package: parallel
-
-    ## 
-    ## Attaching package: 'BiocGenerics'
-
-    ## The following objects are masked from 'package:parallel':
-    ## 
-    ##     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
-    ##     clusterExport, clusterMap, parApply, parCapply, parLapply,
-    ##     parLapplyLB, parRapply, parSapply, parSapplyLB
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     combine, intersect, setdiff, union
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     IQR, mad, sd, var, xtabs
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     anyDuplicated, append, as.data.frame, basename, cbind,
-    ##     colnames, dirname, do.call, duplicated, eval, evalq, Filter,
-    ##     Find, get, grep, grepl, intersect, is.unsorted, lapply, Map,
-    ##     mapply, match, mget, order, paste, pmax, pmax.int, pmin,
-    ##     pmin.int, Position, rank, rbind, Reduce, rownames, sapply,
-    ##     setdiff, sort, table, tapply, union, unique, unsplit, which,
-    ##     which.max, which.min
-
-    ## 
-    ## Attaching package: 'S4Vectors'
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     first, rename
-
-    ## The following object is masked from 'package:tidyr':
-    ## 
-    ##     expand
-
-    ## The following object is masked from 'package:base':
-    ## 
-    ##     expand.grid
-
-    ## Loading required package: IRanges
-
-    ## 
-    ## Attaching package: 'IRanges'
-
-    ## The following objects are masked from 'package:dplyr':
-    ## 
-    ##     collapse, desc, slice
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     reduce
-
-    ## Loading required package: GenomicRanges
-
-    ## Loading required package: GenomeInfoDb
-
-    ## Loading required package: SummarizedExperiment
-
-    ## Loading required package: Biobase
-
-    ## Welcome to Bioconductor
-    ## 
-    ##     Vignettes contain introductory material; view with
-    ##     'browseVignettes()'. To cite Bioconductor, see
-    ##     'citation("Biobase")', and for packages 'citation("pkgname")'.
-
-    ## Loading required package: DelayedArray
-
-    ## Loading required package: matrixStats
-
-    ## 
-    ## Attaching package: 'matrixStats'
-
-    ## The following objects are masked from 'package:Biobase':
-    ## 
-    ##     anyMissing, rowMedians
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     count
-
-    ## Loading required package: BiocParallel
-
-    ## 
-    ## Attaching package: 'DelayedArray'
-
-    ## The following objects are masked from 'package:matrixStats':
-    ## 
-    ##     colMaxs, colMins, colRanges, rowMaxs, rowMins, rowRanges
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     simplify
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     aperm, apply, rowsum
-
-    library(cowplot)
-
-    ## 
-    ## Attaching package: 'cowplot'
-
-    ## The following object is masked from 'package:ggplot2':
-    ## 
-    ##     ggsave
-
-    library(pheatmap)
-    library(viridis)
-
-    ## Loading required package: viridisLite
-
-    library(forcats)
-    library(caret) # LDA analysis
-
-    ## Loading required package: lattice
-
-    ## 
-    ## Attaching package: 'caret'
-
-    ## The following object is masked from 'package:purrr':
-    ## 
-    ##     lift
-
-    library(MASS) # LDA analysis
-
-    ## 
-    ## Attaching package: 'MASS'
-
-    ## The following object is masked from 'package:dplyr':
-    ## 
-    ##     select
-
-    library(BiocParallel)
-    register(MulticoreParam(6))
-
-    source("../R/functions.R")  # load custom functions 
-    source("../R/themes.R")  # load custom themes and color palletes
-
-    knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE,  message=F, comment=FALSE, warning=FALSE)
-
 DEseq2 analysis on characterization. Looking at treatment AND sex for each tissue
 ---------------------------------------------------------------------------------
 
@@ -462,21 +295,9 @@ Linear discriminant analysis (LDA)
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
     FALSE [1] 6.137500 3.320437 2.252064 1.857671 1.697019 1.432470 1.008004 0.840279
 
-    LDAplot.treatment(LDA.hyp1 , "Hypothalamus")
-
-![](../figures/sexes/LDA-1.png)
-
-    LDAplot.treatment(LDA.pit1 ,  "Pituitary")
-
-![](../figures/sexes/LDA-2.png)
-
-    LDAplot.treatment(LDA.gon1 , "Gonad")
-
-![](../figures/sexes/LDA-3.png)
-
     # LDA for hypothesis (3 groups)
 
-    LDA.hyp1 <- LDAdata.hypothesis(vsd.hyp, colDataHyp)
+    LDA.hyp2 <- LDAdata.hypothesis(vsd.hyp, colDataHyp)
 
     FALSE [1] "model accuracy"
     FALSE [1] "predictions$class==test.transformed$hypothesis)"
@@ -653,7 +474,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7ff1205d3a50>
+    FALSE <environment: 0x7ffc78978780>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_015154126.1, XP_015148612.1, NP_001012716.1, 
     FALSE     XP_423016.4, XP_015153296.1, NP_001005800.1, NP_999837.1, 
@@ -675,7 +496,7 @@ Linear discriminant analysis (LDA)
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
     FALSE [1] 7.386458 3.720794
 
-    LDA.pit1 <- LDAdata.hypothesis(vsd.pit, colDataPit)
+    LDA.pit2 <- LDAdata.hypothesis(vsd.pit, colDataPit)
 
     FALSE [1] "model accuracy"
     FALSE [1] "predictions$class==test.transformed$hypothesis)"
@@ -852,7 +673,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7ff132ed8338>
+    FALSE <environment: 0x7ffc70245648>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_424601.2, XP_015153829.1, NP_001005823.1, 
     FALSE     XP_001231665.4, XP_001234312.1, XP_419245.5, XP_015130606.1, 
@@ -874,7 +695,7 @@ Linear discriminant analysis (LDA)
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
     FALSE [1] 7.846659 5.076861
 
-    LDA.gon1 <- LDAdata.hypothesis(vsd.gon, colDataGon)
+    LDA.gon2 <- LDAdata.hypothesis(vsd.gon, colDataGon)
 
     FALSE [1] "model accuracy"
     FALSE [1] "predictions$class==test.transformed$hypothesis)"
@@ -1051,7 +872,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7ff148f2ab58>
+    FALSE <environment: 0x7ffc763eca38>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_421626.3, XP_015152450.1, NP_001005427.1, 
     FALSE     NP_990837.1, XP_001233399.3, XP_417425.2, XP_015129896.1, 
@@ -1073,14 +894,61 @@ Linear discriminant analysis (LDA)
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
     FALSE [1] 6.029069 3.837591
 
-    LDAplot.hypothesis(LDA.hyp1 , "Hypothalamus")
+    # figures for both of the above
+
+    # treatment
+    a <- LDAplot.treatment(LDA.hyp1 , "Hypothalamus model 1", "parental state ~ .  0.277 pred. acc.",
+                            "LD1, F = 7.1504779", "LD2, F = 2.4219585")
+
+![](../figures/sexes/LDA-1.png)
+
+    b <- LDAplot.treatment(LDA.pit1 ,  "Pituitary model 1", "parental state ~ .  0.405 pred. acc.",
+                            "LD1, F = 9.6144160", "LD2, F = 3.7773314")
+
+![](../figures/sexes/LDA-2.png)
+
+    c <- LDAplot.treatment(LDA.gon1 , "Gonad model 1", "parental state ~ .  has 0.297 pred. acc.",
+                            "LD1, F = 6.137500", "LD2, F = 3.320437")
+
+![](../figures/sexes/LDA-3.png)
+
+    c <- c + theme(legend.direction = "horizontal")
+    mylegend <- get_legend(c)
+
+    temp <- plot_grid(a + theme(legend.position = "none"),
+                      b + theme(legend.position = "none"),
+                      c + theme(legend.position = "none"), nrow = 1)
+
+
+    plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 
 ![](../figures/sexes/LDA-4.png)
 
-    LDAplot.hypothesis(LDA.pit1 ,  "Pituitary")
+    # hypothesis
+
+    d <- LDAplot.hypothesis(LDA.hyp2 , "Hypothalamus model 2", "parental stage ~ .  0.432 pred. acc.",
+                            "LD1, F = 7.386458", "LD2, F = 3.720794")
 
 ![](../figures/sexes/LDA-5.png)
 
-    LDAplot.hypothesis(LDA.gon1 , "Gonad")
+    e <- LDAplot.hypothesis(LDA.pit2 ,  "Pituitary model 2", "parental stage ~ .  0.473 pred. acc.",
+                            "LD1, F = 7.846659", "LD2, F = 5.076861")
 
 ![](../figures/sexes/LDA-6.png)
+
+    f <- LDAplot.hypothesis(LDA.gon2 , "Gonad model 3", "parental stage ~ .  has 0.368 pred. acc.",
+                            "LD1, F = 6.029069", "LD2, F = 3.837591")
+
+![](../figures/sexes/LDA-7.png)
+
+    f <- f + theme(legend.direction = "horizontal")
+    mylegend <- get_legend(f)
+
+    temp <- plot_grid(d + theme(legend.position = "none"),
+                      e + theme(legend.position = "none"),
+                      f + theme(legend.position = "none"), nrow = 1)
+
+
+    plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
+
+![](../figures/sexes/LDA-8.png)

@@ -3,7 +3,7 @@ title: "04_DESeq_sexes"
 output: md_document
 ---
 
-```{r setup}
+```{r setup, include = FALSE}
 
 library(tidyverse)
 library(DESeq2)
@@ -13,6 +13,7 @@ library(viridis)
 library(forcats)
 library(caret) # LDA analysis
 library(MASS) # LDA analysis
+library(ggtext) # for pretty plots
 
 library(BiocParallel)
 register(MulticoreParam(6))
@@ -106,7 +107,7 @@ plotPC12(gonPCA, "Gonad")
 http://www.sthda.com/english/articles/36-classification-methods-essentials/146-discriminant-analysis-essentials-in-r/
 
 
-```{r LDA}
+```{r LDAdfs}
 # prep col data for LDA
 colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
 colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
@@ -117,19 +118,58 @@ LDA.hyp1 <- LDAdata.treatment(vsd.hyp, colDataHyp)
 LDA.pit1 <- LDAdata.treatment(vsd.pit, colDataPit)
 LDA.gon1 <- LDAdata.treatment(vsd.gon, colDataGon)
 
-LDAplot.treatment(LDA.hyp1 , "Hypothalamus")
-LDAplot.treatment(LDA.pit1 ,  "Pituitary")
-LDAplot.treatment(LDA.gon1 , "Gonad")
-
 # LDA for hypothesis (3 groups)
 
-LDA.hyp1 <- LDAdata.hypothesis(vsd.hyp, colDataHyp)
-LDA.pit1 <- LDAdata.hypothesis(vsd.pit, colDataPit)
-LDA.gon1 <- LDAdata.hypothesis(vsd.gon, colDataGon)
+LDA.hyp2 <- LDAdata.hypothesis(vsd.hyp, colDataHyp)
+LDA.pit2 <- LDAdata.hypothesis(vsd.pit, colDataPit)
+LDA.gon2 <- LDAdata.hypothesis(vsd.gon, colDataGon)
 
-LDAplot.hypothesis(LDA.hyp1 , "Hypothalamus")
-LDAplot.hypothesis(LDA.pit1 ,  "Pituitary")
-LDAplot.hypothesis(LDA.gon1 , "Gonad")
+```
+
+```{r LDA, fig.width = 9}
+
+# figures for both of the above
+
+# treatment
+a <- LDAplot.treatment(LDA.hyp1 , "Hypothalamus model 1", "parental state ~ .  0.277 pred. acc.",
+                        "LD1, F = 7.1504779", "LD2, F = 2.4219585")
+
+b <- LDAplot.treatment(LDA.pit1 ,  "Pituitary model 1", "parental state ~ .  0.405 pred. acc.",
+                        "LD1, F = 9.6144160", "LD2, F = 3.7773314")
+
+c <- LDAplot.treatment(LDA.gon1 , "Gonad model 1", "parental state ~ .  has 0.297 pred. acc.",
+                        "LD1, F = 6.137500", "LD2, F = 3.320437")
+
+c <- c + theme(legend.direction = "horizontal")
+mylegend <- get_legend(c)
+
+temp <- plot_grid(a + theme(legend.position = "none"),
+                  b + theme(legend.position = "none"),
+                  c + theme(legend.position = "none"), nrow = 1)
+
+
+plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
+
+# hypothesis
+
+d <- LDAplot.hypothesis(LDA.hyp2 , "Hypothalamus model 2", "parental stage ~ .  0.432 pred. acc.",
+                        "LD1, F = 7.386458", "LD2, F = 3.720794")
+
+e <- LDAplot.hypothesis(LDA.pit2 ,  "Pituitary model 2", "parental stage ~ .  0.473 pred. acc.",
+                        "LD1, F = 7.846659", "LD2, F = 5.076861")
+
+f <- LDAplot.hypothesis(LDA.gon2 , "Gonad model 3", "parental stage ~ .  has 0.368 pred. acc.",
+                        "LD1, F = 6.029069", "LD2, F = 3.837591")
+
+f <- f + theme(legend.direction = "horizontal")
+mylegend <- get_legend(f)
+
+temp <- plot_grid(d + theme(legend.position = "none"),
+                  e + theme(legend.position = "none"),
+                  f + theme(legend.position = "none"), nrow = 1)
+
+
+plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 ```
 
 
