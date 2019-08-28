@@ -604,3 +604,163 @@ plotcorrelationheatmaps <- function(vsd, mycoldata, mysubtitle){
   )
 }
 
+
+
+######### LDAdata.treatment ######### 
+
+LDAdata.treatment <- function(vsd, mycolData, mypredictor){
+  
+  # data prep
+  tvsd <- as.data.frame(t(assay(vsd)))   # get vsd counts and transform
+  
+  tvsd <- tvsd[, sample(ncol(tvsd), 20)] # select 20 random genes for testing
+  tvsd$V1 <- row.names(tvsd)             # prep for joining
+  
+  mydata <- left_join(tvsd, mycolData, by = "V1")  # merge counts and variables
+  mydata$V1 <- NULL
+  mydata$sextissue <- NULL
+  mydata$hypothesis <- NULL
+  
+  # Split the data into training (80%) and test set (20%)
+  set.seed(175)
+  
+  training.samples <- mydata$treatment %>%
+    createDataPartition(p = 0.8, list = FALSE)
+  train.data <- mydata[training.samples, ]
+  test.data <- mydata[-training.samples, ]
+  
+  # Normalize the data. Categorical variables are automatically ignored.
+  # Estimate preprocessing parameters
+  preproc.param <- train.data %>% 
+    preProcess(method = c("center", "scale"))
+  
+  # Transform the data using the estimated parameters
+  train.transformed <- preproc.param %>% predict(train.data)
+  test.transformed <- preproc.param %>% predict(test.data)
+  
+  # LDA analysis
+  # Fit the model
+  model <- lda(treatment~ ., data = train.transformed)
+  # Make predictions
+  predictions <- model %>% predict(test.transformed)
+  
+  # Model accuracy
+  print("model accuracy")
+  print("predictions$class==test.transformed$treatment)")
+  print(mean(predictions$class==test.transformed$treatment))
+  
+  # results
+  print("the samples sizes")
+  print(model$counts)
+  
+  print("the prior probabilities used")
+  print(model$prior)
+  
+  print("svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics.")
+  print(model$svd)
+  
+  
+  #  predictions
+  predictions <- model %>% predict(test.transformed)
+  
+  # Predicted classes
+  #print(predictions$class, 6)
+  # Predicted probabilities of class memebership.
+  #print(predictions$posterior, 6) 
+  # Linear discriminants
+  #print(predictions$x, 3)
+  
+  lda.data <- cbind(train.transformed, predict(model)$x)
+  return(lda.data)
+}  
+
+######### LDAplot.treatment ######### 
+
+LDAplot.treatment <- function(LDAdata, mysubtitle){
+  
+  # LDA plot using ggplot2 
+  p <- ggplot(data = LDAdata, aes(LD1, LD2, color = treatment, shape = sex)) +
+    geom_point() +
+    labs(subtitle = mysubtitle)
+  plot(p)
+}
+
+######### LDAdata.hypothesis ######### 
+
+LDAdata.hypothesis <- function(vsd, mycolData, mypredictor){
+  
+  # data prep
+  tvsd <- as.data.frame(t(assay(vsd)))   # get vsd counts and transform
+  
+  tvsd <- tvsd[, sample(ncol(tvsd), 20)] # select 20 random genes for testing
+  tvsd$V1 <- row.names(tvsd)             # prep for joining
+  
+  mydata <- left_join(tvsd, mycolData, by = "V1")  # merge counts and variables
+  mydata$V1 <- NULL
+  mydata$sextissue <- NULL
+  mydata$treatment <- NULL
+  
+  # Split the data into training (80%) and test set (20%)
+  set.seed(175)
+  
+  training.samples <- mydata$hypothesis %>%
+    createDataPartition(p = 0.8, list = FALSE)
+  train.data <- mydata[training.samples, ]
+  test.data <- mydata[-training.samples, ]
+  
+  # Normalize the data. Categorical variables are automatically ignored.
+  # Estimate preprocessing parameters
+  preproc.param <- train.data %>% 
+    preProcess(method = c("center", "scale"))
+  
+  # Transform the data using the estimated parameters
+  train.transformed <- preproc.param %>% predict(train.data)
+  test.transformed <- preproc.param %>% predict(test.data)
+  
+  # LDA analysis
+  # Fit the model
+  model <- lda(hypothesis~ ., data = train.transformed)
+  # Make predictions
+  predictions <- model %>% predict(test.transformed)
+  
+  # Model accuracy
+  print("model accuracy")
+  print("predictions$class==test.transformed$hypothesis)")
+  print(mean(predictions$class==test.transformed$hypothesis))
+  
+  # results
+  print("the samples sizes")
+  print(model$counts)
+  
+  print("the prior probabilities used")
+  print(model$prior)
+  print(model$terms)
+  
+  print("svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics.")
+  print(model$svd)
+  
+
+  #  predictions
+  predictions <- model %>% predict(test.transformed)
+  
+  # Predicted classes
+  #print(predictions$class, 6)
+  # Predicted probabilities of class memebership.
+  #print(predictions$posterior, 6) 
+  # Linear discriminants
+  #print(predictions$x, 3)
+  
+  lda.data <- cbind(train.transformed, predict(model)$x)
+  return(lda.data)
+}  
+
+######### LDAplot.hypothesis ######### 
+
+LDAplot.hypothesis <- function(LDAdata, mysubtitle){
+  
+  # LDA plot using ggplot2 
+  p <- ggplot(data = LDAdata, aes(LD1, LD2, color = hypothesis, shape = sex)) +
+    geom_point() +
+    labs(subtitle = mysubtitle)
+  plot(p)
+}

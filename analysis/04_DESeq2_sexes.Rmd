@@ -85,10 +85,6 @@ vsd.pit.df <- vsd.dataframe(vsd.pit)
 vsd.gon.df <- vsd.dataframe(vsd.gon) 
 ```
 
-
-
-
-
 ## PCA
 
 ```{r pca}
@@ -107,145 +103,33 @@ plotPC12(gonPCA, "Gonad")
 
 http://www.sthda.com/english/articles/36-classification-methods-essentials/146-discriminant-analysis-essentials-in-r/
 
+
 ```{r LDA}
-LDAanalysis <- function(mydds, mycolData, mysubtitle){
-  # data prep
-  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
-  tvsd <- as.data.frame(t(assay(vsd)))   # get vsd counts and transform
-
-  #tvsd <- tvsd[, sample(ncol(tvsd), 20)] # select 20 random genes
-  tvsd$V1 <- row.names(tvsd)             # prep for joining
-
-  mydata <- left_join(tvsd, mycolData, by = "V1")  # merge counts and variables
-  mydata$V1 <- NULL
-  mydata$sextissue <- NULL
-  
-  # Split the data into training (80%) and test set (20%)
-  set.seed(175)
-
-  training.samples <- mydata$treatment %>%
-    createDataPartition(p = 0.8, list = FALSE)
-  train.data <- mydata[training.samples, ]
-  test.data <- mydata[-training.samples, ]
-
-  # Normalize the data. Categorical variables are automatically ignored.
-  # Estimate preprocessing parameters
-  preproc.param <- train.data %>% 
-    preProcess(method = c("center", "scale"))
-
-  # Transform the data using the estimated parameters
-  train.transformed <- preproc.param %>% predict(train.data)
-  test.transformed <- preproc.param %>% predict(test.data)
-
-  # LDA analysis
-  # Fit the model
-  model <- lda(hypothesis~ ., data = train.transformed)
-  # Make predictions
-  predictions <- model %>% predict(test.transformed)
-  # Model accuracy
-  mean(predictions$class==test.transformed$hypothesis)
-
-  # results
-  print(model)
-
-  # make predictions
-  predictions <- model %>% predict(test.transformed)
-  
-  # Predicted classes
-  head(predictions$class, 6)
-  # Predicted probabilities of class memebership.
-  head(predictions$posterior, 6) 
-  # Linear discriminants
-  head(predictions$x, 3)
-
-  # LDA plot using ggplot2 
-  lda.data <- cbind(train.transformed, predict(model)$x)
-  p <- ggplot(data = lda.data, aes(LD1, LD2, color = hypothesis, shape = sex)) +
-    geom_point() +
-    labs(subtitle = mysubtitle)
-  plot(p)
-
-  # model accuracy 
-  print(mean(predictions$class==test.transformed$hypothesis))
-}
-
+# prep col data for LDA
 colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
 colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
 colDataGon <- subsetcolData2(c.colData, c("female_gonad", "male_gonad"))
 
-LDAanalysis(dds.hypothalamus, colDataHyp, "Hypothalamus")
-LDAanalysis(dds.pituitary, colDataPit, "Pituitary")
-LDAanalysis(dds.gonad, colDataGon, "Gonad")
+# LDA for treatment (9 groups)
+LDA.hyp1 <- LDAdata.treatment(vsd.hyp, colDataHyp)
+LDA.pit1 <- LDAdata.treatment(vsd.pit, colDataPit)
+LDA.gon1 <- LDAdata.treatment(vsd.gon, colDataGon)
+
+LDAplot.treatment(LDA.hyp1 , "Hypothalamus")
+LDAplot.treatment(LDA.pit1 ,  "Pituitary")
+LDAplot.treatment(LDA.gon1 , "Gonad")
+
+# LDA for hypothesis (3 groups)
+
+LDA.hyp1 <- LDAdata.hypothesis(vsd.hyp, colDataHyp)
+LDA.pit1 <- LDAdata.hypothesis(vsd.pit, colDataPit)
+LDA.gon1 <- LDAdata.hypothesis(vsd.gon, colDataGon)
+
+LDAplot.hypothesis(LDA.hyp1 , "Hypothalamus")
+LDAplot.hypothesis(LDA.pit1 ,  "Pituitary")
+LDAplot.hypothesis(LDA.gon1 , "Gonad")
 ```
 
-```{r LDA2}
 
-LDAanalysis2 <- function(mydds, mycolData, mysubtitle){
-  # data prep
-  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
-  tvsd <- as.data.frame(t(assay(vsd)))   # get vsd counts and transform
-
-  #tvsd <- tvsd[, sample(ncol(tvsd), 20)] # select 20 random genes
-  tvsd$V1 <- row.names(tvsd)             # prep for joining
-
-  mydata <- left_join(tvsd, mycolData, by = "V1")  # merge counts and variables
-  mydata$V1 <- NULL
-  mydata$sextissue <- NULL
-  mydata$hypothesis <- NULL
-
-  # Split the data into training (80%) and test set (20%)
-  set.seed(175)
-
-  training.samples <- mydata$treatment %>%
-    createDataPartition(p = 0.8, list = FALSE)
-  train.data <- mydata[training.samples, ]
-  test.data <- mydata[-training.samples, ]
-
-  # Normalize the data. Categorical variables are automatically ignored.
-  # Estimate preprocessing parameters
-  preproc.param <- train.data %>% 
-    preProcess(method = c("center", "scale"))
-
-  # Transform the data using the estimated parameters
-  train.transformed <- preproc.param %>% predict(train.data)
-  test.transformed <- preproc.param %>% predict(test.data)
-
-  # LDA analysis
-  # Fit the model
-  model <- lda(treatment~ ., data = train.transformed)
-  # Make predictions
-  predictions <- model %>% predict(test.transformed)
-  # Model accuracy
-  mean(predictions$class==test.transformed$treatment)
-
-  # results
-  print(model)
-
-  # make predictions
-  predictions <- model %>% predict(test.transformed)
-  
-  # Predicted classes
-  head(predictions$class, 6)
-  # Predicted probabilities of class memebership.
-  head(predictions$posterior, 6) 
-  # Linear discriminants
-  head(predictions$x, 3)
-
-  # LDA plot using ggplot2 
-  lda.data <- cbind(train.transformed, predict(model)$x)
-  p <- ggplot(data = lda.data, aes(LD1, LD2, color = treatment, shape = sex)) +
-    geom_point() +
-    labs(subtitle = mysubtitle)
-  plot(p)
-
-  # model accuracy 
-  print(mean(predictions$class==test.transformed$hypothesis))
-}
-
-LDAanalysis2(dds.hypothalamus, colDataHyp, "Hypothalamus")
-LDAanalysis2(dds.pituitary, colDataPit, "Pituitary")
-LDAanalysis2(dds.gonad, colDataGon, "Gonad")
-
-```
 
 
