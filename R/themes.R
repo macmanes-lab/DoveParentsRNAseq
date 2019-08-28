@@ -73,3 +73,5 @@ theme_rmh <- function(){
       legend.margin=margin(t=-0.1, r=0, b=-0.1, l=-0.1, unit="cm"),
       legend.key.size = unit(0.5, "cm"))
 }
+
+theme_set(theme_classic())

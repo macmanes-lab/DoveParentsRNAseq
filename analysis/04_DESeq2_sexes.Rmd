@@ -92,8 +92,6 @@ vsd.gon.df <- vsd.dataframe(vsd.gon)
 ## PCA
 
 ```{r pca}
-theme_set(theme_classic())
-
 hypPCA <- returnPCAs2(vsd.hyp)
 plotPC12(hypPCA, "Hypothalamus")
 
@@ -102,7 +100,6 @@ plotPC12(pitPCA, "Pituitary")
 
 gonPCA <- returnPCAs2(vsd.gon)
 plotPC12(gonPCA, "Gonad")
-
 ```
 
 
@@ -111,8 +108,6 @@ plotPC12(gonPCA, "Gonad")
 http://www.sthda.com/english/articles/36-classification-methods-essentials/146-discriminant-analysis-essentials-in-r/
 
 ```{r LDA}
-theme_set(theme_classic())
-
 LDAanalysis <- function(mydds, mycolData, mysubtitle){
   # data prep
   vsd <- vst(mydds, blind=FALSE) # variance stabilized 
