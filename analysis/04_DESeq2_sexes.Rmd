@@ -68,11 +68,10 @@ dds.gonad <- subsetDESeq2(c.colData,  c.countData, c("female_gonad", "male_gonad
 
 ## total degs
 
-```{r, results = 'hide', eval = F}
+```{r totalDEGs, results = 'hide', eval = F}
 DEGs.pituitary <- returntotalDEGs(dds.pituitary)
 plottotalDEGs(DEGs.pituitary, "Male & Female Pituitary DEGs")
 ```
-
 
 
 
