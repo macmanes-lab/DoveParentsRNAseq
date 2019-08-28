@@ -73,6 +73,12 @@ DEGs.pituitary <- returntotalDEGs(dds.pituitary)
 plottotalDEGs(DEGs.pituitary, "Male & Female Pituitary DEGs")
 ```
 
+## Variance stabilized data
+
+```{r vsd}
+
+```
+
 
 
 
