@@ -348,11 +348,7 @@ pcadataframe <- function(object, intgroup, ntop = 500, returnData = FALSE){
 ######### returnPCAs ######### 
 
 # returns the stats for PC 1-4 for a single variable
-returnPCAs <- function(dds){
-  
-  dds <- dds
-  
-  vsd <- vst(dds, blind=FALSE) # variance stabilized 
+returnPCAs <- function(vsd){
   
   # create the dataframe using my function pcadataframe
   pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
