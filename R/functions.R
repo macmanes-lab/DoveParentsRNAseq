@@ -150,7 +150,7 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
     ggplot( aes(V1, V2)) +
     geom_tile(aes(fill = V3)) +
      theme_minimal(base_size = 12) + 
-    geom_text(aes(label = round(V3, 1)), color = "black")+
+    geom_text(aes(label = round(V3, 1)), color = "grey")+
     scale_fill_viridis(na.value="#bdbdbd", 
                       # limits = c(0,7000),
                        option = "C") +
