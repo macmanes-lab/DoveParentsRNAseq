@@ -7,6 +7,8 @@
     library(viridis)
     library(forcats)
     library("wesanderson")
+    library(caret) # LDA analysis
+    library(MASS) # LDA analysis
 
     library("BiocParallel")
     register(MulticoreParam(4))
@@ -16,8 +18,8 @@
 
     knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE)
 
-Starting with all the data
---------------------------
+DEseq2 analysis on characterization. Looking at treatment AND sex for each tissue
+---------------------------------------------------------------------------------
 
     # import "colData" which contains sample information and "countData" which contains read counts
     c.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
@@ -33,6 +35,7 @@ Starting with all the data
     ## [8] "n5"      "n9"
 
     c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
+
     summary(c.colData[c(7,3,4,5,8)])
 
     ##              study         sex               tissue      treatment  
@@ -52,8 +55,17 @@ Starting with all the data
     ##  male_pituitary     :97  
     ## 
 
-Run DESeq on all subsets of the data
-------------------------------------
+    c.colData <- c.colData %>%
+        mutate(hypothesis = fct_recode(treatment,
+                                "anticipation" = "control",
+                                "anticipation" = "bldg",
+                                "incubation" = "lay",
+                                "incubation" = "inc.d3",
+                                "incubation" = "inc.d9",
+                                "incubation" = "inc.d17",
+                                "hatchling.care" = "hatch",
+                                "hatchling.care" = "n5",
+                                "hatchling.care" = "n9"))
 
     dds.hypothalamus <- subsetDESeq2(c.colData,  c.countData, c("female_hypothalamus","male_hypothalamus") )
 
@@ -156,6 +168,9 @@ Run DESeq on all subsets of the data
     ## estimating dispersions
 
     ## fitting model and testing
+
+PCA
+---
 
     hypPCA <- returnPCAs2(dds.hypothalamus)
 
@@ -262,3 +277,274 @@ Run DESeq on all subsets of the data
     plotPC12(gonPCA, "female and male gonad")
 
 ![](../figures/sexes/pca-3.png)
+
+Linear discriminant analysis (LDA)
+----------------------------------
+
+<a href="http://www.sthda.com/english/articles/36-classification-methods-essentials/146-discriminant-analysis-essentials-in-r/" class="uri">http://www.sthda.com/english/articles/36-classification-methods-essentials/146-discriminant-analysis-essentials-in-r/</a>
+
+    theme_set(theme_classic())
+
+    LDAanalysis <- function(mydds){
+      # data prep
+      vsd <- vst(mydds, blind=FALSE) # variance stabilized 
+      tvsd <- as.data.frame(t(assay(vsd)))   # get vsd counts and transform
+
+      tvsd <- tvsd[, sample(ncol(tvsd), 20)] # select 20 random genes
+      tvsd$V1 <- row.names(tvsd)             # prep for joining
+
+      colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
+
+      mydata <- left_join(tvsd, colDataPit, by = "V1")  # merge counts and variables
+      
+
+      # Split the data into training (80%) and test set (20%)
+      set.seed(175)
+
+      training.samples <- mydata$treatment %>%
+        createDataPartition(p = 0.8, list = FALSE)
+      train.data <- mydata[training.samples, ]
+      test.data <- mydata[-training.samples, ]
+
+      # Normalize the data. Categorical variables are automatically ignored.
+      # Estimate preprocessing parameters
+      preproc.param <- train.data %>% 
+        preProcess(method = c("center", "scale"))
+
+      # Transform the data using the estimated parameters
+      train.transformed <- preproc.param %>% predict(train.data)
+      test.transformed <- preproc.param %>% predict(test.data)
+
+      # LDA analysis
+
+      # Fit the model
+      print(model <- lda(treatment~ sex, data = train.transformed))
+      # Make predictions
+      print(predictions <- model %>% predict(test.transformed))
+    # Model accuracy
+      print(mean(predictions$class==test.transformed$treatment))
+
+      # results
+      print(model)
+
+      # make predictions
+      predictions <- model %>% predict(test.transformed)
+      
+      # Predicted classes
+      print(head(predictions$class, 6))
+      # Predicted probabilities of class memebership.
+      print(head(predictions$posterior, 6) )
+      # Linear discriminants
+      print(head(predictions$x, 3) )
+
+      # LDA plot using ggplot2 
+      lda.data <- cbind(train.transformed, predict(model)$x)
+      p<-ggplot(data=lda.data, aes(x=treatment, y=LD1, fill = treatment)) +
+        geom_bar( stat = "summary", fun.y = "mean")
+      p
+
+      # model accuracy 
+      print(mean(predictions$class==test.transformed$treatment))
+    }
+
+    LDAanalysis(dds.pituitary)
+
+    ## Warning: Column `V1` joining character vector and factor, coercing into
+    ## character vector
+
+    ## Call:
+    ## lda(treatment ~ sex, data = train.transformed)
+    ## 
+    ## Prior probabilities of groups:
+    ##   control      bldg       lay    inc.d3    inc.d9   inc.d17     hatch 
+    ## 0.1282051 0.1025641 0.1025641 0.1025641 0.1282051 0.1153846 0.1025641 
+    ##        n5        n9 
+    ## 0.1025641 0.1153846 
+    ## 
+    ## Group means:
+    ##           sexmale
+    ## control 0.5000000
+    ## bldg    0.5625000
+    ## lay     0.5625000
+    ## inc.d3  0.5000000
+    ## inc.d9  0.4500000
+    ## inc.d17 0.4444444
+    ## hatch   0.4375000
+    ## n5      0.5000000
+    ## n9      0.5555556
+    ## 
+    ## Coefficients of linear discriminants:
+    ##              LD1
+    ## sexmale 1.950186
+    ## $class
+    ##  [1] control control inc.d9  inc.d9  control control control inc.d9 
+    ##  [9] inc.d9  control control control control inc.d9  inc.d9  control
+    ## [17] control control inc.d9  inc.d9  inc.d9  inc.d9  inc.d9  control
+    ## [25] control inc.d9  control control inc.d9  inc.d9  control inc.d9 
+    ## [33] inc.d9  control inc.d9  control inc.d9 
+    ## Levels: control bldg lay inc.d3 inc.d9 inc.d17 hatch n5 n9
+    ## 
+    ## $posterior
+    ##       control       bldg        lay    inc.d3    inc.d9   inc.d17
+    ## 5   0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 8   0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 10  0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 15  0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 16  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 22  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 25  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 30  0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 40  0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 42  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 45  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 46  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 50  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 60  0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 64  0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 66  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 68  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 83  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 88  0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 97  0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 105 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 106 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 108 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 120 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 126 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 128 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 130 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 131 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 146 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 160 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 164 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 168 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 174 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 178 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 179 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 186 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 187 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ##          hatch        n5        n9
+    ## 5   0.09041847 0.1025887 0.1275217
+    ## 8   0.09041847 0.1025887 0.1275217
+    ## 10  0.11467544 0.1025841 0.1032292
+    ## 15  0.11467544 0.1025841 0.1032292
+    ## 16  0.09041847 0.1025887 0.1275217
+    ## 22  0.09041847 0.1025887 0.1275217
+    ## 25  0.09041847 0.1025887 0.1275217
+    ## 30  0.11467544 0.1025841 0.1032292
+    ## 40  0.11467544 0.1025841 0.1032292
+    ## 42  0.09041847 0.1025887 0.1275217
+    ## 45  0.09041847 0.1025887 0.1275217
+    ## 46  0.09041847 0.1025887 0.1275217
+    ## 50  0.09041847 0.1025887 0.1275217
+    ## 60  0.11467544 0.1025841 0.1032292
+    ## 64  0.11467544 0.1025841 0.1032292
+    ## 66  0.09041847 0.1025887 0.1275217
+    ## 68  0.09041847 0.1025887 0.1275217
+    ## 83  0.09041847 0.1025887 0.1275217
+    ## 88  0.11467544 0.1025841 0.1032292
+    ## 97  0.11467544 0.1025841 0.1032292
+    ## 105 0.11467544 0.1025841 0.1032292
+    ## 106 0.11467544 0.1025841 0.1032292
+    ## 108 0.11467544 0.1025841 0.1032292
+    ## 120 0.09041847 0.1025887 0.1275217
+    ## 126 0.09041847 0.1025887 0.1275217
+    ## 128 0.11467544 0.1025841 0.1032292
+    ## 130 0.09041847 0.1025887 0.1275217
+    ## 131 0.09041847 0.1025887 0.1275217
+    ## 146 0.11467544 0.1025841 0.1032292
+    ## 160 0.11467544 0.1025841 0.1032292
+    ## 164 0.09041847 0.1025887 0.1275217
+    ## 168 0.11467544 0.1025841 0.1032292
+    ## 174 0.11467544 0.1025841 0.1032292
+    ## 178 0.09041847 0.1025887 0.1275217
+    ## 179 0.11467544 0.1025841 0.1032292
+    ## 186 0.09041847 0.1025887 0.1275217
+    ## 187 0.11467544 0.1025841 0.1032292
+    ## 
+    ## $x
+    ##            LD1
+    ## 5    0.9750932
+    ## 8    0.9750932
+    ## 10  -0.9750932
+    ## 15  -0.9750932
+    ## 16   0.9750932
+    ## 22   0.9750932
+    ## 25   0.9750932
+    ## 30  -0.9750932
+    ## 40  -0.9750932
+    ## 42   0.9750932
+    ## 45   0.9750932
+    ## 46   0.9750932
+    ## 50   0.9750932
+    ## 60  -0.9750932
+    ## 64  -0.9750932
+    ## 66   0.9750932
+    ## 68   0.9750932
+    ## 83   0.9750932
+    ## 88  -0.9750932
+    ## 97  -0.9750932
+    ## 105 -0.9750932
+    ## 106 -0.9750932
+    ## 108 -0.9750932
+    ## 120  0.9750932
+    ## 126  0.9750932
+    ## 128 -0.9750932
+    ## 130  0.9750932
+    ## 131  0.9750932
+    ## 146 -0.9750932
+    ## 160 -0.9750932
+    ## 164  0.9750932
+    ## 168 -0.9750932
+    ## 174 -0.9750932
+    ## 178  0.9750932
+    ## 179 -0.9750932
+    ## 186  0.9750932
+    ## 187 -0.9750932
+    ## 
+    ## [1] 0.1621622
+    ## Call:
+    ## lda(treatment ~ sex, data = train.transformed)
+    ## 
+    ## Prior probabilities of groups:
+    ##   control      bldg       lay    inc.d3    inc.d9   inc.d17     hatch 
+    ## 0.1282051 0.1025641 0.1025641 0.1025641 0.1282051 0.1153846 0.1025641 
+    ##        n5        n9 
+    ## 0.1025641 0.1153846 
+    ## 
+    ## Group means:
+    ##           sexmale
+    ## control 0.5000000
+    ## bldg    0.5625000
+    ## lay     0.5625000
+    ## inc.d3  0.5000000
+    ## inc.d9  0.4500000
+    ## inc.d17 0.4444444
+    ## hatch   0.4375000
+    ## n5      0.5000000
+    ## n9      0.5555556
+    ## 
+    ## Coefficients of linear discriminants:
+    ##              LD1
+    ## sexmale 1.950186
+    ## [1] control control inc.d9  inc.d9  control control
+    ## Levels: control bldg lay inc.d3 inc.d9 inc.d17 hatch n5 n9
+    ##      control       bldg        lay    inc.d3    inc.d9   inc.d17
+    ## 5  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 8  0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 10 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 15 0.1282302 0.09041446 0.09041446 0.1025841 0.1403520 0.1275161
+    ## 16 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ## 22 0.1282358 0.11468053 0.11468053 0.1025887 0.1160518 0.1032338
+    ##         hatch        n5        n9
+    ## 5  0.09041847 0.1025887 0.1275217
+    ## 8  0.09041847 0.1025887 0.1275217
+    ## 10 0.11467544 0.1025841 0.1032292
+    ## 15 0.11467544 0.1025841 0.1032292
+    ## 16 0.09041847 0.1025887 0.1275217
+    ## 22 0.09041847 0.1025887 0.1275217
+    ##           LD1
+    ## 5   0.9750932
+    ## 8   0.9750932
+    ## 10 -0.9750932
+    ## [1] 0.1621622
