@@ -3,7 +3,7 @@ title: "04_DESeq_sexes"
 output: md_document
 ---
 
-```{r setup, include = FALSE}
+```{r setup}
 
 library(tidyverse)
 library(DESeq2)
@@ -31,12 +31,14 @@ c.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T,
 c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
-# set levels
+# set treatment levels
 c.colData$treatment <- factor(c.colData$treatment, levels = 
                               c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
 
+# craete variable that will be critical for subset later on
 c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
 
+# ceate new variable for hypothesis testing
 c.colData <- c.colData %>%
     mutate(hypothesis = fct_recode(treatment,
                             "anticipation" = "control",
