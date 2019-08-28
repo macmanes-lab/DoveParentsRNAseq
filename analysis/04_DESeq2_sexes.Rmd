@@ -142,7 +142,7 @@ LDAanalysis <- function(mydds){
   lda.data <- cbind(train.transformed, predict(model)$x)
   p<-ggplot(data=lda.data, aes(x=treatment, y=LD1, fill = treatment)) +
     geom_bar( stat = "summary", fun.y = "mean")
-  p
+  plot(p)
 
   # model accuracy 
   print(mean(predictions$class==test.transformed$treatment))
