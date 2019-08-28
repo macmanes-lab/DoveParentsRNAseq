@@ -15,7 +15,6 @@ subsetcolData <- function(colData, eachgroup){
 # subset to look within one tissue in two sexes
 subsetcolData2 <- function(colData, eachgroup){
   
-  
   colData <- colData %>%
     dplyr::filter(sextissue %in% eachgroup) %>%
     droplevels()
@@ -60,11 +59,9 @@ subsetDESeq2 <- function(colData, countData, eachgroup){
   # subset to look within one tissue in one sex
   colData <- subsetcolData2(colData, eachgroup)
   
-  # which counts to save
+  # save counts that match colData
   savecols <- as.character(colData$V1) 
   savecols <- as.vector(savecols) 
-  
-  # save counts that match colData
   countData <- countData %>% dplyr::select(one_of(savecols)) 
   
   # check that row and col lenghts are equal
