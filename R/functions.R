@@ -11,7 +11,7 @@ subsetcolData <- function(colData, eachgroup){
 
 subsetcolData2 <- function(colData, eachgroup){
   
-  # subset to look within one tissue in one sex
+  # subset to look within one tissue in two sexes
   colData <- colData %>%
     dplyr::filter(sextissue %in% eachgroup) %>%
     droplevels()
@@ -19,18 +19,11 @@ subsetcolData2 <- function(colData, eachgroup){
   return(colData)
 }
 
-
-
-
 # run DESeq on subset of data
 # e.g. dds <- subsetDESeq("male_hypothalamus")
 subsetDESeq <- function(colData, countData, eachgroup){
   
-  # subset to look within one tissue in one sex
-  colData <- colData %>%
-    dplyr::filter(sextissue == eachgroup) %>%
-    droplevels()
-  row.names(colData) <- colData$V1
+  colData <- subsetcolData(colData, eachgroup)
   
   # which counts to save
   savecols <- as.character(colData$V1) 
@@ -58,10 +51,7 @@ subsetDESeq <- function(colData, countData, eachgroup){
 subsetDESeq2 <- function(colData, countData, eachgroup){
   
   # subset to look within one tissue in one sex
-  colData <- colData %>%
-    dplyr::filter(sextissue %in% eachgroup) %>%
-    droplevels()
-  row.names(colData) <- colData$V1
+  colData <- subsetcolData2(colData, eachgroup)
   
   # which counts to save
   savecols <- as.character(colData$V1) 
