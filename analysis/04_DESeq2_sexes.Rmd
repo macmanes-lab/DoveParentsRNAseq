@@ -8,22 +8,19 @@ output: md_document
 library(tidyverse)
 library(DESeq2)
 library(cowplot)
-library(RColorBrewer)
 library(pheatmap)
-library(kableExtra)
 library(viridis)
 library(forcats)
-library("wesanderson")
 library(caret) # LDA analysis
 library(MASS) # LDA analysis
 
-library("BiocParallel")
-register(MulticoreParam(4))
+library(BiocParallel)
+register(MulticoreParam(6))
 
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
 
-knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE)
+knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE,  message=F, comment=FALSE, warning=FALSE)
 ```
 
 ## DEseq2 analysis on characterization. Looking at treatment AND sex for each tissue
@@ -52,7 +49,7 @@ c.colData <- c.colData %>%
                             "hatchling.care" = "n5",
                             "hatchling.care" = "n9"))
 
-# drop columsn that are bad for model
+# drop columsn that are bad for model AND not needed for later joining
 c.colData$bird <- NULL
 c.colData$tissue <- NULL
 c.colData$study <- NULL
@@ -67,6 +64,13 @@ dds.hypothalamus <- subsetDESeq2(c.colData,  c.countData, c("female_hypothalamus
 dds.pituitary <- subsetDESeq2(c.colData,  c.countData, c("female_pituitary", "male_pituitary" ) )
 dds.gonad <- subsetDESeq2(c.colData,  c.countData, c("female_gonad", "male_gonad") )
 ```
+
+## Variance stabilized data
+
+```{r vsd}
+
+```
+
 
 ## PCA
 
