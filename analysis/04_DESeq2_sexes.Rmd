@@ -81,6 +81,7 @@ plotPC12(pitPCA, "Pituitary")
 
 gonPCA <- returnPCAs2(dds.gonad)
 plotPC12(gonPCA, "Gonad")
+
 ```
 
 

@@ -406,7 +406,7 @@ plotPC12 <- function(pcadata, mysubtitle){
                             "hatchling.care" = "n9"))
   
   pca12 <- ggplot(pcadata, aes(PC1, PC2, color = treatment, shape = sex)) + 
-    geom_point( size = 3) +
+    geom_point() +
     #stat_ellipse() +
     #xlab(paste0("PC1")) +
     #ylab(paste0("PC2")) +
