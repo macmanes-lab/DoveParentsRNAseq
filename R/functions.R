@@ -1,39 +1,36 @@
-# subset col for heatmap
-subsetcolData <- function(colData, whichgroup){
+# subset colData to look one tissue in one sex
+subsetcolData <- function(colData, eachgroup){
   
-  # subset to look within one tissue in one sex
   colData <- colData %>%
-    dplyr::filter(sextissue == whichgroup) %>%
+    dplyr::filter(sextissue == eachgroup) %>%
     droplevels()
   row.names(colData) <- colData$V1
   return(colData)
 }
 
-subsetcolData2 <- function(colData, whichgroups){
+# subset to look within one tissue in two sexes
+subsetcolData2 <- function(colData, eachgroup){
   
-  # subset to look within one tissue in two sexes
+  
   colData <- colData %>%
-    dplyr::filter(sextissue %in% whichgroup) %>%
+    dplyr::filter(sextissue %in% eachgroup) %>%
     droplevels()
   row.names(colData) <- colData$V1
   return(colData)
 }
 
 # run DESeq on subset of data
-# e.g. dds <- subsetDESeq("male_hypothalamus")
 subsetDESeq <- function(colData, countData, eachgroup){
   
   colData <- subsetcolData(colData, eachgroup)
   
-  # which counts to save
+  # save counts that match colData
   savecols <- as.character(colData$V1) 
   savecols <- as.vector(savecols) 
-  
-  # save counts that match colData
   countData <- countData %>% dplyr::select(one_of(savecols)) 
   
-  # check that row and col lenghts are equal
-  print(ncol(countData) == nrow(colData))
+  # assert that row and col lenghts are equal
+  stopifnot(ncol(countData) == nrow(colData))
   
   dds <- DESeqDataSetFromMatrix(countData = countData,
                                 colData = colData,
@@ -61,7 +58,7 @@ subsetDESeq2 <- function(colData, countData, eachgroup){
   countData <- countData %>% dplyr::select(one_of(savecols)) 
   
   # check that row and col lenghts are equal
-  print(ncol(countData) == nrow(colData))
+  stopifnot(ncol(countData) == nrow(colData))
   
   dds <- DESeqDataSetFromMatrix(countData = countData,
                                 colData = colData,
