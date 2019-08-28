@@ -71,14 +71,16 @@ dds.gonad <- subsetDESeq2(c.colData,  c.countData, c("female_gonad", "male_gonad
 ## PCA
 
 ```{r pca}
+theme_set(theme_classic())
+
 hypPCA <- returnPCAs2(dds.hypothalamus)
-plotPC12(hypPCA, "female and male hypothalamus")
+plotPC12(hypPCA, "Hypothalamus")
 
 pitPCA <- returnPCAs2(dds.pituitary)
-plotPC12(pitPCA, "female and male pituitary")
+plotPC12(pitPCA, "Pituitary")
 
 gonPCA <- returnPCAs2(dds.gonad)
-plotPC12(gonPCA, "female and male gonad")
+plotPC12(gonPCA, "Gonad")
 ```
 
 

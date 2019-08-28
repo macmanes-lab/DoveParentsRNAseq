@@ -407,10 +407,9 @@ plotPC12 <- function(pcadata, mysubtitle){
   
   pca12 <- ggplot(pcadata, aes(PC1, PC2, color = treatment, shape = sex)) + 
     geom_point( size = 3) +
-    stat_ellipse() +
-    theme_minimal(base_size = 12) +
-    ylab(paste0("PC2")) +
-    xlab(paste0("PC1")) +
+    #stat_ellipse() +
+    #xlab(paste0("PC1")) +
+    #ylab(paste0("PC2")) +
     labs(subtitle = mysubtitle) +
     #theme(legend.position = "bottom") +
     #guides( fill = guide_legend(order = 2, ncol=2)) +
@@ -418,60 +417,6 @@ plotPC12 <- function(pcadata, mysubtitle){
   pca12
 }  
 
-plotPC1 <- function(pcadata, mysubtitle, myxlab){ 
-  
-  pcadata <- pcadata
-  
-  #percentVar <- round(100 * attr(pcadata, "percentVar"))
-
-  pca1 <- ggplot(pcadata, aes(xlabel, PC1, fill = lastday, color = penultimate)) + 
-    geom_violin() +
-    #geom_point() +
-     theme_minimal(base_size = 12) +
-    ylab(myxlab) +
-    xlab("Parental stages, with increasing days ->") +
-    labs(subtitle = mysubtitle) +
-    scale_fill_manual(values = colorlastday, 
-                      guide = guide_legend(
-                        direction = "horizontal",
-                        label.position = "bottom")) +
-    scale_color_manual(values = colorpenultimate,
-                       guide = guide_legend(
-                         direction = "horizontal",
-                         label.position = "bottom")) +
-    facet_wrap(~study, scales = "free_x")  +
-    guides(col = guide_legend(nrow = 1),
-           fill = guide_legend(nrow = 1)) +
-    theme(panel.grid = element_blank())
-  return(pca1)
-}
-
-
-plotPC2 <- function(pcadata, mysubtitle, myxlab){ 
-    
-    pcadata <- pcadata
-    
-  pca2 <- ggplot(pcadata, aes(xlabel, PC2, fill = treatment)) + 
-    geom_violin() +
-    #geom_point() +
-     theme_minimal(base_size = 12) +
-    ylab(myxlab) +
-    xlab("Parental stages, with increasing days ->") +
-    labs(subtitle = mysubtitle) +
-    scale_fill_manual(#values = colorlastday, 
-                      guide = guide_legend(
-                        direction = "horizontal",
-                        label.position = "bottom")) +
-    facet_wrap(~study, scales = "free_x")  +
-    guides(col = guide_legend(nrow = 1),
-           fill = guide_legend(nrow = 1)) +
-    theme(panel.grid = element_blank())
-  return(pca2)
-}  
- 
-
-
-  
 
 ## plot candidate genes 
 # e.g. plotcandidates(dds.female_hypothalamus, "female hypothalamus")
