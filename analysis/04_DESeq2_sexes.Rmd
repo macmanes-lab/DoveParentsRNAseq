@@ -86,7 +86,7 @@ http://www.sthda.com/english/articles/36-classification-methods-essentials/146-d
 ```{r LDA}
 theme_set(theme_classic())
 
-LDAanalysis <- function(mydds){
+LDAanalysis <- function(mydds, mycolData){
   # data prep
   vsd <- vst(mydds, blind=FALSE) # variance stabilized 
   tvsd <- as.data.frame(t(assay(vsd)))   # get vsd counts and transform
@@ -94,9 +94,7 @@ LDAanalysis <- function(mydds){
   tvsd <- tvsd[, sample(ncol(tvsd), 20)] # select 20 random genes
   tvsd$V1 <- row.names(tvsd)             # prep for joining
 
-  colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
-
-  mydata <- left_join(tvsd, colDataPit, by = "V1")  # merge counts and variables
+  mydata <- left_join(tvsd, mycolData, by = "V1")  # merge counts and variables
   
 
   # Split the data into training (80%) and test set (20%)
@@ -148,7 +146,13 @@ LDAanalysis <- function(mydds){
   print(mean(predictions$class==test.transformed$treatment))
 }
 
-LDAanalysis(dds.pituitary)
+colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
+colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
+colDataGon <- subsetcolData2(c.colData, c("female_gonad", "male_gonad"))
+
+LDAanalysis(dds.hypothalamus, colDataHyp)
+LDAanalysis(dds.pituitary, colDataPit)
+LDAanalysis(dds.gonad, colDataGon)
 ```
 
 
