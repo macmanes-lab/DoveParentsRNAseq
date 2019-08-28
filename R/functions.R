@@ -676,14 +676,36 @@ LDAdata.treatment <- function(vsd, mycolData, mypredictor){
 
 ######### LDAplot.treatment ######### 
 
-LDAplot.treatment <- function(LDAdata, mysubtitle){
-  
-  # LDA plot using ggplot2 
+LDAplot.treatment <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
   p <- ggplot(data = LDAdata, aes(LD1, LD2, color = treatment, shape = sex)) +
-    geom_point() +
-    labs(subtitle = mysubtitle)
+    geom_point(size = 1.5) +
+    labs(title = mytitle,
+         subtitle = mysubtitle,
+         x = myxlab,
+         y = myylab) +
+    scale_color_manual(name = "parental stage",
+                       values = c("control" = "#F8766D",
+                                  "bldg" = "#D39200" ,
+                                  "lay"  = "#93AA00",
+                                  "inc.d3" =  "#00BA38" ,
+                                  "inc.d9" = "#00C19F",
+                                  "inc.d17" = "#00B9E3",
+                                  "hatch"  = "#619CFF",
+                                  "n5"   = "#DB72FB",
+                                  "n9" = "#FF61C3"),
+                       labels = c("control" = "<span style='color:#F8766D'>control</span>",
+                                  "bldg" = "<span style='color:#D39200'>nest bulding</span>",
+                                  "lay" = "<span style='color:#93AA00'>egg laid</span>",
+                                  "inc.d3" = "<span style='color:#00BA38'>incubation day 3</span>", 
+                                  "inc.d9" = "<span style='color:#00B9E3'>incubation day 9</span>",
+                                  "inc.d17" = "<span style='color:#00B9E3'>incubation day 17</span>",
+                                  "hatch" = "<span style='color:#619CFF'>chicks hatch</span>", 
+                                  "n5" = "<span style='color:#DB72FB'>nestling care day 5</span>",
+                                  "n9" = "<span style='color:#FF61C3'>nestling care day 9</span>")) +
+    theme(legend.text = element_markdown(size = 8))
   plot(p)
-}
+} 
+
 
 ######### LDAdata.hypothesis ######### 
 
@@ -756,11 +778,20 @@ LDAdata.hypothesis <- function(vsd, mycolData, mypredictor){
 
 ######### LDAplot.hypothesis ######### 
 
-LDAplot.hypothesis <- function(LDAdata, mysubtitle){
-  
-  # LDA plot using ggplot2 
+LDAplot.hypothesis <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
   p <- ggplot(data = LDAdata, aes(LD1, LD2, color = hypothesis, shape = sex)) +
-    geom_point() +
-    labs(subtitle = mysubtitle)
+    geom_point(size = 1.5) +
+    labs(title = mytitle,
+         subtitle = mysubtitle,
+         x = myxlab,
+         y = myylab) +
+    scale_color_manual(name = "parental state",
+                       values = c("anticipation" = "#1b9e77", 
+                                  "incubation" = "#d95f02",
+                                  "hatchling.care" = "#7570b3"),
+                       labels = c("anticipation" = "<span style='color:#1b9e77'>anticipation</span>",
+                                  "incubation" = "<span style='color:#d95f02'>incubation</span>", 
+                                  "hatchling.care" = "<span style='color:#7570b3'>hatchling care</span>")) +
+    theme(legend.text = element_markdown(size = 8))
   plot(p)
-}
+}  
