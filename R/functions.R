@@ -1,3 +1,5 @@
+######## subsetcolData #############
+
 # subset colData to look one tissue in one sex
 subsetcolData <- function(colData, eachgroup){
   
@@ -7,6 +9,8 @@ subsetcolData <- function(colData, eachgroup){
   row.names(colData) <- colData$V1
   return(colData)
 }
+
+######### subsetcolData2 ############
 
 # subset to look within one tissue in two sexes
 subsetcolData2 <- function(colData, eachgroup){
@@ -19,7 +23,10 @@ subsetcolData2 <- function(colData, eachgroup){
   return(colData)
 }
 
-# run DESeq on subset of data
+
+############ subsetDESeq #########
+
+# run DESeq on subset of data - treatment only
 subsetDESeq <- function(colData, countData, eachgroup){
   
   colData <- subsetcolData(colData, eachgroup)
@@ -45,6 +52,9 @@ subsetDESeq <- function(colData, countData, eachgroup){
 }
 
 
+############ subsetDESeq2 #########
+
+# run DESeq on subset of data sex * treatment 
 subsetDESeq2 <- function(colData, countData, eachgroup){
   
   # subset to look within one tissue in one sex
@@ -72,19 +82,19 @@ subsetDESeq2 <- function(colData, countData, eachgroup){
   return(dds)
 }
 
+############ numDEGs #########
 
 # print total number of differntially expressed genes
-# numDEGs('m.inc.d3', 'm.inc.d9')
-
-
 numDEGs <- function(dds, group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
   sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
   return(sumpadj)
 }
 
-# resturn pvalues for all genes
 
+############ returnpadj #########
+
+# return pvalues for all genes
 returnpadj <- function(group1, group2){
   res <- results(dds, contrast = c("treatment", group1, group2), independentFiltering = T)
   pvals <- as.data.frame(res$padj)
@@ -94,7 +104,7 @@ returnpadj <- function(group1, group2){
 }
 
 
-################## ALL DEG comparisons
+############returntotalDEGs ############ 
 
 returntotalDEGs <- function(dds){
   
@@ -125,6 +135,8 @@ returntotalDEGs <- function(dds){
   
 }
 
+############ plottotalDEGs ############ 
+
 plottotalDEGs <- function(myDEGS, mysubtitle){  
   totalDEGS <- myDEGS
   totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", "lay",
@@ -136,9 +148,8 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
                                                    "hatch", "n5", "n9"))
 
   totalDEGS <- totalDEGS %>% dplyr::na_if(0)
-  
+
   print(str(totalDEGS))
-  
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +
@@ -157,10 +168,9 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
   plot(allcontrasts)
 }
 
-################## characterization comparisons only
+############ plotserialDEGs ############ 
 
-# bar plot with subset of characterization
-
+# make bar plot with subset of characterization
 serialtimepoints <- c("control.bldg" , "bldg.lay", "lay.inc.d3", "inc.d3.inc.d9", 
                       "inc.d9.inc.d17", "inc.d17.hatch", "hatch.n5", "n5.n9")
 
@@ -186,9 +196,9 @@ plotserialDEGs <- function(DEGs, mysubtitle, myfill){
 }
 
 
-## characterization line graphs
+############ subsetDEGs ############ 
 
-
+# used for making line graphs in 03_DESeq2_characterization.Rmd
 subsetDEGs <- function(DEGs, groupname){
   DEGs <- DEGs %>%
     dplyr::mutate(comparison = row.names(.),
@@ -198,10 +208,11 @@ subsetDEGs <- function(DEGs, groupname){
   return(DEGs)
 }
   
-  
 
-########################### manipulations comparisons
 
+############ plotmanipDEGs ###############
+
+# list of things to compare
 manipVchar <- c("inc.d3.m.inc.d3",
                 "inc.d9.m.inc.d8", "inc.d9.m.inc.d9",
                 "inc.d17.m.inc.d17",
@@ -241,9 +252,9 @@ plotmanipDEGs <- function(DEGs, mysubtitle, legendornot){
 
 
 
-######### offspring removal
+######### plotremoval ######### 
 
-
+# list of things to compare
 offspringremoval <- c("lay.inc.d3", "inc.d3.m.inc.d3", 
                       "inc.d3.inc.d9", "inc.d9.m.inc.d9",
                       "inc.d9.inc.d17", "inc.d17.m.inc.d17", 
@@ -273,8 +284,9 @@ plotremoval <- function(DEGs, mysubtitle, legendornot){
   return(mybarplot)
 }
 
-######### prolong delay
+######### plotprolongdelay ######### 
 
+# list of things to compare
 prolongdelay <- c( "inc.d3.inc.d9", "inc.d9.inc.d17", 
                    "inc.d9.m.inc.d8",
                    "inc.d17.hatch", "hatch.n5",
@@ -309,11 +321,11 @@ plotprolongdelay <- function(DEGs, mysubtitle, legendornot){
   return(mybarplot)
 }
 
-## calculate principal components
+######### pcadataframe ######### 
 
-# I've taken the pca function from DESeq2 and elaborated it so that I could extract up to 6 PCs
-pcadataframe <- function (object, intgroup, ntop = 500, returnData = FALSE) 
-{
+# modified from DESeq2 and elaborated it so that I could extract up to 6 PCs
+
+pcadataframe <- function(object, intgroup, ntop = 500, returnData = FALSE){
   rv <- rowVars(assay(object))
   select <- order(rv, decreasing = TRUE)[seq_len(min(ntop, length(rv)))]
   pca <- prcomp(t(assay(object)[select, ]))
@@ -329,16 +341,18 @@ pcadataframe <- function (object, intgroup, ntop = 500, returnData = FALSE)
   else {
     colData(object)[[intgroup]]
   }
-  d <- data.frame(PC1 = pca$x[, 1], PC2 = pca$x[, 2], PC3 = pca$x[, 3], PC4 = pca$x[, 4],PC5 = pca$x[, 5],PC6 = pca$x[, 6],group = group, 
-                  intgroup.df, name = colnames(object))
+  d <- data.frame(PC1 = pca$x[, 1], PC2 = pca$x[, 2], PC3 = pca$x[, 3], 
+                  PC4 = pca$x[, 4],PC5 = pca$x[, 5],PC6 = pca$x[, 6],
+                  group = group, intgroup.df, name = colnames(object))
   if (returnData) {
     attr(d, "percentVar") <- percentVar[1:6]
     return(d)
   }
 }
 
-# plot pcs 
-# eg. plotPCAs(dds.female_hypothalamus, "female hypothalamus")
+######### returnPCAs ######### 
+
+# returns the stats for PC 1-4 for a single variable
 returnPCAs <- function(dds){
   
   dds <- dds
@@ -358,6 +372,9 @@ returnPCAs <- function(dds){
   return(pcadata)
 }
 
+######### returnPCA2 ######### 
+
+# returns the stats for PC 1-4 for a two variables 
 
 returnPCAs2 <- function(dds){
   
@@ -377,6 +394,9 @@ returnPCAs2 <- function(dds){
   return(pcadata)
 }
 
+######### plotPC12 ######### 
+
+# plot pc 1 and 2 for treatment and sex
 
 plotPC12 <- function(pcadata, mysubtitle){ 
   
@@ -405,8 +425,7 @@ plotPC12 <- function(pcadata, mysubtitle){
 }  
 
 
-## plot candidate genes 
-# e.g. plotcandidates(dds.female_hypothalamus, "female hypothalamus")
+######### plotcandidates ######### 
 
 plotcandidates <- function(mydds, colData, mysubtitle){
   
@@ -459,6 +478,7 @@ plotcandidates <- function(mydds, colData, mysubtitle){
   
 }
 
+######### plotcandidates ######### 
 
 plotprolactin <- function(mydds, colData, mysubtitle){
   
@@ -506,12 +526,9 @@ plotprolactin <- function(mydds, colData, mysubtitle){
 }
 
 
+######### makepheatmap ######### 
 
-
-
-## make pheatmaps 
-# e.g. makepheatmap(dds.female_hypothalamus, "female hypothalamus")
-
+# makes a candidate heat map!!
 makepheatmap <- function(mydds, colData, mysubtitle){
 
   vsd <- vst(mydds, blind=FALSE) # variance stabilized 
@@ -570,7 +587,7 @@ makepheatmap <- function(mydds, colData, mysubtitle){
   }
 
 
-## new correlation heatmap
+######### plotcorrelationheatmaps ######### 
 
 plotcorrelationheatmaps <- function(mydds, mycoldata, mysubtitle){
   dds <- mydds
