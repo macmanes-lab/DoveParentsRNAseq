@@ -145,8 +145,6 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
                                                    "hatch", "n5", "n9"))
 
   totalDEGS <- totalDEGS %>% dplyr::na_if(0)
-
-  print(str(totalDEGS))
   
   allcontrasts <- totalDEGS %>%
     ggplot( aes(V1, V2)) +

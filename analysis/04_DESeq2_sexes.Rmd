@@ -3,7 +3,7 @@ title: "04_DESeq_sexes"
 output: md_document
 ---
 
-```{r setup, message=F, comment=FALSE, warning=FALSE, results='hide'}
+```{r setup, include = FALSE}
 
 library(tidyverse)
 library(DESeq2)
@@ -64,6 +64,16 @@ dds.hypothalamus <- subsetDESeq2(c.colData,  c.countData, c("female_hypothalamus
 dds.pituitary <- subsetDESeq2(c.colData,  c.countData, c("female_pituitary", "male_pituitary" ) )
 dds.gonad <- subsetDESeq2(c.colData,  c.countData, c("female_gonad", "male_gonad") )
 ```
+
+
+## total degs
+
+```{r, results = 'hide'}
+DEGs.pituitary <- returntotalDEGs(dds.pituitary)
+```
+
+
+
 
 ## Variance stabilized data
 
