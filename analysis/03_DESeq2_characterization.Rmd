@@ -52,7 +52,7 @@ dds.male_gondad <- subsetDESeq(c.colData,  c.countData, "male_gonad")
 ## Calculate and plot total DEGs
 
 
-```{r returntotalDEGs, eval = T}
+```{r returntotalDEGs, eval = T, results = 'hide'}
 DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
 DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
 DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
@@ -62,11 +62,6 @@ DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
 ```
 
 ```{r totalDEGs, eval = T}
-#create list of groups for deseq contrasts
-group1 <- c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
-group2 <- group1
-
-
 a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
 b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
 c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
