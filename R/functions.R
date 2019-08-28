@@ -353,12 +353,21 @@ returnPCAs <- function(vsd){
   # create the dataframe using my function pcadataframe
   pcadata <- pcadataframe(vsd, intgroup=c("treatment"), returnData=TRUE)
   percentVar <- round(100 * attr(pcadata, "percentVar"))
+  
+  print("Percent variance explained by PC 1-6")
   print(percentVar)
   
+  print("PC1 ~ treatment, data=pcadata")
   print(summary(aov(PC1 ~ treatment, data=pcadata)))
   print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
+  
+  print("PC2 ~ treatment, data=pcadata")
   print(summary(aov(PC2 ~ treatment, data=pcadata))) 
+  
+  print("PC3 ~ treatment, data=pcadata")
   print(summary(aov(PC3 ~ treatment, data=pcadata))) 
+  
+  print("PC4 ~ treatment, data=pcadata")
   print(summary(aov(PC4 ~ treatment, data=pcadata))) 
   return(pcadata)
 }
@@ -372,11 +381,20 @@ returnPCAs2 <- function(vsd){
   # create the dataframe using my function pcadataframe
   pcadata <- pcadataframe(vsd, intgroup=c("sex", "treatment"), returnData=TRUE)
   percentVar <- round(100 * attr(pcadata, "percentVar"))
+  
+  print("Percent variance explained by PC 1-6")
   print(percentVar)
   
+  print("PC1 ~ treatment * sex, data=pcadata")
   print(summary(aov(PC1 ~ treatment * sex, data=pcadata)))
+  
+  print("PC2 ~ treatment * sex, data=pcadata")
   print(summary(aov(PC2 ~ treatment * sex, data=pcadata))) 
-  print(summary(aov(PC3 ~ treatment * sex, data=pcadata))) 
+  
+  print("PC2 ~ treatment * sex, data=pcadata")
+  print(summary(aov(PC3 ~ treatment * sex, data=pcadata)))
+  
+  print("PC2 ~ treatment * sex, data=pcadata")
   print(summary(aov(PC4 ~ treatment * sex, data=pcadata))) 
   return(pcadata)
 }
