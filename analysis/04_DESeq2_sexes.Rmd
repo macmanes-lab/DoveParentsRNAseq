@@ -76,7 +76,13 @@ plottotalDEGs(DEGs.pituitary, "Male & Female Pituitary DEGs")
 ## Variance stabilized data
 
 ```{r vsd}
+vsd.hyp <- vst(dds.hypothalamus, blind=FALSE) 
+vsd.pit <- vst(dds.pituitary, blind=FALSE) 
+vsd.gon <- vst(dds.gonad, blind=FALSE) 
 
+vsd.hyp.df <- vsd.dataframe(vsd.hyp) 
+vsd.pit.df <- vsd.dataframe(vsd.pit) 
+vsd.gon.df <- vsd.dataframe(vsd.gon) 
 ```
 
 

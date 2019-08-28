@@ -412,19 +412,24 @@ plotPC12 <- function(pcadata, mysubtitle){
 }  
 
 
+######### vsd.dataframe ######### 
+
+vsd.dataframe <- function(vsd){
+  
+  # extract varience stabilized and set rownames
+  vsd.df <- assay(vsd)
+  vsd.df <- as.data.frame(vsd.df)
+  vsd.df$entrezid <- row.names(vsd.df)
+}  
+
 ######### plotcandidates ######### 
 
-plotcandidates <- function(vsd, colData, mysubtitle){
+plotcandidates <- function(vsd.df, colData, mysubtitle){
   
-  # make dataframe counts
-  DEGs <- assay(vsd)
-  DEGs <- as.data.frame(DEGs)
-  DEGs$entrezid <- row.names(DEGs)
-
   # make dataframe with geneids and names and counts
   # how to gather: https://tidyr.tidyverse.org/reference/gather.html
  
-  candidates <- full_join(geneinfo, DEGs, by = "entrezid")
+  candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
   head(candidates)
   
   candidates <- candidates %>%
@@ -463,17 +468,9 @@ plotcandidates <- function(vsd, colData, mysubtitle){
 
 ######### plotcandidates ######### 
 
-plotprolactin <- function(vsd, colData, mysubtitle){
-  
-  # make dataframe counts
-  DEGs <- assay(vsd)
-  DEGs <- as.data.frame(DEGs)
-  DEGs$entrezid <- row.names(DEGs)
-  
-  # make dataframe with geneids and names and counts
-  # how to gather: https://tidyr.tidyverse.org/reference/gather.html
-  
-  candidates <- full_join(geneinfo, DEGs, by = "entrezid")
+plotprolactin <- function(vsd.df, colData, mysubtitle){
+
+  candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
   head(candidates)
   
   candidates <- candidates %>%
@@ -501,23 +498,14 @@ plotprolactin <- function(vsd, colData, mysubtitle){
     labs(x = NULL, subtitle = mysubtitle) +
     guides(fill = guide_legend(nrow = 1))
   return(p1)
-  
 }
 
 
 ######### makepheatmap ######### 
 
 # makes a candidate heat map!!
-makepheatmap <- function(mydds, colData, mysubtitle){
+makepheatmap <- function(vsd.df, colData, mysubtitle){
 
-  vsd <- vst(mydds, blind=FALSE) # variance stabilized 
-  
-  # make dataframe counts
-  DEGs <- assay(vsd)
-  
-  DEGs <- as.data.frame(DEGs)
-  DEGs$entrezid <- row.names(DEGs)
-  
   candidates <- full_join(geneinfo, DEGs, by = "entrezid")
   
   candidates <- candidates %>%
@@ -554,8 +542,6 @@ makepheatmap <- function(mydds, colData, mysubtitle){
                                           "n5"   = "#DB72FB",
                                           "n9" = "#FF61C3"))
   
-  levels(c.colData$treatment)
-  
   p1 <- pheatmap(DEGsmatrix, show_rownames = T, show_colnames = F,
            color = viridis(30),
            #breaks=myBreaks,
@@ -568,12 +554,9 @@ makepheatmap <- function(mydds, colData, mysubtitle){
 
 ######### plotcorrelationheatmaps ######### 
 
-plotcorrelationheatmaps <- function(mydds, mycoldata, mysubtitle){
-  dds <- mydds
-  vsd <- vst(dds, blind=FALSE) # variance stabilized 
-  
+plotcorrelationheatmaps <- function(vsd, mycoldata, mysubtitle){
+
   colnames(vsd) = mycoldata$treatment # set col names to group name
-  
   vsdm <- assay(vsd) # create matrix
   
   vsdmmean <-sapply(unique(colnames(vsdm)), function(i)
