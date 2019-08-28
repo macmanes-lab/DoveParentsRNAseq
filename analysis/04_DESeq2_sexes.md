@@ -290,12 +290,11 @@ Linear discriminant analysis (LDA)
       vsd <- vst(mydds, blind=FALSE) # variance stabilized 
       tvsd <- as.data.frame(t(assay(vsd)))   # get vsd counts and transform
 
-      tvsd <- tvsd[, sample(ncol(tvsd), 20)] # select 20 random genes
+      #tvsd <- tvsd[, sample(ncol(tvsd), 20)] # select 20 random genes
       tvsd$V1 <- row.names(tvsd)             # prep for joining
 
       mydata <- left_join(tvsd, mycolData, by = "V1")  # merge counts and variables
       
-
       # Split the data into training (80%) and test set (20%)
       set.seed(175)
 
@@ -314,7 +313,6 @@ Linear discriminant analysis (LDA)
       test.transformed <- preproc.param %>% predict(test.data)
 
       # LDA analysis
-
       # Fit the model
       print(model <- lda(treatment~ sex, data = train.transformed))
       # Make predictions
