@@ -341,7 +341,7 @@ Linear discriminant analysis (LDA)
       lda.data <- cbind(train.transformed, predict(model)$x)
       p<-ggplot(data=lda.data, aes(x=treatment, y=LD1, fill = treatment)) +
         geom_bar( stat = "summary", fun.y = "mean")
-      p
+      plot(p)
 
       # model accuracy 
       print(mean(predictions$class==test.transformed$treatment))
@@ -547,4 +547,7 @@ Linear discriminant analysis (LDA)
     ## 5   0.9750932
     ## 8   0.9750932
     ## 10 -0.9750932
+
+![](../figures/sexes/LDA-1.png)
+
     ## [1] 0.1621622
