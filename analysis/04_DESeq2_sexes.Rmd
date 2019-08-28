@@ -94,13 +94,13 @@ vsd.gon.df <- vsd.dataframe(vsd.gon)
 ```{r pca}
 theme_set(theme_classic())
 
-hypPCA <- returnPCAs2(dds.hypothalamus)
+hypPCA <- returnPCAs2(vsd.hyp)
 plotPC12(hypPCA, "Hypothalamus")
 
-pitPCA <- returnPCAs2(dds.pituitary)
+pitPCA <- returnPCAs2(vsd.pit)
 plotPC12(pitPCA, "Pituitary")
 
-gonPCA <- returnPCAs2(dds.gonad)
+gonPCA <- returnPCAs2(vsd.gon)
 plotPC12(gonPCA, "Gonad")
 
 ```
