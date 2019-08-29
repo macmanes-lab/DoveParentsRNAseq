@@ -158,7 +158,7 @@ d <- LDAplot.hypothesis(LDA.hyp2 , "Hypothalamus model 2", "parental stage ~ .  
 e <- LDAplot.hypothesis(LDA.pit2 ,  "Pituitary model 2", "parental stage ~ .  0.473 pred. acc.",
                         "LD1, F = 7.846659", "LD2, F = 5.076861")
 
-f <- LDAplot.hypothesis(LDA.gon2 , "Gonad model 3", "parental stage ~ .  has 0.368 pred. acc.",
+f <- LDAplot.hypothesis(LDA.gon2 , "Gonad model 2", "parental stage ~ .  has 0.368 pred. acc.",
                         "LD1, F = 6.029069", "LD2, F = 3.837591")
 
 f <- f + theme(legend.direction = "horizontal")
