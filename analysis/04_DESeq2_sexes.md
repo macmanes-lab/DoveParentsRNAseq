@@ -936,7 +936,7 @@ Linear discriminant analysis (LDA)
 
 ![](../figures/sexes/LDA-6.png)
 
-    f <- LDAplot.hypothesis(LDA.gon2 , "Gonad model 3", "parental stage ~ .  has 0.368 pred. acc.",
+    f <- LDAplot.hypothesis(LDA.gon2 , "Gonad model 2", "parental stage ~ .  has 0.368 pred. acc.",
                             "LD1, F = 6.029069", "LD2, F = 3.837591")
 
 ![](../figures/sexes/LDA-7.png)
