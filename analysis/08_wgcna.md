@@ -1,5 +1,5 @@
-WGCNA analysis, first pass
-==========================
+WGCNA analysis, second pass
+===========================
 
 The anlayses and image was made by following along with and modifing the
 [first in a series of WGCNA
@@ -19,59 +19,7 @@ pattern:
 -   sex: females (white), males (red),
 -   tissue: gonad (white), hypothalamus (pink), pituitary (red).
 
-All characterization data
--------------------------
-
-![](../figures/wgcna/wgcna-1.png)
-
-**Fig 1. Characterization dendrogram with trait heatmap.**. Most
-hypothalamus and pituitary samples separte form the gonad samples, but
-some are clusters contain samples from all tissues.
-
-Females
--------
-
-![](../figures/wgcna/wgcna-female-1.png)
-
-**Fig 2. Female characterization dendrogram with trait heatmap.**. Most
-pituitary samples form a single cluster. More hypothalamus samples
-cluster with gonads than with pituitary.
-
-Males
------
-
-![](../figures/wgcna/wgcna-male-1.png)
-
-**Fig 3. Male characterization dendrogram with trait heatmap.**. As with
-females, most pituitary samples form a single cluster, while more
-hypothalamus samples cluster with gonads than with pituitary.
-
-gonads
-------
-
-![](../figures/wgcna/wgcna-gon-1.png)
-
-**Fig 3. Gonad characterization dendrogram with trait heatmap.**. Male
-and female samples cluster together, but with large, sex-specific
-regions…. maybe there is a strong treatment effect here.
-
-hypothalamus
-------------
-
-![](../figures/wgcna/wgcna-hyp-1.png)
-
-Male and female samples cluster together, but with very small,
-sex-specific regions…. maybe there is a small treatment effect here.
-
 pituitary (not working)
 -----------------------
 
-female hypothalamus
--------------------
-
-![](../figures/wgcna/wgcna-f-hyp-1.png)
-
-female gonad
-------------
-
-![](../figures/wgcna/wgcna-f-gon-1.png)
+![](../figures/wgcna/wgcna-pit-1.png)![](../figures/wgcna/wgcna-pit-2.png)
