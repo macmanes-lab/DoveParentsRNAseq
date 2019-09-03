@@ -8,26 +8,26 @@
 
 
 # Load the packages
+library(tidyverse)
 library(WGCNA)
 library(dplyr)
 library(magrittr)
 library(forcats)
 
-subsetWGCNA <- function(whichgroups, mytitle){
+subsetWGCNA <- function(whichgroups, cutoff, mytitle){
 
-#Read in the data set
-colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, stringsAsFactors = T)
+# read the count data
 countData <- read.csv("../results/00_countData_characterization.csv", row.names = 1)
 
-# create new grouping for subsets
-colData$sextissue <-  paste(colData$sex, colData$tissue, sep = ".")
-levels(colData$treatment)
+# read the sample meta data or column data
+colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, stringsAsFactors = T)
+
 
 ## rename rownames and colnames for better vizualiation
 colData <- colData %>%
   mutate(sex = fct_recode(sex,
-                              "F" = "female",
-                              "M" = "male"),
+                          "F" = "female",
+                          "M" = "male"),
          tissue = fct_recode(tissue,
                              "pit" = "pituitary",
                              "hyp" = "hypothalamus",
@@ -43,27 +43,31 @@ colData <- colData %>%
                                  "hatchling.care" = "n5",
                                  "hatchling.care" = "n9"))
 
+# wgcna needs numeric identifiers
 colData$ID <- as.numeric(colData$bird)
-colData$sample <- paste(colData$sex, colData$tissue, colData$treatment, colData$ID, sep = ".")
-head(colData$sample)
 
+# create a short sample desctiption, make it the row and columns names of colData and countData
+colData$sample <- paste(colData$treatment, colData$sex, colData$tissue,  colData$ID, sep = ".")
+  
+# set row and count names to be the same
 row.names(colData) <- colData$sample
 colnames(countData) <- colData$sample
 
-
-
-# subset to look within one tissue in one sex
-colData <- colData %>%
-  dplyr::filter(sextissue %in% whichgroups) %>%
-  droplevels()
-row.names(colData) <- colData$sample
 head(colData)
-  
+head(countData)
+
+# create new grouping for subsets
+colData$sextissue <-  as.factor(paste(colData$sex, colData$tissue, sep = "."))
+levels(colData$sextissue)
+
+# subset to samples
+colData <- colData %>% dplyr::filter(sextissue %in% whichgroups) 
+
 # which counts to save
 savecols <- as.character(colData$sample) 
 savecols <- as.vector(savecols) 
   
-# save counts that match colData
+# read counts, save counts that match colData
 countData <- countData %>% dplyr::select(one_of(savecols)) 
 
   
@@ -120,12 +124,13 @@ if (!gsg$allOK)
 
 
 sampleTree = hclust(dist(datExpr0), method = "average");
+
 # Plot the sample tree: Open a graphic output window of size 12 by 9 inches
 # The user should change the dimensions if the window is too large or too small.
 
-#plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="", cex.lab = 1.5, 
-  #   cex.axis = 1.5, cex.main = 2)
-#abline(h = 1000000, col = "red");
+plot(sampleTree, main = "Sample clustering to detect outliers", 
+     sub="", xlab="", cex.main = 1, cex = 0.4)
+abline(h = cutoff, col = "red");
 
 
 
@@ -139,7 +144,7 @@ sampleTree = hclust(dist(datExpr0), method = "average");
 # Plot a line to show the cut
 
 # Determine cluster under the line
-clust = cutreeStatic(sampleTree, cutHeight = 1000000, minSize = 3)
+clust = cutreeStatic(sampleTree, cutHeight = cutoff, minSize = 3)
 table(clust)
 
 # clust 1 contains the samples we want to keep.
@@ -155,8 +160,7 @@ nSamples = nrow(datExpr)
 #
 #=====================================================================================
 
-
-traitData <- colData[c(4,3,5,9)]
+traitData <- colData %>% select(tissue,sex,treatment,hypothesis)
 
 # numeric
 head(traitData)
@@ -182,13 +186,12 @@ collectGarbage()
 # Re-cluster samples
 sampleTree2 = hclust(dist(datExpr), method = "average")
 # Convert traits to a color representation: white means low, red means high, grey means missing entry
-traitColors = numbers2colors(datTraits, signed = FALSE);
+traitColors = numbers2colors(datTraits, signed = TRUE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
                     main = mytitle,
-                    cex.dendroLabels = 0.4,
-                    dendroLabels = FALSE
+                    cex.dendroLabels = 0.4
                     )
 
 }

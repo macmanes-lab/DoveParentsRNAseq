@@ -10,7 +10,7 @@ source("08_WGCNA_1.R")
 
 ```
 
-# WGCNA analysis, first pass
+# WGCNA analysis, second pass
 
 The anlayses and image was made by following along with and modifing the [first in a series of WGCNA tutorial](https://horvath.genetics.ucla.edu/html/CoexpressionNetwork/Rpackages/WGCNA/Tutorials/Consensus-DataInput.R). The first tutorial focuses on data input, cleaning and pre-processing; outlier removal; clustering of samples by their Euclidean distance; a comparison of sample cluster to sample meta data. I put pretty much the whole script into a single function that I source with [`08_WGCNA_1.R`](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/08_WGCNA_1.R).
 
@@ -21,28 +21,10 @@ For the following figures, the top panel is a dendrogram showing Euclidean dista
 * tissue: gonad (white), hypothalamus (pink), pituitary (red).
 
 
-## All characterization data
-
-
-```{r wgcna, message=FALSE, warning=FALSE, cache=TRUE}
-
-subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pituitary",
-                           "male.gonad", "male.hypothalamus", "male.pituitary"),
-            mytitle = "Characterization dendrogram with trait heatmap")
-
-```
-
-**Fig 1. Characterization dendrogram with trait heatmap.**. 
- Most hypothalamus and pituitary samples separte form the gonad samples, but some are clusters contain samples from all tissues.  
-
-
 
 ## pituitary (not working)
 
 ```{r wgcna-pit, message=FALSE, warning=FALSE, cache=TRUE}
-
-
-subsetWGCNA(c("female.pitutary", "male.pitutary"),
-            mytitle = "Pituitary dendrogram with trait heatmap")
+subsetWGCNA(c("F.pit", "M.pit"), 2000000, "Pituitary dendrogram with trait heatmap")
 ```
 
