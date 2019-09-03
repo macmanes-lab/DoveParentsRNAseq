@@ -36,77 +36,13 @@ subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pitui
  Most hypothalamus and pituitary samples separte form the gonad samples, but some are clusters contain samples from all tissues.  
 
 
-## Females
-
-```{r wgcna-female, message=FALSE, warning=FALSE, cache=TRUE}
-subsetWGCNA(whichgroups = c("female.gonad", "female.hypothalamus", "female.pituitary"),
-            mytitle = "Female sample dendrogram with trait heatmap")
-
-```
-
-
-**Fig 2. Female characterization dendrogram with trait heatmap.**. 
-Most pituitary samples form a single cluster. More hypothalamus samples cluster with gonads than with pituitary. 
-
-
-## Males
-
-```{r wgcna-male, message=FALSE, warning=FALSE, cache=TRUE}
-subsetWGCNA(c("male.gonad", "male.hypothalamus", "male.pituitary"),
-            mytitle = "Male sample dendrogram with trait heatmap")
-
-```
-
-**Fig 3. Male characterization dendrogram with trait heatmap.**. 
- As with females, most pituitary samples form a single cluster, while more hypothalamus samples cluster with gonads than with pituitary. 
-
-
-
-## gonads
-
-```{r wgcna-gon, message=FALSE, warning=FALSE, cache=TRUE}
-subsetWGCNA(c("female.gonad", "male.gonad"),
-            mytitle = "Gonad dendrogram with trait heatmap")
-```
-
-**Fig 3. Gonad characterization dendrogram with trait heatmap.**. 
-Male and female samples cluster together, but with large, sex-specific regions.... maybe there is a strong treatment effect here.
-
-## hypothalamus
-
-
-
-```{r wgcna-hyp, message=FALSE, warning=FALSE, cache=TRUE}
-subsetWGCNA(c("male.hypothalamus", "female.hypothalamus"),
-            mytitle = "Hypothalamus dendrogram with trait heatmap")
-```
-
-Male and female samples cluster together, but with very small, sex-specific regions.... maybe there is a small treatment effect here.
-
 
 ## pituitary (not working)
 
 ```{r wgcna-pit, message=FALSE, warning=FALSE, cache=TRUE}
 
 
-#subsetWGCNA(c("female.pitutary", "male.pitutary"),
-#            mytitle = "Pituitary dendrogram with trait heatmap")
+subsetWGCNA(c("female.pitutary", "male.pitutary"),
+            mytitle = "Pituitary dendrogram with trait heatmap")
 ```
 
-## female hypothalamus
-
-
-
-```{r wgcna-f-hyp, message=FALSE, warning=FALSE, cache=TRUE}
-subsetWGCNA(c("female.hypothalamus"),
-            mytitle = "Female hypothalamus sample dendrogram")
-```
-
-## female gonad
-
-
-
-```{r wgcna-f-gon, message=FALSE, warning=FALSE, cache=TRUE}
-subsetWGCNA(c("female.gonad"),
-            mytitle = "Female gonad sample dendrogram")
-```
