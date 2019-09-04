@@ -573,9 +573,10 @@ plotWGCNAcandidates <- function(vsd, mygenelist, colData, mysubtitle){
     facet_wrap(~Name, scales = "free_y") +
     theme_rmh() +
     theme(legend.position = "bottom",
-          axis.text.x = element_text(angle = 60,  hjust=1)) +
+          axis.text.x = element_text(angle = 60,  hjust=1),
+          axis.text.y = element_blank()) +
     guides(fill = guide_legend(nrow = 1)) +
-    labs(x = "Time", y = "Gene expression",
+    labs(x = NULL, y = "Gene expression",
          subtitle = mysubtitle) +
     scale_x_continuous(breaks=c(1,2,3,4,5,6,7,8,9),
                        labels=charlevels)
