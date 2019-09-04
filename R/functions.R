@@ -570,14 +570,15 @@ plotWGCNAcandidates <- function(vsd, mygenelist, colData, mysubtitle){
   p1 <- ggplot(candidateST, aes(x = as.numeric(treatment), y = expression, color = sex)) +
     geom_point() +
     geom_smooth(se = FALSE) +
-    facet_wrap(~Name, scales = "free") +
+    facet_wrap(~Name, scales = "free_y") +
     theme_rmh() +
-    theme(legend.position = "bottom") +
+    theme(legend.position = "bottom",
+          axis.text.x = element_text(angle = 60,  hjust=1)) +
     guides(fill = guide_legend(nrow = 1)) +
-    theme(axis.text.x = element_blank(),
-          axis.text.y = element_blank()) +
     labs(x = "Time", y = "Gene expression",
-         subtitle = mysubtitle)
+         subtitle = mysubtitle) +
+    scale_x_continuous(breaks=c(1,2,3,4,5,6,7,8,9),
+                       labels=charlevels)
   return(p1)
   
 }
