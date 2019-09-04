@@ -20,11 +20,3 @@ For the following figures, the top panel is a dendrogram showing Euclidean dista
 * sex: females (white), males (red), 
 * tissue: gonad (white), hypothalamus (pink), pituitary (red).
 
-
-
-## pituitary 
-
-```{r wgcna-pit, message=FALSE, warning=FALSE, cache=TRUE}
-subsetWGCNA(c("F.pit", "M.pit"), 2000000, "Pituitary dendrogram with trait heatmap")
-```
-

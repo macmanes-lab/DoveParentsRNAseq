@@ -14,7 +14,6 @@ library(dplyr)
 library(magrittr)
 library(forcats)
 
-subsetWGCNA <- function(whichgroups, cutoff, mytitle){
 
 # read the count data
 countData <- read.csv("../results/00_countData_characterization.csv", row.names = 1)
@@ -61,7 +60,7 @@ colData$sextissue <-  as.factor(paste(colData$sex, colData$tissue, sep = "."))
 levels(colData$sextissue)
 
 # subset to samples
-colData <- colData %>% dplyr::filter(sextissue %in% whichgroups) 
+colData <- colData %>% dplyr::filter(sextissue %in% c("F.pit", "M.pit")) 
 
 # which counts to save
 savecols <- as.character(colData$sample) 
@@ -130,7 +129,7 @@ sampleTree = hclust(dist(datExpr0), method = "average");
 
 plot(sampleTree, main = "Sample clustering to detect outliers", 
      sub="", xlab="", cex.main = 1, cex = 0.4)
-abline(h = cutoff, col = "red");
+abline(h = 2000000, col = "red");
 
 
 
@@ -144,7 +143,7 @@ abline(h = cutoff, col = "red");
 # Plot a line to show the cut
 
 # Determine cluster under the line
-clust = cutreeStatic(sampleTree, cutHeight = cutoff, minSize = 3)
+clust = cutreeStatic(sampleTree, cutHeight = 2000000, minSize = 3)
 table(clust)
 
 # clust 1 contains the samples we want to keep.
@@ -190,9 +189,7 @@ traitColors = numbers2colors(datTraits, signed = TRUE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
-                    main = mytitle,
+                    main = "Pituitary dendrogram with trait heatmap",
                     cex.dendroLabels = 0.4
                     )
-
-}
 
