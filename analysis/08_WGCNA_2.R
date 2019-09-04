@@ -8,6 +8,8 @@
 
 # Load the WGCNA package
 library(WGCNA)
+library(magrittr) # for %<>%
+
 # The following setting is important, do not omit.
 
 # Allow multi-threading within WGCNA. This helps speed up certain calculations.
@@ -16,12 +18,6 @@ library(WGCNA)
 # Caution: skip this line if you run RStudio or other third-party R environments.
 # See note above.
 
-# Load the data saved in the first part
-lnames = load(file = "../results/08_WGCNA_1.RData");
-#The variable lnames contains the names of loaded variables.
-lnames
-
-str(datTraits)
 
 #=====================================================================================
 #
@@ -45,7 +41,7 @@ plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
 text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],
      labels=powers,cex=cex1,col="red");
 # this line corresponds to using an R^2 cut-off of h
-abline(h=0.90,col="red")
+abline(h=0.60,col="red")
 # Mean connectivity as a function of the soft-thresholding power
 plot(sft$fitIndices[,1], sft$fitIndices[,5],
      xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",
@@ -62,15 +58,15 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
 
 enableWGCNAThreads()
 
-bwnet = blockwiseModules(datExpr, maxBlockSize = 2000,
-                         power = 6, TOMType = "unsigned", minModuleSize = 30,
-                        # reassignThreshold = 0, 
-                         #mergeCutHeight = 0.25,
-                        # numericLabels = TRUE,
-                         #saveTOMs = TRUE,
-                        # saveTOMFileBase = "femaleMouseTOM-blockwise",
-                         verbose = 3)
 
+# this is my attempt to solve an error
+datExpr %<>% mutate_if(is.integer,as.numeric)
+head(str(datExpr))
+
+net = blockwiseModules(datExpr, power = 10,
+                                verbose = 5)
+names(net)
+net$colors
 
 #=====================================================================================
 #
@@ -79,13 +75,36 @@ bwnet = blockwiseModules(datExpr, maxBlockSize = 2000,
 #=====================================================================================
 
 
-# Load the results of single-block analysis
-load(file = "FemaleLiver-02-networkConstruction-auto.RData");
-# Relabel blockwise modules
-bwLabels = matchLabels(bwnet$colors, moduleLabels);
+# open a graphics window
+sizeGrWindow(12, 9)
 # Convert labels to colors for plotting
-bwModuleColors = labels2colors(bwLabels)
+mergedColors = labels2colors(net$colors)
+mergedColors
+# Plot the dendrogram and the module colors underneath
+plotDendroAndColors(net$dendrograms[[1]], mergedColors[net$blockGenes[[1]]],
+                    "Module colors",
+                    dendroLabels = FALSE)
 
+# save data frame with genes and their module colors
+genes_modules <- as.data.frame(net$unmergedColors)
+
+# find candidate genes, PRL and PRLR
+# PRL = NP_990797.2
+# PRLR = XP_015132722.1
+
+genes_modules$entrezid <- row.names(genes_modules)
+
+prolatin_modules <- genes_modules %>%
+  filter(entrezid %in% c("NP_990797.2", "XP_015132722.1"))
+prolatin_modules
+
+PRL_associated <- genes_modules %>%
+  filter(`net$unmergedColors` %in% c("greenyellow"))
+PRL_associated
+
+PRLR_associated <- genes_modules %>%
+  filter(`net$unmergedColors` %in% c("magenta"))
+PRLR_associated
 
 #=====================================================================================
 #
@@ -94,54 +113,7 @@ bwModuleColors = labels2colors(bwLabels)
 #=====================================================================================
 
 
-# open a graphics window
-sizeGrWindow(6,6)
-# Plot the dendrogram and the module colors underneath for block 1
-plotDendroAndColors(bwnet$dendrograms[[1]], bwModuleColors[bwnet$blockGenes[[1]]],
-                    "Module colors", main = "Gene dendrogram and module colors in block 1", 
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05)
-# Plot the dendrogram and the module colors underneath for block 2
-plotDendroAndColors(bwnet$dendrograms[[2]], bwModuleColors[bwnet$blockGenes[[2]]],
-                    "Module colors", main = "Gene dendrogram and module colors in block 2", 
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05)
-
-
-#=====================================================================================
-#
-#  Code chunk 6
-#
-#=====================================================================================
-
-
-sizeGrWindow(12,9)
-plotDendroAndColors(geneTree,
-                    cbind(moduleColors, bwModuleColors),
-                    c("Single block", "2 blocks"),
-                    main = "Single block gene dendrogram and module colors",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05)
-
-
-#=====================================================================================
-#
-#  Code chunk 7
-#
-#=====================================================================================
-
-
-singleBlockMEs = moduleEigengenes(datExpr, moduleColors)$eigengenes;
-blockwiseMEs = moduleEigengenes(datExpr, bwModuleColors)$eigengenes;
-
-
-#=====================================================================================
-#
-#  Code chunk 8
-#
-#=====================================================================================
-
-
-single2blockwise = match(names(singleBlockMEs), names(blockwiseMEs))
-signif(diag(cor(blockwiseMEs[, single2blockwise], singleBlockMEs)), 3)
-
+moduleLabels = net$colors
+moduleColors = labels2colors(net$colors)
+MEs = net$MEs;
+geneTree = net$dendrograms[[1]]

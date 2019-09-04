@@ -19,7 +19,7 @@ pattern:
 -   sex: females (white), males (red),
 -   tissue: gonad (white), hypothalamus (pink), pituitary (red).
 
-pituitary (not working)
------------------------
+pituitary
+---------
 
 ![](../figures/wgcna/wgcna-pit-1.png)![](../figures/wgcna/wgcna-pit-2.png)

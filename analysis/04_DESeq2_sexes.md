@@ -952,3 +952,24 @@ Linear discriminant analysis (LDA)
     plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 
 ![](../figures/sexes/LDA-8.png)
+
+plot genes in a PRL WGCNA module
+--------------------------------
+
+    plotWGCNAcandidates(vsd.pit, c("NP_990797.2"), colDataPit, "PRL expression")
+
+![](../figures/sexes/wgcna-1.png)
+
+    plotWGCNAcandidates(vsd.pit,
+                        c("NP_990797.2","NP_001004392.2", "NP_001004403.1", "NP_001006255.2", "NP_001006274.1",
+                               "NP_989500.1", "XP_001234815.2", "XP_015149152.1", "XP_416110.5"),
+                        colDataPit, "9 of 102 genes in a WGCNA module containting gene of interest")
+
+![](../figures/sexes/wgcna-2.png)
+
+    plotWGCNAcandidates(vsd.pit,
+                        c("XP_428110.3","NP_001004392.2",  "XP_015142961.1", "XP_015139636.1",
+                          "XP_015137408.1", "XP_004938696.1", "NP_990620.1", "NP_001170793.2", "NP_001026250.1"),
+                        colDataPit, "Prolaction receptor: 9 of 147 genes in a WGCNA module containting PRLR")
+
+![](../figures/sexes/wgcna-3.png)
