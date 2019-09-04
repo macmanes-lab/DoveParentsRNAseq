@@ -14,6 +14,7 @@ library(forcats)
 library(caret) # LDA analysis
 library(MASS) # LDA analysis
 library(ggtext) # for pretty plots
+library(ctsGE)
 
 library(BiocParallel)
 register(MulticoreParam(6))
@@ -174,13 +175,13 @@ plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 
 ## plot genes in a  PRL WGCNA module
 
-```{r wgcna, eval = T, fig.width=6, fig.height=7}
+```{r wgcna, eval = T, fig.width=12, fig.height=6}
 plotWGCNAcandidates(vsd.pit, c("NP_990797.2"), colDataPit, "PRL expression")
 
 plotWGCNAcandidates(vsd.pit,
                     c("NP_990797.2","NP_001004392.2", "NP_001004403.1", "NP_001006255.2", "NP_001006274.1",
                            "NP_989500.1", "XP_001234815.2", "XP_015149152.1", "XP_416110.5"),
-                    colDataPit, "9 of 102 genes in a WGCNA module containting gene of interest")
+                    colDataPit, "9 of 102 genes in a WGCNA module containting Prolactin")
 
 plotWGCNAcandidates(vsd.pit,
                     c("XP_428110.3","NP_001004392.2",  "XP_015142961.1", "XP_015139636.1",
@@ -198,6 +199,24 @@ plotWGCNAcandidates(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1"
 plotWGCNAcandidates(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                "NP_990797.2", "XP_015132722.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
+
+
+prl36 <-  PRL_associated$entrezid[1:57]
+prl72 <-  PRL_associated$entrezid[58:102]
+
+plotWGCNAcandidates(vsd.pit, prl36, colDataPit, "A-K genes with PRL pattern in the pituitary")
+plotWGCNAcandidates(vsd.pit, prl72, colDataPit, "K-Z genes with PRL pattern in the pituitary")
+
+
+str(PRL_associated)
+
 ```
 
+```{r ctsGE}
+rts <- assay(vsd.pit)
+head(rts)
 
+
+
+prts <- PreparingTheIndexes(x = rts, min_cutoff=0.5, max_cutoff=0.7, mad.scale = TRUE)
+```
