@@ -1,3 +1,7 @@
+# custom levels
+
+charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
+
 # custom themes for plots
 
 # hex colors for last full day of parents life

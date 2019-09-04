@@ -49,35 +49,6 @@ dds.male_pituitary <- subsetDESeq(c.colData,  c.countData, "male_pituitary"  )
 dds.male_gondad <- subsetDESeq(c.colData,  c.countData, "male_gonad")
 ```
 
-## Calculate and plot total DEGs
-
-
-```{r returntotalDEGs, eval = T, results = 'hide'}
-DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
-DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
-DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
-DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
-DEGs.male_pituitary <- returntotalDEGs(dds.male_pituitary)
-DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
-```
-
-```{r totalDEGs, eval = T}
-a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
-b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
-c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
-d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
-e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
-f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
-
-plot_grid(a + theme(legend.position = "none"),
-          b + theme(legend.position = "none"),
-          c,
-          d + theme(legend.position = "none"),
-          e + theme(legend.position = "none"),
-          f,
-          nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
-```
-
 
 
 ## Plot only a subset of DEGs that relate to hypotheses as bar and line graphs
@@ -205,6 +176,14 @@ plots <- plot_grid(a + theme(legend.position = "none"),
           e + theme(legend.position = "none"),
           f + theme(legend.position = "none"))
 plot_grid(plots, mylegend, nrow = 2, rel_heights = c(1,0.1))
+
+```
+
+## plot genes in a  PRL WGCNA module
+
+```{r wgcna, eval = T}
+plotWGCNAcandidates(dds.female_pituitary, colDataFP, "female pituitary")
+plotWGCNAcandidates(dds.male_pituitary,colDataMP, "male pituitary")
 
 ```
 
