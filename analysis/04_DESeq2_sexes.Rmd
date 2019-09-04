@@ -174,7 +174,7 @@ plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 
 ## plot genes in a  PRL WGCNA module
 
-```{r wgcna, eval = T, fig.width=5.25, fig.height=3}
+```{r wgcna, eval = T, fig.width=6, fig.height=7}
 plotWGCNAcandidates(vsd.pit, c("NP_990797.2"), colDataPit, "PRL expression")
 
 plotWGCNAcandidates(vsd.pit,
@@ -186,6 +186,18 @@ plotWGCNAcandidates(vsd.pit,
                     c("XP_428110.3","NP_001004392.2",  "XP_015142961.1", "XP_015139636.1",
                       "XP_015137408.1", "XP_004938696.1", "NP_990620.1", "NP_001170793.2", "NP_001026250.1"),
                     colDataPit, "Prolaction receptor: 9 of 147 genes in a WGCNA module containting PRLR")
+
+plotWGCNAcandidates(vsd.pit, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
+                               "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
+                               "NP_990797.2", "XP_015132722.1"), colDataPit, "Pitutary: CISH, SOCS, PRL, PRLR")
+
+plotWGCNAcandidates(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
+                               "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
+                               "NP_990797.2", "XP_015132722.1"), colDataHyp, "Hypothalamus: CISH, SOCS, PRL, PRLR")
+
+plotWGCNAcandidates(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
+                               "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
+                               "NP_990797.2", "XP_015132722.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
 ```
 
 

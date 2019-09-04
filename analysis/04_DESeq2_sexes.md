@@ -973,3 +973,21 @@ plot genes in a PRL WGCNA module
                         colDataPit, "Prolaction receptor: 9 of 147 genes in a WGCNA module containting PRLR")
 
 ![](../figures/sexes/wgcna-3.png)
+
+    plotWGCNAcandidates(vsd.pit, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
+                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
+                                   "NP_990797.2", "XP_015132722.1"), colDataPit, "Pitutary: CISH, SOCS, PRL, PRLR")
+
+![](../figures/sexes/wgcna-4.png)
+
+    plotWGCNAcandidates(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
+                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
+                                   "NP_990797.2", "XP_015132722.1"), colDataHyp, "Hypothalamus: CISH, SOCS, PRL, PRLR")
+
+![](../figures/sexes/wgcna-5.png)
+
+    plotWGCNAcandidates(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
+                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
+                                   "NP_990797.2", "XP_015132722.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
+
+![](../figures/sexes/wgcna-6.png)

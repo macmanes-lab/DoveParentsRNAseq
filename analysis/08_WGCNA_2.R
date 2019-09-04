@@ -100,10 +100,16 @@ prolatin_modules
 
 PRL_associated <- genes_modules %>%
   filter(`net$unmergedColors` %in% c("greenyellow"))
+PRL_associated <- left_join(PRL_associated, geneinfo, by = "entrezid")
+PRL_associated <- PRL_associated %>% arrange(Name)
 PRL_associated
+
+write.csv(PRL_associated, "~/Desktop/PRL_associated.csv")
 
 PRLR_associated <- genes_modules %>%
   filter(`net$unmergedColors` %in% c("magenta"))
+PRLR_associated <- left_join(PRLR_associated, geneinfo, by = "entrezid")
+PRLR_associated <- PRLR_associated %>% arrange(Name)
 PRLR_associated
 
 #=====================================================================================
