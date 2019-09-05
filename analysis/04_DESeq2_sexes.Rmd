@@ -175,8 +175,18 @@ plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 
 ## plot genes in a  PRL WGCNA module
 
-```{r wgcna, eval = T, fig.width=12, fig.height=6}
-plotWGCNAcandidates(vsd.pit, c("NP_990797.2"), colDataPit, "PRL expression")
+```{r wgcna, eval = T, fig.width=6, fig.height=6}
+plotWGCNAcandidates(vsd.pit, c("NP_990797.2"), colDataPit, "PRL expression, Pituitary")
+plotWGCNAcandidates(vsd.pit, c("NP_001090992.1"), colDataPit, "VIP1R expression, Pituitary")
+plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1"), colDataPit, "PRL & VIP1R expression, Pituitary")
+plotWGCNAcandidates(vsd.pit, c("NP_990136.1", "NP_001035179.1"), colDataPit, "TH & AR expression, Pituitary")
+plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1","NP_990136.1", "NP_001035179.1", "NP_001026269.1"), colDataPit, "PRL, PRLR, VIP1R, POMC, TH & AR expression, Pituitary")
+
+
+
+plotWGCNAcandidates(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")
+
+
 
 plotWGCNAcandidates(vsd.pit,
                     c("NP_990797.2","NP_001004392.2", "NP_001004403.1", "NP_001006255.2", "NP_001006274.1",
@@ -199,24 +209,38 @@ plotWGCNAcandidates(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1"
 plotWGCNAcandidates(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                "NP_990797.2", "XP_015132722.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
+```
 
-
+```{r wgcna2, eval = T, fig.width=12, fig.height=8}
+PRL_associated <- read.csv("../results/08_PRL_associated.csv", header = T)
 prl36 <-  PRL_associated$entrezid[1:57]
 prl72 <-  PRL_associated$entrezid[58:102]
-
 plotWGCNAcandidates(vsd.pit, prl36, colDataPit, "A-K genes with PRL pattern in the pituitary")
 plotWGCNAcandidates(vsd.pit, prl72, colDataPit, "K-Z genes with PRL pattern in the pituitary")
 
+PRLR_associated <- read.csv("../results/08_PRLR_associated.csv", header = T)
+prlr36 <-  PRLR_associated$entrezid[1:57]
+prlr72 <-  PRLR_associated$entrezid[58:115]
+prlr116<-  PRLR_associated$entrezid[116:147]
+plotWGCNAcandidates(vsd.pit, prlr36, colDataPit, "A-G genes with PRLR pattern in the pituitary")
+plotWGCNAcandidates(vsd.pit, prlr72, colDataPit, "L-S genes with PRLR pattern in the pituitary")
+plotWGCNAcandidates(vsd.pit, prlr116, colDataPit, "S-Z genes with PRLR pattern in the pituitary")
 
-str(PRL_associated)
+VIPR1_associated <- read.csv("../results/08_VIPR1_associated.csv", header = T)
+vipr156 <-  VIPR1_associated$entrezid[398:456]
+plotWGCNAcandidates(vsd.pit, vipr156, colDataPit, "Genes with VIPR1 pattern in the pituitary")
+
+AR_associated <- read.csv("../results/08_AR_associated.csv", header = T)
+AR <-  AR_associated$entrezid[1:31]
+plotWGCNAcandidates(vsd.pit, AR, colDataPit, "Genes with AR pattern in the pituitary")
+
+
+POMC_associated <- read.csv("../results/08_POMC_associated.csv", header = T)
+pomc <-  POMC_associated$entrezid[32:61]
+plotWGCNAcandidates(vsd.pit, pomc, colDataPit, "Genes with POMC pattern in the pituitary")
 
 ```
 
 ```{r ctsGE}
 rts <- assay(vsd.pit)
-head(rts)
-
-
-
-prts <- PreparingTheIndexes(x = rts, min_cutoff=0.5, max_cutoff=0.7, mad.scale = TRUE)
 ```
