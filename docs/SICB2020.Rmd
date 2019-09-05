@@ -62,7 +62,7 @@ plot_grid(r,s, nrow = 1)
 
 ##
 
-Removal of offspring around the time of hatch time causes prolactin to plummet and gene expression patterns shift to a non-parental state, suggesting an external stimulus-driven response; however prolonging incubation or delaying hatch have a much more subtle effect on gene expression. 
+Removal of offspring around the time of chicks hatching causes circulating prolactin to plummet and gene expression patterns shift to a non-parental state, suggesting an external stimulus-driven response; however prolonging incubation or delaying hatch have a much more subtle effect on gene expression. 
 
 
 ```{r, fig.width = 8}
@@ -72,7 +72,7 @@ t
 
 ##
 
-By characterizing and manipulating parental care and measuring the effects on hormones and gene expression in both male and female parents over time, we provide a deeper understanding of how the hypothalamic-pituitary-gonadal axis responds to predictable and unpredictable changes during offspring development.
+By characterizing and manipulating parental care and measuring the effects on hormones and gene expression in both male and female parents over time, we provide a more complete picture of how the hypothalamic-pituitary-gonadal axis responds to predictable and unpredictable changes during offspring development.
 
 ~[](./)
 
