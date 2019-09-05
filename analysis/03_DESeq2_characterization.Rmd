@@ -179,13 +179,6 @@ plot_grid(plots, mylegend, nrow = 2, rel_heights = c(1,0.1))
 
 ```
 
-## plot genes in a  PRL WGCNA module
-
-```{r wgcna, eval = T}
-plotWGCNAcandidates(dds.female_pituitary, colDataFP, "female pituitary")
-plotWGCNAcandidates(dds.male_pituitary,colDataMP, "male pituitary")
-
-```
 
 ## correlation heat maps
 
