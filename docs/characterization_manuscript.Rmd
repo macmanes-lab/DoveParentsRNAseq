@@ -19,7 +19,7 @@ address:
   - code: UNH
     address: UNH, smalltown, NH
 abstract: |
-  Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+  The goal of this research was to provide the most comprehensive gene expression profile of gene expression activity in the HPG axis of male and female rock doves to provide a deeper undertand of how the reproductive axis response to typical behavioral transitions associated with parental care. Here we used RNA sequencing to measure gene activity at 8 stages of the parental care cyle from nest building, to egg incubation, and through nestling care. Non-parental groups were added as controls, but gene expressions differences were assesed between and across all time points. The three tissue have unique signatures, but within each tissue we find minial sex differences. The pitutary samples displacy the msot plasticity in gene expression, with many changes in gene expression mirroring the typical rise and fall of circulating prolatin that peaks when chicks hatch. Our analysis provides new insight into how suites of genes respond in concert to the demands of offspring care.
 author_summary: |
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
 bibliography: mybibfile.bib
