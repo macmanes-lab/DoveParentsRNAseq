@@ -35,6 +35,8 @@ csl: plos.csl
 
 # install.packages(c('tinytex', 'rmarkdown'))
 # tinytex::install_tinytex()
+
+library(cowplot)
 ```
 
 <!--
@@ -51,26 +53,46 @@ Understanding the mechanisms underlying parental care are critical to circumvent
 knitr::include_graphics("../figures/images/PigeonHPGaxis.png")
 ```
 
-Rock doves are socially monogamous and offer bi-parental care, making inter- and intra-sexual comparisons possible. Birds offer two important behavioral transition points into parental care: the incubation of eggs and the caring for chicks. This produces two unique opportunities to study how the brain transitions into two different suites of parental care behaviors. Additionally, rock doves exhibit a parental care strategy analogous to mammals in that they, too, ‘lactate’ to feed their young (Gillespie et al. 2011, 2012). This lactation, unlike simple regurgitation of food, consists of the production and sloughing off of skin cells inside the crop sac of females and males, creating a protein-rich milk-like substance on which they rear their chicks. Many functional similarities between rock dove and mammalian lactation exist concerning the mediation of this event by the hormone prolactin (Dumont 1965). Additionally, like mammalian milk, rock dove milk delivers essential immunoglobulins and nutritional benefits to young, aiding in their immune function and development of microbiota @Gillespie2012. Thus, because rock doves incubate eggs and exhibit mammalian-like mediation and function of lactation for young, they have the potential to serve as a powerful theoretical bridge to understand the neurobiology of both avian and mammalian transitions into parental care.
+Rock doves are socially monogamous and offer bi-parental care, making inter- and intra-sexual comparisons possible. Birds offer two important behavioral transition points into parental care: the incubation of eggs and the caring for chicks. This produces two unique opportunities to study how the brain transitions into two different suites of parental care behaviors. Additionally, rock doves exhibit a parental care strategy analogous to mammals in that they, too, ‘lactate’ to feed their young (Gillespie et al. 2011, 2012). This lactation, unlike simple regurgitation of food, consists of the production and sloughing off of skin cells inside the crop sac of females and males, creating a protein-rich milk-like substance on which they rear their chicks. Many functional similarities between rock dove and mammalian lactation exist concerning the mediation of this event by the hormone prolactin (Dumont 1965). Additionally, like mammalian milk, rock dove milk delivers essential immunoglobulins and nutritional benefits to young, aiding in their immune function and development of microbiota @Gillespie2012. Thus, because rock doves incubate eggs and exhibit mammalian-like mediation and function of lactation for young, they have the potential to serve as a powerful theoretical bridge to understand the neurobiology of both avian and mammalian transitions into parental care. Our working hypothesis is that distinct changes in transcription occur in the brain at the anticipation of, during, and in response to two different types of parental care: incubation behavior and hatchling care.
 
-# Materials and Methods and Results
-
+# Materials and Methods
 ```{r, out.width = "360px", echo = F}
 knitr::include_graphics("../figures/images/samplingtimepoints.png")
 ```
 
-## Characterize changes in neural-gene expression during parental care transitions
+# Results
 
-Our working hypothesis is that distinct changes in transcription occur in the brain at the anticipation of, during, and in response to two different types of parental care: incubation behavior and hatchling care.
+## Table 1: comparison of total DEGs determined by edgeR and DESeq2
+
+## Fig 1: Total number of gene expression differences between each stage
 
 
 ```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
-library(cowplot)
 ggdraw() + draw_image("../figures/characterization/linegraphs-1.png") 
 ```
 
-**Fig 2. The magnitude of gene expression changes between each parental transition**.
+**Fig x. The magnitude of gene expression changes between each parental transition**.
 4-5K genes are differentially expressed beteen control birds and their nest buliding conspecifics in all tissues except the male gonad. 500 - 1000 genes are differentially expressed in the female pituitary from mid-late incubation as well as in the female hypothalamus and pituitary from hatch to nestingly care day 5. 
+
+
+## Fig 2: Ability to use gene expression to distingush groups
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+ggdraw() + draw_image("../figures/sexes/DoveParentsRNAseq_model2.png") 
+```
+
+
+## Fig 3: Prolactin expression in PIT (but not HYP or GON) follows same pattern as in blood
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+ggdraw() + draw_image("../figures/characterization/prolactin-1.png") 
+```
+
+## Fig 4: Hundreds of genes show similar pattern in expression as circulating prolactin
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+ggdraw() + draw_image("../figures/sexes/wgcna-7.png")
+```
 
 
 
