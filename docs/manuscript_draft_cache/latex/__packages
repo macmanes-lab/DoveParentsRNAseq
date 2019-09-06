@@ -1,9 +1,0 @@
-base
-dynamicTreeCut
-fastcluster
-WGCNA
-dplyr
-magrittr
-forcats
-ggplot2
-cowplot
