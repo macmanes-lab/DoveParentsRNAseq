@@ -35,6 +35,8 @@ csl: plos.csl
 
 # install.packages(c('tinytex', 'rmarkdown'))
 # tinytex::install_tinytex()
+
+library(cowplot)
 ```
 
 <!--
@@ -74,8 +76,16 @@ hatches, supporting our working hypothesis. Alternatively, if profiles remain si
 # Results
 
 ```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
-library(cowplot)
 ggdraw() + draw_image("../figures/manipulation/offspringremoval-1.png") 
+```
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+ggdraw() + draw_image("../figures/manipulation/manipVchar-1.png") 
+```
+
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+ggdraw() + draw_image("../figures/manipulation/prolongextend-1.png") 
 ```
 
 # Supplementary Figures
