@@ -1,0 +1,107 @@
+---
+title: Peaks and valleys of prolatin-related gene expression during pigeon parental care stages
+author:
+  - name: Rayna M Harris
+    email: rmharris@ucdavis
+    affiliation: UC Davis
+    corresponding: "rmharris@ucdavis"
+  - name: Suzanne Austin
+    affiliation: UC Davis
+  - name: Andrew Lang
+    affiliation: UNH
+  - name: Matthew MacManes
+    affiliation: UNH
+  - name: Rebecca M Calisi
+    affiliation: UC Davis           
+address:
+  - code: UC Davis
+    address: UC Davis, Davis, CA
+  - code: UNH
+    address: UNH, smalltown, NH
+abstract: |
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+author_summary: |
+  Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+bibliography: mybibfile.bib
+output: rticles::plos_article
+csl: plos.csl
+---
+
+```{r, include=F}
+## got error LaTeX Error: File `changepage.sty' not found 
+## googled LaTeX Error: File `changepage.sty' not found Rmarkdown
+## found this https://stackoverflow.com/questions/34252903/knit-pdf-file-from-rstudio
+## ran the following
+
+# install.packages(c('tinytex', 'rmarkdown'))
+# tinytex::install_tinytex()
+```
+
+<!--
+_Text based on plos sample manuscript, see [http://journals.plos.org/ploscompbiol/s/latex](http://journals.plos.org/ploscompbiol/s/latex)_
+-->
+
+
+# Introduction
+
+
+Understanding the mechanisms underlying parental care are critical to circumventing issues with parent-newborn bonding as well, where ultimate explanations are obvious, but specific mechanisms remain elusive. The rock dove (_Columba livia_) is an ideal system to characterize changes in genetic expression during parental care transitions because: 1) ample genomic resources are available (Gillespie et al. 2013), including a complete annotated genome assembly @Shapiro1063 and methodology concerning reproductive physiology and behavior (Dong et al. 2012); and 2) rock doves are prolific, year-round breeders that thrive in captivity, making observation, manipulation, and sampling highly feasible year-round. 
+
+```{r, out.width = "360px", echo = F}
+knitr::include_graphics("../figures/images/PigeonHPGaxis.png")
+```
+
+Rock doves are socially monogamous and offer bi-parental care, making inter- and intra-sexual comparisons possible. Birds offer two important behavioral transition points into parental care: the incubation of eggs and the caring for chicks. This produces two unique opportunities to study how the brain transitions into two different suites of parental care behaviors. Additionally, rock doves exhibit a parental care strategy analogous to mammals in that they, too, ‘lactate’ to feed their young (Gillespie et al. 2011, 2012). This lactation, unlike simple regurgitation of food, consists of the production and sloughing off of skin cells inside the crop sac of females and males, creating a protein-rich milk-like substance on which they rear their chicks. Many functional similarities between rock dove and mammalian lactation exist concerning the mediation of this event by the hormone prolactin (Dumont 1965). Additionally, like mammalian milk, rock dove milk delivers essential immunoglobulins and nutritional benefits to young, aiding in their immune function and development of microbiota @Gillespie2012. Thus, because rock doves incubate eggs and exhibit mammalian-like mediation and function of lactation for young, they have the potential to serve as a powerful theoretical bridge to understand the neurobiology of both avian and mammalian transitions into parental care.
+
+# Materials and Methods and Results
+
+```{r, out.width = "360px", echo = F}
+knitr::include_graphics("../figures/images/samplingtimepoints.png")
+```
+
+## Characterize changes in neural-gene expression during parental care transitions
+
+Our working hypothesis is that distinct changes in transcription occur in the brain at the anticipation of, during, and in response to two different types of parental care: incubation behavior and hatchling care.
+
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+library(cowplot)
+ggdraw() + draw_image("../figures/characterization/linegraphs-1.png") 
+```
+
+**Fig 2. The magnitude of gene expression changes between each parental transition**.
+4-5K genes are differentially expressed beteen control birds and their nest buliding conspecifics in all tissues except the male gonad. 500 - 1000 genes are differentially expressed in the female pituitary from mid-late incubation as well as in the female hypothalamus and pituitary from hatch to nestingly care day 5. 
+
+
+
+# Acknowledgments
+
+This project is a synergistic collaboration between the PI, Rebecca Calisi-Rodríguez (expertise in avian behavior, parental care and neurobiology), co-PI, Matthew MacManes (expertise in next-generation sequencing, transcriptome assembly, and gene expression analyses), and Collaborator, Rae Silver (expertise in neurobiology, dove behavior, and decades of successful breeding and maintenance of dove colonies at Barnard College).
+
+<!--
+
+# Funding Statment
+
+```{r, include=F}
+## Disclosure of Funding Sources
+## All PLOS authors are required to declare what support they received to carry out their research. Declaring funding sources acknowledges funders’ contributions, fulfills funding requirements, and promotes greater transparency in the research process.
+## Each author must individually declare all sources of funding received for the research submitted to the journal. This information includes the name of granting agencies, grant numbers, and a description of each funder’s role. If the funder has played no role in the research, this must be stated as well. Authors are not required to provide the complete list of every single grant that supports them if the grant is not related to the research published.
+## A Funding Statement is included in the metadata of each published article. The Funding Statement includes the funding information declared by the authors. Inaccurate information about funding discovered after publication may require a correction. 
+## from https://journals.plos.org/plosone/s/disclosure-of-funding-sources
+
+## See https://www.nsf.gov/awardsearch/showAward?AWpD_ID=1455957&HistoricalAwards=false
+```
+
+1. Collaborative Research: RUI: The Neural Basis of Becoming a Parent: From Genotype to Phenotype. NSF-IOS:1455957. 
+
+-->
+
+
+```{r include=F}
+## About the authors
+
+#Roles, Affiliations, Orcids, competing interests
+```
+
+# References {#references .unnumbered}
+

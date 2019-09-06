@@ -1,5 +1,5 @@
 ---
-title: "Peaks and valleys of prolatin-related gene expression during the pigeon parental care cycle"
+title: "Peaks and valleys of prolatin-related gene expression during the pigeon parental care stage"
 author: "Dr. Rayna M Harris, Postdoc, B3 Lab, UC Davis @raynamharris"
 output:
   ioslides_presentation: default
