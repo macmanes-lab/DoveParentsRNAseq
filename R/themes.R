@@ -1,7 +1,7 @@
 # custom levels
 
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
-maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" , "early" , "prolong", "extend")
+maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" , "extend" , "prolong", "early")
 
 # custom themes for plots
 

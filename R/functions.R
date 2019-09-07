@@ -417,19 +417,7 @@ returnPCAs2 <- function(vsd){
 # plot pc 1 and 2 for treatment and sex
 
 plotPC12 <- function(pcadata, mysubtitle){ 
-  
-  pcadata <- pcadata %>%
-    mutate(hypothesis = fct_recode(treatment,
-                            "anticipation" = "control",
-                            "anticipation" = "bldg",
-                            "incubation" = "lay",
-                            "incubation" = "inc.d3",
-                            "incubation" = "inc.d9",
-                            "incubation" = "inc.d17",
-                            "hatchling.care" = "hatch",
-                            "hatchling.care" = "n5",
-                            "hatchling.care" = "n9"))
-  
+
   pca12 <- ggplot(pcadata, aes(PC1, PC2, color = treatment, shape = sex)) + 
     geom_point() +
     #stat_ellipse() +
@@ -580,6 +568,56 @@ plotWGCNAcandidates <- function(vsd, mygenelist, colData, mysubtitle){
          subtitle = mysubtitle) +
     scale_x_continuous(breaks=c(1,2,3,4,5,6,7,8,9),
                        labels=charlevels)
+  return(p1)
+  
+}
+
+plotWGCNAcandidatesManip <- function(vsd, mygenelist, colData, mysubtitle){
+  
+  # make dataframe with geneids and names and counts
+  # how to gather: https://tidyr.tidyverse.org/reference/gather.html
+  
+  vsd.df <- as.data.frame(assay(vsd))
+  vsd.df$entrezid <- row.names(vsd.df)
+  
+  candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
+  
+  # select genes of interst
+  
+  candidates <- candidates %>%
+    filter(entrezid %in% mygenelist) %>% droplevels()
+  
+  candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -geneid)
+  
+  candidates_long <- candidates %>% gather(-Name, key = "sample", value = "value")
+  
+  candidates_long$V1 <- candidates_long$sample
+  
+  candidatecounts <- left_join(candidates_long, colData, by = "V1")
+  
+  candidatecounts$Name <- as.factor(candidatecounts$Name)
+  candidatecounts$treatment <- factor(candidatecounts$treatment, levels = maniplevels)
+  
+  head(candidatecounts)
+  
+  bysextreatment <- group_by(candidatecounts, sex, treatment, Name)
+  bysextreatment
+  candidateST <- summarize(bysextreatment, expression = mean(value))
+  
+  
+  p1 <- ggplot(candidateST, aes(x = as.numeric(treatment), y = expression, color = sex)) +
+    geom_point() +
+    geom_smooth(se = FALSE) +
+    facet_wrap(~Name, scales = "free_y") +
+    theme_rmh() +
+    theme(legend.position = "bottom",
+          axis.text.x = element_text(angle = 60,  hjust=1),
+          axis.text.y = element_blank()) +
+    guides(fill = guide_legend(nrow = 1)) +
+    labs(x = NULL, y = "Gene expression",
+         subtitle = mysubtitle) +
+    scale_x_continuous(breaks=c(1,2,3,4,5,6,7),
+                       labels=maniplevels)
   return(p1)
   
 }
@@ -767,6 +805,33 @@ LDAplot.treatment <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
                                   "hatch" = "<span style='color:#619CFF'>chicks hatch</span>", 
                                   "n5" = "<span style='color:#DB72FB'>nestling care day 5</span>",
                                   "n9" = "<span style='color:#FF61C3'>nestling care day 9</span>")) +
+    theme(legend.text = element_markdown(size = 8))
+  plot(p)
+} 
+
+
+LDAplot.manipulation <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
+  p <- ggplot(data = LDAdata, aes(LD1, LD2, color = treatment, shape = sex)) +
+    geom_point(size = 1.5) +
+    labs(title = mytitle,
+         subtitle = mysubtitle,
+         x = myxlab,
+         y = myylab) +
+    scale_color_manual(name = "parental stage",
+                       values = c("remove.d03" = "#F8766D",
+                                  "remove.d09" = "#D39200" ,
+                                  "remove.d17"  = "#93AA00",
+                                  "remove.d20" =  "#00BA38" ,
+                                  "extend" = "#00C19F",
+                                  "prolong" = "#00B9E3",
+                                  "early"  = "#619CFF"),                 
+                       labels = c("remove.d03" = "<span style='color:#F8766D'>remove.d03</span>",
+                                  "remove.d09" = "<span style='color:#D39200'>remove.d09</span>",
+                                  "remove.d17" = "<span style='color:#93AA00'>remove.d17</span>",
+                                  "remove.d20" = "<span style='color:#00BA38'>remove.d20</span>", 
+                                  "extend" = "<span style='color:#00B9E3'>extend</span>",
+                                  "prolong" = "<span style='color:#00B9E3'>prolong</span>",
+                                  "early" = "<span style='color:#619CFF'>early</span>")) +
     theme(legend.text = element_markdown(size = 8))
   plot(p)
 } 
