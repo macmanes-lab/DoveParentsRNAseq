@@ -114,11 +114,11 @@ ggdraw() + draw_image("../figures/limma/plotMDS-colored-1.png")
 ```
 
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap = "The magnitude of gene expression changes between each parental transition. Using DESeq 2, we identified 4-5K genes are differentially expressed beteen control birds and their nest buliding conspecifics in all tissues except the male gonad. 500 - 1000 genes are differentially expressed in the female pituitary from mid-late incubation as well as in the female hypothalamus and pituitary from hatch to nestingly care day 5."}
+```{r, message=FALSE, warning=FALSE, cache=F, echo = F, fig.width= 5, fig.cap = "The magnitude of gene expression changes between each parental transition. Using DESeq 2, we identified 4-5K genes are differentially expressed beteen control birds and their nest buliding conspecifics in all tissues except the male gonad. 500 - 1000 genes are differentially expressed in the female pituitary from mid-late incubation as well as in the female hypothalamus and pituitary from hatch to nestingly care day 5."}
 ggdraw() + draw_image("../figures/characterization/linegraphs-1.png") 
 ```
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap= "Linear discriminant analysis shows the strongest ability to predict parental stage of pitutary samples."}
+```{r, message=FALSE, warning=FALSE, cache=F, echo = F, fig.width= 5, fig.cap= "Linear discriminant analysis shows the strongest ability to predict parental stage of pitutary samples."}
 a <- ggdraw() + draw_image("../figures/sexes/LDA-4.png") 
 b <- ggdraw() + draw_image("../figures/sexes/DoveParentsRNAseq_model2.png") 
 
@@ -126,12 +126,12 @@ plot_grid(a,b, labels = "AUTO", label_size = 8, ncol = 1)
 ```
 
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap = "Prolactin expression in PIT (but not HYP or GON) follows same pattern as in blood"}
+```{r, message=FALSE, warning=FALSE, cache=F, echo = F, fig.width= 5, fig.cap = "Prolactin expression in PIT (but not HYP or GON) follows same pattern as in blood"}
 ggdraw() + draw_image("../figures/characterization/prolactin-1.png") 
 ```
 
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap = "Hundreds of genes show similar pattern in expression as circulating prolactin"}
+```{r, message=FALSE, warning=FALSE, cache=F, echo = F, fig.width= 5, fig.cap = "Hundreds of genes show similar pattern in expression as circulating prolactin"}
 ggdraw() + draw_image("../figures/sexes/wgcna2-1.png")
 ```
 
