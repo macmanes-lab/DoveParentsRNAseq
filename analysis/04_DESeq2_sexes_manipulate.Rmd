@@ -183,4 +183,25 @@ plotWGCNAcandidatesManip(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_0011207
                                "NP_990797.2", "XP_015132722.1", "NP_001090992.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
 ```
 
+## genes that were in the WGCNA module with PRL twice!
+
+```{r, sharedmodule}
+PRL_associated <- read.csv("../results/08_PRL_associated.csv", header = T)
+PRL_manipulated <- read.csv("../results/08_PRL_manipulated.csv", header = T)
+
+str(PRL_associated)
+str(PRL_manipulated)
+PRLjoin <- inner_join(PRL_associated, PRL_manipulated, by = "entrezid")
+
+PRLboth <- PRLjoin$entrezid
+PRLboth
+
+plotWGCNAcandidatesManip(vsd.pit, PRLboth, colDataPit, "PRL char and manip WGNA shared modules")
+
+
+prl36 <-  PRL_manipulated$entrezid[252:271]
+plotWGCNAcandidatesManip(vsd.pit, prl36, colDataPit, "A-K genes with PRL pattern in the pituitary")
+
+
+```
   
