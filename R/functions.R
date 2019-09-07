@@ -427,7 +427,7 @@ plotPC12 <- function(pcadata, mysubtitle){
     #theme(legend.position = "bottom") +
     #guides( fill = guide_legend(order = 2, ncol=2)) +
     theme(legend.text = element_text(size=10)) 
-  pca12
+  return(pca12)
 }  
 
 
