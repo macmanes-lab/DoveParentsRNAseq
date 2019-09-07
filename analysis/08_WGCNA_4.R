@@ -98,17 +98,17 @@ prolatin_modules <- genes_modules %>%
   filter(entrezid %in% c("NP_990797.2", "XP_015132722.1"))
 prolatin_modules
 
-PRL_associated <- genes_modules %>% filter(`net$unmergedColors` %in% c("greenyellow"))
+PRL_associated <- genes_modules %>% filter(`net$unmergedColors` %in% c("black"))
 PRL_associated <- left_join(PRL_associated, geneinfo, by = "entrezid")
 PRL_associated <- PRL_associated %>% arrange(Name)
-PRL_associated
-write.csv(PRL_associated, "../results/08_PRL_associated.csv", row.names = F)
+str(PRL_associated)
+write.csv(PRL_associated, "../results/08_PRL_manipulated.csv", row.names = F)
 
-PRLR_associated <- genes_modules %>% filter(`net$unmergedColors` %in% c("magenta"))
+PRLR_associated <- genes_modules %>% filter(`net$unmergedColors` %in% c("red"))
 PRLR_associated <- left_join(PRLR_associated, geneinfo, by = "entrezid")
 PRLR_associated <- PRLR_associated %>% arrange(Name)
-PRLR_associated
-write.csv(PRLR_associated, "../results/08_PRLR_associated.csv", row.names = F)
+str(PRLR_associated)
+write.csv(PRLR_associated, "../results/08_PRLR_manipulated.csv", row.names = F)
 
 
 VIPR1_associated <- genes_modules %>% filter(`net$unmergedColors` %in% c("yellow"))
