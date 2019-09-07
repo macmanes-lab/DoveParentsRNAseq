@@ -432,3 +432,46 @@ plot genes in a PRL WGCNA module
                                    "NP_990797.2", "XP_015132722.1", "NP_001090992.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
 
 ![](../figures/manipulation/wgcna-7.png)
+
+genes that were in the WGCNA module with PRL twice!
+---------------------------------------------------
+
+    PRL_associated <- read.csv("../results/08_PRL_associated.csv", header = T)
+    PRL_manipulated <- read.csv("../results/08_PRL_manipulated.csv", header = T)
+
+    str(PRL_associated)
+
+    FALSE 'data.frame': 102 obs. of  5 variables:
+    FALSE  $ net.unmergedColors: Factor w/ 1 level "greenyellow": 1 1 1 1 1 1 1 1 1 1 ...
+    FALSE  $ entrezid          : Factor w/ 102 levels "NP_001004392.2",..: 102 89 9 98 84 7 33 8 47 23 ...
+    FALSE  $ row.names         : int  431627 100857739 423846 424354 428167 374078 373983 421226 423007 421019 ...
+    FALSE  $ Name              : Factor w/ 101 levels "ACOT12","ANKLE1",..: 1 2 3 4 5 6 7 8 9 10 ...
+    FALSE  $ geneid            : int  431627 100857739 423846 424354 428167 374078 373983 421226 423007 421019 ...
+
+    str(PRL_manipulated)
+
+    FALSE 'data.frame': 358 obs. of  5 variables:
+    FALSE  $ net.unmergedColors: Factor w/ 1 level "black": 1 1 1 1 1 1 1 1 1 1 ...
+    FALSE  $ entrezid          : Factor w/ 358 levels "NP_001001461.1",..: 17 282 283 341 264 301 53 323 244 247 ...
+    FALSE  $ row.names         : int  395416 422099 422099 423072 418200 420090 374087 420461 422882 423042 ...
+    FALSE  $ Name              : Factor w/ 354 levels "ABCC1","ABCC3",..: 1 2 2 3 4 5 6 7 8 9 ...
+    FALSE  $ geneid            : int  395416 422099 422099 423072 418200 420090 374087 420461 422882 423042 ...
+
+    PRLjoin <- inner_join(PRL_associated, PRL_manipulated, by = "entrezid")
+
+    PRLboth <- PRLjoin$entrezid
+    PRLboth
+
+    FALSE  [1] "NP_001004392.2" "NP_990016.1"    "XP_001232071.1" "XP_015128663.1"
+    FALSE  [5] "NP_001039301.1" "NP_001026503.1" "NP_001026209.1" "XP_004939719.1"
+    FALSE  [9] "NP_001292058.1" "NP_001026123.1" "XP_015152316.1" "XP_416549.4"   
+    FALSE [13] "NP_990797.2"    "NP_001264669.1" "NP_001279000.1" "XP_004947617.1"
+
+    plotWGCNAcandidatesManip(vsd.pit, PRLboth, colDataPit, "PRL char and manip WGNA shared modules")
+
+![](../figures/manipulation/sharedmodule-1.png)
+
+    prl36 <-  PRL_manipulated$entrezid[252:271]
+    plotWGCNAcandidatesManip(vsd.pit, prl36, colDataPit, "A-K genes with PRL pattern in the pituitary")
+
+![](../figures/manipulation/sharedmodule-2.png)
