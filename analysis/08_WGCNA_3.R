@@ -21,6 +21,7 @@ countData <- read.csv("../results/00_countData_manipluation.csv", row.names = 1)
 # read the sample meta data or column data
 colData <- read.csv("../metadata/00_colData_manipluation.csv", row.names = 1, stringsAsFactors = T)
 
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
 ## rename rownames and colnames for better vizualiation
 colData <- colData %>%
