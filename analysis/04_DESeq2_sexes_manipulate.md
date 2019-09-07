@@ -472,6 +472,6 @@ genes that were in the WGCNA module with PRL twice!
 ![](../figures/manipulation/sharedmodule-1.png)
 
     prl36 <-  PRL_manipulated$entrezid[252:271]
-    plotWGCNAcandidatesManip(vsd.pit, prl36, colDataPit, "A-K genes with PRL pattern in the pituitary")
+    plotWGCNAcandidatesManip(vsd.pit, prl36, colDataPit, "PRL-RIPK3 pattern in the PRL module")
 
 ![](../figures/manipulation/sharedmodule-2.png)

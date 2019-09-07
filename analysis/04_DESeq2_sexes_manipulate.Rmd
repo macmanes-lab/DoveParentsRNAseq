@@ -198,10 +198,7 @@ PRLboth
 
 plotWGCNAcandidatesManip(vsd.pit, PRLboth, colDataPit, "PRL char and manip WGNA shared modules")
 
-
 prl36 <-  PRL_manipulated$entrezid[252:271]
-plotWGCNAcandidatesManip(vsd.pit, prl36, colDataPit, "A-K genes with PRL pattern in the pituitary")
-
-
+plotWGCNAcandidatesManip(vsd.pit, prl36, colDataPit, "PRL-RIPK3 pattern in the PRL module")
 ```
   
