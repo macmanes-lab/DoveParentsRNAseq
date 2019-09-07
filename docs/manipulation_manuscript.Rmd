@@ -47,7 +47,7 @@ _Text based on plos sample manuscript, see [http://journals.plos.org/ploscompbio
 
 
 
-# Materials and Methods and Results
+# Materials and Methods 
 
 
 
@@ -80,13 +80,9 @@ ggdraw() + draw_image("../figures/hormones/prolactin-manip-1.png")
 ggdraw() + draw_image("../figures/manipulation/offspringremoval-1.png") 
 ```
 
-
-
 ```{r, message=FALSE, warning=FALSE, cache=FALSE, echo = F, fig.width= 5, fig.cap = "Manipulation of timing of hatch with dummy eggs and foster chicks. "}
 ggdraw() + draw_image("../figures/manipulation/prolongextend-1.png") 
 ```
-
-# Supplementary Figures
 
 
 # Acknowledgments
