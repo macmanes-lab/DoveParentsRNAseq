@@ -52,24 +52,29 @@ Understanding the mechanisms underlying parental care are critical to circumvent
 
 # Materials and Methods
 
-##  Rock dove housing
 
 Sexually mature male and female rock doves were housed together in rooftop aviaries on the Barnard Campus. Natural male-female pairings permitted, and small observation windows behind each nest box (64 boxes total) facilitate observations nest building, egg laying, chick hatching, and nesting care every morning from 0900-1100 (correct time?). On specific collection days (Fig 1A, needs to be updated), truck blook, the hypothalamus, the pituitary, and the gonads were collected following common protocols used to sample tissue from birds (Fig 1B). Tissue collection, RNA isolation, cDNA library preparation, sequencing, quality control, and read processing were done as described in Calisi et al. 2018, Lang et al 2019, and Austin et al 2019.
 
-```{r, fig.width= 5, echo = F, fig.cap = "Experimental design.We sampled 9 timepoints, including 1 non-parental control, 1 nest-building, 1 egg lay, 3 incubation time point, 1 hatch, and 2 nestling care stages. we collected truck blood, the hypothalamus, the pituitary, and the gonads from all parents."}
-a <- ggdraw() + draw_image("../figures/images/samplingtimepoints.png") 
-b <- ggdraw() + draw_image("../figures/images/PigeonHPGaxis.png") 
-
-plot_grid(a,b, labels = "AUTO", label_size = 8, ncol = 1)
-```
-
-
-EdgeR and DESeq2 were used to calculate statistical differnces in gene expression between each transition. All subsequent analyses were conducting using variance stabilized data from the DESeq2 model. A linear discriminant analysis was used to determine the confidence with which we could predict the parental care stage of a sample based on it's global gene expression profile. WGCNA was used to identify genes who's expression was correlated with specific candidate genes of interest. 
+We used EdgeR determine the greatest contributor to variance in gene expression in the full dataset. Then, we used EdgeR and DESeq2 were used to calculate statistical differnces in gene expression between each transition within a given tissue. All subsequent analyses were conducting using variance stabilized data from the DESeq2 model. A linear discriminant analysis was used to determine the confidence with which we could predict the parental care stage of a sample based on it's global gene expression profile. WGCNA was used to identify genes who's expression was correlated with specific candidate genes of interest. 
 
 
 # Results
 
-Thosands of genes were found to be differentially expressed between the non-parental control group and the nest-building group (Table 1, Fig. 1). Within the time course of parental care, fewer than 1000 genes change there expression over the course of a few days, with the most pronounced difference in toltal number of changes occuring in the female pituitary between incubation days 9 and 17 (Table 1, Fig. 2).  
+We found that the majority of the variation in the full dataset could be attributed to tissue, with only a notable sex differnce existing between the female ovaries and the male testies (Fig. 2).
+
+Thousands of genes were found to be differentially expressed between the non-parental control group and the nest-building group (Table 1, Fig. 3). Within the time course of parental care, fewer than 1000 genes change there expression over the course of a few days, with the most pronounced difference in toltal number of changes occuring in the female pituitary between incubation days 9 and 17 (Table 1, Fig. 3).  
+
+Even though we have a large sample size of roughly 12 samples per tissue per sex, the differences between all 8 sampled parental time points are so small, that we are only able to predict the stage using gene expression along 40%, 30% and 27% of the time in the pituiary, gonads and hypothalamus, respectively (Fig 4A). However, if we group the parental stages into anticipatory (control, nest building), egg care (lay and incubation days), and nestling care (hatch and nesting days), we incrase our ability to detect parental stage to 47%, 43%, and 37 pituiary, hypothalamus and gonads, respectively (Fig 4B).  
+
+Gene expression of prlactin (_PRL_)in the pitutiary, but not the hypothalamus follows the characteristic dip in expression relative to non-parental controls during early incubation then spikes the day before hatch and peaks at hatch (Fig 5). 
+
+Hundreds of genes follow this same, prolactin-associated pattern of expression in the pitutiary (Fig. 6).
+
+# Acknowledgments
+
+This project is a synergistic collaboration between the PI, Rebecca Calisi-Rodríguez (expertise in avian behavior, parental care and neurobiology), co-PI, Matthew MacManes (expertise in next-generation sequencing, transcriptome assembly, and gene expression analyses), and Collaborator, Rae Silver (expertise in neurobiology, dove behavior, and decades of successful breeding and maintenance of dove colonies at Barnard College).
+
+
 
 \begin{table}[hb]
 \begin{tabular}{llllllll}
@@ -97,14 +102,21 @@ DESeq2 & Nest5 - Nest9 & 0 & 0 & 1 & 23 & 19 & 0 \\ \hline
 \end{table}
 
 
+```{r, fig.width= 5, echo = F, fig.cap = "Experimental design.We sampled 9 timepoints, including 1 non-parental control, 1 nest-building, 1 egg lay, 3 incubation time point, 1 hatch, and 2 nestling care stages. we collected truck blood, the hypothalamus, the pituitary, and the gonads from all parents."}
+a <- ggdraw() + draw_image("../figures/images/samplingtimepoints.png") 
+b <- ggdraw() + draw_image("../figures/images/PigeonHPGaxis.png") 
+
+plot_grid(a,b, labels = "AUTO", label_size = 8, ncol = 1)
+```
+
+```{r, fig.width= 5, echo = F, fig.cap = "MDS plots of all samples."}
+ggdraw() + draw_image("../figures/limma/plotMDS-colored-1.png") 
+```
+
 
 ```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap = "The magnitude of gene expression changes between each parental transition. Using DESeq 2, we identified 4-5K genes are differentially expressed beteen control birds and their nest buliding conspecifics in all tissues except the male gonad. 500 - 1000 genes are differentially expressed in the female pituitary from mid-late incubation as well as in the female hypothalamus and pituitary from hatch to nestingly care day 5."}
 ggdraw() + draw_image("../figures/characterization/linegraphs-1.png") 
 ```
-
-
-Even though we have a large sample size of roughly 12 samples per tissue per sex, the differences between all 8 sampled parental time points are so small, that we are only able to predict the stage using gene expression along 40%, 30% and 27% of the time in the pituiary, gonads and hypothalamus, respectively (Fig 3A). However, if we group the parental stages into anticipatory (control, nest building), egg care (lay and incubation days), and nestling care (hatch and nesting days), we incrase our ability to detect parental stage to 47%, 43%, and 37 pituiary, hypothalamus and gonads, respectively (Fig 3B). The 
-
 
 ```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap= "Linear discriminant analysis shows the strongest ability to predict parental stage of pitutary samples."}
 a <- ggdraw() + draw_image("../figures/sexes/LDA-4.png") 
@@ -112,8 +124,6 @@ b <- ggdraw() + draw_image("../figures/sexes/DoveParentsRNAseq_model2.png")
 
 plot_grid(a,b, labels = "AUTO", label_size = 8, ncol = 1)
 ```
-
-Gene expression of prlactin (_PRL_)in the pitutiary, but not the hypothalamus follows the characteristic dip in expression relative to non-parental controls during early incubation then spikes the day before hatch and peaks at hatch (Fig 4). Intrestingly, hundreds of genes follow this same, prolactin-associated pattern of expression in the pitutiary (Fig. 5).
 
 
 ```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap = "Prolactin expression in PIT (but not HYP or GON) follows same pattern as in blood"}
@@ -126,9 +136,7 @@ ggdraw() + draw_image("../figures/sexes/wgcna2-1.png")
 ```
 
 
-# Acknowledgments
 
-This project is a synergistic collaboration between the PI, Rebecca Calisi-Rodríguez (expertise in avian behavior, parental care and neurobiology), co-PI, Matthew MacManes (expertise in next-generation sequencing, transcriptome assembly, and gene expression analyses), and Collaborator, Rae Silver (expertise in neurobiology, dove behavior, and decades of successful breeding and maintenance of dove colonies at Barnard College).
 
 <!--
 
