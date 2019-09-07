@@ -30,17 +30,7 @@ colData <- colData %>%
          tissue = fct_recode(tissue,
                              "pit" = "pituitary",
                              "hyp" = "hypothalamus",
-                             "gon" = "gonad"),
-         hypothesis = fct_recode(treatment,
-                                 "anticipation" = "control",
-                                 "anticipation" = "bldg",
-                                 "incubation" = "lay",
-                                 "incubation" = "inc.d3",
-                                 "incubation" = "inc.d9",
-                                 "incubation" = "inc.d17",
-                                 "hatchling.care" = "hatch",
-                                 "hatchling.care" = "n5",
-                                 "hatchling.care" = "n9"))
+                             "gon" = "gonad"))
 
 # wgcna needs numeric identifiers
 colData$ID <- as.numeric(colData$bird)
@@ -52,8 +42,8 @@ colData$sample <- paste(colData$treatment, colData$sex, colData$tissue,  colData
 row.names(colData) <- colData$sample
 colnames(countData) <- colData$sample
 
-head(colData)
 head(countData)
+head(colData)
 
 # create new grouping for subsets
 colData$sextissue <-  as.factor(paste(colData$sex, colData$tissue, sep = "."))
