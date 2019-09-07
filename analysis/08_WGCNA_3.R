@@ -149,7 +149,7 @@ nSamples = nrow(datExpr)
 #
 #=====================================================================================
 
-traitData <- colData %>% select(tissue,sex,treatment,hypothesis)
+traitData <- colData %>% select(tissue,sex,treatment)
 
 # numeric
 head(traitData)
