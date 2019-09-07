@@ -185,7 +185,7 @@ plotWGCNAcandidatesManip(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_0011207
 
 ## genes that were in the WGCNA module with PRL twice!
 
-```{r, sharedmodule}
+```{r, sharedmodule, fig.height= 8}
 PRL_associated <- read.csv("../results/08_PRL_associated.csv", header = T)
 PRL_manipulated <- read.csv("../results/08_PRL_manipulated.csv", header = T)
 
@@ -195,6 +195,7 @@ PRLjoin <- inner_join(PRL_associated, PRL_manipulated, by = "entrezid")
 
 PRLboth <- PRLjoin$entrezid
 PRLboth
+
 
 plotWGCNAcandidatesManip(vsd.pit, PRLboth, colDataPit, "PRL char and manip WGNA shared modules")
 
