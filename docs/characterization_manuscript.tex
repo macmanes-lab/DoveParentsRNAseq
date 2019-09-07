@@ -254,8 +254,6 @@ concerning reproductive physiology and behavior (Dong et al.~2012); and
 captivity, making observation, manipulation, and sampling highly
 feasible year-round.
 
-\includegraphics[width=360px]{../figures/images/PigeonHPGaxis}
-
 Rock doves are socially monogamous and offer bi-parental care, making
 inter- and intra-sexual comparisons possible. Birds offer two important
 behavioral transition points into parental care: the incubation of eggs
@@ -283,48 +281,91 @@ of parental care: incubation behavior and hatchling care.
 \hypertarget{materials-and-methods}{%
 \section{Materials and Methods}\label{materials-and-methods}}
 
-\includegraphics[width=360px]{../figures/images/samplingtimepoints}
+\hypertarget{rock-dove-housing}{%
+\subsection{Rock dove housing}\label{rock-dove-housing}}
+
+Sexually mature male and female rock doves were housed together in
+rooftop aviaries on the Barnard Campus. Natural male-female pairings
+permitted, and small observation windows behind each nest box (64 boxes
+total) facilitate observations nest building, egg laying, chick
+hatching, and nesting care every morning from 0900-1100 (correct time?).
+On specific collection days (Fig 1A, needs to be updated), truck blook,
+the hypothalamus, the pituitary, and the gonads were collected following
+common protocols used to sample tissue from birds (Fig 1B). Tissue
+collection, RNA isolation, cDNA library preparation, sequencing, quality
+control, and read processing were done as described in Calisi et
+al.~2018, Lang et al 2019, and Austin et al 2019.
+
+\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+We used EdgeR and DESeq2 to calculate statistical differnces in gene
+expression between each transition. All subsequent analyses were
+conducting using variance stabilized data from the DESeq2 model.
 
 \hypertarget{results}{%
 \section{Results}\label{results}}
 
-\hypertarget{table-1-comparison-of-total-degs-determined-by-edger-and-deseq2}{%
-\subsection{Table 1: comparison of total DEGs determined by edgeR and
-DESeq2}\label{table-1-comparison-of-total-degs-determined-by-edger-and-deseq2}}
+Thosands of genes were found to be differentially expressed between the
+non-parental control group and the building group (Table 1, Fig. 1).
+Within the time course of parental care, fewer than 1000 genes change
+there expression over the course of a few days, with the most pronounced
+difference in toltal number of changes occuring in the female pituitary
+between incubation days 9 and 17 (Table 1, Fig. 1).
 
-\hypertarget{fig-1-total-number-of-gene-expression-differences-between-each-stage}{%
-\subsection{Fig 1: Total number of gene expression differences between
-each
-stage}\label{fig-1-total-number-of-gene-expression-differences-between-each-stage}}
+\begin{table}[]
+\begin{tabular}{llllllll}
+\hline
+\textbf{Method} & \textbf{Contrast} & \textbf{Hyp F} & \textbf{Hyp M} & \textbf{Pit F} & \textbf{Pit M} & \textbf{Gon F} & \textbf{Gon M} \\  \hline
+EdgeR & Cont - Bldg & 14674 & 117 & 14593 & 144 & 14859 & 4 \\
+EdgeR & Bldg - Lay & 14742 & 0 & 14593 & 0 & 14836 & 0 \\
+EdgeR & Lay - Inc3 & 0 & 0 & 0 & 0 & 19 & 0 \\
+EdgeR & Inc3 - Inc9 & 0 & 1 & 0 & 3 & 2 & 0 \\
+EdgeR & Inc9 - Inc 17 & 0 & 2 & 57 & 37 & 9 & 0 \\
+EdgeR & Inc17 - Hatch & 0 & 0 & 3 & 1 & 3 & 0 \\
+EdgeR & Hatch - Nest5 & 1 & 0 & 3 & 0 & 0 & 0 \\
+EdgeR & Nest5 - Nest9 & 0 & 0 & 0 & 0 & 24 & 0 \\  \hline
+DESeq2 & Cont - Bldg & 3452 & 4499 & 3950 & 4680 & 4597 & 2135 \\
+DESeq2 & Bldg - Lay & 0 & 0 & 101 & 0 & 104 & 1 \\
+DESeq2 & Lay - Inc3 & 0 & 0 & 18 & 1 & 440 & 1 \\
+DESeq2 & Inc3 - Inc9 & 1 & 0 & 0 & 1 & 8 & 0 \\
+DESeq2 & Inc9 - Inc 17 & 1 & 0 & 640 & 186 & 1 & 0 \\
+DESeq2 & Inc17 - Hatch & 2 & 0 & 3 & 18 & 1 & 0 \\
+DESeq2 & Hatch - Nest5 & 166 & 0 & 340 & 3 & 1 & 0 \\
+DESeq2 & Nest5 - Nest9 & 0 & 0 & 1 & 23 & 19 & 0 \\ \hline
+\end{tabular}
+\caption{Comparison of total DEGs determined by edgeR and DESeq2}
+\label{tab:my-table}
+\end{table}
 
-\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-4-1.pdf}
+\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-3-1.pdf}
 
-\textbf{Fig x. The magnitude of gene expression changes between each
-parental transition}. 4-5K genes are differentially expressed beteen
-control birds and their nest buliding conspecifics in all tissues except
-the male gonad. 500 - 1000 genes are differentially expressed in the
-female pituitary from mid-late incubation as well as in the female
-hypothalamus and pituitary from hatch to nestingly care day 5.
+\textbf{Fig 1. The magnitude of gene expression changes between each
+parental transition}. Using DESeq 2, we identified 4-5K genes are
+differentially expressed beteen control birds and their nest buliding
+conspecifics in all tissues except the male gonad. 500 - 1000 genes are
+differentially expressed in the female pituitary from mid-late
+incubation as well as in the female hypothalamus and pituitary from
+hatch to nestingly care day 5.
 
 \hypertarget{fig-2-ability-to-use-gene-expression-to-distingush-groups}{%
 \subsection{Fig 2: Ability to use gene expression to distingush
 groups}\label{fig-2-ability-to-use-gene-expression-to-distingush-groups}}
 
-\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-5-1.pdf}
+\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-4-1.pdf}
 
 \hypertarget{fig-3-prolactin-expression-in-pit-but-not-hyp-or-gon-follows-same-pattern-as-in-blood}{%
 \subsection{Fig 3: Prolactin expression in PIT (but not HYP or GON)
 follows same pattern as in
 blood}\label{fig-3-prolactin-expression-in-pit-but-not-hyp-or-gon-follows-same-pattern-as-in-blood}}
 
-\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-6-1.pdf}
+\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-5-1.pdf}
 
 \hypertarget{fig-4-hundreds-of-genes-show-similar-pattern-in-expression-as-circulating-prolactin}{%
 \subsection{Fig 4: Hundreds of genes show similar pattern in expression
 as circulating
 prolactin}\label{fig-4-hundreds-of-genes-show-similar-pattern-in-expression-as-circulating-prolactin}}
 
-\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-7-1.pdf}
+\includegraphics{characterization_manuscript_files/figure-latex/unnamed-chunk-6-1.pdf}
 
 \hypertarget{acknowledgments}{%
 \section{Acknowledgments}\label{acknowledgments}}
