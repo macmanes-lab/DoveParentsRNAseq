@@ -66,23 +66,23 @@ We will remove eggs during incubation on Day 1 (beginning), Day 9 (middle), or D
 We will remove newly, naturally hatched chick(s) on Day 2: second chick hatches and sample brains from parents the following day (Day 2 post (second) egg hatching). Prediction: Behavior, transcription and translation are sensory driven and will revert to a pattern characteristic of the ‘Nesting, prior to lay’ point, supporting our working hypothesis. Alternatively, if an internal clock mechanism is at play, we would expect to see a pattern similar to birds caring for chicks on Day 2 post (second) egg hatching.
 
 
-
 We will remove eggs on Day 8 (middle) of incubation and immediately replace them with newly hatched chicks. We will sample brains on the following day (Day 9). Prediction: Changes in behavior, transcription and translation are externally sensory driven, and these will be similar to birds sampled on ‘Day 1: 1st egg
 hatches, supporting our working hypothesis. Alternatively, if profiles remain similar to birds sampled on Day 9 that are actively incubating eggs, this would support the presence of an internal clock mechanism.
 
 
 # Results
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap= "Circulating prolactin levels with an without manipulation."}
+ggdraw() + draw_image("../figures/hormones/prolactin-manip-1.png") 
+```
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap= "Offspring removal."}
 ggdraw() + draw_image("../figures/manipulation/offspringremoval-1.png") 
 ```
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
-ggdraw() + draw_image("../figures/manipulation/manipVchar-1.png") 
-```
 
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5}
+```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap = "Manipulation of timing of hatch with dummy eggs and foster chicks. "}
 ggdraw() + draw_image("../figures/manipulation/prolongextend-1.png") 
 ```
 
