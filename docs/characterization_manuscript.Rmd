@@ -109,7 +109,7 @@ b <- ggdraw() + draw_image("../figures/images/PigeonHPGaxis.png")
 plot_grid(a,b, labels = "AUTO", label_size = 8, ncol = 1)
 ```
 
-```{r, fig.width= 5, echo = F, fig.cap = "MDS plots of all samples."}
+```{r, fig.width= 5, echo = F, fig.cap = "MDS plots of all samples. Needs improvement but shows that tissue is source of main variation whereas sex really only affects the gonads and treatment isn't noticable at this levels of analysis."}
 ggdraw() + draw_image("../figures/limma/plotMDS-colored-1.png") 
 ```
 
