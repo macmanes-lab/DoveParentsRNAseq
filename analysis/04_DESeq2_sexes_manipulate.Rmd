@@ -154,7 +154,7 @@ plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 
 ## plot genes in a  PRL WGCNA module
 
-```{r wgcna, eval = T}
+```{r wgcna, eval = T, echo = F}
 plotWGCNAcandidatesManip(vsd.pit, c("NP_990797.2", "NP_001090992.1", "NP_990136.1", "NP_001035179.1"), colDataPit, "PRL, VIPR1, TH & AR expression, Pituitary")
 
 plotWGCNAcandidatesManip(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")

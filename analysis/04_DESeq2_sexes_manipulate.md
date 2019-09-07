@@ -394,44 +394,7 @@ Linear discriminant analysis (LDA)
 plot genes in a PRL WGCNA module
 --------------------------------
 
-    plotWGCNAcandidatesManip(vsd.pit, c("NP_990797.2", "NP_001090992.1", "NP_990136.1", "NP_001035179.1"), colDataPit, "PRL, VIPR1, TH & AR expression, Pituitary")
-
-![](../figures/manipulation/wgcna-1.png)
-
-    plotWGCNAcandidatesManip(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")
-
-![](../figures/manipulation/wgcna-2.png)
-
-    plotWGCNAcandidatesManip(vsd.pit,c("NP_990797.2","NP_001004392.2", "NP_001004403.1", "NP_001006255.2", "NP_001006274.1",
-                               "NP_989500.1", "XP_001234815.2", "XP_015149152.1", "XP_416110.5"),
-                        colDataPit, "Part of 9 genes in the same WGCNA module as PRL in the characterization study")
-
-![](../figures/manipulation/wgcna-3.png)
-
-    plotWGCNAcandidatesManip(vsd.pit,
-                        c("XP_428110.3","NP_001004392.2",  "XP_015142961.1", "XP_015139636.1",
-                          "XP_015137408.1", "XP_004938696.1", "NP_990620.1", "NP_001170793.2", "XP_015132722.1"),
-                        colDataPit, "Part of 9 genes in the same WGCNA module as PRLR in the characterization study")
-
-![](../figures/manipulation/wgcna-4.png)
-
-    plotWGCNAcandidatesManip(vsd.pit, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
-                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
-                                   "NP_990797.2", "XP_015132722.1", "XP_015132722.1", "NP_001090992.1"), colDataPit, "Pitutary: CISH, SOCS, PRL, PRLR")
-
-![](../figures/manipulation/wgcna-5.png)
-
-    plotWGCNAcandidatesManip(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
-                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
-                                   "NP_990797.2", "XP_015132722.1", "NP_001090992.1"), colDataHyp, "Hypothalamus: CISH, SOCS, PRL, PRLR")
-
-![](../figures/manipulation/wgcna-6.png)
-
-    plotWGCNAcandidatesManip(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
-                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
-                                   "NP_990797.2", "XP_015132722.1", "NP_001090992.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
-
-![](../figures/manipulation/wgcna-7.png)
+![](../figures/manipulation/wgcna-1.png)![](../figures/manipulation/wgcna-2.png)![](../figures/manipulation/wgcna-3.png)![](../figures/manipulation/wgcna-4.png)![](../figures/manipulation/wgcna-5.png)![](../figures/manipulation/wgcna-6.png)![](../figures/manipulation/wgcna-7.png)
 
 genes that were in the WGCNA module with PRL twice!
 ---------------------------------------------------
