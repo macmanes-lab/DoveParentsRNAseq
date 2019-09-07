@@ -364,18 +364,18 @@ Linear discriminant analysis (LDA)
     # figures for both of the above
 
     # treatment
-    a <- LDAplot.manipulation(LDA.hyp1 , "Hypothalamus model 1", "parental state ~ .  0.277 pred. acc.",
-                            "LD1, F = 7.1504779", "LD2, F = 2.4219585")
+    a <- LDAplot.manipulation(LDA.hyp1 , "Hypothalamus model 1", "parental state ~ .  0.185 pred. acc.",
+                            "LD1, F = 3.7984170", "LD2, F = 3.0810558")
 
 ![](../figures/manipulation/LDA-1.png)
 
-    b <- LDAplot.manipulation(LDA.pit1 ,  "Pituitary model 1", "parental state ~ .  0.33 pred. acc.",
-                            "LD1, F = 6.393554", "LD2, F = 3.396018")
+    b <- LDAplot.manipulation(LDA.pit1 ,  "Pituitary model 1", "parental state ~ .  0.407 pred. acc.",
+                            "LD1, F = 6.188592", "LD2, F = 3.604309")
 
 ![](../figures/manipulation/LDA-2.png)
 
-    c <- LDAplot.manipulation(LDA.gon1 , "Gonad model 1", "parental state ~ .  has 0.297 pred. acc.",
-                            "LD1, F = 6.137500", "LD2, F = 3.320437")
+    c <- LDAplot.manipulation(LDA.gon1 , "Gonad model 1", "parental state ~ .  has 0.154 pred. acc.",
+                            "LD1, F = 4.066997", "LD2, F = 2.782389")
 
 ![](../figures/manipulation/LDA-3.png)
 
