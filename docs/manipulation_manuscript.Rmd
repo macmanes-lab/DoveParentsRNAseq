@@ -72,17 +72,17 @@ hatches, supporting our working hypothesis. Alternatively, if profiles remain si
 
 # Results
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap= "Circulating prolactin levels with an without manipulation."}
+```{r, message=FALSE, warning=FALSE, cache=FALSE, echo = F, fig.width= 5, fig.cap= "Circulating prolactin levels with an without manipulation."}
 ggdraw() + draw_image("../figures/hormones/prolactin-manip-1.png") 
 ```
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap= "Offspring removal."}
+```{r, message=FALSE, warning=FALSE, cache=FALSE, echo = F, fig.width= 5, fig.cap= "Offspring removal."}
 ggdraw() + draw_image("../figures/manipulation/offspringremoval-1.png") 
 ```
 
 
 
-```{r, message=FALSE, warning=FALSE, cache=TRUE, echo = F, fig.width= 5, fig.cap = "Manipulation of timing of hatch with dummy eggs and foster chicks. "}
+```{r, message=FALSE, warning=FALSE, cache=FALSE, echo = F, fig.width= 5, fig.cap = "Manipulation of timing of hatch with dummy eggs and foster chicks. "}
 ggdraw() + draw_image("../figures/manipulation/prolongextend-1.png") 
 ```
 
