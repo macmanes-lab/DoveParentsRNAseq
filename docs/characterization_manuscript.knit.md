@@ -1,0 +1,126 @@
+---
+title: Peaks and valleys of prolatin-related gene expression during pigeon parental care stages
+author:
+  - name: Rayna M Harris
+    email: rmharris@ucdavis
+    affiliation: UC Davis
+    corresponding: "rmharris@ucdavis"
+  - name: Suzanne Austin
+    affiliation: UC Davis
+  - name: Andrew Lang
+    affiliation: UNH
+  - name: Matthew MacManes
+    affiliation: UNH
+  - name: Rebecca M Calisi
+    affiliation: UC Davis           
+address:
+  - code: UC Davis
+    address: UC Davis, Davis, CA
+  - code: UNH
+    address: UNH, smalltown, NH
+abstract: |
+  The goal of this research was to provide the most comprehensive gene expression profile of gene expression activity in the HPG axis of male and female rock doves to provide a deeper undertand of how the reproductive axis response to typical behavioral transitions associated with parental care. Here we used RNA sequencing to measure gene activity at 8 stages of the parental care cyle from nest building, to egg incubation, and through nestling care. Non-parental groups were added as controls, but gene expressions differences were assesed between and across all time points. The three tissue have unique signatures, but within each tissue we find minial sex differences. The pitutary samples displacy the msot plasticity in gene expression, with many changes in gene expression mirroring the typical rise and fall of circulating prolatin that peaks when chicks hatch. Our analysis provides new insight into how suites of genes respond in concert to the demands of offspring care. This data can be used to develop and test hypotheses about the mechanism regulating parental care behavior. 
+bibliography: mybibfile.bib
+output: 
+  rticles::plos_article:
+    df_print: kable
+csl: plos.csl
+---
+
+
+
+<!--
+_Text based on plos sample manuscript, see [http://journals.plos.org/ploscompbiol/s/latex](http://journals.plos.org/ploscompbiol/s/latex)_
+-->
+
+
+# Introduction
+
+
+Understanding the mechanisms underlying parental care are critical to circumventing issues with parent-newborn bonding as well, where ultimate explanations are obvious, but specific mechanisms remain elusive. The rock dove (_Columba livia_) is an ideal system to characterize changes in genetic expression during parental care transitions because: 1) ample genomic resources are available (Gillespie et al. 2013), including a complete annotated genome assembly @Shapiro1063 and methodology concerning reproductive physiology and behavior (Dong et al. 2012); and 2) rock doves are prolific, year-round breeders that thrive in captivity, making observation, manipulation, and sampling highly feasible year-round. Rock doves are socially monogamous and offer bi-parental care, making inter- and intra-sexual comparisons possible. Birds offer two important behavioral transition points into parental care: the incubation of eggs and the caring for chicks. This produces two unique opportunities to study how the brain transitions into two different suites of parental care behaviors. Additionally, rock doves exhibit a parental care strategy analogous to mammals in that they, too, ‘lactate’ to feed their young (Gillespie et al. 2011, 2012). This lactation, unlike simple regurgitation of food, consists of the production and sloughing off of skin cells inside the crop sac of females and males, creating a protein-rich milk-like substance on which they rear their chicks. Many functional similarities between rock dove and mammalian lactation exist concerning the mediation of this event by the hormone prolactin (Dumont 1965). Additionally, like mammalian milk, rock dove milk delivers essential immunoglobulins and nutritional benefits to young, aiding in their immune function and development of microbiota @Gillespie2012. Thus, because rock doves incubate eggs and exhibit mammalian-like mediation and function of lactation for young, they have the potential to serve as a powerful theoretical bridge to understand the neurobiology of both avian and mammalian transitions into parental care. Our working hypothesis is that distinct changes in transcription occur in the brain at the anticipation of, during, and in response to two different types of parental care: incubation behavior and hatchling care.
+
+# Materials and Methods
+
+
+Sexually mature male and female rock doves were housed together in rooftop aviaries on the Barnard Campus. Natural male-female pairings permitted, and small observation windows behind each nest box (64 boxes total) facilitate observations nest building, egg laying, chick hatching, and nesting care every morning from 0900-1100 (correct time?). On specific collection days (Fig 1A, needs to be updated), truck blook, the hypothalamus, the pituitary, and the gonads were collected following common protocols used to sample tissue from birds (Fig 1B). Tissue collection, RNA isolation, cDNA library preparation, sequencing, quality control, and read processing were done as described in Calisi et al. 2018, Lang et al 2019, and Austin et al 2019.
+
+We used EdgeR determine the greatest contributor to variance in gene expression in the full dataset. Then, we used EdgeR and DESeq2 were used to calculate statistical differnces in gene expression between each transition within a given tissue. All subsequent analyses were conducting using variance stabilized data from the DESeq2 model. A linear discriminant analysis was used to determine the confidence with which we could predict the parental care stage of a sample based on it's global gene expression profile. WGCNA was used to identify genes who's expression was correlated with specific candidate genes of interest. 
+
+
+# Results
+
+We found that the majority of the variation in the full dataset could be attributed to tissue, with only a notable sex differnce existing between the female ovaries and the male testies (Fig. 2).
+
+Thousands of genes were found to be differentially expressed between the non-parental control group and the nest-building group (Table 1, Fig. 3). Within the time course of parental care, fewer than 1000 genes change there expression over the course of a few days, with the most pronounced difference in toltal number of changes occuring in the female pituitary between incubation days 9 and 17 (Table 1, Fig. 3).  
+
+Even though we have a large sample size of roughly 12 samples per tissue per sex, the differences between all 8 sampled parental time points are so small, that we are only able to predict the stage using gene expression along 40%, 30% and 27% of the time in the pituiary, gonads and hypothalamus, respectively (Fig 4A). However, if we group the parental stages into anticipatory (control, nest building), egg care (lay and incubation days), and nestling care (hatch and nesting days), we incrase our ability to detect parental stage to 47%, 43%, and 37 pituiary, hypothalamus and gonads, respectively (Fig 4B).  
+
+Gene expression of prlactin (_PRL_)in the pitutiary, but not the hypothalamus follows the characteristic dip in expression relative to non-parental controls during early incubation then spikes the day before hatch and peaks at hatch (Fig 5). 
+
+Hundreds of genes follow this same, prolactin-associated pattern of expression in the pitutiary (Fig. 6).
+
+# Acknowledgments
+
+This project is a synergistic collaboration between the PI, Rebecca Calisi-Rodríguez (expertise in avian behavior, parental care and neurobiology), co-PI, Matthew MacManes (expertise in next-generation sequencing, transcriptome assembly, and gene expression analyses), and Collaborator, Rae Silver (expertise in neurobiology, dove behavior, and decades of successful breeding and maintenance of dove colonies at Barnard College).
+
+
+
+\begin{table}[hb]
+\begin{tabular}{llllllll}
+\hline
+\textbf{Method} & \textbf{Contrast} & \textbf{Hyp F} & \textbf{Hyp M} & \textbf{Pit F} & \textbf{Pit M} & \textbf{Gon F} & \textbf{Gon M} \\  \hline
+EdgeR & Cont - Bldg & 14674 & 117 & 14593 & 144 & 14859 & 4 \\
+EdgeR & Bldg - Lay & 14742 & 0 & 14593 & 0 & 14836 & 0 \\
+EdgeR & Lay - Inc3 & 0 & 0 & 0 & 0 & 19 & 0 \\
+EdgeR & Inc3 - Inc9 & 0 & 1 & 0 & 3 & 2 & 0 \\
+EdgeR & Inc9 - Inc 17 & 0 & 2 & 57 & 37 & 9 & 0 \\
+EdgeR & Inc17 - Hatch & 0 & 0 & 3 & 1 & 3 & 0 \\
+EdgeR & Hatch - Nest5 & 1 & 0 & 3 & 0 & 0 & 0 \\
+EdgeR & Nest5 - Nest9 & 0 & 0 & 0 & 0 & 24 & 0 \\  \hline
+DESeq2 & Cont - Bldg & 3452 & 4499 & 3950 & 4680 & 4597 & 2135 \\
+DESeq2 & Bldg - Lay & 0 & 0 & 101 & 0 & 104 & 1 \\
+DESeq2 & Lay - Inc3 & 0 & 0 & 18 & 1 & 440 & 1 \\
+DESeq2 & Inc3 - Inc9 & 1 & 0 & 0 & 1 & 8 & 0 \\
+DESeq2 & Inc9 - Inc 17 & 1 & 0 & 640 & 186 & 1 & 0 \\
+DESeq2 & Inc17 - Hatch & 2 & 0 & 3 & 18 & 1 & 0 \\
+DESeq2 & Hatch - Nest5 & 166 & 0 & 340 & 3 & 1 & 0 \\
+DESeq2 & Nest5 - Nest9 & 0 & 0 & 1 & 23 & 19 & 0 \\ \hline
+\end{tabular}
+\caption{Comparison of total DEGs determined by edgeR and DESeq2}
+\label{tab:my-table}
+\end{table}
+
+
+![Experimental design.We sampled 9 timepoints, including 1 non-parental control, 1 nest-building, 1 egg lay, 3 incubation time point, 1 hatch, and 2 nestling care stages. we collected truck blood, the hypothalamus, the pituitary, and the gonads from all parents.](characterization_manuscript_files/figure-latex/unnamed-chunk-2-1.pdf) 
+
+![MDS plots of all samples. Needs improvement but shows that tissue is source of main variation whereas sex really only affects the gonads and treatment isn't noticable at this levels of analysis.](characterization_manuscript_files/figure-latex/unnamed-chunk-3-1.pdf) 
+
+
+![The magnitude of gene expression changes between each parental transition. Using DESeq 2, we identified 4-5K genes are differentially expressed beteen control birds and their nest buliding conspecifics in all tissues except the male gonad. 500 - 1000 genes are differentially expressed in the female pituitary from mid-late incubation as well as in the female hypothalamus and pituitary from hatch to nestingly care day 5.](characterization_manuscript_files/figure-latex/unnamed-chunk-4-1.pdf) 
+
+![Linear discriminant analysis shows the strongest ability to predict parental stage of pitutary samples.](characterization_manuscript_files/figure-latex/unnamed-chunk-5-1.pdf) 
+
+
+![Prolactin expression in PIT (but not HYP or GON) follows same pattern as in blood](characterization_manuscript_files/figure-latex/unnamed-chunk-6-1.pdf) 
+
+
+![Hundreds of genes show similar pattern in expression as circulating prolactin](characterization_manuscript_files/figure-latex/unnamed-chunk-7-1.pdf) 
+
+
+
+
+<!--
+
+# Funding Statment
+
+
+
+1. Collaborative Research: RUI: The Neural Basis of Becoming a Parent: From Genotype to Phenotype. NSF-IOS:1455957. 
+
+-->
+
+
+
+
+# References {#references .unnumbered}
+
