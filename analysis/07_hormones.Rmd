@@ -55,7 +55,29 @@ prolactin <- prolactin %>%
 prolactin$treatment <- factor(prolactin$treatment, levels = combolevels)
 ```
 
-```{r prolactin-all}
+```{r wranglesteroids}
+PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)
+
+PETC <- PETC %>% select(stage, sex, hormone, plasma_conc)  %>%
+                filter(stage %in% combolevels)  %>%
+                droplevels()
+PETC$stage <- factor(PETC$stage)
+levels(PETC$stage)
+
+PETC <- PETC %>%
+    mutate(sex = fct_recode(sex,
+                            "female" = "f",
+                            "male" = "m"),
+           study = fct_collapse(stage,
+                                 characterization = charlevels,
+                                 manipulation = maniplevels))
+PETC$treatment <- factor(PETC$stage, levels = combolevels)
+
+```
+
+
+
+```{r prolactin}
 prolactin %>%
   select(treatment, `Prolactin ng/mL`, Sex, study) %>% drop_na() %>%
 ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
@@ -63,8 +85,60 @@ ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom") +
   facet_wrap(~study, scales = "free_x") +
-  labs(title = "Ciruclating prolactin levels",
-       subtitle = "During characteristic parental care stages and following manipulation")
+  labs(y = "Prolactin (ng/mL)")
+```
+
+```{r testosterone}
+
+PETC %>% 
+  filter(hormone == "testosterone", sex == "male")  %>% 
+ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  facet_wrap(~study, scales = "free_x") +
+  labs(y = "Testosterone") +
+  scale_fill_manual(values = c("#00BFC4"))
+```
+
+```{r estradiol}
+PETC %>% 
+  filter(hormone == "estradiol", sex == "female")  %>% 
+ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  facet_wrap(~study, scales = "free_x") +
+  labs(y = "Estradiol (ng/mL)") 
+
+```
+
+```{r progesterone}
+PETC %>% 
+  filter(hormone == "progesterone")  %>% 
+ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  facet_wrap(~study, scales = "free_x") +
+  labs(y = "Progesterone (ng/mL)") +
+  ylim(c(0,6))
+
+```
+
+```{r cort}
+
+PETC %>% 
+  filter(hormone == "cort")  %>% 
+ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  facet_wrap(~study, scales = "free_x") +
+  labs(y = "Corticosterone (ng/mL)") +
+  ylim(c(0,10))
+
+
 ```
 
 
