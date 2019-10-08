@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
     ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -73,6 +73,26 @@
 
     prolactin$treatment <- factor(prolactin$treatment, levels = combolevels)
 
+    PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)
+
+    PETC <- PETC %>% select(stage, sex, hormone, plasma_conc)  %>%
+                    filter(stage %in% combolevels)  %>%
+                    droplevels()
+    PETC$stage <- factor(PETC$stage)
+    levels(PETC$stage)
+
+    ##  [1] "bldg"    "extend"  "hatch"   "inc_d17" "inc_d3"  "inc_d9"  "lay"    
+    ##  [8] "n5"      "n9"      "prolong"
+
+    PETC <- PETC %>%
+        mutate(sex = fct_recode(sex,
+                                "female" = "f",
+                                "male" = "m"),
+               study = fct_collapse(stage,
+                                     characterization = charlevels,
+                                     manipulation = maniplevels))
+    PETC$treatment <- factor(PETC$stage, levels = combolevels)
+
     prolactin %>%
       select(treatment, `Prolactin ng/mL`, Sex, study) %>% drop_na() %>%
     ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
@@ -80,10 +100,56 @@
       theme(axis.text.x = element_text(angle = 45, hjust = 1),
             legend.position = "bottom") +
       facet_wrap(~study, scales = "free_x") +
-      labs(title = "Ciruclating prolactin levels",
-           subtitle = "During characteristic parental care stages and following manipulation")
+      labs(y = "Prolactin (ng/mL)")
 
-![](../figures/hormones/prolactin-all-1.png)
+![](../figures/hormones/prolactin-1.png)
+
+    PETC %>% 
+      filter(hormone == "testosterone", sex == "male")  %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+      geom_boxplot() + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "bottom") +
+      facet_wrap(~study, scales = "free_x") +
+      labs(y = "Testosterone") +
+      scale_fill_manual(values = c("#00BFC4"))
+
+![](../figures/hormones/testosterone-1.png)
+
+    PETC %>% 
+      filter(hormone == "estradiol", sex == "female")  %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+      geom_boxplot() + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "bottom") +
+      facet_wrap(~study, scales = "free_x") +
+      labs(y = "Estradiol (ng/mL)") 
+
+![](../figures/hormones/estradiol-1.png)
+
+    PETC %>% 
+      filter(hormone == "progesterone")  %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+      geom_boxplot() + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "bottom") +
+      facet_wrap(~study, scales = "free_x") +
+      labs(y = "Progesterone (ng/mL)") +
+      ylim(c(0,6))
+
+![](../figures/hormones/progesterone-1.png)
+
+    PETC %>% 
+      filter(hormone == "cort")  %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+      geom_boxplot() + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "bottom") +
+      facet_wrap(~study, scales = "free_x") +
+      labs(y = "Corticosterone (ng/mL)") +
+      ylim(c(0,10))
+
+![](../figures/hormones/cort-1.png)
 
     characterization <- prolactin %>% filter(treatment %in% charlevels)   %>%  droplevels()
 
