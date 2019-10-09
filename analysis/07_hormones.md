@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
     ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -208,10 +208,12 @@
       theme(axis.text.x = element_text(angle = 45, hjust = 1),
             legend.position = "bottom",
             legend.title = element_blank()) +
-      labs(subtitle = "Observed prolactin",
-           y = "Concentration (ng/mL)", x = NULL) +
+      labs(subtitle = "Characterization", y = "Prolactin (ng/mL)", x = NULL) +
       #geom_text(data = df, aes(x,y, label = text), color = "darkgrey") +
           ylim(0,120) 
+    a
+
+![](../figures/hormones/prolactin-char-1.png)
 
     b <- ggplot(grid, aes(x = treatment, y = pred, color = sex)) +
       geom_point() + 
@@ -225,7 +227,7 @@
 
     plot_grid(a,b)
 
-![](../figures/hormones/prolactin-char-1.png)
+![](../figures/hormones/prolactin-char-2.png)
 
     aov1 <- aov(data = characterization, `Prolactin ng/mL` ~ treatment + sex)
     aov1
@@ -308,18 +310,20 @@
 
     e <- manipulation %>%
       ggplot( aes(x = treatment, y = `Prolactin ng/mL`)) +
-        geom_boxplot(aes(fill = sex, alpha = 0.5)) + 
+        geom_boxplot(aes(fill = sex)) + 
         theme(axis.text.x = element_text(angle = 45, hjust = 1),
               legend.position = "bottom",
               legend.title = element_blank()) +
         ylim(0,125) +
         labs(subtitle = "Manipulation",
-           y = NULL, x = NULL) + 
-      scale_alpha(guide = 'none')
-
-    plot_grid(a,b,e, nrow = 1, rel_widths = c(1.1,.75,.8)) 
+           y = "Prolactin (ng/mL)", x = NULL)
+    e
 
 ![](../figures/hormones/prolactin-manip-1.png)
+
+    plot_grid(a,e, nrow = 1) 
+
+![](../figures/hormones/prolactin-manip-2.png)
 
     f <-  prolactin %>%
       filter(treatment %in% c("control", "bldg", "inc_d3", "M_inc3",
@@ -355,7 +359,7 @@
 
     plot_grid(f,g, nrow=2, rel_widths = c(.625,.375))
 
-![](../figures/hormones/prolactin-manip-2.png)
+![](../figures/hormones/prolactin-manip-3.png)
 
     ggplot(grid, aes(x = treatment, y = pred, color = sex)) +
       geom_point() + 
