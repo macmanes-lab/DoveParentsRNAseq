@@ -166,10 +166,10 @@ a <- ggplot(characterization, aes(x = treatment, y = `Prolactin ng/mL`, fill = s
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom",
         legend.title = element_blank()) +
-  labs(subtitle = "Observed prolactin",
-       y = "Concentration (ng/mL)", x = NULL) +
+  labs(subtitle = "Characterization", y = "Prolactin (ng/mL)", x = NULL) +
   #geom_text(data = df, aes(x,y, label = text), color = "darkgrey") +
       ylim(0,120) 
+a
 
 b <- ggplot(grid, aes(x = treatment, y = pred, color = sex)) +
   geom_point() + 
@@ -202,16 +202,16 @@ manipulation <- prolactin %>%
 
 e <- manipulation %>%
   ggplot( aes(x = treatment, y = `Prolactin ng/mL`)) +
-    geom_boxplot(aes(fill = sex, alpha = 0.5)) + 
+    geom_boxplot(aes(fill = sex)) + 
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "bottom",
           legend.title = element_blank()) +
     ylim(0,125) +
     labs(subtitle = "Manipulation",
-       y = NULL, x = NULL) + 
-  scale_alpha(guide = 'none')
+       y = "Prolactin (ng/mL)", x = NULL)
+e
 
-plot_grid(a,b,e, nrow = 1, rel_widths = c(1.1,.75,.8)) 
+plot_grid(a,e, nrow = 1) 
 
 f <-  prolactin %>%
   filter(treatment %in% c("control", "bldg", "inc_d3", "M_inc3",
