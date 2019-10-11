@@ -17,7 +17,18 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Methods
 
+
+
 ## Results
+
+### Fig x: Prolactin levels are low when offspring hatch early
+
+![](../figures/hormones/manipulation-1.png)
+
+### Fig 2. Estradiol drops when incubation prolnged or hatch extended
+
+![](../figures/hormones/manipulation-2.png)
+
 
 ## Discussion 
 

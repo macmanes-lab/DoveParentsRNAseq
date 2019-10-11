@@ -19,6 +19,10 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Results
 
+### Fig x: Prolactin drops when offspring removed around hatch
+
+![](../figures/hormones/removal-1.png)
+
 ## Discussion 
 
 ## Conclusion
