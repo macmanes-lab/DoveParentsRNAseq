@@ -1,0 +1,28 @@
+---
+title: "The one where we remove their offspring"
+output: word_document
+author:
+- Principal Investigators - Rebecca Calisi, Matt MacManes, John Wingfield
+- Postdocs - Suzanne Austin, Rayna Harris, Jesse Krause, 
+- Grad students - Victoria Farrar, April Booth, Andrew Lang
+- Undergrads - Tanner Feustel, Candice Lee, Annie Bond?
+- Others - Fred?, Rechelle Viernes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+## Methods
+
+## Results
+
+## Discussion 
+
+## Conclusion
+
+## Acknowledgements
+
+## Data availabilty
