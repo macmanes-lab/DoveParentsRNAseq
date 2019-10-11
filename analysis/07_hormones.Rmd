@@ -93,7 +93,7 @@ ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
 PETC %>% 
   filter(hormone == "testosterone", sex == "male")  %>% 
 ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_boxplot() + 
+  geom_boxplot() + geom_jitter() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom") +
   facet_wrap(~study, scales = "free_x") +
@@ -105,7 +105,7 @@ ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
 PETC %>% 
   filter(hormone == "estradiol", sex == "female")  %>% 
 ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_boxplot() + 
+  geom_boxplot() + geom_jitter() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom") +
   facet_wrap(~study, scales = "free_x") +
@@ -117,7 +117,7 @@ ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
 PETC %>% 
   filter(hormone == "progesterone")  %>% 
 ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_boxplot() + 
+  geom_boxplot() + geom_jitter() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom") +
   facet_wrap(~study, scales = "free_x") +
@@ -127,18 +127,15 @@ ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
 ```
 
 ```{r cort}
-
 PETC %>% 
   filter(hormone == "cort")  %>% 
 ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_boxplot() + 
+  geom_boxplot() + geom_jitter() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom") +
   facet_wrap(~study, scales = "free_x") +
   labs(y = "Corticosterone (ng/mL)") +
   ylim(c(0,10))
-
-
 ```
 
 
@@ -162,7 +159,7 @@ df <- data.frame(
 )
 
 a <- ggplot(characterization, aes(x = treatment, y = `Prolactin ng/mL`, fill = sex)) +
-  geom_boxplot() + 
+  geom_boxplot() + geom_jitter() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "bottom",
         legend.title = element_blank()) +
@@ -202,7 +199,7 @@ manipulation <- prolactin %>%
 
 e <- manipulation %>%
   ggplot( aes(x = treatment, y = `Prolactin ng/mL`)) +
-    geom_boxplot(aes(fill = sex)) + 
+    geom_boxplot(aes(fill = sex)) + geom_jitter() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "bottom",
           legend.title = element_blank()) +
@@ -218,7 +215,7 @@ f <-  prolactin %>%
                           "inc_d9",  "M_inc9", "inc_d17","M_inc17",
                           "hatch", "M_n2")) %>%
 ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
-  geom_boxplot(aes(alpha = study)) + 
+  geom_boxplot(aes(alpha = study)) + geom_jitter() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none") +
   labs(subtitle = "Offspring removed",
@@ -235,7 +232,7 @@ g <-  prolactin %>%
   filter(treatment %in% c("early","prolong", "extend",
                           "inc_d9","inc_d17","hatch", "n5" )) %>% droplevels() %>%
 ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
-  geom_boxplot(aes(alpha = study)) + 
+  geom_boxplot(aes(alpha = study)) + geom_jitter() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         legend.position = "none") +
   labs(subtitle = "Timing of transition altered",
