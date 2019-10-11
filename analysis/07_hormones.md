@@ -147,26 +147,25 @@
     hormones$okay <- ifelse(hormones$hormone == "cort" & hormones$plasma_conc > 30, "bad",
                         ifelse(hormones$hormone == "progesterone" & hormones$plasma_conc > 5, "bad", 
                                ifelse(hormones$hormone == "prolactin" & hormones$plasma_conc > 150, "bad", 
-                                ifelse(hormones$hormone == "prolactin" & hormones$treatment == "control", "bad", 
                             ifelse(hormones$hormone == "testosterone" & hormones$sex == "female", "bad",
-                                   ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay"))))))
+                                   ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay")))))
     hormones <- hormones %>% filter(okay == "okay") %>% droplevels()
     summary(hormones)
 
     ##               study       treatment       sex        hormone         
-    ##  characterization:649   inc_d9 :112   female:475   Length:895        
-    ##  manipulation    :169   inc_d17: 88   male  :420   Class :character  
+    ##  characterization:672   inc_d9 :112   female:485   Length:918        
+    ##  manipulation    :169   inc_d17: 88   male  :433   Class :character  
     ##  removal         : 77   hatch  : 80                Mode  :character  
     ##                         bldg   : 79                                  
     ##                         extend : 78                                  
     ##                         n5     : 77                                  
-    ##                         (Other):381                                  
+    ##                         (Other):404                                  
     ##   plasma_conc           okay          
-    ##  Min.   :  0.0355   Length:895        
-    ##  1st Qu.:  0.4140   Class :character  
-    ##  Median :  1.6787   Mode  :character  
-    ##  Mean   : 12.4169                     
-    ##  3rd Qu.: 11.4596                     
+    ##  Min.   :  0.0355   Length:918        
+    ##  1st Qu.:  0.4409   Class :character  
+    ##  Median :  1.7475   Mode  :character  
+    ##  Mean   : 12.7057                     
+    ##  3rd Qu.: 12.2575                     
     ##  Max.   :120.3499                     
     ## 
 
@@ -242,9 +241,9 @@
 
     ## [1] "PRL"
     ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## treatment     7  85878   12268  39.955 <2e-16 ***
-    ## sex           1   1421    1421   4.627  0.033 *  
-    ## Residuals   156  47900     307                   
+    ## treatment     8  89185   11148   34.35 <2e-16 ***
+    ## sex           1   2983    2983    9.19 0.0028 ** 
+    ## Residuals   178  57766     325                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
