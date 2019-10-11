@@ -164,29 +164,26 @@ plot_grid(d + theme(axis.text.x=element_blank()),
 ```
 
 ```{r aov}
-aov1 <- aov(data = prl.char, plasma_conc ~ treatment + sex)
-aov1
-summary(aov1)
-TukeyHSD(aov1, which = "treatment")
 
-aov2 <- aov(data = prog.char, plasma_conc ~ treatment + sex)
-aov2
-summary(aov2)
+aovSexTretment <- function(mydata, whichormone){
+  aov2 <- aov(data = mydata, plasma_conc ~ treatment + sex)
+  print(whichormone)
+  print(summary(aov2))
+  print(TukeyHSD(aov2, which = "treatment"))
+}
+aovSexTretment(prl.char, "PRL")
+aovSexTretment(cort.char, "CORT")
+aovSexTretment(prog.char, "PROG")
 
-aov3 <- aov(data = cort.char, plasma_conc ~ treatment + sex)
-aov3
-summary(aov3)
-TukeyHSD(aov3, which = "treatment")
+aovTretment  <- function(mydata, whichormone){
+  aov1 <- aov(data = mydata, plasma_conc ~ treatment )
+  print(whichormone)
+  print(summary(aov1))
+  print(TukeyHSD(aov1, which = "treatment"))
+}
 
-
-aov4 <- aov(data = est.char, plasma_conc ~ treatment )
-aov4
-summary(aov4)
-TukeyHSD(aov4, which = "treatment")
-
-aov5 <- aov(data = test.char, plasma_conc ~ treatment )
-aov5
-summary(aov5)
+aovTretment(est.char, "E")
+aovTretment(test.char, "T")
 ```
 
 ```{r}

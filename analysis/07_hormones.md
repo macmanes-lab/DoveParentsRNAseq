@@ -205,35 +205,25 @@
 
 ![](../figures/hormones/characterization-hormones-2.png)
 
-    aov1 <- aov(data = prl.char, plasma_conc ~ treatment + sex)
-    aov1
+    aovSexTretment <- function(mydata, whichormone){
+      aov2 <- aov(data = mydata, plasma_conc ~ treatment + sex)
+      print(whichormone)
+      print(summary(aov2))
+      print(TukeyHSD(aov2, which = "treatment"))
+    }
+    aovSexTretment(prl.char, "PRL")
 
-    ## Call:
-    ##    aov(formula = plasma_conc ~ treatment + sex, data = prl.char)
-    ## 
-    ## Terms:
-    ##                 treatment      sex Residuals
-    ## Sum of Squares   85878.31  1420.71  47900.04
-    ## Deg. of Freedom         7        1       156
-    ## 
-    ## Residual standard error: 17.52289
-    ## Estimated effects may be unbalanced
-
-    summary(aov1)
-
+    ## [1] "PRL"
     ##              Df Sum Sq Mean Sq F value Pr(>F)    
     ## treatment     7  85878   12268  39.955 <2e-16 ***
     ## sex           1   1421    1421   4.627  0.033 *  
     ## Residuals   156  47900     307                   
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-    TukeyHSD(aov1, which = "treatment")
-
     ##   Tukey multiple comparisons of means
     ##     95% family-wise confidence level
     ## 
-    ## Fit: aov(formula = plasma_conc ~ treatment + sex, data = prl.char)
+    ## Fit: aov(formula = plasma_conc ~ treatment + sex, data = mydata)
     ## 
     ## $treatment
     ##                       diff        lwr        upr     p adj
@@ -266,56 +256,19 @@
     ## n9-hatch       -34.1166672 -51.142159 -17.091175 0.0000002
     ## n9-n5          -14.5288656 -31.554357   2.496626 0.1560036
 
-    aov2 <- aov(data = prog.char, plasma_conc ~ treatment + sex)
-    aov2
+    aovSexTretment(cort.char, "CORT")
 
-    ## Call:
-    ##    aov(formula = plasma_conc ~ treatment + sex, data = prog.char)
-    ## 
-    ## Terms:
-    ##                 treatment      sex Residuals
-    ## Sum of Squares    2.62134  0.08244  67.87352
-    ## Deg. of Freedom         7        1       181
-    ## 
-    ## Residual standard error: 0.6123658
-    ## Estimated effects may be unbalanced
-
-    summary(aov2)
-
-    ##              Df Sum Sq Mean Sq F value Pr(>F)
-    ## treatment     7   2.62  0.3745   0.999  0.434
-    ## sex           1   0.08  0.0824   0.220  0.640
-    ## Residuals   181  67.87  0.3750
-
-    aov3 <- aov(data = cort.char, plasma_conc ~ treatment + sex)
-    aov3
-
-    ## Call:
-    ##    aov(formula = plasma_conc ~ treatment + sex, data = cort.char)
-    ## 
-    ## Terms:
-    ##                 treatment      sex Residuals
-    ## Sum of Squares    34.7566   0.1393  368.9301
-    ## Deg. of Freedom         7        1       168
-    ## 
-    ## Residual standard error: 1.481895
-    ## Estimated effects may be unbalanced
-
-    summary(aov3)
-
+    ## [1] "CORT"
     ##              Df Sum Sq Mean Sq F value Pr(>F)  
     ## treatment     7   34.8   4.965   2.261 0.0318 *
     ## sex           1    0.1   0.139   0.063 0.8015  
     ## Residuals   168  368.9   2.196                 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-    TukeyHSD(aov3, which = "treatment")
-
     ##   Tukey multiple comparisons of means
     ##     95% family-wise confidence level
     ## 
-    ## Fit: aov(formula = plasma_conc ~ treatment + sex, data = cort.char)
+    ## Fit: aov(formula = plasma_conc ~ treatment + sex, data = mydata)
     ## 
     ## $treatment
     ##                         diff        lwr        upr     p adj
@@ -348,34 +301,68 @@
     ## n9-hatch       -0.7370858735 -2.2332390 0.75906724 0.7999615
     ## n9-n5          -1.3915570305 -2.8526392 0.06952512 0.0743432
 
-    aov4 <- aov(data = est.char, plasma_conc ~ treatment )
-    aov4
+    aovSexTretment(prog.char, "PROG")
 
-    ## Call:
-    ##    aov(formula = plasma_conc ~ treatment, data = est.char)
+    ## [1] "PROG"
+    ##              Df Sum Sq Mean Sq F value Pr(>F)
+    ## treatment     7   2.62  0.3745   0.999  0.434
+    ## sex           1   0.08  0.0824   0.220  0.640
+    ## Residuals   181  67.87  0.3750               
+    ##   Tukey multiple comparisons of means
+    ##     95% family-wise confidence level
     ## 
-    ## Terms:
-    ##                 treatment Residuals
-    ## Sum of Squares   0.812090  4.213773
-    ## Deg. of Freedom         7        68
+    ## Fit: aov(formula = plasma_conc ~ treatment + sex, data = mydata)
     ## 
-    ## Residual standard error: 0.2489322
-    ## Estimated effects may be unbalanced
+    ## $treatment
+    ##                       diff        lwr       upr     p adj
+    ## lay-bldg        0.29801861 -0.3026406 0.8986778 0.7949354
+    ## inc_d3-bldg     0.14396432 -0.4566949 0.7446235 0.9958085
+    ## inc_d9-bldg    -0.10429598 -0.6176642 0.4090722 0.9985273
+    ## inc_d17-bldg   -0.03684839 -0.5653285 0.4916318 0.9999989
+    ## hatch-bldg      0.15516067 -0.3874311 0.6977525 0.9877649
+    ## n5-bldg         0.09202583 -0.4559557 0.6400074 0.9995747
+    ## n9-bldg         0.11791009 -0.4300714 0.6658916 0.9978735
+    ## inc_d3-lay     -0.15405429 -0.7981896 0.4900810 0.9958640
+    ## inc_d9-lay     -0.40231459 -0.9659329 0.1613038 0.3633017
+    ## inc_d17-lay    -0.33486700 -0.9122837 0.2425497 0.6353906
+    ## hatch-lay      -0.14285794 -0.7332177 0.4475018 0.9955517
+    ## n5-lay         -0.20599278 -0.8013099 0.3893244 0.9638503
+    ## n9-lay         -0.18010853 -0.7754257 0.4152086 0.9829934
+    ## inc_d9-inc_d3  -0.24826030 -0.8118786 0.3153581 0.8777968
+    ## inc_d17-inc_d3 -0.18081271 -0.7582294 0.3966040 0.9792766
+    ## hatch-inc_d3    0.01119635 -0.5791634 0.6015561 1.0000000
+    ## n5-inc_d3      -0.05193849 -0.6472556 0.5433786 0.9999950
+    ## n9-inc_d3      -0.02605423 -0.6213714 0.5692629 1.0000000
+    ## inc_d17-inc_d9  0.06744759 -0.4185210 0.5534161 0.9998808
+    ## hatch-inc_d9    0.25945665 -0.2418217 0.7607350 0.7573619
+    ## n5-inc_d9       0.19632181 -0.3107856 0.7034292 0.9346875
+    ## n9-inc_d9       0.22220606 -0.2849013 0.7293135 0.8807050
+    ## hatch-inc_d17   0.19200906 -0.3247349 0.7087531 0.9471429
+    ## n5-inc_d17      0.12887422 -0.3935263 0.6512747 0.9949881
+    ## n9-inc_d17      0.15475847 -0.3676420 0.6771590 0.9849479
+    ## n5-hatch       -0.06313484 -0.5998069 0.4735372 0.9999611
+    ## n9-hatch       -0.03725058 -0.5739226 0.4994214 0.9999990
+    ## n9-n5           0.02588425 -0.5162363 0.5680049 0.9999999
 
-    summary(aov4)
+    aovTretment  <- function(mydata, whichormone){
+      aov1 <- aov(data = mydata, plasma_conc ~ treatment )
+      print(whichormone)
+      print(summary(aov1))
+      print(TukeyHSD(aov1, which = "treatment"))
+    }
 
+    aovTretment(est.char, "E")
+
+    ## [1] "E"
     ##             Df Sum Sq Mean Sq F value Pr(>F)  
     ## treatment    7  0.812 0.11601   1.872 0.0877 .
     ## Residuals   68  4.214 0.06197                 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
-
-    TukeyHSD(aov4, which = "treatment")
-
     ##   Tukey multiple comparisons of means
     ##     95% family-wise confidence level
     ## 
-    ## Fit: aov(formula = plasma_conc ~ treatment, data = est.char)
+    ## Fit: aov(formula = plasma_conc ~ treatment, data = mydata)
     ## 
     ## $treatment
     ##                        diff         lwr       upr     p adj
@@ -408,24 +395,46 @@
     ## n9-hatch        0.190833254 -0.19280149 0.5744680 0.7743180
     ## n9-n5           0.282053971 -0.06608888 0.6301968 0.1993673
 
-    aov5 <- aov(data = test.char, plasma_conc ~ treatment )
-    aov5
+    aovTretment(test.char, "T")
 
-    ## Call:
-    ##    aov(formula = plasma_conc ~ treatment, data = test.char)
-    ## 
-    ## Terms:
-    ##                 treatment Residuals
-    ## Sum of Squares    7.58604  45.89673
-    ## Deg. of Freedom         7        33
-    ## 
-    ## Residual standard error: 1.179326
-    ## Estimated effects may be unbalanced
-
-    summary(aov5)
-
+    ## [1] "T"
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    7   7.59   1.084   0.779  0.609
-    ## Residuals   33  45.90   1.391
+    ## Residuals   33  45.90   1.391               
+    ##   Tukey multiple comparisons of means
+    ##     95% family-wise confidence level
+    ## 
+    ## Fit: aov(formula = plasma_conc ~ treatment, data = mydata)
+    ## 
+    ## $treatment
+    ##                       diff       lwr      upr     p adj
+    ## lay-bldg        0.19904422 -3.977339 4.375427 0.9999999
+    ## inc_d3-bldg    -0.44725374 -3.004755 2.110248 0.9990748
+    ## inc_d9-bldg    -0.26170893 -2.388219 1.864801 0.9999092
+    ## inc_d17-bldg    0.22989764 -2.078685 2.538480 0.9999784
+    ## hatch-bldg      0.10118886 -2.025321 2.227699 0.9999999
+    ## n5-bldg        -1.03741929 -4.227184 2.152346 0.9623150
+    ## n9-bldg         0.84547467 -1.565761 3.256710 0.9443725
+    ## inc_d3-lay     -0.64629797 -4.908801 3.616205 0.9996354
+    ## inc_d9-lay     -0.46075315 -4.479479 3.557973 0.9999437
+    ## inc_d17-lay     0.03085342 -4.087116 4.148822 1.0000000
+    ## hatch-lay      -0.09785537 -4.116582 3.920871 1.0000000
+    ## n5-lay         -1.23646351 -5.905801 3.432874 0.9880048
+    ## n9-lay          0.64643045 -3.529952 4.822813 0.9995824
+    ## inc_d9-inc_d3   0.18554481 -2.105482 2.476571 0.9999948
+    ## inc_d17-inc_d3  0.67715138 -1.783806 3.138109 0.9850309
+    ## hatch-inc_d3    0.54844260 -1.742584 2.839469 0.9933998
+    ## n5-inc_d3      -0.59016555 -3.891886 2.711555 0.9989348
+    ## n9-inc_d3       1.29272841 -1.264773 3.850230 0.7270053
+    ## inc_d17-inc_d9  0.49160657 -1.517757 2.500970 0.9924789
+    ## hatch-inc_d9    0.36289778 -1.434331 2.160127 0.9976862
+    ## n5-inc_d9      -0.77571036 -3.756077 2.204657 0.9891541
+    ## n9-inc_d9       1.10718360 -1.019326 3.233694 0.6974793
+    ## hatch-inc_d17  -0.12870879 -2.138072 1.880654 0.9999990
+    ## n5-inc_d17     -1.26731693 -4.380209 1.845575 0.8861889
+    ## n9-inc_d17      0.61557703 -1.693005 2.924159 0.9875117
+    ## n5-hatch       -1.13860814 -4.118975 1.841759 0.9152472
+    ## n9-hatch        0.74428582 -1.382224 2.870796 0.9448813
+    ## n9-n5           1.88289396 -1.306871 5.072659 0.5551930
 
     write.csv(hormones, "../results/hormones.csv", row.names = F)
