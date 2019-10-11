@@ -16,18 +16,23 @@ source("../R/themes.R")  # load custom themes and color palletes
 knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
 ```
 
-```{r wrangle}
+```{r clean}
+charlevels <- c("control", "bldg", "lay", "inc_d3", "inc_d9", "inc_d17", "hatch", "n5", "n9" )
+removelevels <- c("M_inc3",  "M_inc9", "M_inc17", "M_n2")
+maniplevels <- c("early", "prolong", "extend")
+combolevels <- c("control", "bldg", "lay", "inc_d3", "M_inc3",
+                  "inc_d9",  "M_inc9", "early",  "inc_d17","M_inc17",  "hatch",
+                 "prolong", "extend", "M_n2",
+                  "n5", "n9" )
+```
+
+```{r wrangle-prolactin}
 prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)
 
 # keep only samples realated to parental care
 prolactin <- prolactin %>% filter(Study %in% c("Baseline", "ParentalCare"))
 
 # create lists of factos for characterization and manipluation studies
-charlevels <- c("control", "bldg", "lay", "inc_d3", "inc_d9", "inc_d17", "hatch", "n5", "n9" )
-maniplevels <- c("M_inc3", "early", "M_inc9", "M_inc17", "M_n2", "prolong", "extend")
-combolevels <- c("control", "bldg", "lay", "inc_d3", "M_inc3",
-                  "inc_d9",  "M_inc9",  "inc_d17","M_inc17",  "hatch", "M_n2",
-                  "n5", "n9" , "early",  "prolong", "extend")
 
 # rename some of the treatments levels, store in new columns
 prolactin <- prolactin %>%
@@ -50,19 +55,27 @@ prolactin <- prolactin %>%
                             "n9" = "N9"),
            study = fct_collapse(treatment,
                                  characterization = charlevels,
-                                 manipulation = maniplevels))
+                                 manipulation = maniplevels,
+                                removal = removelevels))
 
-prolactin$treatment <- factor(prolactin$treatment, levels = combolevels)
+colnames(prolactin)[colnames(prolactin)=="Prolactin ng/mL"] <- "plasma_conc"
+prolactin$hormone <- "prolactin"
+prolactin <- prolactin %>% select(study, treatment, sex, hormone, plasma_conc)   %>% drop_na()
+
+summary(prolactin)
 ```
 
-```{r wranglesteroids}
+
+```{r wrangle-steroids}
 PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)
 
 PETC <- PETC %>% select(stage, sex, hormone, plasma_conc)  %>%
                 filter(stage %in% combolevels)  %>%
-                droplevels()
+                droplevels()  
 PETC$stage <- factor(PETC$stage)
 levels(PETC$stage)
+
+
 
 PETC <- PETC %>%
     mutate(sex = fct_recode(sex,
@@ -70,193 +83,112 @@ PETC <- PETC %>%
                             "male" = "m"),
            study = fct_collapse(stage,
                                  characterization = charlevels,
-                                 manipulation = maniplevels))
-PETC$treatment <- factor(PETC$stage, levels = combolevels)
+                                manipulation = maniplevels,
+                                removal = removelevels)) %>% 
+  drop_na()
+colnames(PETC)[colnames(PETC)=="stage"] <- "treatment"
+PETC <- PETC %>% select(study, treatment, sex, hormone, plasma_conc)
+summary(PETC)
+```
+
+
+```{r combine-clean-split}
+hormones <- rbind(prolactin, PETC)
+hormones$treatment <- factor(hormones$treatment, levels = combolevels)
+
+hormones$okay <- ifelse(hormones$hormone == "cort" & hormones$plasma_conc > 30, "bad",
+                    ifelse(hormones$hormone == "progesterone" & hormones$plasma_conc > 5, "bad", 
+                           ifelse(hormones$hormone == "prolactin" & hormones$plasma_conc > 150, "bad", 
+                            ifelse(hormones$hormone == "prolactin" & hormones$treatment == "control", "bad", 
+                        ifelse(hormones$hormone == "testosterone" & hormones$sex == "female", "bad",
+                               ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay"))))))
+hormones <- hormones %>% filter(okay == "okay") %>% droplevels()
+
+
+prl.char <- hormones %>% filter(hormone == "prolactin", study == "characterization")   %>%  droplevels()
+test.char <- hormones %>% filter(hormone == "testosterone", treatment %in% charlevels)   %>%  droplevels()
+est.char <- hormones %>% filter(hormone == "estradiol", treatment %in% charlevels)   %>%  droplevels()
+prog.char <- hormones %>% filter(hormone == "progesterone", treatment %in% charlevels)   %>%  droplevels()
+cort.char <- hormones %>% filter(hormone == "cort", treatment %in% charlevels)   %>%  droplevels()
 
 ```
 
 
 
-```{r prolactin}
-prolactin %>%
-  select(treatment, `Prolactin ng/mL`, Sex, study) %>% drop_na() %>%
-ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
-  geom_boxplot() + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom") +
-  facet_wrap(~study, scales = "free_x") +
-  labs(y = "Prolactin (ng/mL)")
-```
+```{r characterization-hormones}
 
-```{r testosterone}
+hormonecharplot <- function(myhormone, myylab){
+  
+  mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
+  
+  hormones %>% 
+    filter(study == "characterization",
+           hormone %in% c(myhormone))  %>% 
+  ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+    geom_boxplot() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none") +
+    scale_fill_manual(values = mycolors) +
+    labs(y = myylab, x = NULL) 
+}
 
-PETC %>% 
-  filter(hormone == "testosterone", sex == "male")  %>% 
-ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_boxplot() + geom_jitter() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom") +
-  facet_wrap(~study, scales = "free_x") +
-  labs(y = "Testosterone") +
-  scale_fill_manual(values = c("#00BFC4"))
-```
+a <- hormonecharplot("estradiol", "E (ng/mL)")
+b <- hormonecharplot("testosterone", "T (ng/mL)")
+c <- hormonecharplot("cort", "CORT (ng/mL)")
+d <- hormonecharplot("progesterone", "PROG (ng/mL)")
 
-```{r estradiol}
-PETC %>% 
-  filter(hormone == "estradiol", sex == "female")  %>% 
-ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_boxplot() + geom_jitter() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom") +
-  facet_wrap(~study, scales = "free_x") +
-  labs(y = "Estradiol (ng/mL)") 
+e <- hormonecharplot("prolactin", "PRL (ng/mL)")
 
-```
-
-```{r progesterone}
-PETC %>% 
-  filter(hormone == "progesterone")  %>% 
-ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_boxplot() + geom_jitter() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom") +
-  facet_wrap(~study, scales = "free_x") +
-  labs(y = "Progesterone (ng/mL)") +
-  ylim(c(0,6))
-
-```
-
-```{r cort}
-PETC %>% 
-  filter(hormone == "cort")  %>% 
-ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_boxplot() + geom_jitter() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom") +
-  facet_wrap(~study, scales = "free_x") +
-  labs(y = "Corticosterone (ng/mL)") +
-  ylim(c(0,10))
-```
-
-
-```{r prolactin-char}
-characterization <- prolactin %>% filter(treatment %in% charlevels)   %>%  droplevels()
-
-mod_prolactin <-  lm(data = characterization, `Prolactin ng/mL` ~ treatment + sex)
-mod_prolactin
-
-grid <- characterization %>%
+# model and plot prolactin data
+mod_prolactin <-  lm(data = prl.char,  plasma_conc ~ treatment + sex)
+grid <- prl.char %>%
   data_grid(treatment, sex) %>%
   add_predictions(mod_prolactin) 
 
-grid
-
-df <- data.frame(
-  x = c(1,2,3,4,5,6,7,8,9),
-  y = c(120,120,120,120,120,120,120,120,120),
-  sex = c("female", "female", "female", "female", "female", "female","female", "female", "female"),
-  text = c("AB",  "A", "A" , "AB", "AB", "BCD", "D", "CD", "BC")
-)
-
-a <- ggplot(characterization, aes(x = treatment, y = `Prolactin ng/mL`, fill = sex)) +
-  geom_boxplot() + geom_jitter() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom",
-        legend.title = element_blank()) +
-  labs(subtitle = "Characterization", y = "Prolactin (ng/mL)", x = NULL) +
-  #geom_text(data = df, aes(x,y, label = text), color = "darkgrey") +
-      ylim(0,120) 
-a
-
-b <- ggplot(grid, aes(x = treatment, y = pred, color = sex)) +
+f <- ggplot(grid, aes(x = treatment, y = pred, color = sex)) +
   geom_point() + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "bottom",
+        legend.position = "none",
         legend.title = element_blank()) +
-  labs(subtitle = "Model prediction ",
-       y = NULL, x = NULL) +
-  geom_smooth(se = FALSE, aes(x = as.numeric(treatment)))  +
-  ylim(0,120)
+  labs(y = "predicted PRL (ng/mL)", x = NULL) +
+  geom_smooth(se = F, aes(x = as.numeric(treatment))) 
 
-plot_grid(a,b)
+plot_grid(e,f,  rel_widths = c(0.65,0.35))
+
+plot_grid(d + theme(axis.text.x=element_blank()),
+          a + theme(axis.text.x=element_blank()),
+          c, b, 
+          rel_widths = c(0.65,0.35),
+          rel_heights = c(0.45,0.55), ncol = 2)
+
 ```
 
 ```{r aov}
-aov1 <- aov(data = characterization, `Prolactin ng/mL` ~ treatment + sex)
+aov1 <- aov(data = prl.char, plasma_conc ~ treatment + sex)
 aov1
 summary(aov1)
 TukeyHSD(aov1, which = "treatment")
-```
 
-```{r prolactin-manip, fig.width=8} 
-manipulation <- prolactin %>% 
-  filter(treatment %in% maniplevels) %>%  droplevels() %>% 
-  mutate(result = fct_collapse(treatment,
-                                "early hatch" = c("early"),
-                                "offspring removed" = c("M_inc3",  "M_inc9", "M_inc17", "M_n2"),
-                               "late incubation" = c("prolong"),
-                               "late hatch" = c("extend")))
+aov2 <- aov(data = prog.char, plasma_conc ~ treatment + sex)
+aov2
+summary(aov2)
 
-e <- manipulation %>%
-  ggplot( aes(x = treatment, y = `Prolactin ng/mL`)) +
-    geom_boxplot(aes(fill = sex)) + geom_jitter() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "bottom",
-          legend.title = element_blank()) +
-    ylim(0,125) +
-    labs(subtitle = "Manipulation",
-       y = "Prolactin (ng/mL)", x = NULL)
-e
+aov3 <- aov(data = cort.char, plasma_conc ~ treatment + sex)
+aov3
+summary(aov3)
+TukeyHSD(aov3, which = "treatment")
 
-plot_grid(a,e, nrow = 1) 
 
-f <-  prolactin %>%
-  filter(treatment %in% c("control", "bldg", "inc_d3", "M_inc3",
-                          "inc_d9",  "M_inc9", "inc_d17","M_inc17",
-                          "hatch", "M_n2")) %>%
-ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
-  geom_boxplot(aes(alpha = study)) + geom_jitter() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none") +
-  labs(subtitle = "Offspring removed",
-       x = NULL) +
-  facet_wrap(~sex) +
-  annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 0, ymax = 120, alpha = .2) +
-    #annotate("rect", xmin = 4.5, xmax = 6.5, ymin = 0, ymax = 120, alpha = .3) +
-    annotate("rect", xmin = 6.5, xmax = 8.5, ymin = 0, ymax = 120, alpha = .2) +
-    #annotate("rect", xmin = 8.5, xmax = 10.5, ymin = 0, ymax = 120, alpha = .3) +
-  ylim(0,120) +
-  scale_alpha_manual(values = c(1,0.5))
+aov4 <- aov(data = est.char, plasma_conc ~ treatment )
+aov4
+summary(aov4)
+TukeyHSD(aov4, which = "treatment")
 
-g <-  prolactin %>%
-  filter(treatment %in% c("early","prolong", "extend",
-                          "inc_d9","inc_d17","hatch", "n5" )) %>% droplevels() %>%
-ggplot(aes(x = treatment, y = `Prolactin ng/mL`, fill = Sex)) +
-  geom_boxplot(aes(alpha = study)) + geom_jitter() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-        legend.position = "none") +
-  labs(subtitle = "Timing of transition altered",
-       x = NULL, y = NULL) +
-  facet_wrap(~sex) +
-    annotate("rect", xmin = 4.5, xmax = 7.5, ymin = 0, ymax = 120, alpha = .3) +
-  ylim(0,120) +
-  scale_alpha_manual(values = c(1,0.5))
-
-plot_grid(f,g, nrow=2, rel_widths = c(.625,.375))
-
-```
-
-```{r fortwitter, fig.height= 3, fig.width=5.5}
-ggplot(grid, aes(x = treatment, y = pred, color = sex)) +
-  geom_point() + 
-  theme(axis.text.x=element_blank(),
-        axis.text.y=element_blank(),
-        legend.position = c(0.75,0.3),
-        legend.title = element_blank()) +
-  labs(y = "Gene expression", x = "Time") +
-  geom_smooth(se = FALSE, aes(x = as.numeric(treatment)))  
+aov5 <- aov(data = test.char, plasma_conc ~ treatment )
+aov5
+summary(aov5)
 ```
 
 ```{r}
-write.csv(prolactin, "../results/prolactin.csv", row.names = F)
+write.csv(hormones, "../results/hormones.csv", row.names = F)
 ```

@@ -25,14 +25,20 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Methods
 
-![](../figures/images/PigeonHPGaxis.png)
+### Fig 1: graphical abstract of methods
 
 ![](../figures/images/samplingtimepoints.png)
 
 
 ## Results
 
+### Fig 2. Ciculating prolactin levels
 
+![](../figures/hormones/characterization-hormones-1.png)
+
+### Fig 2 supplement. Ciculating sex steroid levels levels
+
+![](../figures/hormones/characterization-hormones-2.png)
 
 ## Discussion 
 
