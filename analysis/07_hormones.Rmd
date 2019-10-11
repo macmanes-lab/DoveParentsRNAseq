@@ -152,7 +152,7 @@ c <- hormonecharplot("progesterone", "PROG (ng/mL)")
 d1 <- hormonecharplot("estradiol", "E (ng/mL)")
 d2 <- hormonecharplot("testosterone", "T (ng/mL)")
 d <- plot_grid(d1,d2, nrow = 1)
-abcd <- plot_grid(a, b ,c, d)
+abcd <- plot_grid(a, b ,c, d, labels = "AUTO")
 mylegend <- get_legend(c + theme(legend.position = "bottom"))
 plot_grid(abcd, mylegend, nrow = 2, rel_heights = c(0.85,0.15))
 ```

@@ -1,6 +1,6 @@
 ---
 title: "The one characterizing the parental care stages"
-output: word_document
+output: md_document
 author:
 - Principal Investigators - Rebecca Calisi, Matt MacManes, John Wingfield
 - Postdocs - Suzanne Austin, Rayna Harris, Jesse Krause, 
