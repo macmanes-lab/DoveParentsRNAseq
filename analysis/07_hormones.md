@@ -198,7 +198,7 @@
         filter(study == "characterization",
                hormone %in% c(myhormone))  %>% 
       ggplot(aes(x = treatment, y = plasma_conc, fill = treatment, color = sex)) +
-        geom_boxplot() + 
+        geom_boxplot(aes(outlier.colour = treatment)) +
         theme(axis.text.x =  element_blank(),
               legend.position = "none") +
         scale_fill_manual(values = mycolors) +
