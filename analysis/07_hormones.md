@@ -47,6 +47,11 @@
     manipchar <- c("early",  "inc_d17", "hatch", "prolong", "extend", "n5")
     removechar <- c("inc_d3", "M_inc3",  "inc_d9", "M_inc9","inc_d17", "M_inc17","hatch", "M_n2")
 
+    sexcolors <- c("female" = "#F8766D", "male" = "#00BFC4")
+    charcolors <- c("control" = "#F8766D", "bldg" = "#D39200",
+                    "lay" =  "#93AA00", "inc_d3" = "#00BA38" ,"inc_d9" = "#00C19F" , "inc_d17" =  "#00B9E3", 
+                    "hatch" = "#619Cff" , "n5" =  "#DB72Fb", "n9" =  "#FF61C3")
+
     prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)
 
     # keep only samples realated to parental care
@@ -177,17 +182,18 @@
 
     hormonecharplot <- function(myhormone, myylab){
       
-      mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
+      mycolors <- charcolors
       
       hormones %>% 
         filter(study == "characterization",
                hormone %in% c(myhormone))  %>% 
-      ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
         geom_boxplot() + 
         theme(axis.text.x = element_text(angle = 45, hjust = 1),
               legend.position = "none") +
         scale_fill_manual(values = mycolors) +
-        labs(y = myylab, x = NULL) 
+        labs(y = myylab, x = NULL) + 
+        facet_wrap(~sex, nrow = 2, scale = "free_x")
     }
 
     a <- hormonecharplot("estradiol", "E (ng/mL)")
@@ -197,31 +203,12 @@
 
     e <- hormonecharplot("prolactin", "PRL (ng/mL)")
 
-    # model and plot prolactin data
-    mod_prolactin <-  lm(data = prl.char,  plasma_conc ~ treatment + sex)
-    grid <- prl.char %>%
-      data_grid(treatment, sex) %>%
-      add_predictions(mod_prolactin) 
+    cd <- plot_grid(e,c,d, nrow = 1)
+    ab <- plot_grid(a,b, ncol = 1)
 
-    f <- ggplot(grid, aes(x = treatment, y = pred, color = sex)) +
-      geom_point() + 
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),
-            legend.position = "none",
-            legend.title = element_blank()) +
-      labs(y = "predicted PRL (ng/mL)", x = NULL) +
-      geom_smooth(se = F, aes(x = as.numeric(treatment))) 
-
-    plot_grid(e,f,  rel_widths = c(0.65,0.35))
+    plot_grid(cd, ab, rel_widths = c(0.75, 0.25))
 
 ![](../figures/hormones/characterization-1.png)
-
-    plot_grid(d + theme(axis.text.x=element_blank()),
-              a + theme(axis.text.x=element_blank()),
-              c, b, 
-              rel_widths = c(0.65,0.35),
-              rel_heights = c(0.45,0.55), ncol = 2)
-
-![](../figures/hormones/characterization-2.png)
 
     aovSexTretment <- function(mydata, whichormone){
       aov2 <- aov(data = mydata, plasma_conc ~ treatment + sex)
@@ -283,7 +270,7 @@
 
     hormonemanipPRL <- function(myhormone, myylab){
       
-      mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
+      mycolors <- sexcolors
       
       hormones %>% 
         filter(treatment %in% manipchar,
@@ -306,7 +293,7 @@
 
     hormonemanipSteroids <- function(myhormone, myylab, myymax){
       
-      mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
+      mycolors <- sexcolors
       
       hormones %>% 
         filter(treatment %in% manipchar,

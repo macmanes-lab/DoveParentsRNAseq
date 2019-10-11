@@ -32,15 +32,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Results
 
-## Fig 2: circulating prolactin peaks at hatch in M and F
+## Fig 2: hormones
 
 
 ![](../figures/hormones/characterization-1.png)
 
-
-### Fig 2 supplement. CORT but not E,T, or P respond significantly to treatment 
-
-![](../figures/hormones/characterization-2.png)
 
 ## Figure 3: general rnaseq pattern, tissue > sex > stage
 
