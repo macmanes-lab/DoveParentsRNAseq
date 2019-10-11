@@ -24,6 +24,9 @@ combolevels <- c("control", "bldg", "lay", "inc_d3", "M_inc3",
                   "inc_d9",  "M_inc9", "early",  "inc_d17","M_inc17",  "hatch",
                  "prolong", "extend", "M_n2",
                   "n5", "n9" )
+
+manipchar <- c("early",  "inc_d17", "hatch", "prolong", "extend", "n5")
+removechar <- c("inc_d3", "M_inc3",  "inc_d9", "M_inc9","inc_d17", "M_inc17","hatch", "M_n2")
 ```
 
 ```{r wrangle-prolactin}
@@ -75,16 +78,13 @@ PETC <- PETC %>% select(stage, sex, hormone, plasma_conc)  %>%
 PETC$stage <- factor(PETC$stage)
 levels(PETC$stage)
 
-
-
 PETC <- PETC %>%
     mutate(sex = fct_recode(sex,
                             "female" = "f",
                             "male" = "m"),
            study = fct_collapse(stage,
-                                 characterization = charlevels,
-                                manipulation = maniplevels,
-                                removal = removelevels)) %>% 
+                                characterization = charlevels,
+                                manipulation = maniplevels)) %>% 
   drop_na()
 colnames(PETC)[colnames(PETC)=="stage"] <- "treatment"
 PETC <- PETC %>% select(study, treatment, sex, hormone, plasma_conc)
@@ -103,9 +103,9 @@ hormones$okay <- ifelse(hormones$hormone == "cort" & hormones$plasma_conc > 30, 
                         ifelse(hormones$hormone == "testosterone" & hormones$sex == "female", "bad",
                                ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay"))))))
 hormones <- hormones %>% filter(okay == "okay") %>% droplevels()
+summary(hormones)
 
-
-prl.char <- hormones %>% filter(hormone == "prolactin", study == "characterization")   %>%  droplevels()
+prl.char <- hormones %>% filter(hormone == "prolactin", treatment %in% charlevels)   %>%  droplevels()
 test.char <- hormones %>% filter(hormone == "testosterone", treatment %in% charlevels)   %>%  droplevels()
 est.char <- hormones %>% filter(hormone == "estradiol", treatment %in% charlevels)   %>%  droplevels()
 prog.char <- hormones %>% filter(hormone == "progesterone", treatment %in% charlevels)   %>%  droplevels()
@@ -113,10 +113,7 @@ cort.char <- hormones %>% filter(hormone == "cort", treatment %in% charlevels)  
 
 ```
 
-
-
-```{r characterization-hormones}
-
+```{r characterization}
 hormonecharplot <- function(myhormone, myylab){
   
   mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
@@ -163,27 +160,100 @@ plot_grid(d + theme(axis.text.x=element_blank()),
 
 ```
 
-```{r aov}
-
+```{r aov-char}
 aovSexTretment <- function(mydata, whichormone){
   aov2 <- aov(data = mydata, plasma_conc ~ treatment + sex)
   print(whichormone)
   print(summary(aov2))
-  print(TukeyHSD(aov2, which = "treatment"))
+  #print(TukeyHSD(aov2, which = "treatment"))
 }
-aovSexTretment(prl.char, "PRL")
-aovSexTretment(cort.char, "CORT")
-aovSexTretment(prog.char, "PROG")
 
 aovTretment  <- function(mydata, whichormone){
   aov1 <- aov(data = mydata, plasma_conc ~ treatment )
   print(whichormone)
   print(summary(aov1))
-  print(TukeyHSD(aov1, which = "treatment"))
+  #print(TukeyHSD(aov1, which = "treatment"))
 }
+
+aovSexTretment(prl.char, "PRL")
+aovSexTretment(cort.char, "CORT")
+aovSexTretment(prog.char, "PROG")
 
 aovTretment(est.char, "E")
 aovTretment(test.char, "T")
+```
+
+
+```{r manipulation}
+hormonemanipPRL <- function(myhormone, myylab){
+  
+  mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
+  
+  hormones %>% 
+    filter(treatment %in% manipchar,
+           hormone %in% c(myhormone))  %>% 
+  ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+    geom_boxplot() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none",
+          strip.text = element_blank()) +
+    scale_fill_manual(values = mycolors) +
+    labs(y = myylab, x = NULL) +
+    facet_wrap(~sex) +
+    annotate("rect", xmin = 0.5, xmax = 1.5, ymin = 0, ymax = 125, alpha = .2) +
+    annotate("rect", xmin = 3.5, xmax = 5.5, ymin = 0, ymax = 125, alpha = .2) 
+}
+
+hormonemanipPRL("prolactin", "PRL (ng/mL)")
+
+hormonemanipSteroids <- function(myhormone, myylab, myymax){
+  
+  mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
+  
+  hormones %>% 
+    filter(treatment %in% manipchar,
+           hormone %in% c(myhormone))  %>% 
+  ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+    geom_boxplot() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none",
+          strip.text = element_blank()) +
+    scale_fill_manual(values = mycolors) +
+    labs(y = myylab, x = NULL) +
+    facet_wrap(~sex) +
+    annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 0, ymax = myymax, alpha = .2)
+}
+
+a <- hormonemanipSteroids("estradiol", "E (ng/mL)", 1)
+b <- hormonemanipSteroids("testosterone", "T (ng/mL)", 3.5)
+c <- hormonemanipSteroids("cort", "CORT (ng/mL)", 10)
+d <- hormonemanipSteroids("progesterone", "PROG (ng/mL)",2.5)
+
+plot_grid(d,a,c,b, rel_widths = c(0.65,0.35))
+```
+```{r removal}
+hormoneremoval <- function(myhormone, myylab){
+  
+  mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
+  
+  hormones %>% 
+    filter(treatment %in% removechar,
+           hormone %in% c(myhormone))  %>% 
+  ggplot(aes(x = treatment, y = plasma_conc, fill = sex)) +
+    geom_boxplot() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none",
+          strip.text = element_blank()) +
+    scale_fill_manual(values = mycolors) +
+    labs(y = myylab, x = NULL) +
+    facet_wrap(~sex) +
+    annotate("rect", xmin = 1.5, xmax = 2.5, ymin = 0, ymax = 125, alpha = .2) +
+    annotate("rect", xmin = 3.5, xmax = 4.5, ymin = 0, ymax = 125, alpha = .2) +
+    annotate("rect", xmin = 5.5, xmax = 6.5, ymin = 0, ymax = 125, alpha = .2) + 
+    annotate("rect", xmin = 7.5, xmax = 8.5, ymin = 0, ymax = 125, alpha = .2) 
+}
+
+hormoneremoval("prolactin", "PRL (ng/mL)")
 ```
 
 ```{r}
