@@ -99,9 +99,8 @@ hormones$treatment <- factor(hormones$treatment, levels = combolevels)
 hormones$okay <- ifelse(hormones$hormone == "cort" & hormones$plasma_conc > 30, "bad",
                     ifelse(hormones$hormone == "progesterone" & hormones$plasma_conc > 5, "bad", 
                            ifelse(hormones$hormone == "prolactin" & hormones$plasma_conc > 150, "bad", 
-                            ifelse(hormones$hormone == "prolactin" & hormones$treatment == "control", "bad", 
                         ifelse(hormones$hormone == "testosterone" & hormones$sex == "female", "bad",
-                               ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay"))))))
+                               ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay")))))
 hormones <- hormones %>% filter(okay == "okay") %>% droplevels()
 summary(hormones)
 

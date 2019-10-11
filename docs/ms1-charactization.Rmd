@@ -27,18 +27,22 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Fig 1: graphical abstract of methods
 
-![](../figures/images/samplingtimepoints.png)
+![](../figures/images/timeline_timeline.png)
 
 
 ## Results
 
 ## Fig 2: circulating prolactin peaks at hatch in M and F
 
-![](../figures/hormones/characterization-hormones-1.png)
+
+![](../figures/hormones/characterization-1.png)
+
 
 ### Fig 2 supplement. CORT but not E,T, or P respond significantly to treatment 
 
-![](../figures/hormones/characterization-hormones-2.png)
+
+
+![](../figures/hormones/characterization-2.png)
 
 ## Discussion 
 
