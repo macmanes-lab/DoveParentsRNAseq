@@ -139,29 +139,22 @@ hormonecharplot <- function(myhormone, myylab){
            hormone %in% c(myhormone))  %>% 
   ggplot(aes(x = treatment, y = plasma_conc, fill = treatment, color = sex)) +
     geom_boxplot() + 
-    theme(axis.text.x = element_blank(),
+    theme(axis.text.x =  element_blank(),
           legend.position = "none") +
     scale_fill_manual(values = mycolors) +
     scale_color_manual(values = sexcolors) +
     labs(y = myylab, x = NULL) 
 }
 
-hormonecharplot("prolactin", "PRL (ng/mL)") 
-
-a <- hormonecharplot("estradiol", "E (ng/mL)")
-b <- hormonecharplot("testosterone", "T (ng/mL)")
-
-c <- hormonecharplot("cort", "CORT (ng/mL)")
-d <- hormonecharplot("progesterone", "PROG (ng/mL)")
-
-e <- hormonecharplot("prolactin", "PRL (ng/mL)") + theme(legend.position = "right", legend.direction = "horizontal")
-
-cd <- plot_grid(d,c, nrow = 2)
-ab <- plot_grid(a,b, nrow = 2)
-
-abcd <- plot_grid(cd,ab, rel_widths = c(0.6,0.4))
-plot_grid(e,abcd, ncol = 1)
-
+a <- hormonecharplot("prolactin", "PRL (ng/mL)")
+b <- hormonecharplot("cort", "CORT (ng/mL)")
+c <- hormonecharplot("progesterone", "PROG (ng/mL)") 
+d1 <- hormonecharplot("estradiol", "E (ng/mL)")
+d2 <- hormonecharplot("testosterone", "T (ng/mL)")
+d <- plot_grid(d1,d2, nrow = 1)
+abcd <- plot_grid(a, b ,c, d)
+mylegend <- get_legend(c + theme(legend.position = "bottom"))
+plot_grid(abcd, mylegend, nrow = 2, rel_heights = c(0.85,0.15))
 ```
 
 ```{r aov-char}
