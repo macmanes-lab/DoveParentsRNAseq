@@ -1,4 +1,4 @@
-"study","treatment","sex","hormone","plasma_conc","treatment.sex","okay"
+"study","timepoint","sex","hormone","plasma_conc","timepoint.sex","okay"
 "characterization","control","male","prolactin",3.82944,"control male","okay"
 "characterization","control","male","prolactin",3.280352,"control male","okay"
 "characterization","control","male","prolactin",4.14752,"control male","okay"
