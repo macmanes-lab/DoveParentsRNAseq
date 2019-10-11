@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
     ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -51,6 +51,11 @@
     charcolors <- c("control" = "#F8766D", "bldg" = "#D39200",
                     "lay" =  "#93AA00", "inc_d3" = "#00BA38" ,"inc_d9" = "#00C19F" , "inc_d17" =  "#00B9E3", 
                     "hatch" = "#619Cff" , "n5" =  "#DB72Fb", "n9" =  "#FF61C3")
+
+    charsexlevels <- c("control female", "control male", "bldg female", "bldg male",  "lay female", "lay male",
+                    "inc_d3 female", "inc_d3 male", "inc_d9 female", "inc_d9 male",
+                    "inc_d17 female", "inc_d17 male", "hatch female", "hatch male", 
+                    "n5 female", "n5 male", "n9 female" , "n9 male")
 
     prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)
 
@@ -149,6 +154,10 @@
     hormones <- rbind(prolactin, PETC)
     hormones$treatment <- factor(hormones$treatment, levels = combolevels)
 
+    hormones <- hormones %>%  mutate(treatment.sex = paste(treatment, sex, sep = " ")) 
+    hormones$treatment.sex <- factor(hormones$treatment.sex, levels = charsexlevels)
+
+
     hormones$okay <- ifelse(hormones$hormone == "cort" & hormones$plasma_conc > 30, "bad",
                         ifelse(hormones$hormone == "progesterone" & hormones$plasma_conc > 5, "bad", 
                                ifelse(hormones$hormone == "prolactin" & hormones$plasma_conc > 150, "bad", 
@@ -165,14 +174,14 @@
     ##                         extend : 78                                  
     ##                         n5     : 77                                  
     ##                         (Other):404                                  
-    ##   plasma_conc           okay          
-    ##  Min.   :  0.0355   Length:918        
-    ##  1st Qu.:  0.4409   Class :character  
-    ##  Median :  1.7475   Mode  :character  
-    ##  Mean   : 12.7057                     
-    ##  3rd Qu.: 12.2575                     
-    ##  Max.   :120.3499                     
-    ## 
+    ##   plasma_conc              treatment.sex     okay          
+    ##  Min.   :  0.0355   inc_d9 female : 58   Length:918        
+    ##  1st Qu.:  0.4409   inc_d9 male   : 54   Class :character  
+    ##  Median :  1.7475   bldg female   : 46   Mode  :character  
+    ##  Mean   : 12.7057   n5 female     : 46                     
+    ##  3rd Qu.: 12.2575   inc_d17 female: 44                     
+    ##  Max.   :120.3499   (Other)       :424                     
+    ##                     NA's          :246
 
     prl.char <- hormones %>% filter(hormone == "prolactin", treatment %in% charlevels)   %>%  droplevels()
     test.char <- hormones %>% filter(hormone == "testosterone", treatment %in% charlevels)   %>%  droplevels()
@@ -183,32 +192,39 @@
     hormonecharplot <- function(myhormone, myylab){
       
       mycolors <- charcolors
+      sexcolors <- c("female" = "#969696", "male" = "#525252")
       
       hormones %>% 
         filter(study == "characterization",
                hormone %in% c(myhormone))  %>% 
-      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment, color = sex)) +
         geom_boxplot() + 
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        theme(axis.text.x = element_blank(),
               legend.position = "none") +
         scale_fill_manual(values = mycolors) +
-        labs(y = myylab, x = NULL) + 
-        facet_wrap(~sex, nrow = 2, scale = "free_x")
+        scale_color_manual(values = sexcolors) +
+        labs(y = myylab, x = NULL) 
     }
+
+    hormonecharplot("prolactin", "PRL (ng/mL)") 
+
+![](../figures/hormones/characterization-1.png)
 
     a <- hormonecharplot("estradiol", "E (ng/mL)")
     b <- hormonecharplot("testosterone", "T (ng/mL)")
+
     c <- hormonecharplot("cort", "CORT (ng/mL)")
     d <- hormonecharplot("progesterone", "PROG (ng/mL)")
 
-    e <- hormonecharplot("prolactin", "PRL (ng/mL)")
+    e <- hormonecharplot("prolactin", "PRL (ng/mL)") + theme(legend.position = "right", legend.direction = "horizontal")
 
-    cd <- plot_grid(e,c,d, nrow = 1)
-    ab <- plot_grid(a,b, ncol = 1)
+    cd <- plot_grid(d,c, nrow = 2)
+    ab <- plot_grid(a,b, nrow = 2)
 
-    plot_grid(cd, ab, rel_widths = c(0.75, 0.25))
+    abcd <- plot_grid(cd,ab, rel_widths = c(0.6,0.4))
+    plot_grid(e,abcd, ncol = 1)
 
-![](../figures/hormones/characterization-1.png)
+![](../figures/hormones/characterization-2.png)
 
     aovSexTretment <- function(mydata, whichormone){
       aov2 <- aov(data = mydata, plasma_conc ~ treatment + sex)
