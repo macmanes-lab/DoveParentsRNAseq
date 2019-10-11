@@ -155,6 +155,8 @@ d <- plot_grid(d1,d2, nrow = 1)
 abcd <- plot_grid(a, b ,c, d, labels = "AUTO")
 mylegend <- get_legend(c + theme(legend.position = "bottom"))
 plot_grid(abcd, mylegend, nrow = 2, rel_heights = c(0.85,0.15))
+
+plot_grid(get_legend(a + theme(legend.position = "bottom")))
 ```
 
 ```{r aov-char}

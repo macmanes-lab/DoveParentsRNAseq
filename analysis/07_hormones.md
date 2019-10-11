@@ -218,6 +218,10 @@
 
 ![](../figures/hormones/characterization-1.png)
 
+    plot_grid(get_legend(a + theme(legend.position = "bottom")))
+
+![](../figures/hormones/characterization-2.png)
+
     aovSexTretment <- function(mydata, whichormone){
       aov2 <- aov(data = mydata, plasma_conc ~ treatment + sex)
       print(whichormone)
