@@ -1,0 +1,43 @@
+---
+title: "The one characterizing the parental care stages"
+output: word_document
+author:
+- Principal Investigators - Rebecca Calisi, Matt MacManes, John Wingfield
+- Postdocs - Suzanne Austin, Rayna Harris, Jesse Krause, 
+- Grad students - Victoria Farrar, April Booth, Andrew Lang
+- Undergrads - Tanner Feustel, Candice Lee, Annie Bond?
+- Others - Fred?, Rechelle Viernes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+- What genes differ in expression between timepoints?
+- What stages are most different, stressful, responsive?
+- How do genes in the HPG affect genes in other regions?
+- How do male and females differ?
+- How do tissues differ?
+- What is the relationship between genes and hormones across timepoints?
+
+
+## Methods
+
+![](../figures/images/PigeonHPGaxis.png)
+
+![](../figures/images/samplingtimepoints.png)
+
+
+## Results
+
+
+
+## Discussion 
+
+## Conclusion
+
+## Acknowledgements
+
+## Data availabilty
