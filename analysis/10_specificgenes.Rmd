@@ -1,0 +1,60 @@
+---
+title: "forvictoria"
+output: md_document
+---
+
+# selecting candidate genes counts from the hypothalamus
+
+```{r setup, include=FALSE}
+library(tidyverse)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+# import "colData" which contains sample information and "countData" which contains read counts
+c.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
+c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+
+# select only hypothalamus samples
+hypsamples <- c.colData %>% 
+  filter(tissue == "hypothalamus") %>%
+  select(-study) %>%
+  droplevels()
+countstokeep <- as.character(hypsamples$V1)
+hypcounts <- c.countData %>% 
+  mutate(genes = row.names(c.countData)) %>% 
+  select(genes, countstokeep)
+
+# select genes to keep 
+# CISH, SOCS1, SOCS2, SOCS2, SOCS4, SOCS5, SOCS6
+candidates <- c("NP_989957.1", "NP_001131120.1", "NP_989871.1", "NP_001186037.1", "NP_001120786.1")
+hypcounts <- hypcounts %>% 
+  filter(genes %in% candidates)
+
+
+# transform and combine into 1 dataframe
+hypcounts <- as.data.frame(hypcounts)
+row.names(hypcounts) <- hypcounts$genes
+hypcounts$genes <- NULL
+hypcounts <- as.data.frame(t(hypcounts))
+hypcounts$V1 <- row.names(hypcounts)
+hypcandidatecounts <- left_join(hypsamples, hypcounts)
+
+# rename columsn
+colnames(hypcandidatecounts)[colnames(hypcandidatecounts)=="NP_989957.1"] <- "CISH"
+colnames(hypcandidatecounts)[colnames(hypcandidatecounts)=="NP_001131120.1"] <- "SOCS1"
+colnames(hypcandidatecounts)[colnames(hypcandidatecounts)=="NP_989871.1"] <- "SOCS2"
+colnames(hypcandidatecounts)[colnames(hypcandidatecounts)=="NP_001186037.1"] <- "SOCS4"
+colnames(hypcandidatecounts)[colnames(hypcandidatecounts)=="NP_001120786.1"] <- "SOCS5"
+colnames(hypcandidatecounts)[colnames(hypcandidatecounts)=="NP_001120784.1"] <- "SOCS6"
+
+# set rownames
+row.names(hypcandidatecounts) <- hypcandidatecounts$V1
+hypcandidatecounts$V1 <- NULL
+
+# preview and write
+head(hypcandidatecounts)
+write.csv(hypcandidatecounts, "../results/10_hypcandidatecounts.csv")
+```
+
