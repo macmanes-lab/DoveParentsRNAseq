@@ -1,5 +1,5 @@
 ---
-title: "forvictoria"
+title: "candidate genes"
 output: md_document
 ---
 
@@ -48,7 +48,6 @@ hypcounts$entrezid <- NULL
 hypcandidatecounts <- as.data.frame(t(hypcounts))
 hypcandidatecounts$V1 <- row.names(hypcandidatecounts)
 hypcandidatecounts <- left_join(hypsamples, hypcandidatecounts)
-head(hypcandidatecounts)
 
 # set rownames
 row.names(hypcandidatecounts) <- hypcandidatecounts$V1
