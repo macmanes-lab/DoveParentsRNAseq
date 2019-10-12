@@ -55,30 +55,6 @@ selecting candidate genes counts from the hypothalamus
     ## Warning: Column `V1` joining factor and character vector, coercing into
     ## character vector
 
-    head(hypcandidatecounts)
-
-    ##                                        V1    bird    sex       tissue
-    ## 1  L.Blu13_male_hypothalamus_control.NYNO L.Blu13   male hypothalamus
-    ## 2        L.G107_male_hypothalamus_control  L.G107   male hypothalamus
-    ## 3 L.G118_female_hypothalamus_control.NYNO  L.G118 female hypothalamus
-    ## 4          L.R3_male_hypothalamus_control    L.R3   male hypothalamus
-    ## 5          L.R8_male_hypothalamus_control    L.R8   male hypothalamus
-    ## 6    L.W33_male_hypothalamus_control.NYNO   L.W33   male hypothalamus
-    ##   timepoint                       group SOCS6 SOCS5 SOCS1 SOCS4 SOCS2 CISH
-    ## 1   control   male.hypothalamus.control    29    92     1     7     6   26
-    ## 2   control   male.hypothalamus.control    47   196     6    18    16   88
-    ## 3   control female.hypothalamus.control    45   138     1    11    10    0
-    ## 4   control   male.hypothalamus.control    75   333     5    34    17   92
-    ## 5   control   male.hypothalamus.control     4    23     1     4     3    7
-    ## 6   control   male.hypothalamus.control    77   325     1    23    22   79
-    ##    PRL PRLR
-    ## 1  744   35
-    ## 2  578   82
-    ## 3 1255   43
-    ## 4  682   42
-    ## 5  116   13
-    ## 6 2021   91
-
     # set rownames
     row.names(hypcandidatecounts) <- hypcandidatecounts$V1
     hypcandidatecounts$V1 <- NULL
