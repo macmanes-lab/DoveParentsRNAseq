@@ -474,7 +474,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7ffc78978780>
+    FALSE <environment: 0x7f9839a5ae28>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_015154126.1, XP_015148612.1, NP_001012716.1, 
     FALSE     XP_423016.4, XP_015153296.1, NP_001005800.1, NP_999837.1, 
@@ -673,7 +673,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7ffc70245648>
+    FALSE <environment: 0x7f98303d0938>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_424601.2, XP_015153829.1, NP_001005823.1, 
     FALSE     XP_001231665.4, XP_001234312.1, XP_419245.5, XP_015130606.1, 
@@ -872,7 +872,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7ffc763eca38>
+    FALSE <environment: 0x7f9837b64870>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_421626.3, XP_015152450.1, NP_001005427.1, 
     FALSE     NP_990837.1, XP_001233399.3, XP_417425.2, XP_015129896.1, 
@@ -893,8 +893,6 @@ Linear discriminant analysis (LDA)
     FALSE      "numeric"       "factor" 
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
     FALSE [1] 6.029069 3.837591
-
-    # figures for both of the above
 
     # treatment
     a <- LDAplot.treatment(LDA.hyp1 , "Hypothalamus model 1", "parental state ~ .  0.277 pred. acc.",
@@ -925,7 +923,6 @@ Linear discriminant analysis (LDA)
 ![](../figures/sexes/LDA-4.png)
 
     # hypothesis
-
     d <- LDAplot.hypothesis(LDA.hyp2 , "Hypothalamus model 2", "parental stage ~ .  0.432 pred. acc.",
                             "LD1, F = 7.386458", "LD2, F = 3.720794")
 
@@ -956,6 +953,8 @@ Linear discriminant analysis (LDA)
 plot genes in a PRL WGCNA module
 --------------------------------
 
+    # pitutiary expression
+
     plotWGCNAcandidates(vsd.pit, c("NP_990797.2"), colDataPit, "PRL expression, Pituitary")
 
 ![](../figures/sexes/wgcna-1.png)
@@ -972,11 +971,13 @@ plot genes in a PRL WGCNA module
 
 ![](../figures/sexes/wgcna-4.png)
 
-    plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1","NP_990136.1", "NP_001035179.1", "NP_001026269.1"), colDataPit, "PRL, PRLR, VIP1R, POMC, TH & AR expression, Pituitary")
+    plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1","NP_990136.1", "NP_001035179.1", "NP_001026269.1"), 
+                        colDataPit, "PRL, PRLR, VIP1R, POMC, TH & AR expression, Pituitary")
 
 ![](../figures/sexes/wgcna-5.png)
 
-    plotWGCNAcandidates(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")
+    plotWGCNAcandidates(vsd.pit, c("XP_015155078.1", "XP_015146451.1", "NP_001025709.2", "NP_990327.2"), 
+                        colDataPit, "Stat and JAK proteins, Pituitary")
 
 ![](../figures/sexes/wgcna-6.png)
 
@@ -1000,17 +1001,23 @@ plot genes in a PRL WGCNA module
 
 ![](../figures/sexes/wgcna-9.png)
 
+    # hyp
     plotWGCNAcandidates(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                    "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                    "NP_990797.2", "XP_015132722.1"), colDataHyp, "Hypothalamus: CISH, SOCS, PRL, PRLR")
 
 ![](../figures/sexes/wgcna-10.png)
 
+    plotWGCNAcandidates(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")
+
+![](../figures/sexes/wgcna-11.png)
+
+    # gonad
     plotWGCNAcandidates(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                    "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                    "NP_990797.2", "XP_015132722.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
 
-![](../figures/sexes/wgcna-11.png)
+![](../figures/sexes/wgcna-12.png)
 
     PRL_associated <- read.csv("../results/08_PRL_associated.csv", header = T)
     prl36 <-  PRL_associated$entrezid[1:57]

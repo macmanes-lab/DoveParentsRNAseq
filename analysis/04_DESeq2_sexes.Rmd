@@ -124,20 +124,14 @@ LDA.gon1 <- LDAdata.treatment(vsd.gon, colDataGon)
 LDA.hyp2 <- LDAdata.hypothesis(vsd.hyp, colDataHyp)
 LDA.pit2 <- LDAdata.hypothesis(vsd.pit, colDataPit)
 LDA.gon2 <- LDAdata.hypothesis(vsd.gon, colDataGon)
-
 ```
 
 ```{r LDA, fig.width = 9}
-
-# figures for both of the above
-
 # treatment
 a <- LDAplot.treatment(LDA.hyp1 , "Hypothalamus model 1", "parental state ~ .  0.277 pred. acc.",
                         "LD1, F = 7.1504779", "LD2, F = 2.4219585")
-
 b <- LDAplot.treatment(LDA.pit1 ,  "Pituitary model 1", "parental state ~ .  0.405 pred. acc.",
                         "LD1, F = 9.6144160", "LD2, F = 3.7773314")
-
 c <- LDAplot.treatment(LDA.gon1 , "Gonad model 1", "parental state ~ .  has 0.297 pred. acc.",
                         "LD1, F = 6.137500", "LD2, F = 3.320437")
 
@@ -152,13 +146,10 @@ temp <- plot_grid(a + theme(legend.position = "none"),
 plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 
 # hypothesis
-
 d <- LDAplot.hypothesis(LDA.hyp2 , "Hypothalamus model 2", "parental stage ~ .  0.432 pred. acc.",
                         "LD1, F = 7.386458", "LD2, F = 3.720794")
-
 e <- LDAplot.hypothesis(LDA.pit2 ,  "Pituitary model 2", "parental stage ~ .  0.473 pred. acc.",
                         "LD1, F = 7.846659", "LD2, F = 5.076861")
-
 f <- LDAplot.hypothesis(LDA.gon2 , "Gonad model 2", "parental stage ~ .  has 0.368 pred. acc.",
                         "LD1, F = 6.029069", "LD2, F = 3.837591")
 
@@ -176,36 +167,36 @@ plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 ## plot genes in a  PRL WGCNA module
 
 ```{r wgcna, eval = T, fig.width=6, fig.height=6}
+# pitutiary expression
+
 plotWGCNAcandidates(vsd.pit, c("NP_990797.2"), colDataPit, "PRL expression, Pituitary")
 plotWGCNAcandidates(vsd.pit, c("NP_001090992.1"), colDataPit, "VIP1R expression, Pituitary")
 plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1"), colDataPit, "PRL & VIP1R expression, Pituitary")
 plotWGCNAcandidates(vsd.pit, c("NP_990136.1", "NP_001035179.1"), colDataPit, "TH & AR expression, Pituitary")
-plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1","NP_990136.1", "NP_001035179.1", "NP_001026269.1"), colDataPit, "PRL, PRLR, VIP1R, POMC, TH & AR expression, Pituitary")
-
-
-
-plotWGCNAcandidates(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")
-
-
-
+plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1","NP_990136.1", "NP_001035179.1", "NP_001026269.1"), 
+                    colDataPit, "PRL, PRLR, VIP1R, POMC, TH & AR expression, Pituitary")
+plotWGCNAcandidates(vsd.pit, c("XP_015155078.1", "XP_015146451.1", "NP_001025709.2", "NP_990327.2"), 
+                    colDataPit, "Stat and JAK proteins, Pituitary")
 plotWGCNAcandidates(vsd.pit,
                     c("NP_990797.2","NP_001004392.2", "NP_001004403.1", "NP_001006255.2", "NP_001006274.1",
                            "NP_989500.1", "XP_001234815.2", "XP_015149152.1", "XP_416110.5"),
                     colDataPit, "9 of 102 genes in a WGCNA module containting Prolactin")
-
 plotWGCNAcandidates(vsd.pit,
                     c("XP_428110.3","NP_001004392.2",  "XP_015142961.1", "XP_015139636.1",
                       "XP_015137408.1", "XP_004938696.1", "NP_990620.1", "NP_001170793.2", "NP_001026250.1"),
                     colDataPit, "Prolaction receptor: 9 of 147 genes in a WGCNA module containting PRLR")
-
 plotWGCNAcandidates(vsd.pit, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                "NP_990797.2", "XP_015132722.1"), colDataPit, "Pitutary: CISH, SOCS, PRL, PRLR")
 
+# hyp
 plotWGCNAcandidates(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                "NP_990797.2", "XP_015132722.1"), colDataHyp, "Hypothalamus: CISH, SOCS, PRL, PRLR")
+plotWGCNAcandidates(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")
 
+
+# gonad
 plotWGCNAcandidates(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                "NP_990797.2", "XP_015132722.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
