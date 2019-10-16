@@ -1,0 +1,85 @@
+---
+title: "PCA"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggfortify)
+library(factoextra)
+library(cowplot)
+knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/pca/')
+
+
+```
+
+## pca analysis
+
+```{r pca}
+pseudocounts <- read_csv("../results/01_pseudo.counts.csv")
+
+colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
+colData$treatment <- factor(colData$treatment, levels = 
+                              c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", 
+                                "hatch", "n5", "n9"))
+
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+
+subsetcounts <- function(colData, countData){
+  
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  countData <- countData %>% 
+    dplyr::select(X1,savecols) %>% 
+    dplyr::rename(entrezid = X1)  
+  
+  countData <- left_join(geneinfo, countData)
+  countData <- countData %>% distinct(Name, .keep_all = TRUE) %>%
+    select(-row.names)  %>% select(-geneid) %>% select(-entrezid) 
+  
+  
+  row.names(countData) <- countData$Name
+  countData$Name <- NULL
+  countData <- as.data.frame(t(countData))
+  
+  return(countData)
+}
+
+countData <- subsetcounts(colData, pseudocounts)
+
+# confirm
+row.names(countData) == row.names(colData)
+
+# make pca
+mypca <- prcomp(countData)
+
+# percent conribution
+eig.val <- get_eigenvalue(mypca)
+head(eig.val)
+
+mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
+                  PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
+                  ID = row.names(countData))
+head(mypcadf)
+mypcadf$V1 <- row.names(mypcadf)
+mypcadf <- left_join(colData, mypcadf)
+head(mypcadf)
+
+a <- ggplot(mypcadf, aes(x = PC1, y = PC2, color = colData$treatment)) +
+  geom_point() + labs(x = "PC1: 36%", y = "PC2: 32%")
+b <- ggplot(mypcadf, aes(x = PC3, y = PC4, color = colData$treatment)) +
+  geom_point() + theme(legend.position = "bottom", legend.title = element_blank()) + labs(x = "PC3: 25%", y = "PC4: 3%")
+
+mylegend <- get_legend(b)
+
+ab <- plot_grid(a + theme(legend.position = "none") ,
+                b + theme(legend.position = "none"))
+
+plot_grid(ab,mylegend, ncol = 1, rel_heights = c(0.9,0.1))
+
+fviz_pca_var(res.pca, col.var="contrib") +
+scale_color_gradient2(low="white", mid="blue", 
+      high="red", midpoint=50) + theme_minimal()
+
+```
