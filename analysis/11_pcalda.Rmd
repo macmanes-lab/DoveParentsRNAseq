@@ -61,25 +61,19 @@ head(eig.val)
 mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
                   PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
                   ID = row.names(countData))
-head(mypcadf)
+
 mypcadf$V1 <- row.names(mypcadf)
 mypcadf <- left_join(colData, mypcadf)
-head(mypcadf)
+
 
 a <- ggplot(mypcadf, aes(x = PC1, y = PC2, color = colData$treatment)) +
-  geom_point() + labs(x = "PC1: 36%", y = "PC2: 32%")
-b <- ggplot(mypcadf, aes(x = PC3, y = PC4, color = colData$treatment)) +
-  geom_point() + theme(legend.position = "bottom", legend.title = element_blank()) + labs(x = "PC3: 25%", y = "PC4: 3%")
+  geom_point() + labs(x = "PC1: 35.9%", y = "PC2: 32.5%") + theme_minimal(base_size = 8)  +
+  theme(legend.title = element_blank(), legend.position = "left")
 
-mylegend <- get_legend(b)
+b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank")
 
-ab <- plot_grid(a + theme(legend.position = "none") ,
-                b + theme(legend.position = "none"))
 
-plot_grid(ab,mylegend, ncol = 1, rel_heights = c(0.9,0.1))
-
-fviz_pca_var(res.pca, col.var="contrib") +
-scale_color_gradient2(low="white", mid="blue", 
-      high="red", midpoint=50) + theme_minimal()
+ab <- plot_grid(a,b + theme(axis.text = element_blank()) + ggtitle(NULL), rel_widths = c(0.6,0.4))
+ab
 
 ```
