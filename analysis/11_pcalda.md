@@ -112,29 +112,6 @@ pca analysis
     mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
                       PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
                       ID = row.names(countData))
-    head(mypcadf)
-
-    ##                                              PC1        PC2        PC3
-    ## L.Blu13_male_gonad_control.NYNO        -289031.0    9583.47  418914.02
-    ## L.Blu13_male_hypothalamus_control.NYNO -885455.5 -657013.51 -557113.05
-    ## L.Blu13_male_pituitary_control.NYNO    -294197.4  150695.51  211668.84
-    ## L.G107_male_gonad_control              -225279.4  -37945.28  363813.73
-    ## L.G107_male_hypothalamus_control       -484957.1 -344082.98  -89470.83
-    ## L.G107_male_pituitary_control          -352850.2  276251.11  129694.05
-    ##                                              PC4       PC5          PC6
-    ## L.Blu13_male_gonad_control.NYNO        -96018.57 -33516.68   55973.7678
-    ## L.Blu13_male_hypothalamus_control.NYNO -56372.39  -8591.00 -103116.0847
-    ## L.Blu13_male_pituitary_control.NYNO    416519.89  14124.25    9801.6432
-    ## L.G107_male_gonad_control              -94072.20 -31764.49   64140.8075
-    ## L.G107_male_hypothalamus_control       -65247.42 -16252.64    4662.0743
-    ## L.G107_male_pituitary_control          403886.93  13368.66    -237.8222
-    ##                                                                            ID
-    ## L.Blu13_male_gonad_control.NYNO               L.Blu13_male_gonad_control.NYNO
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
-    ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
-    ## L.G107_male_gonad_control                           L.G107_male_gonad_control
-    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
-    ## L.G107_male_pituitary_control                   L.G107_male_pituitary_control
 
     mypcadf$V1 <- row.names(mypcadf)
     mypcadf <- left_join(colData, mypcadf)
@@ -144,47 +121,14 @@ pca analysis
     ## Warning: Column `V1` joining factor and character vector, coercing into
     ## character vector
 
-    head(mypcadf)
-
-    ##                                       V1    bird  sex       tissue
-    ## 1        L.Blu13_male_gonad_control.NYNO L.Blu13 male        gonad
-    ## 2 L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus
-    ## 3    L.Blu13_male_pituitary_control.NYNO L.Blu13 male    pituitary
-    ## 4              L.G107_male_gonad_control  L.G107 male        gonad
-    ## 5       L.G107_male_hypothalamus_control  L.G107 male hypothalamus
-    ## 6          L.G107_male_pituitary_control  L.G107 male    pituitary
-    ##   treatment                     group           study       PC1        PC2
-    ## 1   control        male.gonad.control charcterization -289031.0    9583.47
-    ## 2   control male.hypothalamus.control charcterization -885455.5 -657013.51
-    ## 3   control    male.pituitary.control charcterization -294197.4  150695.51
-    ## 4   control        male.gonad.control charcterization -225279.4  -37945.28
-    ## 5   control male.hypothalamus.control charcterization -484957.1 -344082.98
-    ## 6   control    male.pituitary.control charcterization -352850.2  276251.11
-    ##          PC3       PC4       PC5          PC6
-    ## 1  418914.02 -96018.57 -33516.68   55973.7678
-    ## 2 -557113.05 -56372.39  -8591.00 -103116.0847
-    ## 3  211668.84 416519.89  14124.25    9801.6432
-    ## 4  363813.73 -94072.20 -31764.49   64140.8075
-    ## 5  -89470.83 -65247.42 -16252.64    4662.0743
-    ## 6  129694.05 403886.93  13368.66    -237.8222
-    ##                                       ID
-    ## 1        L.Blu13_male_gonad_control.NYNO
-    ## 2 L.Blu13_male_hypothalamus_control.NYNO
-    ## 3    L.Blu13_male_pituitary_control.NYNO
-    ## 4              L.G107_male_gonad_control
-    ## 5       L.G107_male_hypothalamus_control
-    ## 6          L.G107_male_pituitary_control
-
     a <- ggplot(mypcadf, aes(x = PC1, y = PC2, color = colData$treatment)) +
-      geom_point() + labs(x = "PC1: 36%", y = "PC2: 32%")
-    b <- ggplot(mypcadf, aes(x = PC3, y = PC4, color = colData$treatment)) +
-      geom_point() + theme(legend.position = "bottom", legend.title = element_blank()) + labs(x = "PC3: 25%", y = "PC4: 3%")
+      geom_point() + labs(x = "PC1: 35.9%", y = "PC2: 32.5%") + theme_minimal(base_size = 8)  +
+      theme(legend.title = element_blank(), legend.position = "left")
 
-    mylegend <- get_legend(b)
+    b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank")
 
-    ab <- plot_grid(a + theme(legend.position = "none") ,
-                    b + theme(legend.position = "none"))
 
-    plot_grid(ab,mylegend, ncol = 1, rel_heights = c(0.9,0.1))
+    ab <- plot_grid(a,b + theme(axis.text = element_blank()) + ggtitle(NULL), rel_widths = c(0.6,0.4))
+    ab
 
-![](../figures/11_PCA.LDA/pca-1.png)
+![](../figures/pca/pca-1.png)

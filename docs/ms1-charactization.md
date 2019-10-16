@@ -11,23 +11,23 @@ Methods
 Results
 -------
 
-Fig 2: Prolactin fluctuates the most and peaks near hatch in males and females
-------------------------------------------------------------------------------
+Fig 2: Of the hormones measured, prolactin fluctuates the most and peaks near hatch in males and females
+--------------------------------------------------------------------------------------------------------
 
 ![](../figures/hormones/characterization-1.png)
 
-Figure 3: General RNAseq pattern, tissue &gt; sex &gt; parental stage
----------------------------------------------------------------------
+Figure 3: PCA
+-------------
 
 *Needs to be replaced with a better PCA plot showing all samples as
 points*
 
-![](../figures/limma/plotMDS-colored-1.png)
+![](../figures/pca/pca-1.png)
 
-Figure 4: model showing ability to predict non-parental, egg care, and nestling care
-------------------------------------------------------------------------------------
+Figure 4: LDA
+-------------
 
-*redo color scheme, fix titles*
+![](../figures/sexes/LDA-4.png)
 
 ![](../figures/characterization/DoveParentsRNAseq_model2.png)
 
