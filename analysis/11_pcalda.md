@@ -148,6 +148,8 @@ data wrangle
     ## [562] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
     ## [573] FALSE FALSE FALSE FALSE
 
+    euclidist <- dist(countData) # euclidean distances between the rows
+
 pca
 ---
 
@@ -195,8 +197,10 @@ pca
     ## 5 -65247.42 -16252.64    4662.0743
     ## 6 403886.93  13368.66    -237.8222
 
-    a <- ggplot(mypcadf, aes(x = PC1, y = PC2, color = colData$treatment)) +
-      geom_point() + labs(x = "PC1: 35.9%", y = "PC2: 32.5%") + theme_minimal(base_size = 8)  +
+    a <- ggplot(mypcadf, aes(x = PC1, y = PC2, 
+                             color = colData$treatment, 
+                             shape = colData$tissue)) +
+      geom_point() + labs(x = "PC1: 35.9%", y = "PC2: 32.5%") + theme_minimal(base_size = 6)  +
       theme(legend.title = element_blank(), legend.position = "left")
     a
 
@@ -204,7 +208,7 @@ pca
 
     b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank", 
                        repel = TRUE ,
-                      select.var= list(contrib = 10))
+                      select.var= list(contrib = 6))
     b
 
 ![](../figures/pca/pca-2.png)
@@ -213,20 +217,6 @@ pca
     ab
 
 ![](../figures/pca/pca-3.png)
-
-MDS
-===
-
-    euclidist <- dist(countData) # euclidean distances between the rows
-    fit <- cmdscale(euclidist,eig=TRUE, k=2) # k is the number of dim
-    x <- fit$points[,1]
-    y <- fit$points[,2]
-
-    plot(x, y, xlab="Coordinate 1", ylab="Coordinate 2",
-      main="Metric MDS", type="n")
-    text(x, y, labels = row.names(countData), cex=.7)
-
-![](../figures/pca/MDS-1.png)
 
 tSNE
 ====
@@ -245,13 +235,30 @@ tSNE
       geom_point(size = 2) +
       theme_minimal(base_size = 6) +
       scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
-      theme(legend.position = "top")
+      theme(legend.position = "top") +
+      labs(x = "tSNE 1", y = "tSNE 2")
 
     d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = treatment)) +
       geom_point(size = 2) +
       theme_minimal(base_size = 6) +
-      theme(legend.position = "top")
+      theme(legend.position = "top") +
+      labs(x = "tSNE 1", y = "tSNE 2")
 
-    plot_grid(c,d)
+    cd <- plot_grid(c,d)
+    cd
 
 ![](../figures/pca/tSNE-2.png)
+
+combined pca tsne
+=================
+
+    plot_grid(ab,cd, ncol = 1)
+
+![](../figures/pca/pca.tSNE-1.png)
+
+    plot_grid(a + theme(legend.position = "none"),
+              b + theme(axis.text = element_blank()) + ggtitle(NULL), 
+              c + theme(legend.position = "none"),
+              d + theme(legend.position = "none"))
+
+![](../figures/pca/pca.tSNE-2.png)
