@@ -1091,4 +1091,19 @@ plot genes in a PRL WGCNA module
 
 ![](../figures/sexes/wgcna2-8.png)
 
+    # COX1, COX3, CHGA, PRL, ATP2B4, LOC107055658
+    topPCAloadings <- c("NP_006917.1", "NP_006921.2","XP_421330.1", "NP_990797.2", "XP_015154447.1", "XP_015156300.1")
+
+    plotWGCNAcandidates(vsd.hyp, topPCAloadings, colDataHyp, "Hypothalamus")
+
+![](../figures/sexes/topPCAloadings-1.png)
+
+    plotWGCNAcandidates(vsd.pit, topPCAloadings, colDataPit, "Pituitary")
+
+![](../figures/sexes/topPCAloadings-2.png)
+
+    plotWGCNAcandidates(vsd.gon, topPCAloadings, colDataGon, "Gonads")
+
+![](../figures/sexes/topPCAloadings-3.png)
+
     rts <- assay(vsd.pit)

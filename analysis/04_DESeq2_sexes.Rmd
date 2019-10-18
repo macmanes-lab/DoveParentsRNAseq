@@ -226,6 +226,8 @@ plotWGCNAcandidates(vsd.gon, c("NP_990797.2", "XP_015132722.1", "NP_989690.1",
 
 ```
 
+
+
 ```{r wgcna2, eval = T, fig.width=12, fig.height=8}
 PRL_associated <- read.csv("../results/08_PRL_associated.csv", header = T)
 prl36 <-  PRL_associated$entrezid[1:57]
@@ -253,6 +255,16 @@ plotWGCNAcandidates(vsd.pit, AR, colDataPit, "Genes with AR pattern in the pitui
 POMC_associated <- read.csv("../results/08_POMC_associated.csv", header = T)
 pomc <-  POMC_associated$entrezid[32:61]
 plotWGCNAcandidates(vsd.pit, pomc, colDataPit, "Genes with POMC pattern in the pituitary")
+
+```
+
+```{r topPCAloadings}
+# COX1, COX3, CHGA, PRL, ATP2B4, LOC107055658
+topPCAloadings <- c("NP_006917.1", "NP_006921.2","XP_421330.1", "NP_990797.2", "XP_015154447.1", "XP_015156300.1")
+
+plotWGCNAcandidates(vsd.hyp, topPCAloadings, colDataHyp, "Hypothalamus")
+plotWGCNAcandidates(vsd.pit, topPCAloadings, colDataPit, "Pituitary")
+plotWGCNAcandidates(vsd.gon, topPCAloadings, colDataGon, "Gonads")
 
 ```
 
