@@ -2,11 +2,10 @@
 title: "The one characterizing the parental care stages"
 output: md_document
 author:
-- Principal Investigators - Rebecca Calisi, Matt MacManes, John Wingfield
-- Postdocs - Suzanne Austin, Rayna Harris, Jesse Krause, 
+- PIs - Rebecca Calisi, Matt MacManes
+- Postdocs - Suzanne Austin, Rayna Harris, Jesse Krause
 - Grad students - Victoria Farrar, April Booth, Andrew Lang
-- Undergrads - Tanner Feustel, Candice Lee, Annie Bond?
-- Others - Fred?, Rechelle Viernes
+- Staff - Rechelle Viernes
 ---
 
 ```{r setup, include=FALSE}
@@ -32,12 +31,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 
-## Figure 3: PCA
+## Figure 3: PCA + tSNE
 
-_Needs to be replaced with a better PCA plot showing all samples as points_
+![](../figures/pca/pca-3.png)
 
-![](../figures/pca/pca-1.png)
 
+![](../figures/pca/tSNE-2.png)
 
 ## Figure 4: LDA
 
