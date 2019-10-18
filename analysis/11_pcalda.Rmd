@@ -11,8 +11,6 @@ library(cowplot)
 library(Rtsne)
 library(viridis)
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/pca/')
-
-
 ```
 
 ## data wrangle
@@ -84,9 +82,11 @@ head(mypcadf)
 
 a <- ggplot(mypcadf, aes(x = PC1, y = PC2, 
                          color = colData$treatment, 
-                         shape = colData$tissue)) +
-  geom_point() + labs(x = "PC1: 35.9%", y = "PC2: 32.5%") + theme_minimal(base_size = 6)  +
-  theme(legend.title = element_blank(), legend.position = "left")
+                         shape = colData$tissue,
+                         alpha = colData$sex)) +
+  geom_point(size = 2)  + theme_minimal(base_size = 6)  +
+  theme(legend.title = element_blank(), legend.position = "left") +
+  scale_alpha_manual(values = c(0.75,1))
 a
 
 b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank", 
@@ -107,8 +107,9 @@ tsne_df = as.data.frame(tsne_model$Y)
 plot(tsne_df$V1, tsne_df$V2)
 
 # prep for adding columns
-colData$V1 <- NULL
-tsne_df_cols <- cbind(colData, tsne_df)
+colData2 <- colData 
+colData2$V1 <- NULL
+tsne_df_cols <- cbind(colData2, tsne_df)
 
 c  <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = tissue)) +
   geom_point(size = 2) +
@@ -117,11 +118,12 @@ c  <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = tissue)) +
   theme(legend.position = "top") +
   labs(x = "tSNE 1", y = "tSNE 2")
 
-d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = treatment)) +
+d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment, alpha = sex)) +
   geom_point(size = 2) +
   theme_minimal(base_size = 6) +
   theme(legend.position = "top") +
-  labs(x = "tSNE 1", y = "tSNE 2")
+  labs(x = "tSNE 1", y = "tSNE 2") +
+  scale_alpha_manual(values = c(0.75,1))
 
 cd <- plot_grid(c,d)
 cd
@@ -136,4 +138,12 @@ plot_grid(a + theme(legend.position = "none"),
           b + theme(axis.text = element_blank()) + ggtitle(NULL), 
           c + theme(legend.position = "none"),
           d + theme(legend.position = "none"))
+
+
+mylegend <- get_legend(d + theme(legend.position = "bottom"))
+
+ad <- plot_grid(a + theme(legend.position = "none"),d + theme(legend.position = "none"))
+
+plot_grid(ad, mylegend, nrow = 2, rel_heights = c(1,0.1))
 ```
+
