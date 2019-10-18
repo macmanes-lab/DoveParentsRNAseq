@@ -1,6 +1,12 @@
 pkgs = c("tidyverse", "knitr", "rmarkdown",
          "kableExtra", "cowplot", "RColorBrewer",
-         "pheatmap", "viridis" )
+         "pheatmap", "viridis",
+         "ggfortify", "factoextra",
+         "corrplot",
+         "readxl", "modelr", "lubridate",
+         "WGCNA", "magrittr",  "forcats",
+         "ggimage")
+         
 install.packages(pkgs)
 
 source("https://bioconductor.org/biocLite.R")
