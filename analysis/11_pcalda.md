@@ -199,9 +199,11 @@ pca
 
     a <- ggplot(mypcadf, aes(x = PC1, y = PC2, 
                              color = colData$treatment, 
-                             shape = colData$tissue)) +
-      geom_point() + labs(x = "PC1: 35.9%", y = "PC2: 32.5%") + theme_minimal(base_size = 6)  +
-      theme(legend.title = element_blank(), legend.position = "left")
+                             shape = colData$tissue,
+                             alpha = colData$sex)) +
+      geom_point(size = 2)  + theme_minimal(base_size = 6)  +
+      theme(legend.title = element_blank(), legend.position = "left") +
+      scale_alpha_manual(values = c(0.75,1))
     a
 
 ![](../figures/pca/pca-1.png)
@@ -238,11 +240,12 @@ tSNE
       theme(legend.position = "top") +
       labs(x = "tSNE 1", y = "tSNE 2")
 
-    d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = treatment)) +
+    d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment, alpha = sex)) +
       geom_point(size = 2) +
       theme_minimal(base_size = 6) +
       theme(legend.position = "top") +
-      labs(x = "tSNE 1", y = "tSNE 2")
+      labs(x = "tSNE 1", y = "tSNE 2") +
+      scale_alpha_manual(values = c(0.75,1))
 
     cd <- plot_grid(c,d)
     cd
@@ -262,3 +265,11 @@ combined pca tsne
               d + theme(legend.position = "none"))
 
 ![](../figures/pca/pca.tSNE-2.png)
+
+    mylegend <- get_legend(d + theme(legend.position = "bottom"))
+
+    ad <- plot_grid(a + theme(legend.position = "none"),d + theme(legend.position = "none"))
+
+    plot_grid(ad, mylegend, nrow = 2, rel_heights = c(1,0.1))
+
+![](../figures/pca/pca.tSNE-3.png)
