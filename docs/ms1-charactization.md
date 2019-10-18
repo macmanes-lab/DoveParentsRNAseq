@@ -16,13 +16,12 @@ Fig 2: Of the hormones measured, prolactin fluctuates the most and peaks near ha
 
 ![](../figures/hormones/characterization-1.png)
 
-Figure 3: PCA
--------------
+Figure 3: PCA + tSNE
+--------------------
 
-*Needs to be replaced with a better PCA plot showing all samples as
-points*
+![](../figures/pca/pca-3.png)
 
-![](../figures/pca/pca-1.png)
+![](../figures/pca/tSNE-2.png)
 
 Figure 4: LDA
 -------------
