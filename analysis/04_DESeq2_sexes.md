@@ -1001,23 +1001,50 @@ plot genes in a PRL WGCNA module
 
 ![](../figures/sexes/wgcna-9.png)
 
+    # genes from https://link.springer.com/article/10.1007%2Fs12079-012-0168-0
+    # A pathway map of prolactin signaling
+    # PL, RAC1, IRS2 not found
+    plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "XP_015132722.1", "NP_989690.1",
+                                   "NP_001025709.2", "XP_015144878.1", "NP_989481.1",
+                                   "NP_001186467.1", "NP_990386.1", "XP_015132490.1",
+                                   "XP_417614.3", "XP_015150421.1", "NP_001155844.1"), 
+                        colDataPit, "Pit: Genes involved in prolactin signaling")
+
+![](../figures/sexes/wgcna-10.png)
+
     # hyp
     plotWGCNAcandidates(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                    "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                    "NP_990797.2", "XP_015132722.1"), colDataHyp, "Hypothalamus: CISH, SOCS, PRL, PRLR")
 
-![](../figures/sexes/wgcna-10.png)
+![](../figures/sexes/wgcna-11.png)
 
     plotWGCNAcandidates(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")
 
-![](../figures/sexes/wgcna-11.png)
+![](../figures/sexes/wgcna-12.png)
+
+    plotWGCNAcandidates(vsd.hyp, c("NP_990797.2", "XP_015132722.1", "NP_989690.1",
+                                   "NP_001025709.2", "XP_015144878.1", "NP_989481.1",
+                                   "NP_001186467.1", "NP_990386.1", "XP_015132490.1",
+                                   "XP_417614.3", "XP_015150421.1", "NP_001155844.1"), 
+                        colDataHyp, "Hyp: Genes involved in prolactin signaling")
+
+![](../figures/sexes/wgcna-13.png)
 
     # gonad
     plotWGCNAcandidates(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
                                    "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
                                    "NP_990797.2", "XP_015132722.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
 
-![](../figures/sexes/wgcna-12.png)
+![](../figures/sexes/wgcna-14.png)
+
+    plotWGCNAcandidates(vsd.gon, c("NP_990797.2", "XP_015132722.1", "NP_989690.1",
+                                   "NP_001025709.2", "XP_015144878.1", "NP_989481.1",
+                                   "NP_001186467.1", "NP_990386.1", "XP_015132490.1",
+                                   "XP_417614.3", "XP_015150421.1", "NP_001155844.1"), 
+                        colDataGon, "Gonad: Genes involved in prolactin signaling")
+
+![](../figures/sexes/wgcna-15.png)
 
     PRL_associated <- read.csv("../results/08_PRL_associated.csv", header = T)
     prl36 <-  PRL_associated$entrezid[1:57]

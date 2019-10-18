@@ -13,12 +13,49 @@ pca analysis
 
     ## See spec(...) for full column specifications.
 
+    head(pseudocounts[1:3])
+
+    ## # A tibble: 6 x 3
+    ##   X1           L.Blu13_male_gonad_control… L.Blu13_male_hypothalamus_contr…
+    ##   <chr>                              <dbl>                            <dbl>
+    ## 1 NP_00100112…                      18.0            283.                   
+    ## 2 NP_00100112…                       2.71             0.709                
+    ## 3 NP_00100118…                    1249.             562.                   
+    ## 4 NP_00100119…                       3.00             0.105                
+    ## 5 NP_00100119…                       0.880            0.0000000000000000278
+    ## 6 NP_00100120…                     200.              24.1
+
     colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
     colData$treatment <- factor(colData$treatment, levels = 
                                   c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", 
                                     "hatch", "n5", "n9"))
+    head(colData[1:3])
+
+    ##                                                                            V1
+    ## L.Blu13_male_gonad_control.NYNO               L.Blu13_male_gonad_control.NYNO
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
+    ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
+    ## L.G107_male_gonad_control                           L.G107_male_gonad_control
+    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
+    ## L.G107_male_pituitary_control                   L.G107_male_pituitary_control
+    ##                                           bird  sex
+    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male
+    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male
+    ## L.G107_male_gonad_control               L.G107 male
+    ## L.G107_male_hypothalamus_control        L.G107 male
+    ## L.G107_male_pituitary_control           L.G107 male
 
     geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+    head(geneinfo)
+
+    ##                row.names     Name geneid       entrezid
+    ## NP_001001127.1    408082    EDNRB 408082 NP_001001127.1
+    ## NP_001001129.1    408183  CYP26A1 408183 NP_001001129.1
+    ## NP_001001189.1    374073    CFDP1 374073 NP_001001189.1
+    ## NP_001001194.1    407777    AvBD7 407777 NP_001001194.1
+    ## NP_001001195.1    407779     KRT5 407779 NP_001001195.1
+    ## NP_001001201.1    408034 HSD11B1L 408034 NP_001001201.1
 
     subsetcounts <- function(colData, countData){
       
@@ -47,6 +84,16 @@ pca analysis
 
     ## Warning: Column `entrezid` joining factor and character vector, coercing
     ## into character vector
+
+    head(countData[1:3])
+
+    ##                                            EDNRB     CYP26A1     CFDP1
+    ## L.Blu13_male_gonad_control.NYNO         17.98077   2.7135986 1249.1102
+    ## L.Blu13_male_hypothalamus_control.NYNO 283.43635   0.7087326  561.5653
+    ## L.Blu13_male_pituitary_control.NYNO    121.57418 119.0867999  511.4571
+    ## L.G107_male_gonad_control               14.32112   3.4565328 1444.0513
+    ## L.G107_male_hypothalamus_control       139.81184   2.9686946  502.4257
+    ## L.G107_male_pituitary_control          180.32105  76.4587728  559.8518
 
     # confirm
     row.names(countData) == row.names(colData)
@@ -112,7 +159,6 @@ pca analysis
     mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
                       PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
                       ID = row.names(countData))
-
     mypcadf$V1 <- row.names(mypcadf)
     mypcadf <- left_join(colData, mypcadf)
 
@@ -121,14 +167,39 @@ pca analysis
     ## Warning: Column `V1` joining factor and character vector, coercing into
     ## character vector
 
+    mypcadf <- mypcadf %>% select(bird,sex,tissue,treatment,PC1:PC6)
+    head(mypcadf)
+
+    ##      bird  sex       tissue treatment       PC1        PC2        PC3
+    ## 1 L.Blu13 male        gonad   control -289031.0    9583.47  418914.02
+    ## 2 L.Blu13 male hypothalamus   control -885455.5 -657013.51 -557113.05
+    ## 3 L.Blu13 male    pituitary   control -294197.4  150695.51  211668.84
+    ## 4  L.G107 male        gonad   control -225279.4  -37945.28  363813.73
+    ## 5  L.G107 male hypothalamus   control -484957.1 -344082.98  -89470.83
+    ## 6  L.G107 male    pituitary   control -352850.2  276251.11  129694.05
+    ##         PC4       PC5          PC6
+    ## 1 -96018.57 -33516.68   55973.7678
+    ## 2 -56372.39  -8591.00 -103116.0847
+    ## 3 416519.89  14124.25    9801.6432
+    ## 4 -94072.20 -31764.49   64140.8075
+    ## 5 -65247.42 -16252.64    4662.0743
+    ## 6 403886.93  13368.66    -237.8222
+
     a <- ggplot(mypcadf, aes(x = PC1, y = PC2, color = colData$treatment)) +
       geom_point() + labs(x = "PC1: 35.9%", y = "PC2: 32.5%") + theme_minimal(base_size = 8)  +
       theme(legend.title = element_blank(), legend.position = "left")
+    a
 
-    b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank")
+![](../figures/pca/pca-1.png)
 
+    b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank", 
+                       repel = TRUE ,
+                      select.var= list(contrib = 10))
+    b
+
+![](../figures/pca/pca-2.png)
 
     ab <- plot_grid(a,b + theme(axis.text = element_blank()) + ggtitle(NULL), rel_widths = c(0.6,0.4))
     ab
 
-![](../figures/pca/pca-1.png)
+![](../figures/pca/pca-3.png)
