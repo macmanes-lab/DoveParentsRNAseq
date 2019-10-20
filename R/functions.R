@@ -459,6 +459,7 @@ readvsd <- function(filename){
   vsd <- read_csv(filename)
   vsd <- as.data.frame(vsd)
   row.names(vsd) <- vsd$X1
+  vsd$entrezid <- vsd$X1
   vsd$X1 <- NULL
   return(vsd)
 }
@@ -466,10 +467,48 @@ readvsd <- function(filename){
 readcolData <- function(filename){
   colData <- read_csv(filename)
   colData <- as.data.frame(colData)
+  
+  colData$treatment <- factor(colData$treatment, levels = 
+                                  c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+  
   row.names(colData) <- colData$V1
+  colData$sample <- colData$V1
   colData$V1 <- NULL
   return(colData)
 }
+
+
+### select candidate gene vsds
+selectcandidatevsds <- function(listofgenes, vsd, colData){
+  
+  print(listofgenes)
+  
+  candidateentrezids <- geneinfo %>% 
+    filter(Name %in% listofgenes) %>%  dplyr::select(entrezid) 
+  
+  print(candidateentrezids$entrezid)
+  
+  rowstofilter <- as.list(candidateentrezids$entrezid)
+  
+  candidatevsd <- vsd %>% 
+    filter(entrezid %in% rowstofilter)
+  candidatevsd <- as.data.frame(candidatevsd)
+  row.names(candidatevsd) <- candidatevsd$entrezid
+  
+  candidatevsd <- right_join(geneinfo,candidatevsd) 
+  candidatevsd <- as.data.frame(candidatevsd)
+  row.names(candidatevsd) <- candidatevsd$Name
+  candidatevsd <- candidatevsd[-c(1:3)]
+  
+  candidatevsd <- as.data.frame(t(candidatevsd))
+  candidatevsd$sample <- row.names(candidatevsd)
+  
+  candidatevsd <- left_join(colData,candidatevsd)
+  
+  return(candidatevsd)
+}
+
+
 
 ######### plotcandidates ######### 
 

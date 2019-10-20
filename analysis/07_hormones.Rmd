@@ -127,9 +127,10 @@ est.char <- hormones %>% filter(hormone == "estradiol", timepoint %in% charlevel
 prog.char <- hormones %>% filter(hormone == "progesterone", timepoint %in% charlevels)   %>%  droplevels()
 cort.char <- hormones %>% filter(hormone == "cort", timepoint %in% charlevels)   %>%  droplevels()
 
+
 ```
 
-```{r characterization}
+```{r characterization, fig.width=5.5, fig.height= 3}
 hormonecharplot <- function(myhormone, myylab){
   
   mycolors <- charcolors
@@ -138,16 +139,23 @@ hormonecharplot <- function(myhormone, myylab){
   hormones %>% 
     filter(study == "characterization",
            hormone %in% c(myhormone))  %>% 
-  ggplot(aes(x = timepoint, y = plasma_conc, fill = timepoint, color = sex)) +
-    geom_boxplot(aes(outlier.colour = timepoint), lwd=1.05) +
+    droplevels() %>% 
+  ggplot(aes(x = as.numeric(timepoint), y = plasma_conc)) +
+    geom_boxplot(aes(outlier.colour = timepoint, fill = timepoint, alpha = sex)) +
+    theme_B3() +
     theme(axis.text.x =  element_blank(),
           legend.position = "none") +
     scale_fill_manual(values = mycolors) +
     scale_color_manual(values = sexcolors) +
     labs(y = myylab, x = NULL) +
     guides(fill = guide_legend(order=1),
-         color = guide_legend(order=2))
-}
+         color = guide_legend(order=2)) +
+    scale_alpha_manual(values = c(0.75,1)) +
+    geom_smooth(aes(colour = sex)) +
+    scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) 
+  }
+
+hormonecharplot("prolactin", "PRL (ng/mL)")
 
 a <- hormonecharplot("prolactin", "PRL (ng/mL)")
 b <- hormonecharplot("cort", "CORT (ng/mL)")
@@ -155,10 +163,8 @@ c <- hormonecharplot("progesterone", "PROG (ng/mL)")
 d1 <- hormonecharplot("estradiol", "E (ng/mL)")
 d2 <- hormonecharplot("testosterone", "T (ng/mL)")
 d <- plot_grid(d1,d2, nrow = 1)
-abcd <- plot_grid(a, b ,c, d, labels = "AUTO")
-mylegend <- get_legend(c + theme(legend.position = "bottom"))
-plot_grid(abcd, mylegend, nrow = 2, rel_heights = c(0.85,0.15))
-
+abcd <- plot_grid(a, b ,c, d)
+abcd
 ```
 
 ```{r aov-char}

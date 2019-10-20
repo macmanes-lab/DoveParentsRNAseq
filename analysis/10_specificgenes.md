@@ -1,10 +1,130 @@
+analyses downstream of calculating tissue specific variance in gene expression
+==============================================================================
+
+    vsd.hyp <- readvsd("../results/04_vsd_hyp.csv")
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   X1 = col_character()
+    ## )
+
+    ## See spec(...) for full column specifications.
+
+    colData.hyp <- readcolData("../results/04_colData_hyp.csv")
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   V1 = col_character(),
+    ##   sex = col_character(),
+    ##   treatment = col_character(),
+    ##   sextissue = col_character(),
+    ##   hypothesis = col_character()
+    ## )
+
+    head(vsd.hyp[1:2])
+
+    ##                L.Blu13_male_hypothalamus_control.NYNO
+    ## NP_001001127.1                               8.514761
+    ## NP_001001129.1                               5.317499
+    ## NP_001001189.1                               9.327089
+    ## NP_001001195.1                               5.317499
+    ## NP_001001201.1                               6.400397
+    ## NP_001001203.1                               5.952357
+    ##                L.G107_male_hypothalamus_control
+    ## NP_001001127.1                         7.695211
+    ## NP_001001129.1                         5.721232
+    ## NP_001001189.1                         9.171919
+    ## NP_001001195.1                         5.317499
+    ## NP_001001201.1                         6.435010
+    ## NP_001001203.1                         5.317499
+
+    head(colData.hyp[1:2,])
+
+    ##                                         sex treatment         sextissue
+    ## L.Blu13_male_hypothalamus_control.NYNO male   control male_hypothalamus
+    ## L.G107_male_hypothalamus_control       male   control male_hypothalamus
+    ##                                          hypothesis
+    ## L.Blu13_male_hypothalamus_control.NYNO anticipation
+    ## L.G107_male_hypothalamus_control       anticipation
+    ##                                                                        sample
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
+    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
+
+    rownames(colData.hyp) == colnames(vsd.hyp)
+
+    ## Warning in rownames(colData.hyp) == colnames(vsd.hyp): longer object length
+    ## is not a multiple of shorter object length
+
+    ##   [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ##  [12]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ##  [23]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ##  [34]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ##  [45]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ##  [56]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ##  [67]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ##  [78]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ##  [89]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [100]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [111]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [122]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [133]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [144]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [155]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [166]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [177]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
+    ## [188]  TRUE  TRUE FALSE
+
+    vsd.pit <- readvsd("../results/04_vsd_pit.csv")
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   X1 = col_character()
+    ## )
+    ## See spec(...) for full column specifications.
+
+    colData.pit <- readcolData("../results/04_colData_pit.csv")
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   V1 = col_character(),
+    ##   sex = col_character(),
+    ##   treatment = col_character(),
+    ##   sextissue = col_character(),
+    ##   hypothesis = col_character()
+    ## )
+
+    vsd.gon <- readvsd("../results/04_vsd_gon.csv")
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   X1 = col_character()
+    ## )
+    ## See spec(...) for full column specifications.
+
+    colData.gon <- readcolData("../results/04_colData_gon.csv")
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   V1 = col_character(),
+    ##   sex = col_character(),
+    ##   treatment = col_character(),
+    ##   sextissue = col_character(),
+    ##   hypothesis = col_character()
+    ## )
+
 selecting candidate genes counts from the hypothalamus
 ======================================================
 
-    # import "colData" which contains sample information and "countData" which contains read counts
-    c.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
-    c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
-    geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>% select(Name, entrezid)
+    geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
 
     ## Warning: Missing column names filled in: 'X1' [1]
 
@@ -17,110 +137,104 @@ selecting candidate genes counts from the hypothalamus
     ##   entrezid = col_character()
     ## )
 
-    # select only hypothalamus samples
-    hypsamples <- c.colData %>% 
-      filter(tissue == "hypothalamus") %>%
-      select(-study) %>%
-      droplevels()
-    colnames(hypsamples)[colnames(hypsamples)=="treatment"] <- "timepoint"
+    head(geneinfo)
 
-    countstokeep <- as.character(hypsamples$V1)
-    hypcounts <- c.countData %>% 
-      mutate(entrezid = row.names(c.countData)) %>% 
-      select(entrezid, countstokeep)
+    ## # A tibble: 6 x 3
+    ##   Name      geneid entrezid      
+    ##   <chr>      <dbl> <chr>         
+    ## 1 A2ML1     418254 XP_015148230.1
+    ## 2 A2ML2     427942 XP_004938161.2
+    ## 3 A2ML3  100857394 XP_015148584.1
+    ## 4 A2ML4  100858010 XP_015154891.1
+    ## 5 A4GALT    418223 XP_015145932.1
+    ## 6 A4GNT     429136 XP_426692.3
 
-    hypcounts <- left_join(geneinfo,hypcounts)
+    candidategenes <- c("CISH", "SOCS1", "SOCS2", "SOCS2", "SOCS4", "SOCS5", "SOCS6", 
+                        "PRL", "PRLR", "STAT5B", "JAK1")
+    candidates.hyp <- selectcandidatevsds(candidategenes, vsd.hyp, colData.hyp)
+
+    ##  [1] "CISH"   "SOCS1"  "SOCS2"  "SOCS2"  "SOCS4"  "SOCS5"  "SOCS6" 
+    ##  [8] "PRL"    "PRLR"   "STAT5B" "JAK1"  
+    ##  [1] "NP_989957.1"    "XP_015146451.1" "NP_990797.2"    "XP_015132722.1"
+    ##  [5] "NP_001131120.1" "NP_989871.1"    "NP_001186037.1" "NP_001120786.1"
+    ##  [9] "NP_001120784.1" "XP_015155078.1"
 
     ## Joining, by = "entrezid"
 
-    # select genes to keep 
-    # CISH, SOCS1, SOCS2, SOCS2, SOCS4, SOCS5, SOCS6
-    # PRL PRLR BRAC1
+    ## Joining, by = "sample"
 
-    candidates <- c("CISH", "SOCS1", "SOCS2", "SOCS2", "SOCS4", "SOCS5", "SOCS6", "PRL", "PRLR")
-    hypcounts <- hypcounts %>% filter(Name %in% candidates)
+    candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
 
-    # transform and combine into 1 dataframe
-    hypcounts <- as.data.frame(hypcounts)
+    ##  [1] "CISH"   "SOCS1"  "SOCS2"  "SOCS2"  "SOCS4"  "SOCS5"  "SOCS6" 
+    ##  [8] "PRL"    "PRLR"   "STAT5B" "JAK1"  
+    ##  [1] "NP_989957.1"    "XP_015146451.1" "NP_990797.2"    "XP_015132722.1"
+    ##  [5] "NP_001131120.1" "NP_989871.1"    "NP_001186037.1" "NP_001120786.1"
+    ##  [9] "NP_001120784.1" "XP_015155078.1"
 
-    row.names(hypcounts) <- hypcounts$Name
-    hypcounts$Name <- NULL
-    hypcounts$entrezid <- NULL
-    hypcandidatecounts <- as.data.frame(t(hypcounts))
-    hypcandidatecounts$V1 <- row.names(hypcandidatecounts)
-    hypcandidatecounts <- left_join(hypsamples, hypcandidatecounts)
+    ## Joining, by = "entrezid"
+    ## Joining, by = "sample"
 
-    ## Joining, by = "V1"
+    candidates.gon <- selectcandidatevsds(candidategenes, vsd.gon, colData.gon)
 
-    ## Warning: Column `V1` joining factor and character vector, coercing into
-    ## character vector
+    ##  [1] "CISH"   "SOCS1"  "SOCS2"  "SOCS2"  "SOCS4"  "SOCS5"  "SOCS6" 
+    ##  [8] "PRL"    "PRLR"   "STAT5B" "JAK1"  
+    ##  [1] "NP_989957.1"    "XP_015146451.1" "NP_990797.2"    "XP_015132722.1"
+    ##  [5] "NP_001131120.1" "NP_989871.1"    "NP_001186037.1" "NP_001120786.1"
+    ##  [9] "NP_001120784.1" "XP_015155078.1"
 
-    # set rownames
-    row.names(hypcandidatecounts) <- hypcandidatecounts$V1
-    hypcandidatecounts$V1 <- NULL
+    ## Joining, by = "entrezid"
+    ## Joining, by = "sample"
 
-    # preview and write
-    head(hypcandidatecounts)
+    plotcanddateexpression <- function(candidateexpression,  mysubtitle, whichgene, myylab){
+      
+      ggplot(candidateexpression, aes(x = as.numeric(treatment), y = whichgene)) + 
+        geom_boxplot(aes(fill = treatment, alpha = sex)) + 
+        scale_alpha_manual(values = c(0.6,0.9)) +
+         theme_B3() +
+        theme(legend.position = "none") +
+        theme(axis.title.y=element_text(face="italic"),
+              axis.title.x = element_blank(),
+              axis.text.x = element_blank()) +
+        geom_smooth(aes(colour = sex)) +
+        scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+        labs(subtitle = mysubtitle, y = myylab)
+      
+    }
 
-    ##                                            bird    sex       tissue
-    ## L.Blu13_male_hypothalamus_control.NYNO  L.Blu13   male hypothalamus
-    ## L.G107_male_hypothalamus_control         L.G107   male hypothalamus
-    ## L.G118_female_hypothalamus_control.NYNO  L.G118 female hypothalamus
-    ## L.R3_male_hypothalamus_control             L.R3   male hypothalamus
-    ## L.R8_male_hypothalamus_control             L.R8   male hypothalamus
-    ## L.W33_male_hypothalamus_control.NYNO      L.W33   male hypothalamus
-    ##                                         timepoint
-    ## L.Blu13_male_hypothalamus_control.NYNO    control
-    ## L.G107_male_hypothalamus_control          control
-    ## L.G118_female_hypothalamus_control.NYNO   control
-    ## L.R3_male_hypothalamus_control            control
-    ## L.R8_male_hypothalamus_control            control
-    ## L.W33_male_hypothalamus_control.NYNO      control
-    ##                                                               group SOCS6
-    ## L.Blu13_male_hypothalamus_control.NYNO    male.hypothalamus.control    29
-    ## L.G107_male_hypothalamus_control          male.hypothalamus.control    47
-    ## L.G118_female_hypothalamus_control.NYNO female.hypothalamus.control    45
-    ## L.R3_male_hypothalamus_control            male.hypothalamus.control    75
-    ## L.R8_male_hypothalamus_control            male.hypothalamus.control     4
-    ## L.W33_male_hypothalamus_control.NYNO      male.hypothalamus.control    77
-    ##                                         SOCS5 SOCS1 SOCS4 SOCS2 CISH  PRL
-    ## L.Blu13_male_hypothalamus_control.NYNO     92     1     7     6   26  744
-    ## L.G107_male_hypothalamus_control          196     6    18    16   88  578
-    ## L.G118_female_hypothalamus_control.NYNO   138     1    11    10    0 1255
-    ## L.R3_male_hypothalamus_control            333     5    34    17   92  682
-    ## L.R8_male_hypothalamus_control             23     1     4     3    7  116
-    ## L.W33_male_hypothalamus_control.NYNO      325     1    23    22   79 2021
-    ##                                         PRLR
-    ## L.Blu13_male_hypothalamus_control.NYNO    35
-    ## L.G107_male_hypothalamus_control          82
-    ## L.G118_female_hypothalamus_control.NYNO   43
-    ## L.R3_male_hypothalamus_control            42
-    ## L.R8_male_hypothalamus_control            13
-    ## L.W33_male_hypothalamus_control.NYNO      91
 
-    write.csv(hypcandidatecounts, "../results/10_hypcandidatecounts.csv")
+    a <- plotcanddateexpression(candidates.hyp,  "hypothalamus", candidates.hyp$PRL, "PRL")
+    b <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$PRL, "PRL")
+    c <- plotcanddateexpression(candidates.gon,  "gonad", candidates.gon$PRL, "PRL")
 
-    # correlation matrix
-    forcorr <- hypcandidatecounts %>% 
-      mutate(gene = row.names(hypcandidatecounts)) %>%  select(candidates)
-    M <- cor(forcorr)
-    M <- as.data.frame(M)
-    M$rownames <- row.names(M)
-    # M <- M %>% filter(totalentr > 0.7 | totalentr < -0.7)
-    row.names(M) <- M$rownames
-    greatthan05 <- M$rownames
-    M <- M %>% select(greatthan05)
-    M <- as.matrix(M)
-    corrplot.mixed(M, order = "hclust")
+    plot_grid(a,b + labs(y = NULL),c + labs(y = NULL), nrow = 1)
 
-![](../figures/specificgenes/PRL-1.png)
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-    ggplot(hypcandidatecounts, aes(x = PRL, y = SOCS4, color = timepoint)) + 
-      geom_point() + labs(subtitle = "PRL and SOCS5") + facet_wrap(~sex)
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-![](../figures/specificgenes/PRL-2.png)
+![](../figures/specificgenes/PRLboxplots-1.png)
 
-    ggplot(hypcandidatecounts, aes(x = SOCS5, y = SOCS6, color = timepoint)) + 
-      geom_point() + labs(subtitle = "SOCS5 and SOCS6") + facet_wrap(~sex)
+    e <- plotcanddateexpression(candidates.hyp, NULL, candidates.hyp$PRLR, "PRLR")
+    f <- plotcanddateexpression(candidates.pit, NULL, candidates.pit$PRLR, "PRLR")
+    g <- plotcanddateexpression(candidates.gon, NULL, candidates.gon$PRLR, "PRLR")
 
-![](../figures/specificgenes/PRL-3.png)
+    plot_grid(e,f + labs(y = NULL),g + labs(y = NULL), nrow = 1)
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](../figures/specificgenes/PRLboxplots-2.png)
+
+    e <- plotcanddateexpression(candidates.hyp, NULL, candidates.hyp$STAT5B, "STAT5B")
+    f <- plotcanddateexpression(candidates.pit, NULL, candidates.pit$STAT5B, "STAT5B")
+    g <- plotcanddateexpression(candidates.gon, NULL, candidates.gon$STAT5B, "STAT5B")
+
+    plot_grid(e,f + labs(y = NULL),g + labs(y = NULL), nrow = 1)
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](../figures/specificgenes/PRLboxplots-3.png)

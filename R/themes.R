@@ -1,3 +1,14 @@
+# custom theme
+
+theme_B3 <- function () { 
+  theme_classic(base_size = 7) +
+    theme(
+      panel.grid.major  = element_blank(),  # remove major gridlines
+      panel.grid.minor  = element_blank(),  # remove minor gridlines
+      plot.title = element_text(hjust = 0.5, face = "bold") # center & bold 
+    )
+}
+
 # custom levels
 
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
