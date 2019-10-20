@@ -3,77 +3,88 @@ title: "candidate genes"
 output: md_document
 ---
 
-# selecting candidate genes counts from the hypothalamus
-
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(corrplot)
+library(cowplot)
+
+
+source("../R/functions.R")  # load custom functions 
+source("../R/themes.R")  # load custom themes and color palletes
+
 
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/specificgenes/')
 ```
 
-```{r PRL}
-# import "colData" which contains sample information and "countData" which contains read counts
-c.colData <- read.csv("../metadata/00_colData_characterization.csv", header = T, row.names = 1)
-c.countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
-geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>% select(Name, entrezid)
+# analyses downstream of calculating tissue specific variance in gene expression
 
-# select only hypothalamus samples
-hypsamples <- c.colData %>% 
-  filter(tissue == "hypothalamus") %>%
-  select(-study) %>%
-  droplevels()
-colnames(hypsamples)[colnames(hypsamples)=="treatment"] <- "timepoint"
+```{r getvsdandcolData}
+vsd.hyp <- readvsd("../results/04_vsd_hyp.csv")
+colData.hyp <- readcolData("../results/04_colData_hyp.csv")
 
-countstokeep <- as.character(hypsamples$V1)
-hypcounts <- c.countData %>% 
-  mutate(entrezid = row.names(c.countData)) %>% 
-  select(entrezid, countstokeep)
+head(vsd.hyp[1:2])
+head(colData.hyp[1:2,])
+rownames(colData.hyp) == colnames(vsd.hyp)
 
-hypcounts <- left_join(geneinfo,hypcounts)
+vsd.pit <- readvsd("../results/04_vsd_pit.csv")
+colData.pit <- readcolData("../results/04_colData_pit.csv")
 
-# select genes to keep 
-# CISH, SOCS1, SOCS2, SOCS2, SOCS4, SOCS5, SOCS6
-# PRL PRLR BRAC1
+vsd.gon <- readvsd("../results/04_vsd_gon.csv")
+colData.gon <- readcolData("../results/04_colData_gon.csv")
 
-candidates <- c("CISH", "SOCS1", "SOCS2", "SOCS2", "SOCS4", "SOCS5", "SOCS6", "PRL", "PRLR")
-hypcounts <- hypcounts %>% filter(Name %in% candidates)
-
-# transform and combine into 1 dataframe
-hypcounts <- as.data.frame(hypcounts)
-
-row.names(hypcounts) <- hypcounts$Name
-hypcounts$Name <- NULL
-hypcounts$entrezid <- NULL
-hypcandidatecounts <- as.data.frame(t(hypcounts))
-hypcandidatecounts$V1 <- row.names(hypcandidatecounts)
-hypcandidatecounts <- left_join(hypsamples, hypcandidatecounts)
-
-# set rownames
-row.names(hypcandidatecounts) <- hypcandidatecounts$V1
-hypcandidatecounts$V1 <- NULL
-
-# preview and write
-head(hypcandidatecounts)
-write.csv(hypcandidatecounts, "../results/10_hypcandidatecounts.csv")
-
-# correlation matrix
-forcorr <- hypcandidatecounts %>% 
-  mutate(gene = row.names(hypcandidatecounts)) %>%  select(candidates)
-M <- cor(forcorr)
-M <- as.data.frame(M)
-M$rownames <- row.names(M)
-# M <- M %>% filter(totalentr > 0.7 | totalentr < -0.7)
-row.names(M) <- M$rownames
-greatthan05 <- M$rownames
-M <- M %>% select(greatthan05)
-M <- as.matrix(M)
-corrplot.mixed(M, order = "hclust")
-
-ggplot(hypcandidatecounts, aes(x = PRL, y = SOCS4, color = timepoint)) + 
-  geom_point() + labs(subtitle = "PRL and SOCS5") + facet_wrap(~sex)
-
-ggplot(hypcandidatecounts, aes(x = SOCS5, y = SOCS6, color = timepoint)) + 
-  geom_point() + labs(subtitle = "SOCS5 and SOCS6") + facet_wrap(~sex)
 ```
+
+
+# selecting candidate genes counts from the hypothalamus
+
+
+
+```{r PRL}
+geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
+head(geneinfo)
+```
+
+```{r PRLboxplots, fig.width =5.5, fig.height= 2}
+candidategenes <- c("CISH", "SOCS1", "SOCS2", "SOCS2", "SOCS4", "SOCS5", "SOCS6", 
+                    "PRL", "PRLR", "STAT5B", "JAK1")
+candidates.hyp <- selectcandidatevsds(candidategenes, vsd.hyp, colData.hyp)
+candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
+candidates.gon <- selectcandidatevsds(candidategenes, vsd.gon, colData.gon)
+
+plotcanddateexpression <- function(candidateexpression,  mysubtitle, whichgene, myylab){
+  
+  ggplot(candidateexpression, aes(x = as.numeric(treatment), y = whichgene)) + 
+    geom_boxplot(aes(fill = treatment, alpha = sex)) + 
+    scale_alpha_manual(values = c(0.6,0.9)) +
+     theme_B3() +
+    theme(legend.position = "none") +
+    theme(axis.title.y=element_text(face="italic"),
+          axis.title.x = element_blank(),
+          axis.text.x = element_blank()) +
+    geom_smooth(aes(colour = sex)) +
+    scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+    labs(subtitle = mysubtitle, y = myylab)
+  
+}
+
+
+a <- plotcanddateexpression(candidates.hyp,  "hypothalamus", candidates.hyp$PRL, "PRL")
+b <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$PRL, "PRL")
+c <- plotcanddateexpression(candidates.gon,  "gonad", candidates.gon$PRL, "PRL")
+
+plot_grid(a,b + labs(y = NULL),c + labs(y = NULL), nrow = 1)
+
+e <- plotcanddateexpression(candidates.hyp, NULL, candidates.hyp$PRLR, "PRLR")
+f <- plotcanddateexpression(candidates.pit, NULL, candidates.pit$PRLR, "PRLR")
+g <- plotcanddateexpression(candidates.gon, NULL, candidates.gon$PRLR, "PRLR")
+
+plot_grid(e,f + labs(y = NULL),g + labs(y = NULL), nrow = 1)
+
+e <- plotcanddateexpression(candidates.hyp, NULL, candidates.hyp$STAT5B, "STAT5B")
+f <- plotcanddateexpression(candidates.pit, NULL, candidates.pit$STAT5B, "STAT5B")
+g <- plotcanddateexpression(candidates.gon, NULL, candidates.gon$STAT5B, "STAT5B")
+
+plot_grid(e,f + labs(y = NULL),g + labs(y = NULL), nrow = 1)
+```
+
+
 
