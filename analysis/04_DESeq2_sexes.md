@@ -48,6 +48,11 @@ DEseq2 analysis on characterization. Looking at treatment AND sex for each tissu
     FALSE 5 anticipation
     FALSE 6 anticipation
 
+    # prep col data for subsequent analyses
+    colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
+    colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
+    colDataGon <- subsetcolData2(c.colData, c("female_gonad", "male_gonad"))
+
     dds.hypothalamus <- subsetDESeq2(c.colData,  c.countData, c("female_hypothalamus","male_hypothalamus") )
 
     FALSE class: DESeqDataSet 
@@ -102,13 +107,19 @@ total degs
 Variance stabilized data
 ------------------------
 
+    # create variance stbilized DESeq transformation
     vsd.hyp <- vst(dds.hypothalamus, blind=FALSE) 
     vsd.pit <- vst(dds.pituitary, blind=FALSE) 
     vsd.gon <- vst(dds.gonad, blind=FALSE) 
 
+    # save as a dataframe for downstream analysis
     vsd.hyp.df <- vsd.dataframe(vsd.hyp) 
     vsd.pit.df <- vsd.dataframe(vsd.pit) 
     vsd.gon.df <- vsd.dataframe(vsd.gon) 
+
+    savevsdfiles(vsd.hyp.df, colDataHyp, "hyp")
+    savevsdfiles(vsd.pit.df, colDataPit, "pit")
+    savevsdfiles(vsd.gon.df, colDataGon, "gon")
 
 PCA
 ---
@@ -238,11 +249,6 @@ Linear discriminant analysis (LDA)
 ----------------------------------
 
 <a href="http://www.sthda.com/english/articles/36-classification-methods-essentials/146-discriminant-analysis-essentials-in-r/" class="uri">http://www.sthda.com/english/articles/36-classification-methods-essentials/146-discriminant-analysis-essentials-in-r/</a>
-
-    # prep col data for LDA
-    colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
-    colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
-    colDataGon <- subsetcolData2(c.colData, c("female_gonad", "male_gonad"))
 
     # LDA for treatment (9 groups)
     LDA.hyp1 <- LDAdata.treatment(vsd.hyp, colDataHyp)
@@ -474,7 +480,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7f9839a5ae28>
+    FALSE <environment: 0x7f9d5658f098>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_015154126.1, XP_015148612.1, NP_001012716.1, 
     FALSE     XP_423016.4, XP_015153296.1, NP_001005800.1, NP_999837.1, 
@@ -673,7 +679,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7f98303d0938>
+    FALSE <environment: 0x7f9d56695a08>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_424601.2, XP_015153829.1, NP_001005823.1, 
     FALSE     XP_001231665.4, XP_001234312.1, XP_419245.5, XP_015130606.1, 
@@ -872,7 +878,7 @@ Linear discriminant analysis (LDA)
     FALSE attr(,"response")
     FALSE [1] 1
     FALSE attr(,".Environment")
-    FALSE <environment: 0x7f9837b64870>
+    FALSE <environment: 0x7f9d57063150>
     FALSE attr(,"predvars")
     FALSE list(hypothesis, XP_421626.3, XP_015152450.1, NP_001005427.1, 
     FALSE     NP_990837.1, XP_001233399.3, XP_417425.2, XP_015129896.1, 

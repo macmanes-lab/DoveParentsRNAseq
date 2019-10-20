@@ -431,15 +431,29 @@ plotPC12 <- function(pcadata, mysubtitle){
 }  
 
 
-######### vsd.dataframe ######### 
+######### vsd.dataframe and corresponding col data ######### 
 
 vsd.dataframe <- function(vsd){
   
   # extract varience stabilized and set rownames
   vsd.df <- assay(vsd)
   vsd.df <- as.data.frame(vsd.df)
-  vsd.df$entrezid <- row.names(vsd.df)
+  return(vsd.df)
 }  
+
+
+
+savevsdfiles <- function(myvsddf, mycolData, mytissue){
+  myvsddf <- myvsddf
+  mycolData <- mycolData
+  
+  vsdfilename <- paste0("../results/04_vsd_", mytissue, ".csv", sep = "" )
+  colDatafilename <- paste0("../results/04_colData_", mytissue, ".csv", sep = "" )
+  
+  write.csv(myvsddf, vsdfilename, row.names = T)
+  write.csv(mycolData, colDatafilename, row.names = F)
+}
+
 
 ######### plotcandidates ######### 
 
@@ -627,7 +641,7 @@ plotWGCNAcandidatesManip <- function(vsd, mygenelist, colData, mysubtitle){
 # makes a candidate heat map!!
 makepheatmap <- function(vsd.df, colData, mysubtitle){
 
-  candidates <- full_join(geneinfo, DEGs, by = "entrezid")
+  candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
   
   candidates <- candidates %>%
     filter(Name %in% c("AVP", "AVPR1A", "AVPR1B", "AVPR2",

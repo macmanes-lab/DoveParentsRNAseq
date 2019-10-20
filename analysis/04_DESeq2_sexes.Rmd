@@ -58,6 +58,11 @@ c.colData$tissue <- NULL
 c.colData$study <- NULL
 c.colData$group <- NULL
 head(c.colData)
+
+# prep col data for subsequent analyses
+colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
+colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
+colDataGon <- subsetcolData2(c.colData, c("female_gonad", "male_gonad"))
 ```
 
 
@@ -79,14 +84,24 @@ plottotalDEGs(DEGs.pituitary, "Male & Female Pituitary DEGs")
 ## Variance stabilized data
 
 ```{r vsd}
+# create variance stbilized DESeq transformation
 vsd.hyp <- vst(dds.hypothalamus, blind=FALSE) 
 vsd.pit <- vst(dds.pituitary, blind=FALSE) 
 vsd.gon <- vst(dds.gonad, blind=FALSE) 
 
+# save as a dataframe for downstream analysis
 vsd.hyp.df <- vsd.dataframe(vsd.hyp) 
 vsd.pit.df <- vsd.dataframe(vsd.pit) 
 vsd.gon.df <- vsd.dataframe(vsd.gon) 
 ```
+
+
+```{r viewwritevsd}
+savevsdfiles(vsd.hyp.df, colDataHyp, "hyp")
+savevsdfiles(vsd.pit.df, colDataPit, "pit")
+savevsdfiles(vsd.gon.df, colDataGon, "gon")
+```
+
 
 ## PCA
 
@@ -108,11 +123,6 @@ http://www.sthda.com/english/articles/36-classification-methods-essentials/146-d
 
 
 ```{r LDAdfs}
-# prep col data for LDA
-colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
-colDataPit <- subsetcolData2(c.colData, c("female_pituitary", "male_pituitary"))
-colDataGon <- subsetcolData2(c.colData, c("female_gonad", "male_gonad"))
-
 # LDA for treatment (9 groups)
 LDA.hyp1 <- LDAdata.treatment(vsd.hyp, colDataHyp)
 LDA.pit1 <- LDAdata.treatment(vsd.pit, colDataPit)
@@ -162,6 +172,8 @@ temp <- plot_grid(d + theme(legend.position = "none"),
 
 plot_grid(temp, mylegend, nrow = 2, rel_heights = c(1,0.3))
 ```
+
+
 
 ## plot genes in a  PRL WGCNA module
 
