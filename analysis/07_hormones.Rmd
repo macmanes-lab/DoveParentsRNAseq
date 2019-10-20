@@ -130,7 +130,7 @@ cort.char <- hormones %>% filter(hormone == "cort", timepoint %in% charlevels)  
 
 ```
 
-```{r characterization, fig.width=5.5, fig.height= 3}
+```{r characterizationplots}
 hormonecharplot <- function(myhormone, myylab){
   
   mycolors <- charcolors
@@ -141,6 +141,7 @@ hormonecharplot <- function(myhormone, myylab){
            hormone %in% c(myhormone))  %>% 
     droplevels() %>% 
   ggplot(aes(x = as.numeric(timepoint), y = plasma_conc)) +
+        geom_smooth(aes(colour = sex)) +
     geom_boxplot(aes(outlier.colour = timepoint, fill = timepoint, alpha = sex)) +
     theme_B3() +
     theme(axis.text.x =  element_blank(),
@@ -151,21 +152,25 @@ hormonecharplot <- function(myhormone, myylab){
     guides(fill = guide_legend(order=1),
          color = guide_legend(order=2)) +
     scale_alpha_manual(values = c(0.75,1)) +
-    geom_smooth(aes(colour = sex)) +
     scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) 
   }
 
-hormonecharplot("prolactin", "PRL (ng/mL)")
+```
 
-a <- hormonecharplot("prolactin", "PRL (ng/mL)")
+```{r PRLonly, fig.width = 2.25, fig.height = 1}
+hormonecharplot("prolactin", "PRL (ng/mL)")
+```
+
+```{r sexsteroids, fig.width=2.25, fig.height= 3}
 b <- hormonecharplot("cort", "CORT (ng/mL)")
 c <- hormonecharplot("progesterone", "PROG (ng/mL)") 
 d1 <- hormonecharplot("estradiol", "E (ng/mL)")
 d2 <- hormonecharplot("testosterone", "T (ng/mL)")
 d <- plot_grid(d1,d2, nrow = 1)
-abcd <- plot_grid(a, b ,c, d)
-abcd
+bcd <- plot_grid(b ,c, d, ncol = 1)
+bcd
 ```
+
 
 ```{r aov-char}
 aovSexTretment <- function(mydata, whichormone){
