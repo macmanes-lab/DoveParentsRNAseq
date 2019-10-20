@@ -188,25 +188,24 @@ selecting candidate genes counts from the hypothalamus
     plotcanddateexpression <- function(candidateexpression,  mysubtitle, whichgene, myylab){
       
       ggplot(candidateexpression, aes(x = as.numeric(treatment), y = whichgene)) + 
+            geom_smooth(aes(colour = sex)) +
         geom_boxplot(aes(fill = treatment, alpha = sex)) + 
-        scale_alpha_manual(values = c(0.6,0.9)) +
+        scale_alpha_manual(values = c(0.75,1)) +
          theme_B3() +
         theme(legend.position = "none") +
         theme(axis.title.y=element_text(face="italic"),
               axis.title.x = element_blank(),
               axis.text.x = element_blank()) +
-        geom_smooth(aes(colour = sex)) +
         scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
         labs(subtitle = mysubtitle, y = myylab)
       
     }
 
-
     a <- plotcanddateexpression(candidates.hyp,  "hypothalamus", candidates.hyp$PRL, "PRL")
     b <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$PRL, "PRL")
     c <- plotcanddateexpression(candidates.gon,  "gonad", candidates.gon$PRL, "PRL")
 
-    plot_grid(a,b + labs(y = NULL),c + labs(y = NULL), nrow = 1)
+    plot_grid(a, b + labs(y = NULL), c + labs(y = NULL), nrow = 1)
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
@@ -219,7 +218,7 @@ selecting candidate genes counts from the hypothalamus
     f <- plotcanddateexpression(candidates.pit, NULL, candidates.pit$PRLR, "PRLR")
     g <- plotcanddateexpression(candidates.gon, NULL, candidates.gon$PRLR, "PRLR")
 
-    plot_grid(e,f + labs(y = NULL),g + labs(y = NULL), nrow = 1)
+    plot_grid(e, f + labs(y = NULL), g + labs(y = NULL), nrow = 1)
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
@@ -227,14 +226,22 @@ selecting candidate genes counts from the hypothalamus
 
 ![](../figures/specificgenes/PRLboxplots-2.png)
 
-    e <- plotcanddateexpression(candidates.hyp, NULL, candidates.hyp$STAT5B, "STAT5B")
-    f <- plotcanddateexpression(candidates.pit, NULL, candidates.pit$STAT5B, "STAT5B")
-    g <- plotcanddateexpression(candidates.gon, NULL, candidates.gon$STAT5B, "STAT5B")
+    h <- plotcanddateexpression(candidates.hyp, " ", candidates.hyp$STAT5B, "STAT5B")
+    i <- plotcanddateexpression(candidates.pit, " ", candidates.pit$STAT5B, "STAT5B")
+    j <- plotcanddateexpression(candidates.gon, " ", candidates.gon$STAT5B, "STAT5B")
 
-    plot_grid(e,f + labs(y = NULL),g + labs(y = NULL), nrow = 1)
+    plot_grid(h, i + labs(y = NULL), j + labs(y = NULL), nrow = 1)
 
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](../figures/specificgenes/PRLboxplots-3.png)
+
+    plot_grid(a,b,c, nrow = 3)
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](../figures/specificgenes/PRLboxplots2-1.png)
