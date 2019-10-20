@@ -455,6 +455,22 @@ savevsdfiles <- function(myvsddf, mycolData, mytissue){
 }
 
 
+readvsd <- function(filename){
+  vsd <- read_csv(filename)
+  vsd <- as.data.frame(vsd)
+  row.names(vsd) <- vsd$X1
+  vsd$X1 <- NULL
+  return(vsd)
+}
+
+readcolData <- function(filename){
+  colData <- read_csv(filename)
+  colData <- as.data.frame(colData)
+  row.names(colData) <- colData$V1
+  colData$V1 <- NULL
+  return(colData)
+}
+
 ######### plotcandidates ######### 
 
 plotcandidates <- function(vsd.df, colData, mysubtitle){
