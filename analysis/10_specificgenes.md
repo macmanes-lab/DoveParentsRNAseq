@@ -245,3 +245,41 @@ selecting candidate genes counts from the hypothalamus
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](../figures/specificgenes/PRLboxplots2-1.png)
+
+    head(candidates.pit)
+
+    ##      sex treatment        sextissue   hypothesis
+    ## 1   male   control   male_pituitary anticipation
+    ## 2   male   control   male_pituitary anticipation
+    ## 3 female   control female_pituitary anticipation
+    ## 4   male   control   male_pituitary anticipation
+    ## 5   male   control   male_pituitary anticipation
+    ## 6   male   control   male_pituitary anticipation
+    ##                                 sample    SOCS6    SOCS5    SOCS1    SOCS4
+    ## 1  L.Blu13_male_pituitary_control.NYNO 7.947664 8.946013 6.184901 7.231540
+    ## 2        L.G107_male_pituitary_control 7.543582 9.051427 6.457572 7.070877
+    ## 3 L.G118_female_pituitary_control.NYNO 7.284814 8.851242 6.633381 7.194098
+    ## 4     L.R3_male_pituitary_control.NYNO 7.455728 8.819775 6.702443 7.201298
+    ## 5          L.R8_male_pituitary_control 7.499160 9.084106 6.554400 6.929024
+    ## 6         L.W33_male_pituitary_control 7.663548 8.914462 6.385755 7.042041
+    ##      SOCS2     CISH      PRL     PRLR     JAK1   STAT5B
+    ## 1 8.586158 8.990659 16.75792 8.946013 10.61919 8.586158
+    ## 2 8.167580 9.340588 17.87347 8.802705 10.49447 8.500254
+    ## 3 7.825580 9.571050 17.91121 8.626330 10.53647 8.555758
+    ## 4 8.043921 9.698286 16.51080 8.863145 10.58596 8.406437
+    ## 5 8.154790 9.359305 17.30663 9.239197 10.40536 8.411060
+    ## 6 7.855338 8.203877 19.93211 8.356602 10.45873 8.334751
+
+    PRLpit <- candidates.pit %>%
+      select(sample,sex,treatment,PRL)
+    head(PRLpit)
+
+    ##                                 sample    sex treatment      PRL
+    ## 1  L.Blu13_male_pituitary_control.NYNO   male   control 16.75792
+    ## 2        L.G107_male_pituitary_control   male   control 17.87347
+    ## 3 L.G118_female_pituitary_control.NYNO female   control 17.91121
+    ## 4     L.R3_male_pituitary_control.NYNO   male   control 16.51080
+    ## 5          L.R8_male_pituitary_control   male   control 17.30663
+    ## 6         L.W33_male_pituitary_control   male   control 19.93211
+
+    write.csv(PRLpit, "../results/10_PRLpit.csv")
