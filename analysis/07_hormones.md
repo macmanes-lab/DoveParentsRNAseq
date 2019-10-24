@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
     ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -362,3 +362,30 @@
 ![](../figures/hormones/removal-1.png)
 
     write.csv(hormones, "../results/hormones.csv", row.names = F)
+
+do control bird with high prolactin hormone have high PRL expression in the pituitary? yes.
+===========================================================================================
+
+    PRLpit <- read_csv("../results/10_PRLpit.csv") %>% 
+      filter(treatment == "control") %>% 
+      arrange(desc(PRL))
+    head(PRLpit,2)
+
+    ## # A tibble: 2 x 4
+    ##   sample                                 sex    treatment   PRL
+    ##   <chr>                                  <chr>  <chr>     <dbl>
+    ## 1 blu.o.x.ATLAS_female_pituitary_control female control    20.9
+    ## 2 L.W33_male_pituitary_control           male   control    19.9
+
+    prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)  %>% 
+                filter(Treatment == "baseline")  %>% 
+                select(ColorBands,BandNo_old, Treatment, Sex, `Prolactin ng/mL`)  %>% 
+                arrange(desc(`Prolactin ng/mL`))
+
+    head(prolactin,2)
+
+    ## # A tibble: 2 x 5
+    ##   ColorBands BandNo_old Treatment Sex   `Prolactin ng/mL`
+    ##   <chr>      <chr>      <chr>     <chr>             <dbl>
+    ## 1 blu/o-x    L_Blu/O    baseline  f                  85.3
+    ## 2 w33-x      L_W33      baseline  m                  72.3

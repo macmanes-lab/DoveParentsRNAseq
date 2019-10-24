@@ -271,3 +271,21 @@ hormoneremoval("prolactin", "PRL (ng/mL)")
 ```{r}
 write.csv(hormones, "../results/hormones.csv", row.names = F)
 ```
+
+# do control bird with high prolactin hormone have high PRL expression in the pituitary? yes.
+
+```{r PRLvPRL}
+PRLpit <- read_csv("../results/10_PRLpit.csv") %>% 
+  filter(treatment == "control") %>% 
+  arrange(desc(PRL))
+head(PRLpit,2)
+```
+
+```{r}
+prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)  %>% 
+            filter(Treatment == "baseline")  %>% 
+            select(ColorBands,BandNo_old, Treatment, Sex, `Prolactin ng/mL`)  %>% 
+            arrange(desc(`Prolactin ng/mL`))
+
+head(prolactin,2)
+```

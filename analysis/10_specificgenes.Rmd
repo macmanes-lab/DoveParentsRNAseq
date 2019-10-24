@@ -7,7 +7,6 @@ output: md_document
 library(tidyverse)
 library(cowplot)
 
-
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
 
@@ -91,5 +90,11 @@ plot_grid(h, i + labs(y = NULL), j + labs(y = NULL), nrow = 1)
 plot_grid(a,b,c, nrow = 3)
 ```
 
-
+```{r PRLdf}
+head(candidates.pit)
+PRLpit <- candidates.pit %>%
+  select(sample,sex,treatment,PRL)
+head(PRLpit)
+write.csv(PRLpit, "../results/10_PRLpit.csv", row.names = F)
+```
 
