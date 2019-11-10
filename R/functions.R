@@ -593,36 +593,21 @@ plotprolactin <- function(vsd.df, colData, mysubtitle){
 
 plotWGCNAcandidates <- function(vsd, mygenelist, colData, mysubtitle){
   
-  # make dataframe with geneids and names and counts
-  # how to gather: https://tidyr.tidyverse.org/reference/gather.html
-  
   vsd.df <- as.data.frame(assay(vsd))
   vsd.df$entrezid <- row.names(vsd.df)
   
   candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
- 
-  # select genes of interst
-  
   candidates <- candidates %>%
     filter(entrezid %in% mygenelist) %>% droplevels()
-  
   candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -geneid)
-  
   candidates_long <- candidates %>% gather(-Name, key = "sample", value = "value")
-  
   candidates_long$V1 <- candidates_long$sample
-  
   candidatecounts <- left_join(candidates_long, colData, by = "V1")
-  
   candidatecounts$Name <- as.factor(candidatecounts$Name)
   candidatecounts$treatment <- factor(candidatecounts$treatment, levels = charlevels)
-  
-  head(candidatecounts)
-  
   bysextreatment <- group_by(candidatecounts, sex, treatment, Name)
   bysextreatment
   candidateST <- summarize(bysextreatment, expression = mean(value))
-  
   
   p1 <- ggplot(candidateST, aes(x = as.numeric(treatment), y = expression, color = sex)) +
     geom_point() +
