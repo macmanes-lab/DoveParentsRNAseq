@@ -985,10 +985,10 @@ LDAplot.hypothesis <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
          x = myxlab,
          y = myylab) +
     scale_color_manual(name = "parental state",
-                       values = c("anticipation" = "#1b9e77", 
+                       values = c("non-parental" = "#1b9e77", 
                                   "incubation" = "#d95f02",
                                   "hatchling.care" = "#7570b3"),
-                       labels = c("anticipation" = "<span style='color:#1b9e77'>anticipation</span>",
+                       labels = c("non-parental" = "<span style='color:#1b9e77'>non-parental</span>",
                                   "incubation" = "<span style='color:#d95f02'>incubation</span>", 
                                   "hatchling.care" = "<span style='color:#7570b3'>hatchling care</span>")) +
     theme(legend.text = element_markdown(size = 8))
