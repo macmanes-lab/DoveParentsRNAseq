@@ -153,7 +153,7 @@ data wrangle
 pca
 ---
 
-    # make pca
+    # make pca dataframes
     mypca <- prcomp(countData)
 
     # percent conribution
@@ -202,23 +202,40 @@ pca
                              shape = colData$tissue,
                              alpha = colData$sex)) +
       geom_point(size = 2)  + theme_minimal(base_size = 6)  +
-      theme(legend.title = element_blank(), legend.position = "left") +
-      scale_alpha_manual(values = c(0.75,1))
-    a
-
-![](../figures/pca/pca-1.png)
+      mytheme() +
+      theme(legend.title = element_blank(), 
+            axis.text = element_blank()) +
+      scale_alpha_manual(values = c(0.5,1)) +
+      labs(x = "PC1: 35.9% of variance", y = "PC2: 32.5% of variance") 
+      
 
     b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank", 
                        repel = TRUE ,
-                      select.var= list(contrib = 6))
-    b
+                      select.var= list(contrib = 6)) + 
+          mytheme() + 
+          labs(x = " ", y = " ", subtitle = NULL, title =  NULL) 
 
-![](../figures/pca/pca-2.png)
+    png('../figures/pca/pca-1.png',width=600,height=600, units="px",bg = "transparent")
+    print(a)
+    dev.off()
 
-    ab <- plot_grid(a,b + theme(axis.text = element_blank()) + ggtitle(NULL), rel_widths = c(0.6,0.4))
-    ab
+    ## quartz_off_screen 
+    ##                 2
 
-![](../figures/pca/pca-3.png)
+    png('../figures/pca/pca-2.png',width=600,height=600, units="px",bg = "transparent")
+    print(b)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    fviz_contrib(mypca, choice = "var", axes = 1, top = 5) 
+
+![](../figures/pca/pcaloadings-1.png)
+
+    fviz_contrib(mypca, choice = "var", axes = 2, top = 5) 
+
+![](../figures/pca/pcaloadings-2.png)
 
 tSNE
 ====
@@ -230,46 +247,43 @@ tSNE
 ![](../figures/pca/tSNE-1.png)
 
     # prep for adding columns
-    colData$V1 <- NULL
-    tsne_df_cols <- cbind(colData, tsne_df)
+    colData2 <- colData 
+    colData2$V1 <- NULL
+    tsne_df_cols <- cbind(colData2, tsne_df)
 
     c  <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = tissue)) +
       geom_point(size = 2) +
-      theme_minimal(base_size = 6) +
+      mytheme() +
       scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
-      theme(legend.position = "top") +
       labs(x = "tSNE 1", y = "tSNE 2")
 
     d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment, alpha = sex)) +
       geom_point(size = 2) +
-      theme_minimal(base_size = 6) +
-      theme(legend.position = "top") +
+      mytheme() +
       labs(x = "tSNE 1", y = "tSNE 2") +
-      scale_alpha_manual(values = c(0.75,1))
+      scale_alpha_manual(values = c(0.5,1))
 
-    cd <- plot_grid(c,d)
-    cd
+    c
 
 ![](../figures/pca/tSNE-2.png)
 
+    d
+
+![](../figures/pca/tSNE-3.png)
+
+    png('../figures/pca/tSNE-2.png',width=600,height=600, units="px",bg = "transparent")
+    print(c)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    png('../figures/pca/tSNE-3.png',width=600,height=600, units="px",bg = "transparent")
+    print(d)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
 combined pca tsne
 =================
-
-    plot_grid(ab,cd, ncol = 1)
-
-![](../figures/pca/pca.tSNE-1.png)
-
-    plot_grid(a + theme(legend.position = "none"),
-              b + theme(axis.text = element_blank()) + ggtitle(NULL), 
-              c + theme(legend.position = "none"),
-              d + theme(legend.position = "none"))
-
-![](../figures/pca/pca.tSNE-2.png)
-
-    mylegend <- get_legend(d + theme(legend.position = "bottom"))
-
-    ad <- plot_grid(a + theme(legend.position = "none"),d + theme(legend.position = "none"))
-
-    plot_grid(ad, mylegend, nrow = 2, rel_heights = c(1,0.1))
-
-![](../figures/pca/pca.tSNE-3.png)
