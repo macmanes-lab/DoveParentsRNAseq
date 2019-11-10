@@ -34,7 +34,17 @@ mytheme <- function(){
 
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
 maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" , "extend" , "prolong", "early")
+maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2",  "prolong" , "extend")
 
+
+
+colorsmaniplevels1 <- c( "m.inc.d3" = "#CDCDCD", 
+                         "m.inc.d8" = "#6DA9D3", 
+                         "m.inc.d9" = "#959595", 
+                         "m.inc.d17" = "#626262",
+                         "m.n2" = "#262625", 
+                         "prolong" = "#1B86B9" , 
+                         "extend" = "#01588C")
 
 colorstreatmentsex <-  c("control" = "#F8766D", 
                          "bldg"= "#D39200", 
