@@ -35,6 +35,19 @@ mytheme <- function(){
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
 maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" , "extend" , "prolong", "early")
 
+
+colorstreatmentsex <-  c("control" = "#F8766D", 
+                         "bldg"= "#D39200", 
+                         "lay"= "#93AA00", 
+                         "inc.d3"= "#00BA38", 
+                         "inc.d9"= "#00C19F", 
+                         "inc.d17"= "#00B9E3", 
+                         "hatch"= "#619CFF", 
+                         "n5"= "#DB72FB", 
+                         "n9"= "#FF61C3",
+                         "female" = "#F8766D",
+                         "male" = "#00BFC4")
+
 # custom themes for plots
 
 # hex colors for last full day of parents life
