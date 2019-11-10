@@ -16,8 +16,8 @@ DEseq2 analysis on characterization. Looking at treatment AND sex for each tissu
     # ceate new variable for hypothesis testing
     c.colData <- c.colData %>%
         mutate(hypothesis = fct_recode(treatment,
-                                "anticipation" = "control",
-                                "anticipation" = "bldg",
+                                "non-parental" = "control",
+                                "non-parental" = "bldg",
                                 "incubation" = "lay",
                                 "incubation" = "inc.d3",
                                 "incubation" = "inc.d9",
@@ -41,12 +41,12 @@ DEseq2 analysis on characterization. Looking at treatment AND sex for each tissu
     FALSE 5       L.G107_male_hypothalamus_control male   control male_hypothalamus
     FALSE 6          L.G107_male_pituitary_control male   control    male_pituitary
     FALSE     hypothesis
-    FALSE 1 anticipation
-    FALSE 2 anticipation
-    FALSE 3 anticipation
-    FALSE 4 anticipation
-    FALSE 5 anticipation
-    FALSE 6 anticipation
+    FALSE 1 non-parental
+    FALSE 2 non-parental
+    FALSE 3 non-parental
+    FALSE 4 non-parental
+    FALSE 5 non-parental
+    FALSE 6 non-parental
 
     # prep col data for subsequent analyses
     colDataHyp <- subsetcolData2(c.colData, c("female_hypothalamus", "male_hypothalamus"))
@@ -960,101 +960,24 @@ plot genes in a PRL WGCNA module
 --------------------------------
 
     # pitutiary expression
-
     plotWGCNAcandidates(vsd.pit, c("NP_990797.2"), colDataPit, "PRL expression, Pituitary")
 
 ![](../figures/sexes/wgcna-1.png)
 
-    plotWGCNAcandidates(vsd.pit, c("NP_001090992.1"), colDataPit, "VIP1R expression, Pituitary")
+    # COX1,  PRL, 
+    topPCAloadings <- c("NP_006917.1",  "NP_990797.2")
+    h <- plotWGCNAcandidates(vsd.hyp, topPCAloadings, colDataHyp, "Hypothalamus")
+    p <- plotWGCNAcandidates(vsd.pit, topPCAloadings, colDataPit, "Pituitary")
+
+    plot_grid(h + theme(axis.text.x = element_blank(), legend.position = "none"),
+              p , nrow = 2, rel_heights = c(0.45,0.55))
 
 ![](../figures/sexes/wgcna-2.png)
-
-    plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1"), colDataPit, "PRL & VIP1R expression, Pituitary")
-
-![](../figures/sexes/wgcna-3.png)
-
-    plotWGCNAcandidates(vsd.pit, c("NP_990136.1", "NP_001035179.1"), colDataPit, "TH & AR expression, Pituitary")
-
-![](../figures/sexes/wgcna-4.png)
-
-    plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "NP_001090992.1","NP_990136.1", "NP_001035179.1", "NP_001026269.1"), 
-                        colDataPit, "PRL, PRLR, VIP1R, POMC, TH & AR expression, Pituitary")
-
-![](../figures/sexes/wgcna-5.png)
-
-    plotWGCNAcandidates(vsd.pit, c("XP_015155078.1", "XP_015146451.1", "NP_001025709.2", "NP_990327.2"), 
-                        colDataPit, "Stat and JAK proteins, Pituitary")
-
-![](../figures/sexes/wgcna-6.png)
-
-    plotWGCNAcandidates(vsd.pit,
-                        c("NP_990797.2","NP_001004392.2", "NP_001004403.1", "NP_001006255.2", "NP_001006274.1",
-                               "NP_989500.1", "XP_001234815.2", "XP_015149152.1", "XP_416110.5"),
-                        colDataPit, "9 of 102 genes in a WGCNA module containting Prolactin")
-
-![](../figures/sexes/wgcna-7.png)
-
-    plotWGCNAcandidates(vsd.pit,
-                        c("XP_428110.3","NP_001004392.2",  "XP_015142961.1", "XP_015139636.1",
-                          "XP_015137408.1", "XP_004938696.1", "NP_990620.1", "NP_001170793.2", "NP_001026250.1"),
-                        colDataPit, "Prolaction receptor: 9 of 147 genes in a WGCNA module containting PRLR")
-
-![](../figures/sexes/wgcna-8.png)
-
-    plotWGCNAcandidates(vsd.pit, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
-                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
-                                   "NP_990797.2", "XP_015132722.1"), colDataPit, "Pitutary: CISH, SOCS, PRL, PRLR")
-
-![](../figures/sexes/wgcna-9.png)
-
-    # genes from https://link.springer.com/article/10.1007%2Fs12079-012-0168-0
-    # A pathway map of prolactin signaling
-    # PL, RAC1, IRS2 not found
-    plotWGCNAcandidates(vsd.pit, c("NP_990797.2", "XP_015132722.1", "NP_989690.1",
-                                   "NP_001025709.2", "XP_015144878.1", "NP_989481.1",
-                                   "NP_001186467.1", "NP_990386.1", "XP_015132490.1",
-                                   "XP_417614.3", "XP_015150421.1", "NP_001155844.1"), 
-                        colDataPit, "Pit: Genes involved in prolactin signaling")
-
-![](../figures/sexes/wgcna-10.png)
-
-    # hyp
-    plotWGCNAcandidates(vsd.hyp, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
-                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
-                                   "NP_990797.2", "XP_015132722.1"), colDataHyp, "Hypothalamus: CISH, SOCS, PRL, PRLR")
-
-![](../figures/sexes/wgcna-11.png)
-
-    plotWGCNAcandidates(vsd.hyp, c("NP_001170780.1", "NP_001090992.1", "NP_001014970.1"), colDataHyp, "VIP expression, Hypothalamus")
-
-![](../figures/sexes/wgcna-12.png)
-
-    plotWGCNAcandidates(vsd.hyp, c("NP_990797.2", "XP_015132722.1", "NP_989690.1",
-                                   "NP_001025709.2", "XP_015144878.1", "NP_989481.1",
-                                   "NP_001186467.1", "NP_990386.1", "XP_015132490.1",
-                                   "XP_417614.3", "XP_015150421.1", "NP_001155844.1"), 
-                        colDataHyp, "Hyp: Genes involved in prolactin signaling")
-
-![](../figures/sexes/wgcna-13.png)
-
-    # gonad
-    plotWGCNAcandidates(vsd.gon, c("NP_989957.1", "NP_001120784.1", "NP_001120786.1",
-                                   "NP_001131120.1", "NP_001186037.1", "NP_989871.1",
-                                   "NP_990797.2", "XP_015132722.1"), colDataGon, "Gonad: CISH, SOCS, PRL, PRLR")
-
-![](../figures/sexes/wgcna-14.png)
-
-    plotWGCNAcandidates(vsd.gon, c("NP_990797.2", "XP_015132722.1", "NP_989690.1",
-                                   "NP_001025709.2", "XP_015144878.1", "NP_989481.1",
-                                   "NP_001186467.1", "NP_990386.1", "XP_015132490.1",
-                                   "XP_417614.3", "XP_015150421.1", "NP_001155844.1"), 
-                        colDataGon, "Gonad: Genes involved in prolactin signaling")
-
-![](../figures/sexes/wgcna-15.png)
 
     PRL_associated <- read.csv("../results/08_PRL_associated.csv", header = T)
     prl36 <-  PRL_associated$entrezid[1:57]
     prl72 <-  PRL_associated$entrezid[58:102]
+
     plotWGCNAcandidates(vsd.pit, prl36, colDataPit, "A-K genes with PRL pattern in the pituitary")
 
 ![](../figures/sexes/wgcna2-1.png)
@@ -1062,54 +985,5 @@ plot genes in a PRL WGCNA module
     plotWGCNAcandidates(vsd.pit, prl72, colDataPit, "K-Z genes with PRL pattern in the pituitary")
 
 ![](../figures/sexes/wgcna2-2.png)
-
-    PRLR_associated <- read.csv("../results/08_PRLR_associated.csv", header = T)
-    prlr36 <-  PRLR_associated$entrezid[1:57]
-    prlr72 <-  PRLR_associated$entrezid[58:115]
-    prlr116<-  PRLR_associated$entrezid[116:147]
-    plotWGCNAcandidates(vsd.pit, prlr36, colDataPit, "A-G genes with PRLR pattern in the pituitary")
-
-![](../figures/sexes/wgcna2-3.png)
-
-    plotWGCNAcandidates(vsd.pit, prlr72, colDataPit, "L-S genes with PRLR pattern in the pituitary")
-
-![](../figures/sexes/wgcna2-4.png)
-
-    plotWGCNAcandidates(vsd.pit, prlr116, colDataPit, "S-Z genes with PRLR pattern in the pituitary")
-
-![](../figures/sexes/wgcna2-5.png)
-
-    VIPR1_associated <- read.csv("../results/08_VIPR1_associated.csv", header = T)
-    vipr156 <-  VIPR1_associated$entrezid[398:456]
-    plotWGCNAcandidates(vsd.pit, vipr156, colDataPit, "Genes with VIPR1 pattern in the pituitary")
-
-![](../figures/sexes/wgcna2-6.png)
-
-    AR_associated <- read.csv("../results/08_AR_associated.csv", header = T)
-    AR <-  AR_associated$entrezid[1:31]
-    plotWGCNAcandidates(vsd.pit, AR, colDataPit, "Genes with AR pattern in the pituitary")
-
-![](../figures/sexes/wgcna2-7.png)
-
-    POMC_associated <- read.csv("../results/08_POMC_associated.csv", header = T)
-    pomc <-  POMC_associated$entrezid[32:61]
-    plotWGCNAcandidates(vsd.pit, pomc, colDataPit, "Genes with POMC pattern in the pituitary")
-
-![](../figures/sexes/wgcna2-8.png)
-
-    # COX1, COX3, CHGA, PRL, ATP2B4, LOC107055658
-    topPCAloadings <- c("NP_006917.1", "NP_006921.2","XP_421330.1", "NP_990797.2", "XP_015154447.1", "XP_015156300.1")
-
-    plotWGCNAcandidates(vsd.hyp, topPCAloadings, colDataHyp, "Hypothalamus")
-
-![](../figures/sexes/topPCAloadings-1.png)
-
-    plotWGCNAcandidates(vsd.pit, topPCAloadings, colDataPit, "Pituitary")
-
-![](../figures/sexes/topPCAloadings-2.png)
-
-    plotWGCNAcandidates(vsd.gon, topPCAloadings, colDataGon, "Gonads")
-
-![](../figures/sexes/topPCAloadings-3.png)
 
     rts <- assay(vsd.pit)

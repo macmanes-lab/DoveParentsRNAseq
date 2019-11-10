@@ -613,60 +613,44 @@ plotWGCNAcandidates <- function(vsd, mygenelist, colData, mysubtitle){
     geom_point() +
     geom_smooth(se = FALSE) +
     facet_wrap(~Name, scales = "free_y") +
-    theme_rmh() +
+    mytheme() +
     theme(legend.position = "bottom",
-          axis.text.x = element_text(angle = 60,  hjust=1),
-          axis.text.y = element_blank()) +
+          axis.text.x = element_text(angle = 60,  hjust=1)) +
     guides(fill = guide_legend(nrow = 1)) +
     labs(x = NULL, y = "Gene expression",
          subtitle = mysubtitle) +
     scale_x_continuous(breaks=c(1,2,3,4,5,6,7,8,9),
-                       labels=charlevels)
+                       labels=charlevels) +
+    scale_color_manual(values = colorstreatmentsex)
   return(p1)
   
 }
 
 plotWGCNAcandidatesManip <- function(vsd, mygenelist, colData, mysubtitle){
   
-  # make dataframe with geneids and names and counts
-  # how to gather: https://tidyr.tidyverse.org/reference/gather.html
-  
   vsd.df <- as.data.frame(assay(vsd))
   vsd.df$entrezid <- row.names(vsd.df)
   
   candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
-  
-  # select genes of interst
-  
   candidates <- candidates %>%
     filter(entrezid %in% mygenelist) %>% droplevels()
-  
   candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -geneid)
-  
   candidates_long <- candidates %>% gather(-Name, key = "sample", value = "value")
-  
   candidates_long$V1 <- candidates_long$sample
-  
   candidatecounts <- left_join(candidates_long, colData, by = "V1")
-  
   candidatecounts$Name <- as.factor(candidatecounts$Name)
   candidatecounts$treatment <- factor(candidatecounts$treatment, levels = maniplevels)
-  
-  head(candidatecounts)
-  
   bysextreatment <- group_by(candidatecounts, sex, treatment, Name)
   bysextreatment
   candidateST <- summarize(bysextreatment, expression = mean(value))
   
-  
-  p1 <- ggplot(candidateST, aes(x = as.numeric(treatment), y = expression, color = sex)) +
-    geom_point() +
-    geom_smooth(se = FALSE) +
+  p1 <- ggplot(candidateST, aes(x = as.numeric(treatment), y = expression)) +
+    geom_point(aes(color = treatment)) +
+    geom_smooth(se = FALSE, aes(color = sex)) +
     facet_wrap(~Name, scales = "free_y") +
-    theme_rmh() +
+    mytheme +
     theme(legend.position = "bottom",
-          axis.text.x = element_text(angle = 60,  hjust=1),
-          axis.text.y = element_blank()) +
+          axis.text.x = element_text(angle = 60,  hjust=1)) +
     guides(fill = guide_legend(nrow = 1)) +
     labs(x = NULL, y = "Gene expression",
          subtitle = mysubtitle) +
@@ -938,24 +922,15 @@ LDAdata.hypothesis <- function(vsd, mycolData, mypredictor){
   print("the samples sizes")
   print(model$counts)
   
-  print("the prior probabilities used")
-  print(model$prior)
-  print(model$terms)
+  #print("the prior probabilities used")
+  #print(model$prior)
+  #print(model$terms)
   
   print("svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics.")
   print(model$svd)
   
-
   #  predictions
   predictions <- model %>% predict(test.transformed)
-  
-  # Predicted classes
-  #print(predictions$class, 6)
-  # Predicted probabilities of class memebership.
-  #print(predictions$posterior, 6) 
-  # Linear discriminants
-  #print(predictions$x, 3)
-  
   lda.data <- cbind(train.transformed, predict(model)$x)
   return(lda.data)
 }  
