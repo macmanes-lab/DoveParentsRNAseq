@@ -9,6 +9,27 @@ theme_B3 <- function () {
     )
 }
 
+
+theme_rmh <- function(){ 
+  theme_bw(base_size=14) +
+    theme(
+      panel.grid.minor.x  = element_blank(),
+      panel.grid.minor.y  = element_blank(),
+      strip.background = element_rect(colour="white", fill="white"),
+      legend.position = "right",           
+      legend.margin=margin(t=-0.1, r=0, b=-0.1, l=-0.1, unit="cm"),
+      legend.key.size = unit(0.5, "cm"))
+}
+
+mytheme <- function(){
+  theme_minimal(base_size = 12) + 
+    theme(panel.grid = element_blank(),
+          panel.background = element_rect(fill = "transparent", colour = NA),
+          plot.background = element_rect(fill = "transparent", colour = NA),
+          legend.title = element_blank())
+}
+
+
 # custom levels
 
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
@@ -66,28 +87,3 @@ myannotationscolors <- list(lastday = c("control" = "#77787A",
                                        "chicks later" = "#7874B0"))
 
 
-# themes for whole plots
-
-theme_noaxislabels <- theme(legend.position = "none", 
-                            axis.title=element_blank(), axis.ticks = element_blank(), axis.text=element_blank(),
-                            panel.background = element_blank()) 
-
-theme_siggenes <- theme(legend.position = c(0.2,0.3), 
-                            #axis.title.x=element_blank(), 
-                        axis.ticks = element_blank(), axis.text=element_blank(),
-                        panel.background = element_blank())
-
-theme_nolegend <- theme(legend.position = "none",  axis.text.x=element_blank(), axis.ticks = element_blank()) 
-
-theme_rmh <- function(){ 
-  theme_bw(base_size=14) +
-    theme(
-      panel.grid.minor.x  = element_blank(),
-      panel.grid.minor.y  = element_blank(),
-      strip.background = element_rect(colour="white", fill="white"),
-      legend.position = "right",           
-      legend.margin=margin(t=-0.1, r=0, b=-0.1, l=-0.1, unit="cm"),
-      legend.key.size = unit(0.5, "cm"))
-}
-
-theme_set(theme_classic())
