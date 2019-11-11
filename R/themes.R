@@ -44,6 +44,7 @@ alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,
                "m.n2",  "prolong" , "extend",
                "n5", "n9")
 
+tissuelevels <- c("hypothalamus", "pituitary", "gonads")
 
 # custom colors
 
@@ -82,3 +83,9 @@ colorscharmaip <-  c("control" = "#F8766D",
                  "m.n2" = "#262625", 
                  "prolong" = "#1B86B9" , 
                  "extend" = "#01588C")
+
+colorstissue <- c("hypothalamus" = "#d95f02",
+                  "pituitary" = "#1b9e77",
+                  "gonads" =  "#7570b3")
+
+
