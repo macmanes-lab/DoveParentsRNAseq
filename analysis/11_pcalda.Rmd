@@ -10,17 +10,11 @@ library(factoextra)
 library(cowplot)
 library(Rtsne)
 library(viridis)
+library(forcats)
 
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/pca/', cache = T)
 
-# custom theme for plots
-mytheme <- function(){
-  theme_minimal(base_size = 12) + 
-    theme(panel.grid = element_blank(),
-          panel.background = element_rect(fill = "transparent", colour = NA),
-          plot.background = element_rect(fill = "transparent", colour = NA),
-          legend.title = element_blank())
-}
+source("../R/themes.R")  
 ```
 
 ## data wrangle
@@ -161,6 +155,111 @@ print(d)
 dev.off()
 ```
 
-# combined pca tsne
+## all data
 
 
+```{r charmanip}
+# prep col data for all samples
+colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+colData$treatment <- factor(colData$treatment, levels = alllevels2)
+colData <- colData %>% mutate(tissue = fct_recode(tissue, "gonads" = "gonad"))
+colData$tissue <- factor(colData$tissue, levels = tissuelevels)
+row.names(colData) <- colData$V1
+
+# prep count data for all samples
+countData <- as.data.frame(pseudocounts)
+countData$entrezid <- countData$X1
+countData <- left_join(geneinfo, countData)
+countData <- countData %>% distinct(Name, .keep_all = TRUE) %>%
+    select(-row.names, -geneid, -entrezid, -X1) 
+countData <- as.data.frame(countData)
+row.names(countData) <- countData$Name
+countData$Name <- NULL
+countData$entrezid <- NULL
+countData <- as.data.frame(t(countData))
+
+# check ready for analysis
+row.names(countData) == row.names(colData)
+
+
+# pca
+mypca <- prcomp(countData)
+eig.val <- get_eigenvalue(mypca)
+head(eig.val)
+
+mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
+                  PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
+                  ID = row.names(countData))
+mypcadf$V1 <- row.names(mypcadf)
+mypcadf <- left_join(colData, mypcadf)
+mypcadf <- mypcadf %>% select(bird,sex,tissue,treatment,PC1:PC6)
+head(mypcadf)
+
+all1 <- ggplot(mypcadf, aes(x = PC1, y = PC2, 
+                         color = colData$treatment, 
+                         #shape = colData$tissue,
+                         #size = colData$sex,
+                        shape = colData$study)) +
+  geom_hline(yintercept=0, color = "grey") +
+  geom_vline(xintercept=0, color = "grey") +
+  geom_point(size = 2)  + theme_minimal(base_size = 6)  +
+  mytheme() +
+  theme(legend.title = element_blank(),
+        axis.text = element_blank()) +
+  #scale_alpha_manual(values = c(0.5,1)) +
+  labs(x = "PC1: 44.6% of variance", y = "PC2: 29.8% of variance") +
+  scale_color_manual(values = colorscharmaip) 
+all1
+
+
+all2 <- fviz_pca_var(mypca,  labelsize = 4 , axes.linetype = "blank", 
+                   repel = TRUE ,
+                  select.var= list(contrib = 6)) + 
+      mytheme() + 
+      labs(x = " ", y = " ", subtitle = NULL, title =  NULL) +
+    geom_hline(yintercept=0, color = "grey") +
+  geom_vline(xintercept=0, color = "grey") +
+    theme( axis.text = element_blank()) 
+
+
+# prep for tsne
+euclidist <- dist(countData) # euclidean distances between the rows
+
+tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
+tsne_df = as.data.frame(tsne_model$Y) 
+plot(tsne_df$V1, tsne_df$V2)
+
+# prep for adding columns
+colData2 <- colData 
+colData2$V1 <- NULL
+tsne_df_cols <- cbind(colData2, tsne_df)
+
+ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = tissue)) +
+  geom_point(size = 2) +
+  mytheme() +
+  scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
+  labs(x = "tSNE 1", y = "tSNE 2") 
+
+ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = study, color = tissue)) +
+  geom_point(size = 2) +
+  mytheme() +
+  scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
+  labs(x = "tSNE 1", y = "tSNE 2") 
+
+ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = study, color = treatment)) +
+  geom_point(size = 2) +
+  mytheme() +
+  labs(x = "tSNE 1", y = "tSNE 2") +
+  scale_alpha_manual(values = c(0.5,1)) +
+  scale_color_manual(values = colorscharmaip)
+```
+
+```{r transparentplots}
+png('../figures/pca/all-1.png',width=600,height=600, units="px",bg = "transparent")
+print(all1)
+dev.off()
+
+png('../figures/pca/all-2.png',width=600,height=600, units="px",bg = "transparent")
+print(all2)
+dev.off()
+```
