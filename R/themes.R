@@ -1,4 +1,4 @@
-# custom theme
+# custom themes
 
 theme_B3 <- function () { 
   theme_classic(base_size = 7) +
@@ -33,12 +33,21 @@ mytheme <- function(){
 # custom levels
 
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
-maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" , "extend" , "prolong", "early")
-maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2",  "prolong" , "extend")
+maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" , 
+                  "extend" , "prolong", "early")
+maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2", 
+                   "prolong" , "extend")
+
+alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
+               "m.inc.d8" , "inc.d9", "m.inc.d9" ,
+               "inc.d17",  "m.inc.d17", "hatch", 
+               "m.n2",  "prolong" , "extend",
+               "n5", "n9")
 
 
+# custom colors
 
-colorsmaniplevels1 <- c( "m.inc.d3" = "#CDCDCD", 
+colorsmanip <- c( "m.inc.d3" = "#CDCDCD", 
                          "m.inc.d8" = "#6DA9D3", 
                          "m.inc.d9" = "#959595", 
                          "m.inc.d17" = "#626262",
@@ -46,7 +55,7 @@ colorsmaniplevels1 <- c( "m.inc.d3" = "#CDCDCD",
                          "prolong" = "#1B86B9" , 
                          "extend" = "#01588C")
 
-colorstreatmentsex <-  c("control" = "#F8766D", 
+colorschar <-  c("control" = "#F8766D", 
                          "bldg"= "#D39200", 
                          "lay"= "#93AA00", 
                          "inc.d3"= "#00BA38", 
@@ -54,59 +63,22 @@ colorstreatmentsex <-  c("control" = "#F8766D",
                          "inc.d17"= "#00B9E3", 
                          "hatch"= "#619CFF", 
                          "n5"= "#DB72FB", 
-                         "n9"= "#FF61C3",
-                         "female" = "#F8766D",
-                         "male" = "#00BFC4")
-
-# custom themes for plots
-
-# hex colors for last full day of parents life
-
-colorlastday <-  c("control" = "#77787A", 
-                   "nest building" = "#DA733E", 
-                   "eggs lay" = "#559FD9",
-                   "eggs early" = "#9AD0C3",
-                   "eggs middle" = "#68C2A8", 
-                   "eggs later" = "#37A589",  
-                   "eggs delay" = "#19977D",
-                   "chicks hatch" = "#BAB5D2",   
-                   "chicks early" = "#9993C3", 
-                   "chicks later" = "#7874B0",
-                   "empty nest" = "#754E27")
-
-# hex colors for last 2nd to last day of parents life
-colorpenultimate <- c("control" = "#77787A", 
-                      "nest building" = "#DA733E", 
-                      "eggs lay" = "#559FD9",
-                      "eggs early" = "#9AD0C3",
-                      "eggs middle" = "#68C2A8", 
-                      "eggs later" = "#37A589",  
-                      "eggs delay" = "#19977D",
-                      "chicks hatch" = "#BAB5D2",   
-                      "chicks early" = "#9993C3", 
-                      "chicks later" = "#7874B0")
+                         "n9"= "#FF61C3")
 
 
-myannotationscolors <- list(lastday = c("control" = "#77787A", 
-                                        "nest building" = "#DA733E", 
-                                        "eggs lay" = "#559FD9",
-                                        "eggs early" = "#9AD0C3",
-                                        "eggs middle" = "#68C2A8", 
-                                        "eggs later" = "#37A589",  
-                                        "eggs delay" = "#19977D",
-                                        "chicks hatch" = "#BAB5D2",   
-                                        "chicks early" = "#9993C3", 
-                                        "chicks later" = "#7874B0",
-                                        "empty nest" = "#754E27"),
-                       penultimate = c("control" = "#77787A", 
-                                       "nest building" = "#DA733E", 
-                                       "eggs lay" = "#559FD9",
-                                       "eggs early" = "#9AD0C3",
-                                       "eggs middle" = "#68C2A8", 
-                                       "eggs later" = "#37A589",  
-                                       "eggs delay" = "#19977D",
-                                       "chicks hatch" = "#BAB5D2",   
-                                       "chicks early" = "#9993C3", 
-                                       "chicks later" = "#7874B0"))
-
-
+colorscharmaip <-  c("control" = "#F8766D", 
+                 "bldg"= "#D39200", 
+                 "lay"= "#93AA00", 
+                 "inc.d3"= "#00BA38", 
+                 "inc.d9"= "#00C19F", 
+                 "inc.d17"= "#00B9E3", 
+                 "hatch"= "#619CFF", 
+                 "n5"= "#DB72FB", 
+                 "n9"= "#FF61C3",
+                 "m.inc.d3" = "#CDCDCD", 
+                 "m.inc.d8" = "#6DA9D3", 
+                 "m.inc.d9" = "#959595", 
+                 "m.inc.d17" = "#626262",
+                 "m.n2" = "#262625", 
+                 "prolong" = "#1B86B9" , 
+                 "extend" = "#01588C")
