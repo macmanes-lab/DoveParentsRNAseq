@@ -39,9 +39,9 @@ maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2"
                    "prolong" , "extend")
 
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
-               "m.inc.d8" , "inc.d9", "m.inc.d9" ,
-               "inc.d17",  "m.inc.d17", "hatch", 
-               "m.n2",  "prolong" , "extend",
+                "inc.d9", "m.inc.d8" ,"m.inc.d9" ,
+               "inc.d17",  "m.inc.d17","prolong" ,
+               "hatch",  "m.n2",   "extend",
                "n5", "n9")
 
 alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
@@ -93,4 +93,5 @@ colorstissue <- c("hypothalamus" = "#d95f02",
                   "pituitary" = "#1b9e77",
                   "gonads" =  "#7570b3")
 
+sexcolors <- c("female" = "#969696", "male" = "#525252")
 
