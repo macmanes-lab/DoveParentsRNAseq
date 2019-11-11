@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ───────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
     ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -31,32 +31,9 @@
     ## 
     ##     date
 
-    source("../R/functions.R")  # load custom functions 
     source("../R/themes.R")  # load custom themes and color palletes
 
     knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
-
-    charlevels <- c("control", "bldg", "lay", "inc_d3", "inc_d9", "inc_d17", "hatch", "n5", "n9" )
-    removelevels <- c("M_inc3",  "M_inc9", "M_inc17", "M_n2")
-    maniplevels <- c("early", "prolong", "extend")
-    combolevels <- c("control", "bldg", "lay", "inc_d3", "M_inc3",
-                      "inc_d9",  "M_inc9", "early",  "inc_d17","M_inc17",  "hatch",
-                     "prolong", "extend", "M_n2",
-                      "n5", "n9" )
-
-    manipchar <- c("early",  "inc_d17", "hatch", "prolong", "extend", "n5")
-    removechar <- c("inc_d3", "M_inc3",  "inc_d9", "M_inc9","inc_d17", "M_inc17","hatch", "M_n2")
-
-    sexcolors <- c("female" = "#F8766D", "male" = "#00BFC4")
-    charcolors <- c("control" = "#F8766D", "bldg" = "#D39200",
-                    "lay" =  "#93AA00", "inc_d3" = "#00BA38" ,
-                    "inc_d9" = "#00C19F" , "inc_d17" =  "#00B9E3", 
-                    "hatch" = "#619Cff" , "n5" =  "#DB72Fb", "n9" =  "#FF61C3")
-
-    charsexlevels <- c("control female", "control male", "bldg female", "bldg male",  "lay female", "lay male",
-                    "inc_d3 female", "inc_d3 male", "inc_d9 female", "inc_d9 male",
-                    "inc_d17 female", "inc_d17 male", "hatch female", "hatch male", 
-                    "n5 female", "n5 male", "n9 female" , "n9 male")
 
     prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)
 
@@ -65,40 +42,45 @@
 
     # create lists of factos for characterization and manipluation studies
 
-    # rename some of the timepoints levels, store in new columns
+    # rename some of the treatments levels, store in new columns
     prolactin <- prolactin %>%
         mutate(sex = fct_recode(Sex,
                                 "female" = "f",
                                 "male" = "m"),
-               timepoint = fct_recode(Treatment,
+               treatment = fct_recode(Treatment,
                                 "hatch" = "Hatch",
-                                "inc_d17" = "Inc_d17",
-                                "inc_d3" = "Inc_d3",
-                                "inc_d9" = "Inc_d9",
-                                "M_inc9" = "M_Inc9",
-                                "M_inc3" = "M_Inc3",
-                                "early" = "M_Inc8",
-                                "early" = "M_inc8",
-                                "M_inc17" = "M_Inc17",
-                                "M_n2" = "M_hatch",
+                                "inc.d17" = "Inc_d17",
+                                "inc.d17" = "inc_d17",
+                                "inc.d3" = "Inc_d3",
+                                 "inc.d3" = "inc_d3",
+                                "inc.d9" = "Inc_d9",
+                                 "inc.d9" = "inc_d9",
+                                "m.inc.d9" = "M_Inc9",
+                                "m.inc.d9" = "M_inc9",
+                                "m.inc.d3" = "M_Inc3",
+                                "m.inc.d8" = "M_Inc8",
+                                "m.inc.d8" = "M_inc8",
+                                "m.inc.d17" = "M_Inc17",
+                                "m.n2" = "M_hatch",
                                 "control" = "baseline",
                                 "n5" = "N5", 
                                 "n9" = "N9"),
-               study = fct_collapse(timepoint,
+               study = fct_collapse(treatment,
                                      characterization = charlevels,
-                                     manipulation = maniplevels,
-                                    removal = removelevels))
+                                     manipulation = maniplevels1))
 
     colnames(prolactin)[colnames(prolactin)=="Prolactin ng/mL"] <- "plasma_conc"
     prolactin$hormone <- "prolactin"
-    prolactin <- prolactin %>% select(study, timepoint, sex, hormone, plasma_conc)   %>% drop_na()
+    prolactin <- prolactin %>% 
+                  select(study, treatment, sex, hormone, plasma_conc)  %>% 
+                  drop_na()
 
     summary(prolactin)
 
-    ##               study       timepoint       sex        hormone         
-    ##  characterization:189   inc_d9 : 24   female:160   Length:325        
-    ##  manipulation    : 59   control: 23   male  :165   Class :character  
-    ##  removal         : 77   inc_d17: 21                Mode  :character  
+    ##               study       treatment       sex        hormone         
+    ##  characterization:189   inc.d9 : 24   female:160   Length:325        
+    ##  manipulation    :136   control: 23   male  :165   Class :character  
+    ##                         inc.d17: 21                Mode  :character  
     ##                         n5     : 21                                  
     ##                         bldg   : 20                                  
     ##                         extend : 20                                  
@@ -115,48 +97,46 @@
     PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)
 
     PETC <- PETC %>% select(stage, sex, hormone, plasma_conc)  %>%
-                    filter(stage %in% combolevels)  %>%
-                    droplevels()  
-    PETC$stage <- factor(PETC$stage)
-    levels(PETC$stage)
-
-    ##  [1] "bldg"    "extend"  "hatch"   "inc_d17" "inc_d3"  "inc_d9"  "lay"    
-    ##  [8] "n5"      "n9"      "prolong"
-
-    PETC <- PETC %>%
-        mutate(sex = fct_recode(sex,
+                    mutate(treatment = fct_recode(stage,
+                                "inc.d17" = "inc_d17",
+                                "inc.d3" = "inc_d3",
+                                "inc.d9" = "inc_d9",
+                                "m.inc.d9" = "m_incd9",
+                                "m.inc.d3" = "m_incd3",
+                                "m.inc.d8" = "m_incd8",
+                                "m.inc.d17" = "m_incd17",
+                                "m.n2" = "m_hatch",
+                                "control" = "stress_hpg")) %>%
+                    filter(treatment %in% alllevels2) %>%   
+                    mutate(sex = fct_recode(sex,
                                 "female" = "f",
                                 "male" = "m"),
-               study = fct_collapse(stage,
+                           study = fct_collapse(treatment,
                                     characterization = charlevels,
-                                    manipulation = maniplevels)) %>% 
-      drop_na()
-    colnames(PETC)[colnames(PETC)=="stage"] <- "timepoint"
-    PETC <- PETC %>% select(study, timepoint, sex, hormone, plasma_conc)
+                                    manipulation = maniplevels1)) %>% 
+                  drop_na() %>%  droplevels()  %>% 
+                  select(study, treatment, sex, hormone, plasma_conc)
     summary(PETC)
 
-    ##               study       timepoint       sex        hormone         
-    ##  characterization:490   inc_d9 : 88   female:332   Length:603        
-    ##  manipulation    :113   inc_d17: 68   male  :271   Class :character  
-    ##                         bldg   : 60                Mode  :character  
-    ##                         hatch  : 60                                  
-    ##                         extend : 59                                  
-    ##                         n9     : 58                                  
-    ##                         (Other):210                                  
-    ##   plasma_conc      
-    ##  Min.   :  0.0355  
-    ##  1st Qu.:  0.2402  
-    ##  Median :  0.8358  
-    ##  Mean   :  1.4721  
-    ##  3rd Qu.:  1.6961  
-    ##  Max.   :117.7708  
+    ##               study         treatment       sex        hormone         
+    ##  characterization:500   inc.d9   : 88   female:493   Length:887        
+    ##  manipulation    :387   inc.d17  : 68   male  :394   Class :character  
+    ##                         bldg     : 60                Mode  :character  
+    ##                         hatch    : 60                                  
+    ##                         extend   : 59                                  
+    ##                         m.inc.d17: 58                                  
+    ##                         (Other)  :494                                  
+    ##   plasma_conc       
+    ##  Min.   :  0.03306  
+    ##  1st Qu.:  0.23281  
+    ##  Median :  0.84151  
+    ##  Mean   :  1.39902  
+    ##  3rd Qu.:  1.69764  
+    ##  Max.   :117.77083  
     ## 
 
     hormones <- rbind(prolactin, PETC)
-    hormones$timepoint <- factor(hormones$timepoint, levels = combolevels)
-
-    hormones <- hormones %>%  mutate(timepoint.sex = paste(timepoint, sex, sep = " ")) 
-    hormones$timepoint.sex <- factor(hormones$timepoint.sex, levels = charsexlevels)
+    hormones$treatment <- factor(hormones$treatment, levels = alllevels)
 
 
     hormones$okay <- ifelse(hormones$hormone == "cort" & hormones$plasma_conc > 30, "bad",
@@ -167,45 +147,36 @@
     hormones <- hormones %>% filter(okay == "okay") %>% droplevels()
     summary(hormones)
 
-    ##               study       timepoint       sex        hormone         
-    ##  characterization:672   inc_d9 :112   female:485   Length:918        
-    ##  manipulation    :169   inc_d17: 88   male  :433   Class :character  
-    ##  removal         : 77   hatch  : 80                Mode  :character  
-    ##                         bldg   : 79                                  
-    ##                         extend : 78                                  
-    ##                         n5     : 77                                  
-    ##                         (Other):404                                  
-    ##   plasma_conc              timepoint.sex     okay          
-    ##  Min.   :  0.0355   inc_d9 female : 58   Length:918        
-    ##  1st Qu.:  0.4409   inc_d9 male   : 54   Class :character  
-    ##  Median :  1.7475   bldg female   : 46   Mode  :character  
-    ##  Mean   : 12.7057   n5 female     : 46                     
-    ##  3rd Qu.: 12.2575   inc_d17 female: 44                     
-    ##  Max.   :120.3499   (Other)       :424                     
-    ##                     NA's          :246
-
-    prl.char <- hormones %>% filter(hormone == "prolactin", timepoint %in% charlevels)   %>%  droplevels()
-    test.char <- hormones %>% filter(hormone == "testosterone", timepoint %in% charlevels)   %>%  droplevels()
-    est.char <- hormones %>% filter(hormone == "estradiol", timepoint %in% charlevels)   %>%  droplevels()
-    prog.char <- hormones %>% filter(hormone == "progesterone", timepoint %in% charlevels)   %>%  droplevels()
-    cort.char <- hormones %>% filter(hormone == "cort", timepoint %in% charlevels)   %>%  droplevels()
+    ##               study         treatment       sex        hormone         
+    ##  characterization:682   inc.d9   :112   female:646   Length:1201       
+    ##  manipulation    :519   inc.d17  : 88   male  :555   Class :character  
+    ##                         hatch    : 80                Mode  :character  
+    ##                         bldg     : 79                                  
+    ##                         m.inc.d17: 78                                  
+    ##                         extend   : 78                                  
+    ##                         (Other)  :686                                  
+    ##   plasma_conc            okay          
+    ##  Min.   :  0.03306   Length:1201       
+    ##  1st Qu.:  0.34371   Class :character  
+    ##  Median :  1.38568   Mode  :character  
+    ##  Mean   : 10.00584                     
+    ##  3rd Qu.:  6.05370                     
+    ##  Max.   :120.34989                     
+    ## 
 
     hormonecharplot <- function(myhormone, myylab){
-      
-      mycolors <- charcolors
-      sexcolors <- c("female" = "#969696", "male" = "#525252")
-      
+
       hormones %>% 
         filter(study == "characterization",
                hormone %in% c(myhormone))  %>% 
         droplevels() %>% 
-      ggplot(aes(x = as.numeric(timepoint), y = plasma_conc)) +
+      ggplot(aes(x = as.numeric(treatment), y = plasma_conc)) +
             geom_smooth(aes(colour = sex)) +
-        geom_boxplot(aes(outlier.colour = timepoint, fill = timepoint, alpha = sex)) +
-        theme_B3() +
+        geom_boxplot(aes(outlier.colour = treatment, fill = treatment, alpha = sex)) +
+        mytheme() +
         theme(axis.text.x =  element_blank(),
               legend.position = "none") +
-        scale_fill_manual(values = mycolors) +
+        scale_fill_manual(values = colorscharmaip) +
         scale_color_manual(values = sexcolors) +
         labs(y = myylab, x = NULL) +
         guides(fill = guide_legend(order=1),
@@ -228,138 +199,125 @@
 
 ![](../figures/hormones/sexsteroids-1.png)
 
+    prl.char <- hormones %>% filter(hormone == "prolactin", treatment %in% charlevels)   %>%  droplevels()
+    test.char <- hormones %>% filter(hormone == "testosterone", treatment %in% charlevels)   %>%  droplevels()
+    est.char <- hormones %>% filter(hormone == "estradiol", treatment %in% charlevels)   %>%  droplevels()
+    prog.char <- hormones %>% filter(hormone == "progesterone", treatment %in% charlevels)   %>%  droplevels()
+    cort.char <- hormones %>% filter(hormone == "cort", treatment %in% charlevels)   %>%  droplevels()
+
+
     aovSexTretment <- function(mydata, whichormone){
-      aov2 <- aov(data = mydata, plasma_conc ~ timepoint + sex)
+      aov2 <- aov(data = mydata, plasma_conc ~ treatment * sex)
       print(whichormone)
       print(summary(aov2))
-      #print(TukeyHSD(aov2, which = "timepoint"))
+      #print(TukeyHSD(aov2, which = "treatment"))
     }
 
     aovTretment  <- function(mydata, whichormone){
-      aov1 <- aov(data = mydata, plasma_conc ~ timepoint )
+      aov1 <- aov(data = mydata, plasma_conc ~ treatment )
       print(whichormone)
       print(summary(aov1))
-      #print(TukeyHSD(aov1, which = "timepoint"))
+      #print(TukeyHSD(aov1, which = "treatment"))
     }
 
-    aovSexTretment(prl.char, "PRL")
+    aovSexTretment(prl.char, "PRL") # yes, sex difference (p = 0.00256), yes treatment effect (p < 2e-16), no interaction
 
     ## [1] "PRL"
-    ##              Df Sum Sq Mean Sq F value Pr(>F)    
-    ## timepoint     8  89185   11148   34.35 <2e-16 ***
-    ## sex           1   2983    2983    9.19 0.0028 ** 
-    ## Residuals   178  57766     325                   
+    ##                Df Sum Sq Mean Sq F value  Pr(>F)    
+    ## treatment       8  89185   11148  35.039 < 2e-16 ***
+    ## sex             1   2983    2983   9.374 0.00256 ** 
+    ## treatment:sex   8   3678     460   1.445 0.18104    
+    ## Residuals     170  54087     318                    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-    aovSexTretment(cort.char, "CORT")
+    aovSexTretment(cort.char, "CORT") # no sex difference (p = 0.779 ), small treatment effect (p = 0.0238),  no interaction
 
     ## [1] "CORT"
-    ##              Df Sum Sq Mean Sq F value Pr(>F)  
-    ## timepoint     7   34.8   4.965   2.261 0.0318 *
-    ## sex           1    0.1   0.139   0.063 0.8015  
-    ## Residuals   168  368.9   2.196                 
+    ##                Df Sum Sq Mean Sq F value Pr(>F)  
+    ## treatment       8   39.5   4.940   2.290 0.0238 *
+    ## sex             1    0.2   0.170   0.079 0.7790  
+    ## treatment:sex   8   15.7   1.966   0.911 0.5085  
+    ## Residuals     164  353.8   2.157                 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-    aovSexTretment(prog.char, "PROG")
+    aovSexTretment(prog.char, "PROG") # no sex difference or treatment effect, signifiant interacion (p = 0.0107)
 
     ## [1] "PROG"
-    ##              Df Sum Sq Mean Sq F value Pr(>F)
-    ## timepoint     7   2.62  0.3745   0.999  0.434
-    ## sex           1   0.08  0.0824   0.220  0.640
-    ## Residuals   181  67.87  0.3750
-
-    aovTretment(est.char, "E")
-
-    ## [1] "E"
-    ##             Df Sum Sq Mean Sq F value Pr(>F)  
-    ## timepoint    7  0.812 0.11601   1.872 0.0877 .
-    ## Residuals   68  4.214 0.06197                 
+    ##                Df Sum Sq Mean Sq F value Pr(>F)  
+    ## treatment       8   3.18  0.3970   1.081 0.3783  
+    ## sex             1   0.30  0.3026   0.824 0.3652  
+    ## treatment:sex   8   7.60  0.9502   2.588 0.0107 *
+    ## Residuals     176  64.62  0.3671                 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
-    aovTretment(test.char, "T")
+    aovTretment(est.char, "E") # p = 0.101
+
+    ## [1] "E"
+    ##             Df Sum Sq Mean Sq F value Pr(>F)
+    ## treatment    8  0.871 0.10891   1.758  0.101
+    ## Residuals   68  4.214 0.06197
+
+    aovTretment(test.char, "T") # p = 0.609
 
     ## [1] "T"
     ##             Df Sum Sq Mean Sq F value Pr(>F)
-    ## timepoint    7   7.59   1.084   0.779  0.609
+    ## treatment    7   7.59   1.084   0.779  0.609
     ## Residuals   33  45.90   1.391
 
-    hormonemanipPRL <- function(myhormone, myylab){
-      
-      mycolors <- sexcolors
-      
-      hormones %>% 
-        filter(timepoint %in% manipchar,
-               hormone %in% c(myhormone))  %>% 
-      ggplot(aes(x = timepoint, y = plasma_conc, fill = sex)) +
+    # prolactin, removal only
+    hormones %>% 
+        filter( hormone == c("prolactin"))  %>% 
+        filter( !treatment %in% c("m.inc.d8", "prolong", "extend"))  %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
         geom_boxplot() + 
         theme(axis.text.x = element_text(angle = 45, hjust = 1),
               legend.position = "none",
               strip.text = element_blank()) +
-        scale_fill_manual(values = mycolors) +
-        labs(y = myylab, x = NULL) +
-        facet_wrap(~sex) +
-        annotate("rect", xmin = 0.5, xmax = 1.5, ymin = 0, ymax = 125, alpha = .2) +
-        annotate("rect", xmin = 3.5, xmax = 5.5, ymin = 0, ymax = 125, alpha = .2) 
-    }
-
-    hormonemanipPRL("prolactin", "PRL (ng/mL)")
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = "PRL (ng/mL)", x = NULL) +
+        annotate("rect", xmin = 3.7, xmax = 5.3, ymin = -2, ymax = 0, alpha = 1) +
+        annotate("rect", xmin = 5.7, xmax = 7.3, ymin = -2, ymax = 0, alpha = 1) +
+        annotate("rect", xmin = 7.7, xmax = 9.3, ymin = -2, ymax = 0, alpha = 1) +
+        annotate("rect", xmin = 9.7, xmax = 11.3, ymin = -2, ymax = 0, alpha = 1)
 
 ![](../figures/hormones/manipulation-1.png)
 
-    hormonemanipSteroids <- function(myhormone, myylab, myymax){
-      
-      mycolors <- sexcolors
-      
-      hormones %>% 
-        filter(timepoint %in% manipchar,
-               hormone %in% c(myhormone))  %>% 
-      ggplot(aes(x = timepoint, y = plasma_conc, fill = sex)) +
+    hormones %>% 
+        filter( hormone == c("prolactin"))  %>% 
+        filter( !treatment %in% c("m.inc.d3", "m.inc.d9", "m.inc.d17","m.n2"))  %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
         geom_boxplot() + 
         theme(axis.text.x = element_text(angle = 45, hjust = 1),
               legend.position = "none",
               strip.text = element_blank()) +
-        scale_fill_manual(values = mycolors) +
-        labs(y = myylab, x = NULL) +
-        facet_wrap(~sex) +
-        annotate("rect", xmin = 2.5, xmax = 4.5, ymin = 0, ymax = myymax, alpha = .2)
-    }
-
-    a <- hormonemanipSteroids("estradiol", "E (ng/mL)", 1)
-    b <- hormonemanipSteroids("testosterone", "T (ng/mL)", 3.5)
-    c <- hormonemanipSteroids("cort", "CORT (ng/mL)", 10)
-    d <- hormonemanipSteroids("progesterone", "PROG (ng/mL)",2.5)
-
-    plot_grid(d,a,c,b, rel_widths = c(0.65,0.35))
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = "PRL (ng/mL)", x = NULL) +
+        annotate("rect", xmin = 4.7, xmax = 6.3, ymin = -2, ymax = 0, alpha = 1, alpha = 1) +
+        annotate("rect", xmin = 6.7, xmax = 8.3, ymin = -2, ymax = 0, alpha = 1, alpha = 1) +
+        annotate("rect", xmin = 8.7, xmax = 10.3, ymin = -2, ymax = 0, alpha = 1, alpha = 1)
 
 ![](../figures/hormones/manipulation-2.png)
 
-    hormoneremoval <- function(myhormone, myylab){
-      
-      mycolors <- c("female" = "#F8766D", "male" = "#00BFC4")
-      
-      hormones %>% 
-        filter(timepoint %in% removechar,
-               hormone %in% c(myhormone))  %>% 
-      ggplot(aes(x = timepoint, y = plasma_conc, fill = sex)) +
-        geom_boxplot() + 
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-              legend.position = "none",
-              strip.text = element_blank()) +
-        scale_fill_manual(values = mycolors) +
-        labs(y = myylab, x = NULL) +
-        facet_wrap(~sex) +
-        annotate("rect", xmin = 1.5, xmax = 2.5, ymin = 0, ymax = 125, alpha = .2) +
-        annotate("rect", xmin = 3.5, xmax = 4.5, ymin = 0, ymax = 125, alpha = .2) +
-        annotate("rect", xmin = 5.5, xmax = 6.5, ymin = 0, ymax = 125, alpha = .2) + 
-        annotate("rect", xmin = 7.5, xmax = 8.5, ymin = 0, ymax = 125, alpha = .2) 
-    }
+hormonemanipSteroids &lt;- function(myhormone, myylab, myymax){
 
-    hormoneremoval("prolactin", "PRL (ng/mL)")
+hormones %&gt;% filter( hormone %in% c(myhormone)) %&gt;% ggplot(aes(x =
+treatment, y = plasma\_conc, fill = treatment, color = sex)) +
+geom\_boxplot() + mytheme() + theme(axis.text.x = element\_text(angle =
+45, hjust = 1), \# legend.position = “none”, strip.text =
+element\_blank()) + scale\_fill\_manual(values = colorscharmaip) +
+scale\_color\_manual(values = sexcolors) + labs(y = myylab, x = NULL) }
 
-![](../figures/hormones/removal-1.png)
+a &lt;- hormonemanipSteroids(“estradiol”, “E (ng/mL)”, 1) b &lt;-
+hormonemanipSteroids(“testosterone”, “T (ng/mL)”, 3.5) c &lt;-
+hormonemanipSteroids(“cort”, “CORT (ng/mL)”, 10) d &lt;-
+hormonemanipSteroids(“progesterone”, “PROG (ng/mL)”,2.5)
+
+a b c d \`\`\`
 
     write.csv(hormones, "../results/hormones.csv", row.names = F)
 
