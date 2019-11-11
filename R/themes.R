@@ -44,6 +44,11 @@ alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,
                "m.n2",  "prolong" , "extend",
                "n5", "n9")
 
+alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                "inc.d17", "hatch", "n5", "n9",
+                "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , 
+                "m.inc.d17" , "m.n2", "prolong" , "extend")
+
 tissuelevels <- c("hypothalamus", "pituitary", "gonads")
 
 # custom colors
