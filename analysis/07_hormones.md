@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ───────────────────────────────────────────── tidyverse 1.2.1 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
     ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -174,7 +174,7 @@
             geom_smooth(aes(colour = sex)) +
         geom_boxplot(aes(outlier.colour = treatment, fill = treatment, alpha = sex)) +
         mytheme() +
-        theme(axis.text.x =  element_blank(),
+        theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
               legend.position = "none") +
         scale_fill_manual(values = colorscharmaip) +
         scale_color_manual(values = sexcolors) +
@@ -182,22 +182,29 @@
         guides(fill = guide_legend(order=1),
              color = guide_legend(order=2)) +
         scale_alpha_manual(values = c(0.75,1)) +
-        scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) 
+        scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+        scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                           labels = c( "control", "bldg", "lay", "inc.d3", 
+                                       "inc.d9", "inc.d17", "hatch", "n5", "n9"))
       }
 
     hormonecharplot("prolactin", "PRL (ng/mL)")
 
 ![](../figures/hormones/PRLonly-1.png)
 
-    b <- hormonecharplot("cort", "CORT (ng/mL)")
-    c <- hormonecharplot("progesterone", "PROG (ng/mL)") 
-    d1 <- hormonecharplot("estradiol", "E (ng/mL)")
-    d2 <- hormonecharplot("testosterone", "T (ng/mL)")
-    d <- plot_grid(d1,d2, nrow = 1)
-    bcd <- plot_grid(b ,c, d, ncol = 1)
-    bcd
+    hormonecharplot("cort", "CORT (ng/mL)")
 
 ![](../figures/hormones/sexsteroids-1.png)
+
+    hormonecharplot("progesterone", "PROG (ng/mL)") 
+
+![](../figures/hormones/sexsteroids-2.png)
+
+    d1 <- hormonecharplot("estradiol", "E (ng/mL)")
+    d2 <- hormonecharplot("testosterone", "T (ng/mL)")
+    plot_grid(d1,d2, nrow = 1)
+
+![](../figures/hormones/sexsteroids-3.png)
 
     prl.char <- hormones %>% filter(hormone == "prolactin", treatment %in% charlevels)   %>%  droplevels()
     test.char <- hormones %>% filter(hormone == "testosterone", treatment %in% charlevels)   %>%  droplevels()
@@ -303,21 +310,41 @@
 
 ![](../figures/hormones/manipulation-2.png)
 
-hormonemanipSteroids &lt;- function(myhormone, myylab, myymax){
+    hormonemanipSteroids <- function(myhormone, myylab, myymax){
+      
+      hormones %>% 
+        filter( hormone %in% c(myhormone))  %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment, color = sex)) +
+        geom_boxplot() + 
+        mytheme() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+             # legend.position = "none",
+              strip.text = element_blank()) +
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = myylab, x = NULL) 
+    }
 
-hormones %&gt;% filter( hormone %in% c(myhormone)) %&gt;% ggplot(aes(x =
-treatment, y = plasma\_conc, fill = treatment, color = sex)) +
-geom\_boxplot() + mytheme() + theme(axis.text.x = element\_text(angle =
-45, hjust = 1), \# legend.position = “none”, strip.text =
-element\_blank()) + scale\_fill\_manual(values = colorscharmaip) +
-scale\_color\_manual(values = sexcolors) + labs(y = myylab, x = NULL) }
+    a <- hormonemanipSteroids("estradiol", "E (ng/mL)", 1)
+    b <- hormonemanipSteroids("testosterone", "T (ng/mL)", 3.5)
+    c <- hormonemanipSteroids("cort", "CORT (ng/mL)", 10)
+    d <- hormonemanipSteroids("progesterone", "PROG (ng/mL)",2.5)
 
-a &lt;- hormonemanipSteroids(“estradiol”, “E (ng/mL)”, 1) b &lt;-
-hormonemanipSteroids(“testosterone”, “T (ng/mL)”, 3.5) c &lt;-
-hormonemanipSteroids(“cort”, “CORT (ng/mL)”, 10) d &lt;-
-hormonemanipSteroids(“progesterone”, “PROG (ng/mL)”,2.5)
+    a
 
-a b c d \`\`\`
+![](../figures/hormones/manipulation-3.png)
+
+    b
+
+![](../figures/hormones/manipulation-4.png)
+
+    c
+
+![](../figures/hormones/manipulation-5.png)
+
+    d
+
+![](../figures/hormones/manipulation-6.png)
 
     write.csv(hormones, "../results/hormones.csv", row.names = F)
 
