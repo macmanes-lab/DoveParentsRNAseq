@@ -1,0 +1,134 @@
+---
+title: "15_networks"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/favegenes/')
+
+```
+
+```{r}
+library(tidyverse)
+library(corrplot)
+library(corrr)
+
+source("../R/themes.R")
+
+```
+
+```{r getdata}
+vsd.pituitary.df <- read.csv("../results/04_vsd_pit.csv", row.names = 1)
+head(vsd.pituitary.df)
+
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+head(geneinfo)
+
+vsd.pituitary.df$entrezid <- row.names(vsd.pituitary.df)
+vsd.pituitary.df <- left_join(geneinfo, vsd.pituitary.df)
+vsd.pituitary.df <- vsd.pituitary.df %>% dplyr::distinct(Name, .keep_all = TRUE) %>%
+    dplyr::select(-row.names, -geneid, -entrezid) 
+vsd.pituitary.df <- as.data.frame(vsd.pituitary.df)
+row.names(vsd.pituitary.df) <- vsd.pituitary.df$Name
+vsd.pituitary.df$Name <- NULL
+head(vsd.pituitary.df)
+
+colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+colData$treatment <- factor(colData$treatment, levels = charlevels)
+colData <- colData %>% filter(tissue == "pituitary")
+row.names(colData) <- colData$V1
+
+widecountdata <- as.data.frame(t(vsd.pituitary.df))
+widecountdata$V1 <- row.names(widecountdata)
+widecountdata <- left_join(colData, widecountdata)
+
+head(widecountdata)
+```
+
+
+```{r boxplots}
+# genes from website shown to be associate with oxt and prl
+OXTgenes <- c("OXT",  "AVPR1A", "AVPR1B", "TRH", 
+              "HCRT", "GNRH1", "CRH", "POMC", "MC4R", "AVPR2")
+PRLgenes <- c("PRL", "GNRH1", "TRH", "POU1F1", "POMC", "TSHB",
+              "FSHB", "GH", "PRLR", "JAK2")
+OXTPRLgenes <- c(OXTgenes, PRLgenes)
+head(OXTPRLgenes)
+
+# genes from wgcna pitutiry
+PRL_associated <- read_csv("../results/08_PRL_associated.csv") %>%
+  dplyr::pull(Name)
+PRL_associated
+
+longdata <- widecountdata %>% 
+            select(V1:study, OXTPRLgenes, PRL_associated) %>%
+            gather(gene, expression, OXT:UBE2C)
+head(longdata)
+
+plotnetworkgenes <- function(whichgenes){
+  longdata %>%
+  filter(gene %in% whichgenes) %>%
+  ggplot(aes(x = treatment, y = expression)) +
+        geom_smooth(aes(colour = sex)) +
+    geom_boxplot(aes(outlier.color = treatment, 
+                     fill = treatment, alpha = sex)) +
+    mytheme() +
+    theme(legend.position = "none",
+          axis.text.x = element_blank()) +
+    scale_fill_manual(values = colorschar) +
+    scale_color_manual(values = sexcolors) +
+    labs(x = NULL) +
+    scale_alpha_manual(values = c(0.75,1)) +
+  facet_wrap(~gene, scales = "free_y")
+}
+
+plotnetworkgenes(OXTgenes)
+plotnetworkgenes(PRLgenes)
+plotnetworkgenes(PRL_associated[85:93])
+
+
+
+```
+
+```{r correlations}
+forcorrdata <- widecountdata %>% 
+            select(V1, OXTPRLgenes)  %>% 
+            as.data.frame()
+row.names(forcorrdata) <- forcorrdata$V1   
+forcorrdata$V1 <- NULL
+head(forcorrdata)
+
+cormat <- cor(forcorrdata, method = c("spearman"), use = "complete.obs") 
+head(cormat)
+
+forcorrdata %>% 
+  correlate() %>% 
+  network_plot( colors = c("#67a9cf", "#ef8a62"))
+
+forcorrdata %>% 
+  correlate() %>% 
+  rplot(shape = 15, colors = c("#67a9cf", "#ef8a62") ) + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+```
+
+```{r wgcnaPRLgenes}
+x <- widecountdata %>% 
+            select(PRL_associated,OXTPRLgenes) %>%
+       correlate()     # Create correlation data frame (cor_df)
+  
+x %>% rearrange() %>%  # rearrange by correlations
+       focus(POLQ:SGOL1, mirror = TRUE) %>%
+     shave() %>% # Shave off the upper triangle for a clean result
+       fashion()
+
+x %>%  focus(POLQ:SGOL1, mirror = TRUE) %>%
+  network_plot( colors = c("#67a9cf", "#ef8a62"))
+
+x %>%
+  focus(POLQ:SGOL1, mirror = TRUE) %>%
+  shave(upper = FALSE) %>%
+  rplot(shape = 15, colors = c("#67a9cf", "#ef8a62") ) + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+```
