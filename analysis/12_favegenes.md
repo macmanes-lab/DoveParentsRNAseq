@@ -37457,38 +37457,70 @@
               axis.text.x = element_text(angle = 45, hjust = 1)) +
         scale_fill_manual(values = colorscharmaip) +
         scale_color_manual(values = sexcolors) +
-        labs(x = NULL, y = myylab) +
+        labs(x = NULL, y = NULL, subtitle = myylab) +
         guides(fill = guide_legend(order=1),
              color = guide_legend(order=2)) +
         scale_alpha_manual(values = c(0.75,1)) 
     return(p)
     }
 
-    a <- plotwidedata(widecountdata$PRL, "PRL")
+    plotwidedata(widecountdata$PRL, "PRL")
 
     ## Warning: Ignoring unknown aesthetics: outlier.colour
 
-    b <- plotwidedata(widecountdata$COX1, "COX1")
-
-    ## Warning: Ignoring unknown aesthetics: outlier.colour
-
-    c <- plotwidedata(widecountdata$FOSL2, "FOSL2")
-
-    ## Warning: Ignoring unknown aesthetics: outlier.colour
-
-    plot_grid(a + theme(axis.text.x = element_blank()),c, 
-              nrow = 2)
-
-    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](../figures/favegenes/DESeq2-allmanip-1.png)
 
-    b
+    a <- plotwidedata(widecountdata$PRL, "PRL")
 
+    ## Warning: Ignoring unknown aesthetics: outlier.colour
+
+    b <- plotwidedata(widecountdata$FOSL2, "FOSL2")
+
+    ## Warning: Ignoring unknown aesthetics: outlier.colour
+
+    c <- plotwidedata(widecountdata$COX1, "COX1")
+
+    ## Warning: Ignoring unknown aesthetics: outlier.colour
+
+    d <- plotwidedata(widecountdata$BRCA1, "BRCA1")
+
+    ## Warning: Ignoring unknown aesthetics: outlier.colour
+
+    e <- plotwidedata(widecountdata$CDK1, "CDK1")
+
+    ## Warning: Ignoring unknown aesthetics: outlier.colour
+
+    f <-plotwidedata(widecountdata$MYC, "MYC")
+
+    ## Warning: Ignoring unknown aesthetics: outlier.colour
+
+    plot_grid(a + theme(axis.text.x = element_blank()),
+              b + theme(axis.text.x = element_blank()),
+              c + theme(axis.text.x = element_blank()),
+              d + theme(axis.text.x = element_blank()),
+              e + theme(axis.text.x = element_blank()),
+              f + theme(axis.text.x = element_blank()), nrow = 2)
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](../figures/favegenes/DESeq2-allmanip-2.png)
+
+    plot_grid(a + theme(axis.text.x = element_blank()),
+              d + theme(axis.text.x = element_blank()),
+              e + theme(axis.text.x = element_blank()), nrow = 1)
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](../figures/favegenes/DESeq2-allmanip-3.png)
 
     PRLremove <- widecountdata %>% 
         filter( !treatment %in% c("m.inc.d8", "prolong", "extend"))  %>% 
@@ -37540,3 +37572,62 @@
 
     ## quartz_off_screen 
     ##                 2
+
+    removal <- widecountdata %>% 
+        filter( !treatment %in% c("m.inc.d8", "prolong", "extend",  "control", "bldg" , "lay", "n5", "n9"))
+
+    plotremove <- function(whichgene, myylab){
+      p <-  removal  %>% 
+      ggplot(aes(x = treatment, y = whichgene, fill = treatment,  color = sex)) +
+        geom_boxplot() + 
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+              legend.position = "none",
+              strip.text = element_blank()) +
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = NULL, subtitle = myylab, x = NULL) 
+      return(p)
+    }
+
+    a <- plotremove(removal$PRL, "PRL")
+    b <- plotremove(removal$FOSL2, "FOSL2")
+    c <- plotremove(removal$COX1, "COX1")
+    d <- plotremove(removal$BRCA1, "BRCA1")
+    e <- plotremove(removal$CDK1, "CDK1")
+    f <- plotremove(removal$MYC, "MYC")
+
+    plot_grid(a + theme(axis.text.x = element_blank()),
+              d + theme(axis.text.x = element_blank()),
+              e + theme(axis.text.x = element_blank()), nrow = 1)
+
+![](../figures/favegenes/DESeq2-partialmanip-1.png)
+
+    timing <- widecountdata %>% 
+        filter( !treatment %in% c("m.inc.d3", "m.inc.d9", "m.inc.d17","m.n2", 
+                                  "control", "bldg" , "lay", "n5", "n9"))
+
+    plottiming <- function(whichgene, myylab){
+      p <-  timing  %>% 
+      ggplot(aes(x = treatment, y = whichgene, fill = treatment,  color = sex)) +
+        geom_boxplot() + 
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+              legend.position = "none",
+              strip.text = element_blank()) +
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = NULL, subtitle = myylab, x = NULL) 
+      return(p)
+    }
+
+    a <- plottiming(timing$PRL, "PRL")
+    b <- plottiming(timing$FOSL2, "FOSL2")
+    c <- plottiming(timing$COX1, "COX1")
+    d <- plottiming(timing$BRCA1, "BRCA1")
+    e <- plottiming(timing$CDK1, "CDK1")
+    f <- plottiming(timing$MYC, "MYC")
+
+    plot_grid(a + theme(axis.text.x = element_blank()),
+              d + theme(axis.text.x = element_blank()),
+              e + theme(axis.text.x = element_blank()), nrow = 1)
+
+![](../figures/favegenes/DESeq2-partialmanip-2.png)
