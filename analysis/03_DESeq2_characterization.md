@@ -1140,55 +1140,6 @@ Go terms
     ## Warning: Column `gene` joining character vector and factor, coercing into
     ## character vector
 
-    dt2 <- returnGOgenes(GOterms,bldg.lay) 
-
-    ## Joining, by = "gene"
-
-    ## Warning: Column `gene` joining character vector and factor, coercing into
-    ## character vector
-
-    dt3 <- returnGOgenes(GOterms,lay.inc.d3)  
-
-    ## Joining, by = "gene"
-
-    ## Warning: Column `gene` joining character vector and factor, coercing into
-    ## character vector
-
-    dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9)  
-
-    ## Joining, by = "gene"
-
-    ## Warning: Column `gene` joining character vector and factor, coercing into
-    ## character vector
-
-    dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17)  
-
-    ## Joining, by = "gene"
-
-    ## Warning: Column `gene` joining character vector and factor, coercing into
-    ## character vector
-
-    dt6 <- returnGOgenes(GOterms,inc.d17.hatch)  
-
-    ## Joining, by = "gene"
-
-    ## Warning: Column `gene` joining character vector and factor, coercing into
-    ## character vector
-
-    dt7 <- returnGOgenes(GOterms,hatch.n5)  
-
-    ## Joining, by = "gene"
-
-    ## Warning: Column `gene` joining character vector and factor, coercing into
-    ## character vector
-
-    dt8 <- returnGOgenes(GOterms,n5.n9) 
-
-    ## Joining, by = "gene"
-
-    ## Warning: Column `gene` joining character vector and factor, coercing into
-    ## character vector
-
     kable(dt1)
 
 <table>
@@ -1372,6 +1323,13 @@ ZIC4, ZMIZ1, ZMYND8, ZSWIM6, ZSWIM8
 </tbody>
 </table>
 
+    dt2 <- returnGOgenes(GOterms,bldg.lay) 
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
     kable(dt2) 
 
 <table>
@@ -1410,6 +1368,13 @@ VPS35, VTN, XBP1
 </tr>
 </tbody>
 </table>
+
+    dt3 <- returnGOgenes(GOterms,lay.inc.d3)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
 
     kable(dt3) 
 
@@ -1465,6 +1430,13 @@ TRPC4AP, UFC1, VASH2, VPS35, XBP1, ZBTB16, ZMIZ1
 </tbody>
 </table>
 
+    dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
     kable(dt4) 
 
 <table>
@@ -1483,6 +1455,13 @@ genes
 </tr>
 </tbody>
 </table>
+
+    dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
 
     kable(dt5) 
 
@@ -1574,6 +1553,13 @@ ZBTB7A, ZFYVE27, ZNRF3
 </tbody>
 </table>
 
+    dt6 <- returnGOgenes(GOterms,inc.d17.hatch)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
     kable(dt6) 
 
 <table>
@@ -1598,6 +1584,13 @@ TTK
 </tr>
 </tbody>
 </table>
+
+    dt7 <- returnGOgenes(GOterms,hatch.n5)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
 
     kable(dt7) 
 
@@ -1666,7 +1659,14 @@ ZFPM1
 </tbody>
 </table>
 
-    kable(dt8)
+    dt8 <- returnGOgenes(GOterms,n5.n9) 
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    kable(dt8) 
 
 <table>
 <thead>
