@@ -95,3 +95,21 @@ colorstissue <- c("hypothalamus" = "#d95f02",
 
 sexcolors <- c("female" = "#969696", "male" = "#525252")
 
+colorsvolcano <-  c("control" = "#F8766D", 
+                     "bldg"= "#D39200", 
+                     "lay"= "#93AA00", 
+                     "inc.d3"= "#00BA38", 
+                     "inc.d9"= "#00C19F", 
+                     "inc.d17"= "#00B9E3", 
+                     "hatch"= "#619CFF", 
+                     "n5"= "#DB72FB", 
+                     "n9"= "#FF61C3",
+                     "m.inc.d3" = "#CDCDCD", 
+                     "m.inc.d8" = "#6DA9D3", 
+                     "m.inc.d9" = "#959595", 
+                     "m.inc.d17" = "#626262",
+                     "m.n2" = "#262625", 
+                     "prolong" = "#1B86B9" , 
+                     "extend" = "#01588C",
+                    "NS" = "#bdbdbd")
+

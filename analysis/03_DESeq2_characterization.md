@@ -6,9 +6,15 @@
     library(kableExtra)
     library(viridis)
     library(ggimage)
+    library(knitr)
+    library(kableExtra)
 
+
+    library(BiocParallel)
+    register(MulticoreParam(6))
 
     # load custom functions  
+    source("../R/themes.R") 
     source("../R/functions.R") 
 
     knitr::opts_chunk$set(fig.path = '../figures/characterization/', cache = TRUE)
@@ -48,6 +54,17 @@ Characterization data
     ##  male_hypothalamus  :94  
     ##  male_pituitary     :97  
     ## 
+
+    geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+    head(geneinfo)
+
+    ##                row.names     Name geneid       entrezid
+    ## NP_001001127.1    408082    EDNRB 408082 NP_001001127.1
+    ## NP_001001129.1    408183  CYP26A1 408183 NP_001001129.1
+    ## NP_001001189.1    374073    CFDP1 374073 NP_001001189.1
+    ## NP_001001194.1    407777    AvBD7 407777 NP_001001194.1
+    ## NP_001001195.1    407779     KRT5 407779 NP_001001195.1
+    ## NP_001001201.1    408034 HSD11B1L 408034 NP_001001201.1
 
 Run DESeq on all subsets of the data
 ------------------------------------
@@ -269,782 +286,6 @@ Run DESeq on all subsets of the data
     ## estimating dispersions
 
     ## fitting model and testing
-
-Calculate and plot total DEGs
------------------------------
-
-    DEGs.female_hypothalamus <- returntotalDEGs(dds.female_hypothalamus)
-
-    ## [1] "control.bldg"
-    ## [1] "control.lay"
-    ## [1] "control.inc.d3"
-    ## [1] "control.inc.d9"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.n5"
-    ## [1] "control.n9"
-    ## [1] "bldg.lay"
-    ## [1] "bldg.inc.d3"
-    ## [1] "bldg.inc.d9"
-    ## [1] "bldg.inc.d17"
-    ## [1] "bldg.hatch"
-    ## [1] "bldg.n5"
-    ## [1] "bldg.n9"
-    ## [1] "lay.inc.d3"
-    ## [1] "lay.inc.d9"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.n5"
-    ## [1] "lay.n9"
-    ## [1] "inc.d3.inc.d9"
-    ## [1] "inc.d3.inc.d17"
-    ## [1] "inc.d3.hatch"
-    ## [1] "inc.d3.n5"
-    ## [1] "inc.d3.n9"
-    ## [1] "inc.d9.inc.d17"
-    ## [1] "inc.d9.hatch"
-    ## [1] "inc.d9.n5"
-    ## [1] "inc.d9.n9"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.n5"
-    ## [1] "inc.d17.n9"
-    ## [1] "hatch.n5"
-    ## [1] "hatch.n9"
-    ## [1] "n5.n9"
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 3452
-    ## control.lay     control     lay 3815
-    ## control.inc.d3  control  inc.d3 4263
-    ## control.inc.d9  control  inc.d9 4540
-    ## control.inc.d17 control inc.d17 4235
-    ## control.hatch   control   hatch 3685
-    ## control.n5      control      n5 4475
-    ## control.n9      control      n9 4519
-    ## bldg.lay           bldg     lay    0
-    ## bldg.inc.d3        bldg  inc.d3    0
-    ## bldg.inc.d9        bldg  inc.d9    2
-    ## bldg.inc.d17       bldg inc.d17    0
-    ## bldg.hatch         bldg   hatch    2
-    ## bldg.n5            bldg      n5    0
-    ## bldg.n9            bldg      n9    0
-    ## lay.inc.d3          lay  inc.d3    0
-    ## lay.inc.d9          lay  inc.d9    4
-    ## lay.inc.d17         lay inc.d17    0
-    ## lay.hatch           lay   hatch    5
-    ## lay.n5              lay      n5    1
-    ## lay.n9              lay      n9    4
-    ## inc.d3.inc.d9    inc.d3  inc.d9    1
-    ## inc.d3.inc.d17   inc.d3 inc.d17    0
-    ## inc.d3.hatch     inc.d3   hatch    8
-    ## inc.d3.n5        inc.d3      n5    0
-    ## inc.d3.n9        inc.d3      n9    0
-    ## inc.d9.inc.d17   inc.d9 inc.d17    1
-    ## inc.d9.hatch     inc.d9   hatch  259
-    ## inc.d9.n5        inc.d9      n5    1
-    ## inc.d9.n9        inc.d9      n9    1
-    ## inc.d17.hatch   inc.d17   hatch    2
-    ## inc.d17.n5      inc.d17      n5    1
-    ## inc.d17.n9      inc.d17      n9    2
-    ## hatch.n5          hatch      n5  166
-    ## hatch.n9          hatch      n9  327
-    ## n5.n9                n5      n9    0
-
-    DEGs.female_pituitary <- returntotalDEGs(dds.female_pituitary)
-
-    ## [1] "control.bldg"
-    ## [1] "control.lay"
-    ## [1] "control.inc.d3"
-    ## [1] "control.inc.d9"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.n5"
-    ## [1] "control.n9"
-    ## [1] "bldg.lay"
-    ## [1] "bldg.inc.d3"
-    ## [1] "bldg.inc.d9"
-    ## [1] "bldg.inc.d17"
-    ## [1] "bldg.hatch"
-    ## [1] "bldg.n5"
-    ## [1] "bldg.n9"
-    ## [1] "lay.inc.d3"
-    ## [1] "lay.inc.d9"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.n5"
-    ## [1] "lay.n9"
-    ## [1] "inc.d3.inc.d9"
-    ## [1] "inc.d3.inc.d17"
-    ## [1] "inc.d3.hatch"
-    ## [1] "inc.d3.n5"
-    ## [1] "inc.d3.n9"
-    ## [1] "inc.d9.inc.d17"
-    ## [1] "inc.d9.hatch"
-    ## [1] "inc.d9.n5"
-    ## [1] "inc.d9.n9"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.n5"
-    ## [1] "inc.d17.n9"
-    ## [1] "hatch.n5"
-    ## [1] "hatch.n9"
-    ## [1] "n5.n9"
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 3950
-    ## control.lay     control     lay 3777
-    ## control.inc.d3  control  inc.d3 3062
-    ## control.inc.d9  control  inc.d9 3695
-    ## control.inc.d17 control inc.d17 2870
-    ## control.hatch   control   hatch 3436
-    ## control.n5      control      n5 3451
-    ## control.n9      control      n9 3571
-    ## bldg.lay           bldg     lay  101
-    ## bldg.inc.d3        bldg  inc.d3    5
-    ## bldg.inc.d9        bldg  inc.d9   18
-    ## bldg.inc.d17       bldg inc.d17 1162
-    ## bldg.hatch         bldg   hatch  942
-    ## bldg.n5            bldg      n5  177
-    ## bldg.n9            bldg      n9   60
-    ## lay.inc.d3          lay  inc.d3   18
-    ## lay.inc.d9          lay  inc.d9   35
-    ## lay.inc.d17         lay inc.d17 1626
-    ## lay.hatch           lay   hatch 1316
-    ## lay.n5              lay      n5  103
-    ## lay.n9              lay      n9  209
-    ## inc.d3.inc.d9    inc.d3  inc.d9    0
-    ## inc.d3.inc.d17   inc.d3 inc.d17  441
-    ## inc.d3.hatch     inc.d3   hatch  489
-    ## inc.d3.n5        inc.d3      n5   38
-    ## inc.d3.n9        inc.d3      n9   37
-    ## inc.d9.inc.d17   inc.d9 inc.d17  640
-    ## inc.d9.hatch     inc.d9   hatch  665
-    ## inc.d9.n5        inc.d9      n5   26
-    ## inc.d9.n9        inc.d9      n9   48
-    ## inc.d17.hatch   inc.d17   hatch    3
-    ## inc.d17.n5      inc.d17      n5  404
-    ## inc.d17.n9      inc.d17      n9  968
-    ## hatch.n5          hatch      n5  340
-    ## hatch.n9          hatch      n9  822
-    ## n5.n9                n5      n9    1
-
-    DEGs.female_gonad <- returntotalDEGs(dds.female_gonad)
-
-    ## [1] "control.bldg"
-    ## [1] "control.lay"
-    ## [1] "control.inc.d3"
-    ## [1] "control.inc.d9"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.n5"
-    ## [1] "control.n9"
-    ## [1] "bldg.lay"
-    ## [1] "bldg.inc.d3"
-    ## [1] "bldg.inc.d9"
-    ## [1] "bldg.inc.d17"
-    ## [1] "bldg.hatch"
-    ## [1] "bldg.n5"
-    ## [1] "bldg.n9"
-    ## [1] "lay.inc.d3"
-    ## [1] "lay.inc.d9"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.n5"
-    ## [1] "lay.n9"
-    ## [1] "inc.d3.inc.d9"
-    ## [1] "inc.d3.inc.d17"
-    ## [1] "inc.d3.hatch"
-    ## [1] "inc.d3.n5"
-    ## [1] "inc.d3.n9"
-    ## [1] "inc.d9.inc.d17"
-    ## [1] "inc.d9.hatch"
-    ## [1] "inc.d9.n5"
-    ## [1] "inc.d9.n9"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.n5"
-    ## [1] "inc.d17.n9"
-    ## [1] "hatch.n5"
-    ## [1] "hatch.n9"
-    ## [1] "n5.n9"
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 4597
-    ## control.lay     control     lay 4173
-    ## control.inc.d3  control  inc.d3 2424
-    ## control.inc.d9  control  inc.d9 2740
-    ## control.inc.d17 control inc.d17  699
-    ## control.hatch   control   hatch 1289
-    ## control.n5      control      n5 2280
-    ## control.n9      control      n9 4300
-    ## bldg.lay           bldg     lay  104
-    ## bldg.inc.d3        bldg  inc.d3  566
-    ## bldg.inc.d9        bldg  inc.d9  286
-    ## bldg.inc.d17       bldg inc.d17 1888
-    ## bldg.hatch         bldg   hatch  193
-    ## bldg.n5            bldg      n5  276
-    ## bldg.n9            bldg      n9   24
-    ## lay.inc.d3          lay  inc.d3  440
-    ## lay.inc.d9          lay  inc.d9  275
-    ## lay.inc.d17         lay inc.d17 1439
-    ## lay.hatch           lay   hatch  395
-    ## lay.n5              lay      n5  235
-    ## lay.n9              lay      n9  291
-    ## inc.d3.inc.d9    inc.d3  inc.d9    8
-    ## inc.d3.inc.d17   inc.d3 inc.d17    9
-    ## inc.d3.hatch     inc.d3   hatch   22
-    ## inc.d3.n5        inc.d3      n5   57
-    ## inc.d3.n9        inc.d3      n9  548
-    ## inc.d9.inc.d17   inc.d9 inc.d17    1
-    ## inc.d9.hatch     inc.d9   hatch    1
-    ## inc.d9.n5        inc.d9      n5    4
-    ## inc.d9.n9        inc.d9      n9  268
-    ## inc.d17.hatch   inc.d17   hatch    1
-    ## inc.d17.n5      inc.d17      n5    4
-    ## inc.d17.n9      inc.d17      n9 1046
-    ## hatch.n5          hatch      n5    1
-    ## hatch.n9          hatch      n9   84
-    ## n5.n9                n5      n9   19
-
-    DEGs.male_hypothalamus <- returntotalDEGs(dds.male_hypothalamus)
-
-    ## [1] "control.bldg"
-    ## [1] "control.lay"
-    ## [1] "control.inc.d3"
-    ## [1] "control.inc.d9"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.n5"
-    ## [1] "control.n9"
-    ## [1] "bldg.lay"
-    ## [1] "bldg.inc.d3"
-    ## [1] "bldg.inc.d9"
-    ## [1] "bldg.inc.d17"
-    ## [1] "bldg.hatch"
-    ## [1] "bldg.n5"
-    ## [1] "bldg.n9"
-    ## [1] "lay.inc.d3"
-    ## [1] "lay.inc.d9"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.n5"
-    ## [1] "lay.n9"
-    ## [1] "inc.d3.inc.d9"
-    ## [1] "inc.d3.inc.d17"
-    ## [1] "inc.d3.hatch"
-    ## [1] "inc.d3.n5"
-    ## [1] "inc.d3.n9"
-    ## [1] "inc.d9.inc.d17"
-    ## [1] "inc.d9.hatch"
-    ## [1] "inc.d9.n5"
-    ## [1] "inc.d9.n9"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.n5"
-    ## [1] "inc.d17.n9"
-    ## [1] "hatch.n5"
-    ## [1] "hatch.n9"
-    ## [1] "n5.n9"
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 4499
-    ## control.lay     control     lay 5193
-    ## control.inc.d3  control  inc.d3 5108
-    ## control.inc.d9  control  inc.d9 4915
-    ## control.inc.d17 control inc.d17 5673
-    ## control.hatch   control   hatch 4918
-    ## control.n5      control      n5 5153
-    ## control.n9      control      n9 5259
-    ## bldg.lay           bldg     lay    0
-    ## bldg.inc.d3        bldg  inc.d3    1
-    ## bldg.inc.d9        bldg  inc.d9    0
-    ## bldg.inc.d17       bldg inc.d17    1
-    ## bldg.hatch         bldg   hatch    0
-    ## bldg.n5            bldg      n5    0
-    ## bldg.n9            bldg      n9    1
-    ## lay.inc.d3          lay  inc.d3    0
-    ## lay.inc.d9          lay  inc.d9    0
-    ## lay.inc.d17         lay inc.d17    0
-    ## lay.hatch           lay   hatch    0
-    ## lay.n5              lay      n5    2
-    ## lay.n9              lay      n9    0
-    ## inc.d3.inc.d9    inc.d3  inc.d9    0
-    ## inc.d3.inc.d17   inc.d3 inc.d17    0
-    ## inc.d3.hatch     inc.d3   hatch    0
-    ## inc.d3.n5        inc.d3      n5    0
-    ## inc.d3.n9        inc.d3      n9    0
-    ## inc.d9.inc.d17   inc.d9 inc.d17    0
-    ## inc.d9.hatch     inc.d9   hatch    1
-    ## inc.d9.n5        inc.d9      n5    0
-    ## inc.d9.n9        inc.d9      n9    0
-    ## inc.d17.hatch   inc.d17   hatch    0
-    ## inc.d17.n5      inc.d17      n5    2
-    ## inc.d17.n9      inc.d17      n9    1
-    ## hatch.n5          hatch      n5    0
-    ## hatch.n9          hatch      n9    1
-    ## n5.n9                n5      n9    0
-
-    DEGs.male_pituitary <- returntotalDEGs(dds.male_pituitary)
-
-    ## [1] "control.bldg"
-    ## [1] "control.lay"
-    ## [1] "control.inc.d3"
-    ## [1] "control.inc.d9"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.n5"
-    ## [1] "control.n9"
-    ## [1] "bldg.lay"
-    ## [1] "bldg.inc.d3"
-    ## [1] "bldg.inc.d9"
-    ## [1] "bldg.inc.d17"
-    ## [1] "bldg.hatch"
-    ## [1] "bldg.n5"
-    ## [1] "bldg.n9"
-    ## [1] "lay.inc.d3"
-    ## [1] "lay.inc.d9"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.n5"
-    ## [1] "lay.n9"
-    ## [1] "inc.d3.inc.d9"
-    ## [1] "inc.d3.inc.d17"
-    ## [1] "inc.d3.hatch"
-    ## [1] "inc.d3.n5"
-    ## [1] "inc.d3.n9"
-    ## [1] "inc.d9.inc.d17"
-    ## [1] "inc.d9.hatch"
-    ## [1] "inc.d9.n5"
-    ## [1] "inc.d9.n9"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.n5"
-    ## [1] "inc.d17.n9"
-    ## [1] "hatch.n5"
-    ## [1] "hatch.n9"
-    ## [1] "n5.n9"
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 4680
-    ## control.lay     control     lay 4884
-    ## control.inc.d3  control  inc.d3 4609
-    ## control.inc.d9  control  inc.d9 4571
-    ## control.inc.d17 control inc.d17 4249
-    ## control.hatch   control   hatch 4559
-    ## control.n5      control      n5 4885
-    ## control.n9      control      n9 4719
-    ## bldg.lay           bldg     lay    0
-    ## bldg.inc.d3        bldg  inc.d3    1
-    ## bldg.inc.d9        bldg  inc.d9    0
-    ## bldg.inc.d17       bldg inc.d17  307
-    ## bldg.hatch         bldg   hatch  655
-    ## bldg.n5            bldg      n5  241
-    ## bldg.n9            bldg      n9   37
-    ## lay.inc.d3          lay  inc.d3    1
-    ## lay.inc.d9          lay  inc.d9    0
-    ## lay.inc.d17         lay inc.d17  302
-    ## lay.hatch           lay   hatch  794
-    ## lay.n5              lay      n5  208
-    ## lay.n9              lay      n9   20
-    ## inc.d3.inc.d9    inc.d3  inc.d9    1
-    ## inc.d3.inc.d17   inc.d3 inc.d17  252
-    ## inc.d3.hatch     inc.d3   hatch  694
-    ## inc.d3.n5        inc.d3      n5  244
-    ## inc.d3.n9        inc.d3      n9   49
-    ## inc.d9.inc.d17   inc.d9 inc.d17  186
-    ## inc.d9.hatch     inc.d9   hatch  444
-    ## inc.d9.n5        inc.d9      n5  203
-    ## inc.d9.n9        inc.d9      n9    5
-    ## inc.d17.hatch   inc.d17   hatch   18
-    ## inc.d17.n5      inc.d17      n5   23
-    ## inc.d17.n9      inc.d17      n9  132
-    ## hatch.n5          hatch      n5    3
-    ## hatch.n9          hatch      n9  286
-    ## n5.n9                n5      n9   23
-
-    DEGs.male_gondad <- returntotalDEGs(dds.male_gondad)
-
-    ## [1] "control.bldg"
-    ## [1] "control.lay"
-    ## [1] "control.inc.d3"
-    ## [1] "control.inc.d9"
-    ## [1] "control.inc.d17"
-    ## [1] "control.hatch"
-    ## [1] "control.n5"
-    ## [1] "control.n9"
-    ## [1] "bldg.lay"
-    ## [1] "bldg.inc.d3"
-    ## [1] "bldg.inc.d9"
-    ## [1] "bldg.inc.d17"
-    ## [1] "bldg.hatch"
-    ## [1] "bldg.n5"
-    ## [1] "bldg.n9"
-    ## [1] "lay.inc.d3"
-    ## [1] "lay.inc.d9"
-    ## [1] "lay.inc.d17"
-    ## [1] "lay.hatch"
-    ## [1] "lay.n5"
-    ## [1] "lay.n9"
-    ## [1] "inc.d3.inc.d9"
-    ## [1] "inc.d3.inc.d17"
-    ## [1] "inc.d3.hatch"
-    ## [1] "inc.d3.n5"
-    ## [1] "inc.d3.n9"
-    ## [1] "inc.d9.inc.d17"
-    ## [1] "inc.d9.hatch"
-    ## [1] "inc.d9.n5"
-    ## [1] "inc.d9.n9"
-    ## [1] "inc.d17.hatch"
-    ## [1] "inc.d17.n5"
-    ## [1] "inc.d17.n9"
-    ## [1] "hatch.n5"
-    ## [1] "hatch.n9"
-    ## [1] "n5.n9"
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 2135
-    ## control.lay     control     lay 3005
-    ## control.inc.d3  control  inc.d3 1742
-    ## control.inc.d9  control  inc.d9 2121
-    ## control.inc.d17 control inc.d17 1546
-    ## control.hatch   control   hatch 2074
-    ## control.n5      control      n5 2488
-    ## control.n9      control      n9 2810
-    ## bldg.lay           bldg     lay    1
-    ## bldg.inc.d3        bldg  inc.d3    0
-    ## bldg.inc.d9        bldg  inc.d9    0
-    ## bldg.inc.d17       bldg inc.d17    0
-    ## bldg.hatch         bldg   hatch    0
-    ## bldg.n5            bldg      n5    0
-    ## bldg.n9            bldg      n9    0
-    ## lay.inc.d3          lay  inc.d3    1
-    ## lay.inc.d9          lay  inc.d9  463
-    ## lay.inc.d17         lay inc.d17   15
-    ## lay.hatch           lay   hatch    1
-    ## lay.n5              lay      n5    0
-    ## lay.n9              lay      n9    0
-    ## inc.d3.inc.d9    inc.d3  inc.d9    0
-    ## inc.d3.inc.d17   inc.d3 inc.d17    0
-    ## inc.d3.hatch     inc.d3   hatch    0
-    ## inc.d3.n5        inc.d3      n5    0
-    ## inc.d3.n9        inc.d3      n9    1
-    ## inc.d9.inc.d17   inc.d9 inc.d17    0
-    ## inc.d9.hatch     inc.d9   hatch    0
-    ## inc.d9.n5        inc.d9      n5    0
-    ## inc.d9.n9        inc.d9      n9    0
-    ## inc.d17.hatch   inc.d17   hatch    0
-    ## inc.d17.n5      inc.d17      n5    0
-    ## inc.d17.n9      inc.d17      n9    0
-    ## hatch.n5          hatch      n5    0
-    ## hatch.n9          hatch      n9    0
-    ## n5.n9                n5      n9    0
-
-    #create list of groups for deseq contrasts
-    group1 <- c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
-    group2 <- group1
-
-
-    a <- plottotalDEGs(DEGs.female_hypothalamus, "female hypothalamus")
-
-    ## 'data.frame':    36 obs. of  3 variables:
-    ##  $ V1: Factor w/ 9 levels "control","bldg",..: 1 1 1 1 1 1 1 1 2 2 ...
-    ##  $ V2: Factor w/ 9 levels "control","bldg",..: 2 3 4 5 6 7 8 9 3 4 ...
-    ##  $ V3: int  3452 3815 4263 4540 4235 3685 4475 4519 NA NA ...
-    ## NULL
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 3452
-    ## control.lay     control     lay 3815
-    ## control.inc.d3  control  inc.d3 4263
-    ## control.inc.d9  control  inc.d9 4540
-    ## control.inc.d17 control inc.d17 4235
-    ## control.hatch   control   hatch 3685
-    ## control.n5      control      n5 4475
-    ## control.n9      control      n9 4519
-    ## bldg.lay           bldg     lay   NA
-    ## bldg.inc.d3        bldg  inc.d3   NA
-    ## bldg.inc.d9        bldg  inc.d9    2
-    ## bldg.inc.d17       bldg inc.d17   NA
-    ## bldg.hatch         bldg   hatch    2
-    ## bldg.n5            bldg      n5   NA
-    ## bldg.n9            bldg      n9   NA
-    ## lay.inc.d3          lay  inc.d3   NA
-    ## lay.inc.d9          lay  inc.d9    4
-    ## lay.inc.d17         lay inc.d17   NA
-    ## lay.hatch           lay   hatch    5
-    ## lay.n5              lay      n5    1
-    ## lay.n9              lay      n9    4
-    ## inc.d3.inc.d9    inc.d3  inc.d9    1
-    ## inc.d3.inc.d17   inc.d3 inc.d17   NA
-    ## inc.d3.hatch     inc.d3   hatch    8
-    ## inc.d3.n5        inc.d3      n5   NA
-    ## inc.d3.n9        inc.d3      n9   NA
-    ## inc.d9.inc.d17   inc.d9 inc.d17    1
-    ## inc.d9.hatch     inc.d9   hatch  259
-    ## inc.d9.n5        inc.d9      n5    1
-    ## inc.d9.n9        inc.d9      n9    1
-    ## inc.d17.hatch   inc.d17   hatch    2
-    ## inc.d17.n5      inc.d17      n5    1
-    ## inc.d17.n9      inc.d17      n9    2
-    ## hatch.n5          hatch      n5  166
-    ## hatch.n9          hatch      n9  327
-    ## n5.n9                n5      n9   NA
-
-    ## Warning: Removed 11 rows containing missing values (geom_text).
-
-![](../figures/characterization/totalDEGs-1.png)
-
-    b <- plottotalDEGs(DEGs.female_pituitary, "female pituitary")
-
-    ## 'data.frame':    36 obs. of  3 variables:
-    ##  $ V1: Factor w/ 9 levels "control","bldg",..: 1 1 1 1 1 1 1 1 2 2 ...
-    ##  $ V2: Factor w/ 9 levels "control","bldg",..: 2 3 4 5 6 7 8 9 3 4 ...
-    ##  $ V3: int  3950 3777 3062 3695 2870 3436 3451 3571 101 5 ...
-    ## NULL
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 3950
-    ## control.lay     control     lay 3777
-    ## control.inc.d3  control  inc.d3 3062
-    ## control.inc.d9  control  inc.d9 3695
-    ## control.inc.d17 control inc.d17 2870
-    ## control.hatch   control   hatch 3436
-    ## control.n5      control      n5 3451
-    ## control.n9      control      n9 3571
-    ## bldg.lay           bldg     lay  101
-    ## bldg.inc.d3        bldg  inc.d3    5
-    ## bldg.inc.d9        bldg  inc.d9   18
-    ## bldg.inc.d17       bldg inc.d17 1162
-    ## bldg.hatch         bldg   hatch  942
-    ## bldg.n5            bldg      n5  177
-    ## bldg.n9            bldg      n9   60
-    ## lay.inc.d3          lay  inc.d3   18
-    ## lay.inc.d9          lay  inc.d9   35
-    ## lay.inc.d17         lay inc.d17 1626
-    ## lay.hatch           lay   hatch 1316
-    ## lay.n5              lay      n5  103
-    ## lay.n9              lay      n9  209
-    ## inc.d3.inc.d9    inc.d3  inc.d9   NA
-    ## inc.d3.inc.d17   inc.d3 inc.d17  441
-    ## inc.d3.hatch     inc.d3   hatch  489
-    ## inc.d3.n5        inc.d3      n5   38
-    ## inc.d3.n9        inc.d3      n9   37
-    ## inc.d9.inc.d17   inc.d9 inc.d17  640
-    ## inc.d9.hatch     inc.d9   hatch  665
-    ## inc.d9.n5        inc.d9      n5   26
-    ## inc.d9.n9        inc.d9      n9   48
-    ## inc.d17.hatch   inc.d17   hatch    3
-    ## inc.d17.n5      inc.d17      n5  404
-    ## inc.d17.n9      inc.d17      n9  968
-    ## hatch.n5          hatch      n5  340
-    ## hatch.n9          hatch      n9  822
-    ## n5.n9                n5      n9    1
-
-    ## Warning: Removed 1 rows containing missing values (geom_text).
-
-![](../figures/characterization/totalDEGs-2.png)
-
-    c <- plottotalDEGs(DEGs.female_gonad, "female gonad")
-
-    ## 'data.frame':    36 obs. of  3 variables:
-    ##  $ V1: Factor w/ 9 levels "control","bldg",..: 1 1 1 1 1 1 1 1 2 2 ...
-    ##  $ V2: Factor w/ 9 levels "control","bldg",..: 2 3 4 5 6 7 8 9 3 4 ...
-    ##  $ V3: int  4597 4173 2424 2740 699 1289 2280 4300 104 566 ...
-    ## NULL
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 4597
-    ## control.lay     control     lay 4173
-    ## control.inc.d3  control  inc.d3 2424
-    ## control.inc.d9  control  inc.d9 2740
-    ## control.inc.d17 control inc.d17  699
-    ## control.hatch   control   hatch 1289
-    ## control.n5      control      n5 2280
-    ## control.n9      control      n9 4300
-    ## bldg.lay           bldg     lay  104
-    ## bldg.inc.d3        bldg  inc.d3  566
-    ## bldg.inc.d9        bldg  inc.d9  286
-    ## bldg.inc.d17       bldg inc.d17 1888
-    ## bldg.hatch         bldg   hatch  193
-    ## bldg.n5            bldg      n5  276
-    ## bldg.n9            bldg      n9   24
-    ## lay.inc.d3          lay  inc.d3  440
-    ## lay.inc.d9          lay  inc.d9  275
-    ## lay.inc.d17         lay inc.d17 1439
-    ## lay.hatch           lay   hatch  395
-    ## lay.n5              lay      n5  235
-    ## lay.n9              lay      n9  291
-    ## inc.d3.inc.d9    inc.d3  inc.d9    8
-    ## inc.d3.inc.d17   inc.d3 inc.d17    9
-    ## inc.d3.hatch     inc.d3   hatch   22
-    ## inc.d3.n5        inc.d3      n5   57
-    ## inc.d3.n9        inc.d3      n9  548
-    ## inc.d9.inc.d17   inc.d9 inc.d17    1
-    ## inc.d9.hatch     inc.d9   hatch    1
-    ## inc.d9.n5        inc.d9      n5    4
-    ## inc.d9.n9        inc.d9      n9  268
-    ## inc.d17.hatch   inc.d17   hatch    1
-    ## inc.d17.n5      inc.d17      n5    4
-    ## inc.d17.n9      inc.d17      n9 1046
-    ## hatch.n5          hatch      n5    1
-    ## hatch.n9          hatch      n9   84
-    ## n5.n9                n5      n9   19
-
-![](../figures/characterization/totalDEGs-3.png)
-
-    d <- plottotalDEGs(DEGs.male_hypothalamus, "male hypothalamus")
-
-    ## 'data.frame':    36 obs. of  3 variables:
-    ##  $ V1: Factor w/ 9 levels "control","bldg",..: 1 1 1 1 1 1 1 1 2 2 ...
-    ##  $ V2: Factor w/ 9 levels "control","bldg",..: 2 3 4 5 6 7 8 9 3 4 ...
-    ##  $ V3: int  4499 5193 5108 4915 5673 4918 5153 5259 NA 1 ...
-    ## NULL
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 4499
-    ## control.lay     control     lay 5193
-    ## control.inc.d3  control  inc.d3 5108
-    ## control.inc.d9  control  inc.d9 4915
-    ## control.inc.d17 control inc.d17 5673
-    ## control.hatch   control   hatch 4918
-    ## control.n5      control      n5 5153
-    ## control.n9      control      n9 5259
-    ## bldg.lay           bldg     lay   NA
-    ## bldg.inc.d3        bldg  inc.d3    1
-    ## bldg.inc.d9        bldg  inc.d9   NA
-    ## bldg.inc.d17       bldg inc.d17    1
-    ## bldg.hatch         bldg   hatch   NA
-    ## bldg.n5            bldg      n5   NA
-    ## bldg.n9            bldg      n9    1
-    ## lay.inc.d3          lay  inc.d3   NA
-    ## lay.inc.d9          lay  inc.d9   NA
-    ## lay.inc.d17         lay inc.d17   NA
-    ## lay.hatch           lay   hatch   NA
-    ## lay.n5              lay      n5    2
-    ## lay.n9              lay      n9   NA
-    ## inc.d3.inc.d9    inc.d3  inc.d9   NA
-    ## inc.d3.inc.d17   inc.d3 inc.d17   NA
-    ## inc.d3.hatch     inc.d3   hatch   NA
-    ## inc.d3.n5        inc.d3      n5   NA
-    ## inc.d3.n9        inc.d3      n9   NA
-    ## inc.d9.inc.d17   inc.d9 inc.d17   NA
-    ## inc.d9.hatch     inc.d9   hatch    1
-    ## inc.d9.n5        inc.d9      n5   NA
-    ## inc.d9.n9        inc.d9      n9   NA
-    ## inc.d17.hatch   inc.d17   hatch   NA
-    ## inc.d17.n5      inc.d17      n5    2
-    ## inc.d17.n9      inc.d17      n9    1
-    ## hatch.n5          hatch      n5   NA
-    ## hatch.n9          hatch      n9    1
-    ## n5.n9                n5      n9   NA
-
-    ## Warning: Removed 20 rows containing missing values (geom_text).
-
-![](../figures/characterization/totalDEGs-4.png)
-
-    e <- plottotalDEGs(DEGs.male_pituitary, "male pituitary")
-
-    ## 'data.frame':    36 obs. of  3 variables:
-    ##  $ V1: Factor w/ 9 levels "control","bldg",..: 1 1 1 1 1 1 1 1 2 2 ...
-    ##  $ V2: Factor w/ 9 levels "control","bldg",..: 2 3 4 5 6 7 8 9 3 4 ...
-    ##  $ V3: int  4680 4884 4609 4571 4249 4559 4885 4719 NA 1 ...
-    ## NULL
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 4680
-    ## control.lay     control     lay 4884
-    ## control.inc.d3  control  inc.d3 4609
-    ## control.inc.d9  control  inc.d9 4571
-    ## control.inc.d17 control inc.d17 4249
-    ## control.hatch   control   hatch 4559
-    ## control.n5      control      n5 4885
-    ## control.n9      control      n9 4719
-    ## bldg.lay           bldg     lay   NA
-    ## bldg.inc.d3        bldg  inc.d3    1
-    ## bldg.inc.d9        bldg  inc.d9   NA
-    ## bldg.inc.d17       bldg inc.d17  307
-    ## bldg.hatch         bldg   hatch  655
-    ## bldg.n5            bldg      n5  241
-    ## bldg.n9            bldg      n9   37
-    ## lay.inc.d3          lay  inc.d3    1
-    ## lay.inc.d9          lay  inc.d9   NA
-    ## lay.inc.d17         lay inc.d17  302
-    ## lay.hatch           lay   hatch  794
-    ## lay.n5              lay      n5  208
-    ## lay.n9              lay      n9   20
-    ## inc.d3.inc.d9    inc.d3  inc.d9    1
-    ## inc.d3.inc.d17   inc.d3 inc.d17  252
-    ## inc.d3.hatch     inc.d3   hatch  694
-    ## inc.d3.n5        inc.d3      n5  244
-    ## inc.d3.n9        inc.d3      n9   49
-    ## inc.d9.inc.d17   inc.d9 inc.d17  186
-    ## inc.d9.hatch     inc.d9   hatch  444
-    ## inc.d9.n5        inc.d9      n5  203
-    ## inc.d9.n9        inc.d9      n9    5
-    ## inc.d17.hatch   inc.d17   hatch   18
-    ## inc.d17.n5      inc.d17      n5   23
-    ## inc.d17.n9      inc.d17      n9  132
-    ## hatch.n5          hatch      n5    3
-    ## hatch.n9          hatch      n9  286
-    ## n5.n9                n5      n9   23
-
-    ## Warning: Removed 3 rows containing missing values (geom_text).
-
-![](../figures/characterization/totalDEGs-5.png)
-
-    f <- plottotalDEGs(DEGs.male_gondad, "male gonad")
-
-    ## 'data.frame':    36 obs. of  3 variables:
-    ##  $ V1: Factor w/ 9 levels "control","bldg",..: 1 1 1 1 1 1 1 1 2 2 ...
-    ##  $ V2: Factor w/ 9 levels "control","bldg",..: 2 3 4 5 6 7 8 9 3 4 ...
-    ##  $ V3: int  2135 3005 1742 2121 1546 2074 2488 2810 1 NA ...
-    ## NULL
-    ##                      V1      V2   V3
-    ## control.bldg    control    bldg 2135
-    ## control.lay     control     lay 3005
-    ## control.inc.d3  control  inc.d3 1742
-    ## control.inc.d9  control  inc.d9 2121
-    ## control.inc.d17 control inc.d17 1546
-    ## control.hatch   control   hatch 2074
-    ## control.n5      control      n5 2488
-    ## control.n9      control      n9 2810
-    ## bldg.lay           bldg     lay    1
-    ## bldg.inc.d3        bldg  inc.d3   NA
-    ## bldg.inc.d9        bldg  inc.d9   NA
-    ## bldg.inc.d17       bldg inc.d17   NA
-    ## bldg.hatch         bldg   hatch   NA
-    ## bldg.n5            bldg      n5   NA
-    ## bldg.n9            bldg      n9   NA
-    ## lay.inc.d3          lay  inc.d3    1
-    ## lay.inc.d9          lay  inc.d9  463
-    ## lay.inc.d17         lay inc.d17   15
-    ## lay.hatch           lay   hatch    1
-    ## lay.n5              lay      n5   NA
-    ## lay.n9              lay      n9   NA
-    ## inc.d3.inc.d9    inc.d3  inc.d9   NA
-    ## inc.d3.inc.d17   inc.d3 inc.d17   NA
-    ## inc.d3.hatch     inc.d3   hatch   NA
-    ## inc.d3.n5        inc.d3      n5   NA
-    ## inc.d3.n9        inc.d3      n9    1
-    ## inc.d9.inc.d17   inc.d9 inc.d17   NA
-    ## inc.d9.hatch     inc.d9   hatch   NA
-    ## inc.d9.n5        inc.d9      n5   NA
-    ## inc.d9.n9        inc.d9      n9   NA
-    ## inc.d17.hatch   inc.d17   hatch   NA
-    ## inc.d17.n5      inc.d17      n5   NA
-    ## inc.d17.n9      inc.d17      n9   NA
-    ## hatch.n5          hatch      n5   NA
-    ## hatch.n9          hatch      n9   NA
-    ## n5.n9                n5      n9   NA
-
-    ## Warning: Removed 22 rows containing missing values (geom_text).
-
-![](../figures/characterization/totalDEGs-6.png)
-
-    plot_grid(a + theme(legend.position = "none"),
-              b + theme(legend.position = "none"),
-              c,
-              d + theme(legend.position = "none"),
-              e + theme(legend.position = "none"),
-              f,
-              nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
-
-    ## Warning: Removed 11 rows containing missing values (geom_text).
-
-    ## Warning: Removed 1 rows containing missing values (geom_text).
-
-    ## Warning: Removed 20 rows containing missing values (geom_text).
-
-    ## Warning: Removed 3 rows containing missing values (geom_text).
-
-    ## Warning: Removed 22 rows containing missing values (geom_text).
-
-![](../figures/characterization/totalDEGs-7.png)
 
 Plot only a subset of DEGs that relate to hypotheses as bar and line graphs
 ---------------------------------------------------------------------------
@@ -1705,3 +946,755 @@ plot prolactin
     plot_grid(plots, mylegend, nrow = 2, rel_heights = c(1,0.1))
 
 ![](../figures/characterization/prolactin-1.png)
+
+correlation heat maps
+---------------------
+
+    plotcorrelationheatmaps(dds.female_hypothalamus, colData.female_hypothalamus ,"female hypothalamus: hatch, nest bldg., lay and day-before-hatch cluster")
+    plotcorrelationheatmaps(dds.female_pituitary, colData.female_pituitary, "female pituitary: clustering suggests an internal clock effect")
+    plotcorrelationheatmaps(dds.female_gonad, colData.female_gonad,  "female gonad: highly correlated across incubation and early nestling care")
+    plotcorrelationheatmaps(dds.male_hypothalamus, colData.male_hypothalamus, "male hypothalamus: 100% correlated across most parental care stages")
+    plotcorrelationheatmaps(dds.male_pituitary, colData.male_pituitary, "male pituitary: non-parental males are most different")
+    plotcorrelationheatmaps(dds.male_gondad, colData.male_gondad, "male gonad: non-parental males are most different")
+
+DEGs
+----
+
+    createDEGdf <- function(mydds, whichfactor, up, down){
+      res <- results(mydds, contrast =c(whichfactor, up, down),
+                     independentFiltering = T, alpha = 0.1)
+       data <- data.frame(entrezid = row.names(res),
+                         padj = res$padj, 
+                         logpadj = -log10(res$padj),
+                         lfc = res$log2FoldChange)
+      data <- na.omit(data)
+      
+      data <- data %>%
+        dplyr::mutate(direction = ifelse(data$lfc > 0 & data$padj < 0.1, 
+                                         yes = up, no = ifelse(data$lfc < 0 & data$padj < 0.1, 
+                                                     yes = down, no = "NS")))
+      data$direction <- factor(data$direction, levels = c(down, "NS", up))
+      
+      data <- left_join(data, geneinfo) %>%
+        mutate(gene = Name) %>%
+        select(gene, lfc, padj, logpadj, direction) %>%
+        arrange(desc(lfc))
+      
+      DEGs <- data %>% filter(direction != "NS")
+      
+      myfilename = paste("../results/03_DEGs", down,up, "csv", sep = ".")
+      
+      # write dataframe of only significant genes
+      write.csv(DEGs, myfilename, row.names = F)
+      
+      # return data frome with all data, included NS genes
+      return(data)
+    }  
+
+    control.bldg <- createDEGdf(dds.female_pituitary, "treatment", "bldg", "control")
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    bldg.lay <- createDEGdf(dds.female_pituitary, "treatment", "lay", "bldg")
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    lay.inc.d3 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d3", "lay") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    inc.d3.inc.d9 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d9", "inc.d3") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    inc.d9.inc.d17 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d17", "inc.d9")
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    inc.d17.hatch <- createDEGdf(dds.female_pituitary, "treatment", "hatch", "inc.d17") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    hatch.n5 <- createDEGdf(dds.female_pituitary, "treatment", "n5", "hatch") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    n5.n9 <- createDEGdf(dds.female_pituitary, "treatment", "n9", "n5") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    plot.volcano <- function(data, whichfactor, up, down, mycolors){
+      
+      volcano <- data %>%
+        ggplot(aes(x = lfc, y = logpadj)) + 
+        geom_point(aes(color = direction), size = 1, alpha = 0.75, na.rm = T) + 
+         theme_B3() +
+        scale_color_manual(values = mycolors,
+                           name = " ",
+                           drop = FALSE) +
+        ylim(c(0,25)) +  
+        xlim(c(-8,8)) +
+        labs(y = "-log10(p)", x = "log fold change")  +
+        theme(legend.position = c(.5, .95),
+              legend.direction = "horizontal",
+              legend.spacing.x = unit(-0.1, 'cm'),
+              legend.margin=margin(t=-0.25, r=0, b=0, l=0, unit="cm"),
+              panel.grid = element_blank()) 
+      return(volcano)
+    }
+
+    a <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
+    b <- plot.volcano(bldg.lay, "treatment", "lay", "bldg", colorsvolcano)
+    c <- plot.volcano(lay.inc.d3, "treatment", "inc.d3", "lay", colorsvolcano) 
+    d <- plot.volcano(inc.d3.inc.d9, "treatment", "inc.d9", "inc.d3", colorsvolcano) 
+    e <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcano)
+    f <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
+    g <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
+    h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
+
+
+    plot_grid(a + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
+              b + theme(axis.title = element_blank(), axis.text = element_blank()),
+              c + theme(axis.title = element_blank(), axis.text = element_blank()),
+              d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+              e ,
+              f + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+              g + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+              h + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
+              nrow = 2, rel_widths = c(0.25,0.2,0.2,0.2), rel_heights = c(0.45,0.55))
+
+![](../figures/characterization/plotDEGs-1.png)
+
+Go terms
+--------
+
+    reproduction <- read.table("../results/goterms/reproduction.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+    reproduction$GO <- "reproduction, GO:0000003"  
+      
+    parentalbehavior <- read.table("../results/goterms/parentalbehavior.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+    parentalbehavior$GO <- "parental behavior, GO:0060746"  
+
+    behavior <- read.table("../results/goterms/parentalbehavior.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+    behavior$GO <- "behavior, GO:0007610" 
+
+    systemdevelopment <- read.table("../results/goterms/systemdevelopment.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+    systemdevelopment$GO <- "system development, GO:0048731" 
+
+
+    GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment)
+
+    GOterms <- GOterms %>%
+      dplyr::mutate(gene = toupper(MGI.Gene.Marker.ID)) %>% 
+      dplyr::select(gene, GO) %>% 
+      dplyr::distinct(gene, GO) %>% 
+     group_by(gene) 
+
+    head(GOterms)
+
+    ## # A tibble: 6 x 2
+    ## # Groups:   gene [6]
+    ##   gene   GO                           
+    ##   <chr>  <chr>                        
+    ## 1 AVP    parental behavior, GO:0060746
+    ## 2 AVPR1A parental behavior, GO:0060746
+    ## 3 BRINP1 parental behavior, GO:0060746
+    ## 4 CREBRF parental behavior, GO:0060746
+    ## 5 DBH    parental behavior, GO:0060746
+    ## 6 DRD1   parental behavior, GO:0060746
+
+    returnGOgenes <- function(whichGOterms, data){
+      
+      df <- inner_join(whichGOterms, data) %>% filter(direction != "NS") %>%  select(gene, GO) %>% 
+      group_by(GO) %>% summarize(genes = str_c(gene, collapse = ", "))
+      return(df)
+    }  
+      
+    dt1 <- returnGOgenes(GOterms,control.bldg) 
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    dt2 <- returnGOgenes(GOterms,bldg.lay) 
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    dt3 <- returnGOgenes(GOterms,lay.inc.d3)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    dt6 <- returnGOgenes(GOterms,inc.d17.hatch)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    dt7 <- returnGOgenes(GOterms,hatch.n5)  
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    dt8 <- returnGOgenes(GOterms,n5.n9) 
+
+    ## Joining, by = "gene"
+
+    ## Warning: Column `gene` joining character vector and factor, coercing into
+    ## character vector
+
+    kable(dt1)
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+GO
+</th>
+<th style="text-align:left;">
+genes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
+</td>
+<td style="text-align:left;">
+AVP, DRD1, GNAQ, MBD2, NR3C1, OXT, PRL, PTEN, ZFX
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+parental behavior, <a href="GO:0060746" class="uri">GO:0060746</a>
+</td>
+<td style="text-align:left;">
+AVP, DRD1, GNAQ, MBD2, NR3C1, OXT, PRL, PTEN, ZFX
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
+</td>
+<td style="text-align:left;">
+AAAS, ABAT, ABCG2, ABL2, ACOX1, ACRBP, ACSL4, ACTR2, ACVR1B, ACVR2A,
+ADCY3, ADCYAP1R1, ADRA2A, ADRA2C, ADRM1, AFF4, AFP, AGFG1, AK7, AKAP9,
+ALKBH1, ALKBH5, ALPL, AMH, ANKRD49, ANTXR1, ANXA1, ANXA5, APLP2, APP,
+AR, ARHGDIB, ARID1A, ARID5B, ARNT, ARNTL, ASB1, ASH1L, ATAT1, ATM, ATN1,
+ATP2B4, ATP8B3, ATR, ATRX, AVP, B4GALT1, BBS1, BBS2, BCL2L1, BCL6,
+BIRC6, BMPR1B, BMPR2, BPTF, BPTF, BRCA2, BRDT, BRIP1, BUB1B, BUB3,
+C1QBP, CACNA1E, CACNA1H, CCDC39, CCDC40, CCDC42, CCNA1, CCND1, CCT2,
+CCT3, CCT5, CCT6A, CCT8, CDC25A, CDKN1B, CECR2, CELF1, CFAP43, CFAP44,
+CGA, CHRNA7, CHTF18, CIB1, CIT, CLASP2, CLDN11, CLOCK, CNTFR, COL9A3,
+CORIN, CREM, CRKL, CSF1, CTNNB1, CYP7B1, CYP19A1, CYP26B1, DACH1, DDX3X,
+DDX20, DEDD, DHCR24, DLD, DLG1, DLG1, DMC1, DNAH5, DNAJA1, DNAJB6,
+DNAJC19, DNMT3A, DPCD, DRD1, DRD4, DZIP1, EFCAB1, EIF2B2, EIF2B4,
+EIF4G3, EIF4G3, EIF4G3, EMP2, ENO4, ENPP2, EPAS1, EREG, ESPL1, ETV5,
+FANCA, FANCD2, FANCL, FANCM, FBXW8, FEM1B, FGF7, FGF9, FGF10, FKBP4,
+FNDC3A, FOXC1, FOXL2, FOXO3, FRS2, FZD4, FZR1, GAB1, GAS8, GGNBP2, GGT1,
+GGT5, GHRL, GNAQ, GOLGA3, GOPC, GORASP2, GPX4, GRB2, GREB1L, GREB1L,
+GRHL2, GRIN1, GRIN1, GTSF1, HDAC2, HDAC4, HERC2, HERC4, HEXB, HEY2,
+HFM1, HMGA2, HMGB2, HNRNPK, HORMAD2, HS6ST1, HSF2, HSP90AB1, HSPA2,
+HSPB11, HTT, HYAL3, ID4, IFT20, IFT27, IFT81, IFT88, IGF1R, IGF2,
+IGFBP5, IMMP2L, INHBA, INHBB, INPP5B, INSR, ITGA3, ITGB1, ITGB1, JAM3,
+JMJD1C, KATNAL1, KDM1B, KDM3A, KLF9, KPNA6, KRT8, LAMB1, LAMP1, LEF1,
+LFNG, LHX8, LIMK2, LRGUK, LRP2, M1AP, MAP3K4, MAP7, MAPK1, MAPK14,
+MAPK15, MBD2, MCM8, MDFI, MDK, MEIG1, MEN1, MERTK, METTL14, MKI67, MLH1,
+MLH3, MMP2, MND1, MRE11A, MSH4, MSX2, MYBL1, MYCBPAP, NCAPD3, NCAPH,
+NCOA1, NDC1, NDP, NEK1, NKD1, NOG, NOS2, NPHP1, NPHP1, NPHP4, NPPC,
+NR0B1, NR2F2, NR3C1, NR5A1, NSUN2, NUP107, OCA2, ODF2, OSBP2, OVOL2,
+OXT, P2RY1, PAFAH1B1, PAFAH1B2, PAIP2, PARK7, PATZ1, PBRM1, PBX1, PCSK5,
+PCYT1B, PDE3A, PGM3, PHC2, PKD1, PKD2, PLA2G4A, PLAG1, PLAT, PLCB1,
+PLCD4, PLD6, PMP22, PMS2, POC1A, POLR1B, PPARG, PPP2CA, PRDX3, PRKACB,
+PRKACB, PRKDC, PRL, PRLR, PRMT7, PSAP, PSMC3IP, PTEN, PTGS2, PTPN11,
+PYGO2, RAB3A, RAD21, RAD50, RAD51C, RAD51D, RAD54B, RBM7, RBM15, RIMS1,
+RIMS1, RMI1, RNF8, RNF8, RNF151, RPA1, RPS6KB1, RSPH1, RSPO3, RTCB,
+SNU13, SOD1, SORD, SP1, SP3, SPAG1, SPEF2, SPIRE2, SPIRE2, STAG2, STAT3,
+STAT5B, STK11, STRBP, STRBP, STS, STX2, STXBP1, STYX, SULF1, SUN1, SUN2,
+SYCP2, SYCP3, SYNE1, SYT6, TACR1, TACR3, TAF4, TARBP2, TCF7, TDRD7,
+TDRKH, TDRP, TEKT3, TEKT4, TEX11, TEX14, TGFB1, TH, THBD, TOP2A, TOP2B,
+TOPAZ1, TOPBP1, TPGS1, TRIM36, TRIP13, TSGA10, TTC26, TTLL5, TUBGCP2,
+TUBGCP3, TUBGCP5, TUBGCP6, TXNRD3, UBE2J1, UBE2Q1, VDAC2, VIPAS39,
+VPS13A, WDR19, WDR48, WNT5A, WNT7A, XRN1, YBX3, YTHDC1, YTHDF2, ZFAT,
+ZFP36L1, ZFPM2, ZFX, ZMIZ1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+system development, <a href="GO:0048731" class="uri">GO:0048731</a>
+</td>
+<td style="text-align:left;">
+ABCC8, ABCD2, ABI1, ABL2, ABR, ACAP3, ACD, ACP2, ACP5, ACSL4, ACSL6,
+ACTN1, ACTN1, ACTN2, ACTR2, ACVR1B, ACVR2A, ASAH1, ASAP1, ASB1, ASB2,
+ASCL1, ASH1L, ASPA, ASTN1, ASXL1, ASXL2, ASXL2, ASXL3, ATAD5, ATAT1,
+ATCAY, ATF1, ATF2, ATF3, ATF4, ATG5, ATM, ATN1, BCL2L1, BCL6, BCL9L,
+BCL10, BCL11A, BDNF, BECN1, BFSP2, BHLHE41, BICC1, BICC1, BIN1, BIRC6,
+BLOC1S2, BLOC1S4, BMI1, BMP2, BMPR1B, BMPR2, BNIP2, BPGM, BPTF, BPTF,
+BRCA2, BRINP2, BRIP1, BRSK2, BSN, BTBD1, BTBD2, BTG1, BTK, BZW2, C3AR1,
+C9ORF72, CABP4, CACNA1C, CACNA1C, CACNB4, CACNB4, CACYBP, CALCR, CAMK1,
+CAMK1D, CAMK2A, CAMK4, CAMSAP1, CAMSAP2, CAPN1, CAPRIN1, CAPRIN2, CAPZB,
+CARD10, CASK, CASP6, CASP6, CAT, CAV2, CBLB, CBX7, CCDC39, CCDC40,
+CCDC66, CCDC88A, CCDC141, CCL5, CCM2, CCNB2, CCND1, CCNT2, CCR5, CD38,
+CD74, CD81, CD164, CDC42, CDK5, CDK5R2, CDK5RAP2, CDK13, CDKL5, CDKN1A,
+CDKN1B, CDON, CECR2, CELSR2, CEND1, CEP120, CEP290, CFLAR, CGA, CHD2,
+CHODL, CHRDL1, CHRNA7, CHST11, CHSY1, CIAPIN1, CIB1, CIT, CLASP1,
+CLASP2, CLDN1, CLDN11, CLN8, CLOCK, CLP1, CLUAP1, CMTM8, CNGA3, CNN2,
+CNOT4, CNOT4, CNP, CNTF, CNTFR, CNTN2, CNTN3, CNTN4, CNTN5, CNTN6,
+CNTNAP2, COL1A1, COL11A1, COL18A1, COL19A1, COL25A1, COL27A1, COPS2,
+CORIN, CORO1C, CPE, CPLX2, CREB1, CREB3L2, CRK, CRKL, CRTC1, CRYBA2,
+CRYBB2, CRYBG3, CSF1, CSGALNACT1, CSMD3, CSNK1D, CSPG5, CSRNP1, CTC1,
+CTDP1, CTNNA1, CTNNB1, CTNNBL1, CTNND2, CTNND2, CTNS, CTR9, CTTN, CUL1,
+CUX1, CUX2, CYP7B1, CYP19A1, CYP26B1, DAAM2, DAB1, DAB2IP, DACT1, DAG1,
+DAGLA, DAGLB, DAW1, DBI, DBN1, DBNL, DCLRE1C, DCTN1, DCTN5, DDIT3,
+DDIT4, DDX5, DDX6, DEDD, DENND5A, DES, DGUOK, DHCR24, DHFR, DHRS3,
+DHTKD1, DHX30, DIO3, DIXDC1, DLG1, DLG1, DLG5, DLG5, DLL1, DLX1, ETS1,
+FGF1, FGF2, FGF9, FGF10, FGF13, FGFR1, FOXG1, FOXJ2, FOXK1, FOXO1,
+FOXO3, FOXO4, FOXP1, FRAS1, FREM1, FRG1, FRS2, FRY, FRYL, FUBP1, FXR1,
+FZD1, FZD4, FZD7, FZR1, GAB1, GABPA, GABRA4, GABRA5, GAS1, GAS8,
+GATAD2A, GATAD2A, GDF11, GFRA4, GGNBP2, GH, GHRL, GIGYF2, GJA4, GJC1,
+GJC2, GLA, GLG1, GLI3, GNB1, GNG5, GON4L, GPC1, GPC2, GPC4, GPCPD1,
+GPD2, GPLD1, GPM6B, GPM6B, GPR37L1, GPR157, GPR171, GRB2, GREB1L,
+GREB1L, GRHL2, GRID2, GRIN1, GRIN1, GRIN2A, GRIN2B, GRIP1, GSK3B, ,
+IL1RAPL1, IL7R, ILDR2, ILK, IMMP2L, IMPACT, INA, INHBA, INHBB, INPP5D,
+INSM1, INSR, IQCB1, IRF1, IRF2BP2, IRF8, IRS1, ITFG2, ITGA2, ITGA3,
+ITGA6, ITGA6, ITGB1, ITGB1, ITGB1BP1, ITGB1BP1, ITGB2, ITGB8, ITPR1,
+JADE2, JAK1, JAK2, JAK3, JAKMIP1, JAM3, JMJD1C, JMJD8, KAT2B, KAT6A,
+KCNJ10, KCNMA1, KCNQ1, KCTD10, KDM1A, KDM6A, KEL, KERA, KIF3A, KIF3C,
+KLF4, KLF10, KLF11, KLHL3, KMT2A, KMT2E, KNDC1, KRAS, KRIT1, KRT8,
+L1CAM, LAMA3, LAMA4, LAMB1, LAMB2, LAMC1, LAMC3, LBH, LBR, LGI1, LHFPL4,
+LHFPL5, LHX8, LIAS, LIFR, LIMK2, LINGO1, LMBR1L, LMNA, LMO2, LMO2, LMO4,
+LMTK2, LMX1A, LRFN3, LRIG3, LRP1, LRP2, LRP5, LRP12, LRRK1, LRRK2,
+LRRTM3, LRRTM4, LUC7L, LUC7L, LUZP1, MACF1, MAD1L1, MAD2L2, MAFB, MAFK,
+MAGI2, MAL2, MAN1A2, MAN2A1, MANF, MAP1A, MAP1B, MAP1S, MAP2, MAP2,
+MAP2K2, MAP2K4, MAP2K5, MAP3K4, MAP3K7, MAP3K13, MAP4, MAP4K4, MAP4K4,
+MAP7, MAPK1, MAPK8, MAPK8, MAPK14, MAPKAPK2, MARK1, MARK2, MARVELD1,
+MATN2, MATR3, MBNL1, MBNL1, MBOAT7, MBTD1, MCM3AP, MDFI, MDGA1, MDK,
+MDM1, MDM2, MDM4, MED20, MEF2A, MEF2C, MEF2C, NKX2-2, NPHP1, NPHP1,
+NPHP3, NPHP4, NPPC, NPRL3, NPTN, NPTN, NR0B1, NR1D1, NR2F2, NR3C1,
+NR5A1, NRARP, NRBP2, NRCAM, NRCAM, NRG2, NRG4, NRP1, NRP2, NRSN1, NRTN,
+NRXN3, NRXN3, NSMF, NSUN2, NTM, NTN4, NTNG2, NUDT21, NUMA1, NUP107,
+NUP160, NXN, NYAP2, OLFM1, OLFM3, OMG, ONECUT1, OPA1, OPHN1, OTOL1,
+OTOP1, OVOL2, OXT, P2RX4, P2RY1, P4HTM, PABPC4, PAFAH1B1, PAFAH1B2,
+PAK1, PAK2, PAK3, PAK4, PALB2, PALM, PALM, PAPSS2, PARD3, PATZ1, PAXBP1,
+PAXIP1, PBRM1, PBX1, PBX3, PCDH15, PCDH17, PCDH18, PCDH19, PCID2, PCK1,
+PCLO, PCM1, PCNT, PCSK5, PCYT1B, PDCD2, PDCD6, PDCD10, PDCL3, PDGFC,
+PDGFD, PDGFRB, PDLIM1, PDLIM4, PDLIM5, PDLIM7, PDPK1, PDZD7, PEF1, PER2,
+PER2, PFDN1, PGAP1, PGM3, PHF10, PHGDH, PHLDB1, PHLDB2, PHOSPHO1, PIAS2,
+PIAS2, PICALM, PICK1, PIK3C2A, PIK3CA, PIK3R2, PIK3R3, PIKFYVE, PIM1,
+PITPNA, PKD1, PKD2, PKNOX1, PLA2G4A, PLA2G10, PLAA, PLAG1, PLCB1, PLCE1,
+PLCL2, PLEKHA5, PLEKHA5, PLK2, PLP1, PLS3, PLXNB1, PLXND1, PML, PMP22,
+PMS2, POC1A, POLB, POMGNT2, POU1F1, POU3F3, POU4F1, POU4F2, PPARA,
+PPARG, PPARGC1A, PPHLN1, PPP1CC, PPP1R9A, PPP1R9A, PPP1R9A, PPP1R9B,
+PPP2CA, PPP2R3C, PRDX3, PRELID1, PREX2, PRICKLE1, PRICKLE2, PRKAA1,
+PRKACB, PRKACB, PRKAR1A, PRKAR1B, PRKCB, PRKD1, PRKDC, PSAP, PSD, PSKH1,
+PSMA6, PTBP1, PTCD2, PTCH2, PTCHD1, PTEN, RAG2, RAI1, RALA, RAP1A,
+RAP1GAP2, RAPGEF1, RAPGEF2, RAPGEF3, RAPGEF4, RAPH1, RARB, RARRES2,
+RASA1, RASGRF1, RASSF2, RBBP6, RBFOX1, RBFOX2, RBFOX2, RBM15, RBM45,
+RBM47, RET, RFNG, RFX3, RFX4, RFX6, RGCC, RGS4, RGS6, RGS14, RHO, RHOA,
+RHOJ, RIC8A, RIF1, RIMS1, RIMS1, RIPK2, RIPK3, RIPPLY2, RIT2, RITA1,
+RND2, RNF6, RNF7, RNF8, RNF8, RNF10, RNF41, RNF213, RNLS, ROBO4, ROM1,
+RPA1, RPGR, RPGRIP1L, RPL22, RPL38, RPS6KA1, RPS6KB1, RPS7, RRN3, RRS1,
+RSPO3, RTCB, RUNX3, RXRA, RXRG, RYR2, S1PR1, S100A9, S100B, SAFB2,
+SALL3, SAMD9L, SAMHD1, SAP30, SASH3, SBNO2, SCARB2, SCHIP1, SCLT1,
+SCN2A, SCN8A, SCO2, SCRIB, SCT, SCUBE2, SCYL1, SDC4, SDCBP, SDF4, SDHA,
+SDK1, SDK2, SEC63, SEMA3A, SEMA3E, SEMA3F, SEMA4B, SEMA4C, SEMA4D,
+SEMA5A, SEMA6A, SEMA6B, SEMA6D, SEMA7A, SENP1, SERP1, SERPINE2,
+SERPINF2, SERPINH1, SETD2, SEZ6, SFRP1, SFRP2, SHOX2, SHROOM2, SHROOM4,
+SIK3, SIN3A, SIN3B, SIRT1, SKI, SKIL, SLC1A2, SLC6A4, SLC6A17, SLC8A1,
+SLC8A3, SLC9A1, SLC9A3R1, SLC11A2, SLC12A1, SLC22A5, SLC24A4, SLC25A46,
+SLC26A4, SLC26A4, SLC37A4, SLC38A10, SLC39A1, SLIT1, SLIT3, SLITRK3,
+SLITRK5, SLITRK6, SMAD2, SMAD4, SMARCB1, SMARCC1, SMARCD3, SMARCE1,
+SMCHD1, SMG9, SMO, SMTNL1, SMYD1, TAPT1, TAZ, TBX20, TCEA1, TCF3, TCF7,
+TFE3, TGFB1, TGFBR2, TGIF1, TGM2, TGM3, TH, THBS1, THBS4, THEMIS, THOC1,
+THOC2, THOC5, THSD7A, THSD7A, THY1, TIMP2, TIRAP, TIRAP, TJP1, TJP2,
+TMC1, TMEFF1, TMEM64, TMEM65, TMEM100, TMEM108, TMEM126A, TMEM223,
+TMOD3, TNFRSF21, TNN, TNR, TNRC6C, TOB2, TOP2A, TOP2B, TOX, TRPC4AP,
+TRPC5, TRPM1, TRPM2, TRPS1, TRPV1, TSC1, TSC2, TSG101, TSKU, TSPAN2,
+TTBK2, TTC3, TTC8, TTC21B, TTC26, TTL, TTLL5, TTLL7, TUB, TUB, TUBB2B,
+TUSC2, TWF1, TWF2, TXNRD2, UBA6, UBE2Q1, UBE4B, UBP1, UCHL1, UCHL3,
+UCHL5, UHMK1, ULK4, UNC5A, UNC5B, UNC5C, UNC5D, UNC45A, UNC45B, UNC119B,
+UNK, UNK, UPF2, USH2A, USP1, USP9X, USP19, USP21, USP33, UST, VAMP7,
+VASN, VCL, VHL, VIT, VPS13A, VPS33B, VWC2L, WARS, WASF2, WASF3, WASF3,
+WASL, WDPCP, WDR1, WDR5, WDR7, WDR19, WDR48, WDR60, WDR61, WLS, WNT5A,
+WNT7A, WNT9A, WNT11, WWTR1, XBP1, XK, XYLT1, YAP1, YBX3, YIPF6, YTHDF1,
+YTHDF2, YWHAH, YWHAZ, ZBTB1, ZBTB7A, ZBTB7B, ZBTB14, ZBTB24, ZBTB24,
+ZBTB42, ZBTB46, ZC3H12A, ZC4H2, ZCCHC24, ZEB1, ZFPM2, ZFX, ZIC4, ZIC4,
+ZIC4, ZMIZ1, ZMYND8, ZSWIM6, ZSWIM8
+</td>
+</tr>
+</tbody>
+</table>
+
+    kable(dt2) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+GO
+</th>
+<th style="text-align:left;">
+genes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
+</td>
+<td style="text-align:left;">
+ACSBG2, AGT, ARID4B, BMP6, CEBPA, CGA, DHCR24, ESR1, GATA2, GATA2, NOS2,
+PHLDA2, SP3, TH, TXNRD3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+system development, <a href="GO:0048731" class="uri">GO:0048731</a>
+</td>
+<td style="text-align:left;">
+ASTN1, ATCAY, BMI1, BMP6, BRINP2, BSG, CARD10, CD34, CD81, CDKN1A,
+CEBPA, CGA, CNTN4, CNTN5, CNTN6, COL11A1, DHCR24, DHRS3, DIO3, DLK1,
+GABPA, GAL, GATA2, GATA2, INSIG1, ITPR1, KANK1, LAMA4, LMBR1L, LPAR1,
+LRG1, MAFF, MANF, NTNG1, PHLDA2, PIK3R3, PIP4K2A, POR, PPIB, RITA1,
+RND2, ROM1, SARM1, SCEL, SCN5A, SERPINB5, TBX20, TH, TMEM108, TNFRSF21,
+VPS35, VTN, XBP1
+</td>
+</tr>
+</tbody>
+</table>
+
+    kable(dt3) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+GO
+</th>
+<th style="text-align:left;">
+genes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
+</td>
+<td style="text-align:left;">
+PTEN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+parental behavior, <a href="GO:0060746" class="uri">GO:0060746</a>
+</td>
+<td style="text-align:left;">
+PTEN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
+</td>
+<td style="text-align:left;">
+AFF4, BIRC2, CGA, ESR1, GAS8, GMCL1, MAP2K1, MDK, PACRG, PARK7, PRDX4,
+PTEN, SP3, SPIRE1, TAF4, VASH2, ZBTB16, ZMIZ1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+system development, <a href="GO:0048731" class="uri">GO:0048731</a>
+</td>
+<td style="text-align:left;">
+ASTN1, BIRC2, BSG, C2CD3, CDKN1A, CGA, CLEC3B, CLUAP1, CNTN4, CNTN5,
+CTNNBL1, DAAM2, DAGLB, GAS8, JAK1, KANK1, KREMEN1, LSM1, MANF, MAP2K1,
+MAPK8IP3, MDK, MDM4, NUP93, PDCL3, PDE3B, PPIB, PRDX4, PRELID1, PTEN,
+RGCC, RITA1, RPL22, RPL24, RPL38, RPS7, SEMA4D, SEMA6A, TMPRSS13,
+TRPC4AP, UFC1, VASH2, VPS35, XBP1, ZBTB16, ZMIZ1
+</td>
+</tr>
+</tbody>
+</table>
+
+    kable(dt4) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+GO
+</th>
+<th style="text-align:left;">
+genes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+</tr>
+</tbody>
+</table>
+
+    kable(dt5) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+GO
+</th>
+<th style="text-align:left;">
+genes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
+</td>
+<td style="text-align:left;">
+PRL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+parental behavior, <a href="GO:0060746" class="uri">GO:0060746</a>
+</td>
+<td style="text-align:left;">
+PRL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
+</td>
+<td style="text-align:left;">
+ACSBG2, ACTR2, ACTR3, ACVR1B, ADA, AFF4, AKAP9, ANTXR1, APP, ARID1A,
+ARID4B, ARID5B, ARNT, ASH1L, ASPM, ATAT1, ATM, ATN1, ATP8B3, ATR, ATRX,
+AURKA, BBS1, BCL2L1, BPTF, BRIP1, BUB1, BUB1B, BUB3, CACNA1H, CADM1,
+CBS, CCNB3, CCNE2, CCT2, CCT4, CDC20, CDC25A, CDH1, CKS2, CLGN, CLIC4,
+CREM, CXCL12, DLD, DNAJB6, DNMT3A, E2F7, EIF2S2, EIF4H, EME1, EPAS1,
+ESPL1, EXO1, FANCC, FANCD2, FANCL, FBXO5, FKBP4, GATA2, GATA2, GGT5,
+GLI2, GOLGA3, GORASP2, GPX4, HDAC4, HEY1, HMGB2, HNF4A, HOOK1, ID4,
+ITGA3, JAG2, KATNAL1, KIF18A, KLHDC3, LAMB1, LGR4, LGR5, LLGL2, MASTL,
+MCM8, MKI67, MND1, MSH2, MYBL1, NCAPD3, NCAPH, NCAPH2, NCOA1, NDC1,
+NEK2, NOG, NOTCH2, NPHP4, NSUN2, NUF2, PAFAH1B2, PGM3, PLCB1, PLCD1,
+PLK1, PLK4, PRDX3, PRDX4, PRL, PTGDS, PTTG1, PYGO2, RACGAP1, RAD21,
+RAD54B, RBBP8, RBM15, RFX2, RHOBTB3, RPA1, SOD1, SOX2, SP1, SPIRE2,
+ST14, STAT5B, STXBP1, SYDE1, TCF7L2, TCP1, TFEB, THBD, TMF1, TNK2,
+TOP2A, TRIP13, TSNAX, TTK, UBE2A, VDAC2, WDR77, WEE2, WNT3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+system development, <a href="GO:0048731" class="uri">GO:0048731</a>
+</td>
+<td style="text-align:left;">
+ABCA2, ABCC8, ABI2, ABR, ACP6, ACTN2, ACTR2, ACTR3, ACVR1B, ACVRL1, ADA,
+ASH1L, ASPM, ASTN1, ATAD5, ATAT1, ATG5, ATM, ATN1, BCL2L1, BCL11A,
+BICC1, BICC1, BLOC1S2, BPTF, BRCA1, BRIP1, BSG, BSN, BTBD2, CACNA1C,
+CACYBP, CADM1, CAPN1, CASK, CBFA2T2, CBLN2, CBS, CCM2, CD109, CD164,
+CDC20, CDK1, CDK5, CDK5R1, CDK6, CDON, CEBPG, CELSR2, CELSR3, CEND1,
+CENPF, CERS1, CLCN2, CLDN5, CLEC3B, CLIC4, CNN2, CNTF, COL20A1, COPS2,
+CPE, CREB3L1, CRTC1, CSMD3, CSPG4, CTDSP1, CTNNA1, CTNNBIP1, CTNND2,
+CTR9, CUX1, CUX2, CXADR, CXCL12, DAG1, DBN1, DCTN1, DCX, DDRGK1, DGUOK,
+FOXI1, FOXP1, FRAS1, FZD1, GATA2, GATA2, GATAD2A, GFRA1, GLG1, GLI2,
+GNB1, GOLGA4, GPC3, GPD2, GRIN2B, GRIP1, GRIP2, GRXCR1, IL1RAPL1, ILK,
+IMPAD1, INA, INPPL1, ITGA3, JAG2, JAK1, KCNA2, KCNAB2, KDM4C, KIF3C,
+KIF18A, LAMA4, LAMB1, LAMB2, LBH, LGR4, LGR5, LHFPL4, LIMK1, LLGL2,
+LLPH, LOXL3, LRFN3, LRRC7, LRRK1, LRRTM3, LRRTM4, LSM1, MAEA, MANF,
+MAP1S, MAP2K2, MAP4, MARK2, MBD5, MCM2, MDM4, NKX2-2, NPHP4, NPNT,
+NRBP2, NRP1, NRXN3, NSUN2, NTN1, NTN3, NUMA1, NUS1, NXN, OLFM1, ORAI1,
+OSR2, PAFAH1B2, PAK4, PARVA, PAX7, PAXBP1, PCID2, PCM1, PDLIM7, PEX2,
+PGM3, PHEX, PHF14, PHGDH, PHLDB1, PIK3R1, PIK3R3, PLCB1, PLCD1, PLK4,
+PLS3, POFUT2, POU3F2, POU3F3, PPIB, PRDX3, PRDX4, PRICKLE2, PRKCB, PSD,
+PSMA6, PTBP1, PTCH1, RAI1, RANBP1, RAP1A, RAP1GAP2, RARB, RASGRF1, RB1,
+RBFOX1, RBFOX2, RBM15, RBM47, RET, RGCC, RGMA, RGS6, RHOBTB3, RIPK3,
+RNF165, ROBO4, RPA1, RPGR, RPGRIP1L, RPL22, RXRA, SDF4, SDK2, SEC63,
+SEMA4C, SENP1, SERPINH1, SETDB1, SEZ6, SHOX2, SHROOM4, SIK1, SIK3,
+SIN3B, SLC7A11, SLC9A1, SLC11A2, SLC35D1, SLC37A4, SLITRK6, SMAD4,
+SMARCA4, SMARCD1, SMO, SMPD3, SMYD1, SOX2, TBC1D23, TBCE, TBX20, TCF3,
+TCF7L2, TFEB, TGFBR2, THBS4, THOC1, THOC2, THSD7A, TIRAP, TLX2, TMEM30A,
+TMEM100, TMF1, TMOD3, TMPRSS13, TNIK, TOB2, TOP2A, TRPV4, TTC9, TUSC2,
+UCHL1, UCHL5, UFC1, UFL1, UFM1, UNC5A, USP1, USP19, USP21, UST, VANGL2,
+WASF2, WDR36, WDR60, WDR77, WEE1, WFS1, WNT3, WWTR1, XBP1, XRCC6,
+ZBTB7A, ZFYVE27, ZNRF3
+</td>
+</tr>
+</tbody>
+</table>
+
+    kable(dt6) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+GO
+</th>
+<th style="text-align:left;">
+genes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
+</td>
+<td style="text-align:left;">
+TTK
+</td>
+</tr>
+</tbody>
+</table>
+
+    kable(dt7) 
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+GO
+</th>
+<th style="text-align:left;">
+genes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
+</td>
+<td style="text-align:left;">
+PRL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+parental behavior, <a href="GO:0060746" class="uri">GO:0060746</a>
+</td>
+<td style="text-align:left;">
+PRL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
+</td>
+<td style="text-align:left;">
+ABL2, ACSBG2, ACTR2, AFF4, ALMS1, APP, ASH1L, AURKA, BIRC2, BPTF, BUB1,
+BUB1B, CACNA1H, CBS, CCNB3, CCT2, CCT4, CD44, CDC20, CDC25A, CDK2,
+CEBPA, CKS2, EIF2S2, EIF4H, EME1, FANCC, FNDC3A, FOXL2, GORASP2, GPX4,
+HMGB2, JMJD1C, MKI67, MND1, MYBL1, NCAPH, NCOA1, NCOA6, NPHP1, NSUN2,
+NUF2, PARK7, PKD1, PLCD4, PLK1, PRDX3, PRDX4, PRL, PTTG1, RACGAP1, RAD1,
+RBM15, RHOBTB3, SPATA5, TCP1, UBE2A, VDAC2, WDR66, WDR77
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+system development, <a href="GO:0048731" class="uri">GO:0048731</a>
+</td>
+<td style="text-align:left;">
+ABCC8, ABL2, ACTR2, ASH1L, ASXL1, ATF4, BCL11A, BECN1, BICC1, BIN1,
+BIRC2, BMP3, BPTF, BRCA1, C2CD3, CACNA1C, CAPRIN2, CBLN2, CBS, CCK,
+CD44, CD164, CDC20, CDK1, CDK6, CEBPA, CEBPG, CNTN4, CREB3L1, CRYBB2,
+CTNNA1, CTSK, CUX2, DAGLB, DDIT3, DDRGK1, DGUOK, DGUOK, DLG5, FGF13,
+FOXP1, GLI3, GPC1, GPSM1, GRIP2, INA, JAK1, JMJD1C, JMJD8, KANK1, KCNA2,
+KDM4C, KMT2A, LAMA5, LBH, LHX6, LSM1, MAEA, MAFF, MANF, MAP2, MAP4K4,
+MBD5, MBNL1, MCM2, MCM3AP, NPHP1, NPTX1, NR4A3, NSMF, NSUN2, NUS1,
+OLFM1, PARVA, PAXIP1, PCDH17, PCDH19, PCM1, PDCD10, PDS5A, PHACTR1,
+PIK3R3, PKD1, PLD4, PLS3, PLXNA1, PLXNB2, POLB, POU3F3, PPIB, PRDX3,
+PRDX4, PRELID1, PSMA6, PTCH1, RANBP1, RASGRF1, RBM15, RHOA, RHOBTB3,
+RIPK3, RIT2, RXRG, SCN8A, SCT, SCYL1, SDCBP, SDF4, SDK1, SEC63, SEMA6A,
+SERP1, SIPA1L1, SKI, SLITRK3, SMTNL1, TCF3, TIAM2, TMEM100, TMOD3,
+TMPRSS13, TNRC6C, TUB, UCHL1, UFC1, UFL1, UFM1, UNK, USP1, WDR77, XBP1,
+ZFPM1
+</td>
+</tr>
+</tbody>
+</table>
+
+    kable(dt8)
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+GO
+</th>
+<th style="text-align:left;">
+genes
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
+</td>
+<td style="text-align:left;">
+AREG, RACGAP1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+system development, <a href="GO:0048731" class="uri">GO:0048731</a>
+</td>
+<td style="text-align:left;">
+CARD10, INSIG1, NSMF, SARM1, VTN
+</td>
+</tr>
+</tbody>
+</table>

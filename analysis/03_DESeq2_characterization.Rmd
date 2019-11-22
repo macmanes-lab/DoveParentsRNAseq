@@ -12,9 +12,15 @@ library(pheatmap)
 library(kableExtra)
 library(viridis)
 library(ggimage)
+library(knitr)
+library(kableExtra)
 
+
+library(BiocParallel)
+register(MulticoreParam(6))
 
 # load custom functions  
+source("../R/themes.R") 
 source("../R/functions.R") 
 
 knitr::opts_chunk$set(fig.path = '../figures/characterization/', cache = TRUE)
@@ -34,6 +40,9 @@ c.colData$treatment <- factor(c.colData$treatment, levels =
 levels(c.colData$treatment)
 c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
 summary(c.colData[c(7,3,4,5,8)])
+
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+head(geneinfo)
 ```
 
 
@@ -190,3 +199,145 @@ plotcorrelationheatmaps(dds.male_hypothalamus, colData.male_hypothalamus, "male 
 plotcorrelationheatmaps(dds.male_pituitary, colData.male_pituitary, "male pituitary: non-parental males are most different")
 plotcorrelationheatmaps(dds.male_gondad, colData.male_gondad, "male gonad: non-parental males are most different")
 ```
+
+
+## DEGs
+
+```{r createDEGs}
+
+createDEGdf <- function(mydds, whichfactor, up, down){
+  res <- results(mydds, contrast =c(whichfactor, up, down),
+                 independentFiltering = T, alpha = 0.1)
+   data <- data.frame(entrezid = row.names(res),
+                     padj = res$padj, 
+                     logpadj = -log10(res$padj),
+                     lfc = res$log2FoldChange)
+  data <- na.omit(data)
+  
+  data <- data %>%
+    dplyr::mutate(direction = ifelse(data$lfc > 0 & data$padj < 0.1, 
+                                     yes = up, no = ifelse(data$lfc < 0 & data$padj < 0.1, 
+                                                 yes = down, no = "NS")))
+  data$direction <- factor(data$direction, levels = c(down, "NS", up))
+  
+  data <- left_join(data, geneinfo) %>%
+    mutate(gene = Name) %>%
+    select(gene, lfc, padj, logpadj, direction) %>%
+    arrange(desc(lfc))
+  
+  DEGs <- data %>% filter(direction != "NS")
+  
+  myfilename = paste("../results/03_DEGs", down,up, "csv", sep = ".")
+  
+  # write dataframe of only significant genes
+  write.csv(DEGs, myfilename, row.names = F)
+  
+  # return data frome with all data, included NS genes
+  return(data)
+}  
+
+control.bldg <- createDEGdf(dds.female_pituitary, "treatment", "bldg", "control")
+bldg.lay <- createDEGdf(dds.female_pituitary, "treatment", "lay", "bldg")
+lay.inc.d3 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d3", "lay") 
+inc.d3.inc.d9 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d9", "inc.d3") 
+inc.d9.inc.d17 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d17", "inc.d9")
+inc.d17.hatch <- createDEGdf(dds.female_pituitary, "treatment", "hatch", "inc.d17") 
+hatch.n5 <- createDEGdf(dds.female_pituitary, "treatment", "n5", "hatch") 
+n5.n9 <- createDEGdf(dds.female_pituitary, "treatment", "n9", "n5") 
+```
+
+```{r plotDEGs}
+plot.volcano <- function(data, whichfactor, up, down, mycolors){
+  
+  volcano <- data %>%
+    ggplot(aes(x = lfc, y = logpadj)) + 
+    geom_point(aes(color = direction), size = 1, alpha = 0.75, na.rm = T) + 
+     theme_B3() +
+    scale_color_manual(values = mycolors,
+                       name = " ",
+                       drop = FALSE) +
+    ylim(c(0,25)) +  
+    xlim(c(-8,8)) +
+    labs(y = "-log10(p)", x = "log fold change")  +
+    theme(legend.position = c(.5, .95),
+          legend.direction = "horizontal",
+          legend.spacing.x = unit(-0.1, 'cm'),
+          legend.margin=margin(t=-0.25, r=0, b=0, l=0, unit="cm"),
+          panel.grid = element_blank()) 
+  return(volcano)
+}
+
+a <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
+b <- plot.volcano(bldg.lay, "treatment", "lay", "bldg", colorsvolcano)
+c <- plot.volcano(lay.inc.d3, "treatment", "inc.d3", "lay", colorsvolcano) 
+d <- plot.volcano(inc.d3.inc.d9, "treatment", "inc.d9", "inc.d3", colorsvolcano) 
+e <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcano)
+f <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
+g <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
+h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
+
+
+plot_grid(a + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
+          b + theme(axis.title = element_blank(), axis.text = element_blank()),
+          c + theme(axis.title = element_blank(), axis.text = element_blank()),
+          d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          e ,
+          f + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          g + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          h + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
+          nrow = 2, rel_widths = c(0.25,0.2,0.2,0.2), rel_heights = c(0.45,0.55))
+
+```
+
+## Go terms
+
+```{r GOterms}
+reproduction <- read.table("../results/goterms/reproduction.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+reproduction$GO <- "reproduction, GO:0000003"  
+  
+parentalbehavior <- read.table("../results/goterms/parentalbehavior.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+parentalbehavior$GO <- "parental behavior, GO:0060746"  
+
+behavior <- read.table("../results/goterms/parentalbehavior.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+behavior$GO <- "behavior, GO:0007610" 
+
+systemdevelopment <- read.table("../results/goterms/systemdevelopment.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+systemdevelopment$GO <- "system development, GO:0048731" 
+
+
+GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment)
+
+GOterms <- GOterms %>%
+  dplyr::mutate(gene = toupper(MGI.Gene.Marker.ID)) %>% 
+  dplyr::select(gene, GO) %>% 
+  dplyr::distinct(gene, GO) %>% 
+ group_by(gene) 
+
+head(GOterms)
+
+returnGOgenes <- function(whichGOterms, data){
+  
+  df <- inner_join(whichGOterms, data) %>% filter(direction != "NS") %>%  select(gene, GO) %>% 
+  group_by(GO) %>% summarize(genes = str_c(gene, collapse = ", "))
+  return(df)
+}  
+  
+dt1 <- returnGOgenes(GOterms,control.bldg) 
+dt2 <- returnGOgenes(GOterms,bldg.lay) 
+dt3 <- returnGOgenes(GOterms,lay.inc.d3)  
+dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9)  
+dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17)  
+dt6 <- returnGOgenes(GOterms,inc.d17.hatch)  
+dt7 <- returnGOgenes(GOterms,hatch.n5)  
+dt8 <- returnGOgenes(GOterms,n5.n9) 
+
+kable(dt1)
+kable(dt2) 
+kable(dt3) 
+kable(dt4) 
+kable(dt5) 
+kable(dt6) 
+kable(dt7) 
+kable(dt8)
+```
+
