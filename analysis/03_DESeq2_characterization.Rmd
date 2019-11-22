@@ -304,12 +304,11 @@ behavior$GO <- "behavior, GO:0007610"
 systemdevelopment <- read.table("../results/goterms/systemdevelopment.txt", sep = "\t", row.names = NULL,  fill=TRUE)
 systemdevelopment$GO <- "system development, GO:0048731" 
 
+endocrineprocess <- read.table("../results/goterms/endocrineprocess.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+endocrineprocess$GO <- "endocrine process, GO:0050886" 
 
-cellularcomponentorganization <- read.table("../results/goterms/cellularcomponentorganization.txt", sep = "\t", row.names = NULL,  fill=TRUE)
-cellularcomponentorganization$GO <- "cellular component organization, GO:0016043" 
 
-
-GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment)
+GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment, endocrineprocess)
 
 GOterms <- GOterms %>%
   dplyr::mutate(gene = toupper(MGI.Gene.Marker.ID)) %>% 

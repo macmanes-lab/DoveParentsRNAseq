@@ -1104,12 +1104,11 @@ Go terms
     systemdevelopment <- read.table("../results/goterms/systemdevelopment.txt", sep = "\t", row.names = NULL,  fill=TRUE)
     systemdevelopment$GO <- "system development, GO:0048731" 
 
+    endocrineprocess <- read.table("../results/goterms/endocrineprocess.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+    endocrineprocess$GO <- "endocrine process, GO:0050886" 
 
-    cellularcomponentorganization <- read.table("../results/goterms/cellularcomponentorganization.txt", sep = "\t", row.names = NULL,  fill=TRUE)
-    cellularcomponentorganization$GO <- "cellular component organization, GO:0016043" 
 
-
-    GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment)
+    GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment, endocrineprocess)
 
     GOterms <- GOterms %>%
       dplyr::mutate(gene = toupper(MGI.Gene.Marker.ID)) %>% 
@@ -1164,6 +1163,16 @@ behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
 </td>
 <td style="text-align:left;">
 AVP, DRD1, GNAQ, MBD2, NR3C1, OXT, PRL, PTEN, ZFX
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
+</td>
+<td style="text-align:left;">
+ACE2, ACVR2A, AVPR2, CGA, CORIN, CRY1, ECE1, FGFR1, FOXL2, FZD4, GHRL,
+INHBA, INHBB, KRAS, NPVF, PEX5L, PTPN11, RAB11FIP1, RAB11FIP5, RHOA,
+SERPINF2, SMAD4, TACR1
 </td>
 </tr>
 <tr>
@@ -1350,6 +1359,14 @@ genes
 <tbody>
 <tr>
 <td style="text-align:left;">
+endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
+</td>
+<td style="text-align:left;">
+AGT, BMP6, CGA, GAL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
 </td>
 <td style="text-align:left;">
@@ -1400,6 +1417,14 @@ behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
 </td>
 <td style="text-align:left;">
 PTEN
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
+</td>
+<td style="text-align:left;">
+CGA, RAB11FIP5
 </td>
 </tr>
 <tr>
@@ -1487,6 +1512,14 @@ behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
 </td>
 <td style="text-align:left;">
 PRL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
+</td>
+<td style="text-align:left;">
+ATP6AP2, CRY1, SMAD4, TMF1
 </td>
 </tr>
 <tr>
@@ -1616,6 +1649,14 @@ behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
 </td>
 <td style="text-align:left;">
 PRL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
+</td>
+<td style="text-align:left;">
+ATP6AP2, AVPR2, CRY2, FOXL2, RHOA
 </td>
 </tr>
 <tr>
