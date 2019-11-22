@@ -323,21 +323,28 @@ returnGOgenes <- function(whichGOterms, data){
 }  
   
 dt1 <- returnGOgenes(GOterms,control.bldg) 
-dt2 <- returnGOgenes(GOterms,bldg.lay) 
-dt3 <- returnGOgenes(GOterms,lay.inc.d3)  
-dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9)  
-dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17)  
-dt6 <- returnGOgenes(GOterms,inc.d17.hatch)  
-dt7 <- returnGOgenes(GOterms,hatch.n5)  
-dt8 <- returnGOgenes(GOterms,n5.n9) 
-
 kable(dt1)
+
+dt2 <- returnGOgenes(GOterms,bldg.lay) 
 kable(dt2) 
+
+dt3 <- returnGOgenes(GOterms,lay.inc.d3)  
 kable(dt3) 
+
+dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9)  
 kable(dt4) 
+
+dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17)  
 kable(dt5) 
+
+dt6 <- returnGOgenes(GOterms,inc.d17.hatch)  
 kable(dt6) 
+
+dt7 <- returnGOgenes(GOterms,hatch.n5)  
 kable(dt7) 
-kable(dt8)
+
+dt8 <- returnGOgenes(GOterms,n5.n9) 
+kable(dt8) 
+
 ```
 
