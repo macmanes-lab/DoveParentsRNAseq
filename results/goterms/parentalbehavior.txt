@@ -1,0 +1,24 @@
+MGI Gene/Marker ID	Symbol	Name	Chr	Qualifier	Annotated Term	Context	Proteoform	Evidence	Inferred From	Reference(s)
+MGI:88121	Avp	arginine vasopressin	2		maternal behavior			ISO	RGD:2184 	J:155856 	
+MGI:1859216	Avpr1a	arginine vasopressin receptor 1A	10		maternal behavior			IBA	PTN000662711 	J:265628 	
+MGI:1859216	Avpr1a	arginine vasopressin receptor 1A	10		maternal behavior			ISO	RGD:2185 	J:155856 	
+MGI:1928478	Brinp1	bone morphogenic protein/retinoic acid inducible neural specific 1	4		maternal behavior			IMP	MGI:5604542 	J:231288 	
+MGI:1924378	Crebrf	CREB3 regulatory factor	17		maternal behavior			IGI	MGI:95824 MGI:97762 	J:192857 	
+MGI:1924378	Crebrf	CREB3 regulatory factor	17		maternal behavior			IMP		J:192857 	
+MGI:94864	Dbh	dopamine beta hydroxylase	2		maternal behavior			IMP	MGI:1857556 	J:44784 	
+MGI:99578	Drd1	dopamine receptor D1	13		maternal behavior			IMP	MGI:1857158 	J:22076 J:120070 	
+MGI:95776	Gnaq	guanine nucleotide binding protein, alpha q polypeptide	19		maternal behavior			IMP	MGI:2151661 	J:92771 	
+MGI:96286	hubb	hyper-unconjugated bilirubinemia	UN		maternal behavior			IMP	MGI:1861101 	J:96716 	
+MGI:2685385	Kalrn	kalirin, RhoGEF kinase	16		maternal behavior			IMP	MGI:5551305 	J:206512 	
+MGI:1333813	Mbd2	methyl-CpG binding domain protein 2	18		maternal behavior			IMP	MGI:2388002 	J:68356 	
+MGI:109205	Npas1	neuronal PAS domain protein 1	7		maternal behavior			IGI	MGI:1351610 	J:92610 	
+MGI:1351610	Npas3	neuronal PAS domain protein 3	12		maternal behavior			IGI	MGI:109205 	J:92610 	
+MGI:95824	Nr3c1	nuclear receptor subfamily 3, group C, member 1	18		maternal behavior			IGI	MGI:1924378 MGI:97762 	J:192857 	
+MGI:97439	Oprk1	opioid receptor, kappa 1	1		maternal behavior			ISO	RGD:69426 	J:155856 	
+MGI:97453	Oxt	oxytocin	2		maternal behavior			ISO	RGD:3238 	J:155856 	
+MGI:109147	Oxtr	oxytocin receptor	6		maternal behavior			IBA	PTN000662660 	J:265628 	
+MGI:109147	Oxtr	oxytocin receptor	6		maternal behavior			ISO	RGD:3239 	J:155856 	
+MGI:97762	Prl	prolactin	13		maternal behavior			IGI	MGI:1924378 MGI:95824 	J:192857 	
+MGI:109583	Pten	phosphatase and tensin homolog	19		maternal behavior			IMP		J:109635 	
+MGI:99211	Zfx	zinc finger protein X-linked	X		parental behavior			IMP	MGI:2450147 	J:41131 	
+
