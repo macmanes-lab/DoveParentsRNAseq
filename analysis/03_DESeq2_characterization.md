@@ -1105,6 +1105,10 @@ Go terms
     systemdevelopment$GO <- "system development, GO:0048731" 
 
 
+    cellularcomponentorganization <- read.table("../results/goterms/cellularcomponentorganization.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+    cellularcomponentorganization$GO <- "cellular component organization, GO:0016043" 
+
+
     GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment)
 
     GOterms <- GOterms %>%
