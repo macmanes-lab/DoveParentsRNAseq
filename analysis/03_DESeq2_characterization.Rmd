@@ -307,8 +307,12 @@ systemdevelopment$GO <- "system development, GO:0048731"
 endocrineprocess <- read.table("../results/goterms/endocrineprocess.txt", sep = "\t", row.names = NULL,  fill=TRUE)
 endocrineprocess$GO <- "endocrine process, GO:0050886" 
 
+responsetostimulus <- read.table("../results/goterms/responsetostimulus.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+responsetostimulus$GO <- "response to external stimulus, GO:0009605" 
 
-GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment, endocrineprocess)
+
+GOterms <- rbind(parentalbehavior, reproduction, behavior, 
+                 systemdevelopment, endocrineprocess, responsetostimulus)
 
 GOterms <- GOterms %>%
   dplyr::mutate(gene = toupper(MGI.Gene.Marker.ID)) %>% 
@@ -318,36 +322,35 @@ GOterms <- GOterms %>%
 
 head(GOterms)
 
-returnGOgenes <- function(whichGOterms, data){
+returnGOgenes <- function(whichGOterms, data, mycomparison){
   
-  df <- inner_join(whichGOterms, data) %>% filter(direction != "NS") %>%  select(gene, GO) %>% 
-  group_by(GO) %>% summarize(genes = str_c(gene, collapse = ", "))
+  df <- inner_join(whichGOterms, data) %>% 
+    filter(direction != "NS") %>%  
+    select(gene, GO) %>% 
+    group_by(GO) %>% 
+    summarize(genes = str_c(gene, collapse = ", "))  %>% 
+    mutate(comparison = mycomparison) %>% 
+    select(comparison, GO, genes)
+  
   return(df)
 }  
   
-dt1 <- returnGOgenes(GOterms,control.bldg) 
-kable(dt1)
-
-dt2 <- returnGOgenes(GOterms,bldg.lay) 
-kable(dt2) 
-
-dt3 <- returnGOgenes(GOterms,lay.inc.d3)  
-kable(dt3) 
-
-dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9)  
-kable(dt4) 
-
-dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17)  
+dt1 <- returnGOgenes(GOterms,control.bldg, "control v bldg") 
+dt2 <- returnGOgenes(GOterms,bldg.lay , "bldg v lay") 
+dt3 <- returnGOgenes(GOterms,lay.inc.d3 , "lay v inc d3")  
+dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9 , "inc d3 v inc d9")  
+dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17 , "inc d9 v inc d17")  
 kable(dt5) 
 
-dt6 <- returnGOgenes(GOterms,inc.d17.hatch)  
-kable(dt6) 
-
-dt7 <- returnGOgenes(GOterms,hatch.n5)  
+dt6 <- returnGOgenes(GOterms,inc.d17.hatch, "inc d17 v hatch")  
+dt7 <- returnGOgenes(GOterms,hatch.n5, "hatch v n5")  
 kable(dt7) 
 
-dt8 <- returnGOgenes(GOterms,n5.n9) 
-kable(dt8) 
+dt8 <- returnGOgenes(GOterms,n5.n9, "n5 v n9") 
 
+alldt <- rbind(dt1,dt2,dt3,dt4,dt5,dt6,dt7,dt8)
+alldt
+
+write.csv(alldt, "../results/03_GO_femalepituitary.csv")
 ```
 

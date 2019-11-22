@@ -1107,8 +1107,12 @@ Go terms
     endocrineprocess <- read.table("../results/goterms/endocrineprocess.txt", sep = "\t", row.names = NULL,  fill=TRUE)
     endocrineprocess$GO <- "endocrine process, GO:0050886" 
 
+    responsetostimulus <- read.table("../results/goterms/responsetostimulus.txt", sep = "\t", row.names = NULL,  fill=TRUE)
+    responsetostimulus$GO <- "response to external stimulus, GO:0009605" 
 
-    GOterms <- rbind(parentalbehavior, reproduction, behavior, systemdevelopment, endocrineprocess)
+
+    GOterms <- rbind(parentalbehavior, reproduction, behavior, 
+                     systemdevelopment, endocrineprocess, responsetostimulus)
 
     GOterms <- GOterms %>%
       dplyr::mutate(gene = toupper(MGI.Gene.Marker.ID)) %>% 
@@ -1129,363 +1133,48 @@ Go terms
     ## 5 DBH    parental behavior, GO:0060746
     ## 6 DRD1   parental behavior, GO:0060746
 
-    returnGOgenes <- function(whichGOterms, data){
+    returnGOgenes <- function(whichGOterms, data, mycomparison){
       
-      df <- inner_join(whichGOterms, data) %>% filter(direction != "NS") %>%  select(gene, GO) %>% 
-      group_by(GO) %>% summarize(genes = str_c(gene, collapse = ", "))
+      df <- inner_join(whichGOterms, data) %>% 
+        filter(direction != "NS") %>%  
+        select(gene, GO) %>% 
+        group_by(GO) %>% 
+        summarize(genes = str_c(gene, collapse = ", "))  %>% 
+        mutate(comparison = mycomparison) %>% 
+        select(comparison, GO, genes)
+      
       return(df)
     }  
       
-    dt1 <- returnGOgenes(GOterms,control.bldg) 
+    dt1 <- returnGOgenes(GOterms,control.bldg, "control v bldg") 
 
     ## Joining, by = "gene"
 
     ## Warning: Column `gene` joining character vector and factor, coercing into
     ## character vector
 
-    kable(dt1)
-
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-GO
-</th>
-<th style="text-align:left;">
-genes
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
-</td>
-<td style="text-align:left;">
-AVP, DRD1, GNAQ, MBD2, NR3C1, OXT, PRL, PTEN, ZFX
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
-</td>
-<td style="text-align:left;">
-ACE2, ACVR2A, AVPR2, CGA, CORIN, CRY1, ECE1, FGFR1, FOXL2, FZD4, GHRL,
-INHBA, INHBB, KRAS, NPVF, PEX5L, PTPN11, RAB11FIP1, RAB11FIP5, RHOA,
-SERPINF2, SMAD4, TACR1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-parental behavior, <a href="GO:0060746" class="uri">GO:0060746</a>
-</td>
-<td style="text-align:left;">
-AVP, DRD1, GNAQ, MBD2, NR3C1, OXT, PRL, PTEN, ZFX
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
-</td>
-<td style="text-align:left;">
-AAAS, ABAT, ABCG2, ABL2, ACOX1, ACRBP, ACSL4, ACTR2, ACVR1B, ACVR2A,
-ADCY3, ADCYAP1R1, ADRA2A, ADRA2C, ADRM1, AFF4, AFP, AGFG1, AK7, AKAP9,
-ALKBH1, ALKBH5, ALPL, AMH, ANKRD49, ANTXR1, ANXA1, ANXA5, APLP2, APP,
-AR, ARHGDIB, ARID1A, ARID5B, ARNT, ARNTL, ASB1, ASH1L, ATAT1, ATM, ATN1,
-ATP2B4, ATP8B3, ATR, ATRX, AVP, B4GALT1, BBS1, BBS2, BCL2L1, BCL6,
-BIRC6, BMPR1B, BMPR2, BPTF, BPTF, BRCA2, BRDT, BRIP1, BUB1B, BUB3,
-C1QBP, CACNA1E, CACNA1H, CCDC39, CCDC40, CCDC42, CCNA1, CCND1, CCT2,
-CCT3, CCT5, CCT6A, CCT8, CDC25A, CDKN1B, CECR2, CELF1, CFAP43, CFAP44,
-CGA, CHRNA7, CHTF18, CIB1, CIT, CLASP2, CLDN11, CLOCK, CNTFR, COL9A3,
-CORIN, CREM, CRKL, CSF1, CTNNB1, CYP7B1, CYP19A1, CYP26B1, DACH1, DDX3X,
-DDX20, DEDD, DHCR24, DLD, DLG1, DLG1, DMC1, DNAH5, DNAJA1, DNAJB6,
-DNAJC19, DNMT3A, DPCD, DRD1, DRD4, DZIP1, EFCAB1, EIF2B2, EIF2B4,
-EIF4G3, EIF4G3, EIF4G3, EMP2, ENO4, ENPP2, EPAS1, EREG, ESPL1, ETV5,
-FANCA, FANCD2, FANCL, FANCM, FBXW8, FEM1B, FGF7, FGF9, FGF10, FKBP4,
-FNDC3A, FOXC1, FOXL2, FOXO3, FRS2, FZD4, FZR1, GAB1, GAS8, GGNBP2, GGT1,
-GGT5, GHRL, GNAQ, GOLGA3, GOPC, GORASP2, GPX4, GRB2, GREB1L, GREB1L,
-GRHL2, GRIN1, GRIN1, GTSF1, HDAC2, HDAC4, HERC2, HERC4, HEXB, HEY2,
-HFM1, HMGA2, HMGB2, HNRNPK, HORMAD2, HS6ST1, HSF2, HSP90AB1, HSPA2,
-HSPB11, HTT, HYAL3, ID4, IFT20, IFT27, IFT81, IFT88, IGF1R, IGF2,
-IGFBP5, IMMP2L, INHBA, INHBB, INPP5B, INSR, ITGA3, ITGB1, ITGB1, JAM3,
-JMJD1C, KATNAL1, KDM1B, KDM3A, KLF9, KPNA6, KRT8, LAMB1, LAMP1, LEF1,
-LFNG, LHX8, LIMK2, LRGUK, LRP2, M1AP, MAP3K4, MAP7, MAPK1, MAPK14,
-MAPK15, MBD2, MCM8, MDFI, MDK, MEIG1, MEN1, MERTK, METTL14, MKI67, MLH1,
-MLH3, MMP2, MND1, MRE11A, MSH4, MSX2, MYBL1, MYCBPAP, NCAPD3, NCAPH,
-NCOA1, NDC1, NDP, NEK1, NKD1, NOG, NOS2, NPHP1, NPHP1, NPHP4, NPPC,
-NR0B1, NR2F2, NR3C1, NR5A1, NSUN2, NUP107, OCA2, ODF2, OSBP2, OVOL2,
-OXT, P2RY1, PAFAH1B1, PAFAH1B2, PAIP2, PARK7, PATZ1, PBRM1, PBX1, PCSK5,
-PCYT1B, PDE3A, PGM3, PHC2, PKD1, PKD2, PLA2G4A, PLAG1, PLAT, PLCB1,
-PLCD4, PLD6, PMP22, PMS2, POC1A, POLR1B, PPARG, PPP2CA, PRDX3, PRKACB,
-PRKACB, PRKDC, PRL, PRLR, PRMT7, PSAP, PSMC3IP, PTEN, PTGS2, PTPN11,
-PYGO2, RAB3A, RAD21, RAD50, RAD51C, RAD51D, RAD54B, RBM7, RBM15, RIMS1,
-RIMS1, RMI1, RNF8, RNF8, RNF151, RPA1, RPS6KB1, RSPH1, RSPO3, RTCB,
-SNU13, SOD1, SORD, SP1, SP3, SPAG1, SPEF2, SPIRE2, SPIRE2, STAG2, STAT3,
-STAT5B, STK11, STRBP, STRBP, STS, STX2, STXBP1, STYX, SULF1, SUN1, SUN2,
-SYCP2, SYCP3, SYNE1, SYT6, TACR1, TACR3, TAF4, TARBP2, TCF7, TDRD7,
-TDRKH, TDRP, TEKT3, TEKT4, TEX11, TEX14, TGFB1, TH, THBD, TOP2A, TOP2B,
-TOPAZ1, TOPBP1, TPGS1, TRIM36, TRIP13, TSGA10, TTC26, TTLL5, TUBGCP2,
-TUBGCP3, TUBGCP5, TUBGCP6, TXNRD3, UBE2J1, UBE2Q1, VDAC2, VIPAS39,
-VPS13A, WDR19, WDR48, WNT5A, WNT7A, XRN1, YBX3, YTHDC1, YTHDF2, ZFAT,
-ZFP36L1, ZFPM2, ZFX, ZMIZ1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-system development, <a href="GO:0048731" class="uri">GO:0048731</a>
-</td>
-<td style="text-align:left;">
-ABCC8, ABCD2, ABI1, ABL2, ABR, ACAP3, ACD, ACP2, ACP5, ACSL4, ACSL6,
-ACTN1, ACTN1, ACTN2, ACTR2, ACVR1B, ACVR2A, ASAH1, ASAP1, ASB1, ASB2,
-ASCL1, ASH1L, ASPA, ASTN1, ASXL1, ASXL2, ASXL2, ASXL3, ATAD5, ATAT1,
-ATCAY, ATF1, ATF2, ATF3, ATF4, ATG5, ATM, ATN1, BCL2L1, BCL6, BCL9L,
-BCL10, BCL11A, BDNF, BECN1, BFSP2, BHLHE41, BICC1, BICC1, BIN1, BIRC6,
-BLOC1S2, BLOC1S4, BMI1, BMP2, BMPR1B, BMPR2, BNIP2, BPGM, BPTF, BPTF,
-BRCA2, BRINP2, BRIP1, BRSK2, BSN, BTBD1, BTBD2, BTG1, BTK, BZW2, C3AR1,
-C9ORF72, CABP4, CACNA1C, CACNA1C, CACNB4, CACNB4, CACYBP, CALCR, CAMK1,
-CAMK1D, CAMK2A, CAMK4, CAMSAP1, CAMSAP2, CAPN1, CAPRIN1, CAPRIN2, CAPZB,
-CARD10, CASK, CASP6, CASP6, CAT, CAV2, CBLB, CBX7, CCDC39, CCDC40,
-CCDC66, CCDC88A, CCDC141, CCL5, CCM2, CCNB2, CCND1, CCNT2, CCR5, CD38,
-CD74, CD81, CD164, CDC42, CDK5, CDK5R2, CDK5RAP2, CDK13, CDKL5, CDKN1A,
-CDKN1B, CDON, CECR2, CELSR2, CEND1, CEP120, CEP290, CFLAR, CGA, CHD2,
-CHODL, CHRDL1, CHRNA7, CHST11, CHSY1, CIAPIN1, CIB1, CIT, CLASP1,
-CLASP2, CLDN1, CLDN11, CLN8, CLOCK, CLP1, CLUAP1, CMTM8, CNGA3, CNN2,
-CNOT4, CNOT4, CNP, CNTF, CNTFR, CNTN2, CNTN3, CNTN4, CNTN5, CNTN6,
-CNTNAP2, COL1A1, COL11A1, COL18A1, COL19A1, COL25A1, COL27A1, COPS2,
-CORIN, CORO1C, CPE, CPLX2, CREB1, CREB3L2, CRK, CRKL, CRTC1, CRYBA2,
-CRYBB2, CRYBG3, CSF1, CSGALNACT1, CSMD3, CSNK1D, CSPG5, CSRNP1, CTC1,
-CTDP1, CTNNA1, CTNNB1, CTNNBL1, CTNND2, CTNND2, CTNS, CTR9, CTTN, CUL1,
-CUX1, CUX2, CYP7B1, CYP19A1, CYP26B1, DAAM2, DAB1, DAB2IP, DACT1, DAG1,
-DAGLA, DAGLB, DAW1, DBI, DBN1, DBNL, DCLRE1C, DCTN1, DCTN5, DDIT3,
-DDIT4, DDX5, DDX6, DEDD, DENND5A, DES, DGUOK, DHCR24, DHFR, DHRS3,
-DHTKD1, DHX30, DIO3, DIXDC1, DLG1, DLG1, DLG5, DLG5, DLL1, DLX1, ETS1,
-FGF1, FGF2, FGF9, FGF10, FGF13, FGFR1, FOXG1, FOXJ2, FOXK1, FOXO1,
-FOXO3, FOXO4, FOXP1, FRAS1, FREM1, FRG1, FRS2, FRY, FRYL, FUBP1, FXR1,
-FZD1, FZD4, FZD7, FZR1, GAB1, GABPA, GABRA4, GABRA5, GAS1, GAS8,
-GATAD2A, GATAD2A, GDF11, GFRA4, GGNBP2, GH, GHRL, GIGYF2, GJA4, GJC1,
-GJC2, GLA, GLG1, GLI3, GNB1, GNG5, GON4L, GPC1, GPC2, GPC4, GPCPD1,
-GPD2, GPLD1, GPM6B, GPM6B, GPR37L1, GPR157, GPR171, GRB2, GREB1L,
-GREB1L, GRHL2, GRID2, GRIN1, GRIN1, GRIN2A, GRIN2B, GRIP1, GSK3B, ,
-IL1RAPL1, IL7R, ILDR2, ILK, IMMP2L, IMPACT, INA, INHBA, INHBB, INPP5D,
-INSM1, INSR, IQCB1, IRF1, IRF2BP2, IRF8, IRS1, ITFG2, ITGA2, ITGA3,
-ITGA6, ITGA6, ITGB1, ITGB1, ITGB1BP1, ITGB1BP1, ITGB2, ITGB8, ITPR1,
-JADE2, JAK1, JAK2, JAK3, JAKMIP1, JAM3, JMJD1C, JMJD8, KAT2B, KAT6A,
-KCNJ10, KCNMA1, KCNQ1, KCTD10, KDM1A, KDM6A, KEL, KERA, KIF3A, KIF3C,
-KLF4, KLF10, KLF11, KLHL3, KMT2A, KMT2E, KNDC1, KRAS, KRIT1, KRT8,
-L1CAM, LAMA3, LAMA4, LAMB1, LAMB2, LAMC1, LAMC3, LBH, LBR, LGI1, LHFPL4,
-LHFPL5, LHX8, LIAS, LIFR, LIMK2, LINGO1, LMBR1L, LMNA, LMO2, LMO2, LMO4,
-LMTK2, LMX1A, LRFN3, LRIG3, LRP1, LRP2, LRP5, LRP12, LRRK1, LRRK2,
-LRRTM3, LRRTM4, LUC7L, LUC7L, LUZP1, MACF1, MAD1L1, MAD2L2, MAFB, MAFK,
-MAGI2, MAL2, MAN1A2, MAN2A1, MANF, MAP1A, MAP1B, MAP1S, MAP2, MAP2,
-MAP2K2, MAP2K4, MAP2K5, MAP3K4, MAP3K7, MAP3K13, MAP4, MAP4K4, MAP4K4,
-MAP7, MAPK1, MAPK8, MAPK8, MAPK14, MAPKAPK2, MARK1, MARK2, MARVELD1,
-MATN2, MATR3, MBNL1, MBNL1, MBOAT7, MBTD1, MCM3AP, MDFI, MDGA1, MDK,
-MDM1, MDM2, MDM4, MED20, MEF2A, MEF2C, MEF2C, NKX2-2, NPHP1, NPHP1,
-NPHP3, NPHP4, NPPC, NPRL3, NPTN, NPTN, NR0B1, NR1D1, NR2F2, NR3C1,
-NR5A1, NRARP, NRBP2, NRCAM, NRCAM, NRG2, NRG4, NRP1, NRP2, NRSN1, NRTN,
-NRXN3, NRXN3, NSMF, NSUN2, NTM, NTN4, NTNG2, NUDT21, NUMA1, NUP107,
-NUP160, NXN, NYAP2, OLFM1, OLFM3, OMG, ONECUT1, OPA1, OPHN1, OTOL1,
-OTOP1, OVOL2, OXT, P2RX4, P2RY1, P4HTM, PABPC4, PAFAH1B1, PAFAH1B2,
-PAK1, PAK2, PAK3, PAK4, PALB2, PALM, PALM, PAPSS2, PARD3, PATZ1, PAXBP1,
-PAXIP1, PBRM1, PBX1, PBX3, PCDH15, PCDH17, PCDH18, PCDH19, PCID2, PCK1,
-PCLO, PCM1, PCNT, PCSK5, PCYT1B, PDCD2, PDCD6, PDCD10, PDCL3, PDGFC,
-PDGFD, PDGFRB, PDLIM1, PDLIM4, PDLIM5, PDLIM7, PDPK1, PDZD7, PEF1, PER2,
-PER2, PFDN1, PGAP1, PGM3, PHF10, PHGDH, PHLDB1, PHLDB2, PHOSPHO1, PIAS2,
-PIAS2, PICALM, PICK1, PIK3C2A, PIK3CA, PIK3R2, PIK3R3, PIKFYVE, PIM1,
-PITPNA, PKD1, PKD2, PKNOX1, PLA2G4A, PLA2G10, PLAA, PLAG1, PLCB1, PLCE1,
-PLCL2, PLEKHA5, PLEKHA5, PLK2, PLP1, PLS3, PLXNB1, PLXND1, PML, PMP22,
-PMS2, POC1A, POLB, POMGNT2, POU1F1, POU3F3, POU4F1, POU4F2, PPARA,
-PPARG, PPARGC1A, PPHLN1, PPP1CC, PPP1R9A, PPP1R9A, PPP1R9A, PPP1R9B,
-PPP2CA, PPP2R3C, PRDX3, PRELID1, PREX2, PRICKLE1, PRICKLE2, PRKAA1,
-PRKACB, PRKACB, PRKAR1A, PRKAR1B, PRKCB, PRKD1, PRKDC, PSAP, PSD, PSKH1,
-PSMA6, PTBP1, PTCD2, PTCH2, PTCHD1, PTEN, RAG2, RAI1, RALA, RAP1A,
-RAP1GAP2, RAPGEF1, RAPGEF2, RAPGEF3, RAPGEF4, RAPH1, RARB, RARRES2,
-RASA1, RASGRF1, RASSF2, RBBP6, RBFOX1, RBFOX2, RBFOX2, RBM15, RBM45,
-RBM47, RET, RFNG, RFX3, RFX4, RFX6, RGCC, RGS4, RGS6, RGS14, RHO, RHOA,
-RHOJ, RIC8A, RIF1, RIMS1, RIMS1, RIPK2, RIPK3, RIPPLY2, RIT2, RITA1,
-RND2, RNF6, RNF7, RNF8, RNF8, RNF10, RNF41, RNF213, RNLS, ROBO4, ROM1,
-RPA1, RPGR, RPGRIP1L, RPL22, RPL38, RPS6KA1, RPS6KB1, RPS7, RRN3, RRS1,
-RSPO3, RTCB, RUNX3, RXRA, RXRG, RYR2, S1PR1, S100A9, S100B, SAFB2,
-SALL3, SAMD9L, SAMHD1, SAP30, SASH3, SBNO2, SCARB2, SCHIP1, SCLT1,
-SCN2A, SCN8A, SCO2, SCRIB, SCT, SCUBE2, SCYL1, SDC4, SDCBP, SDF4, SDHA,
-SDK1, SDK2, SEC63, SEMA3A, SEMA3E, SEMA3F, SEMA4B, SEMA4C, SEMA4D,
-SEMA5A, SEMA6A, SEMA6B, SEMA6D, SEMA7A, SENP1, SERP1, SERPINE2,
-SERPINF2, SERPINH1, SETD2, SEZ6, SFRP1, SFRP2, SHOX2, SHROOM2, SHROOM4,
-SIK3, SIN3A, SIN3B, SIRT1, SKI, SKIL, SLC1A2, SLC6A4, SLC6A17, SLC8A1,
-SLC8A3, SLC9A1, SLC9A3R1, SLC11A2, SLC12A1, SLC22A5, SLC24A4, SLC25A46,
-SLC26A4, SLC26A4, SLC37A4, SLC38A10, SLC39A1, SLIT1, SLIT3, SLITRK3,
-SLITRK5, SLITRK6, SMAD2, SMAD4, SMARCB1, SMARCC1, SMARCD3, SMARCE1,
-SMCHD1, SMG9, SMO, SMTNL1, SMYD1, TAPT1, TAZ, TBX20, TCEA1, TCF3, TCF7,
-TFE3, TGFB1, TGFBR2, TGIF1, TGM2, TGM3, TH, THBS1, THBS4, THEMIS, THOC1,
-THOC2, THOC5, THSD7A, THSD7A, THY1, TIMP2, TIRAP, TIRAP, TJP1, TJP2,
-TMC1, TMEFF1, TMEM64, TMEM65, TMEM100, TMEM108, TMEM126A, TMEM223,
-TMOD3, TNFRSF21, TNN, TNR, TNRC6C, TOB2, TOP2A, TOP2B, TOX, TRPC4AP,
-TRPC5, TRPM1, TRPM2, TRPS1, TRPV1, TSC1, TSC2, TSG101, TSKU, TSPAN2,
-TTBK2, TTC3, TTC8, TTC21B, TTC26, TTL, TTLL5, TTLL7, TUB, TUB, TUBB2B,
-TUSC2, TWF1, TWF2, TXNRD2, UBA6, UBE2Q1, UBE4B, UBP1, UCHL1, UCHL3,
-UCHL5, UHMK1, ULK4, UNC5A, UNC5B, UNC5C, UNC5D, UNC45A, UNC45B, UNC119B,
-UNK, UNK, UPF2, USH2A, USP1, USP9X, USP19, USP21, USP33, UST, VAMP7,
-VASN, VCL, VHL, VIT, VPS13A, VPS33B, VWC2L, WARS, WASF2, WASF3, WASF3,
-WASL, WDPCP, WDR1, WDR5, WDR7, WDR19, WDR48, WDR60, WDR61, WLS, WNT5A,
-WNT7A, WNT9A, WNT11, WWTR1, XBP1, XK, XYLT1, YAP1, YBX3, YIPF6, YTHDF1,
-YTHDF2, YWHAH, YWHAZ, ZBTB1, ZBTB7A, ZBTB7B, ZBTB14, ZBTB24, ZBTB24,
-ZBTB42, ZBTB46, ZC3H12A, ZC4H2, ZCCHC24, ZEB1, ZFPM2, ZFX, ZIC4, ZIC4,
-ZIC4, ZMIZ1, ZMYND8, ZSWIM6, ZSWIM8
-</td>
-</tr>
-</tbody>
-</table>
-
-    dt2 <- returnGOgenes(GOterms,bldg.lay) 
+    dt2 <- returnGOgenes(GOterms,bldg.lay , "bldg v lay") 
 
     ## Joining, by = "gene"
 
     ## Warning: Column `gene` joining character vector and factor, coercing into
     ## character vector
 
-    kable(dt2) 
-
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-GO
-</th>
-<th style="text-align:left;">
-genes
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
-</td>
-<td style="text-align:left;">
-AGT, BMP6, CGA, GAL
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
-</td>
-<td style="text-align:left;">
-ACSBG2, AGT, ARID4B, BMP6, CEBPA, CGA, DHCR24, ESR1, GATA2, GATA2, NOS2,
-PHLDA2, SP3, TH, TXNRD3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-system development, <a href="GO:0048731" class="uri">GO:0048731</a>
-</td>
-<td style="text-align:left;">
-ASTN1, ATCAY, BMI1, BMP6, BRINP2, BSG, CARD10, CD34, CD81, CDKN1A,
-CEBPA, CGA, CNTN4, CNTN5, CNTN6, COL11A1, DHCR24, DHRS3, DIO3, DLK1,
-GABPA, GAL, GATA2, GATA2, INSIG1, ITPR1, KANK1, LAMA4, LMBR1L, LPAR1,
-LRG1, MAFF, MANF, NTNG1, PHLDA2, PIK3R3, PIP4K2A, POR, PPIB, RITA1,
-RND2, ROM1, SARM1, SCEL, SCN5A, SERPINB5, TBX20, TH, TMEM108, TNFRSF21,
-VPS35, VTN, XBP1
-</td>
-</tr>
-</tbody>
-</table>
-
-    dt3 <- returnGOgenes(GOterms,lay.inc.d3)  
+    dt3 <- returnGOgenes(GOterms,lay.inc.d3 , "lay v inc d3")  
 
     ## Joining, by = "gene"
 
     ## Warning: Column `gene` joining character vector and factor, coercing into
     ## character vector
 
-    kable(dt3) 
-
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-GO
-</th>
-<th style="text-align:left;">
-genes
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
-</td>
-<td style="text-align:left;">
-PTEN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
-</td>
-<td style="text-align:left;">
-CGA, RAB11FIP5
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-parental behavior, <a href="GO:0060746" class="uri">GO:0060746</a>
-</td>
-<td style="text-align:left;">
-PTEN
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
-</td>
-<td style="text-align:left;">
-AFF4, BIRC2, CGA, ESR1, GAS8, GMCL1, MAP2K1, MDK, PACRG, PARK7, PRDX4,
-PTEN, SP3, SPIRE1, TAF4, VASH2, ZBTB16, ZMIZ1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-system development, <a href="GO:0048731" class="uri">GO:0048731</a>
-</td>
-<td style="text-align:left;">
-ASTN1, BIRC2, BSG, C2CD3, CDKN1A, CGA, CLEC3B, CLUAP1, CNTN4, CNTN5,
-CTNNBL1, DAAM2, DAGLB, GAS8, JAK1, KANK1, KREMEN1, LSM1, MANF, MAP2K1,
-MAPK8IP3, MDK, MDM4, NUP93, PDCL3, PDE3B, PPIB, PRDX4, PRELID1, PTEN,
-RGCC, RITA1, RPL22, RPL24, RPL38, RPS7, SEMA4D, SEMA6A, TMPRSS13,
-TRPC4AP, UFC1, VASH2, VPS35, XBP1, ZBTB16, ZMIZ1
-</td>
-</tr>
-</tbody>
-</table>
-
-    dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9)  
+    dt4 <- returnGOgenes(GOterms,inc.d3.inc.d9 , "inc d3 v inc d9")  
 
     ## Joining, by = "gene"
 
     ## Warning: Column `gene` joining character vector and factor, coercing into
     ## character vector
 
-    kable(dt4) 
-
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-GO
-</th>
-<th style="text-align:left;">
-genes
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-</tr>
-</tbody>
-</table>
-
-    dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17)  
+    dt5 <- returnGOgenes(GOterms,inc.d9.inc.d17 , "inc d9 v inc d17")  
 
     ## Joining, by = "gene"
 
@@ -1498,6 +1187,9 @@ genes
 <thead>
 <tr>
 <th style="text-align:left;">
+comparison
+</th>
+<th style="text-align:left;">
 GO
 </th>
 <th style="text-align:left;">
@@ -1508,6 +1200,9 @@ genes
 <tbody>
 <tr>
 <td style="text-align:left;">
+inc d9 v inc d17
+</td>
+<td style="text-align:left;">
 behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
 </td>
 <td style="text-align:left;">
@@ -1515,6 +1210,9 @@ PRL
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+inc d9 v inc d17
+</td>
 <td style="text-align:left;">
 endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
 </td>
@@ -1524,6 +1222,9 @@ ATP6AP2, CRY1, SMAD4, TMF1
 </tr>
 <tr>
 <td style="text-align:left;">
+inc d9 v inc d17
+</td>
+<td style="text-align:left;">
 parental behavior, <a href="GO:0060746" class="uri">GO:0060746</a>
 </td>
 <td style="text-align:left;">
@@ -1531,6 +1232,9 @@ PRL
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+inc d9 v inc d17
+</td>
 <td style="text-align:left;">
 reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
 </td>
@@ -1552,6 +1256,41 @@ TOP2A, TRIP13, TSNAX, TTK, UBE2A, VDAC2, WDR77, WEE2, WNT3
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+inc d9 v inc d17
+</td>
+<td style="text-align:left;">
+response to external stimulus,
+<a href="GO:0009605" class="uri">GO:0009605</a>
+</td>
+<td style="text-align:left;">
+ABCC8, ABCC9, ABCF3, ABR, ACTR2, ACTR3, ADA, ADAM17, ADAR, ADSL, AGBL4,
+AGBL5, AGRN, AJAP1, ALAD, AOC3, APBB1, APP, ARF1, ASH1L, ASPH, ATG5,
+ATM, ATN1, BAIAP2L1, BCKDHB, BCL2L1, BNIP3L, BSG, CADM1, CASK, CBS,
+CCL28, CD109, CDH4, CDK5, CDK5R1, CDK19, CEBPG, CELSR3, CHID1, CNN2,
+CNPY3, CNTF, COTL1, CRADD, CRTC1, CRY1, CTR9, CXADR, CXCL12, DAG1,
+DAPK3, DBN1, DDX1, DMTN, DPYD, DSCAML1, DUSP3, DUSP10, EFNB1, EIF2AK1,
+EIF2AK3, EIF2AK4, EIF2S1, ELMOD2, EP300, EPHA2, EPHA3, EPHB2, EPRS,
+ERCC6, FAM107A, FANCD2, FFAR4, FOXP1, G3BP2, GABARAPL1, GAS2L3, GCH1,
+GGT5, GLI2, GNB1, GPC3, GPX4, GRIN2B, HMGB1, HMGB2, HMGB3, HSP90B1,
+HSPA5, IFNGR1, IL12RB2, IPO7, IRAK4, KARS, LAMB2, LAMP2, LDHA, LGMN,
+LGR4, LPL, LPO, LRAT, MAP2K2, MAPKBP1, MGLL, MSTN, MTMR3, MYC, MYO18A,
+MYOT, NAALADL2, NCOA1, NDUFC2, NEO1, NEXN, NFASC, NFE2L1, NOG, NOTCH2,
+NPNT, NPRL2, NR1H3, NRP1, NTN1, NTN3, NUCB2, OTOF, PARVA, PBK, PDIA3,
+PDK4, PIK3C2B, PLD1, POLR3F, PPP1CB, PRDX3, PRL, PRLH, PROC, PROS1,
+PSMA1, PTCH1, PTGFR, PYGL, RAB1A, RAB32, RB1, RBM4B, RBM14, REST, RGMA,
+RHOBTB3, RNF165, RNF166, RPL30, RRAGC, RTN4, SCARB1, SEMA4C, SFPQ,
+SHANK3, SIK1, SLC9A1, SLC16A1, SLC17A5, SLC37A4, SLITRK6, SMAD4, SMO,
+SOD1, SOX2, SRF, STAT2, STAT5B, STXBP1, TBC1D23, TCF3, TCF7L2, TFEB,
+THBD, THBS4, TIRAP, TMF1, TRIM24, TRIM35, TRIM59, TRPV4, TUSC2, UACA,
+UFL1, UNC5A, UPF1, USP14, VANGL2, WDR24, WIPI1, WNT3, WRNIP1, XBP1,
+XRCC6, ZYX
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+inc d9 v inc d17
+</td>
 <td style="text-align:left;">
 system development, <a href="GO:0048731" class="uri">GO:0048731</a>
 </td>
@@ -1590,39 +1329,14 @@ ZBTB7A, ZFYVE27, ZNRF3
 </tbody>
 </table>
 
-    dt6 <- returnGOgenes(GOterms,inc.d17.hatch)  
+    dt6 <- returnGOgenes(GOterms,inc.d17.hatch, "inc d17 v hatch")  
 
     ## Joining, by = "gene"
 
     ## Warning: Column `gene` joining character vector and factor, coercing into
     ## character vector
 
-    kable(dt6) 
-
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-GO
-</th>
-<th style="text-align:left;">
-genes
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
-</td>
-<td style="text-align:left;">
-TTK
-</td>
-</tr>
-</tbody>
-</table>
-
-    dt7 <- returnGOgenes(GOterms,hatch.n5)  
+    dt7 <- returnGOgenes(GOterms,hatch.n5, "hatch v n5")  
 
     ## Joining, by = "gene"
 
@@ -1635,6 +1349,9 @@ TTK
 <thead>
 <tr>
 <th style="text-align:left;">
+comparison
+</th>
+<th style="text-align:left;">
 GO
 </th>
 <th style="text-align:left;">
@@ -1645,6 +1362,9 @@ genes
 <tbody>
 <tr>
 <td style="text-align:left;">
+hatch v n5
+</td>
+<td style="text-align:left;">
 behavior, <a href="GO:0007610" class="uri">GO:0007610</a>
 </td>
 <td style="text-align:left;">
@@ -1652,6 +1372,9 @@ PRL
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+hatch v n5
+</td>
 <td style="text-align:left;">
 endocrine process, <a href="GO:0050886" class="uri">GO:0050886</a>
 </td>
@@ -1661,6 +1384,9 @@ ATP6AP2, AVPR2, CRY2, FOXL2, RHOA
 </tr>
 <tr>
 <td style="text-align:left;">
+hatch v n5
+</td>
+<td style="text-align:left;">
 parental behavior, <a href="GO:0060746" class="uri">GO:0060746</a>
 </td>
 <td style="text-align:left;">
@@ -1668,6 +1394,9 @@ PRL
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+hatch v n5
+</td>
 <td style="text-align:left;">
 reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
 </td>
@@ -1681,6 +1410,31 @@ RBM15, RHOBTB3, SPATA5, TCP1, UBE2A, VDAC2, WDR66, WDR77
 </td>
 </tr>
 <tr>
+<td style="text-align:left;">
+hatch v n5
+</td>
+<td style="text-align:left;">
+response to external stimulus,
+<a href="GO:0009605" class="uri">GO:0009605</a>
+</td>
+<td style="text-align:left;">
+ABCC8, ABCC9, ABL2, ACTR2, AGBL4, AJAP1, AMOT, ANKHD1, APP, AQP2, ARF1,
+ARF6, ASH1L, ATF4, BCKDHB, BECN1, BHLHA15, BNIP3L, CBS, CCDC80, CCK,
+CD44, CEBPA, CEBPG, CHGA, CNTN4, CRY2, DDIT3, DMD, DUSP3, DUSP10,
+EIF2AK1, EIF2AK3, EIF2B1, EIF2S1, EP300, EPHA3, EPHA7, EPHB2, FBXO9,
+FFAR4, FOLR1, FOXP1, GABARAPL1, GLI3, GPX4, HMGB2, HMGB3, HSP90B1,
+HSPA5, KARS, KCNB1, LAMP2, LDHA, MAPKBP1, MVK, MYBBP1A, MYC, NCOA1,
+NDUFC2, NEO1, NOCT, NR4A3, NUCB2, PARK7, PARVA, PBK, PDE4D, PDK4, PKD1,
+PLD1, PLXNA1, PLXNB2, POLR3D, PPP1CB, PRDX3, PRKAA2, PRL, PROC, PSMA1,
+PTCH1, PTPRF, RAB1A, RAB32, REST, RHOA, RHOBTB3, RPL30, SCT, SEMA6A,
+SLC16A1, SLC17A5, SNX3, SORL1, TBL2, TCF3, TRIB1, TRIM35, UFL1, VAMP4,
+WIPI1, XBP1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+hatch v n5
+</td>
 <td style="text-align:left;">
 system development, <a href="GO:0048731" class="uri">GO:0048731</a>
 </td>
@@ -1704,42 +1458,29 @@ ZFPM1
 </tbody>
 </table>
 
-    dt8 <- returnGOgenes(GOterms,n5.n9) 
+    dt8 <- returnGOgenes(GOterms,n5.n9, "n5 v n9") 
 
     ## Joining, by = "gene"
 
     ## Warning: Column `gene` joining character vector and factor, coercing into
     ## character vector
 
-    kable(dt8) 
+    alldt <- rbind(dt1,dt2,dt3,dt4,dt5,dt6,dt7,dt8)
+    alldt
 
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-GO
-</th>
-<th style="text-align:left;">
-genes
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-reproduction, <a href="GO:0000003" class="uri">GO:0000003</a>
-</td>
-<td style="text-align:left;">
-AREG, RACGAP1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-system development, <a href="GO:0048731" class="uri">GO:0048731</a>
-</td>
-<td style="text-align:left;">
-CARD10, INSIG1, NSMF, SARM1, VTN
-</td>
-</tr>
-</tbody>
-</table>
+    ## # A tibble: 33 x 3
+    ##    comparison   GO                     genes                               
+    ##    <chr>        <chr>                  <chr>                               
+    ##  1 control v b… behavior, GO:0007610   AVP, DRD1, GNAQ, MBD2, NR3C1, OXT, …
+    ##  2 control v b… endocrine process, GO… ACE2, ACVR2A, AVPR2, CGA, CORIN, CR…
+    ##  3 control v b… parental behavior, GO… AVP, DRD1, GNAQ, MBD2, NR3C1, OXT, …
+    ##  4 control v b… reproduction, GO:0000… AAAS, ABAT, ABCG2, ABL2, ACOX1, ACR…
+    ##  5 control v b… response to external … ABAT, ABCC1, ABCC8, ABCD2, ABCF3, A…
+    ##  6 control v b… system development, G… ABCC8, ABCD2, ABI1, ABL2, ABR, ACAP…
+    ##  7 bldg v lay   endocrine process, GO… AGT, BMP6, CGA, GAL                 
+    ##  8 bldg v lay   reproduction, GO:0000… ACSBG2, AGT, ARID4B, BMP6, CEBPA, C…
+    ##  9 bldg v lay   response to external … AGT, BMP6, BSG, C8G, CAPG, CD34, CD…
+    ## 10 bldg v lay   system development, G… ASTN1, ATCAY, BMI1, BMP6, BRINP2, B…
+    ## # … with 23 more rows
+
+    write.csv(alldt, "../results/03_GO_femalepituitary.csv")
