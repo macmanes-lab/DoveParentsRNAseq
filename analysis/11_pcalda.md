@@ -199,9 +199,8 @@ pca
 
     a <- ggplot(mypcadf, aes(x = PC1, y = PC2, 
                              color = colData$treatment, 
-                             shape = colData$tissue,
-                             alpha = colData$sex)) +
-      geom_point(size = 2)  + theme_minimal(base_size = 6)  +
+                             shape = colData$tissue)) +
+      geom_point(size = 3)  + theme_minimal(base_size = 6)  +
       mytheme() +
       theme(legend.title = element_blank(), 
             axis.text = element_blank()) +
@@ -228,6 +227,12 @@ pca
 
     ## quartz_off_screen 
     ##                 2
+
+    plot_grid(a + theme(legend.position = "none"),
+              b + theme(axis.text = element_blank()), 
+              nrow = 1, rel_widths = c(0.7,0.3))
+
+![](../figures/pca/pca2-1.png)
 
     fviz_contrib(mypca, choice = "var", axes = 1, top = 5) 
 
