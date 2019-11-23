@@ -41,7 +41,11 @@ geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 
 # set levels
 c.colData$treatment <- factor(c.colData$treatment, levels = 
-                              c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+                              c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17",
+                                "hatch", "n5", "n9"))
+c.colData$tissue <- factor(c.colData$tissue, levels = 
+                              c("hypothalamus",  "pituitary", "gonad"))
+
 levels(c.colData$treatment)
 c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_"))
 summary(c.colData[c(7,3,4,5,8)])
@@ -210,13 +214,14 @@ plotcorrelationheatmaps(dds.male_gondad, colData.male_gondad, "male gonad: non-p
 
 ```{r createDEGs}
 
-createDEGdf <- function(mydds, whichfactor, up, down){
+createDEGdf <- function(mydds, whichfactor, up, down, mytissue){
   res <- results(mydds, contrast =c(whichfactor, up, down),
                  independentFiltering = T, alpha = 0.1)
    data <- data.frame(entrezid = row.names(res),
                      padj = res$padj, 
                      logpadj = -log10(res$padj),
-                     lfc = res$log2FoldChange)
+                     lfc = res$log2FoldChange,
+                     tissue = mytissue)
   data <- na.omit(data)
   
   data <- data %>%
@@ -227,13 +232,13 @@ createDEGdf <- function(mydds, whichfactor, up, down){
   
   data <- left_join(data, geneinfo) %>%
     mutate(gene = Name) %>%
-    select(gene, lfc, padj, logpadj, direction) %>%
+    select(gene, lfc, padj, logpadj, direction, tissue) %>%
     arrange(desc(lfc))
   
   DEGs <- data %>% filter(direction != "NS")
   print(str(DEGs))
   
-  myfilename = paste("../results/03_DEGs", down,up, "csv", sep = ".")
+  myfilename = paste("../results/03_DEGs", mytissue, down,up, "csv", sep = ".")
   
   # write dataframe of only significant genes
   write.csv(DEGs, myfilename, row.names = F)
@@ -242,14 +247,14 @@ createDEGdf <- function(mydds, whichfactor, up, down){
   return(data)
 }  
 
-control.bldg <- createDEGdf(dds.female_pituitary, "treatment", "bldg", "control")
-bldg.lay <- createDEGdf(dds.female_pituitary, "treatment", "lay", "bldg")
-lay.inc.d3 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d3", "lay") 
-inc.d3.inc.d9 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d9", "inc.d3") 
-inc.d9.inc.d17 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d17", "inc.d9")
-inc.d17.hatch <- createDEGdf(dds.female_pituitary, "treatment", "hatch", "inc.d17") 
-hatch.n5 <- createDEGdf(dds.female_pituitary, "treatment", "n5", "hatch") 
-n5.n9 <- createDEGdf(dds.female_pituitary, "treatment", "n9", "n5") 
+control.bldg <- createDEGdf(dds.female_pituitary, "treatment", "bldg", "control", "pituitary")
+bldg.lay <- createDEGdf(dds.female_pituitary, "treatment", "lay", "bldg", "pituitary")
+lay.inc.d3 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d3", "lay", "pituitary") 
+inc.d3.inc.d9 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d9", "inc.d3", "pituitary") 
+inc.d9.inc.d17 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d17", "inc.d9", "pituitary")
+inc.d17.hatch <- createDEGdf(dds.female_pituitary, "treatment", "hatch", "inc.d17", "pituitary") 
+hatch.n5 <- createDEGdf(dds.female_pituitary, "treatment", "n5", "hatch", "pituitary") 
+n5.n9 <- createDEGdf(dds.female_pituitary, "treatment", "n9", "n5", "pituitary") 
 ```
 
 ```{r plotDEGs}
@@ -257,7 +262,7 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
   
   volcano <- data %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
-    geom_point(aes(color = direction), size = 1, alpha = 0.75, na.rm = T) + 
+    geom_point(aes(color = direction, shape = tissue), size = 1, alpha = 0.75, na.rm = T) + 
     theme_minimal() +
     scale_color_manual(values = mycolors,
                        name = " ",
@@ -269,7 +274,8 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
           legend.direction = "horizontal",
           legend.spacing.x = unit(-0.1, 'cm'),
           legend.margin=margin(t=-0.25, r=0, b=0, l=0, unit="cm"),
-          panel.grid = element_blank()) 
+          panel.grid = element_blank()) +
+    scale_shape_manual(values = myshapes)
   return(volcano)
 }
 
@@ -365,14 +371,14 @@ write.csv(alldt, "../results/03_GO_femalepituitary.csv")
 ## males and females
 
 ```{r createDEGsmales}
-control.bldg2 <- createDEGdf(dds.male_pituitary, "treatment", "bldg", "control")
-bldg.lay2 <- createDEGdf(dds.male_pituitary, "treatment", "lay", "bldg")
-lay.inc.d32 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d3", "lay") 
-inc.d3.inc.d92 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d9", "inc.d3") 
-inc.d9.inc.d172 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d17", "inc.d9")
-inc.d17.hatch2 <- createDEGdf(dds.male_pituitary, "treatment", "hatch", "inc.d17") 
-hatch.n52 <- createDEGdf(dds.male_pituitary, "treatment", "n5", "hatch") 
-n5.n92 <- createDEGdf(dds.male_pituitary, "treatment", "n9", "n5") 
+control.bldg2 <- createDEGdf(dds.male_pituitary, "treatment", "bldg", "control", "pituitary")
+bldg.lay2 <- createDEGdf(dds.male_pituitary, "treatment", "lay", "bldg", "pituitary")
+lay.inc.d32 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d3", "lay", "pituitary") 
+inc.d3.inc.d92 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d9", "inc.d3", "pituitary") 
+inc.d9.inc.d172 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d17", "inc.d9", "pituitary")
+inc.d17.hatch2 <- createDEGdf(dds.male_pituitary, "treatment", "hatch", "inc.d17", "pituitary") 
+hatch.n52 <- createDEGdf(dds.male_pituitary, "treatment", "n5", "hatch", "pituitary") 
+n5.n92 <- createDEGdf(dds.male_pituitary, "treatment", "n9", "n5", "pituitary") 
 
 ```
 
@@ -398,6 +404,7 @@ males <- plot_grid(a2 + labs(y = "male pituitary \n -log10(p)") + theme(axis.tex
           h2 + theme(axis.title.y = element_blank(), axis.text = element_blank()), 
           nrow = 1, rel_widths = c(1.75,1,1,1,1,1,1,1,1))
 males
+
 ```
 
 ### tissue levels, ignoring sex differences, sort of
@@ -408,14 +415,14 @@ dds.gonads <- subsetDESeq2(c.colData,  c.countData, c("female_gonad","male_gonad
 ```
 
 ```{r gonaddfs2, eval=T}
-control.bldg <- createDEGdf(dds.gonads, "treatment", "bldg", "control")
-bldg.lay <- createDEGdf(dds.gonads, "treatment", "lay", "bldg")
-lay.inc.d3 <- createDEGdf(dds.gonads, "treatment", "inc.d3", "lay") 
-inc.d3.inc.d9 <- createDEGdf(dds.gonads, "treatment", "inc.d9", "inc.d3") 
-inc.d9.inc.d17 <- createDEGdf(dds.gonads, "treatment", "inc.d17", "inc.d9")
-inc.d17.hatch <- createDEGdf(dds.gonads, "treatment", "hatch", "inc.d17") 
-hatch.n5 <- createDEGdf(dds.gonads, "treatment", "n5", "hatch") 
-n5.n9 <- createDEGdf(dds.gonads, "treatment", "n9", "n5") 
+control.bldg <- createDEGdf(dds.gonads, "treatment", "bldg", "control",  "gonads")
+bldg.lay <- createDEGdf(dds.gonads, "treatment", "lay", "bldg",  "gonads")
+lay.inc.d3 <- createDEGdf(dds.gonads, "treatment", "inc.d3", "lay",  "gonads") 
+inc.d3.inc.d9 <- createDEGdf(dds.gonads, "treatment", "inc.d9", "inc.d3",  "gonads") 
+inc.d9.inc.d17 <- createDEGdf(dds.gonads, "treatment", "inc.d17", "inc.d9",  "gonads")
+inc.d17.hatch <- createDEGdf(dds.gonads, "treatment", "hatch", "inc.d17",  "gonads") 
+hatch.n5 <- createDEGdf(dds.gonads, "treatment", "n5", "hatch",  "gonads") 
+n5.n9 <- createDEGdf(dds.gonads, "treatment", "n9", "n5",  "gonads") 
 ```
 
 ```{r gonplot, eval=T}
@@ -428,7 +435,6 @@ f2 <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano
 g2 <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
 h2 <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
 
-
 gonads <- plot_grid(a2 + labs(y = "gonads \n -log10(p)"),
           b2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
           c2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
@@ -440,6 +446,7 @@ gonads <- plot_grid(a2 + labs(y = "gonads \n -log10(p)"),
           h2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
           nrow = 1, rel_widths = c(1.75,1,1,1,1,1,1,1,1))
 gonads
+
 ```
 
 ```{r hypdfs, eval=T}
@@ -447,14 +454,14 @@ dds.hypothalamus <- subsetDESeq2(c.colData,  c.countData, c("female_hypothalamus
 ```
 
 ```{r hypdfs2, eval=T}
-control.bldg <- createDEGdf(dds.hypothalamus, "treatment", "bldg", "control")
-bldg.lay <- createDEGdf(dds.hypothalamus, "treatment", "lay", "bldg")
-lay.inc.d3 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d3", "lay") 
-inc.d3.inc.d9 <- createDEGdf(dds.hypothalamus,  "treatment", "inc.d9", "inc.d3") 
-inc.d9.inc.d17 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d17", "inc.d9")
-inc.d17.hatch <- createDEGdf(dds.hypothalamus, "treatment", "hatch", "inc.d17") 
-hatch.n5 <- createDEGdf(dds.hypothalamus, "treatment", "n5", "hatch") 
-n5.n9 <- createDEGdf(dds.hypothalamus, "treatment", "n9", "n5") 
+control.bldg <- createDEGdf(dds.hypothalamus, "treatment", "bldg", "control" ,  "hypothalamus")
+bldg.lay <- createDEGdf(dds.hypothalamus, "treatment", "lay", "bldg" ,  "hypothalamus")
+lay.inc.d3 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d3", "lay" ,  "hypothalamus") 
+inc.d3.inc.d9 <- createDEGdf(dds.hypothalamus,  "treatment", "inc.d9", "inc.d3" ,  "hypothalamus") 
+inc.d9.inc.d17 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d17", "inc.d9" ,  "hypothalamus")
+inc.d17.hatch <- createDEGdf(dds.hypothalamus, "treatment", "hatch", "inc.d17" ,  "hypothalamus") 
+hatch.n5 <- createDEGdf(dds.hypothalamus, "treatment", "n5", "hatch" ,  "hypothalamus") 
+n5.n9 <- createDEGdf(dds.hypothalamus, "treatment", "n9", "n5" ,  "hypothalamus") 
 ```
 
 ```{r hypplot, eval = T}
@@ -466,7 +473,6 @@ e <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcan
 f <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
 g <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
 h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
-
 
 hypothalamus <- plot_grid(a + 
                        theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
@@ -483,11 +489,54 @@ hypothalamus
 
 ```
 
-```{r allvolcanos, fig.height=8}
+```{r pitdfs, eval=T}
+dds.pituitary <- subsetDESeq2(c.colData,  c.countData, c("female_pituitary","male_pituitary"))
+```
+
+```{r pitdfs2, eval=T}
+control.bldg <- createDEGdf(dds.pituitary, "treatment", "bldg", "control", "pituitary")
+bldg.lay <- createDEGdf(dds.pituitary, "treatment", "lay", "bldg", "pituitary")
+lay.inc.d3 <- createDEGdf(dds.pituitary, "treatment", "inc.d3", "lay", "pituitary") 
+inc.d3.inc.d9 <- createDEGdf(dds.pituitary,  "treatment", "inc.d9", "inc.d3", "pituitary") 
+inc.d9.inc.d17 <- createDEGdf(dds.pituitary, "treatment", "inc.d17", "inc.d9", "pituitary")
+inc.d17.hatch <- createDEGdf(dds.pituitary, "treatment", "hatch", "inc.d17", "pituitary") 
+hatch.n5 <- createDEGdf(dds.pituitary, "treatment", "n5", "hatch", "pituitary") 
+n5.n9 <- createDEGdf(dds.pituitary, "treatment", "n9", "n5", "pituitary") 
+```
+
+```{r pitplot, eval = T}
+a <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
+b <- plot.volcano(bldg.lay, "treatment", "lay", "bldg", colorsvolcano)
+c <- plot.volcano(lay.inc.d3, "treatment", "inc.d3", "lay", colorsvolcano) 
+d <- plot.volcano(inc.d3.inc.d9, "treatment", "inc.d9", "inc.d3", colorsvolcano) 
+e <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcano)
+f <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
+g <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
+h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
+
+pituitary <- plot_grid(a + 
+                       theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
+                       labs(y = "pituitary \n -log10(p)"),
+          b + theme(axis.title = element_blank(), axis.text = element_blank()),
+          c + theme(axis.title = element_blank(), axis.text = element_blank()),
+          d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          e + theme(axis.title = element_blank(), axis.text = element_blank()),
+          f + theme(axis.title = element_blank(), axis.text = element_blank()),
+          g + theme(axis.title = element_blank(), axis.text = element_blank()),
+          h + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          nrow = 1,  rel_widths = c(1.75,1,1,1,1,1,1,1,1))
+pituitary
+
+```
+
+```{r allvolcanos, fig.height=6}
 background <- png::readPNG("../figures/images/DoveParentsRNAseq_charicons.png")
 icons <- ggdraw() +  draw_image(background, scale = 1)
 
 plot_grid(icons, hypothalamus, females, males, gonads, nrow = 5, rel_heights = c(1,1,1,1,1.25))
+
+plot_grid(icons, hypothalamus, pituitary, gonads, nrow = 4, rel_heights = c(1,1,1,1.25))
+
 
 ```
 

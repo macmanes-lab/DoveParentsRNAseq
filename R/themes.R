@@ -125,3 +125,5 @@ colorsvolcanochar <-  c("control" = "#F8766D",
                     "NS" = "#bdbdbd")
 charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9", "NS")
 
+
+myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
