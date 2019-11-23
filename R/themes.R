@@ -1,7 +1,7 @@
 # custom themes
 
 theme_B3 <- function () { 
-  theme_classic(base_size = 7) +
+  theme_classic(base_size = 8) +
     theme(
       panel.grid.major  = element_blank(),  # remove major gridlines
       panel.grid.minor  = element_blank(),  # remove minor gridlines
@@ -112,4 +112,16 @@ colorsvolcano <-  c("control" = "#F8766D",
                      "prolong" = "#1B86B9" , 
                      "extend" = "#01588C",
                     "NS" = "#bdbdbd")
+
+colorsvolcanochar <-  c("control" = "#F8766D", 
+                    "bldg"= "#D39200", 
+                    "lay"= "#93AA00", 
+                    "inc.d3"= "#00BA38", 
+                    "inc.d9"= "#00C19F", 
+                    "inc.d17"= "#00B9E3", 
+                    "hatch"= "#619CFF", 
+                    "n5"= "#DB72FB", 
+                    "n9"= "#FF61C3",
+                    "NS" = "#bdbdbd")
+charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9", "NS")
 
