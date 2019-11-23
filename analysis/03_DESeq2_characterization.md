@@ -1134,7 +1134,7 @@ DEGs
       
       volcano <- data %>%
         ggplot(aes(x = lfc, y = logpadj)) + 
-        geom_point(aes(color = direction, shape = tissue), size = 3, 
+        geom_point(aes(color = direction, shape = tissue), size = 2, 
                    alpha = 0.75, na.rm = T) + 
         theme_minimal() +
         scale_color_manual(values = mycolors,
