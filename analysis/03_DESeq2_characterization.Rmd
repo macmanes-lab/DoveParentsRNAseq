@@ -264,7 +264,7 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
                        drop = FALSE) +
     ylim(c(0,30)) +  
     xlim(c(-8,8)) +
-    labs(y = "-log10 (p-value)", x = " ")  +
+    labs(y = "-log10(p)", x = " ")  +
     theme(legend.position = "none",
           legend.direction = "horizontal",
           legend.spacing.x = unit(-0.1, 'cm'),
@@ -285,7 +285,7 @@ h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano)
 
 females <- plot_grid(a + 
                        theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
-                       labs(y = "female pituitary \n -log10 (p-value)"),
+                       labs(y = "female pituitary \n -log10(p)"),
           b + theme(axis.title = element_blank(), axis.text = element_blank()),
           c + theme(axis.title = element_blank(), axis.text = element_blank()),
           d + theme(axis.title = element_blank(), axis.text = element_blank()), 
@@ -388,27 +388,16 @@ f2 <- plot.volcano(inc.d17.hatch2, "treatment", "hatch", "inc.d17", colorsvolcan
 g2 <- plot.volcano(hatch.n52, "treatment", "n5", "hatch", colorsvolcano) 
 h2 <- plot.volcano(n5.n92, "treatment", "n9", "n5", colorsvolcano) 
 
-males <- plot_grid(a2 + labs(y = "male pituitary \n -log10 (p-value)"),
-          b2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          c2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          d2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
-          e2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
-          f2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          g2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          h2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
+males <- plot_grid(a2 + labs(y = "male pituitary \n -log10(p)") + theme(axis.text.x = element_blank()),
+          b2 + theme(axis.title.y = element_blank(), axis.text = element_blank()),
+          c2 + theme(axis.title.y = element_blank(), axis.text = element_blank()),
+          d2 + theme(axis.title.y = element_blank(), axis.text = element_blank()), 
+          e2 + theme(axis.title.y = element_blank(), axis.text = element_blank()), 
+          f2 + theme(axis.title.y = element_blank(), axis.text = element_blank()),
+          g2 + theme(axis.title.y = element_blank(), axis.text = element_blank()),
+          h2 + theme(axis.title.y = element_blank(), axis.text = element_blank()), 
           nrow = 1, rel_widths = c(1.75,1,1,1,1,1,1,1,1))
 males
-
-femalesNmales <- plot_grid(females,males, nrow = 2, 
-          rel_heights = c(0.45,0.55))
-
-background <- png::readPNG("../figures/images/DoveParentsRNAseq_charicons.png")
-background
- 
-icons <- ggdraw() +  draw_image(background, scale = 1)
-
-plot_grid(icons, females, males, nrow = 3, rel_heights = c(1,1,1.5))
-
 ```
 
 ### tissue levels, ignoring sex differences, sort of
@@ -416,11 +405,13 @@ plot_grid(icons, females, males, nrow = 3, rel_heights = c(1,1,1.5))
 ```{r gonaddfs, eval=T}
 
 dds.gonads <- subsetDESeq2(c.colData,  c.countData, c("female_gonad","male_gonad"))
+```
 
+```{r gonaddfs2, eval=T}
 control.bldg <- createDEGdf(dds.gonads, "treatment", "bldg", "control")
 bldg.lay <- createDEGdf(dds.gonads, "treatment", "lay", "bldg")
 lay.inc.d3 <- createDEGdf(dds.gonads, "treatment", "inc.d3", "lay") 
-inc.d3.inc.d9 <- createDEGdf(dds.gonads) 
+inc.d3.inc.d9 <- createDEGdf(dds.gonads, "treatment", "inc.d9", "inc.d3") 
 inc.d9.inc.d17 <- createDEGdf(dds.gonads, "treatment", "inc.d17", "inc.d9")
 inc.d17.hatch <- createDEGdf(dds.gonads, "treatment", "hatch", "inc.d17") 
 hatch.n5 <- createDEGdf(dds.gonads, "treatment", "n5", "hatch") 
@@ -438,7 +429,7 @@ g2 <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano)
 h2 <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
 
 
-gonads <- plot_grid(a2 + labs(y = "gonads \n -log10 (p-value)"),
+gonads <- plot_grid(a2 + labs(y = "gonads \n -log10(p)"),
           b2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
           c2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
           d2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
@@ -453,11 +444,13 @@ gonads
 
 ```{r hypdfs, eval=T}
 dds.hypothalamus <- subsetDESeq2(c.colData,  c.countData, c("female_hypothalamus","male_hypothalamus"))
+```
 
+```{r hypdfs2, eval=T}
 control.bldg <- createDEGdf(dds.hypothalamus, "treatment", "bldg", "control")
 bldg.lay <- createDEGdf(dds.hypothalamus, "treatment", "lay", "bldg")
 lay.inc.d3 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d3", "lay") 
-inc.d3.inc.d9 <- createDEGdf(dds.hypothalamus) 
+inc.d3.inc.d9 <- createDEGdf(dds.hypothalamus,  "treatment", "inc.d9", "inc.d3") 
 inc.d9.inc.d17 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d17", "inc.d9")
 inc.d17.hatch <- createDEGdf(dds.hypothalamus, "treatment", "hatch", "inc.d17") 
 hatch.n5 <- createDEGdf(dds.hypothalamus, "treatment", "n5", "hatch") 
@@ -477,7 +470,7 @@ h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano)
 
 hypothalamus <- plot_grid(a + 
                        theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
-                       labs(y = "hypothalamus \n -log10 (p-value)"),
+                       labs(y = "hypothalamus \n -log10(p)"),
           b + theme(axis.title = element_blank(), axis.text = element_blank()),
           c + theme(axis.title = element_blank(), axis.text = element_blank()),
           d + theme(axis.title = element_blank(), axis.text = element_blank()), 
@@ -485,12 +478,16 @@ hypothalamus <- plot_grid(a +
           f + theme(axis.title = element_blank(), axis.text = element_blank()),
           g + theme(axis.title = element_blank(), axis.text = element_blank()),
           h + theme(axis.title = element_blank(), axis.text = element_blank()), 
-          nrow = 1, rel_widths = c(1.75,1,1,1,1,1,1,1,1))
+          nrow = 1,  rel_widths = c(1.75,1,1,1,1,1,1,1,1))
 hypothalamus
 
-plot_grid(nrow = 2)
+```
 
-plot_grid(icons, females, males, hypothalamus, gonads, nrow = 5, rel_heights = c(1,1,1,1,1.5))
+```{r allvolcanos, fig.height=8}
+background <- png::readPNG("../figures/images/DoveParentsRNAseq_charicons.png")
+icons <- ggdraw() +  draw_image(background, scale = 1)
+
+plot_grid(icons, hypothalamus, females, males, gonads, nrow = 5, rel_heights = c(1,1,1,1,1.25))
 
 ```
 
