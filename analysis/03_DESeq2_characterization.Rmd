@@ -262,7 +262,8 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
   
   volcano <- data %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
-    geom_point(aes(color = direction, shape = tissue), size = 1, alpha = 0.75, na.rm = T) + 
+    geom_point(aes(color = direction, shape = tissue), size = 3, 
+               alpha = 0.75, na.rm = T) + 
     theme_minimal() +
     scale_color_manual(values = mycolors,
                        name = " ",
@@ -404,7 +405,6 @@ males <- plot_grid(a2 + labs(y = "male pituitary \n -log10(p)") + theme(axis.tex
           h2 + theme(axis.title.y = element_blank(), axis.text = element_blank()), 
           nrow = 1, rel_widths = c(1.75,1,1,1,1,1,1,1,1))
 males
-
 ```
 
 ### tissue levels, ignoring sex differences, sort of
@@ -446,7 +446,6 @@ gonads <- plot_grid(a2 + labs(y = "gonads \n -log10(p)"),
           h2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
           nrow = 1, rel_widths = c(1.75,1,1,1,1,1,1,1,1))
 gonads
-
 ```
 
 ```{r hypdfs, eval=T}
@@ -486,7 +485,6 @@ hypothalamus <- plot_grid(a +
           h + theme(axis.title = element_blank(), axis.text = element_blank()), 
           nrow = 1,  rel_widths = c(1.75,1,1,1,1,1,1,1,1))
 hypothalamus
-
 ```
 
 ```{r pitdfs, eval=T}
@@ -527,6 +525,7 @@ pituitary <- plot_grid(a +
           nrow = 1,  rel_widths = c(1.75,1,1,1,1,1,1,1,1))
 pituitary
 
+
 ```
 
 ```{r allvolcanos, fig.height=6}
@@ -535,8 +534,7 @@ icons <- ggdraw() +  draw_image(background, scale = 1)
 
 plot_grid(icons, hypothalamus, females, males, gonads, nrow = 5, rel_heights = c(1,1,1,1,1.25))
 
+
 plot_grid(icons, hypothalamus, pituitary, gonads, nrow = 4, rel_heights = c(1,1,1,1.25))
-
-
 ```
 
