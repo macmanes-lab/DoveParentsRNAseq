@@ -34,7 +34,11 @@ Characterization data
 
     # set levels
     c.colData$treatment <- factor(c.colData$treatment, levels = 
-                                  c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+                                  c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17",
+                                    "hatch", "n5", "n9"))
+    c.colData$tissue <- factor(c.colData$tissue, levels = 
+                                  c("hypothalamus",  "pituitary", "gonad"))
+
     levels(c.colData$treatment)
 
     ## [1] "control" "bldg"    "lay"     "inc.d3"  "inc.d9"  "inc.d17" "hatch"  
@@ -44,9 +48,9 @@ Characterization data
     summary(c.colData[c(7,3,4,5,8)])
 
     ##              study         sex               tissue      treatment  
-    ##  charcterization:576   female:289   gonad       :194   control: 73  
-    ##                        male  :287   hypothalamus:189   inc.d9 : 71  
-    ##                                     pituitary   :193   inc.d17: 66  
+    ##  charcterization:576   female:289   hypothalamus:189   control: 73  
+    ##                        male  :287   pituitary   :193   inc.d9 : 71  
+    ##                                     gonad       :194   inc.d17: 66  
     ##                                                        n9     : 66  
     ##                                                        bldg   : 60  
     ##                                                        lay    : 60  
@@ -965,13 +969,14 @@ correlation heat maps
 DEGs
 ----
 
-    createDEGdf <- function(mydds, whichfactor, up, down){
+    createDEGdf <- function(mydds, whichfactor, up, down, mytissue){
       res <- results(mydds, contrast =c(whichfactor, up, down),
                      independentFiltering = T, alpha = 0.1)
        data <- data.frame(entrezid = row.names(res),
                          padj = res$padj, 
                          logpadj = -log10(res$padj),
-                         lfc = res$log2FoldChange)
+                         lfc = res$log2FoldChange,
+                         tissue = mytissue)
       data <- na.omit(data)
       
       data <- data %>%
@@ -982,13 +987,13 @@ DEGs
       
       data <- left_join(data, geneinfo) %>%
         mutate(gene = Name) %>%
-        select(gene, lfc, padj, logpadj, direction) %>%
+        select(gene, lfc, padj, logpadj, direction, tissue) %>%
         arrange(desc(lfc))
       
       DEGs <- data %>% filter(direction != "NS")
       print(str(DEGs))
       
-      myfilename = paste("../results/03_DEGs", down,up, "csv", sep = ".")
+      myfilename = paste("../results/03_DEGs", mytissue, down,up, "csv", sep = ".")
       
       # write dataframe of only significant genes
       write.csv(DEGs, myfilename, row.names = F)
@@ -997,131 +1002,139 @@ DEGs
       return(data)
     }  
 
-    control.bldg <- createDEGdf(dds.female_pituitary, "treatment", "bldg", "control")
+    control.bldg <- createDEGdf(dds.female_pituitary, "treatment", "bldg", "control", "pituitary")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    6442 obs. of  5 variables:
+    ## 'data.frame':    6442 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 12439 6566 889 12484 6803 3045 12763 569 4664 12959 ...
     ##  $ lfc      : num  4.77 4.45 4.19 3.93 3.75 ...
     ##  $ padj     : num  1.16e-05 6.18e-04 7.18e-09 2.38e-03 4.52e-07 ...
     ##  $ logpadj  : num  4.94 3.21 8.14 2.62 6.35 ...
     ##  $ direction: Factor w/ 3 levels "control","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    bldg.lay <- createDEGdf(dds.female_pituitary, "treatment", "lay", "bldg")
+    bldg.lay <- createDEGdf(dds.female_pituitary, "treatment", "lay", "bldg", "pituitary")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    281 obs. of  5 variables:
+    ## 'data.frame':    281 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 10342 9845 9870 6188 6768 2540 330 3033 11852 550 ...
     ##  $ lfc      : num  6.6 5.87 4.69 3.86 3.11 ...
     ##  $ padj     : num  7.03e-08 8.04e-07 8.88e-03 5.78e-02 1.84e-03 ...
     ##  $ logpadj  : num  7.15 6.09 2.05 1.24 2.73 ...
     ##  $ direction: Factor w/ 3 levels "bldg","NS","lay": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    lay.inc.d3 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d3", "lay") 
+    lay.inc.d3 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d3", "lay", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    332 obs. of  5 variables:
+    ## 'data.frame':    332 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 5904 13279 1221 11172 6003 3969 11305 488 1990 5788 ...
     ##  $ lfc      : num  2.97 2.79 2.34 2.21 1.73 ...
     ##  $ padj     : num  0.027163 0.017196 0.000837 0.027163 0.040076 ...
     ##  $ logpadj  : num  1.57 1.76 3.08 1.57 1.4 ...
     ##  $ direction: Factor w/ 3 levels "lay","NS","inc.d3": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    inc.d3.inc.d9 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d9", "inc.d3") 
+    inc.d3.inc.d9 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d9", "inc.d3", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1 obs. of  5 variables:
+    ## 'data.frame':    1 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 6768
     ##  $ lfc      : num -3.18
     ##  $ padj     : num 0.0707
     ##  $ logpadj  : num 1.15
     ##  $ direction: Factor w/ 3 levels "inc.d3","NS",..: 1
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1
     ## NULL
 
-    inc.d9.inc.d17 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d17", "inc.d9")
+    inc.d9.inc.d17 <- createDEGdf(dds.female_pituitary, "treatment", "inc.d17", "inc.d9", "pituitary")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    2013 obs. of  5 variables:
+    ## 'data.frame':    2013 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 4114 5777 4003 1935 1964 2228 2933 11225 1818 11311 ...
     ##  $ lfc      : num  4.98 4.89 4.67 4.59 4.5 ...
     ##  $ padj     : num  1.11e-04 8.46e-23 3.22e-12 9.92e-08 1.08e-23 ...
     ##  $ logpadj  : num  3.95 22.07 11.49 7 22.97 ...
     ##  $ direction: Factor w/ 3 levels "inc.d9","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    inc.d17.hatch <- createDEGdf(dds.female_pituitary, "treatment", "hatch", "inc.d17") 
+    inc.d17.hatch <- createDEGdf(dds.female_pituitary, "treatment", "hatch", "inc.d17", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    6 obs. of  5 variables:
+    ## 'data.frame':    6 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 1465 6533 4851 5443 13099 13593
     ##  $ lfc      : num  5.056 1.664 1.422 0.293 -0.581 ...
     ##  $ padj     : num  0.005 0.0838 0.0838 0.005 0.0465 ...
     ##  $ logpadj  : num  2.3 1.08 1.08 2.3 1.33 ...
     ##  $ direction: Factor w/ 3 levels "inc.d17","NS",..: 3 3 3 3 1 1
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1
     ## NULL
 
-    hatch.n5 <- createDEGdf(dds.female_pituitary, "treatment", "n5", "hatch") 
+    hatch.n5 <- createDEGdf(dds.female_pituitary, "treatment", "n5", "hatch", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1091 obs. of  5 variables:
+    ## 'data.frame':    1091 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 13593 1804 6903 5904 8668 6137 6318 11953 11172 13112 ...
     ##  $ lfc      : num  18.43 4.12 3.24 3.12 2.56 ...
     ##  $ padj     : num  1.04e-05 7.25e-02 6.11e-02 5.50e-03 1.92e-03 ...
     ##  $ logpadj  : num  4.98 1.14 1.21 2.26 2.72 ...
     ##  $ direction: Factor w/ 3 levels "hatch","NS","n5": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    n5.n9 <- createDEGdf(dds.female_pituitary, "treatment", "n9", "n5") 
+    n5.n9 <- createDEGdf(dds.female_pituitary, "treatment", "n9", "n5", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    23 obs. of  5 variables:
+    ## 'data.frame':    23 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 11009 13489 10219 2226 7122 10900 4656 1648 8732 12958 ...
     ##  $ lfc      : num  2.89 2.34 2.25 1.99 1.47 ...
     ##  $ padj     : num  0.0346 0.0205 0.0205 0.0121 0.0381 ...
     ##  $ logpadj  : num  1.46 1.69 1.69 1.92 1.42 ...
     ##  $ direction: Factor w/ 3 levels "n5","NS","n9": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
     plot.volcano <- function(data, whichfactor, up, down, mycolors){
       
       volcano <- data %>%
         ggplot(aes(x = lfc, y = logpadj)) + 
-        geom_point(aes(color = direction), size = 1, alpha = 0.75, na.rm = T) + 
+        geom_point(aes(color = direction, shape = tissue), size = 1, alpha = 0.75, na.rm = T) + 
         theme_minimal() +
         scale_color_manual(values = mycolors,
                            name = " ",
@@ -1133,7 +1146,8 @@ DEGs
               legend.direction = "horizontal",
               legend.spacing.x = unit(-0.1, 'cm'),
               legend.margin=margin(t=-0.25, r=0, b=0, l=0, unit="cm"),
-              panel.grid = element_blank()) 
+              panel.grid = element_blank()) +
+        scale_shape_manual(values = myshapes)
       return(volcano)
     }
 
@@ -1561,61 +1575,133 @@ ZFPM1
 males and females
 -----------------
 
-    control.bldg2 <- createDEGdf(dds.male_pituitary, "treatment", "bldg", "control")
+    control.bldg2 <- createDEGdf(dds.male_pituitary, "treatment", "bldg", "control", "pituitary")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    bldg.lay2 <- createDEGdf(dds.male_pituitary, "treatment", "lay", "bldg")
+    ## 'data.frame':    7022 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 12344 1083 6590 6779 5134 889 7668 6801 6554 6076 ...
+    ##  $ lfc      : num  4.31 3.64 3.49 3.45 3.35 ...
+    ##  $ padj     : num  7.39e-10 5.75e-06 8.32e-07 8.98e-07 7.33e-02 ...
+    ##  $ logpadj  : num  9.13 5.24 6.08 6.05 1.13 ...
+    ##  $ direction: Factor w/ 3 levels "control","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    bldg.lay2 <- createDEGdf(dds.male_pituitary, "treatment", "lay", "bldg", "pituitary")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    lay.inc.d32 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d3", "lay") 
+    ## 'data.frame':    0 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 
+    ##  $ lfc      : num 
+    ##  $ padj     : num 
+    ##  $ logpadj  : num 
+    ##  $ direction: Factor w/ 3 levels "bldg","NS","lay": 
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 
+    ## NULL
+
+    lay.inc.d32 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d3", "lay", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    inc.d3.inc.d92 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d9", "inc.d3") 
+    ## 'data.frame':    5 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 7367 13904 1054 11059 1263
+    ##  $ lfc      : num  4.159 3.591 0.324 -0.671 -17.948
+    ##  $ padj     : num  4.80e-02 4.80e-02 4.80e-02 6.70e-02 4.06e-13
+    ##  $ logpadj  : num  1.32 1.32 1.32 1.17 12.39
+    ##  $ direction: Factor w/ 3 levels "lay","NS","inc.d3": 3 3 3 1 1
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1
+    ## NULL
+
+    inc.d3.inc.d92 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d9", "inc.d3", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    inc.d9.inc.d172 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d17", "inc.d9")
+    ## 'data.frame':    1 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 1263
+    ##  $ lfc      : num 22.1
+    ##  $ padj     : num 4.13e-23
+    ##  $ logpadj  : num 22.4
+    ##  $ direction: Factor w/ 3 levels "inc.d3","NS",..: 3
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1
+    ## NULL
+
+    inc.d9.inc.d172 <- createDEGdf(dds.male_pituitary, "treatment", "inc.d17", "inc.d9", "pituitary")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    inc.d17.hatch2 <- createDEGdf(dds.male_pituitary, "treatment", "hatch", "inc.d17") 
+    ## 'data.frame':    437 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 9542 9567 627 4799 6107 7256 11219 5777 546 4114 ...
+    ##  $ lfc      : num  8.66 6.58 6.1 5.87 5.2 ...
+    ##  $ padj     : num  2.16e-10 8.29e-02 3.82e-06 2.14e-02 6.01e-02 ...
+    ##  $ logpadj  : num  9.67 1.08 5.42 1.67 1.22 ...
+    ##  $ direction: Factor w/ 3 levels "inc.d9","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    inc.d17.hatch2 <- createDEGdf(dds.male_pituitary, "treatment", "hatch", "inc.d17", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    hatch.n52 <- createDEGdf(dds.male_pituitary, "treatment", "n5", "hatch") 
+    ## 'data.frame':    56 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 8215 12780 4170 6342 8872 3081 4032 11643 13599 8773 ...
+    ##  $ lfc      : num  3.054 0.855 0.748 0.57 0.498 ...
+    ##  $ padj     : num  0.06825 0.03913 0.00495 0.09055 0.09121 ...
+    ##  $ logpadj  : num  1.17 1.41 2.31 1.04 1.04 ...
+    ##  $ direction: Factor w/ 3 levels "inc.d17","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    hatch.n52 <- createDEGdf(dds.male_pituitary, "treatment", "n5", "hatch", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    n5.n92 <- createDEGdf(dds.male_pituitary, "treatment", "n9", "n5") 
+    ## 'data.frame':    156 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 9542 8838 5167 8188 6989 204 13729 2009 10527 270 ...
+    ##  $ lfc      : num  4.93 1.75 1.63 1.58 1.58 ...
+    ##  $ padj     : num  0.0239 0.0702 0.0722 0.0641 0.0894 ...
+    ##  $ logpadj  : num  1.62 1.15 1.14 1.19 1.05 ...
+    ##  $ direction: Factor w/ 3 levels "hatch","NS","n5": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    n5.n92 <- createDEGdf(dds.male_pituitary, "treatment", "n9", "n5", "pituitary") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
+
+    ## 'data.frame':    63 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 32 7648 8472 687 5788 9344 12758 1379 9536 9193 ...
+    ##  $ lfc      : num  3.3 2 1.42 1.31 1.28 ...
+    ##  $ padj     : num  2.88e-05 6.68e-02 3.04e-02 3.33e-02 1.17e-02 ...
+    ##  $ logpadj  : num  4.54 1.18 1.52 1.48 1.93 ...
+    ##  $ direction: Factor w/ 3 levels "n5","NS","n9": 3 3 3 3 3 3 3 3 1 1 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
 
     a2 <- plot.volcano(control.bldg2, "treatment", "bldg", "control", colorsvolcano)
     b2 <- plot.volcano(bldg.lay2, "treatment", "lay", "bldg", colorsvolcano)
@@ -1674,124 +1760,132 @@ males and females
 
     ## fitting model and testing
 
-    control.bldg <- createDEGdf(dds.gonads, "treatment", "bldg", "control")
+    control.bldg <- createDEGdf(dds.gonads, "treatment", "bldg", "control",  "gonads")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    8155 obs. of  5 variables:
+    ## 'data.frame':    8155 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 2390 6263 6490 13586 6976 6188 8115 3041 8851 11559 ...
     ##  $ lfc      : num  9.35 8.32 8.24 7.34 7.29 ...
     ##  $ padj     : num  9.16e-26 9.08e-16 9.72e-11 1.09e-17 3.59e-13 ...
     ##  $ logpadj  : num  25 15 10 17 12.4 ...
     ##  $ direction: Factor w/ 3 levels "control","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "gonads": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    bldg.lay <- createDEGdf(dds.gonads, "treatment", "lay", "bldg")
+    bldg.lay <- createDEGdf(dds.gonads, "treatment", "lay", "bldg",  "gonads")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1513 obs. of  5 variables:
+    ## 'data.frame':    1513 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 6731 8170 8972 574 3603 4415 7345 1540 6490 4245 ...
     ##  $ lfc      : num  9.81 5.81 5.42 4.34 4.24 ...
     ##  $ padj     : num  4.65e-09 3.36e-04 2.22e-15 7.38e-07 1.97e-05 ...
     ##  $ logpadj  : num  8.33 3.47 14.65 6.13 4.71 ...
     ##  $ direction: Factor w/ 3 levels "bldg","NS","lay": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "gonads": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    lay.inc.d3 <- createDEGdf(dds.gonads, "treatment", "inc.d3", "lay") 
+    lay.inc.d3 <- createDEGdf(dds.gonads, "treatment", "inc.d3", "lay",  "gonads") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    3408 obs. of  5 variables:
+    ## 'data.frame':    3408 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 13593 932 6798 6413 12465 12646 10129 7932 3735 10151 ...
     ##  $ lfc      : num  21.59 3.76 3.36 3.31 3.24 ...
     ##  $ padj     : num  8.18e-38 2.57e-03 5.53e-02 3.00e-07 3.65e-02 ...
     ##  $ logpadj  : num  37.09 2.59 1.26 6.52 1.44 ...
     ##  $ direction: Factor w/ 3 levels "lay","NS","inc.d3": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "gonads": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    inc.d3.inc.d9 <- createDEGdf(dds.gonads, "treatment", "inc.d9", "inc.d3") 
+    inc.d3.inc.d9 <- createDEGdf(dds.gonads, "treatment", "inc.d9", "inc.d3",  "gonads") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    94 obs. of  5 variables:
+    ## 'data.frame':    94 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 9358 6188 6171 7786 4464 5915 12469 12680 1802 7332 ...
     ##  $ lfc      : num  3.41 2.45 2.38 2.36 2.04 ...
     ##  $ padj     : num  0.01337 0.09207 0.07866 0.00734 0.00137 ...
     ##  $ logpadj  : num  1.87 1.04 1.1 2.13 2.86 ...
     ##  $ direction: Factor w/ 3 levels "inc.d3","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "gonads": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    inc.d9.inc.d17 <- createDEGdf(dds.gonads, "treatment", "inc.d17", "inc.d9")
+    inc.d9.inc.d17 <- createDEGdf(dds.gonads, "treatment", "inc.d17", "inc.d9",  "gonads")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1239 obs. of  5 variables:
+    ## 'data.frame':    1239 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 6731 6126 4531 8966 2262 12094 6976 9446 973 7753 ...
     ##  $ lfc      : num  7.15 5.37 4.97 4.72 4.66 ...
     ##  $ padj     : num  2.26e-05 8.13e-06 4.18e-05 8.93e-02 2.28e-04 ...
     ##  $ logpadj  : num  4.65 5.09 4.38 1.05 3.64 ...
     ##  $ direction: Factor w/ 3 levels "inc.d9","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "gonads": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    inc.d17.hatch <- createDEGdf(dds.gonads, "treatment", "hatch", "inc.d17") 
+    inc.d17.hatch <- createDEGdf(dds.gonads, "treatment", "hatch", "inc.d17",  "gonads") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    21 obs. of  5 variables:
+    ## 'data.frame':    21 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 13593 6263 6730 3572 7972 3928 1558 5044 2788 8002 ...
     ##  $ lfc      : num  17.48 5.67 4.12 3.86 3.59 ...
     ##  $ padj     : num  6.96e-27 2.81e-06 8.67e-02 9.76e-02 8.57e-03 ...
     ##  $ logpadj  : num  26.16 5.55 1.06 1.01 2.07 ...
     ##  $ direction: Factor w/ 3 levels "inc.d17","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "gonads": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    hatch.n5 <- createDEGdf(dds.gonads, "treatment", "n5", "hatch") 
+    hatch.n5 <- createDEGdf(dds.gonads, "treatment", "n5", "hatch",  "gonads") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    15 obs. of  5 variables:
+    ## 'data.frame':    15 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 6731 1540 11773 4566 905 7195 3610 5425 5167 5165 ...
     ##  $ lfc      : num  20.236 2.717 1.609 1.559 -0.414 ...
     ##  $ padj     : num  1.02e-41 8.93e-04 4.46e-02 5.96e-03 5.48e-02 ...
     ##  $ logpadj  : num  40.99 3.05 1.35 2.23 1.26 ...
     ##  $ direction: Factor w/ 3 levels "hatch","NS","n5": 3 3 3 3 1 1 1 1 1 1 ...
+    ##  $ tissue   : Factor w/ 1 level "gonads": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    n5.n9 <- createDEGdf(dds.gonads, "treatment", "n9", "n5") 
+    n5.n9 <- createDEGdf(dds.gonads, "treatment", "n9", "n5",  "gonads") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1030 obs. of  5 variables:
+    ## 'data.frame':    1030 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 3226 6490 2390 8966 10293 5359 10129 6730 10600 6976 ...
     ##  $ lfc      : num  18.77 10.67 8.33 7.05 6.67 ...
     ##  $ padj     : num  7.56e-43 5.83e-14 2.06e-18 6.44e-03 1.23e-14 ...
     ##  $ logpadj  : num  42.12 13.23 17.69 2.19 13.91 ...
     ##  $ direction: Factor w/ 3 levels "n5","NS","n9": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "gonads": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
     a2 <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
@@ -1802,7 +1896,6 @@ males and females
     f2 <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
     g2 <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
     h2 <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
-
 
     gonads <- plot_grid(a2 + labs(y = "gonads \n -log10(p)"),
               b2 + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
@@ -1851,124 +1944,132 @@ males and females
 
     ## fitting model and testing
 
-    control.bldg <- createDEGdf(dds.hypothalamus, "treatment", "bldg", "control")
+    control.bldg <- createDEGdf(dds.hypothalamus, "treatment", "bldg", "control" ,  "hypothalamus")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    5783 obs. of  5 variables:
+    ## 'data.frame':    5783 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 10397 12484 12628 1200 246 7484 13959 10211 4009 4001 ...
     ##  $ lfc      : num  4.41 2.5 2.35 2.34 2.23 ...
     ##  $ padj     : num  7.40e-03 9.42e-02 9.65e-03 1.68e-06 1.68e-02 ...
     ##  $ logpadj  : num  2.13 1.03 2.02 5.78 1.77 ...
     ##  $ direction: Factor w/ 3 levels "control","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "hypothalamus": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    bldg.lay <- createDEGdf(dds.hypothalamus, "treatment", "lay", "bldg")
+    bldg.lay <- createDEGdf(dds.hypothalamus, "treatment", "lay", "bldg" ,  "hypothalamus")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1 obs. of  5 variables:
+    ## 'data.frame':    1 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 4866
     ##  $ lfc      : num -1.37
     ##  $ padj     : num 0.017
     ##  $ logpadj  : num 1.77
     ##  $ direction: Factor w/ 3 levels "bldg","NS","lay": 1
+    ##  $ tissue   : Factor w/ 1 level "hypothalamus": 1
     ## NULL
 
-    lay.inc.d3 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d3", "lay") 
+    lay.inc.d3 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d3", "lay" ,  "hypothalamus") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1 obs. of  5 variables:
+    ## 'data.frame':    1 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 10947
     ##  $ lfc      : num -1.16
     ##  $ padj     : num 0.0169
     ##  $ logpadj  : num 1.77
     ##  $ direction: Factor w/ 3 levels "lay","NS","inc.d3": 1
+    ##  $ tissue   : Factor w/ 1 level "hypothalamus": 1
     ## NULL
 
-    inc.d3.inc.d9 <- createDEGdf(dds.hypothalamus,  "treatment", "inc.d9", "inc.d3") 
+    inc.d3.inc.d9 <- createDEGdf(dds.hypothalamus,  "treatment", "inc.d9", "inc.d3" ,  "hypothalamus") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1 obs. of  5 variables:
+    ## 'data.frame':    1 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 6470
     ##  $ lfc      : num -18.7
     ##  $ padj     : num 8.14e-20
     ##  $ logpadj  : num 19.1
     ##  $ direction: Factor w/ 3 levels "inc.d3","NS",..: 1
+    ##  $ tissue   : Factor w/ 1 level "hypothalamus": 1
     ## NULL
 
-    inc.d9.inc.d17 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d17", "inc.d9")
+    inc.d9.inc.d17 <- createDEGdf(dds.hypothalamus, "treatment", "inc.d17", "inc.d9" ,  "hypothalamus")
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    2 obs. of  5 variables:
+    ## 'data.frame':    2 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 6470 5210
     ##  $ lfc      : num  19.33 4.21
     ##  $ padj     : num  2.37e-23 2.10e-02
     ##  $ logpadj  : num  22.63 1.68
     ##  $ direction: Factor w/ 3 levels "inc.d9","NS",..: 3 3
+    ##  $ tissue   : Factor w/ 1 level "hypothalamus": 1 1
     ## NULL
 
-    inc.d17.hatch <- createDEGdf(dds.hypothalamus, "treatment", "hatch", "inc.d17") 
+    inc.d17.hatch <- createDEGdf(dds.hypothalamus, "treatment", "hatch", "inc.d17" ,  "hypothalamus") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    4 obs. of  5 variables:
+    ## 'data.frame':    4 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 38 1632 4923 9936
     ##  $ lfc      : num  4.46 2.21 1.21 1.07
     ##  $ padj     : num  2.01e-02 3.15e-05 6.40e-02 2.01e-02
     ##  $ logpadj  : num  1.7 4.5 1.19 1.7
     ##  $ direction: Factor w/ 3 levels "inc.d17","NS",..: 3 3 3 3
+    ##  $ tissue   : Factor w/ 1 level "hypothalamus": 1 1 1 1
     ## NULL
 
-    hatch.n5 <- createDEGdf(dds.hypothalamus, "treatment", "n5", "hatch") 
+    hatch.n5 <- createDEGdf(dds.hypothalamus, "treatment", "n5", "hatch" ,  "hypothalamus") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    1454 obs. of  5 variables:
+    ## 'data.frame':    1454 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 5209 7390 6434 4829 5131 13279 5978 2760 7245 13476 ...
     ##  $ lfc      : num  2.47 2.07 2.06 2.03 1.65 ...
     ##  $ padj     : num  0.0545 0.0502 0.0813 0.0378 0.0409 ...
     ##  $ logpadj  : num  1.26 1.3 1.09 1.42 1.39 ...
     ##  $ direction: Factor w/ 3 levels "hatch","NS","n5": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "hypothalamus": 1 1 1 1 1 1 1 1 1 1 ...
     ## NULL
 
-    n5.n9 <- createDEGdf(dds.hypothalamus, "treatment", "n9", "n5") 
+    n5.n9 <- createDEGdf(dds.hypothalamus, "treatment", "n9", "n5" ,  "hypothalamus") 
 
     ## Joining, by = "entrezid"
 
     ## Warning: Column `entrezid` joining factors with different levels, coercing
     ## to character vector
 
-    ## 'data.frame':    0 obs. of  5 variables:
+    ## 'data.frame':    0 obs. of  6 variables:
     ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 
     ##  $ lfc      : num 
     ##  $ padj     : num 
     ##  $ logpadj  : num 
     ##  $ direction: Factor w/ 3 levels "n5","NS","n9": 
+    ##  $ tissue   : Factor w/ 1 level "hypothalamus": 
     ## NULL
 
     a <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
@@ -1979,7 +2080,6 @@ males and females
     f <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
     g <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
     h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
-
 
     hypothalamus <- plot_grid(a + 
                            theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
@@ -1996,9 +2096,198 @@ males and females
 
 ![](../figures/characterization/hypplot-1.png)
 
+    dds.pituitary <- subsetDESeq2(c.colData,  c.countData, c("female_pituitary","male_pituitary"))
+
+    ## class: DESeqDataSet 
+    ## dim: 14937 193 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(14937): NP_001001127.1 NP_001001129.1 ... XP_430449.2
+    ##   XP_430508.3
+    ## rowData names(0):
+    ## colnames(193): L.Blu13_male_pituitary_control.NYNO
+    ##   L.G107_male_pituitary_control ... y97.x_female_pituitary_n9
+    ##   y98.o50.x_male_pituitary_inc.d3
+    ## colData names(8): V1 bird ... study sextissue
+    ## [1] 14484   193
+
+    ## estimating size factors
+
+    ## estimating dispersions
+
+    ## gene-wise dispersion estimates: 6 workers
+
+    ## mean-dispersion relationship
+
+    ## final dispersion estimates, fitting model and testing: 6 workers
+
+    ## -- replacing outliers and refitting for 28 genes
+    ## -- DESeq argument 'minReplicatesForReplace' = 7 
+    ## -- original counts are preserved in counts(dds)
+
+    ## estimating dispersions
+
+    ## fitting model and testing
+
+    control.bldg <- createDEGdf(dds.pituitary, "treatment", "bldg", "control", "pituitary")
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    ## 'data.frame':    6492 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 12439 6566 889 12484 6803 3045 12763 569 4664 12959 ...
+    ##  $ lfc      : num  4.76 4.46 4.19 3.93 3.75 ...
+    ##  $ padj     : num  3.48e-06 1.21e-04 1.02e-11 3.75e-03 5.11e-09 ...
+    ##  $ logpadj  : num  5.46 3.92 10.99 2.43 8.29 ...
+    ##  $ direction: Factor w/ 3 levels "control","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    bldg.lay <- createDEGdf(dds.pituitary, "treatment", "lay", "bldg", "pituitary")
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    ## 'data.frame':    282 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 10342 9845 9870 6188 6768 626 12728 7256 2540 3033 ...
+    ##  $ lfc      : num  6.6 5.88 4.69 3.86 3.11 ...
+    ##  $ padj     : num  4.09e-09 3.31e-09 7.28e-03 2.88e-02 1.98e-04 ...
+    ##  $ logpadj  : num  8.39 8.48 2.14 1.54 3.7 ...
+    ##  $ direction: Factor w/ 3 levels "bldg","NS","lay": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    lay.inc.d3 <- createDEGdf(dds.pituitary, "treatment", "inc.d3", "lay", "pituitary") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    ## 'data.frame':    383 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 9836 8947 5904 13279 9095 3002 13035 1221 4244 7208 ...
+    ##  $ lfc      : num  5.05 3.63 2.98 2.79 2.76 ...
+    ##  $ padj     : num  0.00696 0.04853 0.00628 0.0088 0.00294 ...
+    ##  $ logpadj  : num  2.16 1.31 2.2 2.06 2.53 ...
+    ##  $ direction: Factor w/ 3 levels "lay","NS","inc.d3": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    inc.d3.inc.d9 <- createDEGdf(dds.pituitary,  "treatment", "inc.d9", "inc.d3", "pituitary") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    ## 'data.frame':    3 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 3258 6768 9845
+    ##  $ lfc      : num  -0.58 -3.19 -3.78
+    ##  $ padj     : num  0.02458 0.00577 0.01543
+    ##  $ logpadj  : num  1.61 2.24 1.81
+    ##  $ direction: Factor w/ 3 levels "inc.d3","NS",..: 1 1 1
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1
+    ## NULL
+
+    inc.d9.inc.d17 <- createDEGdf(dds.pituitary, "treatment", "inc.d17", "inc.d9", "pituitary")
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    ## 'data.frame':    1996 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 6126 4114 5777 4003 1935 1964 2228 2933 11225 1818 ...
+    ##  $ lfc      : num  4.98 4.98 4.89 4.67 4.59 ...
+    ##  $ padj     : num  8.29e-04 1.51e-04 2.32e-22 9.70e-14 2.22e-06 ...
+    ##  $ logpadj  : num  3.08 3.82 21.63 13.01 5.65 ...
+    ##  $ direction: Factor w/ 3 levels "inc.d9","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    inc.d17.hatch <- createDEGdf(dds.pituitary, "treatment", "hatch", "inc.d17", "pituitary") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    ## 'data.frame':    21 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 6107 9542 1465 627 563 7256 11767 12728 8534 11099 ...
+    ##  $ lfc      : num  18.79 8.47 6.49 5.55 5.23 ...
+    ##  $ padj     : num  4.46e-17 2.59e-07 1.50e-05 1.50e-02 4.46e-17 ...
+    ##  $ logpadj  : num  16.35 6.59 4.82 1.82 16.35 ...
+    ##  $ direction: Factor w/ 3 levels "inc.d17","NS",..: 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    hatch.n5 <- createDEGdf(dds.pituitary, "treatment", "n5", "hatch", "pituitary") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    ## 'data.frame':    1088 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 13593 1804 1658 6137 6903 5904 493 8668 10165 6318 ...
+    ##  $ lfc      : num  19.05 4.12 3.66 3.6 3.24 ...
+    ##  $ padj     : num  2.13e-09 3.87e-02 8.23e-04 8.43e-05 6.07e-02 ...
+    ##  $ logpadj  : num  8.67 1.41 3.08 4.07 1.22 ...
+    ##  $ direction: Factor w/ 3 levels "hatch","NS","n5": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    n5.n9 <- createDEGdf(dds.pituitary, "treatment", "n9", "n5", "pituitary") 
+
+    ## Joining, by = "entrezid"
+
+    ## Warning: Column `entrezid` joining factors with different levels, coercing
+    ## to character vector
+
+    ## 'data.frame':    33 obs. of  6 variables:
+    ##  $ gene     : Factor w/ 13967 levels "","A2ML1","A2ML2",..: 11009 13489 10219 2226 2778 7122 10900 4656 1648 2315 ...
+    ##  $ lfc      : num  2.89 2.34 2.25 1.99 1.6 ...
+    ##  $ padj     : num  3.24e-03 2.30e-03 1.45e-04 4.59e-05 2.52e-02 ...
+    ##  $ logpadj  : num  2.49 2.64 3.84 4.34 1.6 ...
+    ##  $ direction: Factor w/ 3 levels "n5","NS","n9": 3 3 3 3 3 3 3 3 3 3 ...
+    ##  $ tissue   : Factor w/ 1 level "pituitary": 1 1 1 1 1 1 1 1 1 1 ...
+    ## NULL
+
+    a <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
+    b <- plot.volcano(bldg.lay, "treatment", "lay", "bldg", colorsvolcano)
+    c <- plot.volcano(lay.inc.d3, "treatment", "inc.d3", "lay", colorsvolcano) 
+    d <- plot.volcano(inc.d3.inc.d9, "treatment", "inc.d9", "inc.d3", colorsvolcano) 
+    e <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcano)
+    f <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
+    g <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
+    h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
+
+    pituitary <- plot_grid(a + 
+                           theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
+                           labs(y = "pituitary \n -log10(p)"),
+              b + theme(axis.title = element_blank(), axis.text = element_blank()),
+              c + theme(axis.title = element_blank(), axis.text = element_blank()),
+              d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+              e + theme(axis.title = element_blank(), axis.text = element_blank()),
+              f + theme(axis.title = element_blank(), axis.text = element_blank()),
+              g + theme(axis.title = element_blank(), axis.text = element_blank()),
+              h + theme(axis.title = element_blank(), axis.text = element_blank()), 
+              nrow = 1,  rel_widths = c(1.75,1,1,1,1,1,1,1,1))
+    pituitary
+
+![](../figures/characterization/pitplot-1.png)
+
     background <- png::readPNG("../figures/images/DoveParentsRNAseq_charicons.png")
     icons <- ggdraw() +  draw_image(background, scale = 1)
 
     plot_grid(icons, hypothalamus, females, males, gonads, nrow = 5, rel_heights = c(1,1,1,1,1.25))
 
 ![](../figures/characterization/allvolcanos-1.png)
+
+    plot_grid(icons, hypothalamus, pituitary, gonads, nrow = 4, rel_heights = c(1,1,1,1.25))
+
+![](../figures/characterization/allvolcanos-2.png)
