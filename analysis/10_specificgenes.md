@@ -24,59 +24,6 @@ analyses downstream of calculating tissue specific variance in gene expression
     ##   hypothesis = col_character()
     ## )
 
-    head(vsd.hyp[1:2])
-
-    ##                L.Blu13_male_hypothalamus_control.NYNO
-    ## NP_001001127.1                               8.514761
-    ## NP_001001129.1                               5.317499
-    ## NP_001001189.1                               9.327089
-    ## NP_001001195.1                               5.317499
-    ## NP_001001201.1                               6.400397
-    ## NP_001001203.1                               5.952357
-    ##                L.G107_male_hypothalamus_control
-    ## NP_001001127.1                         7.695211
-    ## NP_001001129.1                         5.721232
-    ## NP_001001189.1                         9.171919
-    ## NP_001001195.1                         5.317499
-    ## NP_001001201.1                         6.435010
-    ## NP_001001203.1                         5.317499
-
-    head(colData.hyp[1:2,])
-
-    ##                                         sex treatment         sextissue
-    ## L.Blu13_male_hypothalamus_control.NYNO male   control male_hypothalamus
-    ## L.G107_male_hypothalamus_control       male   control male_hypothalamus
-    ##                                          hypothesis
-    ## L.Blu13_male_hypothalamus_control.NYNO anticipation
-    ## L.G107_male_hypothalamus_control       anticipation
-    ##                                                                        sample
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
-    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
-
-    rownames(colData.hyp) == colnames(vsd.hyp)
-
-    ## Warning in rownames(colData.hyp) == colnames(vsd.hyp): longer object length
-    ## is not a multiple of shorter object length
-
-    ##   [1]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ##  [12]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ##  [23]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ##  [34]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ##  [45]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ##  [56]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ##  [67]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ##  [78]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ##  [89]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [100]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [111]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [122]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [133]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [144]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [155]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [166]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [177]  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE  TRUE
-    ## [188]  TRUE  TRUE FALSE
-
     vsd.pit <- readvsd("../results/04_vsd_pit.csv")
 
     ## Warning: Missing column names filled in: 'X1' [1]
@@ -151,6 +98,7 @@ selecting candidate genes counts from the hypothalamus
 
     candidategenes <- c("CISH", "SOCS1", "SOCS2", "SOCS2", "SOCS4", "SOCS5", "SOCS6", 
                         "PRL", "PRLR", "STAT5B", "JAK1")
+
     candidates.hyp <- selectcandidatevsds(candidategenes, vsd.hyp, colData.hyp)
 
     ##  [1] "CISH"   "SOCS1"  "SOCS2"  "SOCS2"  "SOCS4"  "SOCS5"  "SOCS6" 
@@ -212,11 +160,11 @@ selecting candidate genes counts from the hypothalamus
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-![](../figures/specificgenes/PRLboxplots-1.png)
+![](../figures/specificgenes/candidategenes-1.png)
 
-    e <- plotcanddateexpression(candidates.hyp, NULL, candidates.hyp$PRLR, "PRLR")
-    f <- plotcanddateexpression(candidates.pit, NULL, candidates.pit$PRLR, "PRLR")
-    g <- plotcanddateexpression(candidates.gon, NULL, candidates.gon$PRLR, "PRLR")
+    e <- plotcanddateexpression(candidates.hyp, "hypothalamus", candidates.hyp$PRLR, "PRLR")
+    f <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$PRLR, "PRLR")
+    g <- plotcanddateexpression(candidates.gon, "gonad", candidates.gon$PRLR, "PRLR")
 
     plot_grid(e, f + labs(y = NULL), g + labs(y = NULL), nrow = 1)
 
@@ -224,11 +172,11 @@ selecting candidate genes counts from the hypothalamus
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-![](../figures/specificgenes/PRLboxplots-2.png)
+![](../figures/specificgenes/candidategenes-2.png)
 
-    h <- plotcanddateexpression(candidates.hyp, " ", candidates.hyp$STAT5B, "STAT5B")
-    i <- plotcanddateexpression(candidates.pit, " ", candidates.pit$STAT5B, "STAT5B")
-    j <- plotcanddateexpression(candidates.gon, " ", candidates.gon$STAT5B, "STAT5B")
+    h <- plotcanddateexpression(candidates.hyp, "hypothalamus", candidates.hyp$STAT5B, "STAT5B")
+    i <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$STAT5B, "STAT5B")
+    j <- plotcanddateexpression(candidates.gon, "gonad", candidates.gon$STAT5B, "STAT5B")
 
     plot_grid(h, i + labs(y = NULL), j + labs(y = NULL), nrow = 1)
 
@@ -236,7 +184,23 @@ selecting candidate genes counts from the hypothalamus
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
-![](../figures/specificgenes/PRLboxplots-3.png)
+![](../figures/specificgenes/candidategenes-3.png)
+
+    ggplot(candidates.pit, aes(x = as.numeric(treatment), y = PRL)) + 
+            geom_smooth(aes(colour = sex)) +
+        geom_boxplot(aes(fill = treatment, alpha = sex)) + 
+        scale_alpha_manual(values = c(0.75,1)) +
+        mytheme() +
+        theme(legend.position = "none") +
+        scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+        labs(y = "PRL expression", x = NULL) +
+        scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                           labels = c( "control", "bldg", "lay", "inc.d3", 
+                                       "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](../figures/specificgenes/PRL-1.png)
 
     plot_grid(a,b,c, nrow = 3)
 
@@ -282,4 +246,4 @@ selecting candidate genes counts from the hypothalamus
     ## 5          L.R8_male_pituitary_control   male   control 17.30663
     ## 6         L.W33_male_pituitary_control   male   control 19.93211
 
-    write.csv(PRLpit, "../results/10_PRLpit.csv")
+    write.csv(PRLpit, "../results/10_PRLpit.csv", row.names = F)

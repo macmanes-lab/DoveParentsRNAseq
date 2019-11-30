@@ -122,8 +122,7 @@ hormonecharplot <- function(myhormone, myylab){
          color = guide_legend(order=2)) +
     scale_alpha_manual(values = c(0.75,1)) +
     scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-                       labels = c( "control", "bldg", "lay", "inc.d3", 
-                                   "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+                       labels = charlevels)
   }
 
 ```
