@@ -10,7 +10,6 @@ library(cowplot)
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
 
-
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/specificgenes/')
 ```
 
@@ -19,10 +18,6 @@ knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/specificgenes/')
 ```{r getvsdandcolData}
 vsd.hyp <- readvsd("../results/04_vsd_hyp.csv")
 colData.hyp <- readcolData("../results/04_colData_hyp.csv")
-
-head(vsd.hyp[1:2])
-head(colData.hyp[1:2,])
-rownames(colData.hyp) == colnames(vsd.hyp)
 
 vsd.pit <- readvsd("../results/04_vsd_pit.csv")
 colData.pit <- readcolData("../results/04_colData_pit.csv")
@@ -36,15 +31,15 @@ colData.gon <- readcolData("../results/04_colData_gon.csv")
 # selecting candidate genes counts from the hypothalamus
 
 
-
-```{r PRL}
+```{r geneinfo}
 geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
 head(geneinfo)
 ```
 
-```{r PRLboxplots, fig.width =5.5, fig.height= 2}
+```{r candidategenes, fig.width =5.5, fig.height= 2}
 candidategenes <- c("CISH", "SOCS1", "SOCS2", "SOCS2", "SOCS4", "SOCS5", "SOCS6", 
                     "PRL", "PRLR", "STAT5B", "JAK1")
+
 candidates.hyp <- selectcandidatevsds(candidategenes, vsd.hyp, colData.hyp)
 candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
 candidates.gon <- selectcandidatevsds(candidategenes, vsd.gon, colData.gon)
@@ -71,18 +66,32 @@ c <- plotcanddateexpression(candidates.gon,  "gonad", candidates.gon$PRL, "PRL")
 
 plot_grid(a, b + labs(y = NULL), c + labs(y = NULL), nrow = 1)
 
-e <- plotcanddateexpression(candidates.hyp, NULL, candidates.hyp$PRLR, "PRLR")
-f <- plotcanddateexpression(candidates.pit, NULL, candidates.pit$PRLR, "PRLR")
-g <- plotcanddateexpression(candidates.gon, NULL, candidates.gon$PRLR, "PRLR")
+e <- plotcanddateexpression(candidates.hyp, "hypothalamus", candidates.hyp$PRLR, "PRLR")
+f <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$PRLR, "PRLR")
+g <- plotcanddateexpression(candidates.gon, "gonad", candidates.gon$PRLR, "PRLR")
 
 plot_grid(e, f + labs(y = NULL), g + labs(y = NULL), nrow = 1)
 
 
-h <- plotcanddateexpression(candidates.hyp, " ", candidates.hyp$STAT5B, "STAT5B")
-i <- plotcanddateexpression(candidates.pit, " ", candidates.pit$STAT5B, "STAT5B")
-j <- plotcanddateexpression(candidates.gon, " ", candidates.gon$STAT5B, "STAT5B")
+h <- plotcanddateexpression(candidates.hyp, "hypothalamus", candidates.hyp$STAT5B, "STAT5B")
+i <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$STAT5B, "STAT5B")
+j <- plotcanddateexpression(candidates.gon, "gonad", candidates.gon$STAT5B, "STAT5B")
 
 plot_grid(h, i + labs(y = NULL), j + labs(y = NULL), nrow = 1)
+```
+
+```{r PRL, fig.width = 6, fig.height= 4}
+ggplot(candidates.pit, aes(x = as.numeric(treatment), y = PRL)) + 
+        geom_smooth(aes(colour = sex)) +
+    geom_boxplot(aes(fill = treatment, alpha = sex)) + 
+    scale_alpha_manual(values = c(0.75,1)) +
+    mytheme() +
+    theme(legend.position = "none") +
+    scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+    labs(y = "PRL expression", x = NULL) +
+    scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
+                       labels = c( "control", "bldg", "lay", "inc.d3", 
+                                   "inc.d9", "inc.d17", "hatch", "n5", "n9"))
 ```
 
 
