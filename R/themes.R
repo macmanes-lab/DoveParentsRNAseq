@@ -33,10 +33,10 @@ mytheme <- function(){
 # custom levels
 
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
-maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" , 
-                  "extend" , "prolong", "early")
-maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2", 
-                   "prolong" , "extend")
+
+maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" ,  "extend" , "prolong", "early")
+
+maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2", "prolong" , "extend")
 
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
                 "inc.d9", "m.inc.d8" ,"m.inc.d9" ,
@@ -50,6 +50,32 @@ alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9",
                 "m.inc.d17" , "m.n2", "prolong" , "extend")
 
 tissuelevels <- c("hypothalamus", "pituitary", "gonads")
+
+
+charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9", "NS")
+
+
+## comparisons
+
+serialtimepoints <- c("control.bldg" , "bldg.lay", "lay.inc.d3", "inc.d3.inc.d9", 
+                      "inc.d9.inc.d17", "inc.d17.hatch", "hatch.n5", "n5.n9")
+
+manipVchar <- c("inc.d3.m.inc.d3", "inc.d9.m.inc.d8", "inc.d9.m.inc.d9","inc.d17.m.inc.d17",
+                "hatch.prolong", "hatch.extend", "hatch.m.n2")
+
+offspringremoval <- c("lay.inc.d3", "inc.d3.m.inc.d3", 
+                      "inc.d3.inc.d9", "inc.d9.m.inc.d9",
+                      "inc.d9.inc.d17", "inc.d17.m.inc.d17", 
+                      "hatch.n5", "hatch.m.n2")
+
+prolongdelay <- c( "inc.d3.inc.d9", "inc.d9.inc.d17", 
+                   "inc.d9.m.inc.d8",
+                   "inc.d17.hatch", "hatch.n5",
+                   "hatch.prolong", "hatch.extend")
+
+## custom shapes
+
+myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
 
 # custom colors
 
@@ -123,7 +149,5 @@ colorsvolcanochar <-  c("control" = "#F8766D",
                     "n5"= "#DB72FB", 
                     "n9"= "#FF61C3",
                     "NS" = "#bdbdbd")
-charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9", "NS")
 
 
-myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
