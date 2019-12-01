@@ -14,6 +14,8 @@ library(Rtsne)
 source("../R/functions.R") 
 source("../R/themes.R") 
 
+library(BiocParallel)
+register(MulticoreParam(6))
 
 knitr::opts_chunk$set(fig.path = '../figures/manipulation/', cache = TRUE)
 ```
@@ -45,119 +47,42 @@ summary(m.colData[c(7,3,4,5,8)])
 ## Run DESeq on all subsets of the data
 
 ```{r dds, cache = T}
-dds.female_hypothalamus <- subsetDESeq("female_hypothalamus")
-dds.female_pituitary <- subsetDESeq("female_pituitary" )
-dds.female_gonad <- subsetDESeq("female_gonad" )
-dds.male_hypothalamus <- subsetDESeq("male_hypothalamus" )
-dds.male_pituitary <- subsetDESeq("male_pituitary"  )
-dds.male_gondad <- subsetDESeq("male_gonad")
+dds.female_hypothalamus <- subsetDESeq(m.colData, m.countData, "female_hypothalamus")
+dds.female_pituitary <- subsetDESeq(m.colData, m.countData, "female_pituitary" )
+dds.female_gonad <- subsetDESeq(m.colData, m.countData, "female_gonad" )
+dds.male_hypothalamus <- subsetDESeq(m.colData, m.countData, "male_hypothalamus" )
+dds.male_pituitary <- subsetDESeq(m.colData, m.countData, "male_pituitary"  )
+dds.male_gondad <- subsetDESeq(m.colData, m.countData, "male_gonad")
+```
+
+## volcano plots
+
+
+```{r}
+
+dds.hypothalamus <- subsetDESeq2(m.colData,  m.countData, c("female_hypothalamus","male_hypothalamus"))
+dds.hypothalamus <- subsetDESeq2(m.colData,  m.countData, c("female_pituitary","male_pituitary"))
+dds.hypothalamus <- subsetDESeq2(m.colData,  m.countData, c("female_gonad","male_gonad"))
+
 ```
 
 
-## Calculate and plot total DEGs
+```{r dds, cache = T}
 
-```{r totalDEGs, eval = T}
-#create list of groups for deseq contrasts
-group1 <- c("m.inc.d3","m.inc.d8", "m.inc.d9", "m.inc.d17", "prolong","extend", "m.n2" ) 
-group2 <- group1
+vsdh <- vst(dds.hypothalamus, blind=FALSE)
+vsdp <- vst(dds.pituitary, blind=FALSE)
+vsdg <- vst(dds.gonad, blind=FALSE)
 
-a <- plottotalDEGs(dds.female_hypothalamus, "female hypothalamus")
-b <- plottotalDEGs(dds.female_pituitary, "female pituitary")
-c <- plottotalDEGs(dds.female_gonad, "female gonad")
-d <- plottotalDEGs(dds.male_hypothalamus, "male hypothalamus")
-e <- plottotalDEGs(dds.male_pituitary, "male pituitary")
-f <- plottotalDEGs(dds.male_gondad, "male gonad")
-
-plot_grid(a + theme(legend.position = "none"),
-          b + theme(legend.position = "none"),
-          c,
-          d + theme(legend.position = "none"),
-          e + theme(legend.position = "none"),
-          f,
-          nrow = 2, rel_widths = c(0.3, 0.3, 0.4)) 
+vsdfh <- vst(dds.female_hypothalamus, blind=FALSE)
+vsdfp <- vst(dds.female_pituitary, blind=FALSE)
+vsdfg <- vst(dds.female_gonad, blind=FALSE)
+vsdmh <- vst(dds.male_hypothalamus, blind=FALSE)
+vsdmp <- vst(dds.male_pituitary, blind=FALSE)
+vsdmg <- vst(dds.male_gondad, blind=FALSE)
 ```
 
 
-## Calculate and plot principal components
 
-
-```{r pca, eval = F}
-plotPCAs(dds.female_hypothalamus, "female hypothalamus")
-plotPCAs(dds.female_pituitary, "female pituitary")      
-plotPCAs(dds.female_gonad, "female gonad")
-plotPCAs(dds.male_hypothalamus, "male hypothalamus")
-plotPCAs(dds.male_pituitary, "male pituitary")
-plotPCAs(dds.male_gondad, "male gonad")
-```
-
-## heamap with minimum pvalue
-
-```{r pheatmap, eval = F}
-makepheatmap(dds.female_hypothalamus, "female hypothalamus")
-makepheatmap(dds.female_pituitary, "female pituitary")
-makepheatmap(dds.female_gonad, "female gonad")
-makepheatmap(dds.male_hypothalamus, "male hypothalamus")
-makepheatmap(dds.male_pituitary, "male pituitary")
-makepheatmap(dds.male_gondad, "male gonad")        
-```
-
-## candidate genes
-
-```{r candidates, eval = F}
-plotcandidates(dds.female_hypothalamus, "female hypothalamus")
-plotcandidates(dds.female_pituitary, "female pituitary")
-plotcandidates(dds.female_gonad, "female gonad")
-plotcandidates(dds.male_hypothalamus, "male hypothalamus")
-plotcandidates(dds.male_pituitary, "male pituitary")
-plotcandidates(dds.male_gondad, "male gonad")
-
-```
-
-## offspring removal
-
-```{r offspringremoval, eval = F}
-g <- plotremoval(DEGs.female_hypothalamus, "Female hypothalamus", "bottom")
-h <- plotremoval(DEGs.female_pituitary, "Female pituitary", "none")
-i <- plotremoval(DEGs.female_gonad, "Female gonad",  "none")
-j <- plotremoval(DEGs.male_hypothalamus, "Male hypothalamus", "none")
-k <- plotremoval(DEGs.male_pituitary, "Male pituitary", "none")
-l <- plotremoval(DEGs.male_gondad, "Male gonad", "none")
-
-legend <- get_legend(g)
-
-mybarplots <- plot_grid(g + theme(legend.position = "none"), h , i , j ,k , l, nrow = 2) 
-
-mybarplots2 <- plot_grid(mybarplots, legend, ncol = 1, rel_heights = c(1,0.1))
-mybarplots2
-
-pdf("../figures/sexes/offspringremoval-1.pdf", width = 10, height = 6)
-plot(mybarplots2)
-dev.off()
-
-```
-
-## prolong extend
-
-```{r prolongextend, eval = F}
-g <- plotprolongdelay(DEGs.female_hypothalamus, "Female hypothalamus", "bottom")
-h <- plotprolongdelay(DEGs.female_pituitary, "Female pituitary", "none")
-i <- plotprolongdelay(DEGs.female_gonad, "Female gonad",  "none")
-j <- plotprolongdelay(DEGs.male_hypothalamus, "Male hypothalamus", "none")
-k <- plotprolongdelay(DEGs.male_pituitary, "Male pituitary", "none")
-l <- plotprolongdelay(DEGs.male_gondad, "Male gonad", "none")
-
-legend <- get_legend(g)
-
-mybarplots <- plot_grid(g + theme(legend.position = "none"), h , i , j ,k , l, nrow = 2) 
-
-mybarplots2 <- plot_grid(mybarplots, legend, ncol = 1, rel_heights = c(1,0.1))
-mybarplots2
-
-pdf("../figures/sexes/prolongextend-1.pdf", width = 10, height = 6)
-plot(mybarplots2)
-dev.off()
-
-```
 
 # pca and tsne
 
@@ -226,14 +151,13 @@ head(mypcadf)
 
 a <- ggplot(mypcadf, aes(x = PC1, y = PC2, 
                          color = colData$treatment, 
-                         shape = colData$tissue,
-                         alpha = colData$sex)) +
+                         shape = colData$tissue)) +
   geom_point(size = 2)  + 
   mytheme() +
   theme(legend.title = element_blank(), 
         axis.text = element_blank()) +
   scale_alpha_manual(values = c(0.5,1)) +
-  scale_color_manual(values = colorsmaniplevels1) +
+  scale_color_manual(values = colorsmanip) +
   labs(x = "PC1: 63.6% of variance", y = "PC2: 30.1% of variance") 
   
 
@@ -241,15 +165,10 @@ b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank",
                    repel = TRUE ,
                   select.var= list(contrib = 6)) + 
       mytheme() + 
-      labs(x = " ", y = " ", subtitle = NULL, title =  NULL) 
+      labs(x = " ", y = " ", subtitle = NULL, title =  NULL) +
+  theme( axis.text = element_blank())
 
-png('../figures/manipulation/pcaprep-1.png',width=600,height=600, units="px",bg = "transparent")
-print(a)
-dev.off()
-
-png('../figures/manipulation/pcaprep-2.png',width=600,height=600, units="px",bg = "transparent")
-print(b)
-dev.off()
+plot_grid(a,b, rel_widths = c(2,1))
 ```
 
 ```{r tsne}

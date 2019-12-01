@@ -22,7 +22,6 @@ subsetcolData2 <- function(colData, eachgroup){
   return(colData)
 }
 
-
 ############ subsetDESeq #########
 
 # run DESeq on subset of data - treatment only
@@ -46,10 +45,9 @@ subsetDESeq <- function(colData, countData, eachgroup){
   dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
   print(dim(dds))
   
-  dds <- DESeq(dds) # Differential expression analysis
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
   return(dds)
 }
-
 
 ############ subsetDESeq2 #########
 
@@ -79,6 +77,17 @@ subsetDESeq2 <- function(colData, countData, eachgroup){
   return(dds)
 }
 
+
+# used for making line graphs in 03_DESeq2_characterization.Rmd
+subsetDEGs <- function(DEGs, groupname){
+  DEGs <- DEGs %>%
+    dplyr::mutate(comparison = row.names(.),
+                  sextissue = groupname) %>%
+    dplyr::filter(comparison %in% serialtimepoints) 
+  DEGs$comparison <- factor(DEGs$comparison, levels = serialtimepoints)
+  return(DEGs)
+}
+
 ############ numDEGs #########
 
 # print total number of differntially expressed genes
@@ -87,6 +96,7 @@ numDEGs <- function(dds, group1, group2){
   sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
   return(sumpadj)
 }
+
 
 
 ############ returnpadj #########
@@ -99,7 +109,6 @@ returnpadj <- function(group1, group2){
   colnames(pvals) <- c(padjcolname)
   return(pvals)
 }
-
 
 ############returntotalDEGs ############ 
 
@@ -136,13 +145,8 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
   
   totalDEGS <- myDEGS
   
-  totalDEGS$V2 <- factor(totalDEGS$V2, levels =  c("control", "bldg", "lay",
-                                                   "inc.d3", "inc.d9", "inc.d17",
-                                                   "hatch", "n5", "n9"))
-  
-  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  c("control", "bldg", "lay",
-                                                   "inc.d3", "inc.d9", "inc.d17",
-                                                   "hatch", "n5", "n9"))
+  totalDEGS$V2 <- factor(totalDEGS$V2, levels =  charlevels)
+  totalDEGS$V1 <- factor(totalDEGS$V1, levels =  charlevels)
 
   #totalDEGS <- totalDEGS %>% dplyr::na_if(0)
   
@@ -163,158 +167,6 @@ plottotalDEGs <- function(myDEGS, mysubtitle){
   plot(allcontrasts)
 }
 
-############ plotserialDEGs ############ 
-
-# make bar plot with subset of characterization
-serialtimepoints <- c("control.bldg" , "bldg.lay", "lay.inc.d3", "inc.d3.inc.d9", 
-                      "inc.d9.inc.d17", "inc.d17.hatch", "hatch.n5", "n5.n9")
-
-plotserialDEGs <- function(DEGs, mysubtitle, myfill){
-  
-  # subset to look within one tissue in one sex
-  DEGs <- DEGs %>%
-    dplyr::mutate(comparison = row.names(.)) %>%
-    dplyr::filter(comparison %in% serialtimepoints) 
-  
-  DEGs$comparison <- factor(DEGs$comparison, levels = serialtimepoints)
-  
-  mybarplot <- ggplot(DEGs, aes(comparison)) +
-    geom_bar(aes(weight = V3), fill = myfill) +
-     theme_minimal(base_size = 8) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          panel.grid = element_blank()) +
-    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
-    ylim(0, 5105) +
-    geom_line(aes(x=comparison, y=V3, group = 1))
-
-  return(mybarplot)
-}
-
-
-############ subsetDEGs ############ 
-
-# used for making line graphs in 03_DESeq2_characterization.Rmd
-subsetDEGs <- function(DEGs, groupname){
-  DEGs <- DEGs %>%
-    dplyr::mutate(comparison = row.names(.),
-                  sextissue = groupname) %>%
-    dplyr::filter(comparison %in% serialtimepoints) 
-  DEGs$comparison <- factor(DEGs$comparison, levels = serialtimepoints)
-  return(DEGs)
-}
-  
-
-
-############ plotmanipDEGs ###############
-
-# list of things to compare
-manipVchar <- c("inc.d3.m.inc.d3",
-                "inc.d9.m.inc.d8", "inc.d9.m.inc.d9",
-                "inc.d17.m.inc.d17",
-                "hatch.prolong", "hatch.extend", "hatch.m.n2")
-
-plotmanipDEGs <- function(DEGs, mysubtitle, legendornot){
-  
-  # subset to look within one tissue in one sex
-  DEGs <- DEGs %>%
-    dplyr::mutate(comparison = row.names(.)) %>%
-    dplyr::filter(comparison %in% manipVchar) 
-  
-  DEGs$description <- ifelse(grepl("inc.d9.m.inc.d8", DEGs$comparison),"early chicks", 
-                             ifelse(grepl("d3|d17|d9|n2", DEGs$comparison),"remove offspring",
-                                           ifelse(grepl("prolong", DEGs$comparison),"prolong inc.",
-                                                  ifelse(grepl("extend", DEGs$comparison),"extend inc.", NA))))
-  
-  DEGs$comparison <- factor(DEGs$comparison, levels = manipVchar)
-  DEGs$description <- factor(DEGs$description, levels = c("remove offspring", "early chicks", "prolong inc.", "extend inc."))
-  
-  mybarplot <- ggplot(DEGs, aes(comparison)) +
-    geom_bar(aes(weight = V3, fill = description)) +
-     theme_minimal(base_size = 8) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
-    #ylim(0, 5105) +
-    #geom_line(aes(x=comparison, y=V3, group = 1)) +
-    scale_x_discrete(labels=c("Day 3\nRemove eggs", "Day 9\nAdd chicks", "Day 9\nRemove eggs",
-                              "Day 17\nRemove eggs", "~Hatch\nProlong", "~Hatch\nExtend", "~Hatch\nRemove chicks")) +
-    theme(legend.position = legendornot,
-          legend.title = element_blank(),
-          panel.grid = element_blank()) +
-    scale_fill_manual(values = c("#FF0000", "#00A08A", "#F2AD00", "#5BBCD6"))
-  
-  return(mybarplot)
-}
-
-
-
-######### plotremoval ######### 
-
-# list of things to compare
-offspringremoval <- c("lay.inc.d3", "inc.d3.m.inc.d3", 
-                      "inc.d3.inc.d9", "inc.d9.m.inc.d9",
-                      "inc.d9.inc.d17", "inc.d17.m.inc.d17", 
-                      "hatch.n5", "hatch.m.n2")
-
-plotremoval <- function(DEGs, mysubtitle, legendornot){
-  
-  # subset to look within one tissue in one sex
-  DEGs <- DEGs %>%
-    dplyr::mutate(comparison = row.names(.)) %>%
-    dplyr::filter(comparison %in% offspringremoval) 
-  
-  DEGs$description <- ifelse(grepl(".m.", DEGs$comparison),"offspring removal", "normal transition")
-  
-  DEGs$comparison <- factor(DEGs$comparison, levels = offspringremoval)
-
-  mybarplot <- ggplot(DEGs, aes(comparison)) +
-    geom_bar(aes(weight = V3, fill = description)) +
-    theme_minimal(base_size = 8) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
-    ylim(0, 2800) +
-    theme(legend.position = legendornot,
-          legend.title = element_blank(),
-          panel.grid = element_blank()) 
-  
-  return(mybarplot)
-}
-
-######### plotprolongdelay ######### 
-
-# list of things to compare
-prolongdelay <- c( "inc.d3.inc.d9", "inc.d9.inc.d17", 
-                   "inc.d9.m.inc.d8",
-                   "inc.d17.hatch", "hatch.n5",
-                   "hatch.prolong", "hatch.extend")
-
-
-plotprolongdelay <- function(DEGs, mysubtitle, legendornot){
-  
-  # subset to look within one tissue in one sex
-  DEGs <- DEGs %>%
-    dplyr::mutate(comparison = row.names(.)) %>%
-    dplyr::filter(comparison %in% prolongdelay) 
-  
-  DEGs$description <- ifelse(grepl(".m.", DEGs$comparison),"chicks hatch early", 
-                             ifelse(grepl("hatch.prolong", DEGs$comparison),"prolong inc",  
-                                    ifelse(grepl("hatch.extend", DEGs$comparison),"extend hatch", "normal transition")))
-  
-  DEGs$comparison <- factor(DEGs$comparison, levels = prolongdelay)
-  DEGs$description <- factor(DEGs$description, levels = c("normal transition", "chicks hatch early", "prolong inc", "extend hatch"))
-  
-  
-  mybarplot <- ggplot(DEGs, aes(comparison)) +
-    geom_bar(aes(weight = V3, fill = description)) +
-    theme_minimal(base_size = 8) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(subtitle = mysubtitle, y = "Number of DEGs", x = NULL) +
-    ylim(0, 2800) +
-    theme(legend.position = legendornot,
-          legend.title = element_blank(),
-          panel.grid = element_blank()) 
-  
-  return(mybarplot)
-}
 
 ######### pcadataframe ######### 
 
@@ -359,23 +211,6 @@ returnPCAs <- function(vsd){
   
   print("PC1 ~ treatment, data=pcadata")
   print(summary(aov(PC1 ~ treatment, data=pcadata)))
-  print(TukeyHSD(aov(PC1 ~ treatment, data=pcadata), which = "treatment"))
-  
-  print("PC2 ~ treatment, data=pcadata")
-  print(summary(aov(PC2 ~ treatment, data=pcadata))) 
-  
-  print("PC3 ~ treatment, data=pcadata")
-  print(summary(aov(PC3 ~ treatment, data=pcadata))) 
-  
-  print("PC4 ~ treatment, data=pcadata")
-  print(summary(aov(PC4 ~ treatment, data=pcadata))) 
-  
-  print("PC5 ~ treatment, data=pcadata")
-  print(summary(aov(PC5 ~ treatment, data=pcadata))) 
-  
-  print("PC6 ~ treatment, data=pcadata")
-  print(summary(aov(PC6 ~ treatment, data=pcadata))) 
-  return(pcadata)
 }
 
 ######### returnPCA2 ######### 
@@ -393,22 +228,7 @@ returnPCAs2 <- function(vsd){
   
   print("PC1 ~ treatment * sex, data=pcadata")
   print(summary(aov(PC1 ~ treatment * sex, data=pcadata)))
-  
-  print("PC2 ~ treatment * sex, data=pcadata")
-  print(summary(aov(PC2 ~ treatment * sex, data=pcadata))) 
-  
-  print("PC3 ~ treatment * sex, data=pcadata")
-  print(summary(aov(PC3 ~ treatment * sex, data=pcadata)))
-  
-  print("PC4 ~ treatment * sex, data=pcadata")
-  print(summary(aov(PC4 ~ treatment * sex, data=pcadata)))
-  
-  
-  print("PC5 ~ treatment * sex, data=pcadata")
-  print(summary(aov(PC5 ~ treatment * sex, data=pcadata)))
-  
-  print("PC6 ~ treatment * sex, data=pcadata")
-  print(summary(aov(PC6 ~ treatment * sex, data=pcadata))) 
+
   return(pcadata)
 }
 
@@ -430,7 +250,6 @@ plotPC12 <- function(pcadata, mysubtitle){
   return(pca12)
 }  
 
-
 ######### vsd.dataframe and corresponding col data ######### 
 
 vsd.dataframe <- function(vsd){
@@ -440,8 +259,6 @@ vsd.dataframe <- function(vsd){
   vsd.df <- as.data.frame(vsd.df)
   return(vsd.df)
 }  
-
-
 
 savevsdfiles <- function(myvsddf, mycolData, mytissue){
   myvsddf <- myvsddf
@@ -453,7 +270,6 @@ savevsdfiles <- function(myvsddf, mycolData, mytissue){
   write.csv(myvsddf, vsdfilename, row.names = T)
   write.csv(mycolData, colDatafilename, row.names = F)
 }
-
 
 readvsd <- function(filename){
   vsd <- read_csv(filename)
@@ -477,8 +293,8 @@ readcolData <- function(filename){
   return(colData)
 }
 
-
 ### select candidate gene vsds
+
 selectcandidatevsds <- function(listofgenes, vsd, colData){
   
   print(listofgenes)
@@ -507,8 +323,6 @@ selectcandidatevsds <- function(listofgenes, vsd, colData){
   
   return(candidatevsd)
 }
-
-
 
 ######### plotcandidates ######### 
 
@@ -588,7 +402,6 @@ plotprolactin <- function(vsd.df, colData, mysubtitle){
   return(p1)
 }
 
-
 ###### plot wgcna candidates
 
 plotWGCNAcandidates <- function(vsd, mygenelist, colData, mysubtitle){
@@ -663,6 +476,7 @@ plotWGCNAcandidatesManip <- function(vsd, mygenelist, colData, mysubtitle){
 ######### makepheatmap ######### 
 
 # makes a candidate heat map!!
+
 makepheatmap <- function(vsd.df, colData, mysubtitle){
 
   candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
@@ -710,7 +524,6 @@ makepheatmap <- function(vsd.df, colData, mysubtitle){
   return(p1)
   }
 
-
 ######### plotcorrelationheatmaps ######### 
 
 plotcorrelationheatmaps <- function(vsd, mycoldata, mysubtitle){
@@ -744,8 +557,6 @@ plotcorrelationheatmaps <- function(vsd, mycoldata, mysubtitle){
            breaks = myBreaks
   )
 }
-
-
 
 ######### LDAdata.treatment ######### 
 
