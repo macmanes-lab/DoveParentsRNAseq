@@ -1,6 +1,6 @@
 ---
 title: "plots with prolactin"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
@@ -67,7 +67,7 @@ p1 <- hormones %>%
   labs(x = "parental care stages", y = "prolactin conc. (ng/mL)") +
   annotation_custom(control, ymin = -20, ymax = 0, xmin = -7.5) +
   annotation_custom(bldg, ymin = -20, ymax = 0, xmin = -5.5) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = -3.5) +
+  annotation_custom(lay, ymin = -20, ymax = 0, xmin = -3.5) +
   annotation_custom(inc, ymin = -20, ymax = 0, xmin = -1.5) +
   annotation_custom(inc, ymin = -20, ymax = 0, xmin = 0.5) +
   annotation_custom(inc, ymin = -20, ymax = 0, xmin = 2.5) +
@@ -95,7 +95,7 @@ p2 <- hormones %>%
   labs(x = "parental care stages", y = "prolactin conc. (ng/mL)") +
   annotation_custom(control, ymin = -20, ymax = 0, xmin = -7.8) +
   annotation_custom(bldg, ymin = -20, ymax = 0, xmin = -5.8) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = -3.8) +
+  annotation_custom(lay, ymin = -20, ymax = 0, xmin = -3.8) +
   annotation_custom(inc, ymin = -20, ymax = 0, xmin = -1.8) +
   annotation_custom(inc, ymin = -20, ymax = 0, xmin = 0.6) +
   annotation_custom(inc, ymin = -20, ymax = 0, xmin = 2.4) +
@@ -126,7 +126,7 @@ p3 <- ggplot(candidates.pit, aes(x = as.numeric(treatment), y = PRL)) +
                        labels = charlevels) +
   annotation_custom(control, ymin = 12, ymax = 14, xmin = -7.8) +
   annotation_custom(bldg, ymin = 12, ymax = 14, xmin = -5.8) +
-  annotation_custom(inc, ymin = 12, ymax = 14, xmin = -3.8) +
+  annotation_custom(lay, ymin = 12, ymax = 14, xmin = -3.8) +
   annotation_custom(inc, ymin = 12, ymax = 14, xmin = -1.8) +
   annotation_custom(inc, ymin = 12, ymax = 14, xmin = 0.6) +
   annotation_custom(inc, ymin = 12, ymax = 14, xmin = 2.4) +
