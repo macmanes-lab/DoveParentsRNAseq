@@ -157,7 +157,7 @@ a <- ggplot(mypcadf, aes(x = PC1, y = PC2,
   theme(legend.title = element_blank(), 
         axis.text = element_blank()) +
   scale_alpha_manual(values = c(0.5,1)) +
-  scale_color_manual(values = colorsmanip) +
+  scale_color_manual(values = colorscharmaip2) +
   labs(x = "PC1: 63.6% of variance", y = "PC2: 30.1% of variance") 
   
 

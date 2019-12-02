@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -89,6 +89,8 @@
                               study = fct_collapse(treatment,
                                      characterization = charlevels,
                                      manipulation = maniplevels1)) %>% 
+      
+              dplyr::mutate(bird_id = gsub(".ATLAS", "" , bird_id)) %>% 
               dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc) 
     head(prolactin2)
 
@@ -102,11 +104,125 @@
     ## 5 manipulation     m.inc.d3  female blk.s060.pu.w prolactin        19.4
     ## 6 characterization inc.d9    female blk.s061.pu.y prolactin        11.9
 
-    same <- inner_join(prolactin2, prolactin, by = "bird_id")
-
+    same <- inner_join(prolactin, prolactin2, by = "bird_id")
     ggplot(same, aes(x = plasma_conc.x, y = plasma_conc.y, label = bird_id)) + geom_point() + geom_text()
 
 ![](../figures/hormones/wrangle-prolactin-1.png)
+
+    all <- full_join(prolactin, prolactin2, by = "bird_id") 
+    onlyin1 <- anti_join(prolactin, prolactin2, by = "bird_id") 
+    onlyin2 <- anti_join(prolactin2, prolactin, by = "bird_id") 
+
+
+    dim(prolactin)
+
+    ## [1] 325   6
+
+    dim(prolactin2)
+
+    ## [1] 332   6
+
+    dim(all)
+
+    ## [1] 451  11
+
+    dim(same)
+
+    ## [1] 207  11
+
+    dim(onlyin1)
+
+    ## [1] 118   6
+
+    dim(onlyin2)
+
+    ## [1] 126   6
+
+    print("only in old prolactin dataset") 
+
+    ## [1] "only in old prolactin dataset"
+
+    onlyin1$bird_id
+
+    ##   [1] "x.g.g.f"        "x.r9"           "x.g106"         "g107.x"        
+    ##   [5] "g108.x"         "x.y108.w29"     "w3.x"           "x.w44"         
+    ##   [9] "w33.x"          "blu13.x"        "r8.x"           "x.r20"         
+    ##  [13] "r3.x"           "w4.x"           "o162.w35.x"     "R36.w184.x"    
+    ##  [17] "x.y127.w93"     "blu122.r66.x"   "blu114.r38.w78" "x.Y90"         
+    ##  [21] "x.Y93.G126"     "R45.X"          "R72.Y83.x"      "w178.x"        
+    ##  [25] "r.y.s.blk"      "blk.s.pu.y"     "g19.w36.x"      "D.S.Y.Blk"     
+    ##  [29] "x.y94.g133"     "x.y63"          "x.g104.w82"     "s.d.blk.l"     
+    ##  [33] "s.l.d.r"        "r.s.g.o"        "s.pu.blk.r"     "r183.o72"      
+    ##  [37] "o.d.s"          "blu115.x"       "s.blk.r.o"      "r.s.d.o"       
+    ##  [41] "d.s.blk.o"      "l.s.y.blk"      "s.l.d.o"        "r185.x"        
+    ##  [45] "blk.s.pu.w"     "s.o.l.y"        "s.pk.pu.g"      "g.blk.s.r"     
+    ##  [49] "blk.d.g.s"      "R195.X"         "y18.X"          "s.blk.y.d"     
+    ##  [53] "s.pu.g.pk"      "G.S.Blk.O"      "l.s.pk.r"       "o.s.w.blk"     
+    ##  [57] "d.s.g.blk"      "d.s.blk.r"      "o.s.r.blk"      "r.s.y.blk"     
+    ##  [61] "blk.y.l.s"      "r.s.d.l"        "s.blk.d.r"      "blu110.w26.x"  
+    ##  [65] "pu.blk.s.y"     "pk.s.blk.w"     "g.blk.s.pk"     "s.o.r"         
+    ##  [69] "s.y.blk.pk"     "r.s.l.blk"      "s.g.blk.y"      "l.s.o.w"       
+    ##  [73] "l.s.blk.r"      "blk.s.pu.d"     "blk.s.o.g"      "g.y.blk.s"     
+    ##  [77] "pk.w.s.o"       "s.o.pk.pu"      "l.s.y.g"        "pk.s.o.y"      
+    ##  [81] "s.l.pk.blk"     "s.g.blk.pk"     "s.g.d.blk"      "s.g.blk.pu"    
+    ##  [85] "d.s.blk.w"      "s.blk.pu.pk"    "blk.s.y.g"      "pk.s.d.l"      
+    ##  [89] "g.s.r.blk"      "s.y.pk.blk"     "s.l.blk.w"      "blk.s.g.w"     
+    ##  [93] "s.blk.pk.w"     "s.blk.r.g"      "g.s.o.pk"       "s.blk.pk.pu"   
+    ##  [97] "r.s.g.pk"       "r.s.o.d"        "s.blk.pu.r"     "r.s.blk.pu"    
+    ## [101] "s.blk.pk.r"     "r.s.pk.blk"     "s.g.blk.o"      "g.s.pk.r"      
+    ## [105] "g.s.pk.pu"      "s.d.w.o"        "g.s.pu.blk"     "s.d.blk.g"     
+    ## [109] "s.l.o.pk"       "r.s.l.y"        "s.w.g.blk"      "y.s.o.r"       
+    ## [113] "g.s.pk.w"       "g8.w32.y147"    "d.r.blk.s"      "l.s.g.blk"     
+    ## [117] "r.s.l.w"        "s.l.o.r"
+
+    print("only in new prolactin dataset") 
+
+    ## [1] "only in new prolactin dataset"
+
+    onlyin2$bird_id
+
+    ##   [1] "blk.s030.o.g"    "blk.s031.pu.d"   "blk.s032.g.w"   
+    ##   [4] "blk.s049.y.g"    "blk.s060.pu.w"   "blk.s061.pu.y"  
+    ##   [7] "blk.y.l.s109"    "blu10.w26.x"     "blu114.r38.w198"
+    ##  [10] "blu115.y150.x"   "d.r.blk.s159"    "d.s008.y.blk"   
+    ##  [13] "d.s047.blk.o"    "d.s110.g.blk"    "d.s112.blk.w"   
+    ##  [16] "d.s177.blk.r"    "g8.y197"         "g.blk.s004.pk"  
+    ##  [19] "g.blk.s041.r"    "g.o.y.s037"      "g.s043.pu.blk"  
+    ##  [22] "g.s075.pk.pu"    "g.s076.pk.r"     "g.s078.blk.o"   
+    ##  [25] "g.s111.r.blk"    "g.s179.o.pk"     "g.s351.pk.w"    
+    ##  [28] "g.s.blk.d"       "g.x"             "g.y.blk.s006"   
+    ##  [31] "L.Blu13"         "L.G107"          "L.G118"         
+    ##  [34] "L.R3"            "L.R8"            "l.s024.y.g"     
+    ##  [37] "l.s052.pk.r"     "l.s080.blk.r"    "l.s120.y.blk"   
+    ##  [40] "l.s166.o.w"      "l.s280.g.blk"    "L.W33"          
+    ##  [43] "L.W3"            "L.W4"            "o.d.s009"       
+    ##  [46] "o.s010.r.blk"    "o.s084.w.blk"    "p.g.blk.s040"   
+    ##  [49] "pk.s011.o.y"     "pk.s054.d.g"     "pk.s055.d.l"    
+    ##  [52] "pk.s238.blk.w"   "pk.w.s141.o"     "pu.blk.s102.y"  
+    ##  [55] "pu.s.o.r"        "r183.o22"        "r195.x"         
+    ##  [58] "r36.w184.x"      "r45.X"           "r45.x"          
+    ##  [61] "r6.x"            "r72.y83.x"       "r84.x"          
+    ##  [64] "R.G106"          "R.R20"           "R.R9"           
+    ##  [67] "r.r.x.R2XR"      "r.s005.pk.blk"   "r.s035.y.blk"   
+    ##  [70] "r.s056.g.o"      "r.s057.g.pk"     "r.s058.d.l"     
+    ##  [73] "r.s059.d.o"      "r.s086.l.blk"    "r.s116.blk.pu"  
+    ##  [76] "r.s131.o.d"      "r.s171.l.w"      "r.s172.l.y"     
+    ##  [79] "R.W44"           "R.Y108.W29"      "r.y.s007.blk"   
+    ##  [82] "s038.g.d.blk"    "s044.blk.d.r"    "s062.d.blk.g"   
+    ##  [85] "s063.d.blk.l"    "s064.g.blk.pu"   "s065.l.d.o"     
+    ##  [88] "s066.l.d.r"      "s067.o.l.y"      "s069.pk.pu.g"   
+    ##  [91] "s071.pu.g.pk"    "s089.blk.pk.pu"  "s090.blk.pk.w"  
+    ##  [94] "s091.blk.r.g"    "s092.blk.r.o"    "s093.blk.y.d"   
+    ##  [97] "s095.g.blk.o"    "s096.g.blk.pk"   "s100.l.pk.blk"  
+    ## [100] "s103.y.pk.blk"   "s136.d.w.o"      "s137.g.blk.y"   
+    ## [103] "s139.l.blk.w"    "s142.o.pk.pu"    "s150.w.g.blk"   
+    ## [106] "s175.blk.pu.pk"  "s176.blk.pu.r"   "s186.l.o.pk"    
+    ## [109] "s187.l.o.r"      "s243.blk.pk.r"   "s333.y.blk.pk"  
+    ## [112] "s.pu148.blk.r"   "x.blu116.w107"   "x.y90"          
+    ## [115] "x.y93.g126"      "x.y.s"           "y18.x"          
+    ## [118] "y.s156.o.r"      "x.w178"          "x.o171.w45"     
+    ## [121] "y94.g133.x"      "x.blu122.r66"    "y63.x"          
+    ## [124] "g104.w82.x"      "x.r185"          "w191.r1"
 
     PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)  %>% 
                     dplyr::mutate(treatment = fct_recode(stage,
@@ -149,148 +265,148 @@
     ##   [5] "progesterone" "progesterone" "testosterone" "cort"        
     ##   [9] "cort"         "estradiol"    "progesterone" "cort"        
     ##  [13] "progesterone" "progesterone" "testosterone" "cort"        
-    ##  [17] "progesterone" "cort"         "estradiol"    "progesterone"
-    ##  [21] "progesterone" "progesterone" "cort"         "estradiol"   
-    ##  [25] "progesterone" "cort"         "progesterone" "cort"        
-    ##  [29] "estradiol"    "cort"         "estradiol"    "progesterone"
-    ##  [33] "progesterone" "cort"         "estradiol"    "cort"        
-    ##  [37] "estradiol"    "progesterone" "progesterone" "cort"        
-    ##  [41] "cort"         "estradiol"    "progesterone" "cort"        
-    ##  [45] "estradiol"    "cort"         "progesterone" "progesterone"
-    ##  [49] "testosterone" "cort"         "estradiol"    "cort"        
-    ##  [53] "estradiol"    "progesterone" "estradiol"    "progesterone"
-    ##  [57] "progesterone" "cort"         "estradiol"    "progesterone"
-    ##  [61] "progesterone" "progesterone" "cort"         "progesterone"
-    ##  [65] "progesterone" "testosterone" "cort"         "estradiol"   
-    ##  [69] "progesterone" "progesterone" "cort"         "progesterone"
-    ##  [73] "progesterone" "testosterone" "cort"         "estradiol"   
-    ##  [77] "progesterone" "cort"         "estradiol"    "cort"        
-    ##  [81] "estradiol"    "progesterone" "cort"         "progesterone"
-    ##  [85] "progesterone" "cort"         "progesterone" "cort"        
-    ##  [89] "cort"         "estradiol"    "progesterone" "cort"        
-    ##  [93] "progesterone" "cort"         "estradiol"    "progesterone"
-    ##  [97] "cort"         "progesterone" "testosterone" "cort"        
-    ## [101] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [105] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [109] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [113] "progesterone" "progesterone" "cort"         "progesterone"
-    ## [117] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [121] "cort"         "progesterone" "testosterone" "cort"        
-    ## [125] "progesterone" "testosterone" "cort"         "progesterone"
-    ## [129] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [133] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [137] "progesterone" "progesterone" "cort"         "cort"        
-    ## [141] "progesterone" "testosterone" "cort"         "progesterone"
-    ## [145] "progesterone" "testosterone" "cort"         "progesterone"
-    ## [149] "cort"         "progesterone" "testosterone" "cort"        
-    ## [153] "estradiol"    "progesterone" "progesterone" "cort"        
-    ## [157] "estradiol"    "cort"         "estradiol"    "progesterone"
-    ## [161] "cort"         "progesterone" "cort"         "progesterone"
-    ## [165] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [169] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [173] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [177] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [181] "progesterone" "testosterone" "progesterone" "progesterone"
-    ## [185] "progesterone" "testosterone" "cort"         "cort"        
-    ## [189] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [193] "progesterone" "progesterone" "cort"         "progesterone"
-    ## [197] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [201] "progesterone" "progesterone" "cort"         "cort"        
-    ## [205] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [209] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [213] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [217] "estradiol"    "progesterone" "progesterone" "progesterone"
-    ## [221] "testosterone" "cort"         "cort"         "progesterone"
-    ## [225] "progesterone" "testosterone" "cort"         "estradiol"   
-    ## [229] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [233] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [237] "estradiol"    "progesterone" "progesterone" "cort"        
-    ## [241] "estradiol"    "progesterone" "progesterone" "cort"        
-    ## [245] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [249] "estradiol"    "cort"         "progesterone" "cort"        
-    ## [253] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [257] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [261] "cort"         "estradiol"    "cort"         "progesterone"
-    ## [265] "testosterone" "cort"         "progesterone" "cort"        
-    ## [269] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [273] "cort"         "progesterone" "testosterone" "cort"        
-    ## [277] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [281] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [285] "cort"         "progesterone" "cort"         "cort"        
-    ## [289] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [293] "progesterone" "testosterone" "cort"         "cort"        
-    ## [297] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [301] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [305] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [309] "progesterone" "progesterone" "testosterone" "testosterone"
-    ## [313] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [317] "cort"         "progesterone" "cort"         "cort"        
-    ## [321] "progesterone" "progesterone" "cort"         "progesterone"
-    ## [325] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [329] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [333] "cort"         "progesterone" "testosterone" "cort"        
-    ## [337] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [341] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [345] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [349] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [353] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [357] "progesterone" "cort"         "estradiol"    "cort"        
-    ## [361] "estradiol"    "progesterone" "progesterone" "cort"        
-    ## [365] "estradiol"    "progesterone" "progesterone" "cort"        
-    ## [369] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [373] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [377] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [381] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [385] "progesterone" "progesterone" "progesterone" "cort"        
-    ## [389] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [393] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [397] "progesterone" "progesterone" "cort"         "estradiol"   
-    ## [401] "progesterone" "cort"         "progesterone" "cort"        
-    ## [405] "progesterone" "progesterone" "cort"         "estradiol"   
-    ## [409] "progesterone" "progesterone" "cort"         "estradiol"   
-    ## [413] "progesterone" "progesterone" "cort"         "progesterone"
-    ## [417] "testosterone" "cort"         "progesterone" "testosterone"
-    ## [421] "cort"         "estradiol"    "cort"         "progesterone"
-    ## [425] "progesterone" "testosterone" "cort"         "progesterone"
-    ## [429] "testosterone" "progesterone" "progesterone" "progesterone"
-    ## [433] "progesterone" "testosterone" "testosterone" "cort"        
-    ## [437] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [441] "estradiol"    "cort"         "estradiol"    "cort"        
-    ## [445] "estradiol"    "progesterone" "progesterone" "cort"        
-    ## [449] "estradiol"    "progesterone" "cort"         "cort"        
-    ## [453] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [457] "progesterone" "progesterone" "cort"         "progesterone"
-    ## [461] "progesterone" "testosterone" "cort"         "testosterone"
-    ## [465] "cort"         "estradiol"    "cort"         "cort"        
-    ## [469] "cort"         "progesterone" "cort"         "progesterone"
-    ## [473] "progesterone" "testosterone" "progesterone" "progesterone"
-    ## [477] "cort"         "progesterone" "cort"         "progesterone"
-    ## [481] "testosterone" "cort"         "progesterone" "cort"        
-    ## [485] "estradiol"    "cort"         "estradiol"    "progesterone"
-    ## [489] "progesterone" "cort"         "cort"         "progesterone"
-    ## [493] "progesterone" "testosterone" "cort"         "cort"        
-    ## [497] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [501] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [505] "cort"         "progesterone" "cort"         "estradiol"   
-    ## [509] "cort"         "cort"         "progesterone" "cort"        
-    ## [513] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [517] "progesterone" "cort"         "progesterone" "testosterone"
-    ## [521] "cort"         "cort"         "progesterone" "progesterone"
-    ## [525] "testosterone" "cort"         "progesterone" "cort"        
-    ## [529] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [533] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [537] "testosterone" "cort"         "cort"         "progesterone"
-    ## [541] "testosterone" "cort"         "progesterone" "cort"        
-    ## [545] "estradiol"    "cort"         "progesterone" "progesterone"
-    ## [549] "testosterone" "cort"         "estradiol"    "cort"        
-    ## [553] "progesterone" "cort"         "progesterone" "testosterone"
-    ## [557] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [561] "testosterone" "cort"         "progesterone" "progesterone"
-    ## [565] "testosterone" "progesterone" "cort"         "estradiol"   
-    ## [569] "cort"         "progesterone" "cort"         "cort"        
-    ## [573] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [577] "progesterone" "testosterone" "cort"         "estradiol"   
-    ## [581] "progesterone"
+    ##  [17] "progesterone" "cort"         "estradiol"    "cort"        
+    ##  [21] "estradiol"    "progesterone" "progesterone" "progesterone"
+    ##  [25] "cort"         "estradiol"    "progesterone" "cort"        
+    ##  [29] "progesterone" "cort"         "estradiol"    "cort"        
+    ##  [33] "estradiol"    "progesterone" "progesterone" "cort"        
+    ##  [37] "estradiol"    "cort"         "estradiol"    "progesterone"
+    ##  [41] "progesterone" "cort"         "cort"         "estradiol"   
+    ##  [45] "progesterone" "cort"         "estradiol"    "cort"        
+    ##  [49] "progesterone" "progesterone" "testosterone" "cort"        
+    ##  [53] "estradiol"    "cort"         "estradiol"    "progesterone"
+    ##  [57] "estradiol"    "progesterone" "progesterone" "cort"        
+    ##  [61] "estradiol"    "progesterone" "progesterone" "progesterone"
+    ##  [65] "cort"         "progesterone" "progesterone" "testosterone"
+    ##  [69] "cort"         "estradiol"    "progesterone" "progesterone"
+    ##  [73] "cort"         "progesterone" "progesterone" "testosterone"
+    ##  [77] "cort"         "estradiol"    "progesterone" "cort"        
+    ##  [81] "estradiol"    "cort"         "estradiol"    "progesterone"
+    ##  [85] "cort"         "progesterone" "progesterone" "cort"        
+    ##  [89] "progesterone" "cort"         "cort"         "estradiol"   
+    ##  [93] "progesterone" "cort"         "progesterone" "cort"        
+    ##  [97] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [101] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [105] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [109] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [113] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [117] "cort"         "progesterone" "testosterone" "cort"        
+    ## [121] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [125] "testosterone" "cort"         "progesterone" "testosterone"
+    ## [129] "cort"         "progesterone" "cort"         "estradiol"   
+    ## [133] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [137] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [141] "cort"         "cort"         "progesterone" "testosterone"
+    ## [145] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [149] "cort"         "progesterone" "cort"         "progesterone"
+    ## [153] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [157] "progesterone" "cort"         "estradiol"    "cort"        
+    ## [161] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [165] "cort"         "progesterone" "cort"         "cort"        
+    ## [169] "estradiol"    "progesterone" "progesterone" "progesterone"
+    ## [173] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [177] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [181] "cort"         "estradiol"    "progesterone" "testosterone"
+    ## [185] "progesterone" "progesterone" "progesterone" "testosterone"
+    ## [189] "cort"         "cort"         "cort"         "estradiol"   
+    ## [193] "progesterone" "progesterone" "progesterone" "progesterone"
+    ## [197] "cort"         "progesterone" "testosterone" "cort"        
+    ## [201] "estradiol"    "progesterone" "progesterone" "progesterone"
+    ## [205] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [209] "cort"         "progesterone" "cort"         "estradiol"   
+    ## [213] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [217] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [221] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [225] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [229] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [233] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [237] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [241] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [245] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [249] "testosterone" "cort"         "estradiol"    "cort"        
+    ## [253] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [257] "progesterone" "progesterone" "cort"         "estradiol"   
+    ## [261] "progesterone" "progesterone" "cort"         "estradiol"   
+    ## [265] "cort"         "progesterone" "testosterone" "cort"        
+    ## [269] "progesterone" "cort"         "cort"         "progesterone"
+    ## [273] "progesterone" "testosterone" "cort"         "progesterone"
+    ## [277] "testosterone" "cort"         "cort"         "estradiol"   
+    ## [281] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [285] "progesterone" "cort"         "cort"         "progesterone"
+    ## [289] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [293] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [297] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [301] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [305] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [309] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [313] "testosterone" "testosterone" "cort"         "cort"        
+    ## [317] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [321] "cort"         "cort"         "progesterone" "progesterone"
+    ## [325] "cort"         "progesterone" "cort"         "estradiol"   
+    ## [329] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [333] "progesterone" "progesterone" "cort"         "progesterone"
+    ## [337] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [341] "cort"         "progesterone" "cort"         "estradiol"   
+    ## [345] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [349] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [353] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [357] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [361] "estradiol"    "cort"         "estradiol"    "progesterone"
+    ## [365] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [369] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [373] "testosterone" "cort"         "cort"         "cort"        
+    ## [377] "estradiol"    "progesterone" "progesterone" "cort"        
+    ## [381] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [385] "estradiol"    "progesterone" "progesterone" "progesterone"
+    ## [389] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [393] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [397] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [401] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [405] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [409] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [413] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [417] "cort"         "progesterone" "testosterone" "cort"        
+    ## [421] "progesterone" "testosterone" "cort"         "estradiol"   
+    ## [425] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [429] "cort"         "progesterone" "testosterone" "progesterone"
+    ## [433] "progesterone" "progesterone" "progesterone" "testosterone"
+    ## [437] "testosterone" "cort"         "cort"         "estradiol"   
+    ## [441] "progesterone" "cort"         "estradiol"    "cort"        
+    ## [445] "estradiol"    "cort"         "estradiol"    "progesterone"
+    ## [449] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [453] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [457] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [461] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [465] "cort"         "testosterone" "cort"         "estradiol"   
+    ## [469] "cort"         "cort"         "cort"         "progesterone"
+    ## [473] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [477] "progesterone" "progesterone" "cort"         "progesterone"
+    ## [481] "cort"         "progesterone" "testosterone" "cort"        
+    ## [485] "progesterone" "cort"         "estradiol"    "cort"        
+    ## [489] "estradiol"    "progesterone" "progesterone" "cort"        
+    ## [493] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [497] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [501] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [505] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [509] "cort"         "estradiol"    "cort"         "cort"        
+    ## [513] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [517] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [521] "progesterone" "testosterone" "cort"         "cort"        
+    ## [525] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [529] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [533] "testosterone" "cort"         "progesterone" "cort"        
+    ## [537] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [541] "cort"         "progesterone" "testosterone" "cort"        
+    ## [545] "progesterone" "cort"         "estradiol"    "cort"        
+    ## [549] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [553] "estradiol"    "cort"         "progesterone" "cort"        
+    ## [557] "progesterone" "testosterone" "progesterone" "cort"        
+    ## [561] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [565] "progesterone" "progesterone" "testosterone" "progesterone"
+    ## [569] "cort"         "estradiol"    "cort"         "progesterone"
+    ## [573] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [577] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [581] "cort"         "estradiol"    "progesterone"
 
     plothormonecorrelations <- function(myhormone, myylab){
       PETCP %>% filter(hormone.y == myhormone) %>%
@@ -374,6 +490,43 @@
 
 ![](../figures/hormones/PRLonly-1.png)
 
+    # prolactin, removal only
+    hormones %>% 
+        filter( hormone == c("prolactin"))  %>% 
+        filter(treatment %in% c("inc.d3", "m.inc.d3", "inc.d9", "m.inc.d9", "inc.d17", "m.inc.d17", "hatch","m.n2"))  %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
+        geom_boxplot() + 
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+              legend.position = "none",
+              strip.text = element_blank()) +
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = "PRL (ng/mL)", x = NULL) +
+        annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -2, ymax = 0, alpha = 0.25) +
+        annotate("rect", xmin = 2.6, xmax = 4.4, ymin = -2, ymax = 0, alpha = 0.5) +
+        annotate("rect", xmin = 4.6, xmax = 6.4, ymin = -2, ymax = 0, alpha = 0.75)  +
+        annotate("rect", xmin = 6.6, xmax = 8.4, ymin = -2, ymax = 0, alpha = 1) 
+
+![](../figures/hormones/manipulation-1.png)
+
+    hormones %>% 
+        filter( hormone == c("prolactin"))  %>% 
+        filter( treatment %in% c("inc.d9", "m.inc.d8", "inc.d17", "prolong", "hatch", "extend", "n5"))  %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
+        geom_boxplot() + 
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+              legend.position = "none",
+              strip.text = element_blank()) +
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = "PRL (ng/mL)", x = NULL) +
+        annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -5, ymax = -3, alpha = 0.33) +
+        annotate("rect", xmin = 4.6, xmax = 5.4, ymin = -5, ymax = -3, alpha = 0.33) +
+        annotate("rect", xmin = 2.6, xmax = 5.4, ymin = -2, ymax = 0, alpha = 0.66) +
+        annotate("rect", xmin = 4.6, xmax = 7.4, ymin = 1, ymax = 3, alpha = 1) 
+
+![](../figures/hormones/manipulation-2.png)
+
     hormonecharplot("cort", "CORT (ng/mL)")
 
 ![](../figures/hormones/sexsteroids-1.png)
@@ -387,6 +540,35 @@
     plot_grid(d1,d2, nrow = 1)
 
 ![](../figures/hormones/sexsteroids-3.png)
+
+    hormonemanipSteroids <- function(myhormone, myylab, myymax){
+      
+      hormones %>% 
+        filter( hormone %in% c(myhormone))  %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment, color = sex)) +
+        geom_boxplot() + 
+        mytheme() +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+             legend.position = "none",
+              strip.text = element_blank()) +
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = myylab, x = NULL) 
+    }
+
+    hormonemanipSteroids("cort", "CORT (ng/mL)", 10)
+
+![](../figures/hormones/sexsteroids-4.png)
+
+    hormonemanipSteroids("progesterone", "PROG (ng/mL)",2.5)
+
+![](../figures/hormones/sexsteroids-5.png)
+
+    a <- hormonemanipSteroids("estradiol", "E (ng/mL)", 1)
+    b <- hormonemanipSteroids("testosterone", "T (ng/mL)", 3.5)
+    plot_grid(a,b)
+
+![](../figures/hormones/sexsteroids-6.png)
 
     prl.char <- hormones %>% filter(hormone == "prolactin", treatment %in% charlevels)   %>%  droplevels()
     test.char <- hormones %>% filter(hormone == "testosterone", treatment %in% charlevels)   %>%  droplevels()
@@ -455,78 +637,6 @@
     ##             Df Sum Sq Mean Sq F value Pr(>F)
     ## treatment    7   7.59   1.084   0.779  0.609
     ## Residuals   33  45.90   1.391
-
-    # prolactin, removal only
-    hormones %>% 
-        filter( hormone == c("prolactin"))  %>% 
-        filter( !treatment %in% c("m.inc.d8", "prolong", "extend"))  %>% 
-      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
-        geom_boxplot() + 
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-              legend.position = "none",
-              strip.text = element_blank()) +
-        scale_fill_manual(values = colorscharmaip) +
-        scale_color_manual(values = sexcolors) +
-        labs(y = "PRL (ng/mL)", x = NULL) +
-        annotate("rect", xmin = 3.7, xmax = 5.3, ymin = -2, ymax = 0, alpha = 1) +
-        annotate("rect", xmin = 5.7, xmax = 7.3, ymin = -2, ymax = 0, alpha = 1) +
-        annotate("rect", xmin = 7.7, xmax = 9.3, ymin = -2, ymax = 0, alpha = 1) +
-        annotate("rect", xmin = 9.7, xmax = 11.3, ymin = -2, ymax = 0, alpha = 1)
-
-![](../figures/hormones/manipulation-1.png)
-
-    hormones %>% 
-        filter( hormone == c("prolactin"))  %>% 
-        filter( !treatment %in% c("m.inc.d3", "m.inc.d9", "m.inc.d17","m.n2"))  %>% 
-      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
-        geom_boxplot() + 
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-              legend.position = "none",
-              strip.text = element_blank()) +
-        scale_fill_manual(values = colorscharmaip) +
-        scale_color_manual(values = sexcolors) +
-        labs(y = "PRL (ng/mL)", x = NULL) +
-        annotate("rect", xmin = 4.7, xmax = 6.3, ymin = -2, ymax = 0, alpha = 1, alpha = 1) +
-        annotate("rect", xmin = 6.7, xmax = 8.3, ymin = -2, ymax = 0, alpha = 1, alpha = 1) +
-        annotate("rect", xmin = 8.7, xmax = 10.3, ymin = -2, ymax = 0, alpha = 1, alpha = 1)
-
-![](../figures/hormones/manipulation-2.png)
-
-    hormonemanipSteroids <- function(myhormone, myylab, myymax){
-      
-      hormones %>% 
-        filter( hormone %in% c(myhormone))  %>% 
-      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment, color = sex)) +
-        geom_boxplot() + 
-        mytheme() +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-             # legend.position = "none",
-              strip.text = element_blank()) +
-        scale_fill_manual(values = colorscharmaip) +
-        scale_color_manual(values = sexcolors) +
-        labs(y = myylab, x = NULL) 
-    }
-
-    a <- hormonemanipSteroids("estradiol", "E (ng/mL)", 1)
-    b <- hormonemanipSteroids("testosterone", "T (ng/mL)", 3.5)
-    c <- hormonemanipSteroids("cort", "CORT (ng/mL)", 10)
-    d <- hormonemanipSteroids("progesterone", "PROG (ng/mL)",2.5)
-
-    a
-
-![](../figures/hormones/manipulation-3.png)
-
-    b
-
-![](../figures/hormones/manipulation-4.png)
-
-    c
-
-![](../figures/hormones/manipulation-5.png)
-
-    d
-
-![](../figures/hormones/manipulation-6.png)
 
     write.csv(hormones, "../results/hormones.csv", row.names = F)
 

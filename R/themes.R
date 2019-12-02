@@ -80,12 +80,12 @@ myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
 # custom colors
 
 colorsmanip <- c( "m.inc.d3" = "#CDCDCD", 
-                         "m.inc.d8" = "#6DA9D3", 
+                         "m.inc.d8" = "#fcc5c0", 
                          "m.inc.d9" = "#959595", 
                          "m.inc.d17" = "#626262",
                          "m.n2" = "#262625", 
-                         "prolong" = "#1B86B9" , 
-                         "extend" = "#01588C")
+                         "prolong" = "#f768a1" , 
+                         "extend" = "#f768a1")
 
 colorschar <-  c("control" = "#F8766D", 
                          "bldg"= "#D39200", 
@@ -108,12 +108,31 @@ colorscharmaip <-  c("control" = "#F8766D",
                  "n5"= "#DB72FB", 
                  "n9"= "#FF61C3",
                  "m.inc.d3" = "#CDCDCD", 
-                 "m.inc.d8" = "#6DA9D3", 
+                 "m.inc.d8" = "#fcc5c0", 
                  "m.inc.d9" = "#959595", 
                  "m.inc.d17" = "#626262",
                  "m.n2" = "#262625", 
-                 "prolong" = "#1B86B9" , 
-                 "extend" = "#01588C")
+                 "prolong" = "#f768a1" , 
+                 "extend" = "#7a0177")
+
+colorscharmaip2 <-  c("control" = "#F8766D", 
+                     "bldg"= "#D39200", 
+                     "lay"= "#93AA00", 
+                     "inc.d3"= "#00BA38", 
+                     "inc.d9"= "#00C19F", 
+                     "inc.d17"= "#00B9E3", 
+                     "hatch"= "#619CFF", 
+                     "n5"= "#DB72FB", 
+                     "n9"= "#FF61C3",
+                     
+                     "m.inc.d3" = "#CDCDCD", 
+                     "m.inc.d9" = "#959595", 
+                     "m.inc.d17" = "#626262",
+                     "m.n2" = "#262625", 
+                     
+                     "m.inc.d8" = "#fcc5c0", 
+                     "prolong" = "#f768a1" , 
+                     "extend" = "#7a0177")
 
 colorstissue <- c("hypothalamus" = "#d95f02",
                   "pituitary" = "#1b9e77",
@@ -131,7 +150,7 @@ colorsvolcano <-  c("control" = "#F8766D",
                      "n5"= "#DB72FB", 
                      "n9"= "#FF61C3",
                      "m.inc.d3" = "#CDCDCD", 
-                     "m.inc.d8" = "#6DA9D3", 
+                     "m.inc.d8" = "#fcc5c0", 
                      "m.inc.d9" = "#959595", 
                      "m.inc.d17" = "#626262",
                      "m.n2" = "#262625", 
