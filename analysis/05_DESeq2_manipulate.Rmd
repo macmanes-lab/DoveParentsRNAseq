@@ -67,7 +67,7 @@ dds.hypothalamus <- subsetDESeq2(m.colData,  m.countData, c("female_gonad","male
 ```
 
 
-```{r dds, cache = T}
+```{r vsd, cache = T}
 
 vsdh <- vst(dds.hypothalamus, blind=FALSE)
 vsdp <- vst(dds.pituitary, blind=FALSE)
@@ -83,119 +83,4 @@ vsdmg <- vst(dds.male_gondad, blind=FALSE)
 
 
 
-
-# pca and tsne
-
-```{r}
-pseudocounts <- read_csv("../results/01_pseudo.counts.csv")
-head(pseudocounts[1:3])
-
-colData <- read.csv("../metadata/00_colData_manipluation.csv", header = T, row.names = 1)
-
-colData$treatment <- factor(colData$treatment, levels = maniplevels1)
-colData$tissue <- factor(colData$tissue, levels = c("hypothalamus", "pituitary", "gonad"))
-colData <- colData %>% mutate(tissue = fct_recode(tissue, "gonads" = "gonad"))
-head(colData[1:3])
-
-geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
-
-
-subsetcounts <- function(colData, countData){
-  
-  # save counts that match colData
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
-  countData <- countData %>% 
-    dplyr::select(X1,savecols) %>% 
-    dplyr::rename(entrezid = X1)  
-  
-  countData <- left_join(geneinfo, countData)
-  print(head(countData))
-  countData <- countData %>% dplyr::distinct(Name, .keep_all = TRUE) %>%
-    dplyr::select(-row.names)  %>% dplyr::select(-geneid) %>% dplyr::select(-entrezid) 
-  print(head(countData))
-  row.names(countData) <- countData$Name
-  countData$Name <- NULL
-  countData <- as.data.frame(t(countData))
-  
-  return(countData)
-}
-
-countData <- subsetcounts(colData, pseudocounts)
-head(countData[1:3])
-head(colData)
-# confirm
-row.names(colData) <- colData$V1
-row.names(countData) == row.names(colData)
-
-euclidist <- dist(countData) # euclidean distances between the rows
-```
-
-
-```{r pcaprep}
-# make pca dataframes
-mypca <- prcomp(countData)
-
-# percent conribution
-eig.val <- get_eigenvalue(mypca)
-head(eig.val)
-
-mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
-                  PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
-                  ID = row.names(countData))
-mypcadf$V1 <- row.names(mypcadf)
-mypcadf <- left_join(colData, mypcadf)
-mypcadf <- mypcadf %>% dplyr::select(bird,sex,tissue,treatment,PC1:PC6)
-mypcadf$treatment <- factor(mypcadf$treatment, levels = maniplevels1)
-head(mypcadf)
-
-a <- ggplot(mypcadf, aes(x = PC1, y = PC2, 
-                         color = colData$treatment, 
-                         shape = colData$tissue)) +
-  geom_point(size = 2)  + 
-  mytheme() +
-  theme(legend.title = element_blank(), 
-        axis.text = element_blank()) +
-  scale_alpha_manual(values = c(0.5,1)) +
-  scale_color_manual(values = colorscharmaip2) +
-  labs(x = "PC1: 63.6% of variance", y = "PC2: 30.1% of variance") 
-  
-
-b <-  fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank", 
-                   repel = TRUE ,
-                  select.var= list(contrib = 6)) + 
-      mytheme() + 
-      labs(x = " ", y = " ", subtitle = NULL, title =  NULL) +
-  theme( axis.text = element_blank())
-
-plot_grid(a,b, rel_widths = c(2,1))
-```
-
-```{r tsne}
-
-tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=5, theta=0.5, dims=2)
-tsne_df = as.data.frame(tsne_model$Y) 
-plot(tsne_df$V1, tsne_df$V2)
-
-# prep for adding columns
-colData2 <- colData 
-colData2$V1 <- NULL
-tsne_df_cols <- cbind(colData2, tsne_df)
-
-c  <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = tissue)) +
-  geom_point(size = 2) +
-  mytheme() +
-  scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
-  labs(x = "tSNE 1", y = "tSNE 2")
-
-d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment, alpha = sex)) +
-  geom_point(size = 2) +
-  mytheme() +
-  labs(x = "tSNE 1", y = "tSNE 2") +
-  scale_color_manual(values = colorsmaniplevels1) +
-  scale_alpha_manual(values = c(0.5,1))
-
-c
-d
-```
 
