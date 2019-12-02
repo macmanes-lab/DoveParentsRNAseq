@@ -230,7 +230,7 @@ hormones %>%
     scale_fill_manual(values = colorscharmaip) +
     scale_color_manual(values = sexcolors) +
     labs(y = "PRL (ng/mL)", x = NULL) +
-  ylim(c(-12,125)) +
+  ylim(c(-12,100)) +
    annotation_custom(inc, xmax = 1.6, ymin = -10, ymax = 10) +
    annotation_custom(hatch, xmax = 3.6, ymin = -10, ymax = 10) +
    annotation_custom(inc, xmax = 5.6, ymin = -10, ymax = 10) +
