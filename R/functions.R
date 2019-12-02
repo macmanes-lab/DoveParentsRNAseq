@@ -775,19 +775,21 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
     ggplot(aes(x = lfc, y = logpadj)) + 
     geom_point(aes(color = direction, shape = tissue), size = 1, 
                alpha = 0.75, na.rm = T) + 
-    theme_minimal() +
+    mytheme() +
     scale_color_manual(values = mycolors,
                        name = " ",
-                       drop = FALSE) +
-    ylim(c(0,30)) +  
+                       drop = FALSE,
+                       breaks=c(down, "NS", up)) +
+    ylim(c(-5,25)) +  
     xlim(c(-8,8)) +
     labs(y = "-log10(p)", x = " ")  +
-    theme(legend.position = "none",
+    theme(legend.position = "top",
           legend.direction = "horizontal",
           legend.spacing.x = unit(-0.1, 'cm'),
-          legend.margin=margin(t=-0.25, r=0, b=0, l=0, unit="cm"),
+          legend.margin=margin(t=-0, r=0, b=0, l=0, unit="cm"),
           panel.grid = element_blank()) +
-    scale_shape_manual(values = myshapes)
+    scale_shape_manual(values = myshapes) +
+    guides(shape = F)
   return(volcano)
 }
 

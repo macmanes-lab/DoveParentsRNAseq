@@ -58,6 +58,11 @@ tissuelevels <- c("hypothalamus", "pituitary", "gonads")
 
 
 charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9", "NS")
+alllevels3volcano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                      "inc.d17", "hatch", "n5", "n9",
+                      "m.inc.d3" ,  "m.inc.d9" , "m.inc.d17" , "m.n2",
+                      "m.inc.d8" , "prolong" , "extend",
+                      "NS")
 
 
 ## comparisons
