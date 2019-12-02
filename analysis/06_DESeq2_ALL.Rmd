@@ -1,0 +1,120 @@
+---
+title: "06_DESeqALL"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+
+library(tidyverse)
+library(DESeq2)
+library(cowplot)
+library(pheatmap)
+library(viridis)
+library(forcats)
+library(caret) # LDA analysis
+library(MASS) # LDA analysis
+library(ggtext) # for pretty plots
+library(ctsGE)
+
+library(BiocParallel)
+register(MulticoreParam(6))
+
+source("../R/functions.R")  # load custom functions 
+source("../R/themes.R")  # load custom themes and color palletes
+source("../R/icons.R")  # for images
+
+knitr::opts_chunk$set(fig.path = '../figures/DESeqAll/', cache = T,  message=F, comment=F, warning=F)
+```
+
+## DEseq2 analysis on characterization. Looking at treatment AND sex for each tissue
+
+```{r readfiles}
+# import "colData" which contains sample information and "countData" which contains read counts
+countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+head(geneinfo)
+
+# craete variable that will be critical for subset later on
+colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+colData$sextissue <- as.factor(paste(colData$sex, colData$tissue, sep = "_"))
+colData$treatment <- factor(colData$treatment, levels = alllevels3)
+colData$tissue <- factor(colData$tissue, levels = tissuelevels)
+levels(colData$treatment)
+```
+
+
+
+
+```{r pitdfs, eval=T}
+dds.pituitary <- subsetDESeq2(colData,  countData, c("female_pituitary","male_pituitary"))
+```
+
+```{r  eval=T}
+inc.d3.m.inc.d3 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d3", "inc.d3", "pituitary")
+```
+
+```{r  eval=T}
+inc.d9.m.inc.d9 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d9", "inc.d9", "pituitary")
+```
+
+```{r  eval=T}
+inc.d17.m.inc.d17 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d17", "inc.d17", "pituitary")
+```
+
+```{r  eval=T}
+hatch.m.n2 <- createDEGdfsave(dds.pituitary, "treatment", "m.n2", "hatch", "pituitary")
+```
+
+```{r  eval=T}
+inc.d9.m.inc.d8 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d8", "inc.d9", "pituitary")
+```
+
+```{r  eval=T}
+hatch.m.inc.d8 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d8", "hatch", "pituitary")
+```
+
+```{r  eval=T}
+inc.d17.prolong <- createDEGdfsave(dds.pituitary, "treatment", "prolong", "inc.d17", "pituitary")
+```
+
+```{r  eval=T}
+hatch.prolong <- createDEGdfsave(dds.pituitary, "treatment", "prolong", "hatch", "pituitary")
+```
+
+```{r  eval=T}
+hatch.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "hatch", "pituitary")
+```
+
+```{r  eval=T}
+n5.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "n5", "pituitary")
+```
+
+```{r pitplot, eval = T}
+a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano)
+b <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano)
+c <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) 
+d <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano) 
+e <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano)
+f <- plot.volcano(hatch.m.inc.d8 , "treatment",    "m.inc.d8", "hatch"  , colorsvolcano) 
+g <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano) 
+h <- plot.volcano(hatch.prolong , "treatment",  "prolong", "hatch", colorsvolcano) 
+i <- plot.volcano(hatch.extend , "treatment",  "extend", "hatch" , colorsvolcano) 
+j <- plot.volcano(n5.extend , "treatment",  "extend", "n5", colorsvolcano) 
+
+
+pituitary <- plot_grid(a +  theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
+                       labs(y = "pituitary \n -log10(p)"),
+          b + theme(axis.title = element_blank(), axis.text = element_blank()),
+          c + theme(axis.title = element_blank(), axis.text = element_blank()),
+          d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          e + theme(axis.title = element_blank(), axis.text = element_blank()),
+          f + theme(axis.title = element_blank(), axis.text = element_blank()),
+          g + theme(axis.title = element_blank(), axis.text = element_blank()),
+          h + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          i + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          j + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          nrow = 2)
+pituitary
+```
+
+

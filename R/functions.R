@@ -773,7 +773,7 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
   
   volcano <- data %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
-    geom_point(aes(color = direction, shape = tissue), size = 2, 
+    geom_point(aes(color = direction, shape = tissue), size = 1, 
                alpha = 0.75, na.rm = T) + 
     theme_minimal() +
     scale_color_manual(values = mycolors,
@@ -790,3 +790,75 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
     scale_shape_manual(values = myshapes)
   return(volcano)
 }
+
+
+# made for beta testing
+# usaage
+# tempmanip <- subsetDESeq3(colData, countData, c("female_pituitary","male_pituitary"), 
+#                                                  c("m.inc.d3", "inc.d3", "inc.d9", "m.inc.d9"))
+
+subsetDESeq3 <- function(colData, countData, eachgroup, eachtreatment){
+  
+  colData <- colData %>%
+    dplyr::filter(sextissue %in% eachgroup,
+                  treatment %in% eachtreatment) %>%
+    droplevels()
+  row.names(colData) <- colData$V1
+  
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  
+  # assert that row and col lenghts are equal
+  stopifnot(ncol(countData) == nrow(colData))
+  
+  dds <- DESeqDataSetFromMatrix(countData = countData,
+                                colData = colData,
+                                design = ~ treatment )
+  
+  print(dds)
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dim(dds))
+  
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  return(dds)
+}
+
+
+## for DESeqALL
+createDEGdfsave <- function(mydds, whichfactor, up, down, mytissue){
+  
+  res <- results(mydds, contrast = c(whichfactor, up, down), independentFiltering = T, alpha = 0.1)
+  
+  data <- data.frame(entrezid = row.names(res),
+                     padj = res$padj, 
+                     logpadj = -log10(res$padj),
+                     lfc = res$log2FoldChange,
+                     tissue = mytissue)
+  data <- na.omit(data)
+  
+  data <- data %>%
+    dplyr::mutate(direction = ifelse(data$lfc > 0 & data$padj < 0.1, 
+                                     yes = up, no = ifelse(data$lfc < 0 & data$padj < 0.1, 
+                                                           yes = down, no = "NS")))
+  data$direction <- factor(data$direction, levels = c(down, "NS", up))
+  
+  data <- left_join(data, geneinfo) %>%
+    dplyr::mutate(gene = Name) %>%
+    #dplyr::select(gene, lfc, padj, logpadj, direction, tissue) %>%
+    dplyr::arrange(desc(lfc))
+  
+  # write dataframe of only significant genes
+  DEGs <- data %>% dplyr::filter(direction != "NS")
+  print(str(DEGs))
+  myfilename = paste("../results/DESeqAll", mytissue, down,up, "csv", sep = ".")
+  write.csv(DEGs, myfilename, row.names = F)
+  
+  # return data frome with all data, included NS genes
+  return(data)
+}  
+
+
+
+
