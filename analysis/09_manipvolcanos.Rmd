@@ -1,99 +1,33 @@
 ---
-title: "06_DESeqALL"
-output: html_document
+title: "Manip Volcanos"
+output: md_document
 ---
 
-```{r setup, include = FALSE}
-
+```{r}
 library(tidyverse)
-library(DESeq2)
 library(cowplot)
-library(pheatmap)
-library(viridis)
-library(forcats)
-library(caret) # LDA analysis
-library(MASS) # LDA analysis
-library(ggtext) # for pretty plots
-library(ctsGE)
-
-library(BiocParallel)
-register(MulticoreParam(6))
 
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
 source("../R/icons.R")  # for images
 
-knitr::opts_chunk$set(fig.path = '../figures/DESeqAll/', cache = T,  message=F, comment=F, warning=F)
-```
-
-# Warning: This script takes a very long time to run. 
-
-DESeq2 was not designed to run on 300 samples. But, I really like it, so I do it anyways. Some of these commands take like 15 min to run using 6 cores. 
-
-## DEseq2 on all chaacterization and manipulations
-
-```{r readfiles}
-# import "colData" which contains sample information and "countData" which contains read counts
-countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
-geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
-head(geneinfo)
-
-# craete variable that will be critical for subset later on
-colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
-colData$sextissue <- as.factor(paste(colData$sex, colData$tissue, sep = "_"))
-colData$treatment <- factor(colData$treatment, levels = alllevels3)
-colData$tissue <- factor(colData$tissue, levels = tissuelevels)
-levels(colData$treatment)
-```
-
-
-
-
-```{r pitdfs, eval=T}
-dds.pituitary <- subsetDESeq2(colData,  countData, c("female_pituitary","male_pituitary"))
+knitr::opts_chunk$set(fig.path = '../figures/manipulation/',message=F, warning=FALSE)
 ```
 
 ```{r  eval=T}
-inc.d3.m.inc.d3 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d3", "inc.d3", "pituitary")
+
+inc.d3.m.inc.d3 <- read_csv("../results/DESeqAll.pituitary.inc.d3.m.inc.d3.csv")
+inc.d9.m.inc.d9 <- read_csv("../results/04_DEGs.pituitary.m.inc.d3.m.inc.d9.csv")
+inc.d17.m.inc.d17 <- read_csv("../results/DESeqAll.pituitary.inc.d17.m.inc.d17.csv")
+hatch.m.n2 <- read_csv("../results/DESeqAll.pituitary.hatch.m.n2.csv")
+inc.d9.m.inc.d8 <- read_csv("../results/DESeqAll.pituitary.inc.d9.m.inc.d8.csv")
+hatch.m.inc.d8 <- read_csv("../results/DESeqAll.pituitary.hatch.m.inc.d8.csv")
+inc.d17.prolong <- read_csv("../results/DESeqAll.pituitary.inc.d17.prolong.csv")
+hatch.prolong <- read_csv("../results/DESeqAll.pituitary.hatch.prolong.csv")
+hatch.extend <- read_csv("../results/DESeqAll.pituitary.hatch.extend.csv")
+n5.extend <- read_csv("../results/DESeqAll.pituitary.n5.extend.csv")
+
 ```
-
-```{r  eval=T}
-inc.d9.m.inc.d9 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d9", "inc.d9", "pituitary")
-```
-
-```{r  eval=T}
-inc.d17.m.inc.d17 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d17", "inc.d17", "pituitary")
-```
-
-```{r  eval=T}
-hatch.m.n2 <- createDEGdfsave(dds.pituitary, "treatment", "m.n2", "hatch", "pituitary")
-```
-
-```{r  eval=T}
-inc.d9.m.inc.d8 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d8", "inc.d9", "pituitary")
-```
-
-```{r  eval=T}
-hatch.m.inc.d8 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d8", "hatch", "pituitary")
-```
-
-```{r  eval=T}
-inc.d17.prolong <- createDEGdfsave(dds.pituitary, "treatment", "prolong", "inc.d17", "pituitary")
-```
-
-```{r  eval=T}
-hatch.prolong <- createDEGdfsave(dds.pituitary, "treatment", "prolong", "hatch", "pituitary")
-```
-
-```{r  eval=T}
-hatch.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "hatch", "pituitary")
-```
-
-```{r  eval=T}
-n5.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "n5", "pituitary")
-```
-
-
 
 ```{r volcanos}
 a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano) + 
@@ -132,6 +66,7 @@ j <- plot.volcano(n5.extend , "treatment",  "extend", "n5", colorsvolcano)  +
   annotation_custom(nestling, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
 
 
+
 remove <- plot_grid(a +  theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
                        labs(y = "pituitary \n -log10(p)", subtitle = "1771 DEGs"),
           b + theme(axis.title = element_blank(), axis.text = element_blank()) + labs(subtitle = "277 DEGs"),
@@ -156,3 +91,4 @@ maniphatch <- plot_grid( h +  labs(subtitle = "4113 DEGs"),
 
 plot_grid(manipinc, maniphatch, nrow = 2)
 ```
+
