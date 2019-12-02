@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -32,6 +32,10 @@
     ##     date
 
     source("../R/themes.R")  # load custom themes and color palletes
+    source("../R/icons.R")
+
+    ## Warning: Column `icons` joining factor and character vector, coercing into
+    ## character vector
 
     knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
 
@@ -436,6 +440,8 @@
 ![](../figures/hormones/correlations-4.png)
 
     hormones <- rbind(prolactin, PETC)
+    hormones <- left_join(hormones, birds)
+
     hormones$treatment <- factor(hormones$treatment, levels = alllevels)
 
 
@@ -455,13 +461,21 @@
     ##                         m.inc.d17: 78                                  
     ##                         extend   : 78                                  
     ##                         (Other)  :686                                  
-    ##    hormone           plasma_conc            okay          
+    ##    hormone           plasma_conc           icons          
     ##  Length:1201        Min.   :  0.03306   Length:1201       
     ##  Class :character   1st Qu.:  0.34371   Class :character  
     ##  Mode  :character   Median :  1.38568   Mode  :character  
     ##                     Mean   : 10.00584                     
     ##                     3rd Qu.:  6.05370                     
     ##                     Max.   :120.34989                     
+    ##                                                           
+    ##     music             iconpath             okay          
+    ##  Length:1201        Length:1201        Length:1201       
+    ##  Class :character   Class :character   Class :character  
+    ##  Mode  :character   Mode  :character   Mode  :character  
+    ##                                                          
+    ##                                                          
+    ##                                                          
     ## 
 
     hormonecharplot <- function(myhormone, myylab){
@@ -472,7 +486,7 @@
         droplevels() %>% 
       ggplot(aes(x = as.numeric(treatment), y = plasma_conc)) +
             geom_smooth(aes(colour = sex)) +
-        geom_boxplot(aes(outlier.colour = treatment, fill = treatment, alpha = sex)) +
+        geom_boxplot(aes(fill = treatment, alpha = sex)) +
         mytheme() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
               legend.position = "none") +
@@ -502,10 +516,21 @@
         scale_fill_manual(values = colorscharmaip) +
         scale_color_manual(values = sexcolors) +
         labs(y = "PRL (ng/mL)", x = NULL) +
-        annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -2, ymax = 0, alpha = 0.25) +
-        annotate("rect", xmin = 2.6, xmax = 4.4, ymin = -2, ymax = 0, alpha = 0.5) +
-        annotate("rect", xmin = 4.6, xmax = 6.4, ymin = -2, ymax = 0, alpha = 0.75)  +
-        annotate("rect", xmin = 6.6, xmax = 8.4, ymin = -2, ymax = 0, alpha = 1) 
+        ylim(c(-16,100)) +
+      
+       annotation_custom(inc, xmax = 1.6, ymin = -14, ymax = 5) +
+       annotation_custom(bldg, xmax = 3.6, ymin = -14, ymax = 5) +
+       annotation_custom(inc, xmax = 5.6, ymin = -14, ymax = 5) +
+       annotation_custom(bldg, xmax = 7.6, ymin = -14, ymax = 5) +
+      annotation_custom(hatch, xmax = 9.6, ymin = -14, ymax = 5) +
+      annotation_custom(bldg, xmax = 11.6, ymin = -14, ymax = 5) +
+      annotation_custom(nestling, xmax = 13.6, ymin = -14, ymax = 5) +
+      annotation_custom(bldg, xmax = 15.6, ymin = -14, ymax = 5) +
+        
+        annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -16, ymax = -14, alpha = 0.25) +
+        annotate("rect", xmin = 2.6, xmax = 4.4, ymin = -16, ymax = -14, alpha = 0.5) +
+        annotate("rect", xmin = 4.6, xmax = 6.4, ymin = -16, ymax = -14, alpha = 0.75)  +
+        annotate("rect", xmin = 6.6, xmax = 8.4, ymin = -16, ymax = -14, alpha = 1) 
 
 ![](../figures/hormones/manipulation-1.png)
 
@@ -520,10 +545,19 @@
         scale_fill_manual(values = colorscharmaip) +
         scale_color_manual(values = sexcolors) +
         labs(y = "PRL (ng/mL)", x = NULL) +
-        annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -5, ymax = -3, alpha = 0.33) +
-        annotate("rect", xmin = 4.6, xmax = 5.4, ymin = -5, ymax = -3, alpha = 0.33) +
-        annotate("rect", xmin = 2.6, xmax = 5.4, ymin = -2, ymax = 0, alpha = 0.66) +
-        annotate("rect", xmin = 4.6, xmax = 7.4, ymin = 1, ymax = 3, alpha = 1) 
+      ylim(c(-12,125)) +
+       annotation_custom(inc, xmax = 1.6, ymin = -10, ymax = 10) +
+       annotation_custom(hatch, xmax = 3.6, ymin = -10, ymax = 10) +
+       annotation_custom(inc, xmax = 5.6, ymin = -10, ymax = 10) +
+       annotation_custom(inc, xmax = 7.6, ymin = -10, ymax = 10) +
+      annotation_custom(hatch, xmax = 9.6, ymin = -10, ymax = 10) +
+      annotation_custom(hatch, xmax = 11.6, ymin = -10, ymax = 10) +
+      annotation_custom(nestling, xmax = 13.6, ymin = -10, ymax = 10) +
+        
+      annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -12, ymax = -10, alpha = 0.33) +
+        annotate("rect", xmin = 4.6, xmax = 5.4, ymin = -12, ymax = -10, alpha = 0.33) +
+        annotate("rect", xmin = 2.6, xmax = 5.4, ymin = -10, ymax = -8, alpha = 0.66) +
+        annotate("rect", xmin = 4.6, xmax = 7.4, ymin = -8, ymax = -6, alpha = 1) 
 
 ![](../figures/hormones/manipulation-2.png)
 

@@ -105,7 +105,18 @@
 
     ggplot(meanPRL, aes(treatment, m)) +
        geom_image(aes(image=music), size=.12)  +
-      labs(x = "parental care stages", y = "Prolactin (ng/mL)")
+      labs(x = "parental care stages", y = "Prolactin (ng/mL)")  +
+      mytheme() +
+      ylim(c(-15,80)) +
+      annotation_custom(control, ymin = -20, ymax = 0, xmin = -7.5) +
+      annotation_custom(bldg, ymin = -20, ymax = 0, xmin = -5.5) +
+      annotation_custom(lay, ymin = -20, ymax = 0, xmin = -3.5) +
+      annotation_custom(inc, ymin = -20, ymax = 0, xmin = -1.5) +
+      annotation_custom(inc, ymin = -20, ymax = 0, xmin = 0.5) +
+      annotation_custom(inc, ymin = -20, ymax = 0, xmin = 2.5) +
+      annotation_custom(hatch, ymin = -20, ymax = 0, xmin = 4.5) +
+      annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 6.5) +
+      annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 8.5) 
 
 ![](../figures/PRL/hormone-3.png)
 
@@ -597,6 +608,17 @@
 
     ggplot(meanPRL, aes(treatment, m)) +
        geom_image(aes(image=music), size=.12)  +
-      labs(x = "parental care stages", y = "Pituitary PRL expression")
+      labs(x = "parental care stages", y = "Pituitary PRL expression") +
+      mytheme() +
+      ylim(c(15,22)) +
+      annotation_custom(control, ymin = 15, ymax = 16.5, xmin = -7.5) +
+      annotation_custom(bldg, ymin = 15, ymax = 16.5, xmin = -5.5) +
+      annotation_custom(lay, ymin = 15, ymax = 16.5, xmin = -3.5) +
+      annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = -1.5) +
+      annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = 0.5) +
+      annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = 2.5) +
+      annotation_custom(hatch, ymin = 15, ymax = 16.5, xmin = 4.5) +
+      annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 6.5) +
+      annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 8.5) 
 
 ![](../figures/PRL/PRL.pit-3.png)
