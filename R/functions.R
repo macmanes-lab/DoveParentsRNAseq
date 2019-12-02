@@ -765,3 +765,28 @@ LDAplot.hypothesis <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
     theme(legend.text = element_markdown(size = 8))
   plot(p)
 }  
+
+
+## volcano plots
+
+plot.volcano <- function(data, whichfactor, up, down, mycolors){
+  
+  volcano <- data %>%
+    ggplot(aes(x = lfc, y = logpadj)) + 
+    geom_point(aes(color = direction, shape = tissue), size = 2, 
+               alpha = 0.75, na.rm = T) + 
+    theme_minimal() +
+    scale_color_manual(values = mycolors,
+                       name = " ",
+                       drop = FALSE) +
+    ylim(c(0,30)) +  
+    xlim(c(-8,8)) +
+    labs(y = "-log10(p)", x = " ")  +
+    theme(legend.position = "none",
+          legend.direction = "horizontal",
+          legend.spacing.x = unit(-0.1, 'cm'),
+          legend.margin=margin(t=-0.25, r=0, b=0, l=0, unit="cm"),
+          panel.grid = element_blank()) +
+    scale_shape_manual(values = myshapes)
+  return(volcano)
+}

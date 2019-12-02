@@ -42,17 +42,8 @@ c.colData$sextissue <- as.factor(paste(c.colData$sex, c.colData$tissue, sep = "_
 # rename some factors
 levels(c.colData$treatment)
 # "extend"    "m.inc.d17" "m.inc.d3"  "m.inc.d8"  "m.inc.d9"  "m.n2"      "prolong" 
-c.colData <- c.colData %>%
-    mutate(treatment = fct_recode(treatment,
-                            "extend" = "extend",
-                            "prolong" = "prolong",
-                            "early" = "m.inc.d8",
-                            "remove.d03" = "m.inc.d3",
-                            "remove.d09" = "m.inc.d9",
-                            "remove.d17" = "m.inc.d17",
-                            "remove.d20" = "m.n2"))
 
-c.colData$treatment <- factor(c.colData$treatment, levels = maniplevels)
+c.colData$treatment <- factor(c.colData$treatment, levels = maniplevels1)
 levels(c.colData$treatment)
 
 # drop columsn that are bad for model AND not needed for later joining
@@ -62,6 +53,9 @@ c.colData$study <- NULL
 c.colData$group <- NULL
 head(c.colData)
 str(c.colData)
+
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+head(geneinfo)
 ```
 
 
@@ -203,3 +197,78 @@ prl36 <-  PRL_manipulated$entrezid[252:271]
 plotWGCNAcandidatesManip(vsd.pit, prl36, colDataPit, "PRL-RIPK3 pattern in the PRL module")
 ```
   
+  
+## volcano plots
+
+
+```{r pitdfs, eval=T}
+dds.pituitary <- subsetDESeq2(c.colData,  c.countData, c("female_pituitary","male_pituitary"))
+dds.pituitary$treatment
+```
+
+```{r pitdfs2, eval=T}
+createDEGdfmanip <- function(mydds, whichfactor, up, down, mytissue){
+  res <- results(mydds, contrast =c(whichfactor, up, down),
+                 independentFiltering = T, alpha = 0.1)
+   data <- data.frame(entrezid = row.names(res),
+                     padj = res$padj, 
+                     logpadj = -log10(res$padj),
+                     lfc = res$log2FoldChange,
+                     tissue = mytissue)
+  data <- na.omit(data)
+  
+  data <- data %>%
+    dplyr::mutate(direction = ifelse(data$lfc > 0 & data$padj < 0.1, 
+                                     yes = up, no = ifelse(data$lfc < 0 & data$padj < 0.1, 
+                                                 yes = down, no = "NS")))
+  data$direction <- factor(data$direction, levels = c(down, "NS", up))
+  
+  data <- left_join(data, geneinfo) %>%
+    dplyr::mutate(gene = Name) %>%
+    dplyr::select(gene, lfc, padj, logpadj, direction, tissue) %>%
+    dplyr::arrange(desc(lfc))
+  
+  DEGs <- data %>% filter(direction != "NS")
+  print(str(DEGs))
+  
+  myfilename = paste("../results/04_DEGs", mytissue, down,up, "csv", sep = ".")
+  
+  # write dataframe of only significant genes
+  write.csv(DEGs, myfilename, row.names = F)
+  
+  # return data frome with all data, included NS genes
+  return(data)
+}  
+
+m.inc.d3.m.inc.d9 <- createDEGdfmanip(dds.pituitary, "treatment", "m.inc.d9", "m.inc.d3",  "pituitary")
+m.inc.d9.m.inc.d17 <- createDEGdfmanip(dds.pituitary, "treatment", "m.inc.d17",  "m.inc.d9", "pituitary")
+m.inc.d17.m.n2 <- createDEGdfmanip(dds.pituitary, "treatment", "m.n2",  "m.inc.d17", "pituitary") 
+m.n2.m.inc.d8 <- createDEGdfmanip(dds.pituitary, "treatment", "m.inc.d8",  "m.n2", "pituitary") 
+m.inc.d8.prolong <- createDEGdfmanip(dds.pituitary,  "treatment", "prolong", "m.inc.d8",  "pituitary") 
+prolong.extend <- createDEGdfmanip(dds.pituitary, "treatment", "extend", "prolong",  "pituitary")
+```
+
+```{r pitplot, eval = T}
+a <- plot.volcano(m.inc.d3.m.inc.d9, "treatment", "m.inc.d9", "m.inc.d3",  colorsvolcano)
+b <- plot.volcano(m.inc.d9.m.inc.d17, "treatment", "m.inc.d17", "m.inc.d9",  colorsvolcano)
+c <- plot.volcano(m.inc.d17.m.n2, "treatment",  "m.n2", "m.inc.d17", colorsvolcano) 
+d <- plot.volcano(m.n2.m.inc.d8, "treatment", "m.inc.d8", "m.n2",  colorsvolcano) 
+e <- plot.volcano(m.inc.d8.prolong, "treatment", "prolong", "m.inc.d8",  colorsvolcano) 
+f <- plot.volcano(prolong.extend, "treatment", "extend",  "prolong",colorsvolcano)
+
+pituitary <- plot_grid(a + 
+                       theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
+                       labs(y = "pituitary \n -log10(p)"),
+          b + theme(axis.title = element_blank(), axis.text = element_blank()),
+          c + theme(axis.title = element_blank(), axis.text = element_blank()),
+          d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          e + theme(axis.title = element_blank(), axis.text = element_blank()),
+          f + theme(axis.title = element_blank(), axis.text = element_blank()),
+          nrow = 1,  rel_widths = c(1.75,1,1,1,1,1))
+pituitary
+
+background <- png::readPNG("../figures/images/DoveParentsRNAseq_manipvolcanos.png")
+icons <- ggdraw() +  draw_image(background, scale = 1)
+
+plot_grid(icons, pituitary, nrow = 2, rel_heights = c(1,1))
+```

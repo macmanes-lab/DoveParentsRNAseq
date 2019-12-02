@@ -117,7 +117,7 @@ colorscharmaip <-  c("control" = "#F8766D",
                  "m.inc.d9" = "#959595", 
                  "m.inc.d17" = "#626262",
                  "m.n2" = "#262625", 
-                 "prolong" = "#f768a1" , 
+                 "prolong" = "#ae017e" , 
                  "extend" = "#7a0177")
 
 colorscharmaip2 <-  c("control" = "#F8766D", 
@@ -136,7 +136,7 @@ colorscharmaip2 <-  c("control" = "#F8766D",
                      "m.n2" = "#262625", 
                      
                      "m.inc.d8" = "#fcc5c0", 
-                     "prolong" = "#f768a1" , 
+                     "prolong" = "#ae017e" , 
                      "extend" = "#7a0177")
 
 colorstissue <- c("hypothalamus" = "#d95f02",
@@ -155,12 +155,13 @@ colorsvolcano <-  c("control" = "#F8766D",
                      "n5"= "#DB72FB", 
                      "n9"= "#FF61C3",
                      "m.inc.d3" = "#CDCDCD", 
-                     "m.inc.d8" = "#fcc5c0", 
                      "m.inc.d9" = "#959595", 
                      "m.inc.d17" = "#626262",
                      "m.n2" = "#262625", 
-                     "prolong" = "#1B86B9" , 
-                     "extend" = "#01588C",
+                    
+                    "m.inc.d8" = "#fcc5c0", 
+                    "prolong" = "#ae017e" , 
+                     "extend" = "#7a0177",
                     "NS" = "#bdbdbd")
 
 colorsvolcanochar <-  c("control" = "#F8766D", 
