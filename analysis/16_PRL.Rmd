@@ -13,9 +13,11 @@ library(cowplot)
 library(magick)
 library(png)
 library(grid)
+library("ggimage")
 
 source("../R/themes.R") 
 source("../R/functions.R")
+source("../R/icons.R")
 
 knitr::opts_chunk$set(fig.path = '../figures/PRL/',message=F, warning=FALSE)
 ```
@@ -26,32 +28,6 @@ hormones <- read_csv("../results/hormones.csv")
 hormones$treatment <- factor(hormones$treatment, levels = alllevels)
 ```
 
-
-```{r icons}
-characterization <- png::readPNG("../figures/images/DoveParentsRNAseq_charicons.png")
-characterization <- ggdraw() +  draw_image(characterization, scale = 1)
-
-birds <- data.frame(iconpath=list.files("../figures/images/icons", full.names = T), stringsAsFactors = F)
-birds$icons <- sapply(strsplit(as.character(birds$iconpath),'../figures/images/icons/birds_'), "[", 2)
-
-control <- png::readPNG(birds$iconpath[3])
-control <-  grid::rasterGrob(control, interpolate=TRUE)
-
-bldg <- png::readPNG(birds$iconpath[1])
-bldg <-  grid::rasterGrob(bldg, interpolate=TRUE)
-
-lay <- png::readPNG(birds$iconpath[6])
-lay <-  grid::rasterGrob(lay, interpolate=TRUE)
-
-inc <- png::readPNG(birds$iconpath[5])
-inc <-  grid::rasterGrob(inc, interpolate=TRUE)
-
-hatch <- png::readPNG(birds$iconpath[4])
-hatch <-  grid::rasterGrob(hatch, interpolate=TRUE)
-
-nestling <- png::readPNG(birds$iconpath[2])
-nestling <-  grid::rasterGrob(nestling, interpolate=TRUE)
-```
 
 
 ```{r hormone}
@@ -73,8 +49,29 @@ p1 <- hormones %>%
   annotation_custom(inc, ymin = -20, ymax = 0, xmin = 2.5) +
   annotation_custom(hatch, ymin = -20, ymax = 0, xmin = 4.5) +
   annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 6.5) +
-  annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 8.5)
+  annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 8.5) 
 p1
+
+
+meanPRL <- hormones %>% 
+    filter(study == "characterization", hormone %in% c("prolactin"))  %>% 
+    droplevels() %>% 
+  dplyr::group_by(treatment) %>%
+  dplyr::summarise(m = mean(plasma_conc), 
+                   se = sd(plasma_conc)/sqrt(length(plasma_conc))) %>%
+  dplyr::mutate(m = round(m,0)) 
+meanPRL <- left_join(meanPRL, birds)
+meanPRL$treatment <- factor(meanPRL$treatment, levels = alllevels)
+meanPRL
+
+ggplot(meanPRL, aes(treatment, m)) +
+  geom_errorbar(aes(ymin=m-se, ymax=m+se), width=.1) +
+   geom_image(aes(image=iconpath), size=.12)  +
+  labs(x = "parental care stages", y = "Prolactin (ng/mL)")
+
+ggplot(meanPRL, aes(treatment, m)) +
+   geom_image(aes(image=music), size=.12)  +
+  labs(x = "parental care stages", y = "Prolactin (ng/mL)")
 
 
 p2 <- hormones %>% 
@@ -110,6 +107,7 @@ p2
 ```{r PRL.pit}
 vsd.pit <- readvsd("../results/04_vsd_pit.csv")
 colData.pit <- readcolData("../results/04_colData_pit.csv")
+
 geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
 candidategenes <- c("PRL")
 candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
@@ -136,4 +134,25 @@ p3 <- ggplot(candidates.pit, aes(x = as.numeric(treatment), y = PRL)) +
   ylim(c(13,24)) +
   guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) 
 p3
+
+candidates.pit
+
+meanPRL <- candidates.pit %>% 
+    droplevels() %>% 
+  dplyr::group_by(treatment) %>%
+  dplyr::summarise(m = mean(PRL), 
+                   se = sd(PRL)/sqrt(length(PRL))) %>%
+  dplyr::mutate(m = round(m,0)) 
+meanPRL <- left_join(meanPRL, birds)
+meanPRL$treatment <- factor(meanPRL$treatment, levels = alllevels)
+meanPRL
+
+ggplot(meanPRL, aes(treatment, m)) +
+  geom_errorbar(aes(ymin=m-se, ymax=m+se), width=.1) +
+   geom_image(aes(image=iconpath), size=.12)  +
+  labs(x = "parental care stages", y = "Pituitary PRL expression")
+
+ggplot(meanPRL, aes(treatment, m)) +
+   geom_image(aes(image=music), size=.12)  +
+  labs(x = "parental care stages", y = "Pituitary PRL expression")
 ```
