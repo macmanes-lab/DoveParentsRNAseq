@@ -248,7 +248,7 @@ m.inc.d8.prolong <- createDEGdfmanip(dds.pituitary,  "treatment", "prolong", "m.
 prolong.extend <- createDEGdfmanip(dds.pituitary, "treatment", "extend", "prolong",  "pituitary")
 ```
 
-```{r pitplot, eval = T}
+```{r pitplot, eval = T, fig.height=3}
 a <- plot.volcano(m.inc.d3.m.inc.d9, "treatment", "m.inc.d9", "m.inc.d3",  colorsvolcano)
 b <- plot.volcano(m.inc.d9.m.inc.d17, "treatment", "m.inc.d17", "m.inc.d9",  colorsvolcano)
 c <- plot.volcano(m.inc.d17.m.n2, "treatment",  "m.n2", "m.inc.d17", colorsvolcano) 
