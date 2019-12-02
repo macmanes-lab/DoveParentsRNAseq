@@ -15,18 +15,10 @@ source("../R/themes.R")  # load custom themes and color palletes
 knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
 ```
 
-
 ```{r wrangle-prolactin}
-prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)
-
-# keep only samples realated to parental care
-prolactin <- prolactin %>% filter(Study %in% c("Baseline", "ParentalCare"))
-
-# create lists of factos for characterization and manipluation studies
-
-# rename some of the treatments levels, store in new columns
-prolactin <- prolactin %>%
-    mutate(sex = fct_recode(Sex,
+prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1) %>% 
+  filter(Study %in% c("Baseline", "ParentalCare")) %>%
+    dplyr::mutate(sex = fct_recode(Sex,
                             "female" = "f",
                             "male" = "m"),
            treatment = fct_recode(Treatment,
@@ -49,23 +41,38 @@ prolactin <- prolactin %>%
                             "n9" = "N9"),
            study = fct_collapse(treatment,
                                  characterization = charlevels,
-                                 manipulation = maniplevels1))
+                                 manipulation = maniplevels1)) %>%
+          dplyr::rename("plasma_conc" = "Prolactin ng/mL") %>%
+          mutate(bird_id = gsub("[[:punct:]]", "." , ColorBands)) %>% 
+          dplyr::mutate(hormone = "prolactin") %>% 
+          dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc)  %>% 
+          drop_na()
+head(prolactin)
 
-colnames(prolactin)[colnames(prolactin)=="Prolactin ng/mL"] <- "plasma_conc"
-prolactin$hormone <- "prolactin"
-prolactin <- prolactin %>% 
-              select(study, treatment, sex, hormone, plasma_conc)  %>% 
-              drop_na()
 
-summary(prolactin)
+prolactin2 <- read_csv("../results/prolactin.csv") %>% 
+          dplyr::rename("plasma_conc" = "prolactin_ng_mL",
+                        "treatment" = "stage") %>% 
+           dplyr::mutate(hormone = "prolactin") %>% 
+           dplyr::mutate(treatment = fct_recode(treatment,
+                            "m.n2" = "m.hatch",
+                            "prolong" = "inc.prolong",
+                            "extend" = "extend.hatch"),
+                          study = fct_collapse(treatment,
+                                 characterization = charlevels,
+                                 manipulation = maniplevels1)) %>% 
+          dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc) 
+head(prolactin2)
+
+same <- inner_join(prolactin2, prolactin, by = "bird_id")
+
+ggplot(same, aes(x = plasma_conc.x, y = plasma_conc.y, label = bird_id)) + geom_point() + geom_text()
 ```
 
 
 ```{r wrangle-steroids}
-PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)
-
-PETC <- PETC %>% select(stage, sex, hormone, plasma_conc)  %>%
-                mutate(treatment = fct_recode(stage,
+PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)  %>% 
+                dplyr::mutate(treatment = fct_recode(stage,
                             "inc.d17" = "inc_d17",
                             "inc.d3" = "inc_d3",
                             "inc.d9" = "inc_d9",
@@ -75,16 +82,40 @@ PETC <- PETC %>% select(stage, sex, hormone, plasma_conc)  %>%
                             "m.inc.d17" = "m_incd17",
                             "m.n2" = "m_hatch",
                             "control" = "stress_hpg")) %>%
-                filter(treatment %in% alllevels2) %>%   
-                mutate(sex = fct_recode(sex,
+                dplyr::filter(treatment %in% alllevels2) %>%   
+                dplyr::mutate(sex = fct_recode(sex,
                             "female" = "f",
                             "male" = "m"),
                        study = fct_collapse(treatment,
                                 characterization = charlevels,
                                 manipulation = maniplevels1)) %>% 
-              drop_na() %>%  droplevels()  %>% 
-              select(study, treatment, sex, hormone, plasma_conc)
-summary(PETC)
+              dplyr::mutate(bird_id = gsub("[[:punct:]]", "." , band_combo)) %>% 
+              dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc) %>% 
+             drop_na() %>%  droplevels()  
+head(PETC)
+
+```
+
+```{r correlations}
+PETCP <- left_join(prolactin2, PETC, by = "bird_id") %>% drop_na()
+PETCP$treatment.x <- factor(PETCP$treatment.x, levels = alllevels2)
+PETCP$hormone.y
+
+plothormonecorrelations <- function(myhormone, myylab){
+  PETCP %>% filter(hormone.y == myhormone) %>%
+  ggplot(aes(x = plasma_conc.x, y = plasma_conc.y, color = treatment.x )) +
+  geom_point() + 
+  geom_smooth(method = "lm", se = F) +
+  labs(x = "Prolactin (ng/mL)", y = myylab) +
+  scale_color_manual(values = colorscharmaip) +
+  facet_wrap(~treatment.x, nrow = 3) +
+  theme(legend.position = "none")
+}
+
+plothormonecorrelations("cort", "Corticosterone (ng/mL")
+plothormonecorrelations("estradiol", "Estradiol (ng/mL")
+plothormonecorrelations("progesterone", "Progesterone (ng/mL")
+plothormonecorrelations("testosterone", "Testosterone (ng/mL")
 ```
 
 
@@ -137,7 +168,6 @@ hormonecharplot("progesterone", "PROG (ng/mL)")
 d1 <- hormonecharplot("estradiol", "E (ng/mL)")
 d2 <- hormonecharplot("testosterone", "T (ng/mL)")
 plot_grid(d1,d2, nrow = 1)
-
 ```
 
 

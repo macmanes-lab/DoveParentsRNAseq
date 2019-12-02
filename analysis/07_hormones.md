@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────── tidyverse 1.2.1 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
-    ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.2
-    ## ✔ tibble  2.1.3     ✔ dplyr   0.8.1
-    ## ✔ tidyr   0.8.3     ✔ stringr 1.4.0
+    ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
+    ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
+    ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -35,16 +35,9 @@
 
     knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
 
-    prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)
-
-    # keep only samples realated to parental care
-    prolactin <- prolactin %>% filter(Study %in% c("Baseline", "ParentalCare"))
-
-    # create lists of factos for characterization and manipluation studies
-
-    # rename some of the treatments levels, store in new columns
-    prolactin <- prolactin %>%
-        mutate(sex = fct_recode(Sex,
+    prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1) %>% 
+      filter(Study %in% c("Baseline", "ParentalCare")) %>%
+        dplyr::mutate(sex = fct_recode(Sex,
                                 "female" = "f",
                                 "male" = "m"),
                treatment = fct_recode(Treatment,
@@ -67,37 +60,56 @@
                                 "n9" = "N9"),
                study = fct_collapse(treatment,
                                      characterization = charlevels,
-                                     manipulation = maniplevels1))
+                                     manipulation = maniplevels1)) %>%
+              dplyr::rename("plasma_conc" = "Prolactin ng/mL") %>%
+              mutate(bird_id = gsub("[[:punct:]]", "." , ColorBands)) %>% 
+              dplyr::mutate(hormone = "prolactin") %>% 
+              dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc)  %>% 
+              drop_na()
+    head(prolactin)
 
-    colnames(prolactin)[colnames(prolactin)=="Prolactin ng/mL"] <- "plasma_conc"
-    prolactin$hormone <- "prolactin"
-    prolactin <- prolactin %>% 
-                  select(study, treatment, sex, hormone, plasma_conc)  %>% 
-                  drop_na()
+    ## # A tibble: 6 x 6
+    ##   study            treatment sex    bird_id   hormone   plasma_conc
+    ##   <fct>            <fct>     <fct>  <chr>     <chr>           <dbl>
+    ## 1 characterization control   male   x.g       prolactin        3.83
+    ## 2 characterization control   male   x.g.g     prolactin        3.28
+    ## 3 characterization control   male   x.blk.blk prolactin        4.15
+    ## 4 characterization control   male   x.g.g.g   prolactin       25.3 
+    ## 5 characterization control   female x.g.g.f   prolactin       21.5 
+    ## 6 characterization control   male   x.blu.o   prolactin       14.9
 
-    summary(prolactin)
+    prolactin2 <- read_csv("../results/prolactin.csv") %>% 
+              dplyr::rename("plasma_conc" = "prolactin_ng_mL",
+                            "treatment" = "stage") %>% 
+               dplyr::mutate(hormone = "prolactin") %>% 
+               dplyr::mutate(treatment = fct_recode(treatment,
+                                "m.n2" = "m.hatch",
+                                "prolong" = "inc.prolong",
+                                "extend" = "extend.hatch"),
+                              study = fct_collapse(treatment,
+                                     characterization = charlevels,
+                                     manipulation = maniplevels1)) %>% 
+              dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc) 
+    head(prolactin2)
 
-    ##               study       treatment       sex        hormone         
-    ##  characterization:189   inc.d9 : 24   female:160   Length:325        
-    ##  manipulation    :136   control: 23   male  :165   Class :character  
-    ##                         inc.d17: 21                Mode  :character  
-    ##                         n5     : 21                                  
-    ##                         bldg   : 20                                  
-    ##                         extend : 20                                  
-    ##                         (Other):196                                  
-    ##   plasma_conc    
-    ##  Min.   :  2.02  
-    ##  1st Qu.: 11.07  
-    ##  Median : 23.46  
-    ##  Mean   : 34.76  
-    ##  3rd Qu.: 56.98  
-    ##  Max.   :203.69  
-    ## 
+    ## # A tibble: 6 x 6
+    ##   study            treatment sex    bird_id       hormone   plasma_conc
+    ##   <fct>            <fct>     <chr>  <chr>         <chr>           <dbl>
+    ## 1 manipulation     prolong   male   blk.s030.o.g  prolactin        35.3
+    ## 2 manipulation     prolong   female blk.s031.pu.d prolactin        43.8
+    ## 3 manipulation     m.n2      female blk.s032.g.w  prolactin        90.8
+    ## 4 manipulation     m.inc.d3  female blk.s049.y.g  prolactin        27.0
+    ## 5 manipulation     m.inc.d3  female blk.s060.pu.w prolactin        19.4
+    ## 6 characterization inc.d9    female blk.s061.pu.y prolactin        11.9
 
-    PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)
+    same <- inner_join(prolactin2, prolactin, by = "bird_id")
 
-    PETC <- PETC %>% select(stage, sex, hormone, plasma_conc)  %>%
-                    mutate(treatment = fct_recode(stage,
+    ggplot(same, aes(x = plasma_conc.x, y = plasma_conc.y, label = bird_id)) + geom_point() + geom_text()
+
+![](../figures/hormones/wrangle-prolactin-1.png)
+
+    PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)  %>% 
+                    dplyr::mutate(treatment = fct_recode(stage,
                                 "inc.d17" = "inc_d17",
                                 "inc.d3" = "inc_d3",
                                 "inc.d9" = "inc_d9",
@@ -107,33 +119,205 @@
                                 "m.inc.d17" = "m_incd17",
                                 "m.n2" = "m_hatch",
                                 "control" = "stress_hpg")) %>%
-                    filter(treatment %in% alllevels2) %>%   
-                    mutate(sex = fct_recode(sex,
+                    dplyr::filter(treatment %in% alllevels2) %>%   
+                    dplyr::mutate(sex = fct_recode(sex,
                                 "female" = "f",
                                 "male" = "m"),
                            study = fct_collapse(treatment,
                                     characterization = charlevels,
                                     manipulation = maniplevels1)) %>% 
-                  drop_na() %>%  droplevels()  %>% 
-                  select(study, treatment, sex, hormone, plasma_conc)
-    summary(PETC)
+                  dplyr::mutate(bird_id = gsub("[[:punct:]]", "." , band_combo)) %>% 
+                  dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc) %>% 
+                 drop_na() %>%  droplevels()  
+    head(PETC)
 
-    ##               study         treatment       sex        hormone         
-    ##  characterization:500   inc.d9   : 88   female:493   Length:887        
-    ##  manipulation    :387   inc.d17  : 68   male  :394   Class :character  
-    ##                         bldg     : 60                Mode  :character  
-    ##                         hatch    : 60                                  
-    ##                         extend   : 59                                  
-    ##                         m.inc.d17: 58                                  
-    ##                         (Other)  :494                                  
-    ##   plasma_conc       
-    ##  Min.   :  0.03306  
-    ##  1st Qu.:  0.23281  
-    ##  Median :  0.84151  
-    ##  Mean   :  1.39902  
-    ##  3rd Qu.:  1.69764  
-    ##  Max.   :117.77083  
-    ## 
+    ## # A tibble: 6 x 6
+    ##   study            treatment sex    bird_id       hormone      plasma_conc
+    ##   <fct>            <fct>     <fct>  <chr>         <chr>              <dbl>
+    ## 1 characterization control   female s.x           cort              0.897 
+    ## 2 characterization control   female s.x           estradiol         0.0522
+    ## 3 characterization control   female r9.x .RODO14. progesterone      2.86  
+    ## 4 characterization control   male   g107.x        cort              1.21  
+    ## 5 characterization control   male   g107.x        progesterone      0.225 
+    ## 6 characterization control   male   blu13.x       cort              1.15
+
+    PETCP <- left_join(prolactin2, PETC, by = "bird_id") %>% drop_na()
+    PETCP$treatment.x <- factor(PETCP$treatment.x, levels = alllevels2)
+    PETCP$hormone.y
+
+    ##   [1] "cort"         "cort"         "estradiol"    "progesterone"
+    ##   [5] "progesterone" "progesterone" "testosterone" "cort"        
+    ##   [9] "cort"         "estradiol"    "progesterone" "cort"        
+    ##  [13] "progesterone" "progesterone" "testosterone" "cort"        
+    ##  [17] "progesterone" "cort"         "estradiol"    "progesterone"
+    ##  [21] "progesterone" "progesterone" "cort"         "estradiol"   
+    ##  [25] "progesterone" "cort"         "progesterone" "cort"        
+    ##  [29] "estradiol"    "cort"         "estradiol"    "progesterone"
+    ##  [33] "progesterone" "cort"         "estradiol"    "cort"        
+    ##  [37] "estradiol"    "progesterone" "progesterone" "cort"        
+    ##  [41] "cort"         "estradiol"    "progesterone" "cort"        
+    ##  [45] "estradiol"    "cort"         "progesterone" "progesterone"
+    ##  [49] "testosterone" "cort"         "estradiol"    "cort"        
+    ##  [53] "estradiol"    "progesterone" "estradiol"    "progesterone"
+    ##  [57] "progesterone" "cort"         "estradiol"    "progesterone"
+    ##  [61] "progesterone" "progesterone" "cort"         "progesterone"
+    ##  [65] "progesterone" "testosterone" "cort"         "estradiol"   
+    ##  [69] "progesterone" "progesterone" "cort"         "progesterone"
+    ##  [73] "progesterone" "testosterone" "cort"         "estradiol"   
+    ##  [77] "progesterone" "cort"         "estradiol"    "cort"        
+    ##  [81] "estradiol"    "progesterone" "cort"         "progesterone"
+    ##  [85] "progesterone" "cort"         "progesterone" "cort"        
+    ##  [89] "cort"         "estradiol"    "progesterone" "cort"        
+    ##  [93] "progesterone" "cort"         "estradiol"    "progesterone"
+    ##  [97] "cort"         "progesterone" "testosterone" "cort"        
+    ## [101] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [105] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [109] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [113] "progesterone" "progesterone" "cort"         "progesterone"
+    ## [117] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [121] "cort"         "progesterone" "testosterone" "cort"        
+    ## [125] "progesterone" "testosterone" "cort"         "progesterone"
+    ## [129] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [133] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [137] "progesterone" "progesterone" "cort"         "cort"        
+    ## [141] "progesterone" "testosterone" "cort"         "progesterone"
+    ## [145] "progesterone" "testosterone" "cort"         "progesterone"
+    ## [149] "cort"         "progesterone" "testosterone" "cort"        
+    ## [153] "estradiol"    "progesterone" "progesterone" "cort"        
+    ## [157] "estradiol"    "cort"         "estradiol"    "progesterone"
+    ## [161] "cort"         "progesterone" "cort"         "progesterone"
+    ## [165] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [169] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [173] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [177] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [181] "progesterone" "testosterone" "progesterone" "progesterone"
+    ## [185] "progesterone" "testosterone" "cort"         "cort"        
+    ## [189] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [193] "progesterone" "progesterone" "cort"         "progesterone"
+    ## [197] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [201] "progesterone" "progesterone" "cort"         "cort"        
+    ## [205] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [209] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [213] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [217] "estradiol"    "progesterone" "progesterone" "progesterone"
+    ## [221] "testosterone" "cort"         "cort"         "progesterone"
+    ## [225] "progesterone" "testosterone" "cort"         "estradiol"   
+    ## [229] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [233] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [237] "estradiol"    "progesterone" "progesterone" "cort"        
+    ## [241] "estradiol"    "progesterone" "progesterone" "cort"        
+    ## [245] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [249] "estradiol"    "cort"         "progesterone" "cort"        
+    ## [253] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [257] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [261] "cort"         "estradiol"    "cort"         "progesterone"
+    ## [265] "testosterone" "cort"         "progesterone" "cort"        
+    ## [269] "cort"         "progesterone" "progesterone" "testosterone"
+    ## [273] "cort"         "progesterone" "testosterone" "cort"        
+    ## [277] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [281] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [285] "cort"         "progesterone" "cort"         "cort"        
+    ## [289] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [293] "progesterone" "testosterone" "cort"         "cort"        
+    ## [297] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [301] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [305] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [309] "progesterone" "progesterone" "testosterone" "testosterone"
+    ## [313] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [317] "cort"         "progesterone" "cort"         "cort"        
+    ## [321] "progesterone" "progesterone" "cort"         "progesterone"
+    ## [325] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [329] "cort"         "estradiol"    "progesterone" "progesterone"
+    ## [333] "cort"         "progesterone" "testosterone" "cort"        
+    ## [337] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [341] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [345] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [349] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [353] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [357] "progesterone" "cort"         "estradiol"    "cort"        
+    ## [361] "estradiol"    "progesterone" "progesterone" "cort"        
+    ## [365] "estradiol"    "progesterone" "progesterone" "cort"        
+    ## [369] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [373] "cort"         "cort"         "estradiol"    "progesterone"
+    ## [377] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [381] "testosterone" "cort"         "estradiol"    "progesterone"
+    ## [385] "progesterone" "progesterone" "progesterone" "cort"        
+    ## [389] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [393] "progesterone" "cort"         "cort"         "estradiol"   
+    ## [397] "progesterone" "progesterone" "cort"         "estradiol"   
+    ## [401] "progesterone" "cort"         "progesterone" "cort"        
+    ## [405] "progesterone" "progesterone" "cort"         "estradiol"   
+    ## [409] "progesterone" "progesterone" "cort"         "estradiol"   
+    ## [413] "progesterone" "progesterone" "cort"         "progesterone"
+    ## [417] "testosterone" "cort"         "progesterone" "testosterone"
+    ## [421] "cort"         "estradiol"    "cort"         "progesterone"
+    ## [425] "progesterone" "testosterone" "cort"         "progesterone"
+    ## [429] "testosterone" "progesterone" "progesterone" "progesterone"
+    ## [433] "progesterone" "testosterone" "testosterone" "cort"        
+    ## [437] "cort"         "estradiol"    "progesterone" "cort"        
+    ## [441] "estradiol"    "cort"         "estradiol"    "cort"        
+    ## [445] "estradiol"    "progesterone" "progesterone" "cort"        
+    ## [449] "estradiol"    "progesterone" "cort"         "cort"        
+    ## [453] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [457] "progesterone" "progesterone" "cort"         "progesterone"
+    ## [461] "progesterone" "testosterone" "cort"         "testosterone"
+    ## [465] "cort"         "estradiol"    "cort"         "cort"        
+    ## [469] "cort"         "progesterone" "cort"         "progesterone"
+    ## [473] "progesterone" "testosterone" "progesterone" "progesterone"
+    ## [477] "cort"         "progesterone" "cort"         "progesterone"
+    ## [481] "testosterone" "cort"         "progesterone" "cort"        
+    ## [485] "estradiol"    "cort"         "estradiol"    "progesterone"
+    ## [489] "progesterone" "cort"         "cort"         "progesterone"
+    ## [493] "progesterone" "testosterone" "cort"         "cort"        
+    ## [497] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [501] "progesterone" "cort"         "estradiol"    "progesterone"
+    ## [505] "cort"         "progesterone" "cort"         "estradiol"   
+    ## [509] "cort"         "cort"         "progesterone" "cort"        
+    ## [513] "estradiol"    "progesterone" "cort"         "estradiol"   
+    ## [517] "progesterone" "cort"         "progesterone" "testosterone"
+    ## [521] "cort"         "cort"         "progesterone" "progesterone"
+    ## [525] "testosterone" "cort"         "progesterone" "cort"        
+    ## [529] "progesterone" "progesterone" "testosterone" "cort"        
+    ## [533] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [537] "testosterone" "cort"         "cort"         "progesterone"
+    ## [541] "testosterone" "cort"         "progesterone" "cort"        
+    ## [545] "estradiol"    "cort"         "progesterone" "progesterone"
+    ## [549] "testosterone" "cort"         "estradiol"    "cort"        
+    ## [553] "progesterone" "cort"         "progesterone" "testosterone"
+    ## [557] "progesterone" "cort"         "progesterone" "progesterone"
+    ## [561] "testosterone" "cort"         "progesterone" "progesterone"
+    ## [565] "testosterone" "progesterone" "cort"         "estradiol"   
+    ## [569] "cort"         "progesterone" "cort"         "cort"        
+    ## [573] "estradiol"    "progesterone" "cort"         "progesterone"
+    ## [577] "progesterone" "testosterone" "cort"         "estradiol"   
+    ## [581] "progesterone"
+
+    plothormonecorrelations <- function(myhormone, myylab){
+      PETCP %>% filter(hormone.y == myhormone) %>%
+      ggplot(aes(x = plasma_conc.x, y = plasma_conc.y, color = treatment.x )) +
+      geom_point() + 
+      geom_smooth(method = "lm", se = F) +
+      labs(x = "Prolactin (ng/mL)", y = myylab) +
+      scale_color_manual(values = colorscharmaip) +
+      facet_wrap(~treatment.x, nrow = 3) +
+      theme(legend.position = "none")
+    }
+
+    plothormonecorrelations("cort", "Corticosterone (ng/mL")
+
+![](../figures/hormones/correlations-1.png)
+
+    plothormonecorrelations("estradiol", "Estradiol (ng/mL")
+
+![](../figures/hormones/correlations-2.png)
+
+    plothormonecorrelations("progesterone", "Progesterone (ng/mL")
+
+![](../figures/hormones/correlations-3.png)
+
+    plothormonecorrelations("testosterone", "Testosterone (ng/mL")
+
+![](../figures/hormones/correlations-4.png)
 
     hormones <- rbind(prolactin, PETC)
     hormones$treatment <- factor(hormones$treatment, levels = alllevels)
@@ -147,7 +331,7 @@
     hormones <- hormones %>% filter(okay == "okay") %>% droplevels()
     summary(hormones)
 
-    ##               study         treatment       sex        hormone         
+    ##               study         treatment       sex        bird_id         
     ##  characterization:682   inc.d9   :112   female:646   Length:1201       
     ##  manipulation    :519   inc.d17  : 88   male  :555   Class :character  
     ##                         hatch    : 80                Mode  :character  
@@ -155,13 +339,13 @@
     ##                         m.inc.d17: 78                                  
     ##                         extend   : 78                                  
     ##                         (Other)  :686                                  
-    ##   plasma_conc            okay          
-    ##  Min.   :  0.03306   Length:1201       
-    ##  1st Qu.:  0.34371   Class :character  
-    ##  Median :  1.38568   Mode  :character  
-    ##  Mean   : 10.00584                     
-    ##  3rd Qu.:  6.05370                     
-    ##  Max.   :120.34989                     
+    ##    hormone           plasma_conc            okay          
+    ##  Length:1201        Min.   :  0.03306   Length:1201       
+    ##  Class :character   1st Qu.:  0.34371   Class :character  
+    ##  Mode  :character   Median :  1.38568   Mode  :character  
+    ##                     Mean   : 10.00584                     
+    ##                     3rd Qu.:  6.05370                     
+    ##                     Max.   :120.34989                     
     ## 
 
     hormonecharplot <- function(myhormone, myylab){
@@ -182,10 +366,8 @@
         guides(fill = guide_legend(order=1),
              color = guide_legend(order=2)) +
         scale_alpha_manual(values = c(0.75,1)) +
-        scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
         scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
-                           labels = c( "control", "bldg", "lay", "inc.d3", 
-                                       "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+                           labels = charlevels)
       }
 
     hormonecharplot("prolactin", "PRL (ng/mL)")
