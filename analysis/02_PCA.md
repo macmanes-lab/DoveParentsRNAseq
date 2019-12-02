@@ -177,9 +177,6 @@ Characterization only
 
     tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=5, theta=0.5, dims=2)
     tsne_df = as.data.frame(tsne_model$Y) 
-    plot(tsne_df$V1, tsne_df$V2)
-
-![](../figures/pca/characterization-5.png)
 
     # prep for adding columns
     colData2 <- colData 
@@ -192,7 +189,7 @@ Characterization only
       scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
       labs(x = "tSNE 1", y = "tSNE 2")
 
-    d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment, alpha = sex)) +
+    d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment)) +
       geom_point(size = 2) +
       mytheme() +
       labs(x = "tSNE 1", y = "tSNE 2") +
@@ -200,11 +197,11 @@ Characterization only
 
     c
 
-![](../figures/pca/characterization-6.png)
+![](../figures/pca/characterization-5.png)
 
     d
 
-![](../figures/pca/characterization-7.png)
+![](../figures/pca/characterization-6.png)
 
 Manipulations only
 ------------------
@@ -344,7 +341,7 @@ Manipulations only
       scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
       labs(x = "tSNE 1", y = "tSNE 2")
 
-    d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment, alpha = sex)) +
+    d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment)) +
       geom_point(size = 2) +
       mytheme() +
       labs(x = "tSNE 1", y = "tSNE 2") +
@@ -494,14 +491,6 @@ All data, characterization and manipulations
 
 ![](../figures/pca/charmanip-5.png)
 
-    ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = study, color = tissue)) +
-      geom_point(size = 2) +
-      mytheme() +
-      scale_color_manual(values = colorstissue) +
-      labs(x = "tSNE 1", y = "tSNE 2") 
-
-![](../figures/pca/charmanip-6.png)
-
     ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = study, color = treatment)) +
       geom_point(size = 2) +
       mytheme() +
@@ -509,4 +498,4 @@ All data, characterization and manipulations
       scale_alpha_manual(values = c(0.5,1)) +
       scale_color_manual(values = colorscharmaip2)
 
-![](../figures/pca/charmanip-7.png)
+![](../figures/pca/charmanip-6.png)

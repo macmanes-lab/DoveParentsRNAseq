@@ -109,7 +109,6 @@ fviz_contrib(mypca, choice = "var", axes = 2, top = 5)
 
 tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=5, theta=0.5, dims=2)
 tsne_df = as.data.frame(tsne_model$Y) 
-plot(tsne_df$V1, tsne_df$V2)
 
 # prep for adding columns
 colData2 <- colData 
@@ -122,7 +121,7 @@ c  <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = tissue)) +
   scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
   labs(x = "tSNE 1", y = "tSNE 2")
 
-d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment, alpha = sex)) +
+d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment)) +
   geom_point(size = 2) +
   mytheme() +
   labs(x = "tSNE 1", y = "tSNE 2") +
@@ -210,7 +209,7 @@ c  <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = tissue)) +
   scale_color_manual(values = c("#d95f02","#1b9e77", "#7570b3")) +
   labs(x = "tSNE 1", y = "tSNE 2")
 
-d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment, alpha = sex)) +
+d <- ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = tissue, color = treatment)) +
   geom_point(size = 2) +
   mytheme() +
   labs(x = "tSNE 1", y = "tSNE 2") +
@@ -312,11 +311,6 @@ ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = sex, color = tissue)) +
   scale_color_manual(values = colorstissue) +
   labs(x = "tSNE 1", y = "tSNE 2") 
 
-ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = study, color = tissue)) +
-  geom_point(size = 2) +
-  mytheme() +
-  scale_color_manual(values = colorstissue) +
-  labs(x = "tSNE 1", y = "tSNE 2") 
 
 ggplot(tsne_df_cols, aes(x = V1, y = V2, shape = study, color = treatment)) +
   geom_point(size = 2) +
