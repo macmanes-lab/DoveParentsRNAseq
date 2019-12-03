@@ -53,6 +53,12 @@ levels(colData$treatment)
 dds.pituitary <- subsetDESeq2(colData,  countData, c("female_pituitary","male_pituitary"))
 ```
 
+```{r pitvsd, eval=T}
+vsd <- as.data.frame(assay(vst(dds.pituitary, blind=FALSE)))
+write.csv(vsd, "../results/06_pitallvsd.csv")
+```
+
+
 ```{r  eval=T}
 inc.d3.m.inc.d3 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d3", "inc.d3", "pituitary")
 ```
@@ -98,16 +104,16 @@ n5.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "n5", "pituit
 ```{r volcanos}
 a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano) + 
   annotation_custom(lay, ymin = 20, ymax = 30, xmin = -8, xmax = -2) + 
-  annotation_custom(control, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
+  annotation_custom(bldg, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
 b <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano)+ 
   annotation_custom(inc, ymin = 20, ymax = 30, xmin = -8, xmax = -2) + 
-  annotation_custom(control, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
+  annotation_custom(bldg, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
 c <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) + 
   annotation_custom(inc, ymin = 20, ymax = 30, xmin = -8, xmax = -2) + 
-  annotation_custom(control, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
+  annotation_custom(bldg, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
 d <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano) + 
   annotation_custom(hatch, ymin = 20, ymax = 30, xmin = -8, xmax = -2) + 
-  annotation_custom(control, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
+  annotation_custom(bldg, ymin = 20, ymax = 30, xmin = 2, xmax = 8) 
 
 
 e <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano)  +

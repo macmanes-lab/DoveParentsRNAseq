@@ -14,7 +14,7 @@ iconstreatment <- data.frame(treatment = c("control", "bldg", "lay",
                              icons = c("control.png", "bldg.png", "lay.png",
                                        "incubation.png", "incubation.png", "incubation.png",
                                        "hatch.png", "chicklings.png", "chicklings.png", 
-                                       "control.png", "control.png", "control.png", "control.png",
+                                       "bldg.png", "bldg.png", "bldg.png", "bldg.png",
                                        "hatch.png", "incubation.png","hatch.png"))
 iconstreatment$music <- "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9zgaht3nmVL4moYqz0uKBhYefpTgYrX69_qyL8kmznImDRk-KRw&s"
 
