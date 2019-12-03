@@ -178,3 +178,66 @@ ggplot(meanPRL, aes(treatment, m)) +
   annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 6.5) +
   annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 8.5) 
 ```
+
+## prolactin manip
+
+
+```{r PRL.pit.maip}
+vsd.pit <- readvsd("../results/06_pitallvsd.csv")
+vsd.pit$entrezid <- row.names(vsd.pit)
+
+colData.pit <- read_csv("../metadata/00_samples.csv") %>% 
+  filter(tissue == "pituitary") %>% 
+  mutate(sample = V1)
+
+geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  
+  dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
+
+candidategenes <- c("PRL")
+
+candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
+candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels)
+
+p3 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
+       geom_smooth(aes(colour = sex)) +
+    geom_boxplot(aes(fill = treatment)) +
+    scale_alpha_manual(values = c(0.75,1)) +
+    mytheme() +
+   theme(legend.position = "none", legend.direction = "horizontal") + 
+   scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+    labs(y = "Pituitary PRL", x = NULL) +
+    scale_x_discrete(breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)) +
+  scale_fill_manual(values = colorscharmaip2) +
+  ylim(c(16,22))
+p3
+
+
+meanPRL <- candidates.pit %>% 
+    droplevels() %>% 
+  dplyr::group_by(treatment) %>%
+  dplyr::summarise(m = median(PRL), 
+                   se = sd(PRL)/sqrt(length(PRL))) %>%
+  dplyr::mutate(m = round(m,1)) 
+meanPRL <- left_join(meanPRL, birds)
+meanPRL$treatment <- factor(meanPRL$treatment, levels = alllevels)
+meanPRL
+
+p4 <- ggplot(meanPRL, aes(treatment, m)) +
+   geom_errorbar(aes(ymin=m-se, ymax=m+se, color = treatment), width=.1) +
+   geom_image(aes(image = iconpath), size = 0.06)  +
+   geom_image(aes(image = music , y = m + 0.5), size = 0.04) +
+   labs(x = "parental care stages", y = "Pituitary PRL") +
+   mytheme() +
+   ylim(c(16,22)) +
+   theme(axis.text.x = element_text(angle = 45)) +
+  theme(legend.position = "none") +
+  scale_color_manual(values = colorscharmaip2) +
+  geom_hline(yintercept=16.8) +
+  geom_hline(yintercept=17.8) +
+  geom_hline(yintercept=18.8) +
+  geom_hline(yintercept=19.8) +
+  geom_hline(yintercept=20.8) 
+p4
+ 
+ 
+```

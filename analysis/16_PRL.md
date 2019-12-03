@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -622,3 +622,89 @@
       annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 8.5) 
 
 ![](../figures/PRL/PRL.pit-3.png)
+
+prolactin manip
+---------------
+
+    vsd.pit <- readvsd("../results/06_pitallvsd.csv")
+    vsd.pit$entrezid <- row.names(vsd.pit)
+
+    colData.pit <- read_csv("../metadata/00_samples.csv") %>% 
+      filter(tissue == "pituitary") %>% 
+      mutate(sample = V1)
+
+    geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  
+      dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
+
+    candidategenes <- c("PRL")
+
+    candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
+
+    ## [1] "PRL"
+    ## [1] "NP_990797.2"
+
+    candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels)
+
+    p3 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
+           geom_smooth(aes(colour = sex)) +
+        geom_boxplot(aes(fill = treatment)) +
+        scale_alpha_manual(values = c(0.75,1)) +
+        mytheme() +
+       theme(legend.position = "none", legend.direction = "horizontal") + 
+       scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+        labs(y = "Pituitary PRL", x = NULL) +
+        scale_x_discrete(breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16)) +
+      scale_fill_manual(values = colorscharmaip2) +
+      ylim(c(16,22))
+    p3
+
+![](../figures/PRL/PRL.pit.maip-1.png)
+
+    meanPRL <- candidates.pit %>% 
+        droplevels() %>% 
+      dplyr::group_by(treatment) %>%
+      dplyr::summarise(m = median(PRL), 
+                       se = sd(PRL)/sqrt(length(PRL))) %>%
+      dplyr::mutate(m = round(m,1)) 
+    meanPRL <- left_join(meanPRL, birds)
+    meanPRL$treatment <- factor(meanPRL$treatment, levels = alllevels)
+    meanPRL
+
+    ## # A tibble: 16 x 6
+    ##    treatment     m     se icons    music                iconpath           
+    ##    <fct>     <dbl>  <dbl> <chr>    <chr>                <chr>              
+    ##  1 control    18.1 0.233  control… https://encrypted-t… ../figures/images/…
+    ##  2 bldg       17.1 0.137  bldg.png https://encrypted-t… ../figures/images/…
+    ##  3 lay        17.6 0.173  lay.png  https://encrypted-t… ../figures/images/…
+    ##  4 inc.d3     17.8 0.257  incubat… https://encrypted-t… ../figures/images/…
+    ##  5 m.inc.d3   17.5 0.158  bldg.png https://encrypted-t… ../figures/images/…
+    ##  6 inc.d9     18   0.0973 incubat… https://encrypted-t… ../figures/images/…
+    ##  7 m.inc.d8   17.9 0.390  hatch.p… https://encrypted-t… ../figures/images/…
+    ##  8 m.inc.d9   17.4 0.126  bldg.png https://encrypted-t… ../figures/images/…
+    ##  9 inc.d17    20.5 0.223  incubat… https://encrypted-t… ../figures/images/…
+    ## 10 m.inc.d17  19.7 0.115  bldg.png https://encrypted-t… ../figures/images/…
+    ## 11 prolong    20.5 0.232  incubat… https://encrypted-t… ../figures/images/…
+    ## 12 hatch      20.7 0.0986 hatch.p… https://encrypted-t… ../figures/images/…
+    ## 13 m.n2       19.9 0.112  bldg.png https://encrypted-t… ../figures/images/…
+    ## 14 extend     20.3 0.123  hatch.p… https://encrypted-t… ../figures/images/…
+    ## 15 n5         20   0.102  chickli… https://encrypted-t… ../figures/images/…
+    ## 16 n9         19.2 0.156  chickli… https://encrypted-t… ../figures/images/…
+
+    p4 <- ggplot(meanPRL, aes(treatment, m)) +
+       geom_errorbar(aes(ymin=m-se, ymax=m+se, color = treatment), width=.1) +
+       geom_image(aes(image = iconpath), size = 0.06)  +
+       geom_image(aes(image = music , y = m + 0.5), size = 0.04) +
+       labs(x = "parental care stages", y = "Pituitary PRL") +
+       mytheme() +
+       ylim(c(16,22)) +
+       theme(axis.text.x = element_text(angle = 45)) +
+      theme(legend.position = "none") +
+      scale_color_manual(values = colorscharmaip2) +
+      geom_hline(yintercept=16.8) +
+      geom_hline(yintercept=17.8) +
+      geom_hline(yintercept=18.8) +
+      geom_hline(yintercept=19.8) +
+      geom_hline(yintercept=20.8) 
+    p4
+
+![](../figures/PRL/PRL.pit.maip-2.png)
