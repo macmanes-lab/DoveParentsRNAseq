@@ -16,6 +16,16 @@ source("../R/icons.R")
 knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
 ```
 
+```{r}
+colData  <- read_csv("../metadata/00_birds.csv") %>%
+  mutate(RNAseq = "RNAseq",
+         bird_id = bird)  %>%
+   select(-X1, -bird)
+colData
+```
+
+
+
 ```{r wrangle-prolactin}
 prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1) %>% 
   filter(Study %in% c("Baseline", "ParentalCare")) %>%
@@ -89,7 +99,11 @@ onlyin1$bird_id
 print("only in new prolactin dataset") 
 onlyin2$bird_id
 
+prolctin1rnaseq <- full_join(prolactin, colData)
+prolctin2rnaseq <- full_join(prolactin2, colData)
 
+prolctin1rnaseq
+prolctin2rnaseq
 ```
 
 
