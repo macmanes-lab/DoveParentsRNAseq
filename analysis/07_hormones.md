@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -38,6 +38,27 @@
     ## character vector
 
     knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
+
+    colData  <- read_csv("../metadata/00_birds.csv") %>%
+      mutate(RNAseq = "RNAseq",
+             bird_id = bird)  %>%
+       select(-X1, -bird)
+    colData
+
+    ## # A tibble: 334 x 4
+    ##    sex    treatment RNAseq bird_id
+    ##    <chr>  <chr>     <chr>  <chr>  
+    ##  1 male   control   RNAseq L.Blu13
+    ##  2 male   control   RNAseq L.G107 
+    ##  3 female control   RNAseq L.G118 
+    ##  4 male   control   RNAseq L.R3   
+    ##  5 male   control   RNAseq L.R8   
+    ##  6 male   control   RNAseq L.W33  
+    ##  7 male   control   RNAseq L.W3   
+    ##  8 male   control   RNAseq L.W4   
+    ##  9 female control   RNAseq R.G106 
+    ## 10 female control   RNAseq R.R20  
+    ## # … with 324 more rows
 
     prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1) %>% 
       filter(Study %in% c("Baseline", "ParentalCare")) %>%
@@ -227,6 +248,43 @@
     ## [118] "y.s156.o.r"      "x.w178"          "x.o171.w45"     
     ## [121] "y94.g133.x"      "x.blu122.r66"    "y63.x"          
     ## [124] "g104.w82.x"      "x.r185"          "w191.r1"
+
+    prolctin1rnaseq <- full_join(prolactin, colData)
+    prolctin2rnaseq <- full_join(prolactin2, colData)
+
+    prolctin1rnaseq
+
+    ## # A tibble: 465 x 7
+    ##    study            treatment sex    bird_id   hormone   plasma_conc RNAseq
+    ##    <fct>            <chr>     <chr>  <chr>     <chr>           <dbl> <chr> 
+    ##  1 characterization control   male   x.g       prolactin        3.83 <NA>  
+    ##  2 characterization control   male   x.g.g     prolactin        3.28 <NA>  
+    ##  3 characterization control   male   x.blk.blk prolactin        4.15 <NA>  
+    ##  4 characterization control   male   x.g.g.g   prolactin       25.3  <NA>  
+    ##  5 characterization control   female x.g.g.f   prolactin       21.5  <NA>  
+    ##  6 characterization control   male   x.blu.o   prolactin       14.9  <NA>  
+    ##  7 characterization control   female blu.o.x   prolactin       85.3  <NA>  
+    ##  8 characterization control   female r.r.x     prolactin       36.2  <NA>  
+    ##  9 characterization control   female s.x       prolactin       39.5  <NA>  
+    ## 10 characterization control   female r.r.x     prolactin       22.8  <NA>  
+    ## # … with 455 more rows
+
+    prolctin2rnaseq
+
+    ## # A tibble: 345 x 7
+    ##    study         treatment sex    bird_id       hormone  plasma_conc RNAseq
+    ##    <fct>         <chr>     <chr>  <chr>         <chr>          <dbl> <chr> 
+    ##  1 manipulation  prolong   male   blk.s030.o.g  prolact…       35.3  RNAseq
+    ##  2 manipulation  prolong   female blk.s031.pu.d prolact…       43.8  RNAseq
+    ##  3 manipulation  m.n2      female blk.s032.g.w  prolact…       90.8  RNAseq
+    ##  4 manipulation  m.inc.d3  female blk.s049.y.g  prolact…       27.0  RNAseq
+    ##  5 manipulation  m.inc.d3  female blk.s060.pu.w prolact…       19.4  RNAseq
+    ##  6 characteriza… inc.d9    female blk.s061.pu.y prolact…       11.9  RNAseq
+    ##  7 manipulation  m.inc.d8  female blk.y.l.s109  prolact…        8    RNAseq
+    ##  8 manipulation  m.n2      male   blu10.w26.x   prolact…       18.4  RNAseq
+    ##  9 characteriza… bldg      male   blu114.r38.w… prolact…        5.56 RNAseq
+    ## 10 manipulation  prolong   female blu115.y150.x prolact…       58.5  RNAseq
+    ## # … with 335 more rows
 
     PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)  %>% 
                     dplyr::mutate(treatment = fct_recode(stage,
