@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -708,3 +708,65 @@ prolactin manip
     p4
 
 ![](../figures/PRL/PRL.pit.maip-2.png)
+
+    candidates.pit$bird_id <- candidates.pit$bird
+
+    geneshormones <- left_join(candidates.pit, hormones) %>%
+      select(-X1, -V1, -okay, - icons, -music, -iconpath) %>%
+      drop_na()
+    head(geneshormones)
+
+    ## # A tibble: 6 x 11
+    ##   bird  sex   tissue treatment group study sample   PRL bird_id hormone
+    ##   <chr> <chr> <chr>  <fct>     <chr> <chr> <chr>  <dbl> <chr>   <chr>  
+    ## 1 blk0… fema… pitui… m.n2      fema… mani… blk0.…  20.1 blk0.x  prolac…
+    ## 2 blk0… fema… pitui… m.n2      fema… mani… blk0.…  20.1 blk0.x  cort   
+    ## 3 blk0… fema… pitui… m.n2      fema… mani… blk0.…  20.1 blk0.x  estrad…
+    ## 4 blk1… fema… pitui… extend    fema… mani… blk19…  21.1 blk19.x prolac…
+    ## 5 blk1… fema… pitui… extend    fema… mani… blk19…  21.1 blk19.x cort   
+    ## 6 blk1… fema… pitui… extend    fema… mani… blk19…  21.1 blk19.x estrad…
+    ## # … with 1 more variable: plasma_conc <dbl>
+
+    ggplot(geneshormones, aes(x = plasma_conc, y = PRL)) +
+      geom_point(aes(color = treatment)) +
+      facet_wrap(~hormone, scales = "free_x") +
+        geom_smooth(method = "lm", color = "grey") 
+
+![](../figures/PRL/geneshormones-1.png)
+
+    prolactin2 <- read_csv("../results/07_prolactin2.csv")
+    head(prolactin2)
+
+    ## # A tibble: 6 x 6
+    ##   study            treatment sex    bird_id       hormone   plasma_conc
+    ##   <chr>            <chr>     <chr>  <chr>         <chr>           <dbl>
+    ## 1 manipulation     prolong   male   blk.s030.o.g  prolactin        35.3
+    ## 2 manipulation     prolong   female blk.s031.pu.d prolactin        43.8
+    ## 3 manipulation     m.n2      female blk.s032.g.w  prolactin        90.8
+    ## 4 manipulation     m.inc.d3  female blk.s049.y.g  prolactin        27.0
+    ## 5 manipulation     m.inc.d3  female blk.s060.pu.w prolactin        19.4
+    ## 6 characterization inc.d9    female blk.s061.pu.y prolactin        11.9
+
+    geneshormones2 <- left_join(candidates.pit, prolactin2) %>%
+      drop_na()
+    head(geneshormones)
+
+    ## # A tibble: 6 x 11
+    ##   bird  sex   tissue treatment group study sample   PRL bird_id hormone
+    ##   <chr> <chr> <chr>  <fct>     <chr> <chr> <chr>  <dbl> <chr>   <chr>  
+    ## 1 blk0… fema… pitui… m.n2      fema… mani… blk0.…  20.1 blk0.x  prolac…
+    ## 2 blk0… fema… pitui… m.n2      fema… mani… blk0.…  20.1 blk0.x  cort   
+    ## 3 blk0… fema… pitui… m.n2      fema… mani… blk0.…  20.1 blk0.x  estrad…
+    ## 4 blk1… fema… pitui… extend    fema… mani… blk19…  21.1 blk19.x prolac…
+    ## 5 blk1… fema… pitui… extend    fema… mani… blk19…  21.1 blk19.x cort   
+    ## 6 blk1… fema… pitui… extend    fema… mani… blk19…  21.1 blk19.x estrad…
+    ## # … with 1 more variable: plasma_conc <dbl>
+
+    ggplot(geneshormones2, aes(x = plasma_conc, y = PRL)) +
+      geom_point(aes( color = treatment)) +
+      geom_smooth(method = "lm", color = "grey") +
+      facet_wrap(~hormone, scales = "free") 
+
+![](../figures/PRL/geneshormones-2.png)
+
+    write.csv(candidates.pit, "../results/16_pitPRL.csv")

@@ -238,6 +238,39 @@ p4 <- ggplot(meanPRL, aes(treatment, m)) +
   geom_hline(yintercept=19.8) +
   geom_hline(yintercept=20.8) 
 p4
- 
- 
 ```
+
+```{r geneshormones}
+candidates.pit$bird_id <- candidates.pit$bird
+
+geneshormones <- left_join(candidates.pit, hormones) %>%
+  select(-X1, -V1, -okay, - icons, -music, -iconpath) %>%
+  drop_na()
+head(geneshormones)
+
+
+ggplot(geneshormones, aes(x = plasma_conc, y = PRL)) +
+  geom_point(aes(color = treatment)) +
+  facet_wrap(~hormone, scales = "free_x") +
+    geom_smooth(method = "lm", color = "grey") 
+
+
+prolactin2 <- read_csv("../results/07_prolactin2.csv")
+head(prolactin2)
+geneshormones2 <- left_join(candidates.pit, prolactin2) %>%
+  drop_na()
+head(geneshormones)
+
+
+ggplot(geneshormones2, aes(x = plasma_conc, y = PRL)) +
+  geom_point(aes( color = treatment)) +
+  geom_smooth(method = "lm", color = "grey") +
+  facet_wrap(~hormone, scales = "free") 
+```
+
+
+
+```{r}
+write.csv(candidates.pit, "../results/16_pitPRL.csv")
+```
+
