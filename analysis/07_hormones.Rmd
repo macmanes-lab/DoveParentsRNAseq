@@ -322,9 +322,6 @@ aovTretment(test.char, "T") # p = 0.609
 ```
 
 
-```{r}
-write.csv(hormones, "../results/hormones.csv", row.names = F)
-```
 
 # do control bird with high prolactin hormone have high PRL expression in the pituitary? yes.
 
@@ -336,10 +333,7 @@ head(PRLpit,2)
 ```
 
 ```{r}
-prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xlsx", sheet = 1)  %>% 
-            filter(Treatment == "baseline")  %>% 
-            select(ColorBands,BandNo_old, Treatment, Sex, `Prolactin ng/mL`)  %>% 
-            arrange(desc(`Prolactin ng/mL`))
+write.csv(hormones, "../results/hormones.csv", row.names = F)
+write.csv(prolactin2, "../results/07_prolactin2.csv", row.names = F)
 
-head(prolactin,2)
 ```
