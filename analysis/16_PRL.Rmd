@@ -13,7 +13,8 @@ library(cowplot)
 library(magick)
 library(png)
 library(grid)
-library("ggimage")
+library(ggimage)
+library(apaTables)
 
 source("../R/themes.R") 
 source("../R/functions.R")
@@ -383,11 +384,68 @@ ggplot(geneshormones2, aes(x = plasma_conc, y = PRL)) +
 ```
 
 
+```{r}
+aov_all = data.frame()
+for(i in alllevels3){
+  
+  df <- candidates.pit %>% filter(treatment == i) %>% droplevels()
+  aovtable <- apa.aov.table(aov(PRL ~ sex , data=df))
+  aovtable <- as.data.frame(aovtable$table_body)
+  totaldf <- aovtable[3, 3]
+  aovtable$df <- paste(aovtable$df, ", " , totaldf, sep = "")
+  aovtable$ANOVA <- "PRL ~ sex"
+  aovtable$stages <- paste(i)
+  aovtable$p <- as.numeric(as.character(aovtable$p))
+  aov_all <- rbind(aov_all,aovtable)
+}
+
+aov_all <- aov_all %>%
+  filter(Predictor == "sex")  %>%
+  select(stages, ANOVA, df, "F", p) %>%
+  mutate(sig = ifelse(p < 0.05, "*", " "))
+aov_all
+
+one <- c("m.inc.d3", "inc.d3")
+two <- c("m.inc.d9", "inc.d9")
+three <- c("m.inc.d17", "inc.d17")
+four <- c("m.n2", "hatch")
+five <- c("m.inc.d8", "inc.d9")
+six <- c("m.inc.d8", "hatch")
+seven <- c("prolong", "inc.d17")
+eight <- c("prolong", "hatch")
+nine <- c("extend", "hatch")
+ten <- c("extend", "n5")
+
+manipcomparisons <- list(one, two, three, four, five, six, seven, eight, nine, ten)
+
+aov_manip = data.frame()
+for(i in manipcomparisons){
+  
+  df <- candidates.pit %>% filter(treatment %in% i) %>% droplevels()
+  aovtable <- apa.aov.table(aov(PRL ~ sex * treatment , data=df))
+  aovtable <- as.data.frame(aovtable$table_body)
+  totaldf <- aovtable[5, 3]
+  aovtable$df <- paste(aovtable$df, ", " , totaldf, sep = "")
+  aovtable$ANOVA <- "PRL ~ sex"
+  aovtable$stages <- paste(i, collapse = " vs ")
+  aovtable$p <- as.numeric(as.character(aovtable$p))
+  aov_manip <- rbind(aov_manip,aovtable)
+}
+
+aov_manip  <- aov_manip %>%
+  filter(Predictor %in% c( "treatment"))  %>%
+  select(stages, ANOVA, Predictor, df, "F", p) %>%
+  mutate(sig = ifelse(p < 0.05, "*", " "))
+aov_manip
+```
 
 
 
 
 ```{r}
 write.csv(candidates.pit, "../results/16_pitPRL.csv")
+write.csv(aov_all, "../results/16_aov_PRLsex.csv")
+write.csv(aov_manip, "../results/16_aov_PRLsextreatment.csv")
+
 ```
 
