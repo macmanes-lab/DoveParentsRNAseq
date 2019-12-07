@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -28,7 +28,7 @@
 
     library(png)
     library(grid)
-    library("ggimage")
+    library(ggimage)
 
     ## 
     ## Attaching package: 'ggimage'
@@ -36,6 +36,8 @@
     ## The following object is masked from 'package:cowplot':
     ## 
     ##     theme_nothing
+
+    library(apaTables)
 
     source("../R/themes.R") 
     source("../R/functions.R")
@@ -496,4 +498,89 @@ prolactin manip
 
 ![](../figures/PRL/geneshormones-2.png)
 
+    aov_all = data.frame()
+    for(i in alllevels3){
+      
+      df <- candidates.pit %>% filter(treatment == i) %>% droplevels()
+      aovtable <- apa.aov.table(aov(PRL ~ sex , data=df))
+      aovtable <- as.data.frame(aovtable$table_body)
+      totaldf <- aovtable[3, 3]
+      aovtable$df <- paste(aovtable$df, ", " , totaldf, sep = "")
+      aovtable$ANOVA <- "PRL ~ sex"
+      aovtable$stages <- paste(i)
+      aovtable$p <- as.numeric(as.character(aovtable$p))
+      aov_all <- rbind(aov_all,aovtable)
+    }
+
+    aov_all <- aov_all %>%
+      filter(Predictor == "sex")  %>%
+      select(stages, ANOVA, df, "F", p) %>%
+      mutate(sig = ifelse(p < 0.05, "*", " "))
+    aov_all
+
+    ##       stages     ANOVA    df     F     p sig
+    ## 1    control PRL ~ sex 1, 23  1.22 0.280    
+    ## 2       bldg PRL ~ sex 1, 18  0.05 0.817    
+    ## 3        lay PRL ~ sex 1, 18  0.01 0.920    
+    ## 4     inc.d3 PRL ~ sex 1, 18  6.51 0.020   *
+    ## 5     inc.d9 PRL ~ sex 1, 22  0.24 0.628    
+    ## 6    inc.d17 PRL ~ sex 1, 20  2.10 0.162    
+    ## 7      hatch PRL ~ sex 1, 18  0.38 0.548    
+    ## 8         n5 PRL ~ sex 1, 18  5.01 0.038   *
+    ## 9         n9 PRL ~ sex 1, 20  0.05 0.830    
+    ## 10  m.inc.d3 PRL ~ sex 1, 18 10.31 0.005   *
+    ## 11  m.inc.d9 PRL ~ sex 1, 14  0.00 0.986    
+    ## 12 m.inc.d17 PRL ~ sex 1, 19  0.11 0.749    
+    ## 13      m.n2 PRL ~ sex 1, 18  9.27 0.007   *
+    ## 14  m.inc.d8 PRL ~ sex 1, 18  2.58 0.126    
+    ## 15   prolong PRL ~ sex 1, 18  2.02 0.172    
+    ## 16    extend PRL ~ sex 1, 18  0.00 0.991
+
+    one <- c("m.inc.d3", "inc.d3")
+    two <- c("m.inc.d9", "inc.d9")
+    three <- c("m.inc.d17", "inc.d17")
+    four <- c("m.n2", "hatch")
+    five <- c("m.inc.d8", "inc.d9")
+    six <- c("m.inc.d8", "hatch")
+    seven <- c("prolong", "inc.d17")
+    eight <- c("prolong", "hatch")
+    nine <- c("extend", "hatch")
+    ten <- c("extend", "n5")
+
+    manipcomparisons <- list(one, two, three, four, five, six, seven, eight, nine, ten)
+
+    aov_manip = data.frame()
+    for(i in manipcomparisons){
+      
+      df <- candidates.pit %>% filter(treatment %in% i) %>% droplevels()
+      aovtable <- apa.aov.table(aov(PRL ~ sex * treatment , data=df))
+      aovtable <- as.data.frame(aovtable$table_body)
+      totaldf <- aovtable[5, 3]
+      aovtable$df <- paste(aovtable$df, ", " , totaldf, sep = "")
+      aovtable$ANOVA <- "PRL ~ sex"
+      aovtable$stages <- paste(i, collapse = " vs ")
+      aovtable$p <- as.numeric(as.character(aovtable$p))
+      aov_manip <- rbind(aov_manip,aovtable)
+    }
+
+    aov_manip  <- aov_manip %>%
+      filter(Predictor %in% c( "treatment"))  %>%
+      select(stages, ANOVA, Predictor, df, "F", p) %>%
+      mutate(sig = ifelse(p < 0.05, "*", " "))
+    aov_manip
+
+    ##                  stages     ANOVA Predictor    df     F     p sig
+    ## 1    m.inc.d3 vs inc.d3 PRL ~ sex treatment 1, 36  0.02 0.886    
+    ## 2    m.inc.d9 vs inc.d9 PRL ~ sex treatment 1, 36  6.90 0.013   *
+    ## 3  m.inc.d17 vs inc.d17 PRL ~ sex treatment 1, 39  6.10 0.018   *
+    ## 4         m.n2 vs hatch PRL ~ sex treatment 1, 36 13.79 0.001   *
+    ## 5    m.inc.d8 vs inc.d9 PRL ~ sex treatment 1, 40  0.01 0.920    
+    ## 6     m.inc.d8 vs hatch PRL ~ sex treatment 1, 36 24.92 0.000   *
+    ## 7    prolong vs inc.d17 PRL ~ sex treatment 1, 38  0.04 0.844    
+    ## 8      prolong vs hatch PRL ~ sex treatment 1, 36  1.60 0.215    
+    ## 9       extend vs hatch PRL ~ sex treatment 1, 36  5.85 0.021   *
+    ## 10         extend vs n5 PRL ~ sex treatment 1, 36  4.40 0.043   *
+
     write.csv(candidates.pit, "../results/16_pitPRL.csv")
+    write.csv(aov_all, "../results/16_aov_PRLsex.csv")
+    write.csv(aov_manip, "../results/16_aov_PRLsextreatment.csv")
