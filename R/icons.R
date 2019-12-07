@@ -14,30 +14,34 @@ iconstreatment <- data.frame(treatment = c("control", "bldg", "lay",
                              icons = c("control.png", "bldg.png", "lay.png",
                                        "incubation.png", "incubation.png", "incubation.png",
                                        "hatch.png", "chicklings.png", "chicklings.png", 
-                                       "bldg.png", "bldg.png", "bldg.png", "bldg.png",
-                                       "hatch.png", "incubation.png","hatch.png"))
+                                       "removal-egg.png", "removal-egg.png", "removal-egg.png", "removal-chick.png",
+                                       "manip-hatch.png", "manip-inc.png","manip-hatch.png"))
 iconstreatment$music <- "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9zgaht3nmVL4moYqz0uKBhYefpTgYrX69_qyL8kmznImDRk-KRw&s"
 
 birds <- left_join(iconstreatment, birds, by = "icons")
 
-control <- png::readPNG(birds$iconpath[1])
-control <-  grid::rasterGrob(control, interpolate=TRUE)
+control <-  grid::rasterGrob(png::readPNG(birds$iconpath[1]), interpolate=TRUE)
+bldg <-  grid::rasterGrob(png::readPNG(birds$iconpath[2]), interpolate=TRUE)
+lay <-  grid::rasterGrob(png::readPNG(birds$iconpath[3]), interpolate=TRUE)
+inc <-  grid::rasterGrob(png::readPNG(birds$iconpath[4]), interpolate=TRUE)
+hatch <-  grid::rasterGrob(png::readPNG(birds$iconpath[7]), interpolate=TRUE)
+nestling <-  grid::rasterGrob(png::readPNG(birds$iconpath[8]), interpolate=TRUE)
+removeegg <-  grid::rasterGrob(png::readPNG(birds$iconpath[10]), interpolate=TRUE)
+removechick <-  grid::rasterGrob(png::readPNG(birds$iconpath[13]), interpolate=TRUE)
+maniphatch <- grid::rasterGrob(png::readPNG(birds$iconpath[14]), interpolate=TRUE)
+manipinc <- grid::rasterGrob(png::readPNG(birds$iconpath[15]), interpolate=TRUE)
 
-bldg <- png::readPNG(birds$iconpath[2])
-bldg <-  grid::rasterGrob(bldg, interpolate=TRUE)
+# experimental design
+characterization <- ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_timeline-char.png"), scale = 1)
+removal <- ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_timeline-remove.png"), scale = 1)
+timing <- ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_timeline-timing.png"), scale = 1)
 
-lay <- png::readPNG(birds$iconpath[3])
-lay <-  grid::rasterGrob(lay, interpolate=TRUE)
+removalonly <-  ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-removal.png"), scale = 1)
+timingonly <- ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-timing.png"), scale = 1)
 
-inc <- png::readPNG(birds$iconpath[4])
-inc <-  grid::rasterGrob(inc, interpolate=TRUE)
+# individulal comparisons
+early <-  ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_timeline-early.png"), scale = 1)
+prolong <-  ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_timeline-prolong.png"), scale = 1)
+extend <-  ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_timeline-delay.png"), scale = 1)
 
-hatch <- png::readPNG(birds$iconpath[7])
-hatch <-  grid::rasterGrob(hatch, interpolate=TRUE)
 
-nestling <- png::readPNG(birds$iconpath[8])
-nestling <-  grid::rasterGrob(nestling, interpolate=TRUE)
-
-# all characterization, for volcano plots
-characterization <- png::readPNG("../figures/images/DoveParentsRNAseq_charicons.png")
-characterization <- ggdraw() +  draw_image(characterization, scale = 1)
