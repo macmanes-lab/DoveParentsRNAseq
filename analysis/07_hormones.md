@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -321,154 +321,6 @@
 
     PETCP <- left_join(prolactin2, PETC, by = "bird_id") %>% drop_na()
     PETCP$treatment.x <- factor(PETCP$treatment.x, levels = alllevels2)
-    PETCP$hormone.y
-
-    ##   [1] "cort"         "cort"         "estradiol"    "progesterone"
-    ##   [5] "progesterone" "progesterone" "testosterone" "cort"        
-    ##   [9] "cort"         "estradiol"    "progesterone" "cort"        
-    ##  [13] "progesterone" "progesterone" "testosterone" "cort"        
-    ##  [17] "progesterone" "cort"         "estradiol"    "cort"        
-    ##  [21] "estradiol"    "progesterone" "progesterone" "progesterone"
-    ##  [25] "cort"         "estradiol"    "progesterone" "cort"        
-    ##  [29] "progesterone" "cort"         "estradiol"    "cort"        
-    ##  [33] "estradiol"    "progesterone" "progesterone" "cort"        
-    ##  [37] "estradiol"    "cort"         "estradiol"    "progesterone"
-    ##  [41] "progesterone" "cort"         "cort"         "estradiol"   
-    ##  [45] "progesterone" "cort"         "estradiol"    "cort"        
-    ##  [49] "progesterone" "progesterone" "testosterone" "cort"        
-    ##  [53] "estradiol"    "cort"         "estradiol"    "progesterone"
-    ##  [57] "estradiol"    "progesterone" "progesterone" "cort"        
-    ##  [61] "estradiol"    "progesterone" "progesterone" "progesterone"
-    ##  [65] "cort"         "progesterone" "progesterone" "testosterone"
-    ##  [69] "cort"         "estradiol"    "progesterone" "progesterone"
-    ##  [73] "cort"         "progesterone" "progesterone" "testosterone"
-    ##  [77] "cort"         "estradiol"    "progesterone" "cort"        
-    ##  [81] "estradiol"    "cort"         "estradiol"    "progesterone"
-    ##  [85] "cort"         "progesterone" "progesterone" "cort"        
-    ##  [89] "progesterone" "cort"         "cort"         "estradiol"   
-    ##  [93] "progesterone" "cort"         "progesterone" "cort"        
-    ##  [97] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [101] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [105] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [109] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [113] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [117] "cort"         "progesterone" "testosterone" "cort"        
-    ## [121] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [125] "testosterone" "cort"         "progesterone" "testosterone"
-    ## [129] "cort"         "progesterone" "cort"         "estradiol"   
-    ## [133] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [137] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [141] "cort"         "cort"         "progesterone" "testosterone"
-    ## [145] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [149] "cort"         "progesterone" "cort"         "progesterone"
-    ## [153] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [157] "progesterone" "cort"         "estradiol"    "cort"        
-    ## [161] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [165] "cort"         "progesterone" "cort"         "cort"        
-    ## [169] "estradiol"    "progesterone" "progesterone" "progesterone"
-    ## [173] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [177] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [181] "cort"         "estradiol"    "progesterone" "testosterone"
-    ## [185] "progesterone" "progesterone" "progesterone" "testosterone"
-    ## [189] "cort"         "cort"         "cort"         "estradiol"   
-    ## [193] "progesterone" "progesterone" "progesterone" "progesterone"
-    ## [197] "cort"         "progesterone" "testosterone" "cort"        
-    ## [201] "estradiol"    "progesterone" "progesterone" "progesterone"
-    ## [205] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [209] "cort"         "progesterone" "cort"         "estradiol"   
-    ## [213] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [217] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [221] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [225] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [229] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [233] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [237] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [241] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [245] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [249] "testosterone" "cort"         "estradiol"    "cort"        
-    ## [253] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [257] "progesterone" "progesterone" "cort"         "estradiol"   
-    ## [261] "progesterone" "progesterone" "cort"         "estradiol"   
-    ## [265] "cort"         "progesterone" "testosterone" "cort"        
-    ## [269] "progesterone" "cort"         "cort"         "progesterone"
-    ## [273] "progesterone" "testosterone" "cort"         "progesterone"
-    ## [277] "testosterone" "cort"         "cort"         "estradiol"   
-    ## [281] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [285] "progesterone" "cort"         "cort"         "progesterone"
-    ## [289] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [293] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [297] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [301] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [305] "estradiol"    "progesterone" "cort"         "estradiol"   
-    ## [309] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [313] "testosterone" "testosterone" "cort"         "cort"        
-    ## [317] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [321] "cort"         "cort"         "progesterone" "progesterone"
-    ## [325] "cort"         "progesterone" "cort"         "estradiol"   
-    ## [329] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [333] "progesterone" "progesterone" "cort"         "progesterone"
-    ## [337] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [341] "cort"         "progesterone" "cort"         "estradiol"   
-    ## [345] "progesterone" "cort"         "cort"         "estradiol"   
-    ## [349] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [353] "testosterone" "cort"         "estradiol"    "progesterone"
-    ## [357] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [361] "estradiol"    "cort"         "estradiol"    "progesterone"
-    ## [365] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [369] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [373] "testosterone" "cort"         "cort"         "cort"        
-    ## [377] "estradiol"    "progesterone" "progesterone" "cort"        
-    ## [381] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [385] "estradiol"    "progesterone" "progesterone" "progesterone"
-    ## [389] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [393] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [397] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [401] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [405] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [409] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [413] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [417] "cort"         "progesterone" "testosterone" "cort"        
-    ## [421] "progesterone" "testosterone" "cort"         "estradiol"   
-    ## [425] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [429] "cort"         "progesterone" "testosterone" "progesterone"
-    ## [433] "progesterone" "progesterone" "progesterone" "testosterone"
-    ## [437] "testosterone" "cort"         "cort"         "estradiol"   
-    ## [441] "progesterone" "cort"         "estradiol"    "cort"        
-    ## [445] "estradiol"    "cort"         "estradiol"    "progesterone"
-    ## [449] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [453] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [457] "cort"         "estradiol"    "progesterone" "progesterone"
-    ## [461] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [465] "cort"         "testosterone" "cort"         "estradiol"   
-    ## [469] "cort"         "cort"         "cort"         "progesterone"
-    ## [473] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [477] "progesterone" "progesterone" "cort"         "progesterone"
-    ## [481] "cort"         "progesterone" "testosterone" "cort"        
-    ## [485] "progesterone" "cort"         "estradiol"    "cort"        
-    ## [489] "estradiol"    "progesterone" "progesterone" "cort"        
-    ## [493] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [497] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [501] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [505] "estradiol"    "progesterone" "cort"         "progesterone"
-    ## [509] "cort"         "estradiol"    "cort"         "cort"        
-    ## [513] "progesterone" "cort"         "estradiol"    "progesterone"
-    ## [517] "cort"         "estradiol"    "progesterone" "cort"        
-    ## [521] "progesterone" "testosterone" "cort"         "cort"        
-    ## [525] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [529] "progesterone" "cort"         "progesterone" "progesterone"
-    ## [533] "testosterone" "cort"         "progesterone" "cort"        
-    ## [537] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [541] "cort"         "progesterone" "testosterone" "cort"        
-    ## [545] "progesterone" "cort"         "estradiol"    "cort"        
-    ## [549] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [553] "estradiol"    "cort"         "progesterone" "cort"        
-    ## [557] "progesterone" "testosterone" "progesterone" "cort"        
-    ## [561] "progesterone" "progesterone" "testosterone" "cort"        
-    ## [565] "progesterone" "progesterone" "testosterone" "progesterone"
-    ## [569] "cort"         "estradiol"    "cort"         "progesterone"
-    ## [573] "cort"         "cort"         "estradiol"    "progesterone"
-    ## [577] "cort"         "progesterone" "progesterone" "testosterone"
-    ## [581] "cort"         "estradiol"    "progesterone"
 
     plothormonecorrelations <- function(myhormone, myylab){
       PETCP %>% filter(hormone.y == myhormone) %>%
@@ -568,6 +420,7 @@
         filter(treatment %in% c("inc.d3", "m.inc.d3", "inc.d9", "m.inc.d9", "inc.d17", "m.inc.d17", "hatch","m.n2"))  %>% 
       ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
         geom_boxplot() + 
+      theme_B3()  +
         theme(axis.text.x = element_text(angle = 45, hjust = 1),
               legend.position = "none",
               strip.text = element_blank()) +
@@ -577,13 +430,13 @@
         ylim(c(-16,100)) +
       
        annotation_custom(inc, xmax = 1.6, ymin = -14, ymax = 5) +
-       annotation_custom(bldg, xmax = 3.6, ymin = -14, ymax = 5) +
+       annotation_custom(removeegg, xmax = 3.6, ymin = -14, ymax = 5) +
        annotation_custom(inc, xmax = 5.6, ymin = -14, ymax = 5) +
-       annotation_custom(bldg, xmax = 7.6, ymin = -14, ymax = 5) +
+       annotation_custom(removeegg, xmax = 7.6, ymin = -14, ymax = 5) +
       annotation_custom(hatch, xmax = 9.6, ymin = -14, ymax = 5) +
-      annotation_custom(bldg, xmax = 11.6, ymin = -14, ymax = 5) +
+      annotation_custom(removeegg, xmax = 11.6, ymin = -14, ymax = 5) +
       annotation_custom(nestling, xmax = 13.6, ymin = -14, ymax = 5) +
-      annotation_custom(bldg, xmax = 15.6, ymin = -14, ymax = 5) +
+      annotation_custom(removechick, xmax = 15.6, ymin = -14, ymax = 5) +
         
         annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -16, ymax = -14, alpha = 0.25) +
         annotate("rect", xmin = 2.6, xmax = 4.4, ymin = -16, ymax = -14, alpha = 0.5) +
@@ -597,6 +450,7 @@
         filter( treatment %in% c("inc.d9", "m.inc.d8", "inc.d17", "prolong", "hatch", "extend", "n5"))  %>% 
       ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
         geom_boxplot() + 
+      theme_B3()  +
         theme(axis.text.x = element_text(angle = 45, hjust = 1),
               legend.position = "none",
               strip.text = element_blank()) +
@@ -605,11 +459,11 @@
         labs(y = "PRL (ng/mL)", x = NULL) +
       ylim(c(-12,100)) +
        annotation_custom(inc, xmax = 1.6, ymin = -10, ymax = 10) +
-       annotation_custom(hatch, xmax = 3.6, ymin = -10, ymax = 10) +
+       annotation_custom(maniphatch, xmax = 3.6, ymin = -10, ymax = 10) +
        annotation_custom(inc, xmax = 5.6, ymin = -10, ymax = 10) +
-       annotation_custom(inc, xmax = 7.6, ymin = -10, ymax = 10) +
+       annotation_custom(manipinc, xmax = 7.6, ymin = -10, ymax = 10) +
       annotation_custom(hatch, xmax = 9.6, ymin = -10, ymax = 10) +
-      annotation_custom(hatch, xmax = 11.6, ymin = -10, ymax = 10) +
+      annotation_custom(maniphatch, xmax = 11.6, ymin = -10, ymax = 10) +
       annotation_custom(nestling, xmax = 13.6, ymin = -10, ymax = 10) +
         
       annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -12, ymax = -10, alpha = 0.33) +
