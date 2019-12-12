@@ -92,3 +92,29 @@ write.csv(gon, "../results/12_GO_DEGs_gon.csv")
 
 ```
 
+
+```{r}
+candidates <- c("AVP", "PRL", "PRLR", "GNIH",  "OXT", "AVPR1A", "AVPR1B",
+                "CRH", "FSHB", "GH", "GNRH1", "GNRH2",
+                "MC4R", "JAK2", "HCRT", "POMC", "TRH", "TSHB")
+candidates <- as.data.frame(candidates)
+names(candidates)[1] <- "gene"
+candidates$GO <- "candidate genes"
+
+candidate_DEGs <- left_join(candidates, DEGs) %>%
+  arrange(GO, gene) %>%
+  group_by(GO, comparison) %>%
+  summarize(genes = str_c(gene, collapse = ", ")) %>%
+  pivot_wider(names_from = comparison, values_from = genes) %>% 
+  select(GO, contains("control.bldg"), contains("bldg.lay"), contains("lay.inc.d3"),
+         contains("inc.d3.inc.d9"), contains("inc.d9.inc.d17"), contains("inc.d17.hatch"),
+         contains("hatch.n5"), contains("n5.n9"))
+candidate_DEGs <- as.data.frame(candidate_DEGs)
+row.names(candidate_DEGs) <- candidate_DEGs$GO  
+candidate_DEGs <- t(candidate_DEGs)
+candidate_DEGs <- as.data.frame(candidate_DEGs)
+candidate_DEGs <- tail(candidate_DEGs,10)
+kable(candidate_DEGs)
+
+```
+
