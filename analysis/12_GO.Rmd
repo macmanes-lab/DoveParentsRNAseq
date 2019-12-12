@@ -12,6 +12,17 @@ knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
 
 ```
 
+# Exploring relationships between genes associated with mating behavior, lactation, parental care, and endocrine process in the hypothalamic-pituitary-gonad axis of reproction
+
+## The code
+
+1. Read in list of genes for GO terms: mating beahvior, lactating, parental care, and endocrine process.
+2. Read in lists of differentially expressed genes for each transition (e.g. incubation day 17 to hatch) in each tissue (e.g. pituitary)
+3. Join the two data frames
+4. Print list of differentially expressed genes that correspond to each GO term, separated by either tissue or paretnal stage
+5. Repeat the process for a list of candidate genes instead of GO terms.
+
+## GO terms
 
 ```{r, GOterms}
 
@@ -32,6 +43,7 @@ allGO <- GO_pathfiles %>%
 head(allGO)
 ```
 
+## Differntially expressed genes by stage for each tissue
 
 ```{r DEGs}
 
@@ -47,6 +59,8 @@ DEGs <- DEG_pathfiles %>%
   select(gene, comparison)
 head(DEGs)
 ```
+
+## GO and DEGs joined
 
 
 ```{r GO_DEGs}
@@ -65,6 +79,8 @@ GO_DEGs <- left_join(allGO, DEGs) %>%
   map_df(~.x)
 ```
 
+## Tissue-specifiic differentially expressed genes 
+
 ```{r bytissue}
 hyp <- GO_DEGs %>% select(GO, starts_with("hyp"))
 pit <- GO_DEGs %>% select(GO, starts_with("pit"))
@@ -74,6 +90,8 @@ kable(hyp)
 kable(pit)  
 kable(gon)  
 ```
+
+## Stage-specific differentially expressed genes 
 
 ```{r bystage}
 one <- GO_DEGs %>% select(GO, contains("control.bldg"))
@@ -112,6 +130,8 @@ kable(eight)
 # (positive) regulation of gap junction assembly, regulation of cardiac conduction, regualation of blood pressure
 ```
 
+
+## Candidate genes
 
 ```{r}
 candidates <- c("AVP", "PRL", "PRLR", "GNIH",  "OXT", "AVPR1A", "AVPR1B",
