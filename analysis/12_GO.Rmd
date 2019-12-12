@@ -105,31 +105,42 @@ six <- GO_DEGs %>% select(GO, contains("inc.d17.hatch"))
 seven <- GO_DEGs %>% select(GO, contains("hatch.n5"))
 eight <- GO_DEGs %>% select(GO, contains("n5.n9"))
 
-
+# top GOs of these genes: endocrine porcess, 
+#regulation of blood pressure (by hormones or chemical signals), 
+#system process, regulation of hormone levels
 kable(one) 
-# top GOs of these genes: endocrine porcess, regulation of blood pressure (by hormones or chemical signals), system process, regulation of hormone levels
 
+
+# top Gos maternal, parental, reproductive behavior; 
+# reproduction, reproductive process
 kable(two) 
-# top Gos maternal, parental, reproductive behavior; reproduction, reproductive process
 
 
+# response to chemical, maternal and parental behaviors, 
+# regulation of RNApolI transcription
 kable(three) 
-# response to chemical, maternal and parental beahviors, regulation of RNApolI transscription
 
+
+# insuffiencient genes for GO analysis
 kable(four) 
-# insuffiencient genes
 
+# (cellular) response to organic substance, endocrine process, 
+# response to stimulus, response to chemical 
 kable(five) 
-# (cellular) response to organic substance, endocrine process, response to stimulus, response to chemical 
 
-kable(six)  
+
 # insuffiencient genes
+kable(six)  
 
-kable(seven)  
-# endocrine process, system process, hormone transport, synaptic transmission (dopamineric), secretion by cell
+ 
+# endocrine process, system process, hormone transport, 
+# synaptic transmission (dopamineric), secretion by cell
+kable(seven) 
 
+
+# (positive) regulation of gap junction assembly, 
+# regulation of cardiac conduction, regualation of blood pressure
 kable(eight) 
-# (positive) regulation of gap junction assembly, regulation of cardiac conduction, regualation of blood pressure
 ```
 
 
