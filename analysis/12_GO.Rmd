@@ -88,9 +88,20 @@ hyp <- GO_DEGs %>% select(GO, starts_with("hyp"))
 pit <- GO_DEGs %>% select(GO, starts_with("pit"))
 gon <- GO_DEGs %>% select(GO, starts_with("gon"))
 
-kable(hyp)  
-kable(pit)  
+kable(hyp,  format = "markdown")  
+# top GO therms for hyp:
+# endocrine process, regulation of hormone levels,
+# signal release # hormone secretion, # system process
+# hormone transport, cell-cell signaling
+
+kable(pit,  format = "markdown")
+# endocrine process, mating behavior, system process,
+# reproductive behavior, mating, regulation of blood pressure
+# signal release, regulation of hormone levels
+
 kable(gon)  
+# endocrine process, regulation of blood pressure
+# blood circutation, circulatory system
 ```
 
 ## Stage-specific differentially expressed genes 
