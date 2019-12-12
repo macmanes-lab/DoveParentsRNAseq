@@ -7,6 +7,9 @@ output: md_document
 library(tidyverse)
 library(knitr)
 library(kableExtra)
+
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F)
+
 ```
 
 
@@ -43,26 +46,36 @@ DEGs <- DEG_pathfiles %>%
   mutate(comparison = sapply(strsplit(as.character(comparison),'.csv'), "[", 1)) %>% 
   select(gene, comparison)
 head(DEGs)
+```
 
+
+```{r GO_DEGs}
 GO_DEGs <- left_join(allGO, DEGs) %>%
   arrange(GO, gene) %>%
   group_by(GO, comparison) %>%
-  summarize(genes = str_c(gene, collapse = ", ")) %>%
+  summarize(genes = str_c(gene, collapse = ", ")) %>% 
   pivot_wider(names_from = comparison, values_from = genes) %>% 
   select(GO, contains("control.bldg"), contains("bldg.lay"), contains("lay.inc.d3"),
          contains("inc.d3.inc.d9"), contains("inc.d9.inc.d17"), contains("inc.d17.hatch"),
          contains("hatch.n5"), contains("n5.n9")) %>%
-  filter(GO %in% c("endocrineprocess", "lactation", "parentalbehavior"))
+  filter(GO %in% c("endocrineprocess", "lactation", 
+                   "parentalbehavior", "matingbehavior")) %>% 
+  map(~.x) %>%
+  discard(~all(is.na(.x))) %>%
+  map_df(~.x)
+```
 
-
+```{r bytissue}
 hyp <- GO_DEGs %>% select(GO, starts_with("hyp"))
 pit <- GO_DEGs %>% select(GO, starts_with("pit"))
 gon <- GO_DEGs %>% select(GO, starts_with("gon"))
 
-kable(hyp)
-kable(pit)
-kable(gon)
+kable(hyp)  
+kable(pit)  
+kable(gon)  
+```
 
+```{r bystage}
 one <- GO_DEGs %>% select(GO, contains("control.bldg"))
 two <- GO_DEGs %>% select(GO, contains("bldg.lay"))
 three <- GO_DEGs %>% select(GO, contains("lay.inc.d3"))
@@ -73,30 +86,38 @@ seven <- GO_DEGs %>% select(GO, contains("hatch.n5"))
 eight <- GO_DEGs %>% select(GO, contains("n5.n9"))
 
 
-kable(one)
-kable(two)
-kable(three)
-kable(four)
-kable(five)
-kable(six)
-kable(seven)
-kable(eight)
+kable(one) 
+# top GOs of these genes: endocrine porcess, regulation of blood pressure (by hormones or chemical signals), system process, regulation of hormone levels
+
+kable(two) 
+# top Gos maternal, parental, reproductive behavior; reproduction, reproductive process
 
 
+kable(three) 
+# response to chemical, maternal and parental beahviors, regulation of RNApolI transscription
 
-write.csv(GO_DEGs, "../results/12_GO_DEGs.csv")
-write.csv(hyp, "../results/12_GO_DEGs_hyp.csv")
-write.csv(pit, "../results/12_GO_DEGs_pit.csv")
-write.csv(gon, "../results/12_GO_DEGs_gon.csv")
+kable(four) 
+# insuffiencient genes
 
+kable(five) 
+# (cellular) response to organic substance, endocrine process, response to stimulus, response to chemical 
 
+kable(six)  
+# insuffiencient genes
+
+kable(seven)  
+# endocrine process, system process, hormone transport, synaptic transmission (dopamineric), secretion by cell
+
+kable(eight) 
+# (positive) regulation of gap junction assembly, regulation of cardiac conduction, regualation of blood pressure
 ```
 
 
 ```{r}
 candidates <- c("AVP", "PRL", "PRLR", "GNIH",  "OXT", "AVPR1A", "AVPR1B",
                 "CRH", "FSHB", "GH", "GNRH1", "GNRH2",
-                "MC4R", "JAK2", "HCRT", "POMC", "TRH", "TSHB")
+                "MC4R", "JAK2", "HCRT", "POMC", "TRH", "TSHB",
+                "LH", "FSH")
 candidates <- as.data.frame(candidates)
 names(candidates)[1] <- "gene"
 candidates$GO <- "candidate genes"
@@ -114,7 +135,15 @@ row.names(candidate_DEGs) <- candidate_DEGs$GO
 candidate_DEGs <- t(candidate_DEGs)
 candidate_DEGs <- as.data.frame(candidate_DEGs)
 candidate_DEGs <- tail(candidate_DEGs,10)
-kable(candidate_DEGs)
+kable(candidate_DEGs) 
+
+# Top Go terms: reponse to keytone, response to hormone, repsponse to organonitrogen compound, positive regulation of homeostatic process, maternal beahvior
 
 ```
 
+```{r write}
+write.csv(GO_DEGs, "../results/12_GO_DEGs.csv")
+write.csv(hyp, "../results/12_GO_DEGs_hyp.csv")
+write.csv(pit, "../results/12_GO_DEGs_pit.csv")
+write.csv(gon, "../results/12_GO_DEGs_gon.csv")
+```
