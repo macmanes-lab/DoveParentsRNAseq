@@ -1,0 +1,94 @@
+---
+title: "GO"
+output: md_document
+---
+
+```{r}
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+```
+
+
+```{r, GOterms}
+
+GO_path <- "../results/goterms/"   # path to the data
+GO_files <- dir(GO_path, pattern = "*.txt") # get file names
+GO_pathfiles <- paste0(GO_path, GO_files)
+
+allGO <- GO_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_table(.x, col_types = cols(), col_names = FALSE), .id = "file_name") %>% 
+  mutate(GO = sapply(strsplit(as.character(file_name),'../results/goterms/'), "[", 2)) %>% 
+  mutate(GO = sapply(strsplit(as.character(GO),'.txt'), "[", 1)) %>% 
+  mutate(gene = sapply(strsplit(as.character(X1), "[\\\\]|[^[:print:]]" ), "[", 2)) %>% 
+  select(GO, gene)  %>%
+  filter(gene != "Symbol") %>%
+  distinct(GO,gene)  %>%
+  mutate(gene = toupper(gene))
+head(allGO)
+```
+
+
+```{r DEGs}
+
+DEG_path <- "../results/"   # path to the data
+DEG_files <- dir(DEG_path, pattern = "03_DEGs.*") # get file names
+DEG_pathfiles <- paste0(DEG_path, DEG_files)
+
+DEGs <- DEG_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name") %>%
+  mutate(comparison = sapply(strsplit(as.character(file_name),'../results/03_DEGs.'), "[", 2)) %>% 
+  mutate(comparison = sapply(strsplit(as.character(comparison),'.csv'), "[", 1)) %>% 
+  select(gene, comparison)
+head(DEGs)
+
+GO_DEGs <- left_join(allGO, DEGs) %>%
+  arrange(GO, gene) %>%
+  group_by(GO, comparison) %>%
+  summarize(genes = str_c(gene, collapse = ", ")) %>%
+  pivot_wider(names_from = comparison, values_from = genes) %>% 
+  select(GO, contains("control.bldg"), contains("bldg.lay"), contains("lay.inc.d3"),
+         contains("inc.d3.inc.d9"), contains("inc.d9.inc.d17"), contains("inc.d17.hatch"),
+         contains("hatch.n5"), contains("n5.n9")) %>%
+  filter(GO %in% c("endocrineprocess", "lactation", "parentalbehavior"))
+
+
+hyp <- GO_DEGs %>% select(GO, starts_with("hyp"))
+pit <- GO_DEGs %>% select(GO, starts_with("pit"))
+gon <- GO_DEGs %>% select(GO, starts_with("gon"))
+
+kable(hyp)
+kable(pit)
+kable(gon)
+
+one <- GO_DEGs %>% select(GO, contains("control.bldg"))
+two <- GO_DEGs %>% select(GO, contains("bldg.lay"))
+three <- GO_DEGs %>% select(GO, contains("lay.inc.d3"))
+four <- GO_DEGs %>% select(GO, contains("inc.d3.inc.d9"))
+five <- GO_DEGs %>% select(GO, contains("inc.d9.inc.d17"))
+six <- GO_DEGs %>% select(GO, contains("inc.d17.hatch"))
+seven <- GO_DEGs %>% select(GO, contains("hatch.n5"))
+eight <- GO_DEGs %>% select(GO, contains("n5.n9"))
+
+
+kable(one)
+kable(two)
+kable(three)
+kable(four)
+kable(five)
+kable(six)
+kable(seven)
+kable(eight)
+
+
+
+write.csv(GO_DEGs, "../results/12_GO_DEGs.csv")
+write.csv(hyp, "../results/12_GO_DEGs_hyp.csv")
+write.csv(pit, "../results/12_GO_DEGs_pit.csv")
+write.csv(gon, "../results/12_GO_DEGs_gon.csv")
+
+
+```
+

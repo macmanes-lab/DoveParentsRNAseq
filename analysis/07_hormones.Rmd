@@ -136,7 +136,6 @@ head(PETC)
 ```{r correlations}
 PETCP <- left_join(prolactin2, PETC, by = "bird_id") %>% drop_na()
 PETCP$treatment.x <- factor(PETCP$treatment.x, levels = alllevels2)
-PETCP$hormone.y
 
 plothormonecorrelations <- function(myhormone, myylab){
   PETCP %>% filter(hormone.y == myhormone) %>%
@@ -210,6 +209,7 @@ hormones %>%
     filter(treatment %in% c("inc.d3", "m.inc.d3", "inc.d9", "m.inc.d9", "inc.d17", "m.inc.d17", "hatch","m.n2"))  %>% 
   ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
     geom_boxplot() + 
+  theme_B3()  +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "none",
           strip.text = element_blank()) +
@@ -219,13 +219,13 @@ hormones %>%
     ylim(c(-16,100)) +
   
    annotation_custom(inc, xmax = 1.6, ymin = -14, ymax = 5) +
-   annotation_custom(bldg, xmax = 3.6, ymin = -14, ymax = 5) +
+   annotation_custom(removeegg, xmax = 3.6, ymin = -14, ymax = 5) +
    annotation_custom(inc, xmax = 5.6, ymin = -14, ymax = 5) +
-   annotation_custom(bldg, xmax = 7.6, ymin = -14, ymax = 5) +
+   annotation_custom(removeegg, xmax = 7.6, ymin = -14, ymax = 5) +
   annotation_custom(hatch, xmax = 9.6, ymin = -14, ymax = 5) +
-  annotation_custom(bldg, xmax = 11.6, ymin = -14, ymax = 5) +
+  annotation_custom(removeegg, xmax = 11.6, ymin = -14, ymax = 5) +
   annotation_custom(nestling, xmax = 13.6, ymin = -14, ymax = 5) +
-  annotation_custom(bldg, xmax = 15.6, ymin = -14, ymax = 5) +
+  annotation_custom(removechick, xmax = 15.6, ymin = -14, ymax = 5) +
     
     annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -16, ymax = -14, alpha = 0.25) +
     annotate("rect", xmin = 2.6, xmax = 4.4, ymin = -16, ymax = -14, alpha = 0.5) +
@@ -238,6 +238,7 @@ hormones %>%
     filter( treatment %in% c("inc.d9", "m.inc.d8", "inc.d17", "prolong", "hatch", "extend", "n5"))  %>% 
   ggplot(aes(x = treatment, y = plasma_conc, fill = treatment,  color = sex)) +
     geom_boxplot() + 
+  theme_B3()  +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "none",
           strip.text = element_blank()) +
@@ -246,11 +247,11 @@ hormones %>%
     labs(y = "PRL (ng/mL)", x = NULL) +
   ylim(c(-12,100)) +
    annotation_custom(inc, xmax = 1.6, ymin = -10, ymax = 10) +
-   annotation_custom(hatch, xmax = 3.6, ymin = -10, ymax = 10) +
+   annotation_custom(maniphatch, xmax = 3.6, ymin = -10, ymax = 10) +
    annotation_custom(inc, xmax = 5.6, ymin = -10, ymax = 10) +
-   annotation_custom(inc, xmax = 7.6, ymin = -10, ymax = 10) +
+   annotation_custom(manipinc, xmax = 7.6, ymin = -10, ymax = 10) +
   annotation_custom(hatch, xmax = 9.6, ymin = -10, ymax = 10) +
-  annotation_custom(hatch, xmax = 11.6, ymin = -10, ymax = 10) +
+  annotation_custom(maniphatch, xmax = 11.6, ymin = -10, ymax = 10) +
   annotation_custom(nestling, xmax = 13.6, ymin = -10, ymax = 10) +
     
   annotate("rect", xmin = 0.6, xmax = 2.4, ymin = -12, ymax = -10, alpha = 0.33) +
