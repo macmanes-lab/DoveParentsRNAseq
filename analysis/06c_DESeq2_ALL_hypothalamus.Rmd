@@ -96,7 +96,7 @@ hatch.extend <- createDEGdfsave(dds.hypothalamus, "treatment", "extend", "hatch"
 ```
 
 ```{r  eval=T}
-n5.extend <- createDEGdfsave(dds.hypothalamus, "treatment", "extend", "n5", "hypothalamus")
+n5.extend <- createDEGdfsave(dds.hypothalamus, "treatment", "n5", "extend", "hypothalamus")
 ```
 
 
