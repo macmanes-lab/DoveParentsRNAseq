@@ -780,10 +780,10 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
                        name = " ",
                        drop = FALSE,
                        breaks=c(down, "NS", up)) +
-    ylim(c(-5,25)) +  
+    ylim(c(0,25)) +  
     xlim(c(-8,8)) +
     labs(y = "-log10(p)", x = " ")  +
-    theme(legend.position = "top",
+    theme(legend.position = "none",
           legend.direction = "horizontal",
           legend.spacing.x = unit(-0.1, 'cm'),
           legend.margin=margin(t=-0, r=0, b=0, l=0, unit="cm"),

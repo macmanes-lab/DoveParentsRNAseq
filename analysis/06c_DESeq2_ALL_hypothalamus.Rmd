@@ -1,0 +1,136 @@
+---
+title: "06_DESeqALL"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+
+library(tidyverse)
+library(DESeq2)
+library(cowplot)
+library(pheatmap)
+library(viridis)
+library(forcats)
+library(caret) # LDA analysis
+library(MASS) # LDA analysis
+library(ggtext) # for pretty plots
+library(ctsGE)
+
+library(BiocParallel)
+register(MulticoreParam(6))
+
+source("../R/functions.R")  # load custom functions 
+source("../R/themes.R")  # load custom themes and color palletes
+source("../R/icons.R")  # for images
+
+knitr::opts_chunk$set(fig.path = '../figures/DESeqAll/', cache = T,  message=F, comment=F, warning=F)
+```
+
+# Warning: This script takes a very long time to run. 
+
+DESeq2 was not designed to run on 300 samples. But, I really like it, so I do it anyways. Some of these commands take like 15 min to run using 6 cores. 
+
+## DEseq2 on all chaacterization and manipulations
+
+```{r readfiles}
+# import "colData" which contains sample information and "countData" which contains read counts
+countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+head(geneinfo)
+
+# craete variable that will be critical for subset later on
+colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+colData$sextissue <- as.factor(paste(colData$sex, colData$tissue, sep = "_"))
+colData$treatment <- factor(colData$treatment, levels = alllevels)
+colData$tissue <- factor(colData$tissue, levels = tissuelevels)
+levels(colData$treatment)
+```
+
+
+
+
+```{r hypdfs, eval=T}
+dds.hypothalamus <- subsetDESeq2(colData,  countData, c("female_hypothalamus","male_hypothalamus"))
+```
+
+```{r hypvsd, eval=T}
+vsd <- as.data.frame(assay(vst(dds.hypothalamus, blind=FALSE)))
+write.csv(vsd, "../results/06_hypallvsd.csv")
+```
+
+
+```{r  eval=T}
+inc.d3.m.inc.d3 <- createDEGdfsave(dds.hypothalamus, "treatment", "m.inc.d3", "inc.d3", "hypothalamus")
+```
+
+```{r  eval=T}
+inc.d9.m.inc.d9 <- createDEGdfsave(dds.hypothalamus, "treatment", "m.inc.d9", "inc.d9", "hypothalamus")
+```
+
+```{r  eval=T}
+inc.d17.m.inc.d17 <- createDEGdfsave(dds.hypothalamus, "treatment", "m.inc.d17", "inc.d17", "hypothalamus")
+```
+
+```{r  eval=T}
+hatch.m.n2 <- createDEGdfsave(dds.hypothalamus, "treatment", "m.n2", "hatch", "hypothalamus")
+```
+
+```{r  eval=T}
+inc.d9.m.inc.d8 <- createDEGdfsave(dds.hypothalamus, "treatment", "m.inc.d8", "inc.d9", "hypothalamus")
+```
+
+```{r  eval=T}
+hatch.m.inc.d8 <- createDEGdfsave(dds.hypothalamus, "treatment", "hatch", "m.inc.d8", "hypothalamus")
+```
+
+```{r  eval=T}
+inc.d17.prolong <- createDEGdfsave(dds.hypothalamus, "treatment", "prolong", "inc.d17", "hypothalamus")
+```
+
+```{r  eval=T}
+hatch.prolong <- createDEGdfsave(dds.hypothalamus, "treatment", "hatch", "prolong", "hypothalamus")
+```
+
+```{r  eval=T}
+hatch.extend <- createDEGdfsave(dds.hypothalamus, "treatment", "extend", "hatch", "hypothalamus")
+```
+
+```{r  eval=T}
+n5.extend <- createDEGdfsave(dds.hypothalamus, "treatment", "extend", "n5", "hypothalamus")
+```
+
+
+
+```{r volcanos-hyp, fig.width=7, fig.height=3.5}
+a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano)  
+b <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano) 
+c <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) 
+d <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano) 
+
+e <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano) 
+f <- plot.volcano(hatch.m.inc.d8 , "treatment",    "hatch", "m.inc.d8"  , colorsvolcano)  
+
+g <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano)  
+h <- plot.volcano(hatch.prolong , "treatment",  "hatch", "prolong", colorsvolcano) 
+
+i <- plot.volcano(hatch.extend , "treatment",  "extend", "hatch" , colorsvolcano)  
+j <- plot.volcano(n5.extend , "treatment",  "extend", "n5", colorsvolcano)  
+
+remove <- plot_grid(a + labs(y = "hypothalamus -log10(p-value)"),
+          b + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          c + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) ,
+          d + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
+          nrow = 1, rel_widths = c(1.2,1,1,1),
+          labels = c("a","b","c","d"), label_size = 9)
+remove
+
+timing <- plot_grid(e +  labs(y = "hypothalamus -log10(p-value)"),
+          f + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          g + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          h + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          i + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
+          j + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
+          nrow = 1, rel_widths = c(1.2,1,1,1,1,1),
+          labels = c("a","b","c", "d","e","f"), label_size = 9)
+timing
+```
