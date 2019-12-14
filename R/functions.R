@@ -863,4 +863,32 @@ createDEGdfsave <- function(mydds, whichfactor, up, down, mytissue){
 
 
 
+selectcBRCA1vsds <- function(listofgenes, vsd, colData){
+  
+  print(listofgenes)
+  
+  candidateentrezids <- geneinfo %>% 
+    filter(entrezid %in% listofgenes) %>%  dplyr::select(entrezid) 
+  
+  print(candidateentrezids$entrezid)
+  
+  rowstofilter <- as.list(candidateentrezids$entrezid)
+  
+  candidatevsd <- vsd %>% 
+    filter(entrezid %in% rowstofilter)
+  candidatevsd <- as.data.frame(candidatevsd)
+  row.names(candidatevsd) <- candidatevsd$entrezid
+  
+  candidatevsd <- right_join(geneinfo,candidatevsd) 
+  candidatevsd <- as.data.frame(candidatevsd)
+  row.names(candidatevsd) <- candidatevsd$Name
+  candidatevsd <- candidatevsd[-c(1:3)]
+  
+  candidatevsd <- as.data.frame(t(candidatevsd))
+  candidatevsd$sample <- row.names(candidatevsd)
+  
+  candidatevsd <- left_join(colData,candidatevsd)
+  
+  return(candidatevsd)
+}
 
