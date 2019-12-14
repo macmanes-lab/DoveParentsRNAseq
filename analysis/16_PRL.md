@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -168,6 +168,7 @@
     colData.pit <- readcolData("../results/04_colData_pit.csv")
 
     geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
+
     candidategenes <- c("PRL")
     candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
 
@@ -217,28 +218,6 @@
 
 ![](../figures/PRL/PRL.pit-1.png)
 
-    p6 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
-        geom_boxplot(aes(fill = treatment, alpha = sex, color = sex)) + 
-        scale_alpha_manual(values = c(0.75,1)) +
-        theme_B3() +
-      theme(legend.position = c(0.85,0.2), legend.direction = "horizontal") + 
-      scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-        labs(y = "PRL expression in the pituitary", x = "parental care stage") +
-      annotation_custom(control, ymin = 12, ymax = 14, xmin = -7.8) +
-      annotation_custom(bldg, ymin = 12, ymax = 14, xmin = -5.8) +
-      annotation_custom(lay, ymin = 12, ymax = 14, xmin = -3.8) +
-      annotation_custom(inc, ymin = 12, ymax = 14, xmin = -1.8) +
-      annotation_custom(inc, ymin = 12, ymax = 14, xmin = 0.6) +
-      annotation_custom(inc, ymin = 12, ymax = 14, xmin = 2.4) +
-      annotation_custom(hatch, ymin = 12, ymax = 14, xmin = 4.4) +
-      annotation_custom(nestling, ymin = 12, ymax = 14, xmin = 6.4) +
-      annotation_custom(nestling, ymin = 12, ymax = 14, xmin = 8.4)  + 
-      ylim(c(13,24)) +
-      guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) 
-    p6
-
-![](../figures/PRL/PRL.pit-2.png)
-
     p7 <- ggplot(meanPRL, aes(treatment, m)) +
       geom_errorbar(aes(ymin=m-se, ymax=m+se, color = treatment), width=.1) +
        geom_image(aes(image=iconpath), size=.12)  +
@@ -247,7 +226,7 @@
       theme(legend.position = "none")
     p7
 
-![](../figures/PRL/PRL.pit-3.png)
+![](../figures/PRL/PRL.pit-2.png)
 
     p8 <- ggplot(meanPRL, aes(treatment, m)) +
        geom_image(aes(image=music), size=.12)  +
@@ -271,11 +250,75 @@
 
     p8
 
+![](../figures/PRL/PRL.pit-3.png)
+
+    p6 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
+        geom_boxplot(aes(fill = treatment, alpha = sex, color = sex)) + 
+        scale_alpha_manual(values = c(0.75,1)) +
+        theme_B3() +
+      theme(legend.position = c(0.85,0.2), legend.direction = "horizontal") + 
+      scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+      labs(y = "PRL", x = NULL) +
+      guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) +
+      theme(axis.title.y  = element_text(face = "italic"))
+    p6
+
 ![](../figures/PRL/PRL.pit-4.png)
 
-    plot_grid(p5,p6,p7,p8)
+    brca <- c( "NP_989500.1")
+    brca.pit <- selectcBRCA1vsds(brca, vsd.pit, colData.pit)
 
-![](../figures/PRL/PRL.pit-5.png)
+    ## [1] "NP_989500.1"
+    ## [1] "NP_989500.1"
+
+    meanBRCA <- brca.pit %>% 
+        droplevels() %>% 
+      dplyr::group_by(treatment) %>%
+      dplyr::summarise(m = mean(BRCA1), 
+                       se = sd(BRCA1)/sqrt(length(BRCA1))) %>%
+      dplyr::mutate(m = round(m,1)) 
+    meanBRCA <- left_join(meanBRCA, birds)
+    meanBRCA$treatment <- factor(meanBRCA$treatment, levels = alllevels)
+    meanBRCA
+
+    ## # A tibble: 9 x 6
+    ##   treatment     m     se icons    music                 iconpath           
+    ##   <fct>     <dbl>  <dbl> <chr>    <chr>                 <chr>              
+    ## 1 control     6.6 0.127  control… https://encrypted-tb… ../figures/images/…
+    ## 2 bldg        6.8 0.0815 bldg.png https://encrypted-tb… ../figures/images/…
+    ## 3 lay         6.8 0.0286 lay.png  https://encrypted-tb… ../figures/images/…
+    ## 4 inc.d3      6.8 0.0667 incubat… https://encrypted-tb… ../figures/images/…
+    ## 5 inc.d9      6.8 0.0621 incubat… https://encrypted-tb… ../figures/images/…
+    ## 6 inc.d17     7.4 0.0920 incubat… https://encrypted-tb… ../figures/images/…
+    ## 7 hatch       7.3 0.0617 hatch.p… https://encrypted-tb… ../figures/images/…
+    ## 8 n5          6.9 0.100  chickli… https://encrypted-tb… ../figures/images/…
+    ## 9 n9          6.9 0.0519 chickli… https://encrypted-tb… ../figures/images/…
+
+    brca1 <- brca.pit %>% 
+      ggplot(aes(x = treatment, y = BRCA1, fill = treatment, color = sex)) +
+        geom_boxplot() +
+        theme_B3() +
+      scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+      theme(legend.position = "none") + 
+      labs(x = "increasing time >>", y = "BRCA1") +
+      annotation_custom(control, ymin = 5, ymax = 5.5, xmin = -7.8) +
+      annotation_custom(bldg, ymin = 5, ymax = 5.5, xmin = -5.8) +
+      annotation_custom(lay, ymin = 5, ymax = 5.5, xmin = -3.8) +
+      annotation_custom(inc, ymin = 5, ymax = 5.5, xmin = -1.8) +
+      annotation_custom(inc, ymin = 5, ymax = 5.5, xmin = 0.6) +
+      annotation_custom(inc, ymin = 5, ymax = 5.5, xmin = 2.4) +
+      annotation_custom(hatch, ymin = 5, ymax = 5.5, xmin = 4.4) +
+      annotation_custom(nestling, ymin = 5, ymax = 5.5, xmin = 6.4) +
+      annotation_custom(nestling, ymin = 5, ymax = 5.5, xmin = 8.4) +
+      ylim(5,8) +
+      theme(axis.title.y  = element_text(face = "italic"))
+    brca1
+
+![](../figures/PRL/PRLBRCA1-1.png)
+
+    plot_grid(p6, brca1, nrow = 2)
+
+![](../figures/PRL/PRLBRCA1-2.png)
 
 prolactin manip
 ---------------

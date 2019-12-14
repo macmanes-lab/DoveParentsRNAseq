@@ -1,6 +1,6 @@
 ---
 title: "GO"
-output: md_document
+output: html_document
 ---
 
 # Exploring relationships between genes associated with mating behavior, lactation, parental care, and endocrine process in the hypothalamic-pituitary-gonad axis of reproction
@@ -88,13 +88,13 @@ hyp <- GO_DEGs %>% select(GO, starts_with("hyp"))
 pit <- GO_DEGs %>% select(GO, starts_with("pit"))
 gon <- GO_DEGs %>% select(GO, starts_with("gon"))
 
-kable(hyp,  format = "markdown")  
+kable(hyp)  
 # top GO therms for hyp:
 # endocrine process, regulation of hormone levels,
 # signal release # hormone secretion, # system process
 # hormone transport, cell-cell signaling
 
-kable(pit,  format = "markdown")
+kable(pit)
 # endocrine process, mating behavior, system process,
 # reproductive behavior, mating, regulation of blood pressure
 # signal release, regulation of hormone levels
