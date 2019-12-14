@@ -1,0 +1,3 @@
+"entrezid","padj","logpadj","lfc","tissue","direction","row.names","Name","geneid","gene"
+"NP_001012920.1",0.0037927895727245,2.4210412516657,17.360716938763,"hypothalamus","m.inc.d8",423541,"ARID4A",423541,"ARID4A"
+"XP_015128850.1",1.1853239326135e-09,8.92616294676649,13.6791170685351,"hypothalamus","m.inc.d8",107049632,"LOC107049632",107049632,"LOC107049632"
