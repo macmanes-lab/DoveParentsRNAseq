@@ -7,8 +7,6 @@ output: md_document
 library(tidyverse)
 library(cowplot)
 library(corrr)
-library(ggcorrplot)
-library(pheatmap)
 
 
 source("../R/functions.R")  # load custom functions 
@@ -132,10 +130,6 @@ rplot(x)  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
 x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62")) + 
   labs(subtitletitle = "inc.d9 to inc.d17")
 
-corr <- x
-row.names(corr) <- corr$rowname 
-corr$rowname <- NULL
-ggcorrplot(corr, hc.order = TRUE, outline.col = "white", title = "inc.d9 to inc.d17")
 ```
 
 
@@ -159,10 +153,6 @@ rplot(x)  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
 x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62")) + 
   labs(subtitle = "bldg to lay")
 
-corr <- x
-row.names(corr) <- corr$rowname 
-corr$rowname <- NULL
-ggcorrplot(corr, hc.order = TRUE, outline.col = "white", title = "bldg to lay")
 ```
 
 
@@ -193,10 +183,6 @@ rplot(x) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
 x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62"))  + 
   labs(subtitle = "lay to inc.d3")
 
-corr <- x
-row.names(corr) <- corr$rowname 
-corr$rowname <- NULL
-ggcorrplot(corr, hc.order = TRUE, outline.col = "white", title = "lay to inc.d3")
 ```
 
 ```{r correlations-hatch-n5}
@@ -226,10 +212,5 @@ rplot(x) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
 x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62"))  + 
   labs(subtitle = "hatch to n5")
 
-
-corr <- x
-row.names(corr) <- corr$rowname 
-corr$rowname <- NULL
-ggcorrplot(corr, hc.order = TRUE, outline.col = "white", title = "hatch to n5")
 ```
 

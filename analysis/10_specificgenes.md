@@ -263,16 +263,6 @@ selecting candidate genes counts from the hypothalamus
 
 ![](../figures/specificgenes/correlations-incd9-incd17-2.png)
 
-    corr <- x
-    row.names(corr) <- corr$rowname 
-
-    ## Warning: Setting row names on a tibble is deprecated.
-
-    corr$rowname <- NULL
-    ggcorrplot(corr, hc.order = TRUE, outline.col = "white", title = "inc.d9 to inc.d17")
-
-![](../figures/specificgenes/correlations-incd9-incd17-3.png)
-
     pitcandidates <- c("BMP6", "CGA", "GAL", "XBP1")
     goncandidates <- c("CCND1", "NME1", "PRL", "APLP2", "CYP11A1", "CREBRF", "DBH")
 
@@ -322,16 +312,6 @@ selecting candidate genes counts from the hypothalamus
       labs(subtitle = "bldg to lay")
 
 ![](../figures/specificgenes/correlations-bldg-lay-2.png)
-
-    corr <- x
-    row.names(corr) <- corr$rowname 
-
-    ## Warning: Setting row names on a tibble is deprecated.
-
-    corr$rowname <- NULL
-    ggcorrplot(corr, hc.order = TRUE, outline.col = "white", title = "bldg to lay")
-
-![](../figures/specificgenes/correlations-bldg-lay-3.png)
 
     pitcandidates <- c("PTEN", "CGA", "GAL", "XBP1")
     goncandidates <- c(
@@ -396,16 +376,6 @@ selecting candidate genes counts from the hypothalamus
       labs(subtitle = "lay to inc.d3")
 
 ![](../figures/specificgenes/correlations-lay-incd3-2.png)
-
-    corr <- x
-    row.names(corr) <- corr$rowname 
-
-    ## Warning: Setting row names on a tibble is deprecated.
-
-    corr$rowname <- NULL
-    ggcorrplot(corr, hc.order = TRUE, outline.col = "white", title = "lay to inc.d3")
-
-![](../figures/specificgenes/correlations-lay-incd3-3.png)
 
     pitcandidates <- c( "ATP6AP2", "AVPR2", "CRY2", "RHOA", 
                         "EIF2AK3", "NME1", "PRL", "XBP1",
@@ -575,13 +545,3 @@ selecting candidate genes counts from the hypothalamus
       labs(subtitle = "hatch to n5")
 
 ![](../figures/specificgenes/correlations-hatch-n5-2.png)
-
-    corr <- x
-    row.names(corr) <- corr$rowname 
-
-    ## Warning: Setting row names on a tibble is deprecated.
-
-    corr$rowname <- NULL
-    ggcorrplot(corr, hc.order = TRUE, outline.col = "white", title = "hatch to n5")
-
-![](../figures/specificgenes/correlations-hatch-n5-3.png)
