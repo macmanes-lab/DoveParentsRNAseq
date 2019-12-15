@@ -106,31 +106,6 @@ head(PRLpit)
 write.csv(PRLpit, "../results/10_PRLpit.csv", row.names = F)
 ```
 
-```{r correlations-incd9-incd17}
-pitcandidates <- c("ATP6AP2", "CRY1", "TMF1",
-                   "EIF2AK3", "PRL", "SOCS2", "STAT5B", "XBP1",
-                   "APP", "HDAC4", "NCOA1")
-goncandidates <- c("AVPR2", "BMP6", "CRHR2", "DRD5", "TAC1",
-                   "SOCS2", "ZBTB7B",
-                   "DRD5", "NCOA2", "BRINP1", "NR3C1")
-
-candidates.pit <- selectcandidatevsds(pitcandidates, vsd.pit, colData.pit) %>% select(-sample) %>% filter(treatment %in% c("inc.d9", "inc.d17"))
-candidates.gon <- selectcandidatevsds(goncandidates, vsd.gon, colData.gon) %>% select(-sample) %>% filter(treatment %in% c("inc.d9", "inc.d17"))
-
-candidates.pit <- candidates.pit %>% rename_at(vars(-bird,-sex, -tissue, -treatment), function(x) paste0("pit_", x)) %>% select(-tissue)
-candidates.gon <- candidates.gon %>% rename_at(vars(-bird,-sex, -tissue, -treatment), function(x) paste0("gon_", x)) %>% select(-tissue)
-
-counts <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(-bird, -sex, -treatment)
-cols <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(bird, sex, treatment)
-
-x <- correlate(counts)
-rplot(x)  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-  labs(subtitletitle = "inc.d9 to inc.d17")
-
-x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62")) + 
-  labs(subtitletitle = "inc.d9 to inc.d17")
-
-```
 
 
 ```{r correlations-bldg-lay}
@@ -147,10 +122,10 @@ counts <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(-bi
 cols <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(bird, sex, treatment)
 
 x <- correlate(counts)
-rplot(x)  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+rplot(x, colors = c("skyblue1", "white", "indianred2"))  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   labs(subtitle = "bldg to lay")
 
-x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62")) + 
+x %>% network_plot.cor_df(min_cor = .6 , colors = c("skyblue1", "white", "indianred2")) + 
   labs(subtitle = "bldg to lay")
 
 ```
@@ -176,14 +151,42 @@ counts <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(-bi
 cols <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(bird, sex, treatment)
 
 x <- correlate(counts)
-rplot(x) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+rplot(x, colors = c("skyblue1", "white", "indianred2")) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   labs(subtitle = "lay to inc.d3")
 
-x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62"))  + 
+x %>% network_plot.cor_df(min_cor = .6 , colors = c("skyblue1", "white", "indianred2"))  + 
   labs(subtitle = "lay to inc.d3")
 
 ```
+
+
+```{r correlations-incd9-incd17}
+pitcandidates <- c("ATP6AP2", "CRY1", "TMF1",
+                   "EIF2AK3", "PRL", "SOCS2", "STAT5B", "XBP1",
+                   "APP", "HDAC4", "NCOA1")
+goncandidates <- c("AVPR2", "BMP6", "CRHR2", "DRD5", "TAC1",
+                   "SOCS2", "ZBTB7B",
+                   "DRD5", "NCOA2", "BRINP1", "NR3C1")
+
+candidates.pit <- selectcandidatevsds(pitcandidates, vsd.pit, colData.pit) %>% select(-sample) %>% filter(treatment %in% c("inc.d9", "inc.d17"))
+candidates.gon <- selectcandidatevsds(goncandidates, vsd.gon, colData.gon) %>% select(-sample) %>% filter(treatment %in% c("inc.d9", "inc.d17"))
+
+candidates.pit <- candidates.pit %>% rename_at(vars(-bird,-sex, -tissue, -treatment), function(x) paste0("pit_", x)) %>% select(-tissue)
+candidates.gon <- candidates.gon %>% rename_at(vars(-bird,-sex, -tissue, -treatment), function(x) paste0("gon_", x)) %>% select(-tissue)
+
+counts <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(-bird, -sex, -treatment)
+cols <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(bird, sex, treatment)
+
+x <- correlate(counts)
+rplot(x, colors = c("skyblue1", "white", "indianred2"))  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  labs(subtitletitle = "inc.d9 to inc.d17")
+
+x %>% network_plot.cor_df(min_cor = .6 , colors = c("skyblue1", "white", "indianred2")) + 
+  labs(subtitletitle = "inc.d9 to inc.d17")
+
+```
+
 
 ```{r correlations-hatch-n5}
 pitcandidates <- c( "ATP6AP2", "AVPR2", "CRY2", "RHOA", 
@@ -204,12 +207,11 @@ cols <- full_join(candidates.pit, candidates.hyp) %>% drop_na() %>% select(bird,
 
 
 x <- correlate(counts)
-fashion(x)
-rplot(x) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+rplot(x,  colors = c("skyblue1", "white", "indianred2")) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   labs(subtitle = "hatch to n5")
 
-x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62"))  + 
+x %>% network_plot.cor_df(min_cor = .6, colors = c("skyblue1", "white", "indianred2"))  + 
   labs(subtitle = "hatch to n5")
 
 ```
