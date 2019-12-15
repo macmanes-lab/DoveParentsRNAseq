@@ -179,6 +179,7 @@ counts <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(-bi
 cols <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(bird, sex, treatment)
 
 x <- correlate(counts)
+
 rplot(x, colors = c("skyblue1", "white", "indianred2"))  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   labs(subtitletitle = "inc.d9 to inc.d17")
 
