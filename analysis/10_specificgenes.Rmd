@@ -57,7 +57,7 @@ head(geneinfo)
 ```
 
 ```{r candidategenes, fig.width =5.5, fig.height= 4}
-candidategenes <- c("PRL","PRLR", "GNRHR")
+candidategenes <- c("PRL","PRLR", "CRY1")
 
 candidates.hyp <- selectcandidatevsds(candidategenes, vsd.hyp, colData.hyp)
 candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
@@ -88,9 +88,9 @@ e <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$PRLR, "P
 f <- plotcanddateexpression(candidates.gon, "gonad", candidates.gon$PRLR, "PRLR")
 
 
-g <- plotcanddateexpression(candidates.hyp, "hypothalamus", candidates.hyp$GNRHR, "GNRHR")
-h <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$GNRHR, "GNRHR")
-i <- plotcanddateexpression(candidates.gon, "gonad", candidates.gon$GNRHR, "GNRHR")
+g <- plotcanddateexpression(candidates.hyp, "hypothalamus", candidates.hyp$CRY1, "CRY1")
+h <- plotcanddateexpression(candidates.pit, "pituitary", candidates.pit$CRY1, "CRY1")
+i <- plotcanddateexpression(candidates.gon, "gonad", candidates.gon$CRY1, "CRY1")
 
 abc <- plot_grid(a, d, g, nrow = 1)
 def <- plot_grid(b, e, h, nrow = 1)
@@ -124,33 +124,13 @@ candidates.gon <- candidates.gon %>% rename_at(vars(-bird,-sex, -tissue, -treatm
 
 counts <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(-bird, -sex, -treatment)
 cols <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(bird, sex, treatment)
-dim(counts)
-dim(cols)
-
 
 x <- correlate(counts)
-fashion(x)
 rplot(x)  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   labs(subtitletitle = "inc.d9 to inc.d17")
 
-x %>% network_plot.cor_df(min_cor = .5) + 
+x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62")) + 
   labs(subtitletitle = "inc.d9 to inc.d17")
-
-
-
-cal_z_score <- function(x){
-  (x - mean(x)) / sd(x)
-}
- 
-
-tcounts <- t(counts)
-cols <- cols %>% select(-bird)
-
-data_subset_norm <- t(apply(tcounts, 1, cal_z_score))
-row.names(cols) <- colnames(data_subset_norm)
-
-pheatmap(data_subset_norm,  annotation_col = cols)
-
 
 corr <- x
 row.names(corr) <- corr$rowname 
@@ -171,16 +151,13 @@ candidates.gon <- candidates.gon %>% rename_at(vars(-bird,-sex, -tissue, -treatm
 
 counts <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(-bird, -sex, -treatment)
 cols <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(bird, sex, treatment)
-dim(counts)
-dim(cols)
-
 
 x <- correlate(counts)
-fashion(x)
 rplot(x)  + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   labs(subtitle = "bldg to lay")
 
-x %>% network_plot.cor_df(min_cor = .5) + labs(subtitle = "bldg to lay")
+x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62")) + 
+  labs(subtitle = "bldg to lay")
 
 corr <- x
 row.names(corr) <- corr$rowname 
@@ -207,19 +184,14 @@ candidates.gon <- candidates.gon %>% rename_at(vars(-bird,-sex, -tissue, -treatm
 
 counts <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(-bird, -sex, -treatment)
 cols <- full_join(candidates.pit, candidates.gon) %>% drop_na() %>% select(bird, sex, treatment)
-dim(counts)
-dim(cols)
-
 
 x <- correlate(counts)
-fashion(x)
 rplot(x) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   labs(subtitle = "lay to inc.d3")
 
-x %>% network_plot.cor_df(min_cor = .5)  + 
+x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62"))  + 
   labs(subtitle = "lay to inc.d3")
-
 
 corr <- x
 row.names(corr) <- corr$rowname 
@@ -243,8 +215,6 @@ candidates.hyp <- candidates.hyp %>% rename_at(vars(-bird,-sex, -tissue, -treatm
 
 counts <- full_join(candidates.pit, candidates.hyp) %>% drop_na() %>% select(-bird, -sex, -treatment)
 cols <- full_join(candidates.pit, candidates.hyp) %>% drop_na() %>% select(bird, sex, treatment)
-dim(counts)
-dim(cols)
 
 
 x <- correlate(counts)
@@ -253,7 +223,7 @@ rplot(x) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   labs(subtitle = "hatch to n5")
 
-x %>% network_plot.cor_df(min_cor = .5)  + 
+x %>% network_plot.cor_df(min_cor = .6, colors = c("#67a9cf", "white", "#ef8a62"))  + 
   labs(subtitle = "hatch to n5")
 
 
