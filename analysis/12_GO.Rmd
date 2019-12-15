@@ -45,6 +45,28 @@ allGO <- GO_pathfiles %>%
 head(allGO)
 ```
 
+
+## add candidate genes
+
+```{r}
+candidates <- c(  "PRLR", 
+                 "AVP", "VIP", "AVPR1A", "AVPR1B", "OXT", 
+                 "GNRH1", "NPY",
+                "CRH", "FSHB", "GH", 
+                 "JAK2", "HCRT", "TRH", "TSHB",
+                "LH", "FSH",
+                "MC3R", "MC4R", "MC5R", 
+                "ESR1", "ESR2", "AR", 
+                "STAT5B", "CISH")
+candidates <- as.data.frame(candidates)
+names(candidates)[1] <- "gene"
+candidates$GO <- "candidategenes"
+candidates <- candidates %>% select(GO, gene)
+
+allGO <- rbind(candidates, allGO)
+head(allGO)
+```
+
 ## Differntially expressed genes by stage for each tissue
 
 ```{r DEGs}
@@ -75,11 +97,13 @@ GO_DEGs <- left_join(allGO, DEGs) %>%
          contains("inc.d3.inc.d9"), contains("inc.d9.inc.d17"), contains("inc.d17.hatch"),
          contains("hatch.n5"), contains("n5.n9")) %>%
   filter(GO %in% c("endocrineprocess", "lactation", 
-                   "parentalbehavior", "matingbehavior")) %>% 
+                   "parentalbehavior", "matingbehavior",
+                   "candidategenes")) %>% 
   map(~.x) %>%
   discard(~all(is.na(.x))) %>%
   map_df(~.x)
 ```
+
 
 ## Tissue-specifiic differentially expressed genes 
 
@@ -154,10 +178,15 @@ kable(eight)
 ## Candidate genes
 
 ```{r}
-candidates <- c("AVP", "PRL", "PRLR", "GNIH",  "OXT", "AVPR1A", "AVPR1B",
-                "CRH", "FSHB", "GH", "GNRH1", "GNRH2",
-                "MC4R", "JAK2", "HCRT", "POMC", "TRH", "TSHB",
-                "LH", "FSH")
+candidates <- c( "PRL", "PRLR", 
+                 "AVP", "VIP", "AVPR1A", "AVPR1B", "OXT", 
+                 "GNRH1", "GNRHR", "NPY",
+                "CRH", "FSHB", "GH", 
+                 "JAK2", "HCRT", "POMC", "TRH", "TSHB",
+                "LH", "FSH",
+                "POMC", "MC3R", "MC4R", "MC5R", 
+                "ESR1", "ESR2", "AR", 
+                "STAT5", "CISH")
 candidates <- as.data.frame(candidates)
 names(candidates)[1] <- "gene"
 candidates$GO <- "candidate genes"
