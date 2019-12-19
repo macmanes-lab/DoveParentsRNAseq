@@ -1,0 +1,83 @@
+---
+title: "forrechelle"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggimage)
+library(cowplot)
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r input}
+
+candidategenes <- c( "GH", "NR3C2", "PRLR", "PRL")
+timepoints <- c("lay" , "inc.d9", "hatch", "n9")
+hormones <- c("PRL", "CORT")
+  
+```
+
+
+```{r readfile}
+
+geneids <- read_csv("..//metadata/00_geneinfo.csv")
+
+datapath <- "../results/"   # path to the data
+datafiles <- dir(datapath, pattern = "04_vsd*") # get file names
+datapathfile <- paste0(datapath, datafiles)
+
+df <- datapathfile %>%
+  setNames(nm = .) %>%
+  map_df(~read_csv(.x, col_types = cols(), col_names = T), .id = "filename") %>% 
+  mutate(tissue = sapply(strsplit(as.character(filename),'../results/04_vsd_'), "[", 2)) %>% 
+  mutate(tissue = sapply(strsplit(as.character(tissue),'.csv'), "[", 1))  %>% 
+  left_join(geneids) %>%
+  select(tissue, X1, Name, everything()) %>% select(-filename, -geneid, - entrezid, - row.names) 
+head(df)
+  
+df2 <-  df  %>%
+  filter(Name %in% candidategenes) %>%
+  pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
+               names_to = "sample", values_to = "vsd") %>%
+   mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
+   mutate(treatment = sapply(strsplit(as.character(sample),'_'), "[", 4))  %>%
+   mutate(treatment = sapply(strsplit(as.character(treatment),'.NYNO'), "[", 1)) %>%
+  mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
+  filter(treatment %in% timepoints) %>%
+  select(bird, sex, treatment, tissue, Name, vsd) %>%
+  rename(gene = Name)
+head(df2)
+
+df3 <- df2 %>% 
+  mutate(tissue = fct_relevel(tissue,  "hyp", "pit", "gon")) %>% 
+  mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
+  group_by(sex, treatment, tissue, gene)  %>% 
+  summarize(m = mean(vsd, na.rm = T), se = sd(vsd,  na.rm = T)/sqrt(length(vsd))) %>%
+  mutate(image = "../figures/images/DoveParentsRNAseq_note.png")
+head(df3)  
+  
+
+for (i in levels(df3$tissue)) {
+  
+p <-  df3 %>%
+  filter(tissue == i) %>%
+  ggplot(aes(x = treatment, y = m)) +
+  geom_image(aes(image=image, color = gene), size=0.1)  +
+
+  scale_alpha_manual(values = c(0.5, 1)) +
+  labs(subtitle = i, y = "average expression", x = "parental stage")
+
+pimage <- axis_canvas(p, axis = 'x') + 
+  draw_image("../figures/images/icons/DoveParentsRNAseq_lay.png", x = 0.5, scale = 1 ) +
+  draw_image("../figures/images/icons/DoveParentsRNAseq_incubation.png", x = 1.5, scale = 1) +
+  draw_image("../figures/images/icons/DoveParentsRNAseq_hatch.png", x = 2.5, scale = 1) +
+  draw_image("../figures/images/icons/DoveParentsRNAseq_chicklings.png", x = 3.5, scale = 1)
+  
+p2 <- ggdraw(insert_xaxis_grob(p, pimage, position = "bottom"))
+plot(p2)
+  
+}
+```
+

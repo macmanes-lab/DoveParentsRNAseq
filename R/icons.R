@@ -2,6 +2,7 @@
 library(tidyverse)
 library(png)
 library(grid)
+library(cowplot)
 
 birds <- data.frame(iconpath=list.files("../figures/images/icons", full.names = T), stringsAsFactors = F)
 birds$icons <- sapply(strsplit(as.character(birds$iconpath),'../figures/images/icons/DoveParentsRNAseq_'), "[", 2)
@@ -44,4 +45,6 @@ early <-  ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAse
 prolong <-  ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_timeline-prolong.png"), scale = 1)
 extend <-  ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_timeline-delay.png"), scale = 1)
 
+# music notes
 
+note <- ggdraw() + draw_image(png::readPNG("../figures/images/DoveParentsRNAseq_note.png"), scale = 1)
