@@ -46,14 +46,12 @@ countData <- kallistodata %>%
   arrange(gene)
 head(countData)
 
+
 countData <- as.data.frame(countData)
 row.names(countData) <- countData$gene ## make gene the row name
 countData[1] <- NULL ## make gene the row name
 countData <- round(countData) #round all value to nearest 1s place
-
-# replace dashes with periods (to make deseq happy)
-colnames(countData) <- gsub('-', '.', colnames(countData))
-head(countData,4)
+head(countData)
 
 # print tolal num of genes and samples
 dim(countData)
@@ -123,6 +121,7 @@ samples <- colData
 birds <- colData %>%
   select(bird, sex, treatment) %>%
   distinct()
+birds
 
 ```
 
