@@ -80,7 +80,7 @@ inc.d9.m.inc.d8 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d8", "inc.
 ```
 
 ```{r  eval=T}
-hatch.m.inc.d8 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d8", "hatch", "pituitary")
+hatch.m.inc.d8 <- createDEGdfsave(dds.pituitary, "treatment", "hatch", "m.inc.d8", "pituitary")
 ```
 
 ```{r  eval=T}
@@ -88,7 +88,7 @@ inc.d17.prolong <- createDEGdfsave(dds.pituitary, "treatment", "prolong", "inc.d
 ```
 
 ```{r  eval=T}
-hatch.prolong <- createDEGdfsave(dds.pituitary, "treatment", "prolong", "hatch", "pituitary")
+hatch.prolong <- createDEGdfsave(dds.pituitary, "treatment", "hatch", "prolong", "pituitary")
 ```
 
 ```{r  eval=T}
@@ -96,48 +96,41 @@ hatch.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "hatch", "
 ```
 
 ```{r  eval=T}
-n5.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "n5", "pituitary")
+n5.extend <- createDEGdfsave(dds.pituitary, "treatment", "n5", "extend", "pituitary")
 ```
 
 
 
 ```{r volcanos-pit}
-a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano) 
+a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano)  
 b <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano) 
 c <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) 
 d <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano) 
 
-e <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano)  
-f <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano)  
-g <- plot.volcano(hatch.prolong , "treatment",  "prolong", "hatch", colorsvolcano)  
+e <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano) 
+f <- plot.volcano(hatch.m.inc.d8 , "treatment",    "hatch", "m.inc.d8"  , colorsvolcano)  
 
+g <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano)  
+h <- plot.volcano(hatch.prolong , "treatment",  "hatch", "prolong", colorsvolcano) 
 
-h <- plot.volcano(hatch.m.inc.d8 , "treatment",    "m.inc.d8", "hatch"  , colorsvolcano)  
 i <- plot.volcano(hatch.extend , "treatment",  "extend", "hatch" , colorsvolcano)  
 j <- plot.volcano(n5.extend , "treatment",  "extend", "n5", colorsvolcano)  
 
-
-remove <- plot_grid(a +  theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
-                       labs(y = "pituitary \n -log10(p)"),
-          b + theme(axis.title = element_blank(), axis.text = element_blank()) ,
-          c + theme(axis.title = element_blank(), axis.text = element_blank()) ,
-          d + theme(axis.title = element_blank(), axis.text = element_blank()) , 
+remove <- plot_grid(a + labs(y = "pituitary -log10(p-value)"),
+          b + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          c + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) ,
+          d + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
           nrow = 1, rel_widths = c(1.2,1,1,1),
           labels = c("a","b","c","d"), label_size = 9)
 remove
 
-manipinc <- plot_grid(e +  theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
-                       labs(y = "pituitary \n -log10(p)"),
-          f + theme(axis.title = element_blank(), axis.text = element_blank()) ,
-          g + theme(axis.title = element_blank(), axis.text = element_blank()) ,
-          nrow = 1, rel_widths = c(1.2,1,1),
-          labels = c("e","f","g"," "), label_size = 9)
-
-maniphatch <- plot_grid( h +  labs(y = "pituitary \n -log10(p)"), 
+timing <- plot_grid(e +  labs(y = "pituitary -log10(p-value)"),
+          f + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          g + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+          h + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
           i + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
           j + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
-          nrow = 1, rel_widths = c(1.2,1,1),
-          labels = c("h","i","j"," "), label_size = 9)
-
-plot_grid(manipinc, maniphatch, nrow = 2)
+          nrow = 1, rel_widths = c(1.2,1,1,1,1,1),
+          labels = c("a","b","c", "d","e","f"), label_size = 9)
+timing
 ```
