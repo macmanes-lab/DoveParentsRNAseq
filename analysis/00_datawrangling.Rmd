@@ -14,32 +14,49 @@ library(tidyverse)
 
 ```{r countData}
 # import count data, set rows at entreziz
-countData <- read.table("../results/kallistocounts.txt", 
+kallistodata <- read.table("../results/kallistocounts.txt", 
                         sep = ",", row.names = NULL)
 
-## set row names as entrezid for deseq2
-row.names(countData) <- countData$entrezid
+## save gene information
+geneinfo <- kallistodata %>%
+  select(row.names, Name, geneid, entrezid)
+head(geneinfo)
+
+
+# check for genes that have multple transcripts expressed
+isoforms <- kallistodata %>%
+  group_by(Name) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n), Name) %>%
+  filter(n > 1)
+head(isoforms)
+
+# for example, this gene has 
+geneinfo %>% filter(Name == "CEND1")
+
+# aggregate transcript counts to gene counts
+countData <- kallistodata %>% 
+  select(-row.names, -geneid, -entrezid) %>% 
+  rename(gene = Name) %>%
+  pivot_longer(-gene, names_to = "samples", values_to = "counts") %>%  
+  pivot_wider(
+    names_from = samples, 
+    values_from = counts,
+    values_fn = list(counts = sum))  %>% 
+  arrange(gene)
+head(countData)
+
+countData <- as.data.frame(countData)
+row.names(countData) <- countData$gene ## make gene the row name
+countData[1] <- NULL ## make gene the row name
+countData <- round(countData) #round all value to nearest 1s place
 
 # replace dashes with periods (to make deseq happy)
 colnames(countData) <- gsub('-', '.', colnames(countData))
-
-# create df with gene info and remove this from countData
-geneinfo <- countData %>%
-  select(row.names, Name, geneid, entrezid)
-head(geneinfo)
-countData <- countData %>%
-  select (-c(row.names, Name, geneid, entrezid))
-
-# because DESeq require integers
-countData <- round(countData)
+head(countData,4)
 
 # print tolal num of genes and samples
 dim(countData)
-
-# make a tibble for the sole purpose of previewing this huge df
-countDataTibble <- as.tbl(countData)
-print(countDataTibble, n_extra = 0)
-#rm(countDataTibble)
 ```
 
 ## wrangle colData 
@@ -165,6 +182,8 @@ write.csv(colData_characterization, "../metadata/00_colData_characterization.csv
 write.csv(countData_characterization, "../results/00_countData_characterization.csv", row.names = TRUE) 
 
 write.csv(geneinfo, "../metadata/00_geneinfo.csv", row.names = TRUE)
+
+write.csv(isoforms, "../results/00_geneswithisoformss.csv", row.names = T)
 ```
 
 
