@@ -1,6 +1,6 @@
 ---
 title: "06_DESeqALL"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include = FALSE}
@@ -44,20 +44,59 @@ colData$sextissue <- as.factor(paste(colData$sex, colData$tissue, sep = "_"))
 colData$treatment <- factor(colData$treatment, levels = alllevels3)
 colData$tissue <- factor(colData$tissue, levels = tissuelevels)
 levels(colData$treatment)
-```
 
+head(countData)
+```
 
 
 
 ```{r pitdfs, eval=T}
 dds.pituitary <- subsetDESeq2(colData,  countData, c("female_pituitary","male_pituitary"))
+
 ```
 
 ```{r pitvsd, eval=T}
 vsd <- as.data.frame(assay(vst(dds.pituitary, blind=FALSE)))
 write.csv(vsd, "../results/06_pitallvsd.csv")
+
 ```
 
+
+```{r eval=T}
+control.bldg <- createDEGdfsave(dds.pituitary, "treatment", "bldg", "control", "pituitary")
+```
+
+```{r  eval=T}
+bldg.lay <- createDEGdfsave(dds.pituitary, "treatment", "lay", "bldg", "pituitary")
+```
+
+```{r  eval=T}
+lay.inc.d3 <- createDEGdfsave(dds.pituitary, "treatment", "inc.d3", "lay", "pituitary") 
+```
+
+```{r  eval=T}
+inc.d3.inc.d9 <- createDEGdfsave(dds.pituitary,  "treatment", "inc.d9", "inc.d3", "pituitary") 
+```
+
+```{r  eval=T}
+inc.d9.inc.d17 <- createDEGdfsave(dds.pituitary, "treatment", "inc.d17", "inc.d9", "pituitary")
+```
+
+```{r  eval=T}
+inc.d17.hatch <- createDEGdfsave(dds.pituitary, "treatment", "hatch", "inc.d17", "pituitary") 
+```
+
+```{r  eval=T}
+hatch.n5 <- createDEGdfsave(dds.pituitary, "treatment", "n5", "hatch", "pituitary") 
+```
+
+```{r  eval=T}
+n5.n9 <- createDEGdfsave(dds.pituitary, "treatment", "n9", "n5", "pituitary") 
+```
+
+```{r eval=T}
+sex <- createDEGdfsave(dds.pituitary, "sex", "male", "female", "pituitary") 
+```
 
 ```{r  eval=T}
 inc.d3.m.inc.d3 <- createDEGdfsave(dds.pituitary, "treatment", "m.inc.d3", "inc.d3", "pituitary")
@@ -99,9 +138,39 @@ hatch.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "hatch", "
 n5.extend <- createDEGdfsave(dds.pituitary, "treatment", "n5", "extend", "pituitary")
 ```
 
+```{r  eval=T}
+sex <- createDEGdfsave(dds.pituitary, "sex", "male", "female", "pituitary")
+```
+
+```{r volcanos-pit-char}
+a <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
+b <- plot.volcano(bldg.lay, "treatment", "lay", "bldg", colorsvolcano)
+c <- plot.volcano(lay.inc.d3, "treatment", "inc.d3", "lay", colorsvolcano) 
+d <- plot.volcano(inc.d3.inc.d9, "treatment", "inc.d9", "inc.d3", colorsvolcano) 
+e <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcano)
+f <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
+g <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
+h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
+
+pituitary <- plot_grid(a + 
+                       theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
+                       labs(y = "pituitary \n -log10(p)"),
+          b + theme(axis.title = element_blank(), axis.text = element_blank()),
+          c + theme(axis.title = element_blank(), axis.text = element_blank()),
+          d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          e + theme(axis.title = element_blank(), axis.text = element_blank()),
+          f + theme(axis.title = element_blank(), axis.text = element_blank()),
+          g + theme(axis.title = element_blank(), axis.text = element_blank()),
+          h + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          nrow = 1,  rel_widths = c(1.75,1,1,1,1,1,1,1,1))
+pituitary
+
+plot.volcano(sex, "sex", "male", "female", colorsvolcano) 
+```
 
 
-```{r volcanos-pit}
+
+```{r volcanos-pit-manip}
 a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano)  
 b <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano) 
 c <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) 
@@ -109,7 +178,6 @@ d <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano)
 
 e <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano) 
 f <- plot.volcano(hatch.m.inc.d8 , "treatment",    "hatch", "m.inc.d8"  , colorsvolcano)  
-
 g <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano)  
 h <- plot.volcano(hatch.prolong , "treatment",  "hatch", "prolong", colorsvolcano) 
 

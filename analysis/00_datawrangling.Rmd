@@ -16,10 +16,11 @@ library(tidyverse)
 # import count data, set rows at entreziz
 kallistodata <- read.table("../results/kallistocounts.txt", 
                         sep = ",", row.names = NULL)
+head(kallistodata)
 
 ## save gene information
 geneinfo <- kallistodata %>%
-  select(row.names, Name, geneid, entrezid)
+  select(Name, geneid, entrezid)
 head(geneinfo)
 
 
@@ -32,7 +33,7 @@ isoforms <- kallistodata %>%
 head(isoforms)
 
 # for example, this gene has 
-geneinfo %>% filter(Name == "CEND1")
+geneinfo %>% filter(Name == "GRIN1")
 
 # aggregate transcript counts to gene counts
 countData <- kallistodata %>% 
@@ -43,9 +44,9 @@ countData <- kallistodata %>%
     names_from = samples, 
     values_from = counts,
     values_fn = list(counts = sum))  %>% 
-  arrange(gene)
+  arrange(gene) %>% 
+  filter(gene != "")
 head(countData)
-
 
 countData <- as.data.frame(countData)
 row.names(countData) <- countData$gene ## make gene the row name
