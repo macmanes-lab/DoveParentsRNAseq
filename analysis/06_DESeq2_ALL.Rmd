@@ -44,8 +44,6 @@ colData$sextissue <- as.factor(paste(colData$sex, colData$tissue, sep = "_"))
 colData$treatment <- factor(colData$treatment, levels = alllevels3)
 colData$tissue <- factor(colData$tissue, levels = tissuelevels)
 levels(colData$treatment)
-
-head(countData)
 ```
 
 
@@ -138,67 +136,69 @@ hatch.extend <- createDEGdfsave(dds.pituitary, "treatment", "extend", "hatch", "
 n5.extend <- createDEGdfsave(dds.pituitary, "treatment", "n5", "extend", "pituitary")
 ```
 
-```{r  eval=T}
-sex <- createDEGdfsave(dds.pituitary, "sex", "male", "female", "pituitary")
-```
+```{r volcanos-pituitary, fig.height= 6, fig.width=6}
+a <- plot.volcano(sex, "sex", "male", "female", colorsvolcano)
+b <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
+c <- plot.volcano(bldg.lay, "treatment", "lay", "bldg", colorsvolcano)
+d <- plot.volcano(lay.inc.d3, "treatment", "inc.d3", "lay", colorsvolcano) 
+e <- plot.volcano(inc.d3.inc.d9, "treatment", "inc.d9", "inc.d3", colorsvolcano) 
+f <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcano)
+g <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
+h <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
+i <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
 
-```{r volcanos-pit-char}
-a <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
-b <- plot.volcano(bldg.lay, "treatment", "lay", "bldg", colorsvolcano)
-c <- plot.volcano(lay.inc.d3, "treatment", "inc.d3", "lay", colorsvolcano) 
-d <- plot.volcano(inc.d3.inc.d9, "treatment", "inc.d9", "inc.d3", colorsvolcano) 
-e <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcano)
-f <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
-g <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
-h <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
+j <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano)  
+k <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano) 
+l <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) 
+m <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano) 
 
-pituitary <- plot_grid(a + 
-                       theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
-                       labs(y = "pituitary \n -log10(p)"),
-          b + theme(axis.title = element_blank(), axis.text = element_blank()),
-          c + theme(axis.title = element_blank(), axis.text = element_blank()),
+n <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano) 
+o <- plot.volcano(hatch.m.inc.d8 , "treatment",    "hatch", "m.inc.d8"  , colorsvolcano)  
+p <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano)  
+q <- plot.volcano(hatch.prolong , "treatment",  "hatch", "prolong", colorsvolcano) 
+r <- plot.volcano(hatch.extend , "treatment",  "extend", "hatch" , colorsvolcano)  
+s <- plot.volcano(n5.extend , "treatment",  "extend", "n5", colorsvolcano)  
+
+char <- plot_grid(
+          b + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
+          c + theme(axis.title = element_blank(), axis.text = element_blank()) ,
           d + theme(axis.title = element_blank(), axis.text = element_blank()), 
-          e + theme(axis.title = element_blank(), axis.text = element_blank()),
           f + theme(axis.title = element_blank(), axis.text = element_blank()),
           g + theme(axis.title = element_blank(), axis.text = element_blank()),
-          h + theme(axis.title = element_blank(), axis.text = element_blank()), 
-          nrow = 1,  rel_widths = c(1.75,1,1,1,1,1,1,1,1))
-pituitary
+          h + theme(axis.title = element_blank(), axis.text = element_blank()),
+          i + theme(axis.title = element_blank(), axis.text = element_blank()),
+          nrow = 1, rel_widths = c(1.1,1,1,1,1,1,1))
 
-plot.volcano(sex, "sex", "male", "female", colorsvolcano) 
-```
+remove <- plot_grid( 
+          a + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
+          NULL, 
+          j + theme(axis.title = element_blank(), axis.text = element_blank()) , 
+          k + theme(axis.title = element_blank(), axis.text = element_blank()) , 
+          l + theme(axis.title = element_blank(), axis.text = element_blank()) , 
+          m + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          NULL, nrow = 1, rel_widths = c(1.1, 0.5, 1,1,1,1,0.5))
 
 
+timing <- plot_grid( 
+          n , 
+          o + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
+          NULL,
+          p + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
+          q + theme(axis.title.y = element_blank(), axis.text.y = element_blank())+
+            labs(x = "Log fold change, pituitary") , 
+           NULL,
+          r + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
+          s + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+            nrow = 1, rel_widths = c(1.1,1, 0.5, 1,1,0.5, 1,1)) 
 
-```{r volcanos-pit-manip}
-a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano)  
-b <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano) 
-c <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) 
-d <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano) 
+charicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-char.png")
+charicons <-  grid::rasterGrob(charicons, interpolate=TRUE)
 
-e <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano) 
-f <- plot.volcano(hatch.m.inc.d8 , "treatment",    "hatch", "m.inc.d8"  , colorsvolcano)  
-g <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano)  
-h <- plot.volcano(hatch.prolong , "treatment",  "hatch", "prolong", colorsvolcano) 
+removeicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-removal.png")
+removeicons <-  grid::rasterGrob(removeicons, interpolate=TRUE)
 
-i <- plot.volcano(hatch.extend , "treatment",  "extend", "hatch" , colorsvolcano)  
-j <- plot.volcano(n5.extend , "treatment",  "extend", "n5", colorsvolcano)  
+timingicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-timing.png")
+timingicons <-  grid::rasterGrob(timingicons, interpolate=TRUE)
 
-remove <- plot_grid(a + labs(y = "pituitary -log10(p-value)"),
-          b + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          c + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) ,
-          d + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
-          nrow = 1, rel_widths = c(1.2,1,1,1),
-          labels = c("a","b","c","d"), label_size = 9)
-remove
-
-timing <- plot_grid(e +  labs(y = "pituitary -log10(p-value)"),
-          f + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          g + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          h + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          i + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
-          j + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
-          nrow = 1, rel_widths = c(1.2,1,1,1,1,1),
-          labels = c("a","b","c", "d","e","f"), label_size = 9)
-timing
+plot_grid(charicons, char, removeicons, remove, timingicons, timing, nrow = 6, rel_heights = c(0.9,1,0.9,1,0.9,1.2))
 ```

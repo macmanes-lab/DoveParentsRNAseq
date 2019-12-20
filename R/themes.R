@@ -168,8 +168,8 @@ colorsvolcano <-  c("control" = "#F8766D",
                     "prolong" = "#ae017e" , 
                      "extend" = "#7a0177",
                     
-                    "male" = "#00bfc4",
-                    "female" = "#f8766d",
+                    "male" = "#525252",
+                    "female" = "#969696",
                     
                     "NS" = "#bdbdbd")
 
