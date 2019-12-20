@@ -28,8 +28,12 @@ head(geneinfo)
 isoforms <- kallistodata %>%
   group_by(Name) %>%
   summarize(n = n()) %>%
-  arrange(desc(n), Name) %>%
-  filter(n > 1)
+  filter(n > 1) %>%
+  group_by(n) %>% 
+  summarize(genes = str_c(Name, collapse = ", ")) %>%
+  arrange(desc(n)) %>%
+  rename("n(isoforms)" = "n") %>% 
+  mutate("n(counts)" = str_count(genes, ",") + 1)
 head(isoforms)
 
 # for example, this gene has 
