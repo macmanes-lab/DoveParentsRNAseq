@@ -774,7 +774,7 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
     ggplot(aes(x = lfc, y = logpadj)) + 
     geom_point(aes(color = direction, shape = tissue), size = 1, 
                alpha = 0.75, na.rm = T) + 
-    mytheme() +
+    theme_B3() +
     scale_color_manual(values = mycolors,
                        name = " ",
                        drop = FALSE,
