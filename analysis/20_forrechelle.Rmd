@@ -8,37 +8,39 @@ library(tidyverse)
 library(ggimage)
 library(cowplot)
 
-knitr::opts_chunk$set(echo = TRUE)
+source("../R/themes.R")
+
+knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 ```
 
 ```{r input}
 
-candidategenes <- c( "GH", "NR3C2", "PRLR", "PRL")
+candidategenes <- c( "NR3C1", "NR3C2", "PRLR", "PRL")
 timepoints <- c("lay" , "inc.d9", "hatch", "n9")
 hormones <- c("PRL", "CORT")
   
 ```
 
 
-```{r readfile}
-
-geneids <- read_csv("..//metadata/00_geneinfo.csv")
+```{r rechelle}
 
 datapath <- "../results/"   # path to the data
-datafiles <- dir(datapath, pattern = "04_vsd*") # get file names
+datafiles <- dir(datapath, pattern = "*allvsd.csv") # get file names
 datapathfile <- paste0(datapath, datafiles)
 
 df <- datapathfile %>%
   setNames(nm = .) %>%
   map_df(~read_csv(.x, col_types = cols(), col_names = T), .id = "filename") %>% 
-  mutate(tissue = sapply(strsplit(as.character(filename),'../results/04_vsd_'), "[", 2)) %>% 
-  mutate(tissue = sapply(strsplit(as.character(tissue),'.csv'), "[", 1))  %>% 
-  left_join(geneids) %>%
-  select(tissue, X1, Name, everything()) %>% select(-filename, -geneid, - entrezid, - row.names) 
+  mutate(tissue = sapply(strsplit(as.character(filename),'../results/06_'), "[", 2)) %>% 
+  mutate(tissue = sapply(strsplit(as.character(tissue),'allvsd.csv'), "[", 1))  %>% 
+  select(tissue, X1, everything()) 
+head(df)
+
+df <- df %>% filter(tissue != "gon")
 head(df)
   
 df2 <-  df  %>%
-  filter(Name %in% candidategenes) %>%
+  filter(X1 %in% candidategenes) %>%
   pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
                names_to = "sample", values_to = "vsd") %>%
    mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
@@ -46,8 +48,9 @@ df2 <-  df  %>%
    mutate(treatment = sapply(strsplit(as.character(treatment),'.NYNO'), "[", 1)) %>%
   mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
   filter(treatment %in% timepoints) %>%
-  select(bird, sex, treatment, tissue, Name, vsd) %>%
-  rename(gene = Name)
+  select(bird, sex, treatment, tissue, X1, vsd) %>%
+  rename(gene = X1) %>%
+  drop_na()
 head(df2)
 
 df3 <- df2 %>% 
@@ -79,5 +82,24 @@ p2 <- ggdraw(insert_xaxis_grob(p, pimage, position = "bottom"))
 plot(p2)
   
 }
+
+
+for (i in levels(df3$tissue)) {
+  
+  p <-  df3 %>%
+    filter(tissue == i) %>%
+    ggplot(aes(x = treatment, y = m)) +
+    geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
+    geom_point(size = 1, aes(color = gene)) +
+    geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs(subtitle = i, y = "average expression", x = "parental stage") +
+    facet_wrap(~sex, nrow = 1) +
+    theme_B3()
+  plot(p)
+  
+}
+
+
 ```
 
