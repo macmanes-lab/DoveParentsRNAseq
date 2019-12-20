@@ -7,20 +7,22 @@ output: md_document
 library(tidyverse)
 library(ggimage)
 library(cowplot)
+library(forcats)
+library(corrr)
 
 source("../R/themes.R")
+source("../R/functions.R")
 
 knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 ```
 
 ```{r input}
 
-candidategenes <- c( "NR3C1", "NR3C2", "PRLR", "PRL")
+candidategenes <- c( "NR3C1", "NR3C2", "PRLR", "PRL", "POMC" ,"MC4R", "VIP", "BRCA1")
 timepoints <- c("lay" , "inc.d9", "hatch", "n9")
 hormones <- c("PRL", "CORT")
   
 ```
-
 
 ```{r rechelle}
 
@@ -36,8 +38,7 @@ df <- datapathfile %>%
   select(tissue, X1, everything()) 
 head(df)
 
-df <- df %>% filter(tissue != "gon")
-head(df)
+genes <- as.data.frame(df$X1)
   
 df2 <-  df  %>%
   filter(X1 %in% candidategenes) %>%
@@ -49,40 +50,24 @@ df2 <-  df  %>%
   mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
   filter(treatment %in% timepoints) %>%
   select(bird, sex, treatment, tissue, X1, vsd) %>%
+  mutate(tissue = fct_recode(tissue, "hypothalamus" = "hyp",
+                    "pituitary" = "pit",
+                    "gonads" = "gon"
+                    )) %>%
   rename(gene = X1) %>%
-  drop_na()
+  drop_na() %>%
+  droplevels()
 head(df2)
 
+df2$treatment <- factor(df2$treatment, levels = alllevels)
+
+
 df3 <- df2 %>% 
-  mutate(tissue = fct_relevel(tissue,  "hyp", "pit", "gon")) %>% 
   mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
   group_by(sex, treatment, tissue, gene)  %>% 
   summarize(m = mean(vsd, na.rm = T), se = sd(vsd,  na.rm = T)/sqrt(length(vsd))) %>%
   mutate(image = "../figures/images/DoveParentsRNAseq_note.png")
 head(df3)  
-  
-
-for (i in levels(df3$tissue)) {
-  
-p <-  df3 %>%
-  filter(tissue == i) %>%
-  ggplot(aes(x = treatment, y = m)) +
-  geom_image(aes(image=image, color = gene), size=0.1)  +
-
-  scale_alpha_manual(values = c(0.5, 1)) +
-  labs(subtitle = i, y = "average expression", x = "parental stage")
-
-pimage <- axis_canvas(p, axis = 'x') + 
-  draw_image("../figures/images/icons/DoveParentsRNAseq_lay.png", x = 0.5, scale = 1 ) +
-  draw_image("../figures/images/icons/DoveParentsRNAseq_incubation.png", x = 1.5, scale = 1) +
-  draw_image("../figures/images/icons/DoveParentsRNAseq_hatch.png", x = 2.5, scale = 1) +
-  draw_image("../figures/images/icons/DoveParentsRNAseq_chicklings.png", x = 3.5, scale = 1)
-  
-p2 <- ggdraw(insert_xaxis_grob(p, pimage, position = "bottom"))
-plot(p2)
-  
-}
-
 
 for (i in levels(df3$tissue)) {
   
@@ -96,10 +81,50 @@ for (i in levels(df3$tissue)) {
     labs(subtitle = i, y = "average expression", x = "parental stage") +
     facet_wrap(~sex, nrow = 1) +
     theme_B3()
-  plot(p)
+ print(p)
+}
+
+for (i in levels(df3$tissue)) {
   
+  p <-  df2 %>%
+    filter(tissue == i) %>%
+    ggplot(aes(x = treatment, y = vsd, fill = gene, color = sex)) +
+    geom_boxplot() +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs(subtitle = i, y = "expression", x = "parental stage") +
+    facet_wrap(~gene, scales = "free_y") +
+    theme_B3() +
+    scale_color_manual(values = sexcolors)
+ print(p)
 }
 
 
+dft <- df %>% filter(X1 %in% candidategenes) %>%
+  unite("tissuegene", tissue:X1, remove = FALSE) %>%
+  select(-tissue, -`X1`, -filename)  %>%
+  pivot_longer(-tissuegene, names_to = "samples", values_to = "vsd") %>%
+  drop_na() %>%
+  mutate("bird" = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
+  select(bird,tissuegene,vsd) %>%
+  pivot_wider(id_cols = bird, names_from = tissuegene, values_from = vsd)
+
+dft <- as.data.frame(dft)
+row.names(dft) <- dft$bird
+dft$bird <- NULL
+
+x <- correlate(dft)
+
+
+x %>% network_plot.cor_df(min_cor = .2)
+
+x %>%
+  focus(pit_PRL) %>%
+  mutate(rowname = reorder(rowname, pit_PRL)) %>%
+  ggplot(aes(rowname, pit_PRL)) +
+    geom_col() + coord_flip() +
+  labs(y = "corrleation with pituitiary PRL", x = "candidate genes by tissue") +
+  theme_B3() + 
+  theme(legend.position = "none")
 ```
+
 
