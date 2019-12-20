@@ -122,7 +122,8 @@ All data, characterization and manipulations
 
 ![](../figures/pca/pca-3.png)
 
-    d <- fviz_screeplot(mypca, addlabels = TRUE, ylim = c(0, 50),  ncp = 5) + labs(title = NULL, y = "Variance") + theme_B3() 
+    d <- fviz_screeplot(mypca, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
+      labs(title = NULL, y = "PC Variance") + theme_B3() 
     e <- fviz_contrib(mypca, choice = "var", axes = 1, top = 5)  + labs(title = NULL, subtitle = "PC1", x = NULL) + 
               theme_B3() + theme(axis.text.x = element_text(angle = 55, hjust = 1))
     f <- fviz_contrib(mypca, choice = "var", axes = 2, top = 5)  + labs(title = NULL, subtitle = "PC2", y = NULL, x = NULL) + 
@@ -134,12 +135,14 @@ All data, characterization and manipulations
           labs(x = "PC1", y = "PC2", title =  NULL) +
           theme( axis.text = element_blank()) 
 
+    legend <- png::readPNG("../figures/images/DoveParentsRNAseq_legend.png")
+    legend <-  grid::rasterGrob(legend, interpolate=TRUE)
 
 
     abc <- plot_grid(a,b, c, nrow =  1,  labels = c("d", "e", "f"), label_size = 12)
     defg <- plot_grid(d,e,f,g, nrow = 1, rel_widths = c(1, 0.55, 0.45, 1), labels = c("h", "i", "j", "k" ), label_size = 12)
-    dg <- plot_grid(d,g, NULL, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
-    plot_grid(abc, defg, nrow = 2)
+    dg <- plot_grid(d,g, legend, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
+    plot_grid(abc, dg, nrow = 2)
 
 ![](../figures/pca/pca-4.png)
 
