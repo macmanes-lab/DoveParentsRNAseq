@@ -18,14 +18,12 @@ knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 
 ```{r input}
 
-candidategenes <- c(  "PRLR", "PRL" )
+candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH" )
 timepoints <- charlevels
-hormones <- c("PRL", "CORT")
-  
+
 ```
 
-```{r rechelle}
-
+```{r data}
 datapath <- "../results/"   # path to the data
 datafiles <- dir(datapath, pattern = "*allvsd.csv") # get file names
 datapathfile <- paste0(datapath, datafiles)
@@ -36,8 +34,9 @@ df <- datapathfile %>%
   mutate(tissue = sapply(strsplit(as.character(filename),'../results/06_'), "[", 2)) %>% 
   mutate(tissue = sapply(strsplit(as.character(tissue),'allvsd.csv'), "[", 1))  %>% 
   select(tissue, X1, everything()) 
-head(df)
+```
 
+```{r forrechelle}
 # check which genese appear in multiple tissue
 tissuespecificity <- df %>%
   group_by(X1) %>%
@@ -49,9 +48,7 @@ tissuespecificity <- df %>%
   arrange(desc(n))
 tissuespecificity
 write.csv(tissuespecificity, "../results/tissuespecificity.csv")
-```
 
-```{r}
 genes <- as.data.frame(df$X1)
   
 df2 <-  df  %>%
@@ -74,6 +71,7 @@ df2 <-  df  %>%
 head(df2)
 
 df2$treatment <- factor(df2$treatment, levels = alllevels)
+df2$tissue <- factor(df2$tissue, levels = tissuelevels)
 
 df3 <- df2 %>% 
   mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
@@ -97,19 +95,36 @@ for (i in levels(df3$tissue)) {
  print(p)
 }
 
-for (i in levels(df3$tissue)) {
-  
+
+df3 %>%
+    ggplot(aes(x = treatment, y = m)) +
+    geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
+    geom_point(size = 1, aes(color = gene)) +
+    geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs( y = "average expression", x = "parental stage") +
+    facet_grid(sex ~ tissue, scales = "free_y") +
+    theme_B3() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+df2$gene <- factor(df2$gene)
+
+for (i in levels(df2$gene)) {
   p <-  df2 %>%
-    filter(tissue == i) %>%
-    ggplot(aes(x = treatment, y = vsd, fill = gene, color = sex)) +
+    filter(gene %in% i) %>%
+    ggplot(aes(x = treatment, y = vsd, color = sex, fill = treatment)) +
     geom_boxplot() +
     scale_alpha_manual(values = c(0.5, 1)) +
-    labs(subtitle = i, y = "expression", x = "parental stage") +
-    facet_wrap(~gene, scales = "free_y") +
+    labs(y = "expression", x = "parental stage", subtitle = i) +
+    facet_wrap(~ tissue , scales = "free_y", nrow = 3) +
     theme_B3() +
-    scale_color_manual(values = sexcolors)
+    scale_color_manual(values = sexcolors) +
+    scale_fill_manual(values = colorscharmaip)
  print(p)
 }
+
+
 
 
 dft <- df %>% filter(X1 %in% candidategenes) %>%
@@ -119,8 +134,8 @@ dft <- df %>% filter(X1 %in% candidategenes) %>%
   drop_na() %>%
   mutate("bird" = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
   select(bird,tissuegene,vsd) %>%
+  filter(bird != "x.g.g.ATLAS") %>%
   pivot_wider(id_cols = bird, names_from = tissuegene, values_from = vsd)
-
 dft <- as.data.frame(dft)
 row.names(dft) <- dft$bird
 dft$bird <- NULL
@@ -128,17 +143,44 @@ head(dft)
 
 x <- correlate(dft)
 
+x %>% network_plot.cor_df() + 
+  scale_color_gradient2(low = "blue", mid = "grey", high = "red", midpoint = 0, limits = c(-1,1)) 
 
-x %>% network_plot.cor_df(min_cor = .2)
 
-x %>%
+a <- x %>%
+  focus(hyp_PRL) %>%
+  mutate(rowname = reorder(rowname, hyp_PRL)) %>%
+  ggplot(aes(rowname, hyp_PRL, fill = hyp_PRL)) +
+    geom_col() + coord_flip() +
+  labs(y = "corr. w/ hyp PRL", x = "candidate genes by tissue") +
+  theme_B3() + 
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  scale_fill_gradient2(low = "blue", mid = "grey", high = "red", midpoint = 0, limits = c(-1,1)) +
+  ylim(c(-0.1,0.6))
+
+b <- x %>%
   focus(pit_PRL) %>%
   mutate(rowname = reorder(rowname, pit_PRL)) %>%
-  ggplot(aes(rowname, pit_PRL)) +
+  ggplot(aes(rowname, pit_PRL, fill = pit_PRL)) +
     geom_col() + coord_flip() +
-  labs(y = "corrleation with pituitiary PRL", x = "candidate genes by tissue") +
+  labs(y = "corr. w/ pit PRL", x = NULL) +
   theme_B3() + 
-  theme(legend.position = "none")
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  scale_fill_gradient2(low = "blue", mid = "grey", high = "red", midpoint = 0, limits = c(-1,1))  +
+  ylim(c(-0.1,0.6))
+
+c <- x %>%
+  focus(gon_PRL) %>%
+  mutate(rowname = reorder(rowname, gon_PRL)) %>%
+  ggplot(aes(rowname, gon_PRL, fill = gon_PRL)) +
+    geom_col() + coord_flip() +
+  labs(y = "corr. w/ gon PRL", x = NULL) +
+  theme_B3() + 
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  scale_fill_gradient2(low = "blue", mid = "grey", high = "red", midpoint = 0, limits = c(-1,1))  +
+  ylim(c(-0.1,0.6))
+
+plot_grid(a,b, c, nrow = 1, rel_widths = c(1.1,1,1))
 ```
 
 
