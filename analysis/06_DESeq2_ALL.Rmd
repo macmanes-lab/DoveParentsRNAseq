@@ -167,7 +167,7 @@ char <- plot_grid(
           g + theme(axis.title = element_blank(), axis.text = element_blank()),
           h + theme(axis.title = element_blank(), axis.text = element_blank()),
           i + theme(axis.title = element_blank(), axis.text = element_blank()),
-          nrow = 1, rel_widths = c(1.1,1,1,1,1,1,1))
+          nrow = 1, rel_widths = c(1.2,1,1,1,1,1,1))
 
 remove <- plot_grid( 
           a + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
@@ -176,7 +176,7 @@ remove <- plot_grid(
           k + theme(axis.title = element_blank(), axis.text = element_blank()) , 
           l + theme(axis.title = element_blank(), axis.text = element_blank()) , 
           m + theme(axis.title = element_blank(), axis.text = element_blank()), 
-          NULL, nrow = 1, rel_widths = c(1.1, 0.5, 1,1,1,1,0.5))
+          NULL, nrow = 1, rel_widths = c(1.2, 1, 1,1,1,1,1))
 
 
 timing <- plot_grid( 
@@ -189,7 +189,7 @@ timing <- plot_grid(
            NULL,
           r + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
           s + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-            nrow = 1, rel_widths = c(1.1,1, 0.5, 1,1,0.5, 1,1)) 
+            nrow = 1, rel_widths = c(1.2,1, 0.5, 1,1,0.5, 1,1)) 
 
 charicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-char.png")
 charicons <-  grid::rasterGrob(charicons, interpolate=TRUE)
