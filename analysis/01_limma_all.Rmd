@@ -6,11 +6,6 @@ output: md_document
 DESeq2 is _not_ recommended for experiments with more than 100 samples ([see Mike Love's post](https://mikelove.wordpress.com/2016/09/28/deseq2-or-edger/)), so I decided to try the limma package. I followed [this tutorial](https://www.bioconductor.org/packages/devel/workflows/vignettes/RNAseq123/inst/doc/limmaWorkflow.html).
 
 ```{r}
-if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-BiocManager::install("Glimma")
-
 library(limma)
 library(Glimma)
 library(edgeR)
@@ -18,7 +13,6 @@ library(kableExtra)
 library(cowplot)
 
 knitr::opts_chunk$set(fig.path = '../figures/01_limma/',cache=TRUE)
-
 ```
 
 First, I read in the data I processed in 00_datawrangling.Rmd.
@@ -28,8 +22,7 @@ First, I read in the data I processed in 00_datawrangling.Rmd.
 colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
 countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
 head(colData)
-geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
-
+geneinfo <- row.names(countData)
 ```
 
 Then, I followed the steps from <https://github.com/macmanes-lab/RockDove/blob/master/parental_care/parental_analysis.Rmd>.
@@ -66,128 +59,4 @@ names(parentalobject)
 #head(parentalobject$pseudo.counts)
 
 write.csv(parentalobject$pseudo.counts, "../results/01_pseudo.counts.csv")
-
-#  perform likelihood ratio test and thresholded testing
-fit <- glmFit( parentalobject, parentaldesign, robust=T)
-tr <- glmTreat(fit, lfc = 1)
-topTags(tr)
-#tr$table
-```
-
-
-# plotMDS (multidimential scaling)
-
-```{r plotMDS}
-plotMDS(parentalobject, cex = 0.5)
-```
-
-```{r newRplot}
-
-myMDSplot <- plotMDS(parentalobject, cex = 0.5)
-
-names(myMDSplot$x)
-names(myMDSplot$y)
-
-mergedMDS <- data.frame(myMDSplot$x, myMDSplot$y)
-
-head(mergedMDS)
-
-names(mergedMDS) <- c("x", "y", "par", "treatment", "rep", "tissue")
-mds_GC_final_merged <- ggplot(mergedMDS, aes(x, y)) + 
-  geom_point(aes(color = treatment, shape = rep)) + 
-  geom_rug(aes(colour = treatment)) + 
-  facet_grid(par ~ tissue) + 
-  labs(title = "ggplot of GC new ref samples") + 
-  theme(strip.text.x = element_text(size = 8))
-mds_GC_final_merged
-```
-
-```{r plotMDS-colored}
-levels(colData$tissue)
-col.tissue <- c("#7570b3","#d95f02", "#1b9e77")[colData$tissue]
-plotMDS(parentalobject,col=col.tissue)
-legend("bottomright",fill=c("#7570b3","#d95f02", "#1b9e77"),legend=levels(colData$tissue))
-title("Colored by Tissue")
-
-levels(colData$treatment)
-col.treatment <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6")[colData$treatment]
-plotMDS(parentalobject,col=col.treatment)
-legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
-title("Colored by Treatment")
-
-levels(colData$sex)
-col.sex <- c("#5ab4ac","#d8b365")[colData$sex]
-plotMDS(parentalobject,col=col.sex)
-legend("bottomright",fill=c("#5ab4ac","#d8b365"),legend=levels(colData$sex))
-title("Colored by Sex")
-```
-
-```{r plotMDS-colorshape}
-colData$sexTissue <- paste(colData$sex, colData$tissue, sep = "_")
-
-plotMDS(parentalobject,col=col.treatment, labels = colData$sexTissue)
-legend("bottomright",fill=c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6"),legend=levels(colData$treatment))
-title("Colored by Treatment")
-```
-
-# specify contrasts and make MA plots (currently only a subset)
-
-```{r 01-contrasts}
-# view all levels
-levels(colData$group)
-
-# subset of conrasts - sex specific comparing hatch to lay
-my.contrasts <- makeContrasts(
-	         FG_HL = female.gonad.hatch - female.gonad.lay,
-	         FH_HL = female.hypothalamus.hatch - female.hypothalamus.lay,
-	         FP_HL = female.pituitary.hatch - female.pituitary.lay,
-	         MP_HL = male.pituitary.hatch - male.pituitary.lay,
-	         MH_HL = male.hypothalamus.hatch - male.hypothalamus.lay,
-	         MG_HL = male.gonad.hatch - male.gonad.lay,	         
-levels=parentaldesign)
-
-cont <- "FG_HL"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female gonad lay to hatch', frame.plot=F)
-
-cont <- "FH_HL"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female hypothalamus lay to hatch', frame.plot=F)
-
-
-cont <- "FP_HL"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Female pituitary lay to hatch', frame.plot=F)
-
-
-cont <- "MG_HL"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-#kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male gonad lay to hatch', frame.plot=F)
-
-cont <- "MH_HL"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male hypothalamus lay to hatch', frame.plot=F)
-
-
-cont <- "MP_HL"
-summary(decideTestsDGE(
-	glmTreat(fit, contrast=my.contrasts[,cont], lfc = 1), 
-	adjust.method="fdr", p.value=0.01))
-kable(topTags(glmTreat(fit, contrast=my.contrasts[,cont]), n=5), digits=2, lfc = 1)
-plotMD(glmTreat(fit, contrast=my.contrasts[,cont], lfc=1), main='Male pituitary lay to hatch', frame.plot=F)
 ```
