@@ -1,6 +1,6 @@
 ---
 title: "06_DESeqALL"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include = FALSE}
@@ -59,6 +59,42 @@ write.csv(vsd, "../results/06_gonallvsd.csv")
 ```
 
 
+```{r eval=T}
+control.bldg <- createDEGdfsave(dds.gonads, "treatment", "bldg", "control", "gonads")
+```
+
+```{r  eval=T}
+bldg.lay <- createDEGdfsave(dds.gonads, "treatment", "lay", "bldg", "gonads")
+```
+
+```{r  eval=T}
+lay.inc.d3 <- createDEGdfsave(dds.gonads, "treatment", "inc.d3", "lay", "gonads") 
+```
+
+```{r  eval=T}
+inc.d3.inc.d9 <- createDEGdfsave(dds.gonads,  "treatment", "inc.d9", "inc.d3", "gonads") 
+```
+
+```{r  eval=T}
+inc.d9.inc.d17 <- createDEGdfsave(dds.gonads, "treatment", "inc.d17", "inc.d9", "gonads")
+```
+
+```{r  eval=T}
+inc.d17.hatch <- createDEGdfsave(dds.gonads, "treatment", "hatch", "inc.d17", "gonads") 
+```
+
+```{r  eval=T}
+hatch.n5 <- createDEGdfsave(dds.gonads, "treatment", "n5", "hatch", "gonads") 
+```
+
+```{r  eval=T}
+n5.n9 <- createDEGdfsave(dds.gonads, "treatment", "n9", "n5", "gonads") 
+```
+
+```{r eval=T}
+sex <- createDEGdfsave(dds.gonads, "sex", "male", "female", "gonads") 
+```
+
 ```{r  eval=T}
 inc.d3.m.inc.d3 <- createDEGdfsave(dds.gonads, "treatment", "m.inc.d3", "inc.d3", "gonads")
 ```
@@ -100,37 +136,70 @@ n5.extend <- createDEGdfsave(dds.gonads, "treatment", "n5", "extend", "gonads")
 ```
 
 
+```{r volcanos-gonads, fig.height= 6, fig.width=6}
+a <- plot.volcano(sex, "sex", "male", "female", colorsvolcano)
+b <- plot.volcano(control.bldg, "treatment", "bldg", "control", colorsvolcano)
+c <- plot.volcano(bldg.lay, "treatment", "lay", "bldg", colorsvolcano)
+d <- plot.volcano(lay.inc.d3, "treatment", "inc.d3", "lay", colorsvolcano) 
+e <- plot.volcano(inc.d3.inc.d9, "treatment", "inc.d9", "inc.d3", colorsvolcano) 
+f <- plot.volcano(inc.d9.inc.d17, "treatment", "inc.d17", "inc.d9", colorsvolcano)
+g <- plot.volcano(inc.d17.hatch, "treatment", "hatch", "inc.d17", colorsvolcano) 
+h <- plot.volcano(hatch.n5, "treatment", "n5", "hatch", colorsvolcano) 
+i <- plot.volcano(n5.n9, "treatment", "n9", "n5", colorsvolcano) 
 
-```{r volcanos-gon, fig.width=7, fig.height=3.5}
-a <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano)  
-b <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano) 
-c <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) 
-d <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano) 
+j <- plot.volcano(inc.d3.m.inc.d3 , "treatment",   "m.inc.d3", "inc.d3",   colorsvolcano)  
+k <- plot.volcano(inc.d9.m.inc.d9, "treatment",  "m.inc.d9", "inc.d9" , colorsvolcano) 
+l <- plot.volcano(inc.d17.m.inc.d17 , "treatment",  "m.inc.d17", "inc.d17" , colorsvolcano) 
+m <- plot.volcano(hatch.m.n2 , "treatment",   "m.n2", "hatch", colorsvolcano) 
 
-e <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano) 
-f <- plot.volcano(hatch.m.inc.d8 , "treatment",    "hatch", "m.inc.d8"  , colorsvolcano)  
+n <- plot.volcano(inc.d9.m.inc.d8 , "treatment",   "m.inc.d8", "inc.d9"  , colorsvolcano) 
+o <- plot.volcano(hatch.m.inc.d8 , "treatment",    "hatch", "m.inc.d8"  , colorsvolcano)  
+p <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano)  
+q <- plot.volcano(hatch.prolong , "treatment",  "hatch", "prolong", colorsvolcano) 
+r <- plot.volcano(hatch.extend , "treatment",  "extend", "hatch" , colorsvolcano)  
+s <- plot.volcano(n5.extend , "treatment",  "extend", "n5", colorsvolcano)  
 
-g <- plot.volcano(inc.d17.prolong , "treatment",   "prolong", "inc.d17",  colorsvolcano)  
-h <- plot.volcano(hatch.prolong , "treatment",  "hatch", "prolong", colorsvolcano) 
+char <- plot_grid(
+          b + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
+          c + theme(axis.title = element_blank(), axis.text = element_blank()) ,
+          d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          f + theme(axis.title = element_blank(), axis.text = element_blank()),
+          g + theme(axis.title = element_blank(), axis.text = element_blank()),
+          h + theme(axis.title = element_blank(), axis.text = element_blank()),
+          i + theme(axis.title = element_blank(), axis.text = element_blank()),
+          nrow = 1, rel_widths = c(1.3,1,1,1,1,1,1))
 
-i <- plot.volcano(hatch.extend , "treatment",  "extend", "hatch" , colorsvolcano)  
-j <- plot.volcano(n5.extend , "treatment",  "extend", "n5", colorsvolcano)  
+remove <- plot_grid( 
+          a + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
+          NULL, 
+          j + theme(axis.title = element_blank(), axis.text = element_blank()) , 
+          k + theme(axis.title = element_blank(), axis.text = element_blank()) , 
+          l + theme(axis.title = element_blank(), axis.text = element_blank()) , 
+          m + theme(axis.title = element_blank(), axis.text = element_blank()), 
+          NULL, nrow = 1, rel_widths = c(1.3, 1, 1,1,1,1,1))
 
-remove <- plot_grid(a + labs(y = "gonads -log10(p-value)"),
-          b + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          c + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) ,
-          d + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
-          nrow = 1, rel_widths = c(1.2,1,1,1),
-          labels = c("a","b","c","d"), label_size = 9)
-remove
 
-timing <- plot_grid(e +  labs(y = "gonads -log10(p-value)"),
-          f + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          g + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          h + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-          i + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
-          j + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
-          nrow = 1, rel_widths = c(1.2,1,1,1,1,1),
-          labels = c("a","b","c", "d","e","f"), label_size = 9)
-timing
+timing <- plot_grid( 
+          n , 
+          o + theme(axis.title.y = element_blank(), axis.text.y = element_blank())+
+            labs(x = "Log fold change,")   , 
+          NULL,
+          p + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
+            labs(x = "gonads") , 
+          q + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) ,
+           NULL,
+          r + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
+          s + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+            nrow = 1, rel_widths = c(1.3,1, 0.5, 1, 1, 0.5, 1, 1)) 
+
+charicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-char.png")
+charicons <-  grid::rasterGrob(charicons, interpolate=TRUE)
+
+removeicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-removal.png")
+removeicons <-  grid::rasterGrob(removeicons, interpolate=TRUE)
+
+timingicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-timing.png")
+timingicons <-  grid::rasterGrob(timingicons, interpolate=TRUE)
+
+plot_grid(charicons, char, removeicons, remove, timingicons, timing, nrow = 6, rel_heights = c(0.9,1,0.9,1,0.9,1.2))
 ```

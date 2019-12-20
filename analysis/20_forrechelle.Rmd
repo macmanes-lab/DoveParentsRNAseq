@@ -18,8 +18,8 @@ knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 
 ```{r input}
 
-candidategenes <- c( "NR3C1", "NR3C2", "PRLR", "PRL", "POMC" ,"MC4R", "VIP", "BRCA1")
-timepoints <- c("lay" , "inc.d9", "hatch", "n9")
+candidategenes <- c(  "PRLR", "PRL" )
+timepoints <- charlevels
 hormones <- c("PRL", "CORT")
   
 ```
@@ -38,6 +38,20 @@ df <- datapathfile %>%
   select(tissue, X1, everything()) 
 head(df)
 
+# check which genese appear in multiple tissue
+tissuespecificity <- df %>%
+  group_by(X1) %>%
+  summarize(tissues = str_c(tissue, collapse = ", ")) %>%
+  filter(tissues != "gon, hyp, pit") %>%
+  group_by(tissues) %>%
+  summarize(genes = str_c(X1, collapse = ", ")) %>% 
+  mutate(n = str_count(genes, ",") + 1) %>% 
+  arrange(desc(n))
+tissuespecificity
+write.csv(tissuespecificity, "../results/tissuespecificity.csv")
+```
+
+```{r}
 genes <- as.data.frame(df$X1)
   
 df2 <-  df  %>%
@@ -60,7 +74,6 @@ df2 <-  df  %>%
 head(df2)
 
 df2$treatment <- factor(df2$treatment, levels = alllevels)
-
 
 df3 <- df2 %>% 
   mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
@@ -111,6 +124,7 @@ dft <- df %>% filter(X1 %in% candidategenes) %>%
 dft <- as.data.frame(dft)
 row.names(dft) <- dft$bird
 dft$bird <- NULL
+head(dft)
 
 x <- correlate(dft)
 
