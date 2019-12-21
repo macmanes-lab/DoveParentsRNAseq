@@ -351,7 +351,7 @@ tissue specific
 
 ![](../figures/pca/tissuespecific-10.png)
 
-    h4 <- plotcolorfultsnes(hyptsne, hyptsne$sex, sexcolors)   
+    h4 <- plotcolorfultsnes(hyptsne, hyptsne$sex, sexcolors)  + labs(y = "hypothalamus") 
 
 ![](../figures/pca/tissuespecific-11.png)
 
@@ -359,7 +359,7 @@ tissue specific
 
 ![](../figures/pca/tissuespecific-12.png)
 
-    p4 <- plotcolorfultsnes(pittsne, pittsne$sex, sexcolors)   
+    p4 <- plotcolorfultsnes(pittsne, pittsne$sex, sexcolors)   + labs(y = "pituitary") 
 
 ![](../figures/pca/tissuespecific-13.png)
 
@@ -367,7 +367,7 @@ tissue specific
 
 ![](../figures/pca/tissuespecific-14.png)
 
-    g4 <- plotcolorfultsnes(gontsne, gontsne$sex, sexcolors)   
+    g4 <- plotcolorfultsnes(gontsne, gontsne$sex, sexcolors)  + labs(y = "gonads")  
 
 ![](../figures/pca/tissuespecific-15.png)
 

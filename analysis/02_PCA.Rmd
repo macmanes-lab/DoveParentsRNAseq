@@ -270,13 +270,13 @@ h3 <- plotfriz(hypv)
 p3 <-plotfriz(pitfviz)
 g3 <- plotfriz(gonfviz)
 
-h4 <- plotcolorfultsnes(hyptsne, hyptsne$sex, sexcolors)   
+h4 <- plotcolorfultsnes(hyptsne, hyptsne$sex, sexcolors)  + labs(y = "hypothalamus") 
 h5 <- plotcolorfultsnes(hyptsne, hyptsne$treatment, colorscharmaip)  
 
-p4 <- plotcolorfultsnes(pittsne, pittsne$sex, sexcolors)   
+p4 <- plotcolorfultsnes(pittsne, pittsne$sex, sexcolors)   + labs(y = "pituitary") 
 p5 <- plotcolorfultsnes(pittsne, pittsne$treatment, colorscharmaip)  
 
-g4 <- plotcolorfultsnes(gontsne, gontsne$sex, sexcolors)   
+g4 <- plotcolorfultsnes(gontsne, gontsne$sex, sexcolors)  + labs(y = "gonads")  
 g5 <- plotcolorfultsnes(gontsne, gontsne$treatment, colorscharmaip)  
 
 plot_grid(h4,h5,h2,h3,
@@ -284,5 +284,4 @@ plot_grid(h4,h5,h2,h3,
           g4,g5,g2,g3,
           nrow = 3,
           labels = "auto", label_size = 10)
-
 ```
