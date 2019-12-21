@@ -55,6 +55,8 @@ alllevels3 <- c("control", "bldg", "lay", "inc.d3", "inc.d9",
                  "m.inc.d8" , "prolong" , "extend")
 
 tissuelevels <- c("hypothalamus", "pituitary", "gonads")
+sexlevels <- c("female", "male")
+
 
 
 charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9", "NS")

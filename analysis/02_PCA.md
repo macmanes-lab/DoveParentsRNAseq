@@ -56,135 +56,329 @@ All data, characterization and manipulations
     # check ready for analysis
     #row.names(countData) == row.names(colData)
 
-    # pca
-    mypca <- prcomp(countData)
-    eig.val <- get_eigenvalue(mypca)
-    head(eig.val)
+    head(colData)
 
-    ##         eigenvalue variance.percent cumulative.variance.percent
-    ## Dim.1 347109367771       44.5298914                    44.52989
-    ## Dim.2 232627925348       29.8433209                    74.37321
-    ## Dim.3 157029529870       20.1449703                    94.51818
-    ## Dim.4  20737955767        2.6604264                    97.17861
-    ## Dim.5   6256994416        0.8026959                    97.98130
-    ## Dim.6   5083281170        0.6521229                    98.63343
+    ##                                                                            V1
+    ## L.Blu13_male_gonad_control.NYNO               L.Blu13_male_gonad_control.NYNO
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
+    ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
+    ## L.G107_male_gonad_control                           L.G107_male_gonad_control
+    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
+    ## L.G107_male_pituitary_control                   L.G107_male_pituitary_control
+    ##                                           bird  sex       tissue treatment
+    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male       gonads   control
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus   control
+    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male    pituitary   control
+    ## L.G107_male_gonad_control               L.G107 male       gonads   control
+    ## L.G107_male_hypothalamus_control        L.G107 male hypothalamus   control
+    ## L.G107_male_pituitary_control           L.G107 male    pituitary   control
+    ##                                                            group
+    ## L.Blu13_male_gonad_control.NYNO               male.gonad.control
+    ## L.Blu13_male_hypothalamus_control.NYNO male.hypothalamus.control
+    ## L.Blu13_male_pituitary_control.NYNO       male.pituitary.control
+    ## L.G107_male_gonad_control                     male.gonad.control
+    ## L.G107_male_hypothalamus_control       male.hypothalamus.control
+    ## L.G107_male_pituitary_control             male.pituitary.control
+    ##                                                  study
+    ## L.Blu13_male_gonad_control.NYNO        charcterization
+    ## L.Blu13_male_hypothalamus_control.NYNO charcterization
+    ## L.Blu13_male_pituitary_control.NYNO    charcterization
+    ## L.G107_male_gonad_control              charcterization
+    ## L.G107_male_hypothalamus_control       charcterization
+    ## L.G107_male_pituitary_control          charcterization
 
-    mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
+    # prep for tsne
+
+    subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
+
+      colData <- colData %>%
+        dplyr::filter(tissue %in% whichtissue,
+                      treatment %in% whichtreatment,
+                      sex %in% whichsex) 
+      row.names(colData) <- colData$V1
+
+      # save counts that match colData
+      savecols <- as.character(colData$V1) 
+      savecols <- as.vector(savecols) 
+      
+      countData <- as.data.frame(t(countData))
+      countData <- countData %>% dplyr::select(one_of(savecols)) 
+      countData <- as.data.frame(t(countData))
+
+      euclidist <- dist(countData) # euclidean distances between the rows
+
+      tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
+      tsne_df = as.data.frame(tsne_model$Y) 
+
+      # prep for adding columns
+      colData2 <- colData 
+      colData2$V1 <- NULL
+      tsne_df_cols <- cbind(colData2, tsne_df)
+      return(tsne_df_cols)
+    }
+
+    chartsne <- subsetmaketsne(tissuelevels, charlevels, sexlevels)
+    hyptsne <- subsetmaketsne("hypothalamus", charlevels, sexlevels)
+    pittsne <- subsetmaketsne("pituitary", charlevels, sexlevels)
+    gontsne <- subsetmaketsne("gonads", charlevels, sexlevels)
+
+    plotcolorfultsnes <- function(tsnedf, whichfactor, whichcolors){
+      p <- ggplot(tsnedf, aes(x = V1, y = V2, color = whichfactor, shape = tissue)) +
+        geom_point(size = 1) +
+        theme_B3() +
+        labs(x = "tSNE 1", y = "tSNE 2") +
+        scale_color_manual(values = whichcolors) +
+        theme(legend.position = "none",
+              axis.text = element_blank()) +
+        scale_shape_manual(values = myshapes)
+      print(p)
+    }
+
+    a <- plotcolorfultsnes(chartsne, chartsne$tissue, colorstissue)  
+
+![](../figures/pca/tSNE-1.png)
+
+    b <- plotcolorfultsnes(chartsne, chartsne$sex, sexcolors)   
+
+![](../figures/pca/tSNE-2.png)
+
+    c <- plotcolorfultsnes(chartsne, chartsne$treatment, colorscharmaip)  
+
+![](../figures/pca/tSNE-3.png)
+
+    abc <- plot_grid(a,b,c, nrow = 1, labels = c("a", "b", "c"), label_size = 12)
+    abc
+
+![](../figures/pca/tSNE-4.png)
+
+    subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
+
+      colData <- colData %>%
+        dplyr::filter(tissue %in% whichtissue,
+                      treatment %in% whichtreatment,
+                      sex %in% whichsex) 
+      row.names(colData) <- colData$V1
+
+
+      # save counts that match colData
+      savecols <- as.character(colData$V1) 
+      savecols <- as.vector(savecols) 
+      
+      countData <- as.data.frame(t(countData))
+      countData <- countData %>% dplyr::select(one_of(savecols)) 
+      countData <- as.data.frame(t(countData))
+
+      mypca <- prcomp(countData)
+
+      mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
                       PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
                       ID = row.names(countData))
-    mypcadf$V1 <- row.names(mypcadf)
-    mypcadf <- left_join(colData, mypcadf)
+      mypcadf$V1 <- row.names(mypcadf)
+      mypcadf <- left_join(colData, mypcadf)
+      mypcadf <- mypcadf %>% select(bird,sex,tissue,treatment,PC1:PC6)
+      return(mypcadf)
+    }
+
+    charpca <- subsetmakepca(tissuelevels, charlevels, sexlevels)
 
     ## Joining, by = "V1"
 
     ## Warning: Column `V1` joining factor and character vector, coercing into
     ## character vector
 
-    mypcadf <- mypcadf %>% select(bird,sex,tissue,treatment,PC1:PC6)
-    head(mypcadf)
+    hyppca <- subsetmakepca("hypothalamus", charlevels, sexlevels)
 
-    ##      bird  sex       tissue treatment       PC1       PC2         PC3
-    ## 1 L.Blu13 male       gonads   control -345922.6 390710.08   171612.48
-    ## 2 L.Blu13 male hypothalamus   control -206857.1 592125.36 -1125399.57
-    ## 3 L.Blu13 male    pituitary   control -405936.1 183424.52    44531.28
-    ## 4  L.G107 male       gonads   control -257193.0 364748.85   140165.78
-    ## 5  L.G107 male hypothalamus   control -177797.4 448098.40  -459129.46
-    ## 6  L.G107 male    pituitary   control -515948.0  74090.85   -11508.62
-    ##         PC4        PC5       PC6
-    ## 1 -97041.80 -23661.568  27522.70
-    ## 2 -56474.76  -3423.446 -18932.85
-    ## 3 420683.42   8215.699  36102.24
-    ## 4 -93812.33 -21839.792  30122.90
-    ## 5 -65844.89  -6487.898  40592.78
-    ## 6 411675.74   6560.618  28855.53
+    ## Joining, by = "V1"
 
-    plotcolorfulpcs <- function(whichfactor, whichcolors){
-      p <- ggplot(mypcadf, aes(x = PC1, y = PC2, color = whichfactor)) +
+    ## Warning: Column `V1` joining factor and character vector, coercing into
+    ## character vector
+
+    pitpca <- subsetmakepca("pituitary", charlevels, sexlevels)
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining factor and character vector, coercing into
+    ## character vector
+
+    gonpca <- subsetmakepca("gonads", charlevels, sexlevels)
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining factor and character vector, coercing into
+    ## character vector
+
+    plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){
+      p <- mypcadf %>%
+        ggplot(aes(x = PC1, y = PC2, shape = tissue, color = whichfactor )) +
         geom_point(size = 1)  +
         theme_B3() +
         theme(legend.title = element_blank(),
              axis.text = element_blank(),
              legend.position = "none") +
-        labs(x = "PC1", y = "PC2") +
-        scale_color_manual(values = whichcolors) 
+        labs(x = "PC1", y = "PC2")  +
+        scale_color_manual(values = whichcolors) +
+        scale_shape_manual(values = myshapes)
       print(p)
     }
 
-    a <- plotcolorfulpcs(mypcadf$tissue, colorstissue)  
+    d <- plotcolorfulpcs(charpca, charpca$tissue, colorstissue)  
 
 ![](../figures/pca/pca-1.png)
 
-    b <- plotcolorfulpcs(mypcadf$sex, sexcolors) 
+    e <- plotcolorfulpcs(charpca, charpca$sex, sexcolors) 
 
 ![](../figures/pca/pca-2.png)
 
-    c <- plotcolorfulpcs(mypcadf$treatment, colorscharmaip)   
+    f <- plotcolorfulpcs(charpca,charpca$treatment, colorscharmaip) 
 
 ![](../figures/pca/pca-3.png)
 
-    d <- fviz_screeplot(mypca, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
+    def <- plot_grid(d,e, f, nrow =  1,  labels = c("d", "e", "f"), label_size = 12)
+    def
+
+![](../figures/pca/pca-4.png)
+
+    makefvizdf <-  function(whichtissue, whichtreatment, whichsex){
+      colData <- colData %>%
+          dplyr::filter(tissue %in% whichtissue,
+                      treatment %in% whichtreatment,
+                      sex %in% whichsex) 
+      row.names(colData) <- colData$V1
+
+
+      # save counts that match colData
+      savecols <- as.character(colData$V1) 
+      savecols <- as.vector(savecols) 
+      
+      countData <- as.data.frame(t(countData))
+      countData <- countData %>% dplyr::select(one_of(savecols)) 
+      countData <- as.data.frame(t(countData))
+
+      mypca <- prcomp(countData)
+      return(mypca)
+    }
+
+    charfviz <- makefvizdf(tissuelevels, charlevels, sexlevels)
+    hypv <- makefvizdf("hypothalamus", charlevels, sexlevels)
+    pitfviz <- makefvizdf("pituitary", charlevels, sexlevels)
+    gonfviz <- makefvizdf("gonads", charlevels, sexlevels)
+
+
+    g <- fviz_screeplot(charfviz, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
       labs(title = NULL, y = "PC Variance") + theme_B3() 
-    e <- fviz_contrib(mypca, choice = "var", axes = 1, top = 5)  + labs(title = NULL, subtitle = "PC1", x = NULL) + 
-              theme_B3() + theme(axis.text.x = element_text(angle = 55, hjust = 1))
-    f <- fviz_contrib(mypca, choice = "var", axes = 2, top = 5)  + labs(title = NULL, subtitle = "PC2", y = NULL, x = NULL) + 
-              theme_B3()  + theme(axis.text.x = element_text(angle = 55, hjust = 1))
-    g <- fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank", 
+    h <- fviz_pca_var(charfviz,  labelsize = 3 , axes.linetype = "blank", 
                        repel = TRUE ,
                       select.var= list(contrib = 6)) + 
           theme_B3() + 
           labs(x = "PC1", y = "PC2", title =  NULL) +
           theme( axis.text = element_blank()) 
 
-    legend <- png::readPNG("../figures/images/DoveParentsRNAseq_legend.png")
+    legend <- png::readPNG("../figures/images/DoveParentsRNAseq_legendchar.png")
     legend <-  grid::rasterGrob(legend, interpolate=TRUE)
 
 
-    abc <- plot_grid(a,b, c, nrow =  1,  labels = c("d", "e", "f"), label_size = 12)
-    defg <- plot_grid(d,e,f,g, nrow = 1, rel_widths = c(1, 0.55, 0.45, 1), labels = c("h", "i", "j", "k" ), label_size = 12)
-    dg <- plot_grid(d,g, legend, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
-    plot_grid(abc, dg, nrow = 2)
+    gh <- plot_grid(g,h, legend, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
+    gh
 
-![](../figures/pca/pca-4.png)
+![](../figures/pca/fviz-1.png)
 
-    # prep for tsne
-    euclidist <- dist(countData) # euclidean distances between the rows
+    plot_grid(def, gh, nrow = 2)
 
-    tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
-    tsne_df = as.data.frame(tsne_model$Y) 
+![](../figures/pca/fviz-2.png)
 
-    # prep for adding columns
-    colData2 <- colData 
-    colData2$V1 <- NULL
-    tsne_df_cols <- cbind(colData2, tsne_df)
-
-    plotcolorfultsnes <- function(whichfactor, whichcolors){
-      p <- ggplot(tsne_df_cols, aes(x = V1, y = V2, color = whichfactor)) +
-        geom_point(size = 1) +
-        theme_B3() +
-        labs(x = "tSNE 1", y = "tSNE 2") +
-        scale_color_manual(values = whichcolors) +
-        theme(legend.position = "none",
-              axis.text = element_blank())
-      print(p)
-    }
-
-    h <- plotcolorfultsnes(tsne_df_cols$tissue, colorstissue)  
-
-![](../figures/pca/tSNE-1.png)
-
-    i <- plotcolorfultsnes(tsne_df_cols$sex, sexcolors)   
-
-![](../figures/pca/tSNE-2.png)
-
-    j <- plotcolorfultsnes(tsne_df_cols$treatment, colorscharmaip)  
-
-![](../figures/pca/tSNE-3.png)
-
-    hij <- plot_grid(h,i,j, nrow = 1, labels = c("a", "b", "c"), label_size = 12)
-    hij
-
-![](../figures/pca/tSNE-4.png)
-
-    plot_grid(hij, abc, dg, nrow = 3)
+    plot_grid( abc, def, gh, nrow = 3)
 
 ![](../figures/pca/PCA-tSNE-1.png)
+
+tissue specific
+---------------
+
+    h1 <- plotcolorfulpcs(hyppca, hyppca$sex, sexcolors) 
+
+![](../figures/pca/tissuespecific-1.png)
+
+    h2 <- plotcolorfulpcs(hyppca, hyppca$treatment, colorscharmaip) 
+
+![](../figures/pca/tissuespecific-2.png)
+
+    p1 <- plotcolorfulpcs(pitpca, pitpca$sex, sexcolors) 
+
+![](../figures/pca/tissuespecific-3.png)
+
+    p2 <- plotcolorfulpcs(pitpca, pitpca$treatment, colorscharmaip) 
+
+![](../figures/pca/tissuespecific-4.png)
+
+    g1 <- plotcolorfulpcs(gonpca, gonpca$sex, sexcolors) 
+
+![](../figures/pca/tissuespecific-5.png)
+
+    g2 <- plotcolorfulpcs(gonpca, gonpca$treatment, colorscharmaip) 
+
+![](../figures/pca/tissuespecific-6.png)
+
+    plot_grid(h1,h2,p1,p2,g1,g2, nrow = 3)
+
+![](../figures/pca/tissuespecific-7.png)
+
+    plotfriz <- function(frizdf){
+
+      p1 <- fviz_contrib(frizdf, choice = "var", 
+                         axes = 1, top = 3 , sort.val = "asc")  + 
+        labs(title = NULL,   x = "PC1", y = NULL) + 
+        theme_B3() + coord_flip() +
+        theme(axis.text.x = element_blank())
+      
+      p2 <- fviz_contrib(frizdf, choice = "var", 
+                         axes = 2, top = 3 , sort.val = "asc")  + 
+        labs(title = NULL,   x = "PC2", y = "contrib.") + 
+         theme_B3()  + coord_flip() +
+        theme(axis.text.x = element_blank())
+      
+      p3 <- plot_grid(p1,p2, align = "v", nrow = 2, rel_heights = c(1,1.2))
+      print(p3)
+    }
+
+    h3 <- plotfriz(hypv) 
+
+![](../figures/pca/tissuespecific-8.png)
+
+    p3 <-plotfriz(pitfviz)
+
+![](../figures/pca/tissuespecific-9.png)
+
+    g3 <- plotfriz(gonfviz)
+
+![](../figures/pca/tissuespecific-10.png)
+
+    h4 <- plotcolorfultsnes(hyptsne, hyptsne$sex, sexcolors)   
+
+![](../figures/pca/tissuespecific-11.png)
+
+    h5 <- plotcolorfultsnes(hyptsne, hyptsne$treatment, colorscharmaip)  
+
+![](../figures/pca/tissuespecific-12.png)
+
+    p4 <- plotcolorfultsnes(pittsne, pittsne$sex, sexcolors)   
+
+![](../figures/pca/tissuespecific-13.png)
+
+    p5 <- plotcolorfultsnes(pittsne, pittsne$treatment, colorscharmaip)  
+
+![](../figures/pca/tissuespecific-14.png)
+
+    g4 <- plotcolorfultsnes(gontsne, gontsne$sex, sexcolors)   
+
+![](../figures/pca/tissuespecific-15.png)
+
+    g5 <- plotcolorfultsnes(gontsne, gontsne$treatment, colorscharmaip)  
+
+![](../figures/pca/tissuespecific-16.png)
+
+    plot_grid(h4,h5,h2,h3,
+              p4,p5,p2,p3,
+              g4,g5,g2,g3,
+              nrow = 3,
+              labels = "auto", label_size = 10)
+
+![](../figures/pca/tissuespecific-17.png)

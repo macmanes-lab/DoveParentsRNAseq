@@ -12,9 +12,11 @@ library(Rtsne)
 library(viridis)
 library(forcats)
 
+source("../R/themes.R")
+
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/pca/', cache = T)
 
-source("../R/themes.R")  
+ 
 ```
 
 # note. this file is too big for storage in github :(
@@ -46,99 +48,241 @@ row.names(colData) <- colData$V1
 
 # check ready for analysis
 #row.names(countData) == row.names(colData)
+
+head(colData)
 ```
 
-```{r pcadf}
-# pca
-mypca <- prcomp(countData)
-eig.val <- get_eigenvalue(mypca)
-head(eig.val)
 
-mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
+
+```{r tSNE-df}
+# prep for tsne
+
+subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
+
+  colData <- colData %>%
+    dplyr::filter(tissue %in% whichtissue,
+                  treatment %in% whichtreatment,
+                  sex %in% whichsex) 
+  row.names(colData) <- colData$V1
+
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  countData <- as.data.frame(t(countData))
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  countData <- as.data.frame(t(countData))
+
+  euclidist <- dist(countData) # euclidean distances between the rows
+
+  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
+  tsne_df = as.data.frame(tsne_model$Y) 
+
+  # prep for adding columns
+  colData2 <- colData 
+  colData2$V1 <- NULL
+  tsne_df_cols <- cbind(colData2, tsne_df)
+  return(tsne_df_cols)
+}
+
+chartsne <- subsetmaketsne(tissuelevels, charlevels, sexlevels)
+hyptsne <- subsetmaketsne("hypothalamus", charlevels, sexlevels)
+pittsne <- subsetmaketsne("pituitary", charlevels, sexlevels)
+gontsne <- subsetmaketsne("gonads", charlevels, sexlevels)
+
+```
+
+```{r tSNE}
+plotcolorfultsnes <- function(tsnedf, whichfactor, whichcolors){
+  p <- ggplot(tsnedf, aes(x = V1, y = V2, color = whichfactor, shape = tissue)) +
+    geom_point(size = 1) +
+    theme_B3() +
+    labs(x = "tSNE 1", y = "tSNE 2") +
+    scale_color_manual(values = whichcolors) +
+    theme(legend.position = "none",
+          axis.text = element_blank()) +
+    scale_shape_manual(values = myshapes)
+  print(p)
+}
+
+a <- plotcolorfultsnes(chartsne, chartsne$tissue, colorstissue)  
+b <- plotcolorfultsnes(chartsne, chartsne$sex, sexcolors)   
+c <- plotcolorfultsnes(chartsne, chartsne$treatment, colorscharmaip)  
+
+abc <- plot_grid(a,b,c, nrow = 1, labels = c("a", "b", "c"), label_size = 12)
+abc
+
+```
+
+
+```{r subsetmakepca}
+subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
+
+  colData <- colData %>%
+    dplyr::filter(tissue %in% whichtissue,
+                  treatment %in% whichtreatment,
+                  sex %in% whichsex) 
+  row.names(colData) <- colData$V1
+
+
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  countData <- as.data.frame(t(countData))
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  countData <- as.data.frame(t(countData))
+
+  mypca <- prcomp(countData)
+
+  mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
                   PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
                   ID = row.names(countData))
-mypcadf$V1 <- row.names(mypcadf)
-mypcadf <- left_join(colData, mypcadf)
-mypcadf <- mypcadf %>% select(bird,sex,tissue,treatment,PC1:PC6)
-head(mypcadf)
+  mypcadf$V1 <- row.names(mypcadf)
+  mypcadf <- left_join(colData, mypcadf)
+  mypcadf <- mypcadf %>% select(bird,sex,tissue,treatment,PC1:PC6)
+  return(mypcadf)
+}
+
+charpca <- subsetmakepca(tissuelevels, charlevels, sexlevels)
+hyppca <- subsetmakepca("hypothalamus", charlevels, sexlevels)
+pitpca <- subsetmakepca("pituitary", charlevels, sexlevels)
+gonpca <- subsetmakepca("gonads", charlevels, sexlevels)
+
 ```
 
+
+
+
 ```{r pca}
-plotcolorfulpcs <- function(whichfactor, whichcolors){
-  p <- ggplot(mypcadf, aes(x = PC1, y = PC2, color = whichfactor)) +
+plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){
+  p <- mypcadf %>%
+    ggplot(aes(x = PC1, y = PC2, shape = tissue, color = whichfactor )) +
     geom_point(size = 1)  +
     theme_B3() +
     theme(legend.title = element_blank(),
          axis.text = element_blank(),
          legend.position = "none") +
-    labs(x = "PC1", y = "PC2") +
-    scale_color_manual(values = whichcolors) 
+    labs(x = "PC1", y = "PC2")  +
+    scale_color_manual(values = whichcolors) +
+    scale_shape_manual(values = myshapes)
   print(p)
 }
 
-a <- plotcolorfulpcs(mypcadf$tissue, colorstissue)  
-b <- plotcolorfulpcs(mypcadf$sex, sexcolors) 
-c <- plotcolorfulpcs(mypcadf$treatment, colorscharmaip)   
+d <- plotcolorfulpcs(charpca, charpca$tissue, colorstissue)  
+e <- plotcolorfulpcs(charpca, charpca$sex, sexcolors) 
+f <- plotcolorfulpcs(charpca,charpca$treatment, colorscharmaip) 
 
 
-d <- fviz_screeplot(mypca, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
+
+def <- plot_grid(d,e, f, nrow =  1,  labels = c("d", "e", "f"), label_size = 12)
+def
+```
+
+
+```{r fviz}
+
+makefvizdf <-  function(whichtissue, whichtreatment, whichsex){
+  colData <- colData %>%
+      dplyr::filter(tissue %in% whichtissue,
+                  treatment %in% whichtreatment,
+                  sex %in% whichsex) 
+  row.names(colData) <- colData$V1
+
+
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  countData <- as.data.frame(t(countData))
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  countData <- as.data.frame(t(countData))
+
+  mypca <- prcomp(countData)
+  return(mypca)
+}
+
+charfviz <- makefvizdf(tissuelevels, charlevels, sexlevels)
+hypv <- makefvizdf("hypothalamus", charlevels, sexlevels)
+pitfviz <- makefvizdf("pituitary", charlevels, sexlevels)
+gonfviz <- makefvizdf("gonads", charlevels, sexlevels)
+
+
+g <- fviz_screeplot(charfviz, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
   labs(title = NULL, y = "PC Variance") + theme_B3() 
-e <- fviz_contrib(mypca, choice = "var", axes = 1, top = 5)  + labs(title = NULL, subtitle = "PC1", x = NULL) + 
-          theme_B3() + theme(axis.text.x = element_text(angle = 55, hjust = 1))
-f <- fviz_contrib(mypca, choice = "var", axes = 2, top = 5)  + labs(title = NULL, subtitle = "PC2", y = NULL, x = NULL) + 
-          theme_B3()  + theme(axis.text.x = element_text(angle = 55, hjust = 1))
-g <- fviz_pca_var(mypca,  labelsize = 3 , axes.linetype = "blank", 
+h <- fviz_pca_var(charfviz,  labelsize = 3 , axes.linetype = "blank", 
                    repel = TRUE ,
                   select.var= list(contrib = 6)) + 
       theme_B3() + 
       labs(x = "PC1", y = "PC2", title =  NULL) +
       theme( axis.text = element_blank()) 
 
-legend <- png::readPNG("../figures/images/DoveParentsRNAseq_legend.png")
+legend <- png::readPNG("../figures/images/DoveParentsRNAseq_legendchar.png")
 legend <-  grid::rasterGrob(legend, interpolate=TRUE)
 
 
-abc <- plot_grid(a,b, c, nrow =  1,  labels = c("d", "e", "f"), label_size = 12)
-defg <- plot_grid(d,e,f,g, nrow = 1, rel_widths = c(1, 0.55, 0.45, 1), labels = c("h", "i", "j", "k" ), label_size = 12)
-dg <- plot_grid(d,g, legend, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
-plot_grid(abc, dg, nrow = 2)
+gh <- plot_grid(g,h, legend, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
+gh
+plot_grid(def, gh, nrow = 2)
 ```
 
-```{r tSNE-df}
-# prep for tsne
-euclidist <- dist(countData) # euclidean distances between the rows
-
-tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
-tsne_df = as.data.frame(tsne_model$Y) 
-
-# prep for adding columns
-colData2 <- colData 
-colData2$V1 <- NULL
-tsne_df_cols <- cbind(colData2, tsne_df)
+```{r PCA-tSNE, fig.height= 7, fig.width=7}
+plot_grid( abc, def, gh, nrow = 3)
 
 ```
 
-```{r tSNE}
-plotcolorfultsnes <- function(whichfactor, whichcolors){
-  p <- ggplot(tsne_df_cols, aes(x = V1, y = V2, color = whichfactor)) +
-    geom_point(size = 1) +
-    theme_B3() +
-    labs(x = "tSNE 1", y = "tSNE 2") +
-    scale_color_manual(values = whichcolors) +
-    theme(legend.position = "none",
-          axis.text = element_blank())
-  print(p)
+
+## tissue specific 
+
+```{r tissuespecific, fig.height=7,fig.width=7}
+h1 <- plotcolorfulpcs(hyppca, hyppca$sex, sexcolors) 
+h2 <- plotcolorfulpcs(hyppca, hyppca$treatment, colorscharmaip) 
+
+p1 <- plotcolorfulpcs(pitpca, pitpca$sex, sexcolors) 
+p2 <- plotcolorfulpcs(pitpca, pitpca$treatment, colorscharmaip) 
+
+g1 <- plotcolorfulpcs(gonpca, gonpca$sex, sexcolors) 
+g2 <- plotcolorfulpcs(gonpca, gonpca$treatment, colorscharmaip) 
+
+
+plot_grid(h1,h2,p1,p2,g1,g2, nrow = 3)
+
+
+plotfriz <- function(frizdf){
+
+  p1 <- fviz_contrib(frizdf, choice = "var", 
+                     axes = 1, top = 3 , sort.val = "asc")  + 
+    labs(title = NULL,   x = "PC1", y = NULL) + 
+    theme_B3() + coord_flip() +
+    theme(axis.text.x = element_blank())
+  
+  p2 <- fviz_contrib(frizdf, choice = "var", 
+                     axes = 2, top = 3 , sort.val = "asc")  + 
+    labs(title = NULL,   x = "PC2", y = "contrib.") + 
+     theme_B3()  + coord_flip() +
+    theme(axis.text.x = element_blank())
+  
+  p3 <- plot_grid(p1,p2, align = "v", nrow = 2, rel_heights = c(1,1.2))
+  print(p3)
 }
 
-h <- plotcolorfultsnes(tsne_df_cols$tissue, colorstissue)  
-i <- plotcolorfultsnes(tsne_df_cols$sex, sexcolors)   
-j <- plotcolorfultsnes(tsne_df_cols$treatment, colorscharmaip)  
+h3 <- plotfriz(hypv) 
+p3 <-plotfriz(pitfviz)
+g3 <- plotfriz(gonfviz)
 
-hij <- plot_grid(h,i,j, nrow = 1, labels = c("a", "b", "c"), label_size = 12)
-hij
+h4 <- plotcolorfultsnes(hyptsne, hyptsne$sex, sexcolors)   
+h5 <- plotcolorfultsnes(hyptsne, hyptsne$treatment, colorscharmaip)  
 
-```
-```{r PCA-tSNE, fig.height= 7, fig.width=7}
-plot_grid(hij, abc, dg, nrow = 3)
+p4 <- plotcolorfultsnes(pittsne, pittsne$sex, sexcolors)   
+p5 <- plotcolorfultsnes(pittsne, pittsne$treatment, colorscharmaip)  
+
+g4 <- plotcolorfultsnes(gontsne, gontsne$sex, sexcolors)   
+g5 <- plotcolorfultsnes(gontsne, gontsne$treatment, colorscharmaip)  
+
+plot_grid(h4,h5,h2,h3,
+          p4,p5,p2,p3,
+          g4,g5,g2,g3,
+          nrow = 3,
+          labels = "auto", label_size = 10)
 
 ```
