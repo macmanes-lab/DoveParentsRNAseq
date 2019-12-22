@@ -232,4 +232,5 @@ gonads
 background <- png::readPNG("../figures/images/DoveParentsRNAseq_charicons.png")
 icons <- ggdraw() +  draw_image(background, scale = 1)
 plot_grid(icons, hypothalamus, pituitary, gonads, nrow = 4, rel_heights = c(1,1,1,1.25))
+
 ```
