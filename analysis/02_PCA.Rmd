@@ -212,9 +212,9 @@ g <- fviz_screeplot(charfviz, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barco
   labs(title = NULL, y = "PC Variance") + theme_B3() 
 h <- fviz_pca_var(charfviz,  labelsize = 3 , axes.linetype = "blank", 
                    repel = TRUE ,
-                  select.var= list(contrib = 6)) + 
+                  select.var= list(contrib = 5)) + 
       theme_B3() + 
-      labs(x = "PC1", y = "PC2", title =  NULL) +
+      labs(x = "PC1 (35.8%)", y = "PC2 (32.5%)", title =  NULL) +
       theme( axis.text = element_blank()) 
 
 legend <- png::readPNG("../figures/images/DoveParentsRNAseq_legendchar.png")
@@ -235,6 +235,19 @@ plot_grid( abc, def, gh, nrow = 3)
 ## tissue specific 
 
 ```{r tissuespecific, fig.height=7,fig.width=7}
+
+## tsne 
+h4 <- plotcolorfultsnes(hyptsne, hyptsne$sex, sexcolors)  + labs(y = "hypothalamus") 
+h5 <- plotcolorfultsnes(hyptsne, hyptsne$treatment, colorscharmaip)  
+
+p4 <- plotcolorfultsnes(pittsne, pittsne$sex, sexcolors)   + labs(y = "pituitary") 
+p5 <- plotcolorfultsnes(pittsne, pittsne$treatment, colorscharmaip)  
+
+g4 <- plotcolorfultsnes(gontsne, gontsne$sex, sexcolors)  + labs(y = "gonads")  
+g5 <- plotcolorfultsnes(gontsne, gontsne$treatment, colorscharmaip)  
+
+## pca
+
 h1 <- plotcolorfulpcs(hyppca, hyppca$sex, sexcolors) 
 h2 <- plotcolorfulpcs(hyppca, hyppca$treatment, colorscharmaip) 
 
@@ -248,36 +261,32 @@ g2 <- plotcolorfulpcs(gonpca, gonpca$treatment, colorscharmaip)
 plot_grid(h1,h2,p1,p2,g1,g2, nrow = 3)
 
 
+# screeplot for variance
+fviz_screeplot(hypv, addlabels = TRUE,   ncp = 5) + 
+  labs(title = NULL, y = "PC Variance") + theme_B3() 
+fviz_screeplot(pitfviz, addlabels = TRUE,   ncp = 5) + 
+  labs(title = NULL, y = "PC Variance") + theme_B3() 
+fviz_screeplot(gonfviz, addlabels = TRUE,    ncp = 5) + 
+  labs(title = NULL, y = "PC Variance") + theme_B3() 
+
+
+# fviz contributions
+
 plotfriz <- function(frizdf){
 
-  p1 <- fviz_contrib(frizdf, choice = "var", 
-                     axes = 1, top = 3 , sort.val = "asc")  + 
-    labs(title = NULL,   x = "PC1", y = NULL) + 
-    theme_B3() + coord_flip() +
-    theme(axis.text.x = element_blank())
-  
-  p2 <- fviz_contrib(frizdf, choice = "var", 
-                     axes = 2, top = 3 , sort.val = "asc")  + 
-    labs(title = NULL,   x = "PC2", y = "contrib.") + 
-     theme_B3()  + coord_flip() +
-    theme(axis.text.x = element_blank())
-  
-  p3 <- plot_grid(p1,p2, align = "v", nrow = 2, rel_heights = c(1,1.2))
-  print(p3)
+     p <- fviz_pca_var(frizdf,  labelsize = 3.5 , axes.linetype = "blank", 
+                   repel = T ,  select.var= list(contrib = 3))  + 
+      labs(title = NULL) + 
+      theme_B3() + 
+      theme(axis.text = element_blank())
+   print(p)
 }
 
-h3 <- plotfriz(hypv) 
-p3 <-plotfriz(pitfviz)
-g3 <- plotfriz(gonfviz)
+h3 <- plotfriz(hypv) + labs(x = "PC1 (59.8%)", y = "PC2 (37.7%)") 
+p3 <-plotfriz(pitfviz) + labs(x = "PC1 (54.3%)", y = "PC2 (35.7%)") 
+g3 <- plotfriz(gonfviz) + labs(x = "PC1 (82.7%)", y = "PC2 (11.6%)") 
 
-h4 <- plotcolorfultsnes(hyptsne, hyptsne$sex, sexcolors)  + labs(y = "hypothalamus") 
-h5 <- plotcolorfultsnes(hyptsne, hyptsne$treatment, colorscharmaip)  
-
-p4 <- plotcolorfultsnes(pittsne, pittsne$sex, sexcolors)   + labs(y = "pituitary") 
-p5 <- plotcolorfultsnes(pittsne, pittsne$treatment, colorscharmaip)  
-
-g4 <- plotcolorfultsnes(gontsne, gontsne$sex, sexcolors)  + labs(y = "gonads")  
-g5 <- plotcolorfultsnes(gontsne, gontsne$treatment, colorscharmaip)  
+## all together now
 
 plot_grid(h4,h5,h2,h3,
           p4,p5,p2,p3,
