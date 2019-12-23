@@ -271,6 +271,16 @@ Linear discriminant analysis (LDA)
 
 ![](../figures/LDA/LDAplots-6.png)
 
+    m <- plotfacetresults2(LDA.gon, alllevels, "hypothalamus", 20) + labs(x = NULL) + theme(axis.text.x = element_blank()) +
+        theme(legend.position = "top")  +  guides(fill = guide_legend(nrow  = 1))
+    n <- plotfacetresults2(LDA.pit, alllevels, "pituitary", 17) + theme(strip.text = element_blank()) + labs(x = NULL) + theme(axis.text.x = element_blank())
+    o <- plotfacetresults2(LDA.gon, alllevels, "gonads", 15) +
+      theme(strip.text = element_blank())  + labs(x = NULL) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+    plot_grid(m,n,o, nrow = 3, rel_heights = c(1.6,1,1.2))
+
+![](../figures/LDA/LDAplots-7.png)
+
     df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
       summarize(predictedstages = str_c(predictedstage , collapse = ", "))  %>%
