@@ -13,7 +13,7 @@ library(MASS) # LDA analysis
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
 
-knitr::opts_chunk$set(fig.path = '../figures/sexes/', cache = TRUE,  message=F, comment=FALSE, warning=FALSE)
+knitr::opts_chunk$set(fig.path = '../figures/LDA/', cache = TRUE,  message=F, comment=FALSE, warning=FALSE)
 ```
 
 ## LDA analysis of characterization and manipulation
@@ -129,22 +129,20 @@ LDA.gon <- LDanalysis(charGon, vsd.gon.train, vsd.gon.test, manipGon)
 ```{r LDAplots}
 #myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
 
-
 a <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 b <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
 plot_grid(a,b) 
 
-a <- ggplot(LDA.pit, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
-b <- ggplot(LDA.pit, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+c <- ggplot(LDA.pit, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+d <- ggplot(LDA.pit, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
 plot_grid(a,b) 
 
-a <- ggplot(LDA.gon, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
-b <- ggplot(LDA.gon, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+e <- ggplot(LDA.gon, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+f <- ggplot(LDA.gon, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
-plot_grid(a,b)
-
+plot_grid(a,b,c,d,e,f, nrow = 3)
 
 
 LDA.hyp %>% distinct(treatment, predictedstage) %>%
@@ -171,6 +169,5 @@ LDA.gon %>% distinct(treatment, predictedstage) %>%
 LDA.gon %>% 
   group_by(treatment,predictedstage) %>%
   summarize(n = n())
-
 ```
 
