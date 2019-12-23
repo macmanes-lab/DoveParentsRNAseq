@@ -150,22 +150,39 @@ LDA.pit$predictedstage <- factor(LDA.pit$predictedstage, levels = levelsnewgroup
 LDA.gon$treatment <- factor(LDA.gon$treatment, levels = alllevels)
 LDA.gon$predictedstage <- factor(LDA.gon$predictedstage, levels = levelsnewgrouping)
 
-plotpredictions <- function(df, mysubstitle){
-  ggplot(df, aes(x = treatment, fill = predictedstage)) +
+plotpredictions <- function(df, whichlevels, mysubstitle){
+  
+  p <- df %>%
+    filter(treatment %in% whichlevels)  %>%
+  ggplot(aes(x = treatment, fill = predictedstage)) +
   geom_bar(position = position_fill(reverse = F))  +
   facet_wrap(~sex) +
     theme_B3() +
   theme(legend.position = "none",
         axis.text.x = element_blank()) +
   scale_fill_manual(values = colorsnewgrouping) +
-  labs(y = mysubstitle) 
+  labs(y = mysubstitle, x = NULL) +
+    geom_hline(yintercept = 0.5,  size = 0.25, linetype = 2)
+  return(p)
 }
 
-a <- plotpredictions(LDA.hyp, "hypothalamus") + theme(legend.position = "top") 
-b <- plotpredictions(LDA.pit, "pituitary") + theme(strip.text = element_blank())
-c <- plotpredictions(LDA.gon, "gonads") + theme(axis.text.x = element_text(angle = 45, hjust = 1), strip.text = element_blank())
+a <- plotpredictions(LDA.hyp, alllevels, "hypothalamus") + theme(legend.position = "top") 
+b <- plotpredictions(LDA.pit, alllevels,"pituitary") + theme(strip.text = element_blank())
+c <- plotpredictions(LDA.gon, alllevels, "gonads") + theme(axis.text.x = element_text(angle = 45, hjust = 1), strip.text = element_blank())
 
-plot_grid(a,b,c, rel_heights = c(1.8,1,1.5), nrow = 3)
+plot_grid(a,b,c, rel_heights = c(1.6,1,1.2), nrow = 3)
+
+a <- plotpredictions(LDA.hyp, levelstiming, "hypothalamus") + theme(legend.position = "top") 
+b <- plotpredictions(LDA.pit, levelstiming,"pituitary") + theme(strip.text = element_blank())
+c <- plotpredictions(LDA.gon, levelstiming, "gonads") + theme(axis.text.x = element_text(angle = 45, hjust = 1), strip.text = element_blank())
+
+plot_grid(a,b,c, rel_heights = c(1.6,1,1.2), nrow = 3)
+
+a <- plotpredictions(LDA.hyp, levelsremoval, "hypothalamus") + theme(legend.position = "top") 
+b <- plotpredictions(LDA.pit, levelsremoval,"pituitary") + theme(strip.text = element_blank())
+c <- plotpredictions(LDA.gon, levelsremoval, "gonads") + theme(axis.text.x = element_text(angle = 45, hjust = 1), strip.text = element_blank())
+
+plot_grid(a,b,c, rel_heights = c(1.6,1,1.2), nrow = 3)
 
 
 ```
