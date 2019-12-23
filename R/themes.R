@@ -69,6 +69,8 @@ alllevels3volcano <- c("control", "bldg", "lay", "inc.d3", "inc.d9",
                       "m.inc.d8" , "prolong" , "extend",
                       "NS")
 
+levelsnewgrouping <-  c("control" , "bldg",  "earlyinc", 
+                        "nearhatch",  "chickcare", "manip")
 
 ## comparisons
 
@@ -112,6 +114,12 @@ colorschar <-  c("control" = "#F8766D",
                          "n5"= "#DB72FB", 
                          "n9"= "#FF61C3")
 
+colorsnewgrouping <-  c("control" = "#F8766D", 
+                 "bldg"= "#D39200", 
+                 "earlyinc"= "#00C19F", 
+                 "nearhatch"= "#619CFF", 
+                 "chickcare"= "#FF61C3",
+                 "manip" = "#959595")
 
 colorscharmaip <-  c("control" = "#F8766D", 
                  "bldg"= "#D39200", 
