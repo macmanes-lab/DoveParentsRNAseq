@@ -249,10 +249,11 @@ Linear discriminant analysis (LDA)
       return(p)
     }
 
-
-    j <- plotfacetresults2(LDA.gon, levelstiming, "hypothalamus", 20) + labs(x = NULL) + theme(axis.text.x = element_blank()) +
-      theme(legend.position = "bottom") + guides(fill = guide_legend(nrow  = 1)) 
-    k <- plotfacetresults2(LDA.pit, levelstiming, "pituitary", 17) + theme(strip.text = element_blank()) + labs(x = NULL) + theme(axis.text.x = element_blank())
+    j <- plotfacetresults2(LDA.gon, levelstiming, "hypothalamus", 20) + labs(x = NULL) + 
+      theme(axis.text.x = element_blank()) +
+      theme(legend.position = "top") + guides(fill = guide_legend(nrow  = 1)) 
+    k <- plotfacetresults2(LDA.pit, levelstiming, "pituitary", 17) + 
+      theme(strip.text = element_blank()) + labs(x = NULL) + theme(axis.text.x = element_blank())
     l <- plotfacetresults2(LDA.gon, levelstiming, "gonads", 15) + theme(strip.text = element_blank()) + 
        labs(x = NULL)
 
