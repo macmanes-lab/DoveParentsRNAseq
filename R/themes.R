@@ -197,4 +197,6 @@ colorsvolcanochar <-  c("control" = "#F8766D",
                     "n9"= "#FF61C3",
                     "NS" = "#bdbdbd")
 
-
+myannotationcolors <- list(sex = sexcolors,
+                        tissue = colorstissue,
+                        treatment = colorscharmaip2)
