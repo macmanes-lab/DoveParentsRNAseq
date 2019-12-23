@@ -146,131 +146,1423 @@ Linear discriminant analysis (LDA)
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
     FALSE [1] 9.826642 4.643175 3.744735 3.117603 2.699703 2.362898 2.231784 2.112316
 
+    library(kableExtra)
     #myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
-
 
     a <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
     b <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
     plot_grid(a,b) 
 
-![](../figures/sexes/LDAplots-1.png)
+![](../figures/LDA/LDAplots-1.png)
 
-    a <- ggplot(LDA.pit, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
-    b <- ggplot(LDA.pit, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+    c <- ggplot(LDA.pit, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+    d <- ggplot(LDA.pit, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
     plot_grid(a,b) 
 
-![](../figures/sexes/LDAplots-2.png)
+![](../figures/LDA/LDAplots-2.png)
 
-    a <- ggplot(LDA.gon, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
-    b <- ggplot(LDA.gon, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+    e <- ggplot(LDA.gon, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+    f <- ggplot(LDA.gon, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
-    plot_grid(a,b)
+    plot_grid(a,b,c,d,e,f, nrow = 3)
 
-![](../figures/sexes/LDAplots-3.png)
+![](../figures/LDA/LDAplots-3.png)
 
-    LDA.hyp %>% distinct(treatment, predictedstage) %>%
+    df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
-      summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+      summarize(predictedstages = str_c(predictedstage , collapse = ", ")) 
+    kable(df1)
 
-    FALSE # A tibble: 7 x 2
-    FALSE   treatment predictedstages                           
-    FALSE   <fct>     <chr>                                     
-    FALSE 1 extend    n9, inc.d3, n5, inc.d9, inc.d17           
-    FALSE 2 m.inc.d17 inc.d9, n9, inc.d3, n5, lay, hatch        
-    FALSE 3 m.inc.d3  n5, n9, inc.d3, inc.d9, inc.d17           
-    FALSE 4 m.inc.d8  n5, inc.d3, n9, inc.d9                    
-    FALSE 5 m.inc.d9  bldg, n9, inc.d3, lay, inc.d17, inc.d9, n5
-    FALSE 6 m.n2      inc.d3, n9, n5, inc.d9                    
-    FALSE 7 prolong   inc.d3, inc.d9, n9, n5, inc.d17
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+treatment
+</th>
+<th style="text-align:left;">
+predictedstages
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+n9, inc.d3, n5, inc.d9, inc.d17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+inc.d9, n9, inc.d3, n5, lay, hatch
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+n5, n9, inc.d3, inc.d9, inc.d17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+n5, inc.d3, n9, inc.d9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+bldg, n9, inc.d3, lay, inc.d17, inc.d9, n5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+inc.d3, n9, n5, inc.d9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+inc.d3, inc.d9, n9, n5, inc.d17
+</td>
+</tr>
+</tbody>
+</table>
 
-    LDA.hyp %>% 
+    df2 <- LDA.hyp %>% 
       group_by(treatment,predictedstage) %>%
       summarize(n = n())
+    kable(df2)
 
-    FALSE # A tibble: 36 x 3
-    FALSE # Groups:   treatment [7]
-    FALSE    treatment predictedstage     n
-    FALSE    <fct>     <fct>          <int>
-    FALSE  1 extend    inc.d17            1
-    FALSE  2 extend    inc.d3             3
-    FALSE  3 extend    inc.d9             2
-    FALSE  4 extend    n5                 7
-    FALSE  5 extend    n9                 7
-    FALSE  6 m.inc.d17 hatch              1
-    FALSE  7 m.inc.d17 inc.d3             2
-    FALSE  8 m.inc.d17 inc.d9             1
-    FALSE  9 m.inc.d17 lay                2
-    FALSE 10 m.inc.d17 n5                 6
-    FALSE # … with 26 more rows
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+treatment
+</th>
+<th style="text-align:left;">
+predictedstage
+</th>
+<th style="text-align:right;">
+n
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+</tbody>
+</table>
 
-    LDA.pit %>% distinct(treatment, predictedstage) %>%
+    df3 <- LDA.pit %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
       summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+    kable(df3)
 
-    FALSE # A tibble: 7 x 2
-    FALSE   treatment predictedstages            
-    FALSE   <fct>     <chr>                      
-    FALSE 1 extend    hatch, n9, n5, lay         
-    FALSE 2 m.inc.d17 n9, lay, hatch             
-    FALSE 3 m.inc.d3  lay, n9, inc.d3, bldg      
-    FALSE 4 m.inc.d8  lay, n9, inc.d3, inc.d9    
-    FALSE 5 m.inc.d9  bldg, n9, inc.d3           
-    FALSE 6 m.n2      hatch, n9, lay             
-    FALSE 7 prolong   lay, n9, hatch, inc.d17, n5
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+treatment
+</th>
+<th style="text-align:left;">
+predictedstages
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+hatch, n9, n5, lay
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+n9, lay, hatch
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+lay, n9, inc.d3, bldg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+lay, n9, inc.d3, inc.d9
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+bldg, n9, inc.d3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+hatch, n9, lay
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+lay, n9, hatch, inc.d17, n5
+</td>
+</tr>
+</tbody>
+</table>
 
-    LDA.pit %>% 
+    df4  <- LDA.pit %>% 
       group_by(treatment,predictedstage) %>%
       summarize(n = n())
+    kable(df4)
 
-    FALSE # A tibble: 26 x 3
-    FALSE # Groups:   treatment [7]
-    FALSE    treatment predictedstage     n
-    FALSE    <fct>     <fct>          <int>
-    FALSE  1 extend    hatch              3
-    FALSE  2 extend    lay                1
-    FALSE  3 extend    n5                13
-    FALSE  4 extend    n9                 3
-    FALSE  5 m.inc.d17 hatch              1
-    FALSE  6 m.inc.d17 lay                1
-    FALSE  7 m.inc.d17 n9                19
-    FALSE  8 m.inc.d3  bldg               3
-    FALSE  9 m.inc.d3  inc.d3             1
-    FALSE 10 m.inc.d3  lay                8
-    FALSE # … with 16 more rows
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+treatment
+</th>
+<th style="text-align:left;">
+predictedstage
+</th>
+<th style="text-align:right;">
+n
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+12
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+18
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+</tbody>
+</table>
 
-    LDA.gon %>% distinct(treatment, predictedstage) %>%
+    df5 <- LDA.gon %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
       summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+    kable(df5)
 
-    FALSE # A tibble: 7 x 2
-    FALSE   treatment predictedstages                             
-    FALSE   <fct>     <chr>                                       
-    FALSE 1 extend    n5, n9, inc.d17, lay, hatch, inc.d3         
-    FALSE 2 m.inc.d17 n9, lay, n5                                 
-    FALSE 3 m.inc.d3  lay, inc.d9, n9, n5, inc.d3, hatch, bldg    
-    FALSE 4 m.inc.d8  n5, inc.d3, n9, lay, hatch                  
-    FALSE 5 m.inc.d9  n9, inc.d17, n5, hatch, inc.d9, bldg, inc.d3
-    FALSE 6 m.n2      hatch, n9, lay, n5, bldg                    
-    FALSE 7 prolong   lay, n9, bldg, hatch, n5
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+treatment
+</th>
+<th style="text-align:left;">
+predictedstages
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+n5, n9, inc.d17, lay, hatch, inc.d3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+n9, lay, n5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+lay, inc.d9, n9, n5, inc.d3, hatch, bldg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+n5, inc.d3, n9, lay, hatch
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+n9, inc.d17, n5, hatch, inc.d9, bldg, inc.d3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+hatch, n9, lay, n5, bldg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+lay, n9, bldg, hatch, n5
+</td>
+</tr>
+</tbody>
+</table>
 
-    LDA.gon %>% 
+    df6 <- LDA.gon %>% 
       group_by(treatment,predictedstage) %>%
       summarize(n = n())
+    kable(df6)
 
-    FALSE # A tibble: 38 x 3
-    FALSE # Groups:   treatment [7]
-    FALSE    treatment predictedstage     n
-    FALSE    <fct>     <fct>          <int>
-    FALSE  1 extend    hatch              1
-    FALSE  2 extend    inc.d17            2
-    FALSE  3 extend    inc.d3             1
-    FALSE  4 extend    lay                5
-    FALSE  5 extend    n5                 8
-    FALSE  6 extend    n9                 3
-    FALSE  7 m.inc.d17 lay                6
-    FALSE  8 m.inc.d17 n5                 7
-    FALSE  9 m.inc.d17 n9                 8
-    FALSE 10 m.inc.d3  bldg               1
-    FALSE # … with 28 more rows
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+treatment
+</th>
+<th style="text-align:left;">
+predictedstage
+</th>
+<th style="text-align:right;">
+n
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+2
+</td>
+</tr>
+</tbody>
+</table>
