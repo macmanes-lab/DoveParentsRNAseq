@@ -130,7 +130,7 @@ LDA.gon <- LDanalysis(charGon, vsd.gon.train, vsd.gon.test, manipGon)
 library(kableExtra)
 #myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
 
-a <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+a <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
 b <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
 plot_grid(a,b) 
@@ -144,37 +144,46 @@ e <- ggplot(LDA.gon, aes(x = LD1, LD2, color = predictedstage)) + geom_point(sha
 f <- ggplot(LDA.gon, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
 plot_grid(a,b,c,d,e,f, nrow = 3)
+```
 
+
+```{r LDApredictions}
 
 df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
   group_by(treatment) %>%
-  summarize(predictedstages = str_c(predictedstage , collapse = ", ")) 
+  summarize(predictedstages = str_c(predictedstage , collapse = ", "))  %>%
+  mutate(tissue = "hypothalamus")
 kable(df1)
 
 df2 <- LDA.hyp %>% 
   group_by(treatment,predictedstage) %>%
-  summarize(n = n())
+  summarize(n = n()) %>%
+  mutate(tissue = "hypothalamus")
 kable(df2)
 
 df3 <- LDA.pit %>% distinct(treatment, predictedstage) %>%
   group_by(treatment) %>%
-  summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+  summarize(predictedstages = str_c(predictedstage , collapse = ", ")) %>%
+  mutate(tissue = "pituitary")
 kable(df3)
 
 df4  <- LDA.pit %>% 
   group_by(treatment,predictedstage) %>%
-  summarize(n = n())
+  summarize(n = n()) %>%
+  mutate(tissue = "pituitary")
 kable(df4)
 
 
 df5 <- LDA.gon %>% distinct(treatment, predictedstage) %>%
   group_by(treatment) %>%
-  summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+  summarize(predictedstages = str_c(predictedstage , collapse = ", ")) %>%
+  mutate(tissue = "gonads")
 kable(df5)
 
 df6 <- LDA.gon %>% 
   group_by(treatment,predictedstage) %>%
-  summarize(n = n())
+  summarize(n = n()) %>%
+  mutate(tissue = "gonads")
 kable(df6)
 ```
 
