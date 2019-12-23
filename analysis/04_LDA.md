@@ -245,7 +245,8 @@ Linear discriminant analysis (LDA)
         theme_B3() +
       theme(legend.position = "none") +
       scale_fill_manual(values = colorscharmaip) +
-      labs(y = mysubstitle) 
+      labs(y = mysubstitle)  +
+        geom_hline(yintercept = 0.5,  size = 0.25, linetype = 2)
       return(p)
     }
 
