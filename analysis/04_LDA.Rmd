@@ -128,6 +128,17 @@ LDA.gon <- LDanalysis(charGon, vsd.gon.train, vsd.gon.test, manipGon)
 
 ```{r LDAplots}
 library(kableExtra)
+
+LDA.hyp$treatment <- factor(LDA.hyp$treatment, levels = alllevels)
+LDA.hyp$predictedstage <- factor(LDA.hyp$predictedstage, levels = alllevels)
+
+LDA.pit$treatment <- factor(LDA.pit$treatment, levels = alllevels)
+LDA.pit$predictedstage <- factor(LDA.pit$predictedstage, levels = alllevels)
+
+LDA.gon$treatment <- factor(LDA.gon$treatment, levels = alllevels)
+LDA.gon$predictedstage <- factor(LDA.gon$predictedstage, levels = alllevels)
+
+
 #myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
 
 a <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
@@ -142,15 +153,93 @@ f <- ggplot(LDA.gon, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 
 plot_grid(a,b,c,d,e,f, nrow = 3)
 
 
-g <- ggplot(LDA.hyp, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point( ) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
+g <- ggplot(LDA.hyp, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + 
+  geom_point( ) + theme_B3() +
+  theme(legend.position = "none") + 
+  scale_color_manual(values = colorscharmaip) + 
+  guides(color = guide_legend(show = FALSE))  +
+  labs(subtitle = "hypothalamus")
 
-h <- ggplot(LDA.pit, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point( ) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
+h <- ggplot(LDA.pit, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + 
+  geom_point( ) + theme_B3() +
+  theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)  + 
+  guides(color = guide_legend(show = FALSE)) +
+  labs(subtitle = "piuitary")
 
-i <- ggplot(LDA.gon, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point( ) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)  
+i <- ggplot(LDA.gon, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + 
+  geom_point( ) + theme_B3() +
+  theme(legend.position = "right") + scale_color_manual(values = colorscharmaip)  + 
+  #guides(color = guide_legend(show = FALSE)) +
+  guides(shape = guide_legend(ncol = 3),
+         color = guide_legend(ncol = 3)) +
+  labs(subtitle = "gonads")
 
-plot_grid(g,h,i, nrow = 1)
+gh <- plot_grid(g,h, nrow = 1)
+ghi <- plot_grid(gh, i, nrow = 2)
+ghi
+
+plotfacetresults <- function(df, whichgroups, mysubstitle, myshape){
+  
+  p <- df %>%
+    filter(treatment %in% whichgroups) %>%
+    ggplot(aes(x = LD1, LD2,  color = predictedstage)) + 
+  geom_point(shape = myshape ) + theme_B3() +
+    stat_ellipse() +
+  theme(legend.position = "none") + 
+  scale_color_manual(values = colorscharmaip) + 
+  guides(color = guide_legend(show = FALSE))  +
+  labs(y = mysubstitle) + 
+  facet_wrap(~treatment, nrow = 1)
+  return(p)
+}
 
 
+j <- plotfacetresults(LDA.gon, levelstiming, "hypothalamus\n LD2", 20) + labs(x = NULL)
+k <- plotfacetresults(LDA.pit, levelstiming, "pituitary\n LD2", 17) + theme(strip.text = element_blank()) + labs(x = NULL)
+l <- plotfacetresults(LDA.gon, levelstiming, "gonads\n LD2", 15) + theme(strip.text = element_blank()) + 
+  theme(legend.position = "bottom") +
+  guides(color = guide_legend(nrow  = 1))
+
+plot_grid(j,k,l, nrow = 3, rel_heights = c(1.2,1,1.6), align = "v")
+
+m <- plotfacetresults(LDA.gon, levelsremoval, "hypothalamus\n LD2", 20) + labs(x = NULL)
+n <- plotfacetresults(LDA.pit, levelsremoval, "pituitary\n LD2", 17) + theme(strip.text = element_blank()) + labs(x = NULL)
+o <- plotfacetresults(LDA.gon, levelsremoval, "gonads\n LD2", 15) + theme(strip.text = element_blank()) + 
+  theme(legend.position = "bottom") +
+  guides(color = guide_legend(nrow  = 1))
+
+plot_grid(m,n,o, nrow = 3, rel_heights = c(1.2,1,1.6), align = "v")
+
+
+plotfacetresults2 <- function(df, whichgroups, mysubstitle, myshape){
+  p <- df %>%
+    filter(treatment %in% whichgroups) %>%
+  ggplot(aes(x = treatment, fill = predictedstage)) +
+  geom_bar(position = position_fill(reverse = F))  +
+  facet_wrap(~sex) +
+    theme_B3() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = colorscharmaip) +
+  labs(y = mysubstitle) 
+  return(p)
+}
+
+
+j <- plotfacetresults2(LDA.gon, levelstiming, "hypothalamus", 20) + labs(x = NULL) + theme(axis.text.x = element_blank()) +
+  theme(legend.position = "bottom") + guides(fill = guide_legend(nrow  = 1)) 
+k <- plotfacetresults2(LDA.pit, levelstiming, "pituitary", 17) + theme(strip.text = element_blank()) + labs(x = NULL) + theme(axis.text.x = element_blank())
+l <- plotfacetresults2(LDA.gon, levelstiming, "gonads", 15) + theme(strip.text = element_blank()) + 
+   labs(x = NULL)
+
+plot_grid(j,k,l, nrow = 3, rel_heights = c(1.6,1,1.2))
+
+m <- plotfacetresults2(LDA.gon, levelsremoval, "hypothalamus", 20) + labs(x = NULL) + theme(axis.text.x = element_blank()) +
+    theme(legend.position = "top")  +  guides(fill = guide_legend(nrow  = 1))
+n <- plotfacetresults2(LDA.pit, levelsremoval, "pituitary", 17) + theme(strip.text = element_blank()) + labs(x = NULL) + theme(axis.text.x = element_blank())
+o <- plotfacetresults2(LDA.gon, levelsremoval, "gonads", 15) +
+  theme(strip.text = element_blank())  + labs(x = NULL)
+
+plot_grid(m,n,o, nrow = 3, rel_heights = c(1.6,1,1.2))
 
 ```
 
@@ -166,7 +255,7 @@ kable(df1)
 df2 <- LDA.hyp %>% 
   group_by(treatment,predictedstage) %>%
   summarize(n = n()) %>%
-  mutate(tissue = "hypothalamus")
+  mutate(tissue = "hypothalamus") 
 kable(df2)
 
 df3 <- LDA.pit %>% distinct(treatment, predictedstage) %>%
