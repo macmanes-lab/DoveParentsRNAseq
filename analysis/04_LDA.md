@@ -162,11 +162,11 @@ Linear discriminant analysis (LDA)
 
 ![](../figures/LDA/LDAplots-1.png)
 
-    g <- ggplot(LDA.hyp, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
+    g <- ggplot(LDA.hyp, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point( ) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
 
-    h <- ggplot(LDA.pit, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point(shape = 17) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
+    h <- ggplot(LDA.pit, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point( ) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
 
-    i <- ggplot(LDA.gon, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point(shape = 15) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)  
+    i <- ggplot(LDA.gon, aes(x = LD1, LD2, shape = predictedstage, color = treatment)) + geom_point( ) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)  
 
     plot_grid(g,h,i, nrow = 1)
 
