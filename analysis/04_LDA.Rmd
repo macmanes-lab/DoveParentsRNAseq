@@ -256,7 +256,7 @@ df2 <- LDA.hyp %>%
   group_by(treatment,predictedstage) %>%
   summarize(n = n()) %>%
   mutate(tissue = "hypothalamus")  %>%
-  arrange(tissue, treatment, n)
+  arrange(tissue, treatment, desc(n))
 kable(df2)
 
 df3 <- LDA.pit %>% distinct(treatment, predictedstage) %>%
@@ -269,7 +269,7 @@ df4  <- LDA.pit %>%
   group_by(treatment,predictedstage) %>%
   summarize(n = n()) %>%
   mutate(tissue = "pituitary") %>%
-  arrange(tissue, treatment, n)
+  arrange(tissue, treatment, desc(n))
 kable(df4)
 
 
@@ -283,7 +283,7 @@ df6 <- LDA.gon %>%
   group_by(treatment,predictedstage) %>%
   summarize(n = n()) %>%
   mutate(tissue = "gonads") %>%
-  arrange(tissue, treatment, n)
+  arrange(tissue, treatment, desc(n))
 kable(df6)
 ```
 
