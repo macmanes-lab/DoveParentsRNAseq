@@ -149,7 +149,7 @@ Linear discriminant analysis (LDA)
     library(kableExtra)
     #myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
 
-    a <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
+    a <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip) 
     b <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
 
     plot_grid(a,b) 
@@ -172,7 +172,8 @@ Linear discriminant analysis (LDA)
 
     df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
-      summarize(predictedstages = str_c(predictedstage , collapse = ", ")) 
+      summarize(predictedstages = str_c(predictedstage , collapse = ", "))  %>%
+      mutate(tissue = "hypothalamus")
     kable(df1)
 
 <table>
@@ -184,6 +185,9 @@ treatment
 <th style="text-align:left;">
 predictedstages
 </th>
+<th style="text-align:left;">
+tissue
+</th>
 </tr>
 </thead>
 <tbody>
@@ -194,6 +198,9 @@ extend
 <td style="text-align:left;">
 n9, inc.d3, n5, inc.d9, inc.d17
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -201,6 +208,9 @@ m.inc.d17
 </td>
 <td style="text-align:left;">
 inc.d9, n9, inc.d3, n5, lay, hatch
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -210,6 +220,9 @@ m.inc.d3
 <td style="text-align:left;">
 n5, n9, inc.d3, inc.d9, inc.d17
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -217,6 +230,9 @@ m.inc.d8
 </td>
 <td style="text-align:left;">
 n5, inc.d3, n9, inc.d9
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -226,6 +242,9 @@ m.inc.d9
 <td style="text-align:left;">
 bldg, n9, inc.d3, lay, inc.d17, inc.d9, n5
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -233,6 +252,9 @@ m.n2
 </td>
 <td style="text-align:left;">
 inc.d3, n9, n5, inc.d9
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -242,13 +264,17 @@ prolong
 <td style="text-align:left;">
 inc.d3, inc.d9, n9, n5, inc.d17
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 </tbody>
 </table>
 
     df2 <- LDA.hyp %>% 
       group_by(treatment,predictedstage) %>%
-      summarize(n = n())
+      summarize(n = n()) %>%
+      mutate(tissue = "hypothalamus")
     kable(df2)
 
 <table>
@@ -263,6 +289,9 @@ predictedstage
 <th style="text-align:right;">
 n
 </th>
+<th style="text-align:left;">
+tissue
+</th>
 </tr>
 </thead>
 <tbody>
@@ -276,6 +305,9 @@ inc.d17
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -286,6 +318,9 @@ inc.d3
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -298,6 +333,9 @@ inc.d9
 <td style="text-align:right;">
 2
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -309,6 +347,9 @@ n5
 <td style="text-align:right;">
 7
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -319,6 +360,9 @@ n9
 </td>
 <td style="text-align:right;">
 7
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -331,6 +375,9 @@ hatch
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -342,6 +389,9 @@ inc.d3
 <td style="text-align:right;">
 2
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -352,6 +402,9 @@ inc.d9
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -364,6 +417,9 @@ lay
 <td style="text-align:right;">
 2
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -375,6 +431,9 @@ n5
 <td style="text-align:right;">
 6
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -385,6 +444,9 @@ n9
 </td>
 <td style="text-align:right;">
 9
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -397,6 +459,9 @@ inc.d17
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -407,6 +472,9 @@ inc.d3
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -419,6 +487,9 @@ inc.d9
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -429,6 +500,9 @@ n5
 </td>
 <td style="text-align:right;">
 9
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -441,6 +515,9 @@ n9
 <td style="text-align:right;">
 6
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -451,6 +528,9 @@ inc.d3
 </td>
 <td style="text-align:right;">
 5
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -463,6 +543,9 @@ inc.d9
 <td style="text-align:right;">
 5
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -474,6 +557,9 @@ n5
 <td style="text-align:right;">
 5
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -484,6 +570,9 @@ n9
 </td>
 <td style="text-align:right;">
 5
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -496,6 +585,9 @@ bldg
 <td style="text-align:right;">
 5
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -506,6 +598,9 @@ inc.d17
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -518,6 +613,9 @@ inc.d3
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -528,6 +626,9 @@ inc.d9
 </td>
 <td style="text-align:right;">
 2
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -540,6 +641,9 @@ lay
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -550,6 +654,9 @@ n5
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -562,6 +669,9 @@ n9
 <td style="text-align:right;">
 4
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -572,6 +682,9 @@ inc.d3
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -584,6 +697,9 @@ inc.d9
 <td style="text-align:right;">
 2
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -594,6 +710,9 @@ n5
 </td>
 <td style="text-align:right;">
 4
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -606,6 +725,9 @@ n9
 <td style="text-align:right;">
 11
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -616,6 +738,9 @@ inc.d17
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -628,6 +753,9 @@ inc.d3
 <td style="text-align:right;">
 5
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -638,6 +766,9 @@ inc.d9
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:left;">
+hypothalamus
 </td>
 </tr>
 <tr>
@@ -650,6 +781,9 @@ n5
 <td style="text-align:right;">
 8
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -661,13 +795,17 @@ n9
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+hypothalamus
+</td>
 </tr>
 </tbody>
 </table>
 
     df3 <- LDA.pit %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
-      summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+      summarize(predictedstages = str_c(predictedstage , collapse = ", ")) %>%
+      mutate(tissue = "pituitary")
     kable(df3)
 
 <table>
@@ -679,6 +817,9 @@ treatment
 <th style="text-align:left;">
 predictedstages
 </th>
+<th style="text-align:left;">
+tissue
+</th>
 </tr>
 </thead>
 <tbody>
@@ -689,6 +830,9 @@ extend
 <td style="text-align:left;">
 hatch, n9, n5, lay
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -696,6 +840,9 @@ m.inc.d17
 </td>
 <td style="text-align:left;">
 n9, lay, hatch
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -705,6 +852,9 @@ m.inc.d3
 <td style="text-align:left;">
 lay, n9, inc.d3, bldg
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -712,6 +862,9 @@ m.inc.d8
 </td>
 <td style="text-align:left;">
 lay, n9, inc.d3, inc.d9
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -721,6 +874,9 @@ m.inc.d9
 <td style="text-align:left;">
 bldg, n9, inc.d3
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -728,6 +884,9 @@ m.n2
 </td>
 <td style="text-align:left;">
 hatch, n9, lay
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -737,13 +896,17 @@ prolong
 <td style="text-align:left;">
 lay, n9, hatch, inc.d17, n5
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 </tbody>
 </table>
 
     df4  <- LDA.pit %>% 
       group_by(treatment,predictedstage) %>%
-      summarize(n = n())
+      summarize(n = n()) %>%
+      mutate(tissue = "pituitary")
     kable(df4)
 
 <table>
@@ -758,6 +921,9 @@ predictedstage
 <th style="text-align:right;">
 n
 </th>
+<th style="text-align:left;">
+tissue
+</th>
 </tr>
 </thead>
 <tbody>
@@ -771,6 +937,9 @@ hatch
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -781,6 +950,9 @@ lay
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -793,6 +965,9 @@ n5
 <td style="text-align:right;">
 13
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -803,6 +978,9 @@ n9
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -815,6 +993,9 @@ hatch
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -825,6 +1006,9 @@ lay
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -837,6 +1021,9 @@ n9
 <td style="text-align:right;">
 19
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -848,6 +1035,9 @@ bldg
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -858,6 +1048,9 @@ inc.d3
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -870,6 +1063,9 @@ lay
 <td style="text-align:right;">
 8
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -881,6 +1077,9 @@ n9
 <td style="text-align:right;">
 8
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -891,6 +1090,9 @@ inc.d3
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -903,6 +1105,9 @@ inc.d9
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -913,6 +1118,9 @@ lay
 </td>
 <td style="text-align:right;">
 12
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -925,6 +1133,9 @@ n9
 <td style="text-align:right;">
 4
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -935,6 +1146,9 @@ bldg
 </td>
 <td style="text-align:right;">
 7
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -947,6 +1161,9 @@ inc.d3
 <td style="text-align:right;">
 2
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -957,6 +1174,9 @@ n9
 </td>
 <td style="text-align:right;">
 7
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -969,6 +1189,9 @@ hatch
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -979,6 +1202,9 @@ lay
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -991,6 +1217,9 @@ n9
 <td style="text-align:right;">
 18
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1001,6 +1230,9 @@ hatch
 </td>
 <td style="text-align:right;">
 6
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -1013,6 +1245,9 @@ inc.d17
 <td style="text-align:right;">
 2
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1023,6 +1258,9 @@ lay
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+pituitary
 </td>
 </tr>
 <tr>
@@ -1035,6 +1273,9 @@ n5
 <td style="text-align:right;">
 6
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1046,13 +1287,17 @@ n9
 <td style="text-align:right;">
 5
 </td>
+<td style="text-align:left;">
+pituitary
+</td>
 </tr>
 </tbody>
 </table>
 
     df5 <- LDA.gon %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
-      summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+      summarize(predictedstages = str_c(predictedstage , collapse = ", ")) %>%
+      mutate(tissue = "gonads")
     kable(df5)
 
 <table>
@@ -1064,6 +1309,9 @@ treatment
 <th style="text-align:left;">
 predictedstages
 </th>
+<th style="text-align:left;">
+tissue
+</th>
 </tr>
 </thead>
 <tbody>
@@ -1074,6 +1322,9 @@ extend
 <td style="text-align:left;">
 n5, n9, inc.d17, lay, hatch, inc.d3
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1081,6 +1332,9 @@ m.inc.d17
 </td>
 <td style="text-align:left;">
 n9, lay, n5
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1090,6 +1344,9 @@ m.inc.d3
 <td style="text-align:left;">
 lay, inc.d9, n9, n5, inc.d3, hatch, bldg
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1097,6 +1354,9 @@ m.inc.d8
 </td>
 <td style="text-align:left;">
 n5, inc.d3, n9, lay, hatch
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1106,6 +1366,9 @@ m.inc.d9
 <td style="text-align:left;">
 n9, inc.d17, n5, hatch, inc.d9, bldg, inc.d3
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1113,6 +1376,9 @@ m.n2
 </td>
 <td style="text-align:left;">
 hatch, n9, lay, n5, bldg
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1122,13 +1388,17 @@ prolong
 <td style="text-align:left;">
 lay, n9, bldg, hatch, n5
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 </tbody>
 </table>
 
     df6 <- LDA.gon %>% 
       group_by(treatment,predictedstage) %>%
-      summarize(n = n())
+      summarize(n = n()) %>%
+      mutate(tissue = "gonads")
     kable(df6)
 
 <table>
@@ -1143,6 +1413,9 @@ predictedstage
 <th style="text-align:right;">
 n
 </th>
+<th style="text-align:left;">
+tissue
+</th>
 </tr>
 </thead>
 <tbody>
@@ -1156,6 +1429,9 @@ hatch
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1166,6 +1442,9 @@ inc.d17
 </td>
 <td style="text-align:right;">
 2
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1178,6 +1457,9 @@ inc.d3
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1188,6 +1470,9 @@ lay
 </td>
 <td style="text-align:right;">
 5
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1200,6 +1485,9 @@ n5
 <td style="text-align:right;">
 8
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1211,6 +1499,9 @@ n9
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1221,6 +1512,9 @@ lay
 </td>
 <td style="text-align:right;">
 6
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1233,6 +1527,9 @@ n5
 <td style="text-align:right;">
 7
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1243,6 +1540,9 @@ n9
 </td>
 <td style="text-align:right;">
 8
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1255,6 +1555,9 @@ bldg
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1265,6 +1568,9 @@ hatch
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1277,6 +1583,9 @@ inc.d3
 <td style="text-align:right;">
 2
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1288,6 +1597,9 @@ inc.d9
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1298,6 +1610,9 @@ lay
 </td>
 <td style="text-align:right;">
 6
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1310,6 +1625,9 @@ n5
 <td style="text-align:right;">
 4
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1321,6 +1639,9 @@ n9
 <td style="text-align:right;">
 5
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1331,6 +1652,9 @@ hatch
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1343,6 +1667,9 @@ inc.d3
 <td style="text-align:right;">
 5
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1353,6 +1680,9 @@ lay
 </td>
 <td style="text-align:right;">
 5
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1365,6 +1695,9 @@ n5
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1375,6 +1708,9 @@ n9
 </td>
 <td style="text-align:right;">
 6
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1387,6 +1723,9 @@ bldg
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1397,6 +1736,9 @@ hatch
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1409,6 +1751,9 @@ inc.d17
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1419,6 +1764,9 @@ inc.d3
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1431,6 +1779,9 @@ inc.d9
 <td style="text-align:right;">
 1
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1441,6 +1792,9 @@ n5
 </td>
 <td style="text-align:right;">
 4
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1453,6 +1807,9 @@ n9
 <td style="text-align:right;">
 3
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1463,6 +1820,9 @@ bldg
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1475,6 +1835,9 @@ hatch
 <td style="text-align:right;">
 2
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1486,6 +1849,9 @@ lay
 <td style="text-align:right;">
 4
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1496,6 +1862,9 @@ n5
 </td>
 <td style="text-align:right;">
 5
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1508,6 +1877,9 @@ n9
 <td style="text-align:right;">
 7
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1518,6 +1890,9 @@ bldg
 </td>
 <td style="text-align:right;">
 1
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1530,6 +1905,9 @@ hatch
 <td style="text-align:right;">
 4
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1540,6 +1918,9 @@ lay
 </td>
 <td style="text-align:right;">
 8
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 <tr>
@@ -1552,6 +1933,9 @@ n5
 <td style="text-align:right;">
 5
 </td>
+<td style="text-align:left;">
+gonads
+</td>
 </tr>
 <tr>
 <td style="text-align:left;">
@@ -1562,6 +1946,9 @@ n9
 </td>
 <td style="text-align:right;">
 2
+</td>
+<td style="text-align:left;">
+gonads
 </td>
 </tr>
 </tbody>
