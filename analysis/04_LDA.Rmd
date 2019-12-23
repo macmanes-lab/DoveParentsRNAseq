@@ -127,6 +127,7 @@ LDA.gon <- LDanalysis(charGon, vsd.gon.train, vsd.gon.test, manipGon)
 
 
 ```{r LDAplots}
+library(kableExtra)
 #myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
 
 a <- ggplot(LDA.hyp, aes(x = LD1, LD2, color = predictedstage)) + geom_point(shape = 20) + theme(legend.position = "none") + scale_color_manual(values = colorscharmaip)
@@ -145,29 +146,35 @@ f <- ggplot(LDA.gon, aes(x = LD1, LD2, color = treatment)) + geom_point(shape = 
 plot_grid(a,b,c,d,e,f, nrow = 3)
 
 
-LDA.hyp %>% distinct(treatment, predictedstage) %>%
+df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
   group_by(treatment) %>%
-  summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+  summarize(predictedstages = str_c(predictedstage , collapse = ", ")) 
+kable(df1)
 
-LDA.hyp %>% 
+df2 <- LDA.hyp %>% 
   group_by(treatment,predictedstage) %>%
   summarize(n = n())
+kable(df2)
 
-LDA.pit %>% distinct(treatment, predictedstage) %>%
+df3 <- LDA.pit %>% distinct(treatment, predictedstage) %>%
   group_by(treatment) %>%
   summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+kable(df3)
 
-LDA.pit %>% 
+df4  <- LDA.pit %>% 
   group_by(treatment,predictedstage) %>%
   summarize(n = n())
+kable(df4)
 
 
-LDA.gon %>% distinct(treatment, predictedstage) %>%
+df5 <- LDA.gon %>% distinct(treatment, predictedstage) %>%
   group_by(treatment) %>%
   summarize(predictedstages = str_c(predictedstage , collapse = ", "))
+kable(df5)
 
-LDA.gon %>% 
+df6 <- LDA.gon %>% 
   group_by(treatment,predictedstage) %>%
   summarize(n = n())
+kable(df6)
 ```
 
