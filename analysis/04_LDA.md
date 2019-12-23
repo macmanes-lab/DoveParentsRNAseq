@@ -274,7 +274,7 @@ Linear discriminant analysis (LDA)
     df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
       summarize(predictedstages = str_c(predictedstage , collapse = ", "))  %>%
-      mutate(tissue = "hypothalamus")
+      mutate(tissue = "hypothalamus") 
     kable(df1)
 
 <table>
@@ -375,7 +375,8 @@ hypothalamus
     df2 <- LDA.hyp %>% 
       group_by(treatment,predictedstage) %>%
       summarize(n = n()) %>%
-      mutate(tissue = "hypothalamus") 
+      mutate(tissue = "hypothalamus")  %>%
+      arrange(tissue, treatment, n)
     kable(df2)
 
 <table>
@@ -401,20 +402,6 @@ tissue
 m.inc.d3
 </td>
 <td style="text-align:left;">
-inc.d3
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d3
-</td>
-<td style="text-align:left;">
 inc.d9
 </td>
 <td style="text-align:right;">
@@ -443,10 +430,10 @@ hypothalamus
 m.inc.d3
 </td>
 <td style="text-align:left;">
-n5
+inc.d3
 </td>
 <td style="text-align:right;">
-9
+3
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -468,6 +455,20 @@ hypothalamus
 </tr>
 <tr>
 <td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 m.inc.d8
 </td>
 <td style="text-align:left;">
@@ -527,52 +528,10 @@ hypothalamus
 m.inc.d9
 </td>
 <td style="text-align:left;">
-bldg
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d9
-</td>
-<td style="text-align:left;">
-lay
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d9
-</td>
-<td style="text-align:left;">
 inc.d3
 </td>
 <td style="text-align:right;">
 1
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d9
-</td>
-<td style="text-align:left;">
-inc.d9
-</td>
-<td style="text-align:right;">
-2
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -611,6 +570,34 @@ hypothalamus
 m.inc.d9
 </td>
 <td style="text-align:left;">
+inc.d9
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
 n9
 </td>
 <td style="text-align:right;">
@@ -622,27 +609,13 @@ hypothalamus
 </tr>
 <tr>
 <td style="text-align:left;">
-m.inc.d17
+m.inc.d9
 </td>
 <td style="text-align:left;">
-lay
+bldg
 </td>
 <td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-inc.d3
-</td>
-<td style="text-align:right;">
-2
+5
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -681,6 +654,34 @@ hypothalamus
 m.inc.d17
 </td>
 <td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
 n5
 </td>
 <td style="text-align:right;">
@@ -709,34 +710,6 @@ hypothalamus
 prolong
 </td>
 <td style="text-align:left;">
-inc.d3
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-prolong
-</td>
-<td style="text-align:left;">
-inc.d9
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-prolong
-</td>
-<td style="text-align:left;">
 inc.d17
 </td>
 <td style="text-align:right;">
@@ -751,10 +724,10 @@ hypothalamus
 prolong
 </td>
 <td style="text-align:left;">
-n5
+inc.d9
 </td>
 <td style="text-align:right;">
-8
+3
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -776,13 +749,27 @@ hypothalamus
 </tr>
 <tr>
 <td style="text-align:left;">
-m.n2
+prolong
 </td>
 <td style="text-align:left;">
 inc.d3
 </td>
 <td style="text-align:right;">
-3
+5
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+8
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -797,6 +784,20 @@ inc.d9
 </td>
 <td style="text-align:right;">
 2
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+3
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -835,10 +836,10 @@ hypothalamus
 extend
 </td>
 <td style="text-align:left;">
-inc.d3
+inc.d17
 </td>
 <td style="text-align:right;">
-3
+1
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -863,10 +864,10 @@ hypothalamus
 extend
 </td>
 <td style="text-align:left;">
-inc.d17
+inc.d3
 </td>
 <td style="text-align:right;">
-1
+3
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -1007,7 +1008,8 @@ pituitary
     df4  <- LDA.pit %>% 
       group_by(treatment,predictedstage) %>%
       summarize(n = n()) %>%
-      mutate(tissue = "pituitary")
+      mutate(tissue = "pituitary") %>%
+      arrange(tissue, treatment, n)
     kable(df4)
 
 <table>
@@ -1028,6 +1030,20 @@ tissue
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+inc.d3
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 m.inc.d3
@@ -1061,38 +1077,10 @@ pituitary
 m.inc.d3
 </td>
 <td style="text-align:left;">
-inc.d3
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d3
-</td>
-<td style="text-align:left;">
 n9
 </td>
 <td style="text-align:right;">
 8
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d8
-</td>
-<td style="text-align:left;">
-lay
-</td>
-<td style="text-align:right;">
-12
 </td>
 <td style="text-align:left;">
 pituitary
@@ -1142,13 +1130,13 @@ pituitary
 </tr>
 <tr>
 <td style="text-align:left;">
-m.inc.d9
+m.inc.d8
 </td>
 <td style="text-align:left;">
-bldg
+lay
 </td>
 <td style="text-align:right;">
-7
+12
 </td>
 <td style="text-align:left;">
 pituitary
@@ -1163,6 +1151,20 @@ inc.d3
 </td>
 <td style="text-align:right;">
 2
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+bldg
+</td>
+<td style="text-align:right;">
+7
 </td>
 <td style="text-align:left;">
 pituitary
@@ -1257,6 +1259,20 @@ pituitary
 prolong
 </td>
 <td style="text-align:left;">
+n9
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
 hatch
 </td>
 <td style="text-align:right;">
@@ -1275,20 +1291,6 @@ n5
 </td>
 <td style="text-align:right;">
 6
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-prolong
-</td>
-<td style="text-align:left;">
-n9
-</td>
-<td style="text-align:right;">
-5
 </td>
 <td style="text-align:left;">
 pituitary
@@ -1369,10 +1371,10 @@ pituitary
 extend
 </td>
 <td style="text-align:left;">
-n5
+n9
 </td>
 <td style="text-align:right;">
-13
+3
 </td>
 <td style="text-align:left;">
 pituitary
@@ -1383,10 +1385,10 @@ pituitary
 extend
 </td>
 <td style="text-align:left;">
-n9
+n5
 </td>
 <td style="text-align:right;">
-3
+13
 </td>
 <td style="text-align:left;">
 pituitary
@@ -1499,7 +1501,8 @@ gonads
     df6 <- LDA.gon %>% 
       group_by(treatment,predictedstage) %>%
       summarize(n = n()) %>%
-      mutate(tissue = "gonads")
+      mutate(tissue = "gonads") %>%
+      arrange(tissue, treatment, n)
     kable(df6)
 
 <table>
@@ -1539,10 +1542,24 @@ gonads
 m.inc.d3
 </td>
 <td style="text-align:left;">
-lay
+inc.d9
 </td>
 <td style="text-align:right;">
-6
+1
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 gonads
@@ -1567,34 +1584,6 @@ gonads
 m.inc.d3
 </td>
 <td style="text-align:left;">
-inc.d9
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d3
-</td>
-<td style="text-align:left;">
-hatch
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d3
-</td>
-<td style="text-align:left;">
 n5
 </td>
 <td style="text-align:right;">
@@ -1613,6 +1602,48 @@ n9
 </td>
 <td style="text-align:right;">
 5
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d3
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+hatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d8
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+3
 </td>
 <td style="text-align:left;">
 gonads
@@ -1651,52 +1682,10 @@ gonads
 m.inc.d8
 </td>
 <td style="text-align:left;">
-hatch
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d8
-</td>
-<td style="text-align:left;">
-n5
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d8
-</td>
-<td style="text-align:left;">
 n9
 </td>
 <td style="text-align:right;">
 6
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d9
-</td>
-<td style="text-align:left;">
-bldg
-</td>
-<td style="text-align:right;">
-3
 </td>
 <td style="text-align:left;">
 gonads
@@ -1735,20 +1724,6 @@ gonads
 m.inc.d9
 </td>
 <td style="text-align:left;">
-inc.d17
-</td>
-<td style="text-align:right;">
-3
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d9
-</td>
-<td style="text-align:left;">
 hatch
 </td>
 <td style="text-align:right;">
@@ -1763,10 +1738,24 @@ gonads
 m.inc.d9
 </td>
 <td style="text-align:left;">
-n5
+bldg
 </td>
 <td style="text-align:right;">
-4
+3
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+inc.d17
+</td>
+<td style="text-align:right;">
+3
 </td>
 <td style="text-align:left;">
 gonads
@@ -1781,6 +1770,20 @@ n9
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d9
+</td>
+<td style="text-align:left;">
+n5
+</td>
+<td style="text-align:right;">
+4
 </td>
 <td style="text-align:left;">
 gonads
@@ -1847,10 +1850,10 @@ gonads
 prolong
 </td>
 <td style="text-align:left;">
-lay
+n9
 </td>
 <td style="text-align:right;">
-8
+2
 </td>
 <td style="text-align:left;">
 gonads
@@ -1889,10 +1892,10 @@ gonads
 prolong
 </td>
 <td style="text-align:left;">
-n9
+lay
 </td>
 <td style="text-align:right;">
-2
+8
 </td>
 <td style="text-align:left;">
 gonads
@@ -1917,10 +1920,10 @@ gonads
 m.n2
 </td>
 <td style="text-align:left;">
-lay
+hatch
 </td>
 <td style="text-align:right;">
-4
+2
 </td>
 <td style="text-align:left;">
 gonads
@@ -1931,10 +1934,10 @@ gonads
 m.n2
 </td>
 <td style="text-align:left;">
-hatch
+lay
 </td>
 <td style="text-align:right;">
-2
+4
 </td>
 <td style="text-align:left;">
 gonads
@@ -1973,10 +1976,10 @@ gonads
 extend
 </td>
 <td style="text-align:left;">
-lay
+inc.d3
 </td>
 <td style="text-align:right;">
-5
+1
 </td>
 <td style="text-align:left;">
 gonads
@@ -1987,7 +1990,7 @@ gonads
 extend
 </td>
 <td style="text-align:left;">
-inc.d3
+hatch
 </td>
 <td style="text-align:right;">
 1
@@ -2015,10 +2018,24 @@ gonads
 extend
 </td>
 <td style="text-align:left;">
-hatch
+n9
 </td>
 <td style="text-align:right;">
-1
+3
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+lay
+</td>
+<td style="text-align:right;">
+5
 </td>
 <td style="text-align:left;">
 gonads
@@ -2033,20 +2050,6 @@ n5
 </td>
 <td style="text-align:right;">
 8
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-n9
-</td>
-<td style="text-align:right;">
-3
 </td>
 <td style="text-align:left;">
 gonads
