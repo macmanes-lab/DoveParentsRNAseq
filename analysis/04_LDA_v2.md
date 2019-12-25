@@ -52,9 +52,10 @@ Linear discriminant analysis (LDA)
     LDanalysis <- function(trainsamples, traindata, testdata, testsamples){
       
       train.data <- left_join(trainsamples, traindata) %>%
-        dplyr::select(-V1, -bird, -tissue, -group, -study, -sex, -treatment)
+        dplyr::select(-V1, -bird, -tissue, -group, -study, -treatment)
       
-      test.data <- testdata
+      test.data <- left_join(testsamples, testdata) %>%
+        dplyr::select(-V1, -bird, -tissue, -group, -study, -treatment,  -newgrouping)
       
       # Normalize the data. Categorical variables are automatically ignored.
       # Estimate preprocessing parameters
@@ -67,7 +68,7 @@ Linear discriminant analysis (LDA)
       
       # LDA analysis
       # Fit the model
-      model <- lda(newgrouping~ ., data = train.transformed)
+      model <- lda(newgrouping ~ ., data = train.transformed)
       # Make predictions
       predictions <- model %>% predict(test.transformed)
       
@@ -119,7 +120,7 @@ Linear discriminant analysis (LDA)
     FALSE      bldg   control nearhatch  earlyinc chickcare 
     FALSE 0.1058201 0.1164021 0.2222222 0.3333333 0.2222222 
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
-    FALSE [1] 17.272351  5.277690  3.866870  3.245675
+    FALSE [1] 17.272330  5.277666  3.866853  3.245741
 
     LDA.pit <- LDanalysis(charPit, vsd.pit.train, vsd.pit.test, manipPit)
 
@@ -133,7 +134,7 @@ Linear discriminant analysis (LDA)
     FALSE      bldg   control nearhatch  earlyinc chickcare 
     FALSE 0.1036269 0.1295337 0.2176166 0.3316062 0.2176166 
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
-    FALSE [1] 15.291194 10.251065  6.042979  4.728399
+    FALSE [1] 15.291104 10.251105  6.042939  4.728390
 
     LDA.gon <- LDanalysis(charGon, vsd.gon.train, vsd.gon.test, manipGon)
 
@@ -147,7 +148,7 @@ Linear discriminant analysis (LDA)
     FALSE      bldg   control nearhatch  earlyinc chickcare 
     FALSE 0.1030928 0.1340206 0.2164948 0.3298969 0.2164948 
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
-    FALSE [1] 13.703585  5.117379  4.215588  4.196928
+    FALSE [1] 13.703576  5.117379  4.215588  4.196928
 
     library(kableExtra)
 
@@ -223,28 +224,6 @@ tissue
 <tbody>
 <tr>
 <td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-chickcare, earlyinc, nearhatch
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-earlyinc, chickcare, nearhatch
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 m.inc.d3
 </td>
 <td style="text-align:left;">
@@ -278,6 +257,28 @@ hypothalamus
 </tr>
 <tr>
 <td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+earlyinc, chickcare, nearhatch
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+chickcare, earlyinc, nearhatch
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 m.n2
 </td>
 <td style="text-align:left;">
@@ -289,7 +290,7 @@ hypothalamus
 </tr>
 <tr>
 <td style="text-align:left;">
-prolong
+extend
 </td>
 <td style="text-align:left;">
 chickcare, earlyinc, nearhatch
@@ -326,90 +327,6 @@ tissue
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-chickcare
-</td>
-<td style="text-align:right;">
-11
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-earlyinc
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-nearhatch
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-chickcare
-</td>
-<td style="text-align:right;">
-11
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-earlyinc
-</td>
-<td style="text-align:right;">
-9
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-nearhatch
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-</tr>
 <tr>
 <td style="text-align:left;">
 m.inc.d3
@@ -510,13 +427,13 @@ hypothalamus
 </tr>
 <tr>
 <td style="text-align:left;">
-m.n2
+m.inc.d17
 </td>
 <td style="text-align:left;">
-earlyinc
+chickcare
 </td>
 <td style="text-align:right;">
-15
+11
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -524,13 +441,27 @@ hypothalamus
 </tr>
 <tr>
 <td style="text-align:left;">
-m.n2
+m.inc.d17
 </td>
 <td style="text-align:left;">
-chickcare
+earlyinc
 </td>
 <td style="text-align:right;">
-5
+9
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+nearhatch
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 hypothalamus
@@ -578,6 +509,76 @@ nearhatch
 hypothalamus
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+earlyinc
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+chickcare
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+chickcare
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+earlyinc
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+nearhatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+</tr>
 </tbody>
 </table>
 
@@ -602,28 +603,6 @@ tissue
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-nearhatch, chickcare
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-chickcare, nearhatch
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
 <tr>
 <td style="text-align:left;">
 m.inc.d3
@@ -659,10 +638,10 @@ pituitary
 </tr>
 <tr>
 <td style="text-align:left;">
-m.n2
+m.inc.d17
 </td>
 <td style="text-align:left;">
-nearhatch, chickcare, earlyinc
+chickcare, nearhatch
 </td>
 <td style="text-align:left;">
 pituitary
@@ -674,6 +653,28 @@ prolong
 </td>
 <td style="text-align:left;">
 earlyinc, chickcare, nearhatch
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+nearhatch, chickcare, earlyinc
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+nearhatch, chickcare
 </td>
 <td style="text-align:left;">
 pituitary
@@ -707,62 +708,6 @@ tissue
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-chickcare
-</td>
-<td style="text-align:right;">
-15
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-nearhatch
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-chickcare
-</td>
-<td style="text-align:right;">
-20
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-nearhatch
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
 <tr>
 <td style="text-align:left;">
 m.inc.d3
@@ -877,13 +822,13 @@ pituitary
 </tr>
 <tr>
 <td style="text-align:left;">
-m.n2
+m.inc.d17
 </td>
 <td style="text-align:left;">
 chickcare
 </td>
 <td style="text-align:right;">
-18
+20
 </td>
 <td style="text-align:left;">
 pituitary
@@ -891,21 +836,7 @@ pituitary
 </tr>
 <tr>
 <td style="text-align:left;">
-m.n2
-</td>
-<td style="text-align:left;">
-earlyinc
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.n2
+m.inc.d17
 </td>
 <td style="text-align:left;">
 nearhatch
@@ -959,6 +890,76 @@ earlyinc
 pituitary
 </td>
 </tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+chickcare
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+earlyinc
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+nearhatch
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+chickcare
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+nearhatch
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+</tr>
 </tbody>
 </table>
 
@@ -983,28 +984,6 @@ tissue
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-earlyinc, chickcare, nearhatch
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-chickcare, earlyinc
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
 <tr>
 <td style="text-align:left;">
 m.inc.d3
@@ -1040,6 +1019,28 @@ gonads
 </tr>
 <tr>
 <td style="text-align:left;">
+m.inc.d17
+</td>
+<td style="text-align:left;">
+chickcare, earlyinc
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+prolong
+</td>
+<td style="text-align:left;">
+earlyinc, chickcare, nearhatch
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 m.n2
 </td>
 <td style="text-align:left;">
@@ -1051,7 +1052,7 @@ gonads
 </tr>
 <tr>
 <td style="text-align:left;">
-prolong
+extend
 </td>
 <td style="text-align:left;">
 earlyinc, chickcare, nearhatch
@@ -1088,76 +1089,6 @@ tissue
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-earlyinc
-</td>
-<td style="text-align:right;">
-11
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-chickcare
-</td>
-<td style="text-align:right;">
-5
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-extend
-</td>
-<td style="text-align:left;">
-nearhatch
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-chickcare
-</td>
-<td style="text-align:right;">
-13
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.inc.d17
-</td>
-<td style="text-align:left;">
-earlyinc
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
 <tr>
 <td style="text-align:left;">
 m.inc.d3
@@ -1272,13 +1203,13 @@ gonads
 </tr>
 <tr>
 <td style="text-align:left;">
-m.n2
+m.inc.d17
 </td>
 <td style="text-align:left;">
 chickcare
 </td>
 <td style="text-align:right;">
-9
+13
 </td>
 <td style="text-align:left;">
 gonads
@@ -1286,27 +1217,13 @@ gonads
 </tr>
 <tr>
 <td style="text-align:left;">
-m.n2
+m.inc.d17
 </td>
 <td style="text-align:left;">
 earlyinc
 </td>
 <td style="text-align:right;">
 8
-</td>
-<td style="text-align:left;">
-gonads
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-m.n2
-</td>
-<td style="text-align:left;">
-nearhatch
-</td>
-<td style="text-align:right;">
-2
 </td>
 <td style="text-align:left;">
 gonads
@@ -1349,6 +1266,90 @@ nearhatch
 </td>
 <td style="text-align:right;">
 3
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+chickcare
+</td>
+<td style="text-align:right;">
+9
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+earlyinc
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+m.n2
+</td>
+<td style="text-align:left;">
+nearhatch
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+earlyinc
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+chickcare
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+gonads
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+extend
+</td>
+<td style="text-align:left;">
+nearhatch
+</td>
+<td style="text-align:right;">
+4
 </td>
 <td style="text-align:left;">
 gonads

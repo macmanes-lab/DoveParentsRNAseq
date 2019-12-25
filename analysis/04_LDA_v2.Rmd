@@ -76,12 +76,10 @@ http://www.sthda.com/english/articles/36-classification-methods-essentials/146-d
 LDanalysis <- function(trainsamples, traindata, testdata, testsamples){
   
   train.data <- left_join(trainsamples, traindata) %>%
-    dplyr::select(-V1, -bird, -tissue, -group, -study, - treatment)
+    dplyr::select(-V1, -bird, -tissue, -group, -study, -treatment)
   
   test.data <- left_join(testsamples, testdata) %>%
     dplyr::select(-V1, -bird, -tissue, -group, -study, -treatment,  -newgrouping)
-  
-  test.data <- testdata
   
   # Normalize the data. Categorical variables are automatically ignored.
   # Estimate preprocessing parameters
@@ -94,7 +92,7 @@ LDanalysis <- function(trainsamples, traindata, testdata, testsamples){
   
   # LDA analysis
   # Fit the model
-  model <- lda(newgrouping~ ., data = train.transformed)
+  model <- lda(newgrouping ~ ., data = train.transformed)
   # Make predictions
   predictions <- model %>% predict(test.transformed)
   
@@ -186,13 +184,10 @@ b <- plotpredictions(LDA.pit, levelsremoval,"pituitary") + theme(strip.text = el
 c <- plotpredictions(LDA.gon, levelsremoval, "gonads") + theme(axis.text.x = element_text(angle = 45, hjust = 1), strip.text = element_blank())
 
 plot_grid(a,b,c, rel_heights = c(1.6,1,1.2), nrow = 3)
-
-
 ```
 
 
 ```{r LDApredictions}
-
 df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
   group_by(treatment) %>%
   summarize(predictedstages = str_c(predictedstage , collapse = ", "))  %>%
