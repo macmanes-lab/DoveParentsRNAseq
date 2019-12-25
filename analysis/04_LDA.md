@@ -214,7 +214,6 @@ Linear discriminant analysis (LDA)
       return(p)
     }
 
-
     j <- plotfacetresults(LDA.gon, levelstiming, "hypothalamus\n LD2", 20) + labs(x = NULL)
     k <- plotfacetresults(LDA.pit, levelstiming, "pituitary\n LD2", 17) + theme(strip.text = element_blank()) + labs(x = NULL)
     l <- plotfacetresults(LDA.gon, levelstiming, "gonads\n LD2", 15) + theme(strip.text = element_blank()) + 
