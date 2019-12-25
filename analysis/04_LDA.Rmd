@@ -38,6 +38,10 @@ selectvsd <- function(pathtofile, colData){
   savecols <- as.character(colData$V1) 
   savecols <- as.vector(savecols) 
   df <- df %>% dplyr::select(one_of(savecols)) 
+  
+  # keep only 100 genes fornow
+  #df <- head(df, 100)
+  
   df <- as.data.frame(t(df))
   df$V1 <- row.names(df)
   return(df)
@@ -61,12 +65,17 @@ http://www.sthda.com/english/articles/36-classification-methods-essentials/146-d
 
 ```{r LDAdfs}
 
+
+
 LDanalysis <- function(trainsamples, traindata, testdata, testsamples){
   
   train.data <- left_join(trainsamples, traindata) %>%
-    dplyr::select(-V1, -bird, -tissue, -group, -study, -sex)
+    dplyr::select(-V1, -bird, -tissue, -group, -study)
   
-  test.data <- testdata
+  test.data <- left_join(testsamples, testdata) %>%
+    dplyr::select(-V1, -bird, -tissue, -group, -study, -treatment)
+  
+  testsamples <- testsamples
   
   # Normalize the data. Categorical variables are automatically ignored.
   # Estimate preprocessing parameters
@@ -79,14 +88,14 @@ LDanalysis <- function(trainsamples, traindata, testdata, testsamples){
   
   # LDA analysis
   # Fit the model
-  model <- lda(treatment~ ., data = train.transformed)
+  model <- lda(treatment ~ ., data = train.transformed)
   # Make predictions
   predictions <- model %>% predict(test.transformed)
   
   # Model accuracy
   print("model accuracy")
-  print("predictions$class==test.transformed$treatment)")
-  print(mean(predictions$class==test.transformed$treatment))
+  #print("predictions$class==test.transformed$treatment)")
+ # print(mean(predictions$class==test.transformed$treatment))
   
   # results
   print("the samples sizes")
@@ -127,7 +136,7 @@ LDA.gon <- LDanalysis(charGon, vsd.gon.train, vsd.gon.test, manipGon)
 
 
 ```{r LDAplots}
-library(kableExtra)
+
 
 LDA.hyp$treatment <- factor(LDA.hyp$treatment, levels = alllevels)
 LDA.hyp$predictedstage <- factor(LDA.hyp$predictedstage, levels = alllevels)
@@ -254,6 +263,7 @@ plot_grid(m,n,o, nrow = 3, rel_heights = c(1.6,1,1.2))
 
 
 ```{r LDApredictions}
+library(kableExtra)
 
 df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
   group_by(treatment) %>%

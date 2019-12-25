@@ -76,7 +76,10 @@ http://www.sthda.com/english/articles/36-classification-methods-essentials/146-d
 LDanalysis <- function(trainsamples, traindata, testdata, testsamples){
   
   train.data <- left_join(trainsamples, traindata) %>%
-    dplyr::select(-V1, -bird, -tissue, -group, -study, -sex, -treatment)
+    dplyr::select(-V1, -bird, -tissue, -group, -study, - treatment)
+  
+  test.data <- left_join(testsamples, testdata) %>%
+    dplyr::select(-V1, -bird, -tissue, -group, -study, -treatment,  -newgrouping)
   
   test.data <- testdata
   

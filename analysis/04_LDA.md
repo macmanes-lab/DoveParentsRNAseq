@@ -20,6 +20,10 @@ LDA analysis of characterization and manipulation
       savecols <- as.character(colData$V1) 
       savecols <- as.vector(savecols) 
       df <- df %>% dplyr::select(one_of(savecols)) 
+      
+      # keep only 100 genes fornow
+      #df <- head(df, 100)
+      
       df <- as.data.frame(t(df))
       df$V1 <- row.names(df)
       return(df)
@@ -41,9 +45,12 @@ Linear discriminant analysis (LDA)
     LDanalysis <- function(trainsamples, traindata, testdata, testsamples){
       
       train.data <- left_join(trainsamples, traindata) %>%
-        dplyr::select(-V1, -bird, -tissue, -group, -study, -sex)
+        dplyr::select(-V1, -bird, -tissue, -group, -study)
       
-      test.data <- testdata
+      test.data <- left_join(testsamples, testdata) %>%
+        dplyr::select(-V1, -bird, -tissue, -group, -study, -treatment)
+      
+      testsamples <- testsamples
       
       # Normalize the data. Categorical variables are automatically ignored.
       # Estimate preprocessing parameters
@@ -56,14 +63,14 @@ Linear discriminant analysis (LDA)
       
       # LDA analysis
       # Fit the model
-      model <- lda(treatment~ ., data = train.transformed)
+      model <- lda(treatment ~ ., data = train.transformed)
       # Make predictions
       predictions <- model %>% predict(test.transformed)
       
       # Model accuracy
       print("model accuracy")
-      print("predictions$class==test.transformed$treatment)")
-      print(mean(predictions$class==test.transformed$treatment))
+      #print("predictions$class==test.transformed$treatment)")
+     # print(mean(predictions$class==test.transformed$treatment))
       
       # results
       print("the samples sizes")
@@ -99,8 +106,6 @@ Linear discriminant analysis (LDA)
     LDA.hyp <- LDanalysis(charHyp, vsd.hyp.train, vsd.hyp.test, manipHyp)
 
     FALSE [1] "model accuracy"
-    FALSE [1] "predictions$class==test.transformed$treatment)"
-    FALSE [1] NaN
     FALSE [1] "the samples sizes"
     FALSE    bldg control   hatch inc.d17  inc.d3  inc.d9     lay      n5      n9 
     FALSE      20      22      20      22      20      23      20      20      22 
@@ -110,14 +115,12 @@ Linear discriminant analysis (LDA)
     FALSE        n5        n9 
     FALSE 0.1058201 0.1164021 
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
-    FALSE [1] 12.290102  3.737184  3.211678  2.808778  2.549954  2.426899  2.113333
-    FALSE [8]  2.026555
+    FALSE [1] 12.290093  3.737176  3.211662  2.808772  2.549954  2.426908  2.113342
+    FALSE [8]  2.026581
 
     LDA.pit <- LDanalysis(charPit, vsd.pit.train, vsd.pit.test, manipPit)
 
     FALSE [1] "model accuracy"
-    FALSE [1] "predictions$class==test.transformed$treatment)"
-    FALSE [1] NaN
     FALSE [1] "the samples sizes"
     FALSE    bldg control   hatch inc.d17  inc.d3  inc.d9     lay      n5      n9 
     FALSE      20      25      20      22      20      24      20      20      22 
@@ -127,14 +130,12 @@ Linear discriminant analysis (LDA)
     FALSE        n5        n9 
     FALSE 0.1036269 0.1139896 
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
-    FALSE [1] 11.062116  7.608644  4.442591  3.502461  3.462251  2.818560  2.652532
-    FALSE [8]  2.179736
+    FALSE [1] 11.062064  7.608646  4.442513  3.502451  3.462257  2.818555  2.652531
+    FALSE [8]  2.179710
 
     LDA.gon <- LDanalysis(charGon, vsd.gon.train, vsd.gon.test, manipGon)
 
     FALSE [1] "model accuracy"
-    FALSE [1] "predictions$class==test.transformed$treatment)"
-    FALSE [1] NaN
     FALSE [1] "the samples sizes"
     FALSE    bldg control   hatch inc.d17  inc.d3  inc.d9     lay      n5      n9 
     FALSE      20      26      20      22      20      24      20      20      22 
@@ -144,9 +145,7 @@ Linear discriminant analysis (LDA)
     FALSE        n5        n9 
     FALSE 0.1030928 0.1134021 
     FALSE [1] "svd: the singular values, which give the ratio of the between- and within-group standard deviations on the linear discriminant variables. Their squares are the canonical F-statistics."
-    FALSE [1] 9.826642 4.643175 3.744735 3.117603 2.699703 2.362898 2.231784 2.112316
-
-    library(kableExtra)
+    FALSE [1] 9.826635 4.643176 3.744735 3.117603 2.699703 2.362898 2.231785 2.112316
 
     LDA.hyp$treatment <- factor(LDA.hyp$treatment, levels = alllevels)
     LDA.hyp$predictedstage <- factor(LDA.hyp$predictedstage, levels = alllevels)
@@ -281,6 +280,8 @@ Linear discriminant analysis (LDA)
     plot_grid(m,n,o, nrow = 3, rel_heights = c(1.6,1,1.2))
 
 ![](../figures/LDA/LDAplots-7.png)
+
+    library(kableExtra)
 
     df1 <- LDA.hyp %>% distinct(treatment, predictedstage) %>%
       group_by(treatment) %>%
