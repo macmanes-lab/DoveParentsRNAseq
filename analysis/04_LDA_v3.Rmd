@@ -1,0 +1,142 @@
+---
+title: "04_LDA_v3"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+suppressMessages(library(tidyverse)) 
+library(forcats)
+library(tidyselect) # for vars_select
+
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## stress data
+
+```{r}
+# genes info
+geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>% dplyr::select(Name, entrezid)
+
+
+# prep stress data
+stress_coldata <- read_csv("../../austinCORT/data/03_colDataSTRESS.csv")
+stress_countdata <- read.csv("../../austinCORT/data/03_countDataSTRESS.csv", row.names = 1)
+head(stress_coldata)
+head(stress_countdata)
+
+
+subsetcoldata <- function(whichtissue){
+  df <- stress_coldata %>% 
+    mutate(tissue = fct_recode(tissue,
+           "hypothalamus" = "hyp",
+           "pituitary" = "pit",
+           "gonads" = "gon")) %>% 
+    filter(tissue == whichtissue) %>% 
+    rename("V1" = "sample")  %>% 
+    mutate(V1 = str_replace(V1, '.male', "_male"))  %>%
+    mutate(V1 = str_replace(V1, '.f_male', "_female"))  %>% 
+    mutate(bird = sapply(strsplit(as.character(V1),'\\_'), "[", 1))  %>% 
+    mutate(group = sapply(strsplit(as.character(V1),'\\_'), "[", 2))  %>% 
+    mutate(V1 = str_replace(V1, '_', "."))  %>%
+    mutate(V1 = str_replace(V1, "r.r.x.R2XR.", "r.r.x.R2XR_")) %>%
+    mutate(study = "stress") %>% 
+    dplyr::select(V1, bird, sex, tissue, treatment, group, study)  %>% 
+    droplevels()
+  print(head(df))
+  return(df)
+}
+
+stress_coldata_hyp <- subsetcoldata("hypothalamus")
+stress_coldata_pit <- subsetcoldata("pituitary")
+stress_coldata_gon <- subsetcoldata("gonads")
+
+selectvsdstress <- function(stresscolData){
+  
+  savecols <- stress_coldata_hyp$V1
+  savecols <- as.vector(savecols) 
+  
+  df <- stress_countdata %>% dplyr::select(one_of(savecols)) 
+  df$entrezid <- row.names(df)
+  
+  df <- left_join(geneinfo, df) %>% 
+    dplyr::select(-entrezid) %>% 
+    rename(gene = Name) %>%
+    pivot_longer(-gene, names_to = "samples", values_to = "counts") %>%
+    pivot_wider(
+    names_from = samples, 
+    values_from = counts,
+    values_fn = list(counts = sum))  %>% 
+  arrange(gene) %>% 
+  filter(gene != "")
+  
+  df <- as.data.frame(df)
+  row.names(df) <- df$gene
+  df$gene <- NULL
+  df <- as.data.frame(t(df))
+  
+  print(head(df))
+  return(df)
+}
+
+stress_countdata_hyp <- selectvsdstress(stress_coldata_hyp)
+stress_countdata_pit <- selectvsdstress(stress_coldata_pit)
+stress_countdata_pit <- selectvsdstress(stress_coldata_gon)
+```
+
+## parentalcare data
+
+```{r}
+colData <- read.csv("../metadata/00_samples.csv", row.names = 1)
+
+charHyp <- colData %>% filter(study == "charcterization", tissue == "hypothalamus") %>% droplevels()
+charPit <- colData %>% filter(study == "charcterization", tissue == "pituitary") %>% droplevels()
+charGon <- colData %>% filter(study == "charcterization", tissue == "gonad") %>% 
+  mutate(tissue = fct_recode(tissue, "gonads" = "gonad")) %>% droplevels()
+
+manipHyp <- colData %>% filter(study == "manipulation", tissue == "hypothalamus") %>% droplevels()
+manipPit <- colData %>% filter(study == "manipulation", tissue == "pituitary") %>% droplevels()
+manipGon <- colData %>% filter(study == "manipulation", tissue == "gonad") %>% 
+  mutate(tissue = fct_recode(tissue, "gonads" = "gonad")) %>% droplevels()
+
+
+selectvsd <- function(pathtofile, colData){
+  
+  df <- read.csv(pathtofile, row.names = 1)
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  df <- df %>% dplyr::select(one_of(savecols)) 
+  
+  # keep only 100 genes fornow
+  #df <- head(df, 100)
+  
+  df <- as.data.frame(t(df))
+  df$V1 <- row.names(df)
+  return(df)
+}
+
+vsd.hyp.train <- selectvsd("../results/06_hypallvsd.csv",  charHyp)
+vsd.pit.train <- selectvsd("../results/06_pitallvsd.csv",  charPit)
+vsd.gon.train <- selectvsd("../results/06_gonallvsd.csv",  charGon)
+
+
+vsd.hyp.test <- selectvsd("../results/06_hypallvsd.csv",  manipHyp)
+vsd.pit.test <- selectvsd("../results/06_pitallvsd.csv",  manipPit)
+vsd.gon.test <- selectvsd("../results/06_gonallvsd.csv",  manipGon)
+
+hypcols <- names(vsd.hyp.train)
+pitcols <- names(vsd.pit.test)
+goncols <- names(vsd.gon.test)
+
+```
+
+## combine stress and sex
+
+
+```{r}
+stress_countdata_hyp <- stress_countdata_hyp %>% tidyselect::vars_select(hypcols, strict = F)
+
+head(stress_countdata_hyp)
+stress_countdata_pit  
+stress_countdata_pit  
+```
+
