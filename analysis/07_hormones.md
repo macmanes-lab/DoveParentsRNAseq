@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -592,11 +592,31 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
       arrange(desc(PRL))
     head(PRLpit,2)
 
-    ## # A tibble: 2 x 4
-    ##   sample                                 sex    treatment   PRL
-    ##   <chr>                                  <chr>  <chr>     <dbl>
-    ## 1 blu.o.x.ATLAS_female_pituitary_control female control    20.9
-    ## 2 L.W33_male_pituitary_control           male   control    19.9
+    ## # A tibble: 2 x 5
+    ##   bird          sex    treatment tissue      PRL
+    ##   <chr>         <chr>  <chr>     <chr>     <dbl>
+    ## 1 blu.o.x.ATLAS female control   pituitary  20.9
+    ## 2 L.W33         male   control   pituitary  19.9
 
     write.csv(hormones, "../results/hormones.csv", row.names = F)
     write.csv(prolactin2, "../results/07_prolactin2.csv", row.names = F)
+
+for rechelle
+------------
+
+    rechelle <- hormones %>%
+      dplyr::filter(hormone %in% c("prolactin", "cort"),
+                    treatment %in% c("lay", "inc.d9", "hatch", "n9")) %>%
+      dplyr::select(-icons, -music, -iconpath, -okay)
+       
+    ggplot(rechelle, aes(x = treatment, y = plasma_conc, fill = sex)) +
+        geom_boxplot() + 
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+             legend.position = "none",
+              strip.text = element_blank()) +
+      facet_wrap(~hormone, scales = "free_y") +
+      theme_B3()
+
+![](../figures/hormones/forrechelle-1.png)
+
+    write.csv(rechelle, "../results/07_forrechelle.csv")
