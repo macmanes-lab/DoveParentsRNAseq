@@ -6,6 +6,8 @@ output: md_document
 ```{r setup}
 # https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 library(tidyverse)
+
+source("../R/themes.R")
 ```
 
 # Data Wrangling
@@ -16,7 +18,6 @@ library(tidyverse)
 # import count data, set rows at entreziz
 kallistodata <- read.table("../results/kallistocounts.txt", 
                         sep = ",", row.names = NULL)
-head(kallistodata)
 
 ## save gene information
 geneinfo <- kallistodata %>%
@@ -50,13 +51,12 @@ countData <- kallistodata %>%
     values_fn = list(counts = sum))  %>% 
   arrange(gene) %>% 
   filter(gene != "")
-head(countData)
 
 countData <- as.data.frame(countData)
 row.names(countData) <- countData$gene ## make gene the row name
 countData[1] <- NULL ## make gene the row name
 countData <- round(countData) #round all value to nearest 1s place
-head(countData)
+head(countData[13:15])
 
 # print tolal num of genes and samples
 dim(countData)
@@ -104,8 +104,7 @@ colData$group <- paste(colData$sex, colData$tissue, colData$treatment, sep=".")
 # add variable to distinguish characterization study and manipulation
 colData$study <- ifelse(grepl("m.|extend|prolong", colData$treatment), "manipulation", "charcterization")
 
-colData$study <- factor(colData$study, 
-                         levels = c("charcterization", "manipulation"))
+colData$study <- factor(colData$study, levels = c("charcterization", "manipulation"))
 
 ## view colData
 str(colData)
@@ -137,7 +136,7 @@ birds
 ```{r manip}
 # create a new dfs for just the manipulation study
 colData_manipluation <- colData %>%
-  dplyr::filter(grepl('m.|extend|prolong', treatment)) %>%
+  dplyr::filter(treatment %in% maniplevels1) %>%
   droplevels()
 row.names(colData_manipluation) <- colData_manipluation$V1
 
@@ -158,7 +157,7 @@ ncol(countData_manipluation) == nrow(colData_manipluation)
 ```{r characterization}
 # filter out data related to the manipulation study
 colData_characterization <- colData %>%
-  dplyr::filter(!grepl('m.|extend|prolong', treatment)) %>%
+  dplyr::filter(treatment %in% charlevels) %>%
   droplevels()
 row.names(colData_characterization) <- colData_characterization$V1
 

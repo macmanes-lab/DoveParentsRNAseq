@@ -17,6 +17,7 @@ library(forcats)
 
 # read the count data
 countData <- read.csv("../results/00_countData_characterization.csv", row.names = 1)
+head(countData[1:2])
 
 # read the sample meta data or column data
 colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, stringsAsFactors = T)
@@ -32,8 +33,8 @@ colData <- colData %>%
                              "hyp" = "hypothalamus",
                              "gon" = "gonad"),
          hypothesis = fct_recode(treatment,
-                                 "anticipation" = "control",
-                                 "anticipation" = "bldg",
+                                 "non.parental" = "control",
+                                 "non.parental" = "bldg",
                                  "incubation" = "lay",
                                  "incubation" = "inc.d3",
                                  "incubation" = "inc.d9",
@@ -51,9 +52,6 @@ colData$sample <- paste(colData$treatment, colData$sex, colData$tissue,  colData
 # set row and count names to be the same
 row.names(colData) <- colData$sample
 colnames(countData) <- colData$sample
-
-head(colData)
-head(countData)
 
 # create new grouping for subsets
 colData$sextissue <-  as.factor(paste(colData$sex, colData$tissue, sep = "."))
@@ -105,12 +103,10 @@ gsg$allOK
 
 if (!gsg$allOK)
 {
-  # Optionally, print the gene and sample names that were removed:
-  #if (sum(!gsg$goodGenes)>0) 
-  #  printFlush(paste("Removing genes:", paste(names(datExpr0)[!gsg$goodGenes], collapse = ", ")));
-  #if (sum(!gsg$goodSamples)>0) 
-  #  printFlush(paste("Removing samples:", paste(rownames(datExpr0)[!gsg$goodSamples], collapse = ", ")));
-  # Remove the offending genes and samples from the data:
+  if (sum(!gsg$goodGenes)>0)
+    printFlush(paste("Removing genes:", paste(names(datExpr0)[!gsg$goodGenes], collapse = ", ")))
+  if (sum(!gsg$goodSamples)>0)
+    printFlush(paste("Removing samples:", paste(rownames(datExpr0)[!gsg$goodSamples], collapse = ", ")))
   datExpr0 = datExpr0[gsg$goodSamples, gsg$goodGenes]
 }
 
