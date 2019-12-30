@@ -47,60 +47,6 @@ meanprolactin
 p1 <- hormones %>% 
     filter(study == "characterization", hormone %in% c("prolactin"))  %>% 
     droplevels() %>% 
-  ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
-    geom_boxplot() +
-  ylim(c(-10,120)) + 
-    theme_B3() +
-  #theme(axis.text.x = element_blank()) + 
-  theme(legend.position = "none") + 
-  labs(x = "parental care stages", y = "prolactin (ng/mL)") +
-  annotation_custom(control, ymin = -20, ymax = 0, xmin = -7.5) +
-  annotation_custom(bldg, ymin = -20, ymax = 0, xmin = -5.5) +
-  annotation_custom(lay, ymin = -20, ymax = 0, xmin = -3.5) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = -1.5) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = 0.5) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = 2.5) +
-  annotation_custom(hatch, ymin = -20, ymax = 0, xmin = 4.5) +
-  annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 6.5) +
-  annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 8.5) 
-p1
-
-
-
-p2 <-  ggplot(meanprolactin, aes(treatment, m)) +
-  geom_errorbar(aes(ymin=m-se, ymax=m+se, color = treatment), width=.1) +
-   geom_image(aes(image=iconpath), size=.1)  +
-  labs(x = "parental care stages", y = "prolactin (ng/mL)") +
-  theme_B3() +
-  theme(legend.position = "none")
-  
-p2
-
-p3 <- ggplot(meanprolactin, aes(treatment, m)) +
-   geom_image(aes(image=music), size=.12)  +
-  labs(x = "increasing time >>", y = "prolactin (ng/mL)")  +
-  mytheme() +
-  ylim(c(-15,80)) +
-  annotation_custom(control, ymin = -20, ymax = 0, xmin = -7.5) +
-  annotation_custom(bldg, ymin = -20, ymax = 0, xmin = -5.5) +
-  annotation_custom(lay, ymin = -20, ymax = 0, xmin = -3.5) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = -1.5) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = 0.5) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = 2.5) +
-  annotation_custom(hatch, ymin = -20, ymax = 0, xmin = 4.5) +
-  annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 6.5) +
-  annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 8.5) +
-  geom_hline(yintercept=0) +
-  geom_hline(yintercept=20) +
-  geom_hline(yintercept=40) +
-  geom_hline(yintercept=60) +
-  geom_hline(yintercept=80) 
-p3
-
-
-p4 <- hormones %>% 
-    filter(study == "characterization", hormone %in% c("prolactin"))  %>% 
-    droplevels() %>% 
   ggplot(aes(x = treatment, y = plasma_conc)) +
     geom_boxplot(aes(fill = treatment, alpha = sex, color = sex)) +
     theme_B3() +
@@ -122,194 +68,125 @@ p4 <- hormones %>%
   annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 6.4) +
   annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 8.4) + 
   ylim(c(-10,120)) 
-p4
-
-plot_grid(p1,p4,p2,p3)
-
-
+p1
 ```
 
 
+```{r candidatevsds}
+colData.pit <-  read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+colData.pit <- colData.pit %>% filter(tissue == "pituitary")
+
+vsd.pit <- read.csv("../results/06_pitallvsd.csv", header = T, row.names = 1)
+
+savecols <- as.character(colData.pit$V1) 
+savecols <- as.vector(savecols) 
+vsd.pit <- vsd.pit %>% dplyr::select(one_of(savecols)) 
+vsd.pit$genes <- row.names(vsd.pit)
+
+candidategenes <- c("PRL", "BRCA1")
+candidates.pit <- vsd.pit %>% dplyr::filter(genes %in% candidategenes)
+candidates.pit <- as.data.frame(candidates.pit)
+row.names(candidates.pit) <- candidates.pit$genes
+candidates.pit$genes <- NULL
+candidates.pit <- as.data.frame(t(candidates.pit))
+candidates.pit$V1 <- row.names(candidates.pit) 
+candidates.pit <- left_join(colData.pit, candidates.pit)
+candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels)
+tail(candidates.pit)
+```
+
 ```{r PRL.pit}
-vsd.pit <- readvsd("../results/04_vsd_pit.csv")
-colData.pit <- readcolData("../results/04_colData_pit.csv")
-
-geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
-
-candidategenes <- c("PRL")
-candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
-
 meanPRL <- candidates.pit %>% 
     droplevels() %>% 
-  dplyr::group_by(treatment) %>%
+  dplyr::group_by(treatment, sex) %>%
   dplyr::summarise(m = mean(PRL), 
                    se = sd(PRL)/sqrt(length(PRL))) %>%
-  dplyr::mutate(m = round(m,1)) 
+  dplyr::mutate(m = round(m,1))  %>%
+  dplyr::filter(treatment %in% charlevels)
 meanPRL <- left_join(meanPRL, birds)
-meanPRL$treatment <- factor(meanPRL$treatment, levels = alllevels)
+meanPRL$treatment <- factor(meanPRL$treatment, levels = charlevels)
 meanPRL
 
-p5 <- candidates.pit %>% 
-  ggplot(aes(x = treatment, y = PRL, fill = treatment)) +
-    geom_boxplot() +
-    theme_B3() +
-  theme(legend.position = "none") + 
-  labs(x = "increasing time >>", y = "prolactin (ng/mL)") +
-  annotation_custom(control, ymin = 12, ymax = 14, xmin = -7.8) +
-  annotation_custom(bldg, ymin = 12, ymax = 14, xmin = -5.8) +
-  annotation_custom(lay, ymin = 12, ymax = 14, xmin = -3.8) +
-  annotation_custom(inc, ymin = 12, ymax = 14, xmin = -1.8) +
-  annotation_custom(inc, ymin = 12, ymax = 14, xmin = 0.6) +
-  annotation_custom(inc, ymin = 12, ymax = 14, xmin = 2.4) +
-  annotation_custom(hatch, ymin = 12, ymax = 14, xmin = 4.4) +
-  annotation_custom(nestling, ymin = 12, ymax = 14, xmin = 6.4) +
-  annotation_custom(nestling, ymin = 12, ymax = 14, xmin = 8.4)  +
-  ylim(c(13,24)) 
-p5
 
-
-
-
-
-p7 <- ggplot(meanPRL, aes(treatment, m)) +
-  geom_errorbar(aes(ymin=m-se, ymax=m+se, color = treatment), width=.1) +
-   geom_image(aes(image=iconpath), size=.12)  +
-  labs(x = "increasing time >>", y = "Pituitary PRL expression") +
-  theme_B3()  +
-  theme(legend.position = "none")
-p7
-
-p8 <- ggplot(meanPRL, aes(treatment, m)) +
-   geom_image(aes(image=music), size=.12)  +
-  labs(x = "parental care stages", y = "Pituitary PRL expression") +
-  mytheme() +
-  ylim(c(15,22)) +
-  annotation_custom(control, ymin = 15, ymax = 16.5, xmin = -7.5) +
-  annotation_custom(bldg, ymin = 15, ymax = 16.5, xmin = -5.5) +
-  annotation_custom(lay, ymin = 15, ymax = 16.5, xmin = -3.5) +
-  annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = -1.5) +
-  annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = 0.5) +
-  annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = 2.5) +
-  annotation_custom(hatch, ymin = 15, ymax = 16.5, xmin = 4.5) +
-  annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 6.5) +
-  annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 8.5)   +
-  geom_hline(yintercept=17) +
-  geom_hline(yintercept=18) +
-  geom_hline(yintercept=19) +
-  geom_hline(yintercept=20) +
-  geom_hline(yintercept=21) 
-
-p8
-
-p6 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
+p2 <- candidates.pit %>%
+  dplyr::filter(treatment %in% charlevels) %>%
+  ggplot(aes(x = treatment, y = PRL)) + 
     geom_boxplot(aes(fill = treatment, alpha = sex, color = sex)) + 
     scale_alpha_manual(values = c(0.75,1)) +
     theme_B3() +
   theme(legend.position = c(0.85,0.2), legend.direction = "horizontal") + 
   scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-  labs(y = "PRL", x = NULL) +
+  labs(y = "PRL", x = "increasing time >>", subtitle = "Pituitary" ) +
   guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) +
-  theme(axis.title.y  = element_text(face = "italic"))
-p6
+  theme(axis.title.y  = element_text(face = "italic"))  +
+  annotation_custom(control, ymin = 13.5, ymax = 15, xmin = -7.5) +
+  annotation_custom(bldg, ymin = 13.5, ymax = 15, xmin = -5.5) +
+  annotation_custom(lay, ymin = 13.5, ymax = 15, xmin = -3.5) +
+  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = -1.5) +
+  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = 0.5) +
+  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = 2.5) +
+  annotation_custom(hatch, ymin = 13.5, ymax = 15, xmin = 4.5) +
+  annotation_custom(nestling, ymin = 13.5, ymax = 15, xmin = 6.5) +
+  annotation_custom(nestling, ymin = 13.5, ymax = 15, xmin = 8.5)   
+p2
 
 ```
 
 
 ```{r PRLBRCA1}
-brca <- c( "NP_989500.1")
-brca.pit <- selectcBRCA1vsds(brca, vsd.pit, colData.pit)
-
-meanBRCA <- brca.pit %>% 
+meanBRCA <- candidates.pit %>% 
     droplevels() %>% 
-  dplyr::group_by(treatment) %>%
+  dplyr::group_by(treatment, sex) %>%
   dplyr::summarise(m = mean(BRCA1), 
                    se = sd(BRCA1)/sqrt(length(BRCA1))) %>%
-  dplyr::mutate(m = round(m,1)) 
+  dplyr::mutate(m = round(m,1)) %>%
+  dplyr::filter(treatment %in% charlevels)
 meanBRCA <- left_join(meanBRCA, birds)
 meanBRCA$treatment <- factor(meanBRCA$treatment, levels = alllevels)
 meanBRCA
 
-brca1 <- brca.pit %>% 
-  ggplot(aes(x = treatment, y = BRCA1, fill = treatment, color = sex)) +
+p3 <- candidates.pit %>% 
+  dplyr::filter(treatment %in% charlevels) %>%
+  ggplot(aes(x = treatment, y = BRCA1, fill = treatment, color = sex, alpha = sex)) +
     geom_boxplot() +
     theme_B3() +
+      scale_alpha_manual(values = c(0.75,1)) +
   scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
   theme(legend.position = "none") + 
-  labs(x = "increasing time >>", y = "BRCA1") +
-  annotation_custom(control, ymin = 5, ymax = 5.5, xmin = -7.8) +
-  annotation_custom(bldg, ymin = 5, ymax = 5.5, xmin = -5.8) +
-  annotation_custom(lay, ymin = 5, ymax = 5.5, xmin = -3.8) +
-  annotation_custom(inc, ymin = 5, ymax = 5.5, xmin = -1.8) +
-  annotation_custom(inc, ymin = 5, ymax = 5.5, xmin = 0.6) +
-  annotation_custom(inc, ymin = 5, ymax = 5.5, xmin = 2.4) +
-  annotation_custom(hatch, ymin = 5, ymax = 5.5, xmin = 4.4) +
-  annotation_custom(nestling, ymin = 5, ymax = 5.5, xmin = 6.4) +
-  annotation_custom(nestling, ymin = 5, ymax = 5.5, xmin = 8.4) +
-  ylim(5,8) +
+  labs(x = "increasing time >>", y = "BRCA1", subtitle = "Pituitary") +
+  annotation_custom(control, ymin = 6.65, ymax = 7, xmin = -7.8) +
+  annotation_custom(bldg, ymin = 6.65, ymax = 7, xmin = -5.8) +
+  annotation_custom(lay, ymin = 6.65, ymax = 7, xmin = -3.8) +
+  annotation_custom(inc, ymin = 6.65, ymax = 7, xmin = -1.8) +
+  annotation_custom(inc, ymin = 6.65, ymax = 7, xmin = 0.6) +
+  annotation_custom(inc, ymin = 6.65, ymax = 7, xmin = 2.4) +
+  annotation_custom(hatch, ymin = 6.65, ymax = 7, xmin = 4.4) +
+  annotation_custom(nestling, ymin = 6.65, ymax = 7, xmin = 6.4) +
+  annotation_custom(nestling, ymin = 6.65, ymax = 7, xmin = 8.4) +
+  ylim(6.8,8.5) +
+  guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) +
+  theme(legend.position = c(0.85,0.2), legend.direction = "horizontal") + 
   theme(axis.title.y  = element_text(face = "italic"))
-brca1
+p3
 
 
-plot_grid(p6, brca1, nrow = 2)
 ```
 
 ## prolactin manip
 
 
-```{r manipdata}
-vsd.pit <- readvsd("../results/06_pitallvsd.csv")
-vsd.pit$entrezid <- row.names(vsd.pit)
-
-colData.pit <- read_csv("../metadata/00_samples.csv") %>% 
-  filter(tissue == "pituitary") %>% 
-  mutate(sample = V1)
-
-geneinfo <- read_csv("../metadata/00_geneinfo.csv") %>%  
-  dplyr::select(Name, geneid, entrezid) %>% arrange(Name)
-
-candidategenes <- c("PRL")
-candidates.pit <- selectcandidatevsds(candidategenes, vsd.pit, colData.pit)
-candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels)
-
-meanPRL <- candidates.pit %>% 
-    droplevels() %>% 
-  dplyr::group_by(treatment) %>%
-  dplyr::summarise(m = median(PRL), 
-                   se = sd(PRL)/sqrt(length(PRL))) %>%
-  dplyr::mutate(m = round(m,1)) 
-meanPRL <- left_join(meanPRL, birds)
-meanPRL$treatment <- factor(meanPRL$treatment, levels = alllevels)
-meanPRL
-```
 
 
 
 ```{r PRL.pit.maip}
-p10 <- ggplot(meanPRL, aes(treatment, m)) +
-   geom_errorbar(aes(ymin=m-se, ymax=m+se, color = treatment), width=.1) +
-   geom_image(aes(image = iconpath), size = 0.06)  +
-   geom_image(aes(image = music , y = m + 0.5), size = 0.04) +
-   labs(x = "parental care stages", y = "Pituitary PRL") +
-   mytheme() +
-   ylim(c(16,22)) +
-   theme(axis.text.x = element_text(angle = 45)) +
-  theme(legend.position = "none") +
-  scale_color_manual(values = colorscharmaip2) +
-  geom_hline(yintercept=16.8) +
-  geom_hline(yintercept=17.8) +
-  geom_hline(yintercept=18.8) +
-  geom_hline(yintercept=19.8) +
-  geom_hline(yintercept=20.8)  
-p10
 
-p11 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
-       geom_smooth(aes(colour = sex)) +
-    geom_boxplot(aes(fill = treatment)) +
+p4 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
+    geom_boxplot(aes(fill = treatment, alpha = sex)) +
     scale_alpha_manual(values = c(0.75,1)) +
     theme_B3() +
    theme(legend.position = "none", legend.direction = "horizontal") + 
    scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-    labs(y = "Pituitary PRL", x = NULL) +
+  labs(x = "increasing time >>", y = "PRL", subtitle = "Pituitary") +
   scale_fill_manual(values = colorscharmaip2) +
   ylim(c(13,22.5)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -328,73 +205,66 @@ p11 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) +
   annotation_custom(removechick, ymin = 13, ymax = 14, xmin = 9.4) +
   annotation_custom(maniphatch, ymin = 13, ymax = 14, xmin = 11.4) +
   annotation_custom(nestling, ymin = 13, ymax = 14, xmin = 13.4) +
-  annotation_custom(nestling, ymin = 13, ymax = 14, xmin = 15.4) 
-p11
-
-p12 <- candidates.pit %>%
-  filter(treatment %in% c("inc.d9", "m.inc.d8", "hatch")) %>%
-    ggplot(aes(x = treatment, y = PRL)) + 
-    geom_boxplot(aes(fill = treatment, color = sex)) + 
-    scale_alpha_manual(values = c(0.75,1)) +
-    theme_B3() +
-   theme(legend.position = "none", legend.direction = "horizontal") + 
-   scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-    labs(y = "Pituitary PRL", x = NULL) +
-  ylim(c(13,22.5)) +
-  scale_fill_manual(values = colorscharmaip2)   +
-  annotation_custom(control, ymin = 13, ymax = 14, xmin = -1.6) +
-  annotation_custom(maniphatch, ymin = 13, ymax = 14, xmin = 0.4) +
-  annotation_custom(hatch, ymin = 13, ymax = 14, xmin = 2.4)
-p12
-
-p13 <- candidates.pit %>%
-  filter(treatment %in% c("inc.d17", "prolong", "hatch")) %>%
-    ggplot(aes(x = treatment, y = PRL)) + 
-    geom_boxplot(aes(fill = treatment, color = sex)) + 
-    scale_alpha_manual(values = c(0.75,1)) +
-    theme_B3() +
-   theme(legend.position = "none", legend.direction = "horizontal") + 
-   scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-    labs(y = "Pituitary PRL", x = NULL) +
-  ylim(c(13,22.5)) +
-  scale_fill_manual(values = colorscharmaip2)   +
-  annotation_custom(control, ymin = 13, ymax = 14, xmin = -1.6) +
-  annotation_custom(manipinc, ymin = 13, ymax = 14, xmin = 0.4) +
-  annotation_custom(hatch, ymin = 13, ymax = 14, xmin = 2.4)
-p13
-
-
-p14 <- candidates.pit %>%
-  filter(treatment %in% c("hatch", "extend", "n5")) %>%
-    ggplot(aes(x = treatment, y = PRL)) + 
-    geom_boxplot(aes(fill = treatment, color = sex)) + 
-    scale_alpha_manual(values = c(0.75,1)) +
-    theme_B3() +
-   theme(legend.position = "none", legend.direction = "horizontal") + 
-   scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-    labs(y = "Pituitary PRL", x = NULL) +
-  ylim(c(13,22.5)) +
-  scale_fill_manual(values = colorscharmaip2)   +
-  annotation_custom(control, ymin = 13, ymax = 14, xmin = -1.6) +
-  annotation_custom(maniphatch, ymin = 13, ymax = 14, xmin = 0.4) +
-  annotation_custom(hatch, ymin = 13, ymax = 14, xmin = 2.4)
-p14
-
-plot_grid(p12,p13 + theme(axis.text.y = element_blank(), axis.title.y = element_blank()),
-          p14 + theme(axis.text.y = element_blank(), axis.title.y = element_blank()), 
-          nrow = 1, rel_widths = c(1.2,1,1))
+  annotation_custom(nestling, ymin = 13, ymax = 14, xmin = 15.4) +
+    theme(axis.title.y  = element_text(face = "italic"))
+p4
 
 
 ```
 
+```{r BRCA.pit.maip}
+
+p5 <- ggplot(candidates.pit, aes(x = treatment, y = BRCA1)) + 
+    geom_boxplot(aes(fill = treatment, alpha = sex)) +
+    scale_alpha_manual(values = c(0.75,1)) +
+    theme_B3() +
+   theme(legend.position = "none", legend.direction = "horizontal") + 
+   scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+  labs(x = "increasing time >>", y = "BRCA1", subtitle = "Pituitary") +
+  scale_fill_manual(values = colorscharmaip2) +
+  ylim(6.8,8.5) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  annotation_custom(control, ymin = 13, ymax = 14, xmin = -14.8) +
+  annotation_custom(bldg, ymin = 13, ymax = 14, xmin = -12.8) +
+  annotation_custom(lay, ymin = 13, ymax = 14, xmin = -10.8) +
+  annotation_custom(inc, ymin = 13, ymax = 14, xmin = -8.8) +
+  annotation_custom(removeegg, ymin = 13, ymax = 14, xmin = -6.8) +
+  annotation_custom(inc, ymin = 13, ymax = 14, xmin = -4.8) +
+  annotation_custom(maniphatch, ymin = 13, ymax = 14, xmin = -2.8) +
+  annotation_custom(removeegg, ymin = 13, ymax = 14, xmin = -0.8) +
+  annotation_custom(inc, ymin = 13, ymax = 14, xmin = 1.4) +
+  annotation_custom(removeegg, ymin = 13, ymax = 14, xmin = 3.4)  +
+  annotation_custom(manipinc, ymin = 13, ymax = 14, xmin = 5.4) +
+  annotation_custom(hatch, ymin = 13, ymax = 14, xmin = 7.4) +
+  annotation_custom(removechick, ymin = 13, ymax = 14, xmin = 9.4) +
+  annotation_custom(maniphatch, ymin = 13, ymax = 14, xmin = 11.4) +
+  annotation_custom(nestling, ymin = 13, ymax = 14, xmin = 13.4) +
+  annotation_custom(nestling, ymin = 13, ymax = 14, xmin = 15.4) +
+    theme(axis.title.y  = element_text(face = "italic"))
+p5
+
+
+ggplot(candidates.pit, aes(x = PRL, y = BRCA1)) +
+  geom_point(aes(alpha = sex,  color = 	treatment)) +
+  geom_smooth(method = "loess", se=T, color = "darkgrey") +
+  scale_color_manual(values = colorscharmaip2)  +
+  scale_alpha_manual(values = c(0.5,1)) +
+  labs(subtitle = "Pituitary") +
+  theme(axis.title  = element_text(face = "italic"),
+        legend.title =  element_blank())
+
+```
+
+
 ```{r geneshormones}
 candidates.pit$bird_id <- candidates.pit$bird
-
+candidates.pit$X1 <- candidates.pit$V1
 geneshormones <- left_join(candidates.pit, hormones) %>%
   select(-X1, -V1, -okay, - icons, -music, -iconpath) %>%
   drop_na()
-head(geneshormones)
 
+(geneshormones$bird_id)
+(hormones$bird_id)
 
 ggplot(geneshormones, aes(x = plasma_conc, y = PRL)) +
   geom_point(aes(color = treatment)) +
@@ -472,6 +342,31 @@ aov_manip
 ```
 
 
+```{r music}
+
+p8 <- ggplot(meanPRL, aes(treatment, m)) +
+   geom_image(aes(image=music), size=.12)  +
+  labs(x = "parental care stages", y = "PRL", subtitle = "Pituitary") +
+  mytheme() +
+  ylim(c(15,22)) +
+  annotation_custom(control, ymin = 15, ymax = 16.5, xmin = -7.5) +
+  annotation_custom(bldg, ymin = 15, ymax = 16.5, xmin = -5.5) +
+  annotation_custom(lay, ymin = 15, ymax = 16.5, xmin = -3.5) +
+  annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = -1.5) +
+  annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = 0.5) +
+  annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = 2.5) +
+  annotation_custom(hatch, ymin = 15, ymax = 16.5, xmin = 4.5) +
+  annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 6.5) +
+  annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 8.5)   +
+  geom_hline(yintercept=17) +
+  geom_hline(yintercept=18) +
+  geom_hline(yintercept=19) +
+  geom_hline(yintercept=20) +
+  geom_hline(yintercept=21) 
+
+p8
+
+```
 
 
 ```{r}
