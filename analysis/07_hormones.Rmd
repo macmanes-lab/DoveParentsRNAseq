@@ -338,3 +338,24 @@ write.csv(hormones, "../results/hormones.csv", row.names = F)
 write.csv(prolactin2, "../results/07_prolactin2.csv", row.names = F)
 
 ```
+
+## for rechelle
+
+```{r forrechelle}
+
+rechelle <- hormones %>%
+  dplyr::filter(hormone %in% c("prolactin", "cort"),
+                treatment %in% c("lay", "inc.d9", "hatch", "n9")) %>%
+  dplyr::select(-icons, -music, -iconpath, -okay)
+   
+ggplot(rechelle, aes(x = treatment, y = plasma_conc, fill = sex)) +
+    geom_boxplot() + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+         legend.position = "none",
+          strip.text = element_blank()) +
+  facet_wrap(~hormone, scales = "free_y") +
+  theme_B3()
+
+write.csv(rechelle, "../results/07_forrechelle.csv")
+```
+
