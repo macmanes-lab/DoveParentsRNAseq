@@ -9,6 +9,7 @@ library(cowplot)
 library(readxl)
 library(modelr)
 library(lubridate)
+library(ggsignif)
 
 source("../R/themes.R")  # load custom themes and color palletes
 source("../R/icons.R")
@@ -341,21 +342,52 @@ write.csv(prolactin2, "../results/07_prolactin2.csv", row.names = F)
 
 ## for rechelle
 
-```{r forrechelle}
+```{r forrechelle, fig.height= 4, fig.width=6}
 
 rechelle <- hormones %>%
   dplyr::filter(hormone %in% c("prolactin", "cort"),
                 treatment %in% c("lay", "inc.d9", "hatch", "n9")) %>%
   dplyr::select(-icons, -music, -iconpath, -okay)
    
-ggplot(rechelle, aes(x = treatment, y = plasma_conc, fill = sex)) +
-    geom_boxplot() + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+rechelle$hormone <- factor(rechelle$hormone, levels = c("prolactin", "cort"))
+
+prl.rechelle <- rechelle %>% filter(hormone == "prolactin")   %>%  droplevels()
+cort.rechelle <- rechelle %>% filter(hormone == "cort")   %>%  droplevels()
+
+TukeyHSD(aov(plasma_conc ~  treatment, data=prl.rechelle))
+TukeyHSD(aov(plasma_conc ~  treatment, data=cort.rechelle))
+
+
+rechelleplot <- function(mydf, myylab){
+  
+  p <- ggplot(mydf, aes(x = treatment, y = plasma_conc, fill = sex)) +
+  geom_point(aes(color = sex), position = position_dodge(0.9), size = 2)+
+  geom_boxplot(alpha = 0.5, outlier.shape = NA) +
+  scale_color_manual(name = "Sex", values = c("gray50", "maroon"))+
+  scale_fill_manual(name = "Sex", values = c("gray50", "maroon"))+
+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
          legend.position = "none",
           strip.text = element_blank()) +
-  facet_wrap(~hormone, scales = "free_y") +
-  theme_B3()
+    theme_classic()+
+  theme(text = element_text(size= 15)) +
+    labs(x = "Stage", y = myylab) 
+  return(p)
 
-write.csv(rechelle, "../results/07_forrechelle.csv")
+}
+
+#PRL
+rechelleplot(prl.rechelle, "Prolactin (ng/mL)")
+rechelleplot(prl.rechelle, "Prolactin (ng/mL)") + 
+  scale_y_continuous(breaks = c(0,25,50,75,100, 125), limits = c(-20,125)) +
+  geom_signif(comparisons=list(c("lay", "hatch")), annotations= "p < 0.001", y_position = 100, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
+  geom_signif(comparisons=list(c("lay", "n9")), annotations= "p < 0.001", y_position = 110, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
+  geom_signif(comparisons=list(c("hatch", "n9")), annotations= "p < 0.001", y_position = 120, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
+  geom_signif(comparisons=list(c("inc.d9", "hatch")), annotations= "p < 0.001", y_position = -5, tip_length = -0.05, vjust = 2, color= "black" , textsize = 5 ) +
+  geom_signif(comparisons=list(c("inc.d9", "n9")), annotations= "p < 0.001", y_position = -15, tip_length = -0.05, vjust = 2, color= "black" , textsize = 5 )
+
+#CORT
+rechelleplot(cort.rechelle, "Corticosterone (ng/mL)")
+
 ```
 

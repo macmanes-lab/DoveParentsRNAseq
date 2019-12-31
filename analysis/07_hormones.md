@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -30,6 +30,8 @@
     ## The following object is masked from 'package:base':
     ## 
     ##     date
+
+    library(ggsignif)
 
     source("../R/themes.R")  # load custom themes and color palletes
     source("../R/icons.R")
@@ -609,14 +611,77 @@ for rechelle
                     treatment %in% c("lay", "inc.d9", "hatch", "n9")) %>%
       dplyr::select(-icons, -music, -iconpath, -okay)
        
-    ggplot(rechelle, aes(x = treatment, y = plasma_conc, fill = sex)) +
-        geom_boxplot() + 
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+    rechelle$hormone <- factor(rechelle$hormone, levels = c("prolactin", "cort"))
+
+    prl.rechelle <- rechelle %>% filter(hormone == "prolactin")   %>%  droplevels()
+    cort.rechelle <- rechelle %>% filter(hormone == "cort")   %>%  droplevels()
+
+    TukeyHSD(aov(plasma_conc ~  treatment, data=prl.rechelle))
+
+    ##   Tukey multiple comparisons of means
+    ##     95% family-wise confidence level
+    ## 
+    ## Fit: aov(formula = plasma_conc ~ treatment, data = prl.rechelle)
+    ## 
+    ## $treatment
+    ##                    diff        lwr       upr     p adj
+    ## inc.d9-lay     8.646903  -1.704891  18.99870 0.1343466
+    ## hatch-lay     62.492635  51.680540  73.30473 0.0000000
+    ## n9-lay        28.375968  17.563873  39.18806 0.0000000
+    ## hatch-inc.d9  53.845733  43.493939  64.19753 0.0000000
+    ## n9-inc.d9     19.729065   9.377272  30.08086 0.0000195
+    ## n9-hatch     -34.116667 -44.928763 -23.30457 0.0000000
+
+    TukeyHSD(aov(plasma_conc ~  treatment, data=cort.rechelle))
+
+    ##   Tukey multiple comparisons of means
+    ##     95% family-wise confidence level
+    ## 
+    ## Fit: aov(formula = plasma_conc ~ treatment, data = cort.rechelle)
+    ## 
+    ## $treatment
+    ##                       diff        lwr       upr     p adj
+    ## inc.d9-lay    0.3318847747 -0.6465388 1.3103084 0.8112203
+    ## hatch-lay     0.3326067238 -0.7997396 1.4649531 0.8683277
+    ## n9-lay       -0.4044791498 -1.5535794 0.7446211 0.7935749
+    ## hatch-inc.d9  0.0007219491 -1.0245257 1.0259696 1.0000000
+    ## n9-inc.d9    -0.7363639244 -1.7800860 0.3073582 0.2586385
+    ## n9-hatch     -0.7370858735 -1.9263089 0.4521372 0.3714463
+
+    rechelleplot <- function(mydf, myylab){
+      
+      p <- ggplot(mydf, aes(x = treatment, y = plasma_conc, fill = sex)) +
+      geom_point(aes(color = sex), position = position_dodge(0.9), size = 2)+
+      geom_boxplot(alpha = 0.5, outlier.shape = NA) +
+      scale_color_manual(name = "Sex", values = c("gray50", "maroon"))+
+      scale_fill_manual(name = "Sex", values = c("gray50", "maroon"))+
+
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
              legend.position = "none",
               strip.text = element_blank()) +
-      facet_wrap(~hormone, scales = "free_y") +
-      theme_B3()
+        theme_classic()+
+      theme(text = element_text(size= 15)) +
+        labs(x = "Stage", y = myylab) 
+      return(p)
+
+    }
+
+    #PRL
+    rechelleplot(prl.rechelle, "Prolactin (ng/mL)")
 
 ![](../figures/hormones/forrechelle-1.png)
 
-    write.csv(rechelle, "../results/07_forrechelle.csv")
+    rechelleplot(prl.rechelle, "Prolactin (ng/mL)") + 
+      scale_y_continuous(breaks = c(0,25,50,75,100, 125), limits = c(-20,125)) +
+      geom_signif(comparisons=list(c("lay", "hatch")), annotations= "p < 0.001", y_position = 100, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
+      geom_signif(comparisons=list(c("lay", "n9")), annotations= "p < 0.001", y_position = 110, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
+      geom_signif(comparisons=list(c("hatch", "n9")), annotations= "p < 0.001", y_position = 120, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
+      geom_signif(comparisons=list(c("inc.d9", "hatch")), annotations= "p < 0.001", y_position = -5, tip_length = -0.05, vjust = 2, color= "black" , textsize = 5 ) +
+      geom_signif(comparisons=list(c("inc.d9", "n9")), annotations= "p < 0.001", y_position = -15, tip_length = -0.05, vjust = 2, color= "black" , textsize = 5 )
+
+![](../figures/hormones/forrechelle-2.png)
+
+    #CORT
+    rechelleplot(cort.rechelle, "Corticosterone (ng/mL)")
+
+![](../figures/hormones/forrechelle-3.png)
