@@ -253,6 +253,17 @@ ggplot(candidates.pit, aes(x = PRL, y = BRCA1)) +
   theme(axis.title  = element_text(face = "italic"),
         legend.title =  element_blank())
 
+candidates.pit %>%
+  filter(treatment %in% charlevels) %>%
+ggplot( aes(x = PRL, y = BRCA1)) +
+  geom_point(aes(alpha = sex,  color = 	treatment)) +
+  geom_smooth(method = "loess", se=T, color = "darkgrey") +
+  scale_color_manual(values = colorscharmaip2)  +
+  scale_alpha_manual(values = c(0.5,1)) +
+  labs(subtitle = "Pituitary") +
+  theme(axis.title  = element_text(face = "italic"),
+        legend.title =  element_blank())
+
 ```
 
 
