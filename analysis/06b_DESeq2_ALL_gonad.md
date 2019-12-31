@@ -285,11 +285,12 @@ DEseq2 on all chaacterization and manipulations
               b + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
               c + theme(axis.title = element_blank(), axis.text = element_blank()) ,
               d + theme(axis.title = element_blank(), axis.text = element_blank()), 
+              e + theme(axis.title = element_blank(), axis.text = element_blank()),
               f + theme(axis.title = element_blank(), axis.text = element_blank()),
               g + theme(axis.title = element_blank(), axis.text = element_blank()),
               h + theme(axis.title = element_blank(), axis.text = element_blank()),
               i + theme(axis.title = element_blank(), axis.text = element_blank()),
-              nrow = 1, rel_widths = c(1.3,1,1,1,1,1,1))
+              nrow = 1, rel_widths = c(1.4,1,1,1,1,1,1,1))
 
     remove <- plot_grid( 
               a + theme(axis.title.x = element_blank(), axis.text.x = element_blank()),
@@ -298,8 +299,7 @@ DEseq2 on all chaacterization and manipulations
               k + theme(axis.title = element_blank(), axis.text = element_blank()) , 
               l + theme(axis.title = element_blank(), axis.text = element_blank()) , 
               m + theme(axis.title = element_blank(), axis.text = element_blank()), 
-              NULL, nrow = 1, rel_widths = c(1.3, 1, 1,1,1,1,1))
-
+              NULL, nrow = 1, rel_widths = c(1.4, 1, 1,1,1,1,1))
 
     timing <- plot_grid( 
               n , 
@@ -312,7 +312,7 @@ DEseq2 on all chaacterization and manipulations
                NULL,
               r + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
               s + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
-                nrow = 1, rel_widths = c(1.3,1, 0.5, 1, 1, 0.5, 1, 1)) 
+                nrow = 1, rel_widths = c(1.4,1, 0.5, 1, 1, 0.5, 1, 1)) 
 
     charicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-char.png")
     charicons <-  grid::rasterGrob(charicons, interpolate=TRUE)
@@ -323,6 +323,22 @@ DEseq2 on all chaacterization and manipulations
     timingicons <- png::readPNG("../figures/images/DoveParentsRNAseq_volcanos-timing.png")
     timingicons <-  grid::rasterGrob(timingicons, interpolate=TRUE)
 
-    plot_grid(charicons, char, removeicons, remove, timingicons, timing, nrow = 6, rel_heights = c(0.9,1,0.9,1,0.9,1.2))
+    plot_grid(charicons, char, removeicons, remove, timingicons, timing, 
+              nrow = 6, rel_heights = c(0.9,1,0.9,1,0.9,1.2))
 
 ![](../figures/DESeqAll/volcanos-gonads-1.png)
+
+    char2 <- plot_grid(
+              b ,
+              c + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) ,
+              d + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
+              e + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+              f + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+              g + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+              h + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+              i + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+              nrow = 1, rel_widths = c(1.4,1,1,1,1,1,1,1))
+
+    plot_grid(charicons, char2, nrow = 2, rel_heights = c(0.9,1))
+
+![](../figures/DESeqAll/volcanos-gon-char-1.png)

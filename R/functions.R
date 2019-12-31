@@ -578,6 +578,11 @@ LDAplot.treatment <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
 
 plot.volcano <- function(data, whichfactor, up, down, mycolors){
   
+  numbersup <- data %>% dplyr::filter(direction == up) %>%  
+    group_by(direction) %>% summarize(n = n()) %>% pull(n)
+  numbersdown <- data %>% dplyr::filter(direction == down) %>%  
+    group_by(direction) %>% summarize(n = n()) %>% pull(n)
+  
   volcano <- data %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
     geom_point(aes(color = direction, shape = tissue), size = 1, 
@@ -596,7 +601,9 @@ plot.volcano <- function(data, whichfactor, up, down, mycolors){
           legend.margin=margin(t=-0, r=0, b=0, l=0, unit="cm"),
           panel.grid = element_blank()) +
     scale_shape_manual(values = myshapes) +
-    guides(shape = F)
+    guides(shape = F) +
+    annotate("text", label = numbersdown, x = -4, y = 25, size = 2) +
+    annotate("text", label = numbersup, x = 4, y = 25, size = 2) 
   return(volcano)
 }
 
