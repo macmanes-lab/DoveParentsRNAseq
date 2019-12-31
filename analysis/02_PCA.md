@@ -121,6 +121,7 @@ All data, characterization and manipulations
     hyptsne <- subsetmaketsne("hypothalamus", charlevels, sexlevels)
     pittsne <- subsetmaketsne("pituitary", charlevels, sexlevels)
     gontsne <- subsetmaketsne("gonads", charlevels, sexlevels)
+    alltsne <- subsetmaketsne(tissuelevels, alllevels, sexlevels)
 
     plotcolorfultsnes <- function(tsnedf, whichfactor, whichcolors){
       p <- ggplot(tsnedf, aes(x = V1, y = V2, color = whichfactor, shape = tissue)) +
@@ -151,6 +152,23 @@ All data, characterization and manipulations
 
 ![](../figures/pca/tSNE-4.png)
 
+    a2 <- plotcolorfultsnes(alltsne, alltsne$tissue, colorstissue)  
+
+![](../figures/pca/tSNE-5.png)
+
+    b2 <- plotcolorfultsnes(alltsne, alltsne$sex, sexcolors)   
+
+![](../figures/pca/tSNE-6.png)
+
+    c2 <- plotcolorfultsnes(alltsne, alltsne$treatment, colorscharmaip)  
+
+![](../figures/pca/tSNE-7.png)
+
+    abc2 <- plot_grid(a2,b2,c2, nrow = 1, labels = c("a", "b", "c"), label_size = 12)
+    abc2
+
+![](../figures/pca/tSNE-8.png)
+
     subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
 
       colData <- colData %>%
@@ -167,7 +185,7 @@ All data, characterization and manipulations
       countData <- as.data.frame(t(countData))
       countData <- countData %>% dplyr::select(one_of(savecols)) 
       countData <- as.data.frame(t(countData))
-
+     
       mypca <- prcomp(countData)
 
       mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
@@ -207,6 +225,13 @@ All data, characterization and manipulations
     ## Warning: Column `V1` joining factor and character vector, coercing into
     ## character vector
 
+    allpca <- subsetmakepca(tissuelevels, alllevels, sexlevels)
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining factor and character vector, coercing into
+    ## character vector
+
     plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){
       p <- mypcadf %>%
         ggplot(aes(x = PC1, y = PC2, shape = tissue, color = whichfactor )) +
@@ -238,6 +263,23 @@ All data, characterization and manipulations
 
 ![](../figures/pca/pca-4.png)
 
+    d2 <- plotcolorfulpcs(allpca, allpca$tissue, colorstissue)  
+
+![](../figures/pca/pca-5.png)
+
+    e2 <- plotcolorfulpcs(allpca, allpca$sex, sexcolors) 
+
+![](../figures/pca/pca-6.png)
+
+    f2 <- plotcolorfulpcs(allpca,allpca$treatment, colorscharmaip) 
+
+![](../figures/pca/pca-7.png)
+
+    def2 <- plot_grid(d2,e2, f2, nrow =  1,  labels = c("d", "e", "f"), label_size = 12)
+    def2
+
+![](../figures/pca/pca-8.png)
+
     makefvizdf <-  function(whichtissue, whichtreatment, whichsex){
       colData <- colData %>%
           dplyr::filter(tissue %in% whichtissue,
@@ -263,6 +305,8 @@ All data, characterization and manipulations
     pitfviz <- makefvizdf("pituitary", charlevels, sexlevels)
     gonfviz <- makefvizdf("gonads", charlevels, sexlevels)
 
+    allfviz <- makefvizdf(tissuelevels, alllevels, sexlevels)
+
 
     g <- fviz_screeplot(charfviz, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
       labs(title = NULL, y = "PC Variance") + theme_B3() 
@@ -286,9 +330,35 @@ All data, characterization and manipulations
 
 ![](../figures/pca/fviz-2.png)
 
+    g2 <- fviz_screeplot(allfviz, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
+      labs(title = NULL, y = "PC Variance") + theme_B3() 
+    h2 <- fviz_pca_var(allfviz,  labelsize = 3 , axes.linetype = "blank", 
+                       repel = TRUE ,
+                      select.var= list(contrib = 5)) + 
+          theme_B3() + 
+          labs(x = "PC1 (35.8%)", y = "PC2 (32.5%)", title =  NULL) +
+          theme( axis.text = element_blank()) 
+
+    legend2 <- png::readPNG("../figures/images/DoveParentsRNAseq_legend.png")
+    legend2 <-  grid::rasterGrob(legend2, interpolate=TRUE)
+
+
+    gh2 <- plot_grid(g2,h2, legend2, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
+    gh2
+
+![](../figures/pca/fviz-3.png)
+
+    plot_grid(def2, gh2, nrow = 2)
+
+![](../figures/pca/fviz-4.png)
+
     plot_grid( abc, def, gh, nrow = 3)
 
 ![](../figures/pca/PCA-tSNE-1.png)
+
+    plot_grid( abc2, def2, gh2, nrow = 3)
+
+![](../figures/pca/PCA-tSNE-2.png)
 
 tissue specific
 ---------------

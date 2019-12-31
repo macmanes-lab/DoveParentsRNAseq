@@ -89,6 +89,7 @@ chartsne <- subsetmaketsne(tissuelevels, charlevels, sexlevels)
 hyptsne <- subsetmaketsne("hypothalamus", charlevels, sexlevels)
 pittsne <- subsetmaketsne("pituitary", charlevels, sexlevels)
 gontsne <- subsetmaketsne("gonads", charlevels, sexlevels)
+alltsne <- subsetmaketsne(tissuelevels, alllevels, sexlevels)
 
 ```
 
@@ -112,6 +113,13 @@ c <- plotcolorfultsnes(chartsne, chartsne$treatment, colorscharmaip)
 abc <- plot_grid(a,b,c, nrow = 1, labels = c("a", "b", "c"), label_size = 12)
 abc
 
+a2 <- plotcolorfultsnes(alltsne, alltsne$tissue, colorstissue)  
+b2 <- plotcolorfultsnes(alltsne, alltsne$sex, sexcolors)   
+c2 <- plotcolorfultsnes(alltsne, alltsne$treatment, colorscharmaip)  
+
+abc2 <- plot_grid(a2,b2,c2, nrow = 1, labels = c("a", "b", "c"), label_size = 12)
+abc2
+
 ```
 
 
@@ -132,7 +140,7 @@ subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
   countData <- as.data.frame(t(countData))
   countData <- countData %>% dplyr::select(one_of(savecols)) 
   countData <- as.data.frame(t(countData))
-
+ 
   mypca <- prcomp(countData)
 
   mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
@@ -149,6 +157,7 @@ hyppca <- subsetmakepca("hypothalamus", charlevels, sexlevels)
 pitpca <- subsetmakepca("pituitary", charlevels, sexlevels)
 gonpca <- subsetmakepca("gonads", charlevels, sexlevels)
 
+allpca <- subsetmakepca(tissuelevels, alllevels, sexlevels)
 ```
 
 
@@ -173,10 +182,15 @@ d <- plotcolorfulpcs(charpca, charpca$tissue, colorstissue)
 e <- plotcolorfulpcs(charpca, charpca$sex, sexcolors) 
 f <- plotcolorfulpcs(charpca,charpca$treatment, colorscharmaip) 
 
-
-
 def <- plot_grid(d,e, f, nrow =  1,  labels = c("d", "e", "f"), label_size = 12)
 def
+
+d2 <- plotcolorfulpcs(allpca, allpca$tissue, colorstissue)  
+e2 <- plotcolorfulpcs(allpca, allpca$sex, sexcolors) 
+f2 <- plotcolorfulpcs(allpca,allpca$treatment, colorscharmaip) 
+
+def2 <- plot_grid(d2,e2, f2, nrow =  1,  labels = c("d", "e", "f"), label_size = 12)
+def2
 ```
 
 
@@ -207,6 +221,8 @@ hypv <- makefvizdf("hypothalamus", charlevels, sexlevels)
 pitfviz <- makefvizdf("pituitary", charlevels, sexlevels)
 gonfviz <- makefvizdf("gonads", charlevels, sexlevels)
 
+allfviz <- makefvizdf(tissuelevels, alllevels, sexlevels)
+
 
 g <- fviz_screeplot(charfviz, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
   labs(title = NULL, y = "PC Variance") + theme_B3() 
@@ -224,10 +240,29 @@ legend <-  grid::rasterGrob(legend, interpolate=TRUE)
 gh <- plot_grid(g,h, legend, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
 gh
 plot_grid(def, gh, nrow = 2)
+
+
+g2 <- fviz_screeplot(allfviz, addlabels = TRUE, ylim = c(0, 50),  ncp = 5, barcolor = "white", barfill = "white") + 
+  labs(title = NULL, y = "PC Variance") + theme_B3() 
+h2 <- fviz_pca_var(allfviz,  labelsize = 3 , axes.linetype = "blank", 
+                   repel = TRUE ,
+                  select.var= list(contrib = 5)) + 
+      theme_B3() + 
+      labs(x = "PC1 (35.8%)", y = "PC2 (32.5%)", title =  NULL) +
+      theme( axis.text = element_blank()) 
+
+legend2 <- png::readPNG("../figures/images/DoveParentsRNAseq_legend.png")
+legend2 <-  grid::rasterGrob(legend2, interpolate=TRUE)
+
+
+gh2 <- plot_grid(g2,h2, legend2, nrow = 1, rel_widths = c(1, 1, 1), labels = c("h", "i", NULL ), label_size = 12)
+gh2
+plot_grid(def2, gh2, nrow = 2)
 ```
 
 ```{r PCA-tSNE, fig.height= 7, fig.width=7}
 plot_grid( abc, def, gh, nrow = 3)
+plot_grid( abc2, def2, gh2, nrow = 3)
 
 ```
 
