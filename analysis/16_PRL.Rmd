@@ -7,6 +7,8 @@ output: md_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Plots with Prolactin
+
 ```{r}
 library(tidyverse)
 library(cowplot)
@@ -23,6 +25,7 @@ source("../R/icons.R")
 knitr::opts_chunk$set(fig.path = '../figures/PRL/',message=F, warning=FALSE)
 ```
 
+## Circulating levels of prolactin
 
 ```{r data}
 hormones <- read_csv("../results/hormones.csv")
@@ -71,6 +74,8 @@ p1 <- hormones %>%
 p1
 ```
 
+
+## Prolactin (_PRL_) and _BRCA1_ expression in the pituitary
 
 ```{r candidatevsds}
 colData.pit <-  read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
@@ -172,9 +177,7 @@ p3
 
 ```
 
-## prolactin manip
-
-
+## Manipulation of parental care and _PRL_ and _BRCA1_ expression
 
 
 
@@ -211,6 +214,8 @@ p4
 
 
 ```
+
+
 
 ```{r BRCA.pit.maip}
 
@@ -266,16 +271,18 @@ ggplot( aes(x = PRL, y = BRCA1)) +
 
 ```
 
+## Genes an hormones (in progress, don't have all the bird ids lining up.)
 
 ```{r geneshormones}
 candidates.pit$bird_id <- candidates.pit$bird
 candidates.pit$X1 <- candidates.pit$V1
+
 geneshormones <- left_join(candidates.pit, hormones) %>%
   select(-X1, -V1, -okay, - icons, -music, -iconpath) %>%
   drop_na()
 
-(geneshormones$bird_id)
-(hormones$bird_id)
+head(geneshormones$bird_id)
+head(hormones$bird_id)
 
 ggplot(geneshormones, aes(x = plasma_conc, y = PRL)) +
   geom_point(aes(color = treatment)) +
@@ -296,6 +303,7 @@ ggplot(geneshormones2, aes(x = plasma_conc, y = PRL)) +
   facet_wrap(~hormone, scales = "free") 
 ```
 
+## Prolactin hormone statistics
 
 ```{r}
 aov_all = data.frame()
@@ -355,6 +363,16 @@ aov_manip
 
 ```{r music}
 
+meanPRL <- candidates.pit %>% 
+    droplevels() %>% 
+  dplyr::group_by(treatment) %>%
+  dplyr::summarise(m = mean(PRL), 
+                   se = sd(PRL)/sqrt(length(PRL))) %>%
+  dplyr::mutate(m = round(m,1))  %>%
+  dplyr::filter(treatment %in% charlevels)
+meanPRL <- left_join(meanPRL, birds)
+meanPRL$treatment <- factor(meanPRL$treatment, levels = charlevels)
+
 p8 <- ggplot(meanPRL, aes(treatment, m)) +
    geom_image(aes(image=music), size=.12)  +
   labs(x = "parental care stages", y = "PRL", subtitle = "Pituitary") +
@@ -373,17 +391,60 @@ p8 <- ggplot(meanPRL, aes(treatment, m)) +
   geom_hline(yintercept=18) +
   geom_hline(yintercept=19) +
   geom_hline(yintercept=20) +
-  geom_hline(yintercept=21) 
+  geom_hline(yintercept=21) +
+  theme(axis.title.y  = element_text(face = "italic"))
 
 p8
 
 ```
 
 
+## WGCNA candidates
+
+```{r WGCNAcandidates}
+
+#WGCNAgenes <- read_csv("../results/08_PRL_associated.csv") %>% pull(x)
+#WGCNAgenes <- c("FBXO5", "NUF2", "PTTG1", "BUB1", "PRL", "ASPM", "AURKA", "CDC20", "NEK2", "CKS2", 
+#                  "MYC", "CCNB3", "FANCC", "STC1", "RACGAP1", "E2F7", "PLK1", "EXO1", "CENPI", "CDK1")
+WGCNAgenes <- c("PRL", "PAX7", "ASPM", "AURKA",  "CDC20", "CENPF", "MYC",  "CDK1", "LBH", "BRCA1", "FOXM1", "FBXO5")
+
+
+WGCNAgenes.pit <- vsd.pit %>% dplyr::filter(genes %in% WGCNAgenes)
+WGCNAgenes.pit <- as.data.frame(WGCNAgenes.pit)
+row.names(WGCNAgenes.pit) <- WGCNAgenes.pit$genes
+WGCNAgenes.pit <- pivot_longer(WGCNAgenes.pit, -genes, names_to = "V1", values_to = "expression")
+head(WGCNAgenes.pit)
+WGCNAgenes.pit <- left_join(colData.pit, WGCNAgenes.pit) %>%
+  filter(study == "charcterization")
+WGCNAgenes.pit$treatment <- factor(WGCNAgenes.pit$treatment, levels = alllevels)
+
+WGCNAgenes.pit$genes <- factor(WGCNAgenes.pit$genes)
+WGCNAgenes.pit$genesnum <- round(as.numeric(WGCNAgenes.pit$genes), digits = -1)
+
+
+p1 <- ggplot(WGCNAgenes.pit, aes(x = treatment, y = expression)) +
+  geom_boxplot(aes(fill = treatment)) +
+  facet_wrap(~genes, scales = "free_y") +
+  theme_B3() +
+  theme(legend.position = "none") +
+  #scale_color_manual(values = sexcolors) +
+  theme(axis.text.y = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.background = element_blank(),
+        strip.text = element_text(face = "italic")) +
+  labs( x = "parental stage", y = "pituitary expression",
+        subtitle = "Genes that are coexpressed with prolactin and regulate development")
+p1
+  
+
+```
+
+
+
+
 ```{r}
 write.csv(candidates.pit, "../results/16_pitPRL.csv")
 write.csv(aov_all, "../results/16_aov_PRLsex.csv")
 write.csv(aov_manip, "../results/16_aov_PRLsextreatment.csv")
-
 ```
 
