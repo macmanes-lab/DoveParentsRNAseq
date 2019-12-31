@@ -218,4 +218,20 @@ char2 <- plot_grid(
           nrow = 1, rel_widths = c(1.4,1,1,1,1,1,1,1))
 
 plot_grid(charicons, char2, nrow = 2, rel_heights = c(0.9,1))
+
+
+timing2 <- plot_grid( 
+          n , 
+          o + theme(axis.title.y = element_blank(), axis.text.y = element_blank())+
+            labs(x = "Log fold change,")   , 
+          NULL,
+          p + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) +
+            labs(x = "pituitary") , 
+          q + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) ,
+           NULL,
+          r + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
+          s + theme(axis.title.y = element_blank(), axis.text.y = element_blank()),
+            nrow = 1, rel_widths = c(1.4,1, 0.5, 1, 1, 0.5, 1, 1)) 
+
+plot_grid(timingicons, timing2, nrow = 2, rel_heights = c(0.9,1))
 ```
