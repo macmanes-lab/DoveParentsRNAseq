@@ -359,3 +359,15 @@ DEseq2 on all chaacterization and manipulations
     plot_grid(timingicons, timing2, nrow = 2, rel_heights = c(0.9,1))
 
 ![](../figures/DESeqAll/volcanos-pit-char-2.png)
+
+    remove2 <- plot_grid( 
+              NULL,
+              j , 
+              k + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
+              l + theme(axis.title.y = element_blank(), axis.text.y = element_blank()) , 
+              m + theme(axis.title.y = element_blank(), axis.text.y = element_blank()), 
+              nrow = 1, rel_widths = c(1,1.4,1,1,1))
+
+    plot_grid(removeicons, remove2, nrow = 2, rel_heights = c(0.9,1))
+
+![](../figures/DESeqAll/volcanos-pit-char-3.png)
