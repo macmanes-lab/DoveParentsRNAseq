@@ -10,6 +10,8 @@ library(readxl)
 library(modelr)
 library(lubridate)
 library(ggsignif)
+library(apaTables)
+
 
 source("../R/themes.R")  # load custom themes and color palletes
 source("../R/icons.R")
@@ -389,5 +391,116 @@ rechelleplot(prl.rechelle, "Prolactin (ng/mL)") +
 #CORT
 rechelleplot(cort.rechelle, "Corticosterone (ng/mL)")
 
+```
+
+```{r sex}
+hormones$hormone <- factor(hormones$hormone, 
+                           levels = c("cort", "progesterone", "prolactin", 
+                                      "estradiol", "testosterone"))
+
+hormones %>%
+  filter(study == "characterization") %>%
+  ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+  geom_boxplot() +
+  theme_B3() +
+  facet_wrap(~hormone, nrow = 1, scales = "free") +
+  theme(legend.position = "none") +
+  labs(y = "concentration (ng/mL")
+
+
+printaovtablesex <- function(myhormone, mydescirption){
+  
+  aov_all = data.frame()
+  for(i in alllevels3){
+    df <- hormones %>% filter(hormone == myhormone,
+                            treatment == i) %>% droplevels()
+    aovtable <- apa.aov.table(aov(plasma_conc ~ sex, data  = df))
+    aovtable <- as.data.frame(aovtable$table_body)
+    totaldf <- aovtable[3, 3]
+    aovtable$df <- paste(aovtable$df, ", " , totaldf, sep = "")
+    aovtable$ANOVA <- mydescirption
+    aovtable$stages <- paste(i)
+    aovtable$p <- as.numeric(as.character(aovtable$p))
+    aov_all <- rbind(aov_all,aovtable)
+  }
+
+  aov_all <- aov_all %>%
+    filter(Predictor == "sex")  %>%
+    select(stages, ANOVA, df, "F", p) %>%
+    mutate(sig = ifelse(p < 0.05, "*", " "))
+  aov_all
+  return(aov_all)
+}
+
+printaovtablesex("cort", "CORT ~ sex")
+printaovtablesex("progesterone", "Prog ~ sex")
+printaovtablesex("prolactin", "PRL ~ sex")
+
+
+
+TukeyHSD(aov(data = cort.char, plasma_conc ~ treatment), which = "treatment")
+
+```
+
+```{r cort}
+p1 <- hormones %>%
+  filter(hormone == "cort",
+         study == "characterization") %>%
+  ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+  geom_boxplot() +
+  theme_B3() +
+  labs(y = "concentration (ng/mL)", subtitle = "Corticosterone" , x = NULL) +
+  theme(legend.position = "none") +
+  scale_y_continuous(limits = c(0,8.5))
+p1
+
+
+cort <- hormones %>%
+  filter(hormone == "cort",
+         study == "characterization")
+
+p2 <-  ggplot(cort, aes(x = treatment, y = plasma_conc, fill = treatment)) +
+  geom_boxplot() +
+  theme_B3() +
+  labs(y = NULL, x = NULL, subtitle = " ") +
+  theme(legend.position = "none") +
+  geom_signif(comparisons=list(c("control", "inc.d17")), annotations= "p = 0.49", y_position = 7.5, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
+  geom_signif(comparisons=list(c("control", "hatch")), annotations= "p = 0.021", y_position = 8, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
+  geom_signif(comparisons=list(c("control", "n5")), annotations= "p = 0.004", y_position = 8.5, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
+  geom_signif(comparisons=list(c("n5", "n9")), annotations= "p = 0.001", y_position = 8, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
+  scale_y_continuous(limits = c(0,8.5))
+  
+p2
+
+p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8))
+
+p3 <- hormones %>%
+  filter(hormone == "cort",
+         treatment %in% c(controlsremoval, levelsremoval )) %>% 
+ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+  geom_boxplot() +
+  theme_B3() +
+  scale_y_continuous(limits = c(0,8.5)) +
+  scale_fill_manual(values = colorscharmaip) +
+  theme(legend.position = "none") +
+  labs( x = NULL, y = "concentration (ng/mL")
+p3
+
+p4 <- hormones %>%
+  filter(hormone == "cort",
+         treatment %in% c(controlstiming, levelstiming )) %>% 
+ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+  geom_boxplot() +
+  theme_B3() +
+  scale_y_continuous(limits = c(0,8.5)) +
+  scale_fill_manual(values = colorscharmaip) +
+  theme(legend.position = "none") +
+  labs(y = NULL, x = NULL)
+p4
+
+p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4))
+
+
+plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
 ```
 

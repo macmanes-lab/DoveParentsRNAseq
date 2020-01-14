@@ -41,6 +41,10 @@ maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2"
 levelstiming <- c( "m.inc.d8" , "prolong" , "extend")
 levelsremoval <- c( "m.inc.d3" ,    "m.inc.d9" , "m.inc.d17" , "m.n2")
 
+controlstiming <- c( "inc.d9" , "hatch" , "n5")
+controlsremoval <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
+
+
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
                 "inc.d9", "m.inc.d8" ,"m.inc.d9" ,
                "inc.d17",  "m.inc.d17","prolong" ,
