@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -833,6 +833,18 @@ for rechelle
     ## n9-hatch        -0.7370858735 -2.2475303 0.77335858 0.8384413
     ## n9-n5           -1.3915570305 -2.8665955 0.08348146 0.0813021
 
+    hormones %>%
+      filter(hormone == "cort") %>%
+      group_by(sex) %>%
+      summarise(mean = mean(plasma_conc),
+                median = median(plasma_conc))
+
+    ## # A tibble: 2 x 3
+    ##   sex     mean median
+    ##   <fct>  <dbl>  <dbl>
+    ## 1 female  2.09   1.63
+    ## 2 male    2.25   1.75
+
     p1 <- hormones %>%
       filter(hormone == "cort",
              study == "characterization") %>%
@@ -865,7 +877,7 @@ for rechelle
 
 ![](../figures/hormones/cort-2.png)
 
-    p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8))
+    p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8), labels = c("a","b"), label_size = 8)
 
     p3 <- hormones %>%
       filter(hormone == "cort",
@@ -895,12 +907,24 @@ for rechelle
 
 ![](../figures/hormones/cort-4.png)
 
-    p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4))
+    p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4), labels = c("c","d"), label_size = 8 )
 
 
     plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
 
 ![](../figures/hormones/cort-5.png)
+
+    hormones %>%
+      filter(hormone == "prolactin") %>%
+      group_by(sex) %>%
+      summarise(m = mean(plasma_conc),
+                median = median(plasma_conc))
+
+    ## # A tibble: 2 x 3
+    ##   sex        m median
+    ##   <fct>  <dbl>  <dbl>
+    ## 1 female  38.2   29.1
+    ## 2 male    29.7   17.9
 
     p1 <- hormones %>%
       filter(hormone == "prolactin",
@@ -1041,7 +1065,170 @@ for rechelle
 
     p34 <- plot_grid(p3a , p3b,p4a, p4b, rel_widths = c(0.55,0.55, 0.45,0.45), labels = c("d","e", "f", "g"), label_size = 8, nrow = 1)
 
-
     plot_grid(p12, p34, nrow = 2, rel_heights = c(0.5,0.5))
 
 ![](../figures/hormones/PRL-7.png)
+
+    hormoneswide <- hormones %>%
+      select(study, treatment, sex, bird_id, hormone, plasma_conc) %>%
+      pivot_wider( names_from = hormone, values_from  = plasma_conc, values_fn = list(plasma_conc = mean)) 
+
+    plotcorrelations <- function(i,j, myxlab, mylab, mysubtitle){
+          p <- ggplot(hormoneswide, aes(x = i, y = j),na.rm = TRUE) +
+           geom_point(aes(color = treatment), na.rm = TRUE) +
+           geom_smooth( method = lm, color = "darkgrey", na.rm = TRUE ) +
+           theme_B3() +
+          #facet_wrap(~sex, scales = "free") +
+            labs(x = myxlab, y = mylab, subtitle = mysubtitle) +
+            theme(legend.position = "none")
+          
+          return(p)
+      }
+      
+    p1 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$cort, "prolactin", "cort", "r = 0.221, p = 0.001")
+    p2 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$progesterone, "prolactin", "progesterone", "r = -0.099, p = 0.2")
+    p3 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$testosterone, "prolactin", "testosterone", "r = -0.258, p = 0.08")
+    p4 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$estradiol, "prolactin", "estradiol", "r = 0.05, p = 0.6")
+
+    p5 <- plotcorrelations(hormoneswide$cort, hormoneswide$progesterone, "cort", "progesterone", "r = 0.104, p = 0.175")
+    p6 <- plotcorrelations(hormoneswide$cort, hormoneswide$estradiol, "cort", "estradiol", "r = -0.026, p = 0.8")
+    p7 <- plotcorrelations(hormoneswide$cort, hormoneswide$testosterone, "cort", "testosterone", "r = -0.108, p = 0.4")
+
+    p8 <- plotcorrelations(hormoneswide$progesterone, hormoneswide$estradiol, "progesterone", "estradiol", "r = 0.120, p = 0.3")
+    p9 <- plotcorrelations(hormoneswide$progesterone, hormoneswide$testosterone, "progesterone", "testosterone", "r = 0.133, p = 0.3")
+
+
+    allcorrs <- plot_grid(p1,p2,p3,p4,p5,p6,p7,p8,p9, nrow = 3, align = "hv", labels = "auto", label_size = 8)
+    allcorrs
+
+![](../figures/hormones/correlations2-1.png)
+
+    plot_grid(p1,p3 + theme(legend.position = "right"), align = "hv", rel_widths = c(0.4,0.6))
+
+![](../figures/hormones/correlations2-2.png)
+
+    cor.test(hormoneswide$prolactin, hormoneswide$cort)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$prolactin and hormoneswide$cort
+    ## t = 3.2454, df = 205, p-value = 0.00137
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  0.08732223 0.34697012
+    ## sample estimates:
+    ##       cor 
+    ## 0.2210598
+
+    cor.test(hormoneswide$prolactin, hormoneswide$progesterone)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$prolactin and hormoneswide$progesterone
+    ## t = -1.2484, df = 157, p-value = 0.2137
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.2509210  0.0573868
+    ## sample estimates:
+    ##       cor 
+    ## -0.099146
+
+    cor.test(hormoneswide$prolactin, hormoneswide$estradiol)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$prolactin and hormoneswide$estradiol
+    ## t = 0.48023, df = 90, p-value = 0.6322
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.1558760  0.2527557
+    ## sample estimates:
+    ##        cor 
+    ## 0.05055546
+
+    cor.test(hormoneswide$prolactin, hormoneswide$testosterone)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$prolactin and hormoneswide$testosterone
+    ## t = -1.7885, df = 45, p-value = 0.08043
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.50725710  0.03191091
+    ## sample estimates:
+    ##        cor 
+    ## -0.2576166
+
+    cor.test(hormoneswide$cort, hormoneswide$estradiol)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$cort and hormoneswide$estradiol
+    ## t = -0.25377, df = 95, p-value = 0.8002
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.2243082  0.1743230
+    ## sample estimates:
+    ##         cor 
+    ## -0.02602726
+
+    cor.test(hormoneswide$cort, hormoneswide$testosterone)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$cort and hormoneswide$testosterone
+    ## t = -0.69576, df = 41, p-value = 0.4905
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.3955351  0.1987687
+    ## sample estimates:
+    ##        cor 
+    ## -0.1080241
+
+    cor.test(hormoneswide$cort, hormoneswide$progesterone)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$cort and hormoneswide$progesterone
+    ## t = 1.362, df = 170, p-value = 0.175
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.04646163  0.24964841
+    ## sample estimates:
+    ##       cor 
+    ## 0.1038951
+
+    cor.test(hormoneswide$progesterone, hormoneswide$estradiol)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$progesterone and hormoneswide$estradiol
+    ## t = 1.0969, df = 83, p-value = 0.2759
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.09603681  0.32439384
+    ## sample estimates:
+    ##       cor 
+    ## 0.1195339
+
+    cor.test(hormoneswide$progesterone, hormoneswide$testosterone)
+
+    ## 
+    ##  Pearson's product-moment correlation
+    ## 
+    ## data:  hormoneswide$progesterone and hormoneswide$testosterone
+    ## t = 1.0059, df = 56, p-value = 0.3188
+    ## alternative hypothesis: true correlation is not equal to 0
+    ## 95 percent confidence interval:
+    ##  -0.1295308  0.3784937
+    ## sample estimates:
+    ##       cor 
+    ## 0.1332222

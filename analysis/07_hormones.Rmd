@@ -443,6 +443,14 @@ TukeyHSD(aov(data = cort.char, plasma_conc ~ treatment), which = "treatment")
 ```
 
 ```{r cort}
+
+hormones %>%
+  filter(hormone == "cort") %>%
+  group_by(sex) %>%
+  summarise(mean = mean(plasma_conc),
+            median = median(plasma_conc))
+
+
 p1 <- hormones %>%
   filter(hormone == "cort",
          study == "characterization") %>%
@@ -472,7 +480,7 @@ p2 <-  ggplot(cort, aes(x = treatment, y = plasma_conc, fill = treatment)) +
   
 p2
 
-p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8))
+p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8), labels = c("a","b"), label_size = 8)
 
 p3 <- hormones %>%
   filter(hormone == "cort",
@@ -498,7 +506,7 @@ ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
   labs(y = NULL, x = NULL)
 p4
 
-p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4))
+p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4), labels = c("c","d"), label_size = 8 )
 
 
 plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
@@ -506,6 +514,12 @@ plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
 
 
 ```{r PRL}
+hormones %>%
+  filter(hormone == "prolactin") %>%
+  group_by(sex) %>%
+  summarise(m = mean(plasma_conc),
+            median = median(plasma_conc))
+
 p1 <- hormones %>%
   filter(hormone == "prolactin",
          study == "characterization") %>%
@@ -634,7 +648,55 @@ p4b
 
 p34 <- plot_grid(p3a , p3b,p4a, p4b, rel_widths = c(0.55,0.55, 0.45,0.45), labels = c("d","e", "f", "g"), label_size = 8, nrow = 1)
 
-
 plot_grid(p12, p34, nrow = 2, rel_heights = c(0.5,0.5))
+```
+
+```{r correlations2 }
+hormoneswide <- hormones %>%
+  select(study, treatment, sex, bird_id, hormone, plasma_conc) %>%
+  pivot_wider( names_from = hormone, values_from  = plasma_conc, values_fn = list(plasma_conc = mean)) 
+
+plotcorrelations <- function(i,j, myxlab, mylab, mysubtitle){
+      p <- ggplot(hormoneswide, aes(x = i, y = j),na.rm = TRUE) +
+       geom_point(aes(color = treatment), na.rm = TRUE) +
+       geom_smooth( method = lm, color = "darkgrey", na.rm = TRUE ) +
+       theme_B3() +
+      #facet_wrap(~sex, scales = "free") +
+        labs(x = myxlab, y = mylab, subtitle = mysubtitle) +
+        theme(legend.position = "none")
+      
+      return(p)
+  }
+  
+p1 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$cort, "prolactin", "cort", "r = 0.221, p = 0.001")
+p2 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$progesterone, "prolactin", "progesterone", "r = -0.099, p = 0.2")
+p3 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$testosterone, "prolactin", "testosterone", "r = -0.258, p = 0.08")
+p4 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$estradiol, "prolactin", "estradiol", "r = 0.05, p = 0.6")
+
+p5 <- plotcorrelations(hormoneswide$cort, hormoneswide$progesterone, "cort", "progesterone", "r = 0.104, p = 0.175")
+p6 <- plotcorrelations(hormoneswide$cort, hormoneswide$estradiol, "cort", "estradiol", "r = -0.026, p = 0.8")
+p7 <- plotcorrelations(hormoneswide$cort, hormoneswide$testosterone, "cort", "testosterone", "r = -0.108, p = 0.4")
+
+p8 <- plotcorrelations(hormoneswide$progesterone, hormoneswide$estradiol, "progesterone", "estradiol", "r = 0.120, p = 0.3")
+p9 <- plotcorrelations(hormoneswide$progesterone, hormoneswide$testosterone, "progesterone", "testosterone", "r = 0.133, p = 0.3")
+
+
+allcorrs <- plot_grid(p1,p2,p3,p4,p5,p6,p7,p8,p9, nrow = 3, align = "hv", labels = "auto", label_size = 8)
+allcorrs
+
+plot_grid(p1,p3 + theme(legend.position = "right"), align = "hv", rel_widths = c(0.4,0.6))
+
+cor.test(hormoneswide$prolactin, hormoneswide$cort)
+cor.test(hormoneswide$prolactin, hormoneswide$progesterone)
+cor.test(hormoneswide$prolactin, hormoneswide$estradiol)
+cor.test(hormoneswide$prolactin, hormoneswide$testosterone)
+
+cor.test(hormoneswide$cort, hormoneswide$estradiol)
+cor.test(hormoneswide$cort, hormoneswide$testosterone)
+cor.test(hormoneswide$cort, hormoneswide$progesterone)
+
+
+cor.test(hormoneswide$progesterone, hormoneswide$estradiol)
+cor.test(hormoneswide$progesterone, hormoneswide$testosterone)
 ```
 
