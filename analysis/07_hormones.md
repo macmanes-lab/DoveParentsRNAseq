@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -901,3 +901,147 @@ for rechelle
     plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
 
 ![](../figures/hormones/cort-5.png)
+
+    p1 <- hormones %>%
+      filter(hormone == "prolactin",
+             study == "characterization") %>%
+      ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = "concentration (ng/mL)", subtitle = "Prolactin" , x = NULL) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      scale_fill_manual(values = sexcolors) +
+      scale_y_continuous(limits = c(0,100)) 
+    p1
+
+![](../figures/hormones/PRL-1.png)
+
+    PRLf <- hormones %>%
+      filter(hormone == "prolactin",
+             study == "characterization",
+             sex == "female")
+
+    PRLm <- hormones %>%
+      filter(hormone == "prolactin",
+             study == "characterization",
+             sex == "male")
+
+
+    p2a <-  ggplot(PRLf, aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      labs(y = NULL, x = NULL, subtitle = "females") +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      scale_color_manual(values = sexcolors) +
+      scale_y_continuous(limits = c(0,100)) +
+        geom_text(aes(label = "B", x = 1, y = 100, fontface = "plain"), size = 3) +
+       geom_text(aes(label = "A", x = 2, y = 100), size = 3) +
+    geom_text(aes(label = "A", x = 3, y = 100), size = 3) +
+    geom_text(aes(label = "B", x = 4, y = 100), size = 3) +
+      geom_text(aes(label = "C", x = 5, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 6, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 7, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 8, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 9, y = 100), size = 3) 
+      
+    p2b <-  ggplot(PRLm, aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      labs(y = NULL, x = NULL, subtitle = "males") +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      scale_color_manual(values = sexcolors) +
+      scale_y_continuous(limits = c(0,100)) +
+      geom_text(aes(label = "A", x = 1, y = 100, fontface = "plain"), size = 3) +
+       geom_text(aes(label = "A", x = 2, y = 100), size = 3) +
+    geom_text(aes(label = "B", x = 3, y = 100), size = 3) +
+    geom_text(aes(label = "B", x = 4, y = 100), size = 3) +
+      geom_text(aes(label = "B", x = 5, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 6, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 7, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 8, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 9, y = 100), size = 3) 
+      
+
+    p12 <- plot_grid(p1,p2a,p2b, rel_widths = c(0.25,0.5, 0.5), labels = c("a","b", "c"), label_size = 8, nrow = 1, align = "hv")
+    p12
+
+![](../figures/hormones/PRL-2.png)
+
+    p3a <- hormones %>%
+      filter(hormone == "prolactin",
+             sex == "female", 
+             treatment %in% c(controlsremoval, levelsremoval )) %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,100)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs( x = NULL, y = "concentration (ng/mL", subtitle = "females") +
+      scale_color_manual(values = sexcolors)
+    p3a
+
+![](../figures/hormones/PRL-3.png)
+
+    p3b <- hormones %>%
+      filter(hormone == "prolactin",
+             sex == "male", 
+             treatment %in% c(controlsremoval, levelsremoval )) %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,100)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs( x = NULL, y = NULL, subtitle = "males") +
+      scale_color_manual(values = sexcolors)
+    p3b
+
+![](../figures/hormones/PRL-4.png)
+
+    p4a <- hormones %>%
+      filter(hormone == "prolactin",
+             sex == "female", 
+             treatment %in% c(controlstiming, levelstiming )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,100)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs(y = NULL, x = NULL, subtitle = "females") +
+      scale_color_manual(values = sexcolors)
+    p4a
+
+![](../figures/hormones/PRL-5.png)
+
+    p4b <- hormones %>%
+      filter(hormone == "prolactin",
+             sex == "male", 
+             treatment %in% c(controlstiming, levelstiming )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,100)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs(y = NULL, x = NULL, subtitle = "males") +
+      scale_color_manual(values = sexcolors) 
+      
+    p4b
+
+![](../figures/hormones/PRL-6.png)
+
+    p34 <- plot_grid(p3a , p3b,p4a, p4b, rel_widths = c(0.55,0.55, 0.45,0.45), labels = c("d","e", "f", "g"), label_size = 8, nrow = 1)
+
+
+    plot_grid(p12, p34, nrow = 2, rel_heights = c(0.5,0.5))
+
+![](../figures/hormones/PRL-7.png)
