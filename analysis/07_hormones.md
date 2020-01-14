@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -32,6 +32,8 @@
     ##     date
 
     library(ggsignif)
+    library(apaTables)
+
 
     source("../R/themes.R")  # load custom themes and color palletes
     source("../R/icons.R")
@@ -685,3 +687,217 @@ for rechelle
     rechelleplot(cort.rechelle, "Corticosterone (ng/mL)")
 
 ![](../figures/hormones/forrechelle-3.png)
+
+    hormones$hormone <- factor(hormones$hormone, 
+                               levels = c("cort", "progesterone", "prolactin", 
+                                          "estradiol", "testosterone"))
+
+    hormones %>%
+      filter(study == "characterization") %>%
+      ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+      geom_boxplot() +
+      theme_B3() +
+      facet_wrap(~hormone, nrow = 1, scales = "free") +
+      theme(legend.position = "none") +
+      labs(y = "concentration (ng/mL")
+
+![](../figures/hormones/sex-1.png)
+
+    printaovtablesex <- function(myhormone, mydescirption){
+      
+      aov_all = data.frame()
+      for(i in alllevels3){
+        df <- hormones %>% filter(hormone == myhormone,
+                                treatment == i) %>% droplevels()
+        aovtable <- apa.aov.table(aov(plasma_conc ~ sex, data  = df))
+        aovtable <- as.data.frame(aovtable$table_body)
+        totaldf <- aovtable[3, 3]
+        aovtable$df <- paste(aovtable$df, ", " , totaldf, sep = "")
+        aovtable$ANOVA <- mydescirption
+        aovtable$stages <- paste(i)
+        aovtable$p <- as.numeric(as.character(aovtable$p))
+        aov_all <- rbind(aov_all,aovtable)
+      }
+
+      aov_all <- aov_all %>%
+        filter(Predictor == "sex")  %>%
+        select(stages, ANOVA, df, "F", p) %>%
+        mutate(sig = ifelse(p < 0.05, "*", " "))
+      aov_all
+      return(aov_all)
+    }
+
+    printaovtablesex("cort", "CORT ~ sex")
+
+    ##       stages      ANOVA    df    F     p sig
+    ## 1    control CORT ~ sex  1, 3 0.63 0.485    
+    ## 2       bldg CORT ~ sex 1, 18 0.41 0.528    
+    ## 3        lay CORT ~ sex 1, 20 3.21 0.089    
+    ## 4     inc.d3 CORT ~ sex 1, 16 0.03 0.870    
+    ## 5     inc.d9 CORT ~ sex 1, 34 2.21 0.147    
+    ## 6    inc.d17 CORT ~ sex 1, 21 0.09 0.770    
+    ## 7      hatch CORT ~ sex 1, 17 0.73 0.405    
+    ## 8         n5 CORT ~ sex 1, 19 0.40 0.534    
+    ## 9         n9 CORT ~ sex 1, 16 1.14 0.302    
+    ## 10  m.inc.d3 CORT ~ sex 1, 19 0.54 0.473    
+    ## 11  m.inc.d9 CORT ~ sex 1, 16 0.83 0.376    
+    ## 12 m.inc.d17 CORT ~ sex 1, 17 0.50 0.488    
+    ## 13      m.n2 CORT ~ sex 1, 17 1.18 0.293    
+    ## 14  m.inc.d8 CORT ~ sex 1, 18 1.68 0.212    
+    ## 15   prolong CORT ~ sex 1, 16 0.04 0.842    
+    ## 16    extend CORT ~ sex 1, 18 1.01 0.328
+
+    printaovtablesex("progesterone", "Prog ~ sex")
+
+    ##       stages      ANOVA    df     F     p sig
+    ## 1    control Prog ~ sex  1, 2 72.05 0.014   *
+    ## 2       bldg Prog ~ sex 1, 21  0.12 0.730    
+    ## 3        lay Prog ~ sex 1, 15  2.71 0.121    
+    ## 4     inc.d3 Prog ~ sex 1, 15  0.84 0.375    
+    ## 5     inc.d9 Prog ~ sex 1, 30  0.03 0.870    
+    ## 6    inc.d17 Prog ~ sex 1, 26  1.72 0.201    
+    ## 7      hatch Prog ~ sex 1, 23  0.67 0.420    
+    ## 8         n5 Prog ~ sex 1, 22  2.43 0.133    
+    ## 9         n9 Prog ~ sex 1, 22  0.56 0.463    
+    ## 10  m.inc.d3 Prog ~ sex 1, 16  1.28 0.275    
+    ## 11  m.inc.d9 Prog ~ sex 1, 21  0.05 0.830    
+    ## 12 m.inc.d17 Prog ~ sex 1, 23  0.14 0.709    
+    ## 13      m.n2 Prog ~ sex 1, 19  8.59 0.009   *
+    ## 14  m.inc.d8 Prog ~ sex 1, 19  3.27 0.086    
+    ## 15   prolong Prog ~ sex 1, 20  0.02 0.885    
+    ## 16    extend Prog ~ sex 1, 20  0.14 0.714
+
+    printaovtablesex("prolactin", "PRL ~ sex")
+
+    ##       stages     ANOVA    df     F     p sig
+    ## 1    control PRL ~ sex 1, 21  7.74 0.011   *
+    ## 2       bldg PRL ~ sex 1, 18  4.47 0.049   *
+    ## 3        lay PRL ~ sex 1, 18  2.10 0.165    
+    ## 4     inc.d3 PRL ~ sex 1, 18  3.93 0.063    
+    ## 5     inc.d9 PRL ~ sex 1, 22  0.31 0.583    
+    ## 6    inc.d17 PRL ~ sex 1, 19  1.07 0.313    
+    ## 7      hatch PRL ~ sex 1, 18  0.20 0.662    
+    ## 8         n5 PRL ~ sex 1, 18  0.03 0.870    
+    ## 9         n9 PRL ~ sex 1, 18  3.00 0.100    
+    ## 10  m.inc.d3 PRL ~ sex 1, 18 10.39 0.005   *
+    ## 11  m.inc.d9 PRL ~ sex 1, 17  2.12 0.164    
+    ## 12 m.inc.d17 PRL ~ sex 1, 18  0.02 0.901    
+    ## 13      m.n2 PRL ~ sex 1, 16  0.73 0.405    
+    ## 14  m.inc.d8 PRL ~ sex 1, 17  3.37 0.084    
+    ## 15   prolong PRL ~ sex 1, 18  2.16 0.159    
+    ## 16    extend PRL ~ sex 1, 17  3.38 0.084
+
+    TukeyHSD(aov(data = cort.char, plasma_conc ~ treatment), which = "treatment")
+
+    ##   Tukey multiple comparisons of means
+    ##     95% family-wise confidence level
+    ## 
+    ## Fit: aov(formula = plasma_conc ~ treatment, data = cort.char)
+    ## 
+    ## $treatment
+    ##                          diff        lwr        upr     p adj
+    ## bldg-control     0.2093902065 -2.0866895 2.50546988 0.9999986
+    ## lay-control      0.7971986970 -1.4779118 3.07230916 0.9734607
+    ## inc.d3-control   1.0891729855 -1.2322785 3.41062447 0.8661114
+    ## inc.d9-control   1.1290834716 -1.0625737 3.32074066 0.7935434
+    ## inc.d17-control  1.1807993406 -1.0851336 3.44673224 0.7830206
+    ## hatch-control    1.1298054208 -1.1783272 3.43793808 0.8361174
+    ## n5-control       1.7842765778 -0.5008432 4.06939638 0.2627173
+    ## n9-control       0.3927195472 -1.9287319 2.71417103 0.9998346
+    ## lay-bldg         0.5878084905 -0.8309722 2.00658914 0.9297455
+    ## inc.d3-bldg      0.8797827790 -0.6121783 2.37174387 0.6470944
+    ## inc.d9-bldg      0.9196932651 -0.3609988 2.20038532 0.3748645
+    ## inc.d17-bldg     0.9714091341 -0.4326075 2.37542579 0.4276318
+    ## hatch-bldg       0.9204152143 -0.5507365 2.39156690 0.5694718
+    ## n5-bldg          1.5748863713  0.1401099 3.00966280 0.0198533
+    ## n9-bldg          0.1833293407 -1.3086317 1.67529043 0.9999857
+    ## inc.d3-lay       0.2919742885 -1.1675098 1.75145833 0.9994239
+    ## inc.d9-lay       0.3318847747 -0.9108211 1.57459066 0.9954843
+    ## inc.d17-lay      0.3836006436 -0.9858549 1.75305621 0.9937509
+    ## hatch-lay        0.3326067238 -1.1055981 1.77081153 0.9983527
+    ## n5-lay           0.9870778808 -0.4138965 2.38805225 0.4017680
+    ## n9-lay          -0.4044791498 -1.8639632 1.05500489 0.9941865
+    ## inc.d9-inc.d3    0.0399104862 -1.2857317 1.36555270 1.0000000
+    ## inc.d17-inc.d3   0.0916263551 -1.3535096 1.53676231 0.9999999
+    ## hatch-inc.d3     0.0406324353 -1.4698120 1.55107689 1.0000000
+    ## n5-inc.d3        0.6951035923 -0.7799349 2.17014208 0.8632148
+    ## n9-inc.d3       -0.6964534382 -2.2271732 0.83426634 0.8850290
+    ## inc.d17-inc.d9   0.0517158689 -1.1741072 1.27753893 1.0000000
+    ## hatch-inc.d9     0.0007219491 -1.3014557 1.30289962 1.0000000
+    ## n5-inc.d9        0.6551931061 -0.6057442 1.91613037 0.7857052
+    ## n9-inc.d9       -0.7363639244 -2.0620061 0.58927829 0.7177564
+    ## hatch-inc.d17   -0.0509939198 -1.4746362 1.37264835 1.0000000
+    ## n5-inc.d17       0.6034772372 -0.7825435 1.98949795 0.9083084
+    ## n9-inc.d17      -0.7880797933 -2.2332157 0.65705616 0.7377265
+    ## n5-hatch         0.6544711570 -0.7995158 2.10845807 0.8911158
+    ## n9-hatch        -0.7370858735 -2.2475303 0.77335858 0.8384413
+    ## n9-n5           -1.3915570305 -2.8665955 0.08348146 0.0813021
+
+    p1 <- hormones %>%
+      filter(hormone == "cort",
+             study == "characterization") %>%
+      ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = "concentration (ng/mL)", subtitle = "Corticosterone" , x = NULL) +
+      theme(legend.position = "none") +
+      scale_y_continuous(limits = c(0,8.5))
+    p1
+
+![](../figures/hormones/cort-1.png)
+
+    cort <- hormones %>%
+      filter(hormone == "cort",
+             study == "characterization")
+
+    p2 <-  ggplot(cort, aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = NULL, x = NULL, subtitle = " ") +
+      theme(legend.position = "none") +
+      geom_signif(comparisons=list(c("control", "inc.d17")), annotations= "p = 0.49", y_position = 7.5, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
+      geom_signif(comparisons=list(c("control", "hatch")), annotations= "p = 0.021", y_position = 8, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
+      geom_signif(comparisons=list(c("control", "n5")), annotations= "p = 0.004", y_position = 8.5, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
+      geom_signif(comparisons=list(c("n5", "n9")), annotations= "p = 0.001", y_position = 8, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
+      scale_y_continuous(limits = c(0,8.5))
+      
+    p2
+
+![](../figures/hormones/cort-2.png)
+
+    p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8))
+
+    p3 <- hormones %>%
+      filter(hormone == "cort",
+             treatment %in% c(controlsremoval, levelsremoval )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,8.5)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none") +
+      labs( x = NULL, y = "concentration (ng/mL")
+    p3
+
+![](../figures/hormones/cort-3.png)
+
+    p4 <- hormones %>%
+      filter(hormone == "cort",
+             treatment %in% c(controlstiming, levelstiming )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,8.5)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none") +
+      labs(y = NULL, x = NULL)
+    p4
+
+![](../figures/hormones/cort-4.png)
+
+    p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4))
+
+
+    plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
+
+![](../figures/hormones/cort-5.png)
