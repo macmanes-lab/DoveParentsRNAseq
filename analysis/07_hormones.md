@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -40,6 +40,16 @@
 
     ## Warning: Column `icons` joining factor and character vector, coercing into
     ## character vector
+
+    theme_B3 <- function () { 
+      theme_classic(base_size = 11) +
+        theme(
+          panel.grid.major  = element_blank(),  # remove major gridlines
+          panel.grid.minor  = element_blank(),  # remove minor gridlines
+          plot.title = element_text(hjust = 0.5, face = "bold"), # center & bold 
+          axis.text.x = element_text(angle = 45, hjust = 1)
+        )
+    }
 
     knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
 
@@ -1069,6 +1079,105 @@ for rechelle
 
 ![](../figures/hormones/PRL-7.png)
 
+prolactin 2
+-----------
+
+    hormones %>%
+      filter(hormone == "prolactin") %>%
+      group_by(sex) %>%
+      summarise(m = mean(plasma_conc),
+                median = median(plasma_conc))
+
+    ## # A tibble: 2 x 3
+    ##   sex        m median
+    ##   <fct>  <dbl>  <dbl>
+    ## 1 female  38.2   29.1
+    ## 2 male    29.7   17.9
+
+    p1 <- hormones %>%
+      filter(hormone == "prolactin",
+             study == "characterization") %>%
+      ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = "concentration (ng/mL)", subtitle = "Prolactin" , x = NULL) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      scale_fill_manual(values = sexcolors) +
+      scale_y_continuous(limits = c(0,100)) 
+    p1
+
+![](../figures/hormones/PRL2-1.png)
+
+    df <- hormones %>%
+      filter(hormone == "prolactin",
+             study == "characterization")
+    p2 <-  ggplot(df, aes(x = treatment, y = plasma_conc, fill = treatment, color = sex)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      labs(y = NULL, x = NULL, subtitle = " ") +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      scale_color_manual(values = sexcolors) +
+      scale_y_continuous(limits = c(0,105)) +
+        geom_text(aes(label = "B", x = 1, y = 100, fontface = "plain"), size = 3) +
+       geom_text(aes(label = "A", x = 2, y = 100), size = 3) +
+    geom_text(aes(label = "A", x = 3, y = 100), size = 3) +
+    geom_text(aes(label = "B", x = 4, y = 100), size = 3) +
+      geom_text(aes(label = "C", x = 5, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 6, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 7, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 8, y = 100), size = 3) +
+      geom_text(aes(label = "D", x = 9, y = 100), size = 3) +
+      geom_text(aes(label = '*', x = 1, y = 105), size = 5) +
+       geom_text(aes(label = '*', x = 2, y = 105), size = 5) 
+      p2
+
+![](../figures/hormones/PRL2-2.png)
+
+    p3 <- hormones %>%
+      filter(hormone == "prolactin",
+             treatment %in% c(controlsremoval, levelsremoval )) %>% 
+      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,110)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs( x = NULL, y = "concentration (ng/mL", subtitle = " ") +
+      scale_color_manual(values = sexcolors) +
+       geom_text(aes(label = '*', x = 2, y = 105), size = 5) 
+    p3
+
+![](../figures/hormones/PRL2-3.png)
+
+    p4 <- hormones %>%
+      filter(hormone == "prolactin",
+             treatment %in% c(controlstiming, levelstiming )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot(aes(color = sex)) +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,110)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs(y = NULL, x = NULL, subtitle = " ") +
+      scale_color_manual(values = sexcolors) 
+    p4
+
+![](../figures/hormones/PRL2-4.png)
+
+    p12 <- plot_grid(p1, p2, rel_widths = c(0.15,0.8), labels = "auto", label_size = 8)
+    p34 <- plot_grid(p3,p4, nrow = 1, rel_widths = c(0.55,0.45), labels = c("c", "d"), label_size = 8)
+
+    plot_grid(p12, p34, nrow = 2)
+
+![](../figures/hormones/PRL2-5.png)
+
+correlations
+------------
+
     hormoneswide <- hormones %>%
       select(study, treatment, sex, bird_id, hormone, plasma_conc) %>%
       pivot_wider( names_from = hormone, values_from  = plasma_conc, values_fn = list(plasma_conc = mean)) 
@@ -1080,7 +1189,8 @@ for rechelle
            theme_B3() +
           #facet_wrap(~sex, scales = "free") +
             labs(x = myxlab, y = mylab, subtitle = mysubtitle) +
-            theme(legend.position = "none")
+            theme(legend.position = "none") +
+            scale_color_manual(values = colorscharmaip2)
           
           return(p)
       }
@@ -1103,7 +1213,7 @@ for rechelle
 
 ![](../figures/hormones/correlations2-1.png)
 
-    plot_grid(p1,p3 + theme(legend.position = "right"), align = "hv", rel_widths = c(0.4,0.6))
+    plot_grid(p1 + theme(axis.text.x = element_text(angle = 0)),p3+ theme(axis.text.x = element_text(angle = 0))  + theme(legend.position = "right"), align = "hv", rel_widths = c(0.4,0.6))
 
 ![](../figures/hormones/correlations2-2.png)
 
@@ -1232,3 +1342,204 @@ for rechelle
     ## sample estimates:
     ##       cor 
     ## 0.1332222
+
+progesterone
+------------
+
+    hormones %>%
+      filter(hormone == "progesterone") %>%
+      group_by(sex) %>%
+      summarise(mean = mean(plasma_conc),
+                median = median(plasma_conc))
+
+    ## # A tibble: 2 x 3
+    ##   sex     mean median
+    ##   <fct>  <dbl>  <dbl>
+    ## 1 female 0.682  0.369
+    ## 2 male   0.751  0.368
+
+    p1 <- hormones %>%
+      filter(hormone == "progesterone",
+             study == "characterization") %>%
+      ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = "concentration (ng/mL)", subtitle = "Progesterone" , x = NULL) +
+      theme(legend.position = "none")   +
+      scale_y_continuous(limits = c(0,4.5)) +
+      scale_fill_manual(values = sexcolors) 
+
+    df <- hormones %>%
+      filter(hormone == "progesterone",
+             study == "characterization")
+
+    p2 <-  ggplot(df, aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = NULL, x = NULL, subtitle = " ") +
+      scale_y_continuous(limits = c(0,4.5)) +
+      theme(legend.position = "none") 
+
+    p3 <- hormones %>%
+      filter(hormone == "progesterone",
+             treatment %in% c(controlsremoval, levelsremoval )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,4.5)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none") +
+      labs( x = NULL, y = "concentration (ng/mL")
+
+    p4 <- hormones %>%
+      filter(hormone == "progesterone",
+             treatment %in% c(controlstiming, levelstiming )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,4.5)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none") +
+      labs(y = NULL, x = NULL)
+
+
+    progesterone <- plot_grid(p1, p2, p3 + labs(y = NULL), p4, nrow = 1, rel_widths =   c(0.175,0.4,0.35,0.25))
+    progesterone
+
+![](../figures/hormones/progesterone-1.png)
+
+estradiol and testosterone
+--------------------------
+
+    hormones %>%
+      filter(hormone == "estradiol") %>%
+      summarise(mean = mean(plasma_conc),
+                median = median(plasma_conc))
+
+    ## # A tibble: 1 x 2
+    ##    mean median
+    ##   <dbl>  <dbl>
+    ## 1 0.208  0.148
+
+    p5 <- hormones %>%
+      filter(hormone == "estradiol",
+             study == "characterization") %>%
+      ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = "concentration (ng/mL)", subtitle = "Estradiol" , x = NULL) +
+      theme(legend.position = "none")  +
+        scale_y_continuous(limits = c(0,1)) +
+      scale_fill_manual(values = sexcolors) 
+
+    df <- hormones %>%
+      filter(hormone == "estradiol",
+             study == "characterization")
+
+    p6 <-  ggplot(df, aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = NULL, x = NULL, subtitle = " ") +
+        scale_y_continuous(limits = c(0,1)) +
+      theme(legend.position = "none") 
+
+
+    p7 <- hormones %>%
+      filter(hormone == "estradiol",
+             treatment %in% c(controlsremoval, levelsremoval )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,1)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none") +
+      labs( x = NULL, y = "concentration (ng/mL")
+
+
+    p8 <- hormones %>%
+      filter(hormone == "estradiol",
+             treatment %in% c(controlstiming, levelstiming )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,1)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none") +
+      labs(y = NULL, x = NULL)
+
+    estradiol <- plot_grid(p5, p6, p7 + labs(y = NULL), p8, nrow = 1, rel_widths =   c(0.175,0.4,0.35,0.25))
+    estradiol
+
+![](../figures/hormones/estradiol-1.png)
+
+    hormones %>%
+      filter(hormone == "testosterone") %>%
+      summarise(mean = mean(plasma_conc),
+                median = median(plasma_conc))
+
+    ## # A tibble: 1 x 2
+    ##    mean median
+    ##   <dbl>  <dbl>
+    ## 1  1.58  0.904
+
+    p9 <- hormones %>%
+      filter(hormone == "testosterone",
+             study == "characterization") %>%
+      ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = "concentration (ng/mL)", subtitle = "Testosterone" , x = NULL) +
+      theme(legend.position = "none")  +
+        scale_y_continuous(limits = c(0,8.5)) +
+      scale_fill_manual(values = sexcolors) 
+
+
+    df <- hormones %>%
+      filter(hormone == "testosterone",
+             study == "characterization")
+
+    p10 <-  ggplot(df, aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      labs(y = NULL, x = NULL, subtitle = " ") +
+        scale_y_continuous(limits = c(0,8.5)) +
+      theme(legend.position = "none") 
+      
+
+    p11 <- hormones %>%
+      filter(hormone == "testosterone",
+             treatment %in% c(controlsremoval, levelsremoval )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,8.5)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none") +
+      labs( x = NULL, y = "concentration (ng/mL")
+
+    p12 <- hormones %>%
+      filter(hormone == "testosterone",
+             treatment %in% c(controlstiming, levelstiming )) %>% 
+    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
+      geom_boxplot() +
+      theme_B3() +
+      scale_y_continuous(limits = c(0,8.5)) +
+      scale_fill_manual(values = colorscharmaip) +
+      theme(legend.position = "none") +
+      labs(y = NULL, x = NULL)
+    p12
+
+![](../figures/hormones/testosterone-1.png)
+
+    testosterone <- plot_grid(p9, p10, p11 + labs(y = NULL), p12, nrow = 1, rel_widths =   c(0.175,0.4,0.35,0.25))
+    testosterone
+
+![](../figures/hormones/testosterone-2.png)
+
+    plot_grid(p1, p2, p3 + labs(y = NULL), p4, p5, p6, p7 + labs(y = NULL), p8, 
+              p9, p10, p11 + labs(y = NULL), p12, nrow = 3, rel_widths =   c(0.175,0.4,0.35,0.25), align = "hv",
+              label_size = 8, labels = c("a", " ", " " , " ",
+                                         "b", " ", " " , " ",
+                                         "c", " ", " " , " "))
+
+![](../figures/hormones/supplefig-1.png)
