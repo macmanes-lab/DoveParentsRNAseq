@@ -12,20 +12,8 @@ library(lubridate)
 library(ggsignif)
 library(apaTables)
 
-
 source("../R/themes.R")  # load custom themes and color palletes
 source("../R/icons.R")
-
-
-theme_B3 <- function () { 
-  theme_classic(base_size = 11) +
-    theme(
-      panel.grid.major  = element_blank(),  # remove major gridlines
-      panel.grid.minor  = element_blank(),  # remove minor gridlines
-      plot.title = element_text(hjust = 0.5, face = "bold"), # center & bold 
-      axis.text.x = element_text(angle = 45, hjust = 1)
-    )
-}
 
 knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
 ```
@@ -74,65 +62,24 @@ prolactin <- read_excel("../results/Pigeon prolactin concentrations juil 2018.xl
           drop_na()
 head(prolactin)
 
-
-prolactin2 <- read_csv("../results/prolactin.csv") %>% 
-          dplyr::rename("plasma_conc" = "prolactin_ng_mL",
-                        "treatment" = "stage") %>% 
-           dplyr::mutate(hormone = "prolactin") %>% 
-           dplyr::mutate(treatment = fct_recode(treatment,
-                            "m.n2" = "m.hatch",
-                            "prolong" = "inc.prolong",
-                            "extend" = "extend.hatch"),
-                          study = fct_collapse(treatment,
-                                 characterization = charlevels,
-                                 manipulation = maniplevels1)) %>% 
-  
-          dplyr::mutate(bird_id = gsub(".ATLAS", "" , bird_id)) %>% 
-          dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc) 
-head(prolactin2)
-
-same <- inner_join(prolactin, prolactin2, by = "bird_id")
-ggplot(same, aes(x = plasma_conc.x, y = plasma_conc.y, label = bird_id)) + geom_point() + geom_text()
-
-
-all <- full_join(prolactin, prolactin2, by = "bird_id") 
-onlyin1 <- anti_join(prolactin, prolactin2, by = "bird_id") 
-onlyin2 <- anti_join(prolactin2, prolactin, by = "bird_id") 
-
-
-dim(prolactin)
-dim(prolactin2)
-dim(all)
-dim(same)
-dim(onlyin1)
-dim(onlyin2)
-
-print("only in old prolactin dataset") 
-onlyin1$bird_id
-
-print("only in new prolactin dataset") 
-onlyin2$bird_id
-
-prolctin1rnaseq <- full_join(prolactin, colData)
-prolctin2rnaseq <- full_join(prolactin2, colData)
-
-prolctin1rnaseq
-prolctin2rnaseq
 ```
 
 
+
 ```{r wrangle-steroids}
-PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", sheet = 2)  %>% 
-                dplyr::mutate(treatment = fct_recode(stage,
-                            "inc.d17" = "inc_d17",
-                            "inc.d3" = "inc_d3",
-                            "inc.d9" = "inc_d9",
-                            "m.inc.d9" = "m_incd9",
-                            "m.inc.d3" = "m_incd3",
-                            "m.inc.d8" = "m_incd8",
-                            "m.inc.d17" = "m_incd17",
-                            "m.n2" = "m_hatch",
-                            "control" = "stress_hpg")) %>%
+PETC <- read_excel("../results/hormones.xlsx", sheet = 1)  %>% 
+              dplyr::rename(corticosterone = cort, progesterone = p4,
+                            estradiol = e2,  testosterone = t) %>% 
+               dplyr::mutate(treatment = fct_recode(treatment...3,
+                            "inc.d17" = "incd17",
+                            "inc.d3" = "incd3",
+                            "inc.d9" = "incd9",
+                            "m.inc.d9" = "minc9",
+                            "m.inc.d3" = "minc3",
+                            "m.inc.d8" = "minc8",
+                            "m.inc.d17" = "minc17",
+                            "m.n2" = "m hatch",
+                            "control" = "baseline")) %>%
                 dplyr::filter(treatment %in% alllevels2) %>%   
                 dplyr::mutate(sex = fct_recode(sex,
                             "female" = "f",
@@ -140,49 +87,45 @@ PETC <- read_excel("../results/parental_care_hormone_RIA_data_master.xlsx", shee
                        study = fct_collapse(treatment,
                                 characterization = charlevels,
                                 manipulation = maniplevels1)) %>% 
-              dplyr::mutate(bird_id = gsub("[[:punct:]]", "." , band_combo)) %>% 
-              dplyr::select(study, treatment, sex, bird_id, hormone, plasma_conc) %>% 
-             drop_na() %>%  droplevels()  
+              dplyr::mutate(bird_id = gsub("[[:punct:]]", "." , id)) %>% 
+              dplyr::select(bird_id, treatment, sex, study, 
+                            corticosterone, estradiol, testosterone, progesterone) %>% 
+              pivot_longer(cols = corticosterone:progesterone,
+                           names_to = "hormone", values_to = "plasma_conc",
+                           values_drop_na = TRUE) %>% 
+              drop_na() %>% droplevels()  
 head(PETC)
-
-```
-
-```{r correlations}
-PETCP <- left_join(prolactin2, PETC, by = "bird_id") %>% drop_na()
-PETCP$treatment.x <- factor(PETCP$treatment.x, levels = alllevels2)
-
-plothormonecorrelations <- function(myhormone, myylab){
-  PETCP %>% filter(hormone.y == myhormone) %>%
-  ggplot(aes(x = plasma_conc.x, y = plasma_conc.y, color = treatment.x )) +
-  geom_point() + 
-  geom_smooth(method = "lm", se = F) +
-  labs(x = "Prolactin (ng/mL)", y = myylab) +
-  scale_color_manual(values = colorscharmaip) +
-  facet_wrap(~treatment.x, nrow = 3) +
-  theme(legend.position = "none")
-}
-
-plothormonecorrelations("cort", "Corticosterone (ng/mL")
-plothormonecorrelations("estradiol", "Estradiol (ng/mL")
-plothormonecorrelations("progesterone", "Progesterone (ng/mL")
-plothormonecorrelations("testosterone", "Testosterone (ng/mL")
 ```
 
 
 ```{r combine-clean-split}
 hormones <- rbind(prolactin, PETC)
+
+hormones$okay <- ifelse(hormones$hormone == "corticosterone" & hormones$plasma_conc > 30, "bad",
+                    ifelse(hormones$hormone == "progesterone" & hormones$plasma_conc > 5, "bad", 
+                           ifelse(hormones$hormone == "prolactin" & hormones$plasma_conc > 150, "bad", 
+                        ifelse(hormones$hormone == "testosterone" & hormones$sex == "female", "bad",
+                               ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay")))))
+hormones <- hormones %>% filter(okay == "okay") %>% droplevels() %>% select(-okay)
+
+write.csv(hormones, "../results/hormones.csv", row.names = F)
+
+# make a winder one for correlations
+hormoneswide <- hormones %>% pivot_wider(names_from = "hormone", values_from = "plasma_conc", 
+                                         values_fn = list(plasma_conc = mean))
+hormoneswide$treatment <- factor(hormoneswide$treatment, levels = alllevels)
+head(hormoneswide)
+
+# for facet wrapping
 hormones <- left_join(hormones, birds)
 
 hormones$treatment <- factor(hormones$treatment, levels = alllevels)
 
 
-hormones$okay <- ifelse(hormones$hormone == "cort" & hormones$plasma_conc > 30, "bad",
-                    ifelse(hormones$hormone == "progesterone" & hormones$plasma_conc > 5, "bad", 
-                           ifelse(hormones$hormone == "prolactin" & hormones$plasma_conc > 150, "bad", 
-                        ifelse(hormones$hormone == "testosterone" & hormones$sex == "female", "bad",
-                               ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay")))))
-hormones <- hormones %>% filter(okay == "okay") %>% droplevels()
-summary(hormones)
+hormones$hormone <- factor(hormones$hormone, 
+                           levels = c("prolactin", "corticosterone", "progesterone", 
+                                      "estradiol", "testosterone"))
+head(hormones)
 ```
 
 ```{r characterizationplots}
@@ -208,11 +151,13 @@ hormonecharplot <- function(myhormone, myylab){
                        labels = charlevels)
   }
 
+hormonecharplot("prolactin", "PRL (ng/mL)")
+hormonecharplot("corticosterone", "CORT (ng/mL)")
+hormonecharplot("estradiol", "e2 (ng/mL)")
+hormonecharplot("testosterone", "t (ng/mL)")
+hormonecharplot("progesterone", "p4 (ng/mL)")
 ```
 
-```{r PRLonly}
-hormonecharplot("prolactin", "PRL (ng/mL)")
-```
 
 
 
@@ -276,7 +221,7 @@ hormones %>%
 
 ```{r sexsteroids}
 
-hormonecharplot("cort", "CORT (ng/mL)")
+hormonecharplot("corticosterone", "CORT (ng/mL)")
 hormonecharplot("progesterone", "PROG (ng/mL)") 
 d1 <- hormonecharplot("estradiol", "E (ng/mL)")
 d2 <- hormonecharplot("testosterone", "T (ng/mL)")
@@ -297,7 +242,7 @@ hormonemanipSteroids <- function(myhormone, myylab, myymax){
     labs(y = myylab, x = NULL) 
 }
 
-hormonemanipSteroids("cort", "CORT (ng/mL)", 10)
+hormonemanipSteroids("corticosterone", "CORT (ng/mL)", 10)
 hormonemanipSteroids("progesterone", "PROG (ng/mL)",2.5)
 
 a <- hormonemanipSteroids("estradiol", "E (ng/mL)", 1)
@@ -311,7 +256,7 @@ prl.char <- hormones %>% filter(hormone == "prolactin", treatment %in% charlevel
 test.char <- hormones %>% filter(hormone == "testosterone", treatment %in% charlevels)   %>%  droplevels()
 est.char <- hormones %>% filter(hormone == "estradiol", treatment %in% charlevels)   %>%  droplevels()
 prog.char <- hormones %>% filter(hormone == "progesterone", treatment %in% charlevels)   %>%  droplevels()
-cort.char <- hormones %>% filter(hormone == "cort", treatment %in% charlevels)   %>%  droplevels()
+cort.char <- hormones %>% filter(hormone == "corticosterone", treatment %in% charlevels)   %>%  droplevels()
 
 
 aovSexTretment <- function(mydata, whichormone){
@@ -329,7 +274,7 @@ aovTretment  <- function(mydata, whichormone){
 }
 
 aovSexTretment(prl.char, "PRL") # yes, sex difference (p = 0.00256), yes treatment effect (p < 2e-16), no interaction
-aovSexTretment(cort.char, "CORT") # no sex difference (p = 0.779 ), small treatment effect (p = 0.0238),  no interaction
+aovSexTretment(cort.char, "corticosterone") # no sex difference (p = 0.779 ), small treatment effect (p = 0.0238),  no interaction
 aovSexTretment(prog.char, "PROG") # no sex difference or treatment effect, signifiant interacion (p = 0.0107)
 
 aovTretment(est.char, "E") # p = 0.101
@@ -347,25 +292,21 @@ PRLpit <- read_csv("../results/10_PRLpit.csv") %>%
 head(PRLpit,2)
 ```
 
-```{r}
-write.csv(hormones, "../results/hormones.csv", row.names = F)
-write.csv(prolactin2, "../results/07_prolactin2.csv", row.names = F)
 
-```
 
 ## for rechelle
 
 ```{r forrechelle, fig.height= 4, fig.width=6}
 
 rechelle <- hormones %>%
-  dplyr::filter(hormone %in% c("prolactin", "cort"),
+  dplyr::filter(hormone %in% c("prolactin", "corticosterone"),
                 treatment %in% c("lay", "inc.d9", "hatch", "n9")) %>%
-  dplyr::select(-icons, -music, -iconpath, -okay)
+  dplyr::select(-icons, -music, -iconpath)
    
-rechelle$hormone <- factor(rechelle$hormone, levels = c("prolactin", "cort"))
+rechelle$hormone <- factor(rechelle$hormone, levels = c("prolactin", "corticosterone"))
 
 prl.rechelle <- rechelle %>% filter(hormone == "prolactin")   %>%  droplevels()
-cort.rechelle <- rechelle %>% filter(hormone == "cort")   %>%  droplevels()
+cort.rechelle <- rechelle %>% filter(hormone == "corticosterone")   %>%  droplevels()
 
 TukeyHSD(aov(plasma_conc ~  treatment, data=prl.rechelle))
 TukeyHSD(aov(plasma_conc ~  treatment, data=cort.rechelle))
@@ -405,10 +346,6 @@ rechelleplot(cort.rechelle, "Corticosterone (ng/mL)")
 ```
 
 ```{r sex}
-hormones$hormone <- factor(hormones$hormone, 
-                           levels = c("cort", "progesterone", "prolactin", 
-                                      "estradiol", "testosterone"))
-
 hormones %>%
   filter(study == "characterization") %>%
   ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
@@ -443,39 +380,33 @@ printaovtablesex <- function(myhormone, mydescirption){
   return(aov_all)
 }
 
-printaovtablesex("cort", "CORT ~ sex")
-printaovtablesex("progesterone", "Prog ~ sex")
 printaovtablesex("prolactin", "PRL ~ sex")
-
-
-
-TukeyHSD(aov(data = cort.char, plasma_conc ~ treatment), which = "treatment")
-
 ```
 
 ```{r cort}
 
 hormones %>%
-  filter(hormone == "cort") %>%
+  filter(hormone == "corticosterone") %>%
   group_by(sex) %>%
   summarise(mean = mean(plasma_conc),
             median = median(plasma_conc))
 
 
 p1 <- hormones %>%
-  filter(hormone == "cort",
+  filter(hormone == "corticosterone",
          study == "characterization") %>%
   ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
   geom_boxplot() +
   theme_B3() +
   labs(y = "concentration (ng/mL)", subtitle = "Corticosterone" , x = NULL) +
   theme(legend.position = "none") +
-  scale_y_continuous(limits = c(0,8.5))
+  scale_y_continuous(limits = c(0,8.5)) +
+  scale_fill_manual(values = sexcolors)
 p1
 
 
 cort <- hormones %>%
-  filter(hormone == "cort",
+  filter(hormone == "corticosterone",
          study == "characterization")
 
 p2 <-  ggplot(cort, aes(x = treatment, y = plasma_conc, fill = treatment)) +
@@ -494,7 +425,7 @@ p2
 p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8), labels = c("a","b"), label_size = 8)
 
 p3 <- hormones %>%
-  filter(hormone == "cort",
+  filter(hormone == "corticosterone",
          treatment %in% c(controlsremoval, levelsremoval )) %>% 
 ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
   geom_boxplot() +
@@ -506,7 +437,7 @@ ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
 p3
 
 p4 <- hormones %>%
-  filter(hormone == "cort",
+  filter(hormone == "corticosterone",
          treatment %in% c(controlstiming, levelstiming )) %>% 
 ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
   geom_boxplot() +
@@ -750,12 +681,9 @@ plot_grid(p12, p34, nrow = 2)
 
 
 ```{r correlations2 }
-hormoneswide <- hormones %>%
-  select(study, treatment, sex, bird_id, hormone, plasma_conc) %>%
-  pivot_wider( names_from = hormone, values_from  = plasma_conc, values_fn = list(plasma_conc = mean)) 
 
 plotcorrelations <- function(i,j, myxlab, mylab, mysubtitle){
-      p <- ggplot(hormoneswide, aes(x = i, y = j),na.rm = TRUE) +
+      p <- ggplot(hormoneswide, aes(x = i, y = j), na.rm = TRUE) +
        geom_point(aes(color = treatment), na.rm = TRUE) +
        geom_smooth( method = lm, color = "darkgrey", na.rm = TRUE ) +
        theme_B3() +
@@ -765,38 +693,39 @@ plotcorrelations <- function(i,j, myxlab, mylab, mysubtitle){
         scale_color_manual(values = colorscharmaip2)
       
       return(p)
-  }
-  
-p1 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$cort, "prolactin", "cort", "r = 0.221, p = 0.001")
-p2 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$progesterone, "prolactin", "progesterone", "r = -0.099, p = 0.2")
-p3 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$testosterone, "prolactin", "testosterone", "r = -0.258, p = 0.08")
-p4 <- plotcorrelations(hormoneswide$prolactin, hormoneswide$estradiol, "prolactin", "estradiol", "r = 0.05, p = 0.6")
+}
 
-p5 <- plotcorrelations(hormoneswide$cort, hormoneswide$progesterone, "cort", "progesterone", "r = 0.104, p = 0.175")
-p6 <- plotcorrelations(hormoneswide$cort, hormoneswide$estradiol, "cort", "estradiol", "r = -0.026, p = 0.8")
-p7 <- plotcorrelations(hormoneswide$cort, hormoneswide$testosterone, "cort", "testosterone", "r = -0.108, p = 0.4")
+hormoneswide
 
-p8 <- plotcorrelations(hormoneswide$progesterone, hormoneswide$estradiol, "progesterone", "estradiol", "r = 0.120, p = 0.3")
-p9 <- plotcorrelations(hormoneswide$progesterone, hormoneswide$testosterone, "progesterone", "testosterone", "r = 0.133, p = 0.3")
+corrPRL <- hormoneswide %>%
+  pivot_longer(cols = corticosterone:progesterone, names_to = "hormones", values_to = "conc", values_drop_na = TRUE) %>%
+  filter(study == "characterization") %>%
+  ggplot(aes(x = prolactin, y = conc)) +
+  geom_point(aes(color = treatment)) +
+  geom_smooth( color = "darkgrey", method = "lm") +
+  facet_wrap(~hormones, nrow = 1, scales = "free_y")  +
+  theme_B3() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank()) +
+  scale_color_manual(values = colorscharmaip2) +
+  guides(color = guide_legend(nrow = 1)) +
+  labs(y = "conc. (ng/mL)", x = "prolactin (ng/mL)")
+corrPRL
 
-
-allcorrs <- plot_grid(p1,p2,p3,p4,p5,p6,p7,p8,p9, nrow = 3, align = "hv", labels = "auto", label_size = 8)
-allcorrs
-
-plot_grid(p1 + theme(axis.text.x = element_text(angle = 0)),p3+ theme(axis.text.x = element_text(angle = 0))  + theme(legend.position = "right"), align = "hv", rel_widths = c(0.4,0.6))
-
-cor.test(hormoneswide$prolactin, hormoneswide$cort)
-cor.test(hormoneswide$prolactin, hormoneswide$progesterone)
-cor.test(hormoneswide$prolactin, hormoneswide$estradiol)
-cor.test(hormoneswide$prolactin, hormoneswide$testosterone)
-
-cor.test(hormoneswide$cort, hormoneswide$estradiol)
-cor.test(hormoneswide$cort, hormoneswide$testosterone)
-cor.test(hormoneswide$cort, hormoneswide$progesterone)
-
-
-cor.test(hormoneswide$progesterone, hormoneswide$estradiol)
-cor.test(hormoneswide$progesterone, hormoneswide$testosterone)
+corrCORT <- hormoneswide %>%
+  pivot_longer(cols = c(prolactin, estradiol, testosterone, progesterone), names_to = "hormones", values_to = "conc", values_drop_na = TRUE) %>%
+  filter(study == "characterization") %>%
+  ggplot(aes(x = corticosterone, y = conc)) +
+  geom_point(aes(color = treatment)) +
+  geom_smooth( color = "darkgrey", method = "lm") +
+  facet_wrap(~hormones, nrow = 1, scales = "free_y")  +
+  theme_B3() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank()) +
+  scale_color_manual(values = colorscharmaip2) +
+  guides(color = guide_legend(nrow = 1)) +
+  labs(y = "conc. (ng/mL)", x = "corticosterone (ng/mL)")
+corrCORT
 ```
 
 ## progesterone
