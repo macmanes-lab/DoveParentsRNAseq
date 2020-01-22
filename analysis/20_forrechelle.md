@@ -1,4 +1,13 @@
     candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH" )
+    datadrivengenes <- c("COX1", "PRL", "CHGA", "ATP2B4", "LOC107055658")
+
+    calisigenes <- c("PRL", "PRLR", 
+                     "VIP", "VIPR1", "VIPR2", 
+                     "OXT", "AVP", "AVPR1A", "AVPR1B", 
+                     "GNRH1","GNRHR", "NPVF",
+                     "NR3C1", "NR3C2",
+                     "ESR1", "ESR2", "AR")
+
     timepoints <- charlevels
 
     datapath <- "../results/"   # path to the data
@@ -17,6 +26,11 @@
     ## Warning: Missing column names filled in: 'X1' [1]
 
     ## Warning: Missing column names filled in: 'X1' [1]
+
+    genes <- as.data.frame(df$X1)
+
+tissue specificiity
+-------------------
 
     # check which genese appear in multiple tissue
     tissuespecificity <- df %>%
@@ -40,10 +54,11 @@
 
     write.csv(tissuespecificity, "../results/tissuespecificity.csv")
 
-    genes <- as.data.frame(df$X1)
-      
+candidate genes
+---------------
+
     df2 <-  df  %>%
-      filter(X1 %in% candidategenes) %>%
+      filter(X1 %in% c(candidategenes)) %>%
       pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
                    names_to = "sample", values_to = "vsd") %>%
        mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
@@ -73,6 +88,23 @@
 
     df2$treatment <- factor(df2$treatment, levels = alllevels)
     df2$tissue <- factor(df2$tissue, levels = tissuelevels)
+    df2$gene <- factor(df2$gene)
+
+    for (i in levels(df2$gene)) {
+      p <-  df2 %>%
+        filter(gene %in% i) %>%
+        ggplot(aes(x = treatment, y = vsd, color = sex, fill = treatment)) +
+        geom_boxplot() +
+        scale_alpha_manual(values = c(0.5, 1)) +
+        labs(y = "expression", x = "parental stage", subtitle = i) +
+        facet_wrap(~ tissue , scales = "free_y", nrow = 3) +
+        theme_B3() +
+        scale_color_manual(values = sexcolors) +
+        scale_fill_manual(values = colorscharmaip)
+     print(p)
+    }
+
+![](../figures/favegenes/candidates-1.png)![](../figures/favegenes/candidates-2.png)![](../figures/favegenes/candidates-3.png)![](../figures/favegenes/candidates-4.png)![](../figures/favegenes/candidates-5.png)
 
     df3 <- df2 %>% 
       mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
@@ -84,7 +116,7 @@
     ## # A tibble: 6 x 7
     ## # Groups:   sex, treatment, tissue [2]
     ##   sex    treatment tissue    gene      m     se image                      
-    ##   <chr>  <fct>     <fct>     <chr> <dbl>  <dbl> <chr>                      
+    ##   <chr>  <fct>     <fct>     <fct> <dbl>  <dbl> <chr>                      
     ## 1 female control   hypothal… CISH   7.42 0.228  ../figures/images/DovePare…
     ## 2 female control   hypothal… GH     9.33 0.330  ../figures/images/DovePare…
     ## 3 female control   hypothal… JAK2   8.53 0.0774 ../figures/images/DovePare…
@@ -107,7 +139,7 @@
      print(p)
     }
 
-![](../figures/favegenes/candidate%20genes-1.png)![](../figures/favegenes/candidate%20genes-2.png)![](../figures/favegenes/candidate%20genes-3.png)
+![](../figures/favegenes/candidates-6.png)![](../figures/favegenes/candidates-7.png)![](../figures/favegenes/candidates-8.png)
 
     df3 %>%
         ggplot(aes(x = treatment, y = m)) +
@@ -120,61 +152,7 @@
         theme_B3() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-![](../figures/favegenes/candidate%20genes-4.png)
-
-    df2$gene <- factor(df2$gene)
-
-    for (i in levels(df2$gene)) {
-      p <-  df2 %>%
-        filter(gene %in% i) %>%
-        ggplot(aes(x = treatment, y = vsd, color = sex, fill = treatment)) +
-        geom_boxplot() +
-        scale_alpha_manual(values = c(0.5, 1)) +
-        labs(y = "expression", x = "parental stage", subtitle = i) +
-        facet_wrap(~ tissue , scales = "free_y", nrow = 3) +
-        theme_B3() +
-        scale_color_manual(values = sexcolors) +
-        scale_fill_manual(values = colorscharmaip)
-     print(p)
-    }
-
-![](../figures/favegenes/candidate%20genes-5.png)![](../figures/favegenes/candidate%20genes-6.png)![](../figures/favegenes/candidate%20genes-7.png)![](../figures/favegenes/candidate%20genes-8.png)![](../figures/favegenes/candidate%20genes-9.png)
-
-    dft <- df %>% filter(X1 %in% candidategenes) %>%
-      unite("tissuegene", tissue:X1, remove = FALSE) %>%
-      select(-tissue, -`X1`, -filename)  %>%
-      pivot_longer(-tissuegene, names_to = "samples", values_to = "vsd") %>%
-      drop_na() %>%
-      mutate("bird" = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
-      select(bird,tissuegene,vsd) %>%
-      filter(bird != "x.g.g.ATLAS") %>%
-      pivot_wider(id_cols = bird, names_from = tissuegene, values_from = vsd)
-    dft <- as.data.frame(dft)
-    row.names(dft) <- dft$bird
-    dft$bird <- NULL
-    head(dft)
-
-    ##          gon_CISH   gon_GH gon_JAK2   gon_PRL gon_PRLR hyp_CISH   hyp_GH
-    ## L.Blu13  8.752463 9.630519 9.870018 12.620157 7.519119 8.195291 11.23222
-    ## L.G107   9.685718 7.999319 9.625719  9.975896 7.033196 8.531852 10.47964
-    ## L.G118   7.746627 9.312189 8.303121  9.585174 5.584985 5.463812 10.54857
-    ## L.R3    10.091290 9.661806 9.184809 12.713160 7.780442 8.213306  9.89367
-    ## L.R8     9.982216 7.837528 9.220338 10.190503 7.517327 8.263373 11.66288
-    ## L.W33    9.575585 8.104064 8.904483 10.282352 7.497994 8.234172 10.65886
-    ##         hyp_JAK2  hyp_PRL hyp_PRLR  pit_CISH   pit_GH pit_JAK2  pit_PRL
-    ## L.Blu13 9.055230 12.58395 8.522239  9.321163 16.56528 9.362994 17.03357
-    ## L.G107  9.165604 10.94625 8.452225  9.657710 16.57417 9.342533 18.14585
-    ## L.G118  8.887380 12.98360 8.481032  9.879818 18.03054 8.923568 18.18094
-    ## L.R3    8.367134 10.71558 7.454105 10.008407 17.11419 8.894092 16.78585
-    ## L.R8    8.877838 11.90012 8.974098  9.678544 15.66945 9.344693 17.58225
-    ## L.W33   9.069194 12.47638 8.388383  8.568670 15.49809 9.516664 20.20969
-    ##         pit_PRLR
-    ## L.Blu13 9.278048
-    ## L.G107  9.137519
-    ## L.G118  8.966179
-    ## L.R3    9.197612
-    ## L.R8    9.561870
-    ## L.W33   8.714056
+![](../figures/favegenes/candidates-9.png)
 
     ePRL <- df2 %>% dplyr::rename(value = vsd, measurement = gene) %>% filter(measurement == "PRL") %>% droplevels()
     ePRLR <- df2 %>% dplyr::rename(value = vsd, measurement = gene) %>% filter(measurement == "PRLR") %>% droplevels()
@@ -221,6 +199,42 @@
     ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](../figures/favegenes/victoria-ePRL-1.png)
+
+    dft <- df %>% filter(X1 %in% candidategenes) %>%
+      unite("tissuegene", tissue:X1, remove = FALSE) %>%
+      select(-tissue, -`X1`, -filename)  %>%
+      pivot_longer(-tissuegene, names_to = "samples", values_to = "vsd") %>%
+      drop_na() %>%
+      mutate("bird" = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
+      select(bird,tissuegene,vsd) %>%
+      filter(bird != "x.g.g.ATLAS") %>%
+      pivot_wider(id_cols = bird, names_from = tissuegene, values_from = vsd)
+    dft <- as.data.frame(dft)
+    row.names(dft) <- dft$bird
+    dft$bird <- NULL
+    head(dft)
+
+    ##          gon_CISH   gon_GH gon_JAK2   gon_PRL gon_PRLR hyp_CISH   hyp_GH
+    ## L.Blu13  8.752463 9.630519 9.870018 12.620157 7.519119 8.195291 11.23222
+    ## L.G107   9.685718 7.999319 9.625719  9.975896 7.033196 8.531852 10.47964
+    ## L.G118   7.746627 9.312189 8.303121  9.585174 5.584985 5.463812 10.54857
+    ## L.R3    10.091290 9.661806 9.184809 12.713160 7.780442 8.213306  9.89367
+    ## L.R8     9.982216 7.837528 9.220338 10.190503 7.517327 8.263373 11.66288
+    ## L.W33    9.575585 8.104064 8.904483 10.282352 7.497994 8.234172 10.65886
+    ##         hyp_JAK2  hyp_PRL hyp_PRLR  pit_CISH   pit_GH pit_JAK2  pit_PRL
+    ## L.Blu13 9.055230 12.58395 8.522239  9.321163 16.56528 9.362994 17.03357
+    ## L.G107  9.165604 10.94625 8.452225  9.657710 16.57417 9.342533 18.14585
+    ## L.G118  8.887380 12.98360 8.481032  9.879818 18.03054 8.923568 18.18094
+    ## L.R3    8.367134 10.71558 7.454105 10.008407 17.11419 8.894092 16.78585
+    ## L.R8    8.877838 11.90012 8.974098  9.678544 15.66945 9.344693 17.58225
+    ## L.W33   9.069194 12.47638 8.388383  8.568670 15.49809 9.516664 20.20969
+    ##         pit_PRLR
+    ## L.Blu13 9.278048
+    ## L.G107  9.137519
+    ## L.G118  8.966179
+    ## L.R3    9.197612
+    ## L.R8    9.561870
+    ## L.W33   8.714056
 
     x <- correlate(dft)
 

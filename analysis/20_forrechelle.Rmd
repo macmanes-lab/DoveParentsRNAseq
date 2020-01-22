@@ -21,6 +21,14 @@ knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 
 candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH" )
 datadrivengenes <- c("COX1", "PRL", "CHGA", "ATP2B4", "LOC107055658")
+
+calisigenes <- c("PRL", "PRLR", 
+                 "VIP", "VIPR1", "VIPR2", 
+                 "OXT", "AVP", "AVPR1A", "AVPR1B", 
+                 "GNRH1","GNRHR", "NPVF",
+                 "NR3C1", "NR3C2",
+                 "ESR1", "ESR2", "AR")
+
 timepoints <- charlevels
 
 ```
@@ -36,7 +44,10 @@ df <- datapathfile %>%
   mutate(tissue = sapply(strsplit(as.character(filename),'../results/06_'), "[", 2)) %>% 
   mutate(tissue = sapply(strsplit(as.character(tissue),'allvsd.csv'), "[", 1))  %>% 
   select(tissue, X1, everything()) 
+
+genes <- as.data.frame(df$X1)
 ```
+## tissue specificiity
 
 ```{r candidate genes}
 # check which genese appear in multiple tissue
@@ -51,11 +62,14 @@ tissuespecificity <- df %>%
 tissuespecificity
 
 write.csv(tissuespecificity, "../results/tissuespecificity.csv")
+```
 
-genes <- as.data.frame(df$X1)
+## candidate genes
+
+```{r candidates}
   
 df2 <-  df  %>%
-  filter(X1 %in% candidategenes) %>%
+  filter(X1 %in% c(candidategenes)) %>%
   pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
                names_to = "sample", values_to = "vsd") %>%
    mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
@@ -75,26 +89,23 @@ head(df2)
 
 df2$treatment <- factor(df2$treatment, levels = alllevels)
 df2$tissue <- factor(df2$tissue, levels = tissuelevels)
+df2$gene <- factor(df2$gene)
+
+for (i in levels(df2$gene)) {
+  p <-  df2 %>%
+    filter(gene %in% i) %>%
+    ggplot(aes(x = treatment, y = vsd, color = sex, fill = treatment)) +
+    geom_boxplot() +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs(y = "expression", x = "parental stage", subtitle = i) +
+    facet_wrap(~ tissue , scales = "free_y", nrow = 3) +
+    theme_B3() +
+    scale_color_manual(values = sexcolors) +
+    scale_fill_manual(values = colorscharmaip)
+ print(p)
+}
 
 
-df4 <-  df  %>%
-  dplyr::filter(X1 %in% datadrivengenes) %>%
-  pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
-               names_to = "sample", values_to = "vsd") %>%
-   mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
-   mutate(treatment = sapply(strsplit(as.character(sample),'_'), "[", 4))  %>%
-   mutate(treatment = sapply(strsplit(as.character(treatment),'.NYNO'), "[", 1)) %>%
-  mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
-  dplyr::filter(treatment %in% timepoints) %>%
-  dplyr::select(bird, sex, treatment, tissue, X1, vsd) %>%
-  mutate(tissue = fct_recode(tissue, "hypothalamus" = "hyp",
-                    "pituitary" = "pit",
-                    "gonads" = "gon"
-                    )) %>%
-  rename(gene = X1) %>%
-  drop_na() %>%
-  droplevels()
-head(df4)
 
 df3 <- df2 %>% 
   mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
@@ -130,39 +141,6 @@ df3 %>%
     theme_B3() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-
-df2$gene <- factor(df2$gene)
-
-for (i in levels(df2$gene)) {
-  p <-  df2 %>%
-    filter(gene %in% i) %>%
-    ggplot(aes(x = treatment, y = vsd, color = sex, fill = treatment)) +
-    geom_boxplot() +
-    scale_alpha_manual(values = c(0.5, 1)) +
-    labs(y = "expression", x = "parental stage", subtitle = i) +
-    facet_wrap(~ tissue , scales = "free_y", nrow = 3) +
-    theme_B3() +
-    scale_color_manual(values = sexcolors) +
-    scale_fill_manual(values = colorscharmaip)
- print(p)
-}
-
-
-
-
-dft <- df %>% filter(X1 %in% candidategenes) %>%
-  unite("tissuegene", tissue:X1, remove = FALSE) %>%
-  select(-tissue, -`X1`, -filename)  %>%
-  pivot_longer(-tissuegene, names_to = "samples", values_to = "vsd") %>%
-  drop_na() %>%
-  mutate("bird" = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
-  select(bird,tissuegene,vsd) %>%
-  filter(bird != "x.g.g.ATLAS") %>%
-  pivot_wider(id_cols = bird, names_from = tissuegene, values_from = vsd)
-dft <- as.data.frame(dft)
-row.names(dft) <- dft$bird
-dft$bird <- NULL
-head(dft)
 ```
 
 
@@ -216,6 +194,21 @@ plot_grid(a,b, nrow = 2, align = "v", labels = c("a", "b"), label_size = 8,
 ```
 
 ```{r victoria-ePRL-corr}
+
+dft <- df %>% filter(X1 %in% candidategenes) %>%
+  unite("tissuegene", tissue:X1, remove = FALSE) %>%
+  select(-tissue, -`X1`, -filename)  %>%
+  pivot_longer(-tissuegene, names_to = "samples", values_to = "vsd") %>%
+  drop_na() %>%
+  mutate("bird" = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
+  select(bird,tissuegene,vsd) %>%
+  filter(bird != "x.g.g.ATLAS") %>%
+  pivot_wider(id_cols = bird, names_from = tissuegene, values_from = vsd)
+dft <- as.data.frame(dft)
+row.names(dft) <- dft$bird
+dft$bird <- NULL
+head(dft)
+
 x <- correlate(dft)
 
 x %>% network_plot.cor_df() + 
