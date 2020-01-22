@@ -58,8 +58,9 @@ alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9",
 
 alllevels3 <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                 "inc.d17", "hatch", "n5", "n9",
-                "m.inc.d3" ,  "m.inc.d9" , "m.inc.d17" , "m.n2",
-                 "m.inc.d8" , "prolong" , "extend")
+               
+                 "m.inc.d8" , "prolong" , "extend",
+                "m.inc.d3" ,  "m.inc.d9" , "m.inc.d17" , "m.n2")
 
 tissuelevels <- c("hypothalamus", "pituitary", "gonads")
 sexlevels <- c("female", "male")
@@ -67,6 +68,7 @@ sexlevels <- c("female", "male")
 
 
 charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9", "NS")
+
 alllevels3volcano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                       "inc.d17", "hatch", "n5", "n9",
                       "m.inc.d3" ,  "m.inc.d9" , "m.inc.d17" , "m.n2",
@@ -118,6 +120,16 @@ colorschar <-  c("control" = "#F8766D",
                          "n5"= "#DB72FB", 
                          "n9"= "#FF61C3")
 
+colorscharnew <-  c("control" = "#F8766D", 
+                 "bldg"= "#D39200", 
+                 "lay"= "#c2e699", 
+                 "inc.d3"= "#78c679", 
+                 "inc.d9"= "#31a354", 
+                 "inc.d17"= "#006837", 
+                 "hatch"= "#6baed6", 
+                 "n5"= "#3182bd", 
+                 "n9"= "#08519c")
+
 colorsnewgrouping <-  c("control" = "#F8766D", 
                  "bldg"= "#D39200", 
                  "earlyinc"= "#00C19F", 
@@ -125,41 +137,18 @@ colorsnewgrouping <-  c("control" = "#F8766D",
                  "chickcare"= "#FF61C3",
                  "manip" = "#959595")
 
-colorscharmaip <-  c("control" = "#F8766D", 
-                 "bldg"= "#D39200", 
-                 "lay"= "#93AA00", 
-                 "inc.d3"= "#00BA38", 
-                 "inc.d9"= "#00C19F", 
-                 "inc.d17"= "#00B9E3", 
-                 "hatch"= "#619CFF", 
-                 "n5"= "#DB72FB", 
-                 "n9"= "#FF61C3",
-                 "m.inc.d3" = "#CDCDCD", 
-                 "m.inc.d8" = "#fcc5c0", 
-                 "m.inc.d9" = "#959595", 
-                 "m.inc.d17" = "#626262",
-                 "m.n2" = "#262625", 
-                 "prolong" = "#ae017e" , 
-                 "extend" = "#7a0177")
+colorscharmaip <- c("m.inc.d3" = "#CDCDCD", 
+                   "m.inc.d9" = "#959595", 
+                   "m.inc.d17" = "#626262",
+                   "m.n2" = "#262625", 
+                   
+                   "m.inc.d8" = "#cbc9e2", 
+                   "prolong" = "#9e9ac8" , 
+                   "extend" = "#6a51a3" )
 
-colorscharmaip2 <-  c("control" = "#F8766D", 
-                     "bldg"= "#D39200", 
-                     "lay"= "#93AA00", 
-                     "inc.d3"= "#00BA38", 
-                     "inc.d9"= "#00C19F", 
-                     "inc.d17"= "#00B9E3", 
-                     "hatch"= "#619CFF", 
-                     "n5"= "#DB72FB", 
-                     "n9"= "#FF61C3",
-                     
-                     "m.inc.d3" = "#CDCDCD", 
-                     "m.inc.d9" = "#959595", 
-                     "m.inc.d17" = "#626262",
-                     "m.n2" = "#262625", 
-                     
-                     "m.inc.d8" = "#fcc5c0", 
-                     "prolong" = "#ae017e" , 
-                     "extend" = "#7a0177")
+colorscharmaip <-  c(colorscharnew,colorscharmaip)
+
+colorscharmaip2 <-  c(colorscharnew,colorscharmaip)
 
 colorstissue <- c("hypothalamus" = "#d95f02",
                   "pituitary" = "#1b9e77",
