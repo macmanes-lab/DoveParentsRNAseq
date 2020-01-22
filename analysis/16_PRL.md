@@ -3,14 +3,14 @@ Plots with Prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -87,7 +87,7 @@ Circulating levels of prolactin
       ggplot(aes(x = treatment, y = plasma_conc)) +
         geom_boxplot(aes(fill = treatment, alpha = sex, color = sex)) +
         theme_B3() +
-        scale_fill_manual(values = colorscharmaip) +
+        scale_fill_manual(values = colorscharnew) +
         scale_color_manual(values = sexcolors) +
         labs(y = "prolactin (ng/mL)", x = NULL) +
         guides(fill = FALSE, alpha = FALSE,
@@ -133,8 +133,11 @@ Prolactin (*PRL*) and *BRCA1* expression in the pituitary
     candidates.pit$genes <- NULL
     candidates.pit <- as.data.frame(t(candidates.pit))
     candidates.pit$V1 <- row.names(candidates.pit) 
-    candidates.pit <- left_join(colData.pit, candidates.pit)
+    candidates.pit <- left_join(colData.pit, candidates.pit) 
     candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels)
+    candidates.pit$study2 <- ifelse(candidates.pit$treatment %in% charlevels, "charcterization",
+                                  ifelse(candidates.pit$treatment %in% levelstiming, "timing",
+                                         ifelse(candidates.pit$treatment %in% levelsremoval, "removal", NA)))
     tail(candidates.pit)
 
     ##                                       V1       bird    sex    tissue
@@ -151,6 +154,13 @@ Prolactin (*PRL*) and *BRCA1* expression in the pituitary
     ## 328        n9        female.pituitary.n9 charcterization 7.420520 19.06794
     ## 329      m.n2      female.pituitary.m.n2    manipulation 7.446570 20.25300
     ## 330    inc.d3      male.pituitary.inc.d3 charcterization 7.286573 17.90847
+    ##              study2
+    ## 325         removal
+    ## 326 charcterization
+    ## 327 charcterization
+    ## 328 charcterization
+    ## 329         removal
+    ## 330 charcterization
 
     meanPRL <- candidates.pit %>% 
         droplevels() %>% 
@@ -193,7 +203,8 @@ Prolactin (*PRL*) and *BRCA1* expression in the pituitary
         scale_alpha_manual(values = c(0.75,1)) +
         theme_B3() +
       theme(legend.position = c(0.85,0.2), legend.direction = "horizontal") + 
-      scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+      scale_color_manual(values = sexcolors) +
+      scale_fill_manual(values = colorscharnew) +
       labs(y = "PRL", x = "increasing time >>", subtitle = "Pituitary" ) +
       guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) +
       theme(axis.title.y  = element_text(face = "italic"))  +
@@ -268,7 +279,8 @@ Prolactin (*PRL*) and *BRCA1* expression in the pituitary
         geom_boxplot() +
         theme_B3() +
           scale_alpha_manual(values = c(0.75,1)) +
-      scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+      scale_color_manual(values = sexcolors) +
+      scale_fill_manual(values = colorscharnew) +
       theme(legend.position = "none") + 
       labs(x = "increasing time >>", y = "BRCA1", subtitle = "Pituitary") +
       annotation_custom(control, ymin = 6.65, ymax = 7, xmin = -7.8) +
@@ -296,8 +308,9 @@ Manipulation of parental care and *PRL* and *BRCA1* expression
         scale_alpha_manual(values = c(0.75,1)) +
         theme_B3() +
        theme(legend.position = "none", legend.direction = "horizontal") + 
-       scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-      labs(x = "increasing time >>", y = "PRL", subtitle = "Pituitary") +
+       scale_color_manual(values = sexcolors) +
+      scale_fill_manual(values = colorscharmaip) +
+        labs(x = "increasing time >>", y = "PRL", subtitle = "Pituitary") +
       scale_fill_manual(values = colorscharmaip2) +
       ylim(c(13,22.5)) +
       theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -321,6 +334,27 @@ Manipulation of parental care and *PRL* and *BRCA1* expression
     p4
 
 ![](../figures/PRL/PRL.pit.maip-1.png)
+
+    candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels3)
+
+    ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
+        geom_boxplot(aes(fill = treatment, alpha = sex), width=0.9) +
+        scale_alpha_manual(values = c(0.75,1), guide=FALSE) +
+        theme_B3() +
+       theme(legend.position = "bottom", 
+             legend.direction = "horizontal",
+             legend.title = element_blank(),
+             axis.text.x = element_text(angle = 45, hjust = 1),
+             axis.title.y = element_text(face = "italic")) + 
+       scale_color_manual(values = sexcolors, guide=FALSE) +
+      scale_fill_manual(values = colorscharmaip) +
+        labs(x = "parental stage", y = "PRL", subtitle = "Pituitary") +
+      ylim(c(14,22)) +
+      theme()  +
+      facet_wrap(~study2, scales = "free_x", shrink  = T) +
+         guides(fill = guide_legend(nrow = 3, byrow = TRUE)) 
+
+![](../figures/PRL/PRL.pit.maip-2.png)
 
     p5 <- ggplot(candidates.pit, aes(x = treatment, y = BRCA1)) + 
         geom_boxplot(aes(fill = treatment, alpha = sex)) +
@@ -426,13 +460,13 @@ Genes an hormones (in progress, don’t have all the bird ids lining up.)
     ## 27 blk19.x female pituitary    extend female.pituitary.extend manipulation
     ## 28 blk19.x female pituitary    extend female.pituitary.extend manipulation
     ## 31  blk5.x   male pituitary  m.inc.d3 male.pituitary.m.inc.d3 manipulation
-    ##       BRCA1      PRL bird_id                              X1
-    ## 21 7.731041 20.08465  blk0.x    blk0.x_female_pituitary_m.n2
-    ## 25 8.020828 21.14005 blk19.x blk19.x_female_pituitary_extend
-    ## 26 8.020828 21.14005 blk19.x blk19.x_female_pituitary_extend
-    ## 27 8.020828 21.14005 blk19.x blk19.x_female_pituitary_extend
-    ## 28 8.020828 21.14005 blk19.x blk19.x_female_pituitary_extend
-    ## 31 7.389572 17.83394  blk5.x  blk5.x_male_pituitary_m.inc.d3
+    ##       BRCA1      PRL  study2 bird_id                              X1
+    ## 21 7.731041 20.08465 removal  blk0.x    blk0.x_female_pituitary_m.n2
+    ## 25 8.020828 21.14005  timing blk19.x blk19.x_female_pituitary_extend
+    ## 26 8.020828 21.14005  timing blk19.x blk19.x_female_pituitary_extend
+    ## 27 8.020828 21.14005  timing blk19.x blk19.x_female_pituitary_extend
+    ## 28 8.020828 21.14005  timing blk19.x blk19.x_female_pituitary_extend
+    ## 31 7.389572 17.83394 removal  blk5.x  blk5.x_male_pituitary_m.inc.d3
     ##           hormone  plasma_conc
     ## 21      prolactin  15.25856000
     ## 25      prolactin 100.68067200
@@ -481,13 +515,13 @@ Prolactin hormone statistics
     ## 7      hatch PRL ~ sex 1, 18  0.38 0.547    
     ## 8         n5 PRL ~ sex 1, 18  5.01 0.038   *
     ## 9         n9 PRL ~ sex 1, 20  0.05 0.829    
-    ## 10  m.inc.d3 PRL ~ sex 1, 18 10.32 0.005   *
-    ## 11  m.inc.d9 PRL ~ sex 1, 14  0.00 0.985    
-    ## 12 m.inc.d17 PRL ~ sex 1, 19  0.11 0.748    
-    ## 13      m.n2 PRL ~ sex 1, 18  9.25 0.007   *
-    ## 14  m.inc.d8 PRL ~ sex 1, 18  2.58 0.126    
-    ## 15   prolong PRL ~ sex 1, 18  2.02 0.172    
-    ## 16    extend PRL ~ sex 1, 18  0.00 0.991
+    ## 10  m.inc.d8 PRL ~ sex 1, 18  2.58 0.126    
+    ## 11   prolong PRL ~ sex 1, 18  2.02 0.172    
+    ## 12    extend PRL ~ sex 1, 18  0.00 0.991    
+    ## 13  m.inc.d3 PRL ~ sex 1, 18 10.32 0.005   *
+    ## 14  m.inc.d9 PRL ~ sex 1, 14  0.00 0.985    
+    ## 15 m.inc.d17 PRL ~ sex 1, 19  0.11 0.748    
+    ## 16      m.n2 PRL ~ sex 1, 18  9.25 0.007   *
 
     one <- c("m.inc.d3", "inc.d3")
     two <- c("m.inc.d9", "inc.d9")
@@ -639,9 +673,9 @@ WGCNA candidates
             strip.text = element_text(face = "italic")) +
       labs( x = "parental stage", y = "pituitary expression",
             subtitle = "Genes that are coexpressed with prolactin and regulate development")
-    p1
+    i  
 
-![](../figures/PRL/WGCNAcandidates-1.png)
+    ## [1] "extend" "n5"
 
     write.csv(candidates.pit, "../results/16_pitPRL.csv")
     write.csv(aov_all, "../results/16_aov_PRLsex.csv")

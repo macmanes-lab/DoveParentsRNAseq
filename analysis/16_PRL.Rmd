@@ -53,7 +53,7 @@ p1 <- hormones %>%
   ggplot(aes(x = treatment, y = plasma_conc)) +
     geom_boxplot(aes(fill = treatment, alpha = sex, color = sex)) +
     theme_B3() +
-    scale_fill_manual(values = colorscharmaip) +
+    scale_fill_manual(values = colorscharnew) +
     scale_color_manual(values = sexcolors) +
     labs(y = "prolactin (ng/mL)", x = NULL) +
     guides(fill = FALSE, alpha = FALSE,
@@ -98,9 +98,14 @@ row.names(candidates.pit) <- candidates.pit$genes
 candidates.pit$genes <- NULL
 candidates.pit <- as.data.frame(t(candidates.pit))
 candidates.pit$V1 <- row.names(candidates.pit) 
-candidates.pit <- left_join(colData.pit, candidates.pit)
+candidates.pit <- left_join(colData.pit, candidates.pit) 
 candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels)
+candidates.pit$study2 <- ifelse(candidates.pit$treatment %in% charlevels, "charcterization",
+                              ifelse(candidates.pit$treatment %in% levelstiming, "timing",
+                                     ifelse(candidates.pit$treatment %in% levelsremoval, "removal", NA)))
 tail(candidates.pit)
+
+
 ```
 
 ```{r PRL.pit}
@@ -123,7 +128,8 @@ p2 <- candidates.pit %>%
     scale_alpha_manual(values = c(0.75,1)) +
     theme_B3() +
   theme(legend.position = c(0.85,0.2), legend.direction = "horizontal") + 
-  scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+  scale_color_manual(values = sexcolors) +
+  scale_fill_manual(values = colorscharnew) +
   labs(y = "PRL", x = "increasing time >>", subtitle = "Pituitary" ) +
   guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) +
   theme(axis.title.y  = element_text(face = "italic"))  +
@@ -178,7 +184,8 @@ p3 <- candidates.pit %>%
     geom_boxplot() +
     theme_B3() +
       scale_alpha_manual(values = c(0.75,1)) +
-  scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
+  scale_color_manual(values = sexcolors) +
+  scale_fill_manual(values = colorscharnew) +
   theme(legend.position = "none") + 
   labs(x = "increasing time >>", y = "BRCA1", subtitle = "Pituitary") +
   annotation_custom(control, ymin = 6.65, ymax = 7, xmin = -7.8) +
@@ -210,8 +217,9 @@ p4 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) +
     scale_alpha_manual(values = c(0.75,1)) +
     theme_B3() +
    theme(legend.position = "none", legend.direction = "horizontal") + 
-   scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-  labs(x = "increasing time >>", y = "PRL", subtitle = "Pituitary") +
+   scale_color_manual(values = sexcolors) +
+  scale_fill_manual(values = colorscharmaip) +
+    labs(x = "increasing time >>", y = "PRL", subtitle = "Pituitary") +
   scale_fill_manual(values = colorscharmaip2) +
   ylim(c(13,22.5)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
@@ -234,6 +242,24 @@ p4 <- ggplot(candidates.pit, aes(x = treatment, y = PRL)) +
     theme(axis.title.y  = element_text(face = "italic"))
 p4
 
+candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels3)
+
+ggplot(candidates.pit, aes(x = treatment, y = PRL)) + 
+    geom_boxplot(aes(fill = treatment, alpha = sex), width=0.9) +
+    scale_alpha_manual(values = c(0.75,1), guide=FALSE) +
+    theme_B3() +
+   theme(legend.position = "bottom", 
+         legend.direction = "horizontal",
+         legend.title = element_blank(),
+         axis.text.x = element_text(angle = 45, hjust = 1),
+         axis.title.y = element_text(face = "italic")) + 
+   scale_color_manual(values = sexcolors, guide=FALSE) +
+  scale_fill_manual(values = colorscharmaip) +
+    labs(x = "parental stage", y = "PRL", subtitle = "Pituitary") +
+  ylim(c(14,22)) +
+  theme()  +
+  facet_wrap(~study2, scales = "free_x", shrink  = T) +
+     guides(fill = guide_legend(nrow = 3, byrow = TRUE)) 
 
 ```
 
@@ -481,8 +507,7 @@ p1 <- ggplot(WGCNAgenes.pit, aes(x = treatment, y = expression)) +
         strip.text = element_text(face = "italic")) +
   labs( x = "parental stage", y = "pituitary expression",
         subtitle = "Genes that are coexpressed with prolactin and regulate development")
-p1
-  
+i  
 
 ```
 
