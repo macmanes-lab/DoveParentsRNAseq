@@ -1,13 +1,17 @@
+    calisigenes <- c("PRL", "PRLR", 
+                     "VIP", "VIPR1", "VIPR2", 
+                     "OXT", "AVP", "AVPR1A", "AVPR1B", 
+                     "GNRH1","GNRHR", "NPVF",
+                     "NR3C1", "NR3C2",
+                     "ESR1", "ESR2", "AR")
+
     prepvsds <- function(pathtofile){
       
       df <- read.csv(pathtofile, row.names = 1)
       
-      df <- tail(df, 5000)
-      df <- head(df, 1000)
-      
       df <- as.data.frame(t(df))
       df$V1 <- row.names(df)
-
+      
       df$sex <- sapply(strsplit(as.character(df$V1),'\\_'), "[", 2)
       df$tissue <- sapply(strsplit(as.character(df$V1),'\\_'), "[", 3)
       df$treatment <- sapply(strsplit(as.character(df$V1),'\\_'), "[", 4)
@@ -37,12 +41,22 @@
       df <- sapply(unique(colnames(df)), function(i)
         rowMeans(df[,colnames(df) == i]))
       
+      df <- as.data.frame(df)
+      df$gene <- row.names(df)
+      df <- df %>% dplyr::filter(gene %in% calisigenes)
+      df <- as.data.frame(df)
+      row.names(df) <-  df$gene
+      df$gene <- NULL
+
+      
       return(df)
     }
 
     vsd.hyp <- prepvsds("../results/06_hypallvsd.csv")
     vsd.pit <- prepvsds("../results/06_pitallvsd.csv")
     vsd.gon <- prepvsds("../results/06_gonallvsd.csv")
+
+
 
     makelabels <- function(df){
       
@@ -60,16 +74,16 @@
     gonlabels <- makelabels(vsd.gon)
 
     pheatmap(vsd.hyp, show_colnames = F, annotation_col = hyplabels, 
-             annotation_colors = myannotationcolors, show_rownames = F)
+             annotation_colors = myannotationcolors, show_rownames = T)
 
 ![](../figures/pheatmap/pheatmap-1.png)
 
     pheatmap(vsd.pit, show_colnames = F, annotation_col = pitlabels, 
-             annotation_colors = myannotationcolors, show_rownames = F)
+             annotation_colors = myannotationcolors, show_rownames = T)
 
 ![](../figures/pheatmap/pheatmap-2.png)
 
     pheatmap(vsd.gon, show_colnames = F, annotation_col = gonlabels, 
-             annotation_colors = myannotationcolors, show_rownames = F)
+             annotation_colors = myannotationcolors, show_rownames = T)
 
 ![](../figures/pheatmap/pheatmap-3.png)
