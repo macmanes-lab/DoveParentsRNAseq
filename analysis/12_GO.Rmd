@@ -1,6 +1,6 @@
 ---
 title: "GO"
-output: html_document
+output: md_document
 ---
 
 # Exploring relationships between genes associated with mating behavior, lactation, parental care, and endocrine process in the hypothalamic-pituitary-gonad axis of reproction
@@ -49,15 +49,15 @@ head(allGO)
 ## add candidate genes
 
 ```{r}
-candidates <- c(  "PRLR", 
-                 "AVP", "VIP", "AVPR1A", "AVPR1B", "OXT", 
-                 "GNRH1", "NPY",
-                "CRH", "FSHB", "GH", 
-                 "JAK2", "HCRT", "TRH", "TSHB",
-                "LH", "FSH",
-                "MC3R", "MC4R", "MC5R", 
+candidates <- c("PRL", "PRLR", 
+                 "AVP", "VIP", "AVPR1A", "AVPR1B", "OXT",  "VIPR1", "VIPR2",
+                "GNRH1", "NPY", "LH", "FSH",
+                "CRH", "FSHB", "GH",  "JAK2", "HCRT", "TRH", "TSHB",
+                "MC3R", "MC4R", "MC5R",  "NR3C1", "NR3C2",
                 "ESR1", "ESR2", "AR", 
-                "STAT5B", "CISH")
+                "STAT5B", "CISH",
+                "GNRHR", "NPVF")
+
 candidates <- as.data.frame(candidates)
 names(candidates)[1] <- "gene"
 candidates$GO <- "candidategenes"
@@ -178,19 +178,6 @@ kable(eight)
 ## Candidate genes
 
 ```{r}
-candidates <- c( "PRL", "PRLR", 
-                 "AVP", "VIP", "AVPR1A", "AVPR1B", "OXT", 
-                 "GNRH1", "GNRHR", "NPY",
-                "CRH", "FSHB", "GH", 
-                 "JAK2", "HCRT", "POMC", "TRH", "TSHB",
-                "LH", "FSH",
-                "POMC", "MC3R", "MC4R", "MC5R", 
-                "ESR1", "ESR2", "AR", 
-                "STAT5", "CISH")
-candidates <- as.data.frame(candidates)
-names(candidates)[1] <- "gene"
-candidates$GO <- "candidate genes"
-
 candidate_DEGs <- left_join(candidates, DEGs) %>%
   arrange(GO, gene) %>%
   group_by(GO, comparison) %>%
