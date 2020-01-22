@@ -20,11 +20,12 @@ knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 ```{r input}
 
 candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH" )
+datadrivengenes <- c("COX1", "PRL", "CHGA", "ATP2B4", "LOC107055658")
 timepoints <- charlevels
 
 ```
 
-```{r data}
+```{r data, message=F, results=F}
 datapath <- "../results/"   # path to the data
 datafiles <- dir(datapath, pattern = "*allvsd.csv") # get file names
 datapathfile <- paste0(datapath, datafiles)
@@ -48,6 +49,7 @@ tissuespecificity <- df %>%
   mutate(n = str_count(genes, ",") + 1) %>% 
   arrange(desc(n))
 tissuespecificity
+
 write.csv(tissuespecificity, "../results/tissuespecificity.csv")
 
 genes <- as.data.frame(df$X1)
@@ -73,6 +75,26 @@ head(df2)
 
 df2$treatment <- factor(df2$treatment, levels = alllevels)
 df2$tissue <- factor(df2$tissue, levels = tissuelevels)
+
+
+df4 <-  df  %>%
+  dplyr::filter(X1 %in% datadrivengenes) %>%
+  pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
+               names_to = "sample", values_to = "vsd") %>%
+   mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
+   mutate(treatment = sapply(strsplit(as.character(sample),'_'), "[", 4))  %>%
+   mutate(treatment = sapply(strsplit(as.character(treatment),'.NYNO'), "[", 1)) %>%
+  mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
+  dplyr::filter(treatment %in% timepoints) %>%
+  dplyr::select(bird, sex, treatment, tissue, X1, vsd) %>%
+  mutate(tissue = fct_recode(tissue, "hypothalamus" = "hyp",
+                    "pituitary" = "pit",
+                    "gonads" = "gon"
+                    )) %>%
+  rename(gene = X1) %>%
+  drop_na() %>%
+  droplevels()
+head(df4)
 
 df3 <- df2 %>% 
   mutate(treatment = fct_relevel(treatment, timepoints)) %>% 

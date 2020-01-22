@@ -3,14 +3,14 @@ Plots with Prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -384,12 +384,12 @@ Genes an hormones (in progress, don’t have all the bird ids lining up.)
     candidates.pit$X1 <- candidates.pit$V1
 
     geneshormones <- left_join(candidates.pit, hormones) %>%
-      select(-X1, -V1, -okay, - icons, -music, -iconpath) %>%
+      select( -V1 ) %>%
       drop_na()
 
     head(geneshormones$bird_id)
 
-    ## [1] "blk0.x"  "blk0.x"  "blk0.x"  "blk19.x" "blk19.x" "blk19.x"
+    ## [1] "blk0.x"  "blk19.x" "blk19.x" "blk19.x" "blk19.x" "blk5.x"
 
     head(hormones$bird_id)
 
@@ -421,18 +421,25 @@ Genes an hormones (in progress, don’t have all the bird ids lining up.)
 
     ##       bird    sex    tissue treatment                   group        study
     ## 21  blk0.x female pituitary      m.n2   female.pituitary.m.n2 manipulation
-    ## 22  blk0.x female pituitary      m.n2   female.pituitary.m.n2 manipulation
-    ## 23  blk0.x female pituitary      m.n2   female.pituitary.m.n2 manipulation
+    ## 25 blk19.x female pituitary    extend female.pituitary.extend manipulation
+    ## 26 blk19.x female pituitary    extend female.pituitary.extend manipulation
     ## 27 blk19.x female pituitary    extend female.pituitary.extend manipulation
     ## 28 blk19.x female pituitary    extend female.pituitary.extend manipulation
-    ## 29 blk19.x female pituitary    extend female.pituitary.extend manipulation
-    ##       BRCA1      PRL bird_id   hormone  plasma_conc
-    ## 21 7.731041 20.08465  blk0.x prolactin  15.25856000
-    ## 22 7.731041 20.08465  blk0.x      cort   4.60254912
-    ## 23 7.731041 20.08465  blk0.x estradiol   0.17274629
-    ## 27 8.020828 21.14005 blk19.x prolactin 100.68067200
-    ## 28 8.020828 21.14005 blk19.x      cort   2.53935784
-    ## 29 8.020828 21.14005 blk19.x estradiol   0.05364098
+    ## 31  blk5.x   male pituitary  m.inc.d3 male.pituitary.m.inc.d3 manipulation
+    ##       BRCA1      PRL bird_id                              X1
+    ## 21 7.731041 20.08465  blk0.x    blk0.x_female_pituitary_m.n2
+    ## 25 8.020828 21.14005 blk19.x blk19.x_female_pituitary_extend
+    ## 26 8.020828 21.14005 blk19.x blk19.x_female_pituitary_extend
+    ## 27 8.020828 21.14005 blk19.x blk19.x_female_pituitary_extend
+    ## 28 8.020828 21.14005 blk19.x blk19.x_female_pituitary_extend
+    ## 31 7.389572 17.83394  blk5.x  blk5.x_male_pituitary_m.inc.d3
+    ##           hormone  plasma_conc
+    ## 21      prolactin  15.25856000
+    ## 25      prolactin 100.68067200
+    ## 26 corticosterone   2.53948128
+    ## 27      estradiol   0.05364098
+    ## 28   progesterone   0.27174264
+    ## 31      prolactin  11.47628800
 
     ggplot(geneshormones2, aes(x = plasma_conc, y = PRL)) +
       geom_point(aes( color = treatment)) +
@@ -537,64 +544,55 @@ Prolactin hormone statistics
     meanPRL <- left_join(meanPRL, birds)
     meanPRL$treatment <- factor(meanPRL$treatment, levels = charlevels)
 
-    p8 <- ggplot(meanPRL, aes(treatment, m)) +
-       geom_image(aes(image=music), size=.12)  +
-      labs(x = "parental care stages", y = "PRL", subtitle = "Pituitary") +
-      mytheme() +
-      ylim(c(15,22)) +
-      annotation_custom(control, ymin = 15, ymax = 16.5, xmin = -7.5) +
-      annotation_custom(bldg, ymin = 15, ymax = 16.5, xmin = -5.5) +
-      annotation_custom(lay, ymin = 15, ymax = 16.5, xmin = -3.5) +
-      annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = -1.5) +
-      annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = 0.5) +
-      annotation_custom(inc, ymin = 15, ymax = 16.5, xmin = 2.5) +
-      annotation_custom(hatch, ymin = 15, ymax = 16.5, xmin = 4.5) +
-      annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 6.5) +
-      annotation_custom(nestling, ymin = 15, ymax = 16.5, xmin = 8.5)   +
-      geom_hline(yintercept=17) +
-      geom_hline(yintercept=18) +
-      geom_hline(yintercept=19) +
-      geom_hline(yintercept=20) +
-      geom_hline(yintercept=21) +
-      theme(axis.title.y  = element_text(face = "italic"))
+    p1 <- hormones %>% 
+        filter(study == "characterization", hormone %in% c("prolactin"))  %>% 
+        droplevels() %>% 
+      ggplot(aes(x = treatment, y = plasma_conc)) +
+        geom_boxplot(aes(fill = treatment, alpha = sex, color = sex)) +
+        theme_B3() +
+        scale_fill_manual(values = colorscharmaip) +
+        scale_color_manual(values = sexcolors) +
+        labs(y = "prolactin (ng/mL)", x = NULL) +
+        scale_alpha_manual(values = c(0.75,1)) +
+        theme(legend.position = "top", legend.direction = "horizontal",
+              axis.title.x = element_blank(),
+              axis.text.x = element_blank(),
+              legend.title = element_blank(),
+              legend.key.size =  unit(0.25, "cm")) + 
+      labs( y = "prolactin (ng/mL)") +
+       guides(fill = guide_legend(nrow = 1)) 
 
-    p8
-
-![](../figures/PRL/music-1.png)
-
-    p9 <- ggplot(meanPRL, aes(treatment, m)) +
-       geom_image(aes(image=music), size=.12)  +
-      mytheme() +
-      ylim(c(15,22)) +
-      geom_hline(yintercept=17) +
-      geom_hline(yintercept=18) +
-      geom_hline(yintercept=19) +
-      geom_hline(yintercept=20) +
-      geom_hline(yintercept=21) +
-      theme(axis.text  = element_blank(),
-            axis.title = element_blank())
-
-    p9
-
-![](../figures/PRL/music-2.png)
-
-    p10 <- candidates.pit %>%
+    p2 <- candidates.pit %>%
       dplyr::filter(treatment %in% charlevels) %>%
       ggplot(aes(x = treatment, y = PRL)) + 
-        geom_boxplot(aes(fill = treatment)) + 
+        geom_boxplot(aes(fill = treatment, alpha = sex, color = sex)) + 
         scale_alpha_manual(values = c(0.75,1)) +
         theme_B3() +
-      theme(legend.position = c(0.85,0.2), legend.direction = "horizontal") + 
+      theme(legend.position = "none") + 
       scale_color_manual(values = c("female" = "#969696", "male" = "#525252")) +
-      labs(y = "Prolactin expression", x = "parental stage") +
-      guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) 
-    p10
+      labs(y = "Pituitary PRL", x = "parental stage" ) +
+      theme(axis.title.y  = element_text(face = "italic"),
+            axis.text.x = element_blank())  +
+      annotation_custom(control, ymin = 13.5, ymax = 15, xmin = -7.5) +
+      annotation_custom(bldg, ymin = 13.5, ymax = 15, xmin = -5.5) +
+      annotation_custom(lay, ymin = 13.5, ymax = 15, xmin = -3.5) +
+      annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = -1.5) +
+      annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = 0.5) +
+      annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = 2.5) +
+      annotation_custom(hatch, ymin = 13.5, ymax = 15, xmin = 4.5) +
+      annotation_custom(nestling, ymin = 13.5, ymax = 15, xmin = 6.5) +
+      annotation_custom(nestling, ymin = 13.5, ymax = 15, xmin = 8.5) 
 
-![](../figures/PRL/music-3.png)
+    p8 <- ggplot(meanPRL, aes(treatment, m)) +
+       geom_image(aes(image=music), size=.12)  +
+      labs(x = NULL, y = "prolactin symphony") +
+      mytheme() +
+      ylim(c(15,22)) +
+      theme(axis.text = element_blank())
 
-    plot_grid(p10,p9, nrow = 2, align = "hv")
+    plot_grid(p1,p2,p8, nrow = 3, align = "hv", labels = "auto", label_size = 8)
 
-![](../figures/PRL/music-4.png)
+![](../figures/PRL/music-1.png)
 
 WGCNA candidates
 ----------------
