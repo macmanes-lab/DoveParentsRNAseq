@@ -112,4 +112,4 @@ write.csv(PRL_associated, "../results/08_PRL_associated.csv", row.names = F)
 
 ### save files
 
-write.csv(genes_modules, "08_genes_modules.csv", row.names = F)
+write.csv(genes_modules, "../results/08_genes_modules.csv", row.names = F)

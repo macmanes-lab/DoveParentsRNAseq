@@ -141,3 +141,136 @@ p3 <- plot_grid(p1, sinnermansong, nrow = 2)
 p3
 ```
 
+```{r symphonymodules}
+modules <- read_csv("../results/08_genes_modules.csv") %>%
+  rename(modulecolor = `net$colors`)  
+
+candidategenes <- c("PRL", "PRLR", 
+                 "VIP", "VIPR1", "VIPR2", 
+                 "OXT", "AVP", "AVPR1A", "AVPR1B", 
+                 "GNRH1","GNRHR", "NPVF",
+                 "NR3C1", "NR3C2",
+                 "ESR1", "ESR2", "AR",
+                 "DIO2","LEPR", "DIO3", "DIO1","CYP19A1",
+                 "HSPA14", "HSPA12A",
+                 "PTGES3", "HSD11B2","DRD5", "DRD1", "DRD2","PGE1", "PGF")
+
+modulescandidates <- modules %>% filter(gene %in% candidategenes)  %>%
+  group_by(modulecolor)  %>%
+  summarize(gene = str_c(gene, collapse = ", "))
+
+modulescandidates
+
+datapath <- "../results/"   # path to the data
+datafiles <- dir(datapath, pattern = "*allvsd.csv") # get file names
+datapathfile <- paste0(datapath, datafiles)
+
+df <- datapathfile %>%
+  setNames(nm = .) %>%
+  map_df(~read_csv(.x, col_types = cols(), col_names = T), .id = "filename") %>% 
+  mutate(tissue = sapply(strsplit(as.character(filename),'../results/06_'), "[", 2)) %>% 
+  mutate(tissue = sapply(strsplit(as.character(tissue),'allvsd.csv'), "[", 1))  %>% 
+  select(tissue, X1, everything()) 
+
+df2 <-  df  %>%
+  filter(X1 %in% c(candidategenes)) %>%
+  pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
+               names_to = "sample", values_to = "vsd") %>%
+   mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
+   mutate(treatment = sapply(strsplit(as.character(sample),'_'), "[", 4))  %>%
+   mutate(treatment = sapply(strsplit(as.character(treatment),'.NYNO'), "[", 1)) %>%
+  mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
+  filter(treatment %in% charlevels) %>%
+  select(bird, sex, treatment, tissue, X1, vsd) %>%
+  mutate(tissue = fct_recode(tissue, "hypothalamus" = "hyp",
+                    "pituitary" = "pit",
+                    "gonads" = "gon"
+                    )) %>%
+  rename(gene = X1) %>%
+  drop_na() %>%
+  droplevels()
+head(df2)
+
+df2$treatment <- factor(df2$treatment, levels = alllevels)
+df2$tissue <- factor(df2$tissue, levels = tissuelevels)
+df2$gene <- factor(df2$gene)
+
+
+df3 <- df2 %>% 
+  mutate(treatment = fct_relevel(treatment, charlevels)) %>% 
+  group_by(treatment, tissue, gene)  %>% 
+  summarize(m = mean(vsd, na.rm = T), se = sd(vsd,  na.rm = T)/sqrt(length(vsd))) %>%
+  mutate(image = "../figures/images/DoveParentsRNAseq_note.png") 
+head(df3)  
+
+d4 <- left_join(df3, modules, by = "gene")
+
+
+for (i in levels(d4$tissue)) {
+  p <-  d4 %>%
+    filter(tissue == i) %>%
+    ggplot(aes(x = treatment, y = m)) +
+    geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
+    geom_point(size = 1, aes(color = gene)) +
+    geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs(subtitle = i, y = "average expression", x = "parental stage") +
+    facet_wrap(~modulecolor, nrow = 2) +
+    theme_B3() +
+    theme(legend.position = "bottom")
+ print(p)
+}
+
+
+d4 %>%
+  filter(modulecolor != "turquoise",
+         tissue == "pituitary") %>%
+  droplevels() %>% 
+    ggplot(aes(x = treatment, y = m)) +
+    geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
+    geom_point(size = 1, aes(color = gene)) +
+    geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "average expression", x = "parental stage") +
+    facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
+    theme_B3() +
+    theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1)) +
+    guides(color = guide_legend(nrow = 2, byrow = T)) 
+
+d4 %>%
+  filter( modulecolor != "turquoise",
+          # modulecolor != "greenyellow",
+          tissue == "pituitary") %>%
+  droplevels() %>% 
+    ggplot(aes(x = treatment, y = m)) +
+  geom_image(aes(image=image), size = 0.15) +
+  facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
+  labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "gene expression", x = "parental stage") +
+    facet_wrap(~gene, scales = "free_y", nrow = ) +
+    theme_B3() +
+    theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+
+d4 %>%
+  filter( modulecolor != "turquoise",
+          # modulecolor != "greenyellow",
+          tissue == "pituitary") %>%
+  droplevels() %>% 
+    ggplot(aes(x = treatment, y = m)) +
+  geom_image(aes(image=image), size = 0.1) +
+  labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "gene expression", x = "parental stage") +
+    theme_B3() +
+    theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_log10()
+
+```
+
+## outline
+
+- data-driven
+- hypothesis-drive
+- sonically-driven
+- visually-driven
+- statistcally-driven
+
+Data and hypothesis driven research for the visually, sonically, and statistcially inclined biologists

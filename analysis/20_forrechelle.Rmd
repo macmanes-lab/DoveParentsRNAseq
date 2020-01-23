@@ -29,8 +29,9 @@ calisigenes <- c("PRL", "PRLR",
                  "NR3C1", "NR3C2",
                  "ESR1", "ESR2", "AR")
 
-timepoints <- charlevels
 
+
+timepoints <- charlevels
 ```
 
 ```{r data, message=F, results=F}
@@ -46,6 +47,7 @@ df <- datapathfile %>%
   select(tissue, X1, everything()) 
 
 genes <- as.data.frame(df$X1)
+
 ```
 ## tissue specificiity
 
@@ -66,7 +68,7 @@ write.csv(tissuespecificity, "../results/tissuespecificity.csv")
 
 ## candidate genes
 
-```{r candidates}
+```{r candidates1}
   
 df2 <-  df  %>%
   filter(X1 %in% c(candidategenes)) %>%
@@ -105,7 +107,9 @@ for (i in levels(df2$gene)) {
  print(p)
 }
 
+```
 
+```{r candidates2}
 
 df3 <- df2 %>% 
   mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
@@ -129,6 +133,9 @@ for (i in levels(df3$tissue)) {
  print(p)
 }
 
+```
+
+```{r candidates3}
 
 df3 %>%
     ggplot(aes(x = treatment, y = m)) +
