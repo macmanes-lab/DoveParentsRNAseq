@@ -1,13 +1,13 @@
 ---
 title: "volcanos"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}
 library(tidyverse)
 source("../R/themes.R")
 
-knitr::opts_chunk$set(echo = TRUE, message = F)
+knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/favegenes/")
 ```
 
 ## DEGs
