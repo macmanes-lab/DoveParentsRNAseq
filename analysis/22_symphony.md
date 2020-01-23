@@ -150,3 +150,189 @@ R Markdown
     p3
 
 ![](../figures/favegenes/soulmusic-1.png)
+
+    modules <- read_csv("../results/08_genes_modules.csv") %>%
+      rename(modulecolor = `net$colors`)  
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   `net$colors` = col_character(),
+    ##   gene = col_character()
+    ## )
+
+    candidategenes <- c("PRL", "PRLR", 
+                     "VIP", "VIPR1", "VIPR2", 
+                     "OXT", "AVP", "AVPR1A", "AVPR1B", 
+                     "GNRH1","GNRHR", "NPVF",
+                     "NR3C1", "NR3C2",
+                     "ESR1", "ESR2", "AR",
+                     "DIO2","LEPR", "DIO3", "DIO1","CYP19A1",
+                     "HSPA14", "HSPA12A",
+                     "PTGES3", "HSD11B2","DRD5", "DRD1", "DRD2","PGE1", "PGF")
+
+    modulescandidates <- modules %>% filter(gene %in% candidategenes)  %>%
+      group_by(modulecolor)  %>%
+      summarize(gene = str_c(gene, collapse = ", "))
+
+    modulescandidates
+
+    ## # A tibble: 8 x 2
+    ##   modulecolor gene                                                         
+    ##   <chr>       <chr>                                                        
+    ## 1 black       DRD5                                                         
+    ## 2 green       PTGES3                                                       
+    ## 3 greenyellow AVP, GNRH1, NPVF, OXT                                        
+    ## 4 grey        DIO1, DIO3                                                   
+    ## 5 magenta     PRLR                                                         
+    ## 6 red         PRL                                                          
+    ## 7 salmon      VIP                                                          
+    ## 8 turquoise   AR, AVPR1A, AVPR1B, CYP19A1, DIO2, DRD1, ESR1, ESR2, GNRHR, …
+
+    datapath <- "../results/"   # path to the data
+    datafiles <- dir(datapath, pattern = "*allvsd.csv") # get file names
+    datapathfile <- paste0(datapath, datafiles)
+
+    df <- datapathfile %>%
+      setNames(nm = .) %>%
+      map_df(~read_csv(.x, col_types = cols(), col_names = T), .id = "filename") %>% 
+      mutate(tissue = sapply(strsplit(as.character(filename),'../results/06_'), "[", 2)) %>% 
+      mutate(tissue = sapply(strsplit(as.character(tissue),'allvsd.csv'), "[", 1))  %>% 
+      select(tissue, X1, everything()) 
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    df2 <-  df  %>%
+      filter(X1 %in% c(candidategenes)) %>%
+      pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
+                   names_to = "sample", values_to = "vsd") %>%
+       mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
+       mutate(treatment = sapply(strsplit(as.character(sample),'_'), "[", 4))  %>%
+       mutate(treatment = sapply(strsplit(as.character(treatment),'.NYNO'), "[", 1)) %>%
+      mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
+      filter(treatment %in% charlevels) %>%
+      select(bird, sex, treatment, tissue, X1, vsd) %>%
+      mutate(tissue = fct_recode(tissue, "hypothalamus" = "hyp",
+                        "pituitary" = "pit",
+                        "gonads" = "gon"
+                        )) %>%
+      rename(gene = X1) %>%
+      drop_na() %>%
+      droplevels()
+    head(df2)
+
+    ## # A tibble: 6 x 6
+    ##   bird    sex    treatment tissue gene    vsd
+    ##   <chr>   <chr>  <chr>     <fct>  <chr> <dbl>
+    ## 1 L.Blu13 male   control   gonads AR     7.64
+    ## 2 L.G107  male   control   gonads AR     7.61
+    ## 3 L.G118  female control   gonads AR     8.93
+    ## 4 L.R3    male   control   gonads AR     7.85
+    ## 5 L.R8    male   control   gonads AR     7.35
+    ## 6 L.W33   male   control   gonads AR     7.57
+
+    df2$treatment <- factor(df2$treatment, levels = alllevels)
+    df2$tissue <- factor(df2$tissue, levels = tissuelevels)
+    df2$gene <- factor(df2$gene)
+
+
+    df3 <- df2 %>% 
+      mutate(treatment = fct_relevel(treatment, charlevels)) %>% 
+      group_by(treatment, tissue, gene)  %>% 
+      summarize(m = mean(vsd, na.rm = T), se = sd(vsd,  na.rm = T)/sqrt(length(vsd))) %>%
+      mutate(image = "../figures/images/DoveParentsRNAseq_note.png") 
+    head(df3)  
+
+    ## # A tibble: 6 x 6
+    ## # Groups:   treatment, tissue [1]
+    ##   treatment tissue      gene       m     se image                          
+    ##   <fct>     <fct>       <fct>  <dbl>  <dbl> <chr>                          
+    ## 1 control   hypothalam… AR      7.15 0.0800 ../figures/images/DoveParentsR…
+    ## 2 control   hypothalam… AVP    10.0  0.313  ../figures/images/DoveParentsR…
+    ## 3 control   hypothalam… AVPR1A  8.32 0.0993 ../figures/images/DoveParentsR…
+    ## 4 control   hypothalam… AVPR1B  5.59 0.0462 ../figures/images/DoveParentsR…
+    ## 5 control   hypothalam… CYP19…  9.06 0.188  ../figures/images/DoveParentsR…
+    ## 6 control   hypothalam… DIO1    5.61 0.0541 ../figures/images/DoveParentsR…
+
+    d4 <- left_join(df3, modules, by = "gene")
+
+    ## Warning: Column `gene` joining factor and character vector, coercing into
+    ## character vector
+
+    for (i in levels(d4$tissue)) {
+      p <-  d4 %>%
+        filter(tissue == i) %>%
+        ggplot(aes(x = treatment, y = m)) +
+        geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
+        geom_point(size = 1, aes(color = gene)) +
+        geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
+        scale_alpha_manual(values = c(0.5, 1)) +
+        labs(subtitle = i, y = "average expression", x = "parental stage") +
+        facet_wrap(~modulecolor, nrow = 2) +
+        theme_B3() +
+        theme(legend.position = "bottom")
+     print(p)
+    }
+
+![](../figures/favegenes/symphonymodules-1.png)![](../figures/favegenes/symphonymodules-2.png)![](../figures/favegenes/symphonymodules-3.png)
+
+    d4 %>%
+      filter(modulecolor != "turquoise",
+             tissue == "pituitary") %>%
+      droplevels() %>% 
+        ggplot(aes(x = treatment, y = m)) +
+        geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
+        geom_point(size = 1, aes(color = gene)) +
+        geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
+        scale_alpha_manual(values = c(0.5, 1)) +
+        labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "average expression", x = "parental stage") +
+        facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
+        theme_B3() +
+        theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1)) +
+        guides(color = guide_legend(nrow = 2, byrow = T)) 
+
+![](../figures/favegenes/symphonymodules-4.png)
+
+    d4 %>%
+      filter( modulecolor != "turquoise",
+              # modulecolor != "greenyellow",
+              tissue == "pituitary") %>%
+      droplevels() %>% 
+        ggplot(aes(x = treatment, y = m)) +
+      geom_image(aes(image=image), size = 0.15) +
+      facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
+      labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "gene expression", x = "parental stage") +
+        facet_wrap(~gene, scales = "free_y", nrow = ) +
+        theme_B3() +
+        theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+![](../figures/favegenes/symphonymodules-5.png)
+
+    d4 %>%
+      filter( modulecolor != "turquoise",
+              # modulecolor != "greenyellow",
+              tissue == "pituitary") %>%
+      droplevels() %>% 
+        ggplot(aes(x = treatment, y = m)) +
+      geom_image(aes(image=image), size = 0.1) +
+      labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "gene expression", x = "parental stage") +
+        theme_B3() +
+        theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) +
+      scale_y_log10()
+
+![](../figures/favegenes/symphonymodules-6.png)
+
+outline
+-------
+
+-   data-driven
+-   hypothesis-drive
+-   sonically-driven
+-   visually-driven
+-   statistcally-driven
+
+Data and hypothesis driven research for the visually, sonically, and
+statistcially inclined biologists
