@@ -45,6 +45,9 @@ controlstiming <- c( "inc.d9" , "hatch" , "n5")
 controlsremoval <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
 
 
+comparisonlevels <- c("control.bldg", "bldg.lay" ,"lay.inc_d3", "inc_d3.inc_d9",
+                      "inc_d9.inc_d17", "inc_d17.hatch" , "hatch.n5", "n5.n9"   )
+
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
                 "inc.d9", "m.inc.d8" ,"m.inc.d9" ,
                "inc.d17",  "m.inc.d17","prolong" ,
