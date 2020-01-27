@@ -3,14 +3,14 @@ Plots with Prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -624,6 +624,57 @@ calisis candidates
 
 ![](../figures/PRL/calisigenes-1.png)
 
+music for own
+-------------
+
+    meanBrcaPrl <- candidates.pit %>% 
+        droplevels() %>% 
+      dplyr::group_by(treatment, sex) %>%
+      dplyr::summarise(meanBRCA1 = mean(BRCA1), 
+                       meanPRL = mean(PRL)) %>%
+      dplyr::mutate(meanBRCA1 = round(meanBRCA1,2)) %>%
+      dplyr::mutate(meanPRL = round(meanPRL,1)) %>%
+      dplyr::filter(treatment %in% charlevels) %>%
+      droplevels() %>%
+      dplyr::mutate(timepoint = as.numeric(treatment)) %>%
+      select(timepoint, treatment, sex, meanPRL, meanBRCA1)
+    meanBrcaPrl
+
+    ## # A tibble: 18 x 5
+    ## # Groups:   treatment [9]
+    ##    timepoint treatment sex    meanPRL meanBRCA1
+    ##        <dbl> <fct>     <fct>    <dbl>     <dbl>
+    ##  1         1 control   female    18.5      7.53
+    ##  2         1 control   male      17.9      7.46
+    ##  3         2 bldg      female    17        7.38
+    ##  4         2 bldg      male      17        7.35
+    ##  5         3 lay       female    17.3      7.27
+    ##  6         3 lay       male      17.4      7.33
+    ##  7         4 inc.d3    female    17.9      7.37
+    ##  8         4 inc.d3    male      16.8      7.35
+    ##  9         5 inc.d9    female    18        7.37
+    ## 10         5 inc.d9    male      17.9      7.32
+    ## 11         6 inc.d17   female    20.4      8   
+    ## 12         6 inc.d17   male      19.8      7.85
+    ## 13         7 hatch     female    20.8      7.8 
+    ## 14         7 hatch     male      20.7      7.8 
+    ## 15         8 n5        female    19.8      7.43
+    ## 16         8 n5        male      20.2      7.71
+    ## 17         9 n9        female    19        7.44
+    ## 18         9 n9        male      19.1      7.37
+
+    summary(meanBrcaPrl)
+
+    ##    timepoint   treatment     sex       meanPRL        meanBRCA1    
+    ##  Min.   :1   control:2   female:9   Min.   :16.80   Min.   :7.270  
+    ##  1st Qu.:3   bldg   :2   male  :9   1st Qu.:17.52   1st Qu.:7.355  
+    ##  Median :5   lay    :2              Median :18.25   Median :7.405  
+    ##  Mean   :5   inc.d3 :2              Mean   :18.64   Mean   :7.507  
+    ##  3rd Qu.:7   inc.d9 :2              3rd Qu.:19.80   3rd Qu.:7.665  
+    ##  Max.   :9   inc.d17:2              Max.   :20.80   Max.   :8.000  
+    ##              (Other):6
+
     write.csv(candidates.pit, "../results/16_pitPRL.csv")
     write.csv(aov_all, "../results/16_aov_PRLsex.csv")
     write.csv(aov_manip, "../results/16_aov_PRLsextreatment.csv")
+    write.csv(meanBrcaPrl, "../results/16_meanBrcaPrl.csv", row.names = F)
