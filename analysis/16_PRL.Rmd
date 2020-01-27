@@ -489,6 +489,23 @@ p2
 
 ```
 
+## music for own
+
+```{r}
+meanBrcaPrl <- candidates.pit %>% 
+    droplevels() %>% 
+  dplyr::group_by(treatment, sex) %>%
+  dplyr::summarise(meanBRCA1 = mean(BRCA1), 
+                   meanPRL = mean(PRL)) %>%
+  dplyr::mutate(meanBRCA1 = round(meanBRCA1,2)) %>%
+  dplyr::mutate(meanPRL = round(meanPRL,1)) %>%
+  dplyr::filter(treatment %in% charlevels) %>%
+  droplevels() %>%
+  dplyr::mutate(timepoint = as.numeric(treatment)) %>%
+  select(timepoint, treatment, sex, meanPRL, meanBRCA1)
+meanBrcaPrl
+summary(meanBrcaPrl)
+```
 
 
 
@@ -496,5 +513,7 @@ p2
 write.csv(candidates.pit, "../results/16_pitPRL.csv")
 write.csv(aov_all, "../results/16_aov_PRLsex.csv")
 write.csv(aov_manip, "../results/16_aov_PRLsextreatment.csv")
+write.csv(meanBrcaPrl, "../results/16_meanBrcaPrl.csv", row.names = F)
+
 ```
 
