@@ -19,7 +19,8 @@ knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 
 ```{r input}
 
-candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH" )
+candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH", "FSHB", "CGA" )
+
 datadrivengenes <- c("COX1", "PRL", "CHGA", "ATP2B4", "LOC107055658")
 
 calisigenes <- c("PRL", "PRLR", 
@@ -27,9 +28,8 @@ calisigenes <- c("PRL", "PRLR",
                  "OXT", "AVP", "AVPR1A", "AVPR1B", 
                  "GNRH1","GNRHR", "NPVF",
                  "NR3C1", "NR3C2",
-                 "ESR1", "ESR2", "AR")
-
-
+                 "ESR1", "ESR2", "AR",
+                 "FSH", "CGA")
 
 timepoints <- charlevels
 ```

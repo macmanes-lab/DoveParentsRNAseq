@@ -1,4 +1,5 @@
-    candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH" )
+    candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH", "FSHB", "CGA" )
+
     datadrivengenes <- c("COX1", "PRL", "CHGA", "ATP2B4", "LOC107055658")
 
     calisigenes <- c("PRL", "PRLR", 
@@ -6,7 +7,8 @@
                      "OXT", "AVP", "AVPR1A", "AVPR1B", 
                      "GNRH1","GNRHR", "NPVF",
                      "NR3C1", "NR3C2",
-                     "ESR1", "ESR2", "AR")
+                     "ESR1", "ESR2", "AR",
+                     "FSH", "CGA")
 
     timepoints <- charlevels
 
@@ -79,12 +81,12 @@ candidate genes
     ## # A tibble: 6 x 6
     ##   bird    sex    treatment tissue gene    vsd
     ##   <chr>   <chr>  <chr>     <fct>  <chr> <dbl>
-    ## 1 L.Blu13 male   control   gonads CISH   8.75
-    ## 2 L.G107  male   control   gonads CISH   9.69
-    ## 3 L.G118  female control   gonads CISH   7.75
-    ## 4 L.R3    male   control   gonads CISH  10.1 
-    ## 5 L.R8    male   control   gonads CISH   9.98
-    ## 6 L.W33   male   control   gonads CISH   9.58
+    ## 1 L.Blu13 male   control   gonads CGA   10.3 
+    ## 2 L.G107  male   control   gonads CGA    9.33
+    ## 3 L.G118  female control   gonads CGA    9.31
+    ## 4 L.R3    male   control   gonads CGA   10.4 
+    ## 5 L.R8    male   control   gonads CGA    9.31
+    ## 6 L.W33   male   control   gonads CGA    8.85
 
     df2$treatment <- factor(df2$treatment, levels = alllevels)
     df2$tissue <- factor(df2$tissue, levels = tissuelevels)
@@ -104,7 +106,7 @@ candidate genes
      print(p)
     }
 
-![](../figures/favegenes/candidates-1.png)![](../figures/favegenes/candidates-2.png)![](../figures/favegenes/candidates-3.png)![](../figures/favegenes/candidates-4.png)![](../figures/favegenes/candidates-5.png)
+![](../figures/favegenes/candidates1-1.png)![](../figures/favegenes/candidates1-2.png)![](../figures/favegenes/candidates1-3.png)![](../figures/favegenes/candidates1-4.png)![](../figures/favegenes/candidates1-5.png)![](../figures/favegenes/candidates1-6.png)![](../figures/favegenes/candidates1-7.png)
 
     df3 <- df2 %>% 
       mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
@@ -114,15 +116,15 @@ candidate genes
     head(df3)  
 
     ## # A tibble: 6 x 7
-    ## # Groups:   sex, treatment, tissue [2]
+    ## # Groups:   sex, treatment, tissue [1]
     ##   sex    treatment tissue    gene      m     se image                      
     ##   <chr>  <fct>     <fct>     <fct> <dbl>  <dbl> <chr>                      
-    ## 1 female control   hypothal… CISH   7.42 0.228  ../figures/images/DovePare…
-    ## 2 female control   hypothal… GH     9.33 0.330  ../figures/images/DovePare…
-    ## 3 female control   hypothal… JAK2   8.53 0.0774 ../figures/images/DovePare…
-    ## 4 female control   hypothal… PRL   11.3  0.536  ../figures/images/DovePare…
-    ## 5 female control   hypothal… PRLR   8.05 0.139  ../figures/images/DovePare…
-    ## 6 female control   pituitary CISH   9.31 0.173  ../figures/images/DovePare…
+    ## 1 female control   hypothal… CGA   10.5  0.189  ../figures/images/DovePare…
+    ## 2 female control   hypothal… CISH   7.42 0.228  ../figures/images/DovePare…
+    ## 3 female control   hypothal… FSHB   6.10 0.293  ../figures/images/DovePare…
+    ## 4 female control   hypothal… GH     9.33 0.330  ../figures/images/DovePare…
+    ## 5 female control   hypothal… JAK2   8.53 0.0774 ../figures/images/DovePare…
+    ## 6 female control   hypothal… PRL   11.3  0.536  ../figures/images/DovePare…
 
     for (i in levels(df3$tissue)) {
       
@@ -139,7 +141,7 @@ candidate genes
      print(p)
     }
 
-![](../figures/favegenes/candidates-6.png)![](../figures/favegenes/candidates-7.png)![](../figures/favegenes/candidates-8.png)
+![](../figures/favegenes/candidates2-1.png)![](../figures/favegenes/candidates2-2.png)![](../figures/favegenes/candidates2-3.png)
 
     df3 %>%
         ggplot(aes(x = treatment, y = m)) +
@@ -152,7 +154,7 @@ candidate genes
         theme_B3() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-![](../figures/favegenes/candidates-9.png)
+![](../figures/favegenes/candidates3-1.png)
 
     ePRL <- df2 %>% dplyr::rename(value = vsd, measurement = gene) %>% filter(measurement == "PRL") %>% droplevels()
     ePRLR <- df2 %>% dplyr::rename(value = vsd, measurement = gene) %>% filter(measurement == "PRLR") %>% droplevels()
@@ -214,27 +216,27 @@ candidate genes
     dft$bird <- NULL
     head(dft)
 
-    ##          gon_CISH   gon_GH gon_JAK2   gon_PRL gon_PRLR hyp_CISH   hyp_GH
-    ## L.Blu13  8.752463 9.630519 9.870018 12.620157 7.519119 8.195291 11.23222
-    ## L.G107   9.685718 7.999319 9.625719  9.975896 7.033196 8.531852 10.47964
-    ## L.G118   7.746627 9.312189 8.303121  9.585174 5.584985 5.463812 10.54857
-    ## L.R3    10.091290 9.661806 9.184809 12.713160 7.780442 8.213306  9.89367
-    ## L.R8     9.982216 7.837528 9.220338 10.190503 7.517327 8.263373 11.66288
-    ## L.W33    9.575585 8.104064 8.904483 10.282352 7.497994 8.234172 10.65886
-    ##         hyp_JAK2  hyp_PRL hyp_PRLR  pit_CISH   pit_GH pit_JAK2  pit_PRL
-    ## L.Blu13 9.055230 12.58395 8.522239  9.321163 16.56528 9.362994 17.03357
-    ## L.G107  9.165604 10.94625 8.452225  9.657710 16.57417 9.342533 18.14585
-    ## L.G118  8.887380 12.98360 8.481032  9.879818 18.03054 8.923568 18.18094
-    ## L.R3    8.367134 10.71558 7.454105 10.008407 17.11419 8.894092 16.78585
-    ## L.R8    8.877838 11.90012 8.974098  9.678544 15.66945 9.344693 17.58225
-    ## L.W33   9.069194 12.47638 8.388383  8.568670 15.49809 9.516664 20.20969
-    ##         pit_PRLR
-    ## L.Blu13 9.278048
-    ## L.G107  9.137519
-    ## L.G118  8.966179
-    ## L.R3    9.197612
-    ## L.R8    9.561870
-    ## L.W33   8.714056
+    ##           gon_CGA  gon_CISH gon_FSHB   gon_GH gon_JAK2   gon_PRL gon_PRLR
+    ## L.Blu13 10.276835  8.752463 7.010403 9.630519 9.870018 12.620157 7.519119
+    ## L.G107   9.326330  9.685718 5.136372 7.999319 9.625719  9.975896 7.033196
+    ## L.G118   9.306396  7.746627 6.601791 9.312189 8.303121  9.585174 5.584985
+    ## L.R3    10.393589 10.091290 6.790839 9.661806 9.184809 12.713160 7.780442
+    ## L.R8     9.312446  9.982216 5.094668 7.837528 9.220338 10.190503 7.517327
+    ## L.W33    8.852477  9.575585 4.746627 8.104064 8.904483 10.282352 7.497994
+    ##           hyp_CGA hyp_CISH hyp_FSHB   hyp_GH hyp_JAK2  hyp_PRL hyp_PRLR
+    ## L.Blu13 10.722406 8.195291 7.212804 11.23222 9.055230 12.58395 8.522239
+    ## L.G107  10.304413 8.531852 5.463812 10.47964 9.165604 10.94625 8.452225
+    ## L.G118  10.847600 5.463812 6.763414 10.54857 8.887380 12.98360 8.481032
+    ## L.R3     9.775206 8.213306 5.463812  9.89367 8.367134 10.71558 7.454105
+    ## L.R8     9.994246 8.263373 6.661287 11.66288 8.877838 11.90012 8.974098
+    ## L.W33   10.651401 8.234172 6.680838 10.65886 9.069194 12.47638 8.388383
+    ##          pit_CGA  pit_CISH pit_FSHB   pit_GH pit_JAK2  pit_PRL pit_PRLR
+    ## L.Blu13 15.69590  9.321163 10.19741 16.56528 9.362994 17.03357 9.278048
+    ## L.G107  15.77569  9.657710 13.35324 16.57417 9.342533 18.14585 9.137519
+    ## L.G118  16.20775  9.879818 11.76137 18.03054 8.923568 18.18094 8.966179
+    ## L.R3    16.08147 10.008407 12.12199 17.11419 8.894092 16.78585 9.197612
+    ## L.R8    16.57337  9.678544 13.37029 15.66945 9.344693 17.58225 9.561870
+    ## L.W33   15.54004  8.568670 12.48586 15.49809 9.516664 20.20969 8.714056
 
     x <- correlate(dft)
 
@@ -285,9 +287,11 @@ candidate genes
 
     cde <- plot_grid(c,d, e, nrow = 1, rel_widths = c(1.1,1,1))
 
-    ## Warning: Removed 2 rows containing missing values (position_stack).
+    ## Warning: Removed 5 rows containing missing values (position_stack).
 
     ## Warning: Removed 5 rows containing missing values (position_stack).
+
+    ## Warning: Removed 1 rows containing missing values (position_stack).
 
     cde
 
