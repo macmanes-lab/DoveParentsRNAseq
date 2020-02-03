@@ -307,7 +307,7 @@ hormones %>%
 printaovtablesex <- function(myhormone, mydescirption){
   
   aov_all = data.frame()
-  for(i in alllevels3){
+  for(i in alllevels){
     df <- hormones %>% filter(hormone == myhormone,
                             treatment == i) %>% droplevels()
     aovtable <- apa.aov.table(aov(plasma_conc ~ sex, data  = df))
@@ -397,9 +397,10 @@ ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
 p4
 
 p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4), labels = c("c","d"), label_size = 8 )
+p34
 
-
-plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
+allcortplots <- plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
+allcortplots
 ```
 
 
@@ -538,8 +539,19 @@ p4b
 
 p34 <- plot_grid(p3a , p3b,p4a, p4b, rel_widths = c(0.55,0.55, 0.45,0.45), labels = c("d","e", "f", "g"), label_size = 8, nrow = 1)
 
-plot_grid(p12, p34, nrow = 2, rel_heights = c(0.5,0.5))
+allprolactinplots <- plot_grid(p12, p34, nrow = 2, rel_heights = c(0.5,0.5))
+allprolactinplots
 ```
+
+## figure 2
+
+```{r figure2, fig.width=7, fig.height=7}
+
+plot_grid(allprolactinplots, allcortplots, nrow = 2)
+```
+
+
+
 
 ## prolactin 2 
 
@@ -899,12 +911,12 @@ testosterone
 ```
 
 ```{r supplefig, fig.height=8}
-plot_grid(p1, p2, p3 + labs(y = NULL), p4, p5, p6, p7 + labs(y = NULL), p8, 
+sexsteroids <- plot_grid(p1, p2, p3 + labs(y = NULL), p4, p5, p6, p7 + labs(y = NULL), p8, 
           p9, p10, p11 + labs(y = NULL), p12, nrow = 3, rel_widths =   c(0.175,0.4,0.35,0.25), align = "hv",
           label_size = 8, labels = c("a", " ", " " , " ",
                                      "b", " ", " " , " ",
                                      "c", " ", " " , " "))
-
+sexsteroids
 ```
 
 ## pca of hormones
@@ -943,9 +955,16 @@ b2 <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 
 c2 <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
   labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
 
-twos <- plot_grid(a2,b2,c2, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+twos <- plot_grid(a2 + theme(title = element_blank()),b2,c2, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
 
 plot_grid(ones,twos, nrow = 2)
+
+twos
+```
+
+```{r figure3, fig.height=8, fig.width=7}
+
+plot_grid(twos,sexsteroids, nrow = 2, rel_heights = c(0.25,0.75), align = "hv")
 ```
 
 # smooth funciton
