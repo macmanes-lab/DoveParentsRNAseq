@@ -15,7 +15,7 @@ library(apaTables)
 source("../R/themes.R")  # load custom themes and color palletes
 source("../R/icons.R")
 
-knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
+knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE, cache = T)
 ```
 
 ```{r}
@@ -137,7 +137,7 @@ hormonecharplot <- function(myhormone, myylab){
     droplevels() %>% 
   ggplot(aes(x = as.numeric(treatment), y = plasma_conc)) +
         geom_smooth(aes(colour = sex)) +
-    geom_boxplot(aes(fill = treatment, alpha = sex)) +
+    geom_boxplot(aes(fill = treatment)) +
     mytheme() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
           legend.position = "none") +
@@ -146,7 +146,6 @@ hormonecharplot <- function(myhormone, myylab){
     labs(y = myylab, x = NULL) +
     guides(fill = guide_legend(order=1),
          color = guide_legend(order=2)) +
-    scale_alpha_manual(values = c(0.75,1)) +
     scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
                        labels = charlevels)
   }
@@ -293,57 +292,6 @@ head(PRLpit,2)
 ```
 
 
-
-## for rechelle
-
-```{r forrechelle, fig.height= 4, fig.width=6}
-
-rechelle <- hormones %>%
-  dplyr::filter(hormone %in% c("prolactin", "corticosterone"),
-                treatment %in% c("lay", "inc.d9", "hatch", "n9")) %>%
-  dplyr::select(-icons, -music, -iconpath)
-   
-rechelle$hormone <- factor(rechelle$hormone, levels = c("prolactin", "corticosterone"))
-
-prl.rechelle <- rechelle %>% filter(hormone == "prolactin")   %>%  droplevels()
-cort.rechelle <- rechelle %>% filter(hormone == "corticosterone")   %>%  droplevels()
-
-TukeyHSD(aov(plasma_conc ~  treatment, data=prl.rechelle))
-TukeyHSD(aov(plasma_conc ~  treatment, data=cort.rechelle))
-
-
-rechelleplot <- function(mydf, myylab){
-  
-  p <- ggplot(mydf, aes(x = treatment, y = plasma_conc, fill = sex)) +
-  geom_point(aes(color = sex), position = position_dodge(0.9), size = 2)+
-  geom_boxplot(alpha = 0.5, outlier.shape = NA) +
-  scale_color_manual(name = "Sex", values = c("gray50", "maroon"))+
-  scale_fill_manual(name = "Sex", values = c("gray50", "maroon"))+
-
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-         legend.position = "none",
-          strip.text = element_blank()) +
-    theme_classic()+
-  theme(text = element_text(size= 15)) +
-    labs(x = "Stage", y = myylab) 
-  return(p)
-
-}
-
-#PRL
-rechelleplot(prl.rechelle, "Prolactin (ng/mL)")
-rechelleplot(prl.rechelle, "Prolactin (ng/mL)") + 
-  scale_y_continuous(breaks = c(0,25,50,75,100, 125), limits = c(-20,125)) +
-  geom_signif(comparisons=list(c("lay", "hatch")), annotations= "p < 0.001", y_position = 100, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
-  geom_signif(comparisons=list(c("lay", "n9")), annotations= "p < 0.001", y_position = 110, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
-  geom_signif(comparisons=list(c("hatch", "n9")), annotations= "p < 0.001", y_position = 120, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
-  geom_signif(comparisons=list(c("inc.d9", "hatch")), annotations= "p < 0.001", y_position = -5, tip_length = -0.05, vjust = 2, color= "black" , textsize = 5 ) +
-  geom_signif(comparisons=list(c("inc.d9", "n9")), annotations= "p < 0.001", y_position = -15, tip_length = -0.05, vjust = 2, color= "black" , textsize = 5 )
-
-#CORT
-rechelleplot(cort.rechelle, "Corticosterone (ng/mL)")
-
-```
 
 ```{r sex}
 hormones %>%
@@ -726,6 +674,46 @@ corrCORT <- hormoneswide %>%
   guides(color = guide_legend(nrow = 1)) +
   labs(y = "conc. (ng/mL)", x = "corticosterone (ng/mL)")
 corrCORT
+
+hormoneswide %>%
+  pivot_longer(cols = c(prolactin, estradiol, testosterone, progesterone), names_to = "hormones", values_to = "conc", values_drop_na = TRUE) %>%
+  filter(study == "characterization") %>%
+  ggplot(aes(x = corticosterone, y = conc)) +
+  geom_point(aes(color = treatment)) +
+  geom_smooth(color = "darkgrey", method = "lm") +
+  facet_grid(hormones ~ treatment, scales = "free_y")  +
+  theme_B3() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank()) +
+  scale_color_manual(values = colorscharmaip2) +
+  guides(color = guide_legend(nrow = 1)) +
+  labs(y = "conc. (ng/mL)", x = "corticosterone (ng/mL)")
+
+
+hormoneswide %>%
+  pivot_longer(cols = c(corticosterone, estradiol, testosterone, progesterone), names_to = "hormones", values_to = "conc", values_drop_na = TRUE) %>%
+  filter(study == "characterization") %>%
+  ggplot(aes(x = prolactin, y = conc)) +
+  geom_point(aes(color = treatment)) +
+  geom_smooth(color = "darkgrey", method = "lm") +
+  facet_grid(hormones ~ treatment, scales = "free_y")  +
+  theme_B3() +
+  theme(legend.position = "bottom",
+        legend.title = element_blank()) +
+  scale_color_manual(values = colorscharmaip2) +
+  guides(color = guide_legend(nrow = 1)) +
+  labs(y = "conc. (ng/mL)", x = "prolactin (ng/mL)")
+
+ggplot(hormoneswide, aes(x = prolactin, y = corticosterone, color = treatment)) +
+  geom_point() + geom_smooth(method = "lm") +
+  facet_wrap(~treatment) +
+  scale_color_manual(values =  colorscharmaip) + theme(legend.position = "none")
+
+ggplot(hormoneswide, aes(x = prolactin, y = testosterone, color = treatment)) +
+  geom_point() + geom_smooth(method = "lm") +
+  facet_wrap(~treatment) +
+  scale_color_manual(values =  colorscharmaip) + theme(legend.position = "none")
+
 ```
 
 ## progesterone
@@ -918,3 +906,44 @@ plot_grid(p1, p2, p3 + labs(y = NULL), p4, p5, p6, p7 + labs(y = NULL), p8,
                                      "c", " ", " " , " "))
 
 ```
+
+## pca of hormones
+
+```{r PCA}
+
+library("factoextra")
+library("FactoMineR")
+
+# char only
+hormoneswidechar <- hormoneswide %>% filter(treatment %in% charlevels)
+df <- hormoneswidechar %>% select(prolactin:progesterone)
+res.pca <- PCA(df)
+
+a <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization only") 
+# Contributions of variables to PC1
+
+b <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
+                                                                      title = element_blank())
+# Contributions of variables to PC2
+c <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
+  labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
+
+plot_grid(a,b,c, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+
+# char and manip
+df <- hormoneswide %>% select(prolactin:progesterone)
+res.pca <- PCA(df)
+
+a <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization & manipluation") 
+# Contributions of variables to PC1
+
+b <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
+                                                                      title = element_blank())
+# Contributions of variables to PC2
+c <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
+  labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
+
+plot_grid(a,b,c, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+
+```
+
