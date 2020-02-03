@@ -125,6 +125,7 @@ hormones$treatment <- factor(hormones$treatment, levels = alllevels)
 hormones$hormone <- factor(hormones$hormone, 
                            levels = c("prolactin", "corticosterone", "progesterone", 
                                       "estradiol", "testosterone"))
+hormones$logconc <- log10(hormones$plasma_conc)
 head(hormones)
 ```
 
@@ -350,7 +351,8 @@ p1 <- hormones %>%
   theme_B3() +
   labs(y = "CORT (ng/mL)", subtitle = element_blank() , x = NULL) +
   theme(legend.position = "none") +
-  scale_fill_manual(values = sexcolors)
+  scale_fill_manual(values = sexcolors) +
+  scale_fill_manual(values = colorscharmaip)
 p1
 
 
@@ -362,7 +364,8 @@ p2 <-  ggplot(cort, aes(x = treatment, y = plasma_conc, fill = treatment)) +
   geom_boxplot() +
   theme_B3() +
   labs(y = NULL, x = NULL, subtitle = element_blank() ) +
-  theme(legend.position = "none") 
+  theme(legend.position = "none")  +
+  scale_fill_manual(values = colorscharmaip)
   
 p2
 
@@ -423,12 +426,12 @@ p1
 
 PRLf <- hormones %>%
   filter(hormone == "prolactin",
-         study == "characterization",
+         #study == "characterization",
          sex == "female")
 
 PRLm <- hormones %>%
   filter(hormone == "prolactin",
-         study == "characterization",
+         #study == "characterization",
          sex == "male")
 
 
@@ -439,7 +442,8 @@ p2a <-  ggplot(PRLf, aes(x = treatment, y = plasma_conc, fill = treatment)) +
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_color_manual(values = sexcolors) +
-  scale_y_continuous(limits = c(0,100))
+  scale_y_continuous(limits = c(0,100))  +
+  scale_fill_manual(values = colorscharmaip)
   
 p2b <-  ggplot(PRLm, aes(x = treatment, y = plasma_conc, fill = treatment)) +
   geom_boxplot(aes(color = sex)) +
@@ -448,7 +452,8 @@ p2b <-  ggplot(PRLm, aes(x = treatment, y = plasma_conc, fill = treatment)) +
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   scale_color_manual(values = sexcolors) +
-  scale_y_continuous(limits = c(0,100))
+  scale_y_continuous(limits = c(0,100))+
+  scale_fill_manual(values = colorscharmaip)
   
 
 p12 <- plot_grid(p1,p2a,p2b, rel_widths = c(0.25,0.5, 0.5), labels = c("a","b", "c"), label_size = 8, nrow = 1, align = "hv")
@@ -466,7 +471,7 @@ p3a <- hormones %>%
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1)) +
   labs( x = NULL, y = "Prolactin (ng/mL", subtitle = "females") +
-  scale_color_manual(values = sexcolors)
+  scale_color_manual(values = sexcolors) 
 p3a
 
 p3b <- hormones %>%
@@ -526,6 +531,7 @@ allprolactinplots
 ```{r figure2, fig.width=7, fig.height=7}
 
 plot_grid(allprolactinplots, allcortplots, nrow = 2)
+
 
 ```
 
@@ -916,5 +922,96 @@ line <- ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc)) +
   
 
 plot_grid(box, line, nrow = 1)
+```
+
+## stats
+
+```{r}
+
+P3 <- hormones %>% filter(hormone == "progesterone")
+E2 <- hormones %>% filter(hormone == "estradiol")
+T2 <- hormones %>% filter(hormone == "testosterone")
+
+
+
+aov1 <- aov(PRLm$logconc ~ PRLm$treatment)
+res1 <- TukeyHSD(aov1)
+res1 <- as.data.frame(res1$`PRLm$treatment`)
+res1$hormone <- "male PRL"
+res1$sig <- ifelse(res1$`p adj` < 0.001, "***",
+                   ifelse(res1$`p adj` < 0.01, "**",
+                           ifelse(res1$`p adj` < 0.05, "*", "NS" )))
+res1$comparison <- row.names(res1)
+res1
+
+
+
+aov2 <- aov(PRLf$logconc ~ PRLf$treatment)
+res2 <- TukeyHSD(aov2)
+res2 <- as.data.frame(res2$`PRLf$treatment`)
+res2$hormone <- "female PRL"
+res2$sig <- ifelse(res2$`p adj` < 0.001, "***",
+                   ifelse(res2$`p adj` < 0.01, "**",
+                           ifelse(res2$`p adj` < 0.05, "*","NS"  )))
+res2$comparison <- row.names(res2)
+res2
+
+
+aov3 <- aov(P3$logconc ~ P3$treatment)
+res3 <- TukeyHSD(aov3)
+res3 <- as.data.frame(res3$`P3$treatment`)
+res3$hormone <- "P3"
+res3$sig <- ifelse(res3$`p adj` < 0.001, "***",
+                   ifelse(res3$`p adj` < 0.01, "**",
+                           ifelse(res3$`p adj` < 0.05, "*", "NS"  )))
+res3$comparison <- row.names(res3)
+res3
+
+aov4 <- aov(E2$logconc ~ E2$treatment)
+res4 <- TukeyHSD(aov4)
+res4 <- as.data.frame(res4$`E2$treatment`)
+res4$hormone <- "E2"
+res4$sig <- ifelse(res4$`p adj` < 0.001, "***",
+                   ifelse(res4$`p adj` < 0.01, "**",
+                           ifelse(res4$`p adj` < 0.05, "*", "NS" )))
+res4$comparison <- row.names(res4)
+res4
+
+
+aov5 <- aov(T2$logconc ~ T2$treatment)
+res5 <- TukeyHSD(aov5)
+res5 <- as.data.frame(res5$`T2$treatment`)
+res5$hormone <- "T"
+res5$sig <- ifelse(res5$`p adj` < 0.001, "***",
+                   ifelse(res5$`p adj` < 0.01, "**",
+                           ifelse(res5$`p adj` < 0.05, "*", "NS"  )))
+res5$comparison <- row.names(res5)
+res5
+
+resall <- rbind(res3, res5, res4, res2, res1) %>% drop_na()
+resall
+
+table1 <- resall %>%
+  filter(grepl('control', comparison),
+         !grepl('prolong|extend|m.', comparison)) %>%
+   mutate(diff = round(diff, 2)) %>% 
+  mutate(diffsig = paste(diff, sig, sep = ", ")) %>% 
+   select(hormone, comparison, diffsig) %>% 
+  pivot_wider( names_from = hormone, values_from = diffsig)
+table1
+
+table2 <- resall %>%
+  filter(!grepl('control|bldg|lay|n5', comparison),
+         grepl('prolong|extend|m.', comparison)) %>%
+   mutate(diff = round(diff, 2)) %>% 
+  mutate(diffsig = paste(diff, sig, sep = ", ")) %>% 
+   select(hormone, comparison, diffsig) %>% 
+  pivot_wider( names_from = hormone, values_from = diffsig)
+table2
+
+write.csv(table1, "../../parentalhormones/data/table-1.csv")
+write.csv(table2, "../../parentalhormones/data/table-2.csv")
+
+
 ```
 
