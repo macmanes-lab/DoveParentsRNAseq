@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -458,7 +458,8 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
       return(aov_all)
     }
 
-    printaovtablesex("prolactin", "PRL ~ sex")
+    table1 <- printaovtablesex("prolactin", "PRL ~ sex")
+    table1
 
     ##       stages     ANOVA    df     F     p sig
     ## 1    control PRL ~ sex 1, 21  7.74 0.011   *
@@ -478,6 +479,8 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
     ## 15        n5 PRL ~ sex 1, 18  0.03 0.870    
     ## 16        n9 PRL ~ sex 1, 18  3.00 0.100
 
+    write.csv(table1, "../../parentalhormones/data/table-1.csv", row.names = F)
+
     hormones %>%
       filter(hormone == "corticosterone") %>%
       group_by(sex) %>%
@@ -496,9 +499,8 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
       ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
       geom_boxplot() +
       theme_B3() +
-      labs(y = "concentration (ng/mL)", subtitle = "Corticosterone" , x = NULL) +
+      labs(y = "CORT (ng/mL)", subtitle = element_blank() , x = NULL) +
       theme(legend.position = "none") +
-      scale_y_continuous(limits = c(0,8.5)) +
       scale_fill_manual(values = sexcolors)
     p1
 
@@ -511,19 +513,14 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
     p2 <-  ggplot(cort, aes(x = treatment, y = plasma_conc, fill = treatment)) +
       geom_boxplot() +
       theme_B3() +
-      labs(y = NULL, x = NULL, subtitle = " ") +
-      theme(legend.position = "none") +
-      geom_signif(comparisons=list(c("control", "inc.d17")), annotations= "p = 0.49", y_position = 7.5, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
-      geom_signif(comparisons=list(c("control", "hatch")), annotations= "p = 0.021", y_position = 8, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
-      geom_signif(comparisons=list(c("control", "n5")), annotations= "p = 0.004", y_position = 8.5, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
-      geom_signif(comparisons=list(c("n5", "n9")), annotations= "p = 0.001", y_position = 8, tip_length = 0, vjust = 0, color= "black" , textsize = 3 ) +
-      scale_y_continuous(limits = c(0,8.5))
+      labs(y = NULL, x = NULL, subtitle = element_blank() ) +
+      theme(legend.position = "none") 
       
     p2
 
 ![](../figures/hormones/cort-2.png)
 
-    p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8), labels = c("a","b"), label_size = 8)
+    p12 <- plot_grid(p1,p2, rel_widths = c(0.2,0.8), labels = c("h","i"), label_size = 8)
 
     p3 <- hormones %>%
       filter(hormone == "corticosterone",
@@ -531,10 +528,10 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
     ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
       geom_boxplot() +
       theme_B3() +
-      scale_y_continuous(limits = c(0,8.5)) +
       scale_fill_manual(values = colorscharmaip) +
       theme(legend.position = "none") +
-      labs( x = NULL, y = "concentration (ng/mL")
+      labs( x = NULL, y = "CORT (ng/mL") +
+      ylim(c(0,12.5))
     p3
 
 ![](../figures/hormones/cort-3.png)
@@ -545,15 +542,15 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
     ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
       geom_boxplot() +
       theme_B3() +
-      scale_y_continuous(limits = c(0,8.5)) +
       scale_fill_manual(values = colorscharmaip) +
       theme(legend.position = "none") +
-      labs(y = NULL, x = NULL)
+      labs(y = NULL, x = NULL) + 
+      ylim(c(0,12.5))
     p4
 
 ![](../figures/hormones/cort-4.png)
 
-    p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4), labels = c("c","d"), label_size = 8 )
+    p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4), labels = c("j","k"), label_size = 8 )
     p34
 
 ![](../figures/hormones/cort-5.png)
@@ -581,7 +578,7 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
       ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
       geom_boxplot() +
       theme_B3() +
-      labs(y = "concentration (ng/mL)", subtitle = "Prolactin" , x = NULL) +
+      labs(y = "Prolactin (ng/mL)", subtitle = " " , x = NULL) +
       theme(legend.position = "none",
             axis.text.x = element_text(angle = 45, hjust = 1)) +
       scale_fill_manual(values = sexcolors) +
@@ -608,16 +605,7 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
       theme(legend.position = "none",
             axis.text.x = element_text(angle = 45, hjust = 1)) +
       scale_color_manual(values = sexcolors) +
-      scale_y_continuous(limits = c(0,100)) +
-        geom_text(aes(label = "B", x = 1, y = 100, fontface = "plain"), size = 3) +
-       geom_text(aes(label = "A", x = 2, y = 100), size = 3) +
-    geom_text(aes(label = "A", x = 3, y = 100), size = 3) +
-    geom_text(aes(label = "B", x = 4, y = 100), size = 3) +
-      geom_text(aes(label = "C", x = 5, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 6, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 7, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 8, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 9, y = 100), size = 3) 
+      scale_y_continuous(limits = c(0,100))
       
     p2b <-  ggplot(PRLm, aes(x = treatment, y = plasma_conc, fill = treatment)) +
       geom_boxplot(aes(color = sex)) +
@@ -626,16 +614,7 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
       theme(legend.position = "none",
             axis.text.x = element_text(angle = 45, hjust = 1)) +
       scale_color_manual(values = sexcolors) +
-      scale_y_continuous(limits = c(0,100)) +
-      geom_text(aes(label = "A", x = 1, y = 100, fontface = "plain"), size = 3) +
-       geom_text(aes(label = "A", x = 2, y = 100), size = 3) +
-    geom_text(aes(label = "B", x = 3, y = 100), size = 3) +
-    geom_text(aes(label = "B", x = 4, y = 100), size = 3) +
-      geom_text(aes(label = "B", x = 5, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 6, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 7, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 8, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 9, y = 100), size = 3) 
+      scale_y_continuous(limits = c(0,100))
       
 
     p12 <- plot_grid(p1,p2a,p2b, rel_widths = c(0.25,0.5, 0.5), labels = c("a","b", "c"), label_size = 8, nrow = 1, align = "hv")
@@ -654,7 +633,7 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
       scale_fill_manual(values = colorscharmaip) +
       theme(legend.position = "none",
             axis.text.x = element_text(angle = 45, hjust = 1)) +
-      labs( x = NULL, y = "concentration (ng/mL", subtitle = "females") +
+      labs( x = NULL, y = "Prolactin (ng/mL", subtitle = "females") +
       scale_color_manual(values = sexcolors)
     p3a
 
@@ -725,102 +704,6 @@ figure 2
     plot_grid(allprolactinplots, allcortplots, nrow = 2)
 
 ![](../figures/hormones/figure2-1.png)
-
-prolactin 2
------------
-
-    hormones %>%
-      filter(hormone == "prolactin") %>%
-      group_by(sex) %>%
-      summarise(m = mean(plasma_conc),
-                median = median(plasma_conc))
-
-    ## # A tibble: 2 x 3
-    ##   sex        m median
-    ##   <fct>  <dbl>  <dbl>
-    ## 1 female  38.2   29.1
-    ## 2 male    29.7   17.9
-
-    p1 <- hormones %>%
-      filter(hormone == "prolactin",
-             study == "characterization") %>%
-      ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
-      geom_boxplot() +
-      theme_B3() +
-      labs(y = "concentration (ng/mL)", subtitle = "Prolactin" , x = NULL) +
-      theme(legend.position = "none",
-            axis.text.x = element_text(angle = 45, hjust = 1)) +
-      scale_fill_manual(values = sexcolors) +
-      scale_y_continuous(limits = c(0,100)) 
-    p1
-
-![](../figures/hormones/PRL2-1.png)
-
-    df <- hormones %>%
-      filter(hormone == "prolactin",
-             study == "characterization")
-    p2 <-  ggplot(df, aes(x = treatment, y = plasma_conc, fill = treatment, color = sex)) +
-      geom_boxplot(aes(color = sex)) +
-      theme_B3() +
-      labs(y = NULL, x = NULL, subtitle = " ") +
-      theme(legend.position = "none",
-            axis.text.x = element_text(angle = 45, hjust = 1)) +
-      scale_color_manual(values = sexcolors) +
-      scale_y_continuous(limits = c(0,105)) +
-        geom_text(aes(label = "B", x = 1, y = 100, fontface = "plain"), size = 3) +
-       geom_text(aes(label = "A", x = 2, y = 100), size = 3) +
-    geom_text(aes(label = "A", x = 3, y = 100), size = 3) +
-    geom_text(aes(label = "B", x = 4, y = 100), size = 3) +
-      geom_text(aes(label = "C", x = 5, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 6, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 7, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 8, y = 100), size = 3) +
-      geom_text(aes(label = "D", x = 9, y = 100), size = 3) +
-      geom_text(aes(label = '*', x = 1, y = 105), size = 5) +
-       geom_text(aes(label = '*', x = 2, y = 105), size = 5) 
-      p2
-
-![](../figures/hormones/PRL2-2.png)
-
-    p3 <- hormones %>%
-      filter(hormone == "prolactin",
-             treatment %in% c(controlsremoval, levelsremoval )) %>% 
-      ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
-      geom_boxplot(aes(color = sex)) +
-      theme_B3() +
-      scale_y_continuous(limits = c(0,110)) +
-      scale_fill_manual(values = colorscharmaip) +
-      theme(legend.position = "none",
-            axis.text.x = element_text(angle = 45, hjust = 1)) +
-      labs( x = NULL, y = "concentration (ng/mL", subtitle = " ") +
-      scale_color_manual(values = sexcolors) +
-       geom_text(aes(label = '*', x = 2, y = 105), size = 5) 
-    p3
-
-![](../figures/hormones/PRL2-3.png)
-
-    p4 <- hormones %>%
-      filter(hormone == "prolactin",
-             treatment %in% c(controlstiming, levelstiming )) %>% 
-    ggplot(aes(x = treatment, y = plasma_conc, fill = treatment)) +
-      geom_boxplot(aes(color = sex)) +
-      theme_B3() +
-      scale_y_continuous(limits = c(0,110)) +
-      scale_fill_manual(values = colorscharmaip) +
-      theme(legend.position = "none",
-            axis.text.x = element_text(angle = 45, hjust = 1)) +
-      labs(y = NULL, x = NULL, subtitle = " ") +
-      scale_color_manual(values = sexcolors) 
-    p4
-
-![](../figures/hormones/PRL2-4.png)
-
-    p12 <- plot_grid(p1, p2, rel_widths = c(0.15,0.8), labels = "auto", label_size = 8)
-    p34 <- plot_grid(p3,p4, nrow = 1, rel_widths = c(0.55,0.45), labels = c("c", "d"), label_size = 8)
-
-    plot_grid(p12, p34, nrow = 2)
-
-![](../figures/hormones/PRL2-5.png)
 
 correlations
 ------------
@@ -957,7 +840,7 @@ progesterone
       ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
       geom_boxplot() +
       theme_B3() +
-      labs(y = "concentration (ng/mL)", subtitle = "Progesterone" , x = NULL) +
+      labs(y = "Progesterone (ng/mL)", subtitle = element_blank() , x = NULL) +
       theme(legend.position = "none")   +
       scale_y_continuous(limits = c(0,4.5)) +
       scale_fill_manual(values = sexcolors) 
@@ -982,7 +865,7 @@ progesterone
       scale_y_continuous(limits = c(0,4.5)) +
       scale_fill_manual(values = colorscharmaip) +
       theme(legend.position = "none") +
-      labs( x = NULL, y = "concentration (ng/mL")
+      labs( x = NULL, y = "Progesterone (ng/mL")
 
     p4 <- hormones %>%
       filter(hormone == "progesterone",
@@ -1020,7 +903,7 @@ estradiol and testosterone
       ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
       geom_boxplot() +
       theme_B3() +
-      labs(y = "concentration (ng/mL)", subtitle = "Estradiol" , x = NULL) +
+      labs(y = "Estradiol (ng/mL)", subtitle = element_blank() , x = NULL) +
       theme(legend.position = "none")  +
         scale_y_continuous(limits = c(0,1)) +
       scale_fill_manual(values = sexcolors) 
@@ -1046,7 +929,7 @@ estradiol and testosterone
       scale_y_continuous(limits = c(0,1)) +
       scale_fill_manual(values = colorscharmaip) +
       theme(legend.position = "none") +
-      labs( x = NULL, y = "concentration (ng/mL")
+      labs( x = NULL, y = "Estradiol (ng/mL")
 
 
     p8 <- hormones %>%
@@ -1081,7 +964,7 @@ estradiol and testosterone
       ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
       geom_boxplot() +
       theme_B3() +
-      labs(y = "concentration (ng/mL)", subtitle = "Testosterone" , x = NULL) +
+      labs(y = "Testosterone (ng/mL)", subtitle = element_blank() , x = NULL) +
       theme(legend.position = "none")  +
         scale_y_continuous(limits = c(0,8.5)) +
       scale_fill_manual(values = sexcolors) 
@@ -1129,14 +1012,27 @@ estradiol and testosterone
 
 ![](../figures/hormones/testosterone-2.png)
 
-    sexsteroids <- plot_grid(p1, p2, p3 + labs(y = NULL), p4, p5, p6, p7 + labs(y = NULL), p8, 
-              p9, p10, p11 + labs(y = NULL), p12, nrow = 3, rel_widths =   c(0.175,0.4,0.35,0.25), align = "hv",
-              label_size = 8, labels = c("a", " ", " " , " ",
-                                         "b", " ", " " , " ",
-                                         "c", " ", " " , " "))
+    sexsteroids <- plot_grid(
+           p9 + theme(axis.text.x = element_blank()),  
+           p10 + theme(axis.text.x = element_blank()), 
+           p11 + labs(y = NULL) + theme(axis.text.x = element_blank()), 
+           p12 + theme(axis.text.x = element_blank()),
+            p5 + theme(axis.text.x = element_blank()), 
+           p6 + theme(axis.text.x = element_blank()), 
+           p7 + labs(y = NULL) + theme(axis.text.x = element_blank()), 
+           p8 + theme(axis.text.x = element_blank()), 
+           p1 , 
+           p2 + theme(axis.text.x = element_text(angle = 45, hjust = 1)), 
+           p3 + labs(y = NULL)  + theme(axis.text.x = element_text(angle = 45, hjust = 1)), 
+           p4  + theme(axis.text.x = element_text(angle = 45, hjust = 1)), 
+            nrow = 3, 
+            rel_widths =   c(0.175,0.4,0.35,0.25), align = "hv",
+              label_size = 8, labels = c("A1", "A2", "A3" , "A4",
+                                         "B1", "B2", "B3" , "B4",
+                                         "C1", "C2", "C3" , "C3"))
     sexsteroids
 
-![](../figures/hormones/supplefig-1.png)
+![](../figures/hormones/sexsteroids2-1.png)
 
 pca of hormones
 ---------------
