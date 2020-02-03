@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ──────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -437,7 +437,7 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
     printaovtablesex <- function(myhormone, mydescirption){
       
       aov_all = data.frame()
-      for(i in alllevels3){
+      for(i in alllevels){
         df <- hormones %>% filter(hormone == myhormone,
                                 treatment == i) %>% droplevels()
         aovtable <- apa.aov.table(aov(plasma_conc ~ sex, data  = df))
@@ -465,18 +465,18 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
     ## 2       bldg PRL ~ sex 1, 18  4.47 0.049   *
     ## 3        lay PRL ~ sex 1, 18  2.10 0.165    
     ## 4     inc.d3 PRL ~ sex 1, 18  3.93 0.063    
-    ## 5     inc.d9 PRL ~ sex 1, 22  0.31 0.583    
-    ## 6    inc.d17 PRL ~ sex 1, 19  1.07 0.313    
-    ## 7      hatch PRL ~ sex 1, 18  0.20 0.662    
-    ## 8         n5 PRL ~ sex 1, 18  0.03 0.870    
-    ## 9         n9 PRL ~ sex 1, 18  3.00 0.100    
-    ## 10  m.inc.d8 PRL ~ sex 1, 17  3.37 0.084    
+    ## 5   m.inc.d3 PRL ~ sex 1, 18 10.39 0.005   *
+    ## 6     inc.d9 PRL ~ sex 1, 22  0.31 0.583    
+    ## 7   m.inc.d8 PRL ~ sex 1, 17  3.37 0.084    
+    ## 8   m.inc.d9 PRL ~ sex 1, 17  2.12 0.164    
+    ## 9    inc.d17 PRL ~ sex 1, 19  1.07 0.313    
+    ## 10 m.inc.d17 PRL ~ sex 1, 18  0.02 0.901    
     ## 11   prolong PRL ~ sex 1, 18  2.16 0.159    
-    ## 12    extend PRL ~ sex 1, 17  3.38 0.084    
-    ## 13  m.inc.d3 PRL ~ sex 1, 18 10.39 0.005   *
-    ## 14  m.inc.d9 PRL ~ sex 1, 17  2.12 0.164    
-    ## 15 m.inc.d17 PRL ~ sex 1, 18  0.02 0.901    
-    ## 16      m.n2 PRL ~ sex 1, 16  0.73 0.405
+    ## 12     hatch PRL ~ sex 1, 18  0.20 0.662    
+    ## 13      m.n2 PRL ~ sex 1, 16  0.73 0.405    
+    ## 14    extend PRL ~ sex 1, 17  3.38 0.084    
+    ## 15        n5 PRL ~ sex 1, 18  0.03 0.870    
+    ## 16        n9 PRL ~ sex 1, 18  3.00 0.100
 
     hormones %>%
       filter(hormone == "corticosterone") %>%
@@ -554,11 +554,14 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
 ![](../figures/hormones/cort-4.png)
 
     p34 <- plot_grid(p3,p4, rel_widths = c(0.6,0.4), labels = c("c","d"), label_size = 8 )
-
-
-    plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
+    p34
 
 ![](../figures/hormones/cort-5.png)
+
+    allcortplots <- plot_grid(p12, p34, nrow = 2, rel_heights = c(0.6,0.4))
+    allcortplots
+
+![](../figures/hormones/cort-6.png)
 
     hormones %>%
       filter(hormone == "prolactin") %>%
@@ -711,9 +714,17 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
 
     p34 <- plot_grid(p3a , p3b,p4a, p4b, rel_widths = c(0.55,0.55, 0.45,0.45), labels = c("d","e", "f", "g"), label_size = 8, nrow = 1)
 
-    plot_grid(p12, p34, nrow = 2, rel_heights = c(0.5,0.5))
+    allprolactinplots <- plot_grid(p12, p34, nrow = 2, rel_heights = c(0.5,0.5))
+    allprolactinplots
 
 ![](../figures/hormones/PRL-7.png)
+
+figure 2
+--------
+
+    plot_grid(allprolactinplots, allcortplots, nrow = 2)
+
+![](../figures/hormones/figure2-1.png)
 
 prolactin 2
 -----------
@@ -1118,11 +1129,12 @@ estradiol and testosterone
 
 ![](../figures/hormones/testosterone-2.png)
 
-    plot_grid(p1, p2, p3 + labs(y = NULL), p4, p5, p6, p7 + labs(y = NULL), p8, 
+    sexsteroids <- plot_grid(p1, p2, p3 + labs(y = NULL), p4, p5, p6, p7 + labs(y = NULL), p8, 
               p9, p10, p11 + labs(y = NULL), p12, nrow = 3, rel_widths =   c(0.175,0.4,0.35,0.25), align = "hv",
               label_size = 8, labels = c("a", " ", " " , " ",
                                          "b", " ", " " , " ",
                                          "c", " ", " " , " "))
+    sexsteroids
 
 ![](../figures/hormones/supplefig-1.png)
 
@@ -1165,11 +1177,19 @@ pca of hormones
     c2 <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
       labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
 
-    twos <- plot_grid(a2,b2,c2, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+    twos <- plot_grid(a2 + theme(title = element_blank()),b2,c2, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
 
     plot_grid(ones,twos, nrow = 2)
 
 ![](../figures/hormones/PCA-5.png)
+
+    twos
+
+![](../figures/hormones/PCA-6.png)
+
+    plot_grid(twos,sexsteroids, nrow = 2, rel_heights = c(0.25,0.75), align = "hv")
+
+![](../figures/hormones/figure3-1.png)
 
 smooth funciton
 ===============
