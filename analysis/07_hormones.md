@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -1139,34 +1139,87 @@ pca of hormones
 
 ![](../figures/hormones/PCA-1.png)![](../figures/hormones/PCA-2.png)
 
-    a <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization only") 
+    a1 <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization only") 
     # Contributions of variables to PC1
 
-    b <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
+    b1 <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
                                                                           title = element_blank())
     # Contributions of variables to PC2
-    c <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
+    c1 <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
       labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
 
-    plot_grid(a,b,c, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
-
-![](../figures/hormones/PCA-3.png)
+    ones <- plot_grid(a1,b1,c1, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
 
     # char and manip
     df <- hormoneswide %>% select(prolactin:progesterone)
     res.pca <- PCA(df)
 
-![](../figures/hormones/PCA-4.png)![](../figures/hormones/PCA-5.png)
+![](../figures/hormones/PCA-3.png)![](../figures/hormones/PCA-4.png)
 
-    a <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization & manipluation") 
+    a2 <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization & manipluation") 
     # Contributions of variables to PC1
 
-    b <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
+    b2 <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
                                                                           title = element_blank())
     # Contributions of variables to PC2
-    c <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
+    c2 <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
       labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
 
-    plot_grid(a,b,c, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+    twos <- plot_grid(a2,b2,c2, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
 
-![](../figures/hormones/PCA-6.png)
+    plot_grid(ones,twos, nrow = 2)
+
+![](../figures/hormones/PCA-5.png)
+
+smooth funciton
+===============
+
+    head(hormones)
+
+    ## # A tibble: 6 x 9
+    ##   study  treatment sex   bird_id hormone plasma_conc icons music  iconpath 
+    ##   <fct>  <fct>     <fct> <chr>   <fct>         <dbl> <chr> <chr>  <chr>    
+    ## 1 chara… control   male  x.g     prolac…        3.83 cont… https… ../figur…
+    ## 2 chara… control   male  x.g.g   prolac…        3.28 cont… https… ../figur…
+    ## 3 chara… control   male  x.blk.… prolac…        4.15 cont… https… ../figur…
+    ## 4 chara… control   male  x.g.g.g prolac…       25.3  cont… https… ../figur…
+    ## 5 chara… control   fema… x.g.g.f prolac…       21.5  cont… https… ../figur…
+    ## 6 chara… control   male  x.blu.o prolac…       14.9  cont… https… ../figur…
+
+    ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc, color = hormone)) +
+      geom_smooth() 
+
+![](../figures/hormones/summary-1.png)
+
+    box <- ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc)) +
+      geom_boxplot(aes(fill = treatment)) +
+      #geom_smooth(aes(color = hormone)) +
+      facet_wrap(~hormone, scales = "free_y", nrow = 5) +
+      scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16),
+                         labels = alllevels) +
+      theme_B3() +
+      theme(#strip.text = element_blank(),
+            axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "none",
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA)) +
+      labs(y = "plasma conc. (ng/mL)", x = "parental stage")
+
+    line <- ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc)) +
+      #geom_boxplot(aes(fill = treatment)) +
+      geom_smooth(aes(color = hormone)) +
+      facet_wrap(~hormone, scales = "free_y", nrow = 5) +
+      scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16),
+                         labels = alllevels) +
+      theme_B3() +
+      theme(#strip.text = element_blank(),
+            axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "none",
+            panel.background = element_rect(fill = "transparent",colour = NA),
+            plot.background = element_rect(fill = "transparent",colour = NA)) +
+      labs(y = "plasma conc. (ng/mL)", x = "parental stage") 
+      
+
+    plot_grid(box, line, nrow = 1)
+
+![](../figures/hormones/summary-2.png)

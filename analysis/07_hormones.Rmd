@@ -919,31 +919,71 @@ hormoneswidechar <- hormoneswide %>% filter(treatment %in% charlevels)
 df <- hormoneswidechar %>% select(prolactin:progesterone)
 res.pca <- PCA(df)
 
-a <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization only") 
+a1 <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization only") 
 # Contributions of variables to PC1
 
-b <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
+b1 <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
                                                                       title = element_blank())
 # Contributions of variables to PC2
-c <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
+c1 <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
   labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
 
-plot_grid(a,b,c, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+ones <- plot_grid(a1,b1,c1, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
 
 # char and manip
 df <- hormoneswide %>% select(prolactin:progesterone)
 res.pca <- PCA(df)
 
-a <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization & manipluation") 
+a2 <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization & manipluation") 
 # Contributions of variables to PC1
 
-b <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
+b2 <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
                                                                       title = element_blank())
 # Contributions of variables to PC2
-c <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
+c2 <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
   labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
 
-plot_grid(a,b,c, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+twos <- plot_grid(a2,b2,c2, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
 
+plot_grid(ones,twos, nrow = 2)
+```
+
+# smooth funciton
+
+```{r summary}
+head(hormones)
+ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc, color = hormone)) +
+  geom_smooth() 
+
+box <- ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc)) +
+  geom_boxplot(aes(fill = treatment)) +
+  #geom_smooth(aes(color = hormone)) +
+  facet_wrap(~hormone, scales = "free_y", nrow = 5) +
+  scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16),
+                     labels = alllevels) +
+  theme_B3() +
+  theme(#strip.text = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent",colour = NA),
+        plot.background = element_rect(fill = "transparent",colour = NA)) +
+  labs(y = "plasma conc. (ng/mL)", x = "parental stage")
+
+line <- ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc)) +
+  #geom_boxplot(aes(fill = treatment)) +
+  geom_smooth(aes(color = hormone)) +
+  facet_wrap(~hormone, scales = "free_y", nrow = 5) +
+  scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16),
+                     labels = alllevels) +
+  theme_B3() +
+  theme(#strip.text = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "none",
+        panel.background = element_rect(fill = "transparent",colour = NA),
+        plot.background = element_rect(fill = "transparent",colour = NA)) +
+  labs(y = "plasma conc. (ng/mL)", x = "parental stage") 
+  
+
+plot_grid(box, line, nrow = 1)
 ```
 
