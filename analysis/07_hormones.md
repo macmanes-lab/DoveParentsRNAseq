@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -40,7 +40,7 @@
     ## Warning: Column `icons` joining factor and character vector, coercing into
     ## character vector
 
-    knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE)
+    knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE, cache = T)
 
     colData  <- read_csv("../metadata/00_birds.csv") %>%
       mutate(RNAseq = "RNAseq",
@@ -202,7 +202,7 @@
         droplevels() %>% 
       ggplot(aes(x = as.numeric(treatment), y = plasma_conc)) +
             geom_smooth(aes(colour = sex)) +
-        geom_boxplot(aes(fill = treatment, alpha = sex)) +
+        geom_boxplot(aes(fill = treatment)) +
         mytheme() +
         theme(axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),
               legend.position = "none") +
@@ -211,7 +211,6 @@
         labs(y = myylab, x = NULL) +
         guides(fill = guide_legend(order=1),
              color = guide_legend(order=2)) +
-        scale_alpha_manual(values = c(0.75,1)) +
         scale_x_continuous(breaks = c(1, 2, 3, 4, 5, 6, 7, 8, 9),
                            labels = charlevels)
       }
@@ -424,89 +423,6 @@ do control bird with high prolactin hormone have high PRL expression in the pitu
     ## 1 blu.o.x.ATLAS female control   pituitary  20.9
     ## 2 L.W33         male   control   pituitary  19.9
 
-for rechelle
-------------
-
-    rechelle <- hormones %>%
-      dplyr::filter(hormone %in% c("prolactin", "corticosterone"),
-                    treatment %in% c("lay", "inc.d9", "hatch", "n9")) %>%
-      dplyr::select(-icons, -music, -iconpath)
-       
-    rechelle$hormone <- factor(rechelle$hormone, levels = c("prolactin", "corticosterone"))
-
-    prl.rechelle <- rechelle %>% filter(hormone == "prolactin")   %>%  droplevels()
-    cort.rechelle <- rechelle %>% filter(hormone == "corticosterone")   %>%  droplevels()
-
-    TukeyHSD(aov(plasma_conc ~  treatment, data=prl.rechelle))
-
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = plasma_conc ~ treatment, data = prl.rechelle)
-    ## 
-    ## $treatment
-    ##                    diff        lwr       upr     p adj
-    ## inc.d9-lay     8.646903  -1.704891  18.99870 0.1343466
-    ## hatch-lay     62.492635  51.680540  73.30473 0.0000000
-    ## n9-lay        28.375968  17.563873  39.18806 0.0000000
-    ## hatch-inc.d9  53.845733  43.493939  64.19753 0.0000000
-    ## n9-inc.d9     19.729065   9.377272  30.08086 0.0000195
-    ## n9-hatch     -34.116667 -44.928763 -23.30457 0.0000000
-
-    TukeyHSD(aov(plasma_conc ~  treatment, data=cort.rechelle))
-
-    ##   Tukey multiple comparisons of means
-    ##     95% family-wise confidence level
-    ## 
-    ## Fit: aov(formula = plasma_conc ~ treatment, data = cort.rechelle)
-    ## 
-    ## $treatment
-    ##                     diff        lwr       upr     p adj
-    ## inc.d9-lay   -0.19581931 -1.0562772 0.6646386 0.9326007
-    ## hatch-lay     0.52348100 -0.3869864 1.4339484 0.4370185
-    ## n9-lay       -0.21615565 -1.1148746 0.6825633 0.9216744
-    ## hatch-inc.d9  0.71930032 -0.1534213 1.5920219 0.1426297
-    ## n9-inc.d9    -0.02033634 -0.8807942 0.8401216 0.9999136
-    ## n9-hatch     -0.73963665 -1.6501041 0.1708308 0.1519465
-
-    rechelleplot <- function(mydf, myylab){
-      
-      p <- ggplot(mydf, aes(x = treatment, y = plasma_conc, fill = sex)) +
-      geom_point(aes(color = sex), position = position_dodge(0.9), size = 2)+
-      geom_boxplot(alpha = 0.5, outlier.shape = NA) +
-      scale_color_manual(name = "Sex", values = c("gray50", "maroon"))+
-      scale_fill_manual(name = "Sex", values = c("gray50", "maroon"))+
-
-      theme(axis.text.x = element_text(angle = 45, hjust = 1),
-             legend.position = "none",
-              strip.text = element_blank()) +
-        theme_classic()+
-      theme(text = element_text(size= 15)) +
-        labs(x = "Stage", y = myylab) 
-      return(p)
-
-    }
-
-    #PRL
-    rechelleplot(prl.rechelle, "Prolactin (ng/mL)")
-
-![](../figures/hormones/forrechelle-1.png)
-
-    rechelleplot(prl.rechelle, "Prolactin (ng/mL)") + 
-      scale_y_continuous(breaks = c(0,25,50,75,100, 125), limits = c(-20,125)) +
-      geom_signif(comparisons=list(c("lay", "hatch")), annotations= "p < 0.001", y_position = 100, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
-      geom_signif(comparisons=list(c("lay", "n9")), annotations= "p < 0.001", y_position = 110, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
-      geom_signif(comparisons=list(c("hatch", "n9")), annotations= "p < 0.001", y_position = 120, tip_length = 0.05, vjust = 0, color= "black" , textsize = 5 ) +
-      geom_signif(comparisons=list(c("inc.d9", "hatch")), annotations= "p < 0.001", y_position = -5, tip_length = -0.05, vjust = 2, color= "black" , textsize = 5 ) +
-      geom_signif(comparisons=list(c("inc.d9", "n9")), annotations= "p < 0.001", y_position = -15, tip_length = -0.05, vjust = 2, color= "black" , textsize = 5 )
-
-![](../figures/hormones/forrechelle-2.png)
-
-    #CORT
-    rechelleplot(cort.rechelle, "Corticosterone (ng/mL)")
-
-![](../figures/hormones/forrechelle-3.png)
-
     hormones %>%
       filter(study == "characterization") %>%
       ggplot(aes(x = sex, y = plasma_conc, fill = sex)) +
@@ -554,13 +470,13 @@ for rechelle
     ## 7      hatch PRL ~ sex 1, 18  0.20 0.662    
     ## 8         n5 PRL ~ sex 1, 18  0.03 0.870    
     ## 9         n9 PRL ~ sex 1, 18  3.00 0.100    
-    ## 10  m.inc.d3 PRL ~ sex 1, 18 10.39 0.005   *
-    ## 11  m.inc.d9 PRL ~ sex 1, 17  2.12 0.164    
-    ## 12 m.inc.d17 PRL ~ sex 1, 18  0.02 0.901    
-    ## 13      m.n2 PRL ~ sex 1, 16  0.73 0.405    
-    ## 14  m.inc.d8 PRL ~ sex 1, 17  3.37 0.084    
-    ## 15   prolong PRL ~ sex 1, 18  2.16 0.159    
-    ## 16    extend PRL ~ sex 1, 17  3.38 0.084
+    ## 10  m.inc.d8 PRL ~ sex 1, 17  3.37 0.084    
+    ## 11   prolong PRL ~ sex 1, 18  2.16 0.159    
+    ## 12    extend PRL ~ sex 1, 17  3.38 0.084    
+    ## 13  m.inc.d3 PRL ~ sex 1, 18 10.39 0.005   *
+    ## 14  m.inc.d9 PRL ~ sex 1, 17  2.12 0.164    
+    ## 15 m.inc.d17 PRL ~ sex 1, 18  0.02 0.901    
+    ## 16      m.n2 PRL ~ sex 1, 16  0.73 0.405
 
     hormones %>%
       filter(hormone == "corticosterone") %>%
@@ -963,6 +879,52 @@ correlations
 
 ![](../figures/hormones/correlations2-2.png)
 
+    hormoneswide %>%
+      pivot_longer(cols = c(prolactin, estradiol, testosterone, progesterone), names_to = "hormones", values_to = "conc", values_drop_na = TRUE) %>%
+      filter(study == "characterization") %>%
+      ggplot(aes(x = corticosterone, y = conc)) +
+      geom_point(aes(color = treatment)) +
+      geom_smooth(color = "darkgrey", method = "lm") +
+      facet_grid(hormones ~ treatment, scales = "free_y")  +
+      theme_B3() +
+      theme(legend.position = "bottom",
+            legend.title = element_blank()) +
+      scale_color_manual(values = colorscharmaip2) +
+      guides(color = guide_legend(nrow = 1)) +
+      labs(y = "conc. (ng/mL)", x = "corticosterone (ng/mL)")
+
+![](../figures/hormones/correlations2-3.png)
+
+    hormoneswide %>%
+      pivot_longer(cols = c(corticosterone, estradiol, testosterone, progesterone), names_to = "hormones", values_to = "conc", values_drop_na = TRUE) %>%
+      filter(study == "characterization") %>%
+      ggplot(aes(x = prolactin, y = conc)) +
+      geom_point(aes(color = treatment)) +
+      geom_smooth(color = "darkgrey", method = "lm") +
+      facet_grid(hormones ~ treatment, scales = "free_y")  +
+      theme_B3() +
+      theme(legend.position = "bottom",
+            legend.title = element_blank()) +
+      scale_color_manual(values = colorscharmaip2) +
+      guides(color = guide_legend(nrow = 1)) +
+      labs(y = "conc. (ng/mL)", x = "prolactin (ng/mL)")
+
+![](../figures/hormones/correlations2-4.png)
+
+    ggplot(hormoneswide, aes(x = prolactin, y = corticosterone, color = treatment)) +
+      geom_point() + geom_smooth(method = "lm") +
+      facet_wrap(~treatment) +
+      scale_color_manual(values =  colorscharmaip) + theme(legend.position = "none")
+
+![](../figures/hormones/correlations2-5.png)
+
+    ggplot(hormoneswide, aes(x = prolactin, y = testosterone, color = treatment)) +
+      geom_point() + geom_smooth(method = "lm") +
+      facet_wrap(~treatment) +
+      scale_color_manual(values =  colorscharmaip) + theme(legend.position = "none")
+
+![](../figures/hormones/correlations2-6.png)
+
 progesterone
 ------------
 
@@ -1163,3 +1125,48 @@ estradiol and testosterone
                                          "c", " ", " " , " "))
 
 ![](../figures/hormones/supplefig-1.png)
+
+pca of hormones
+---------------
+
+    library("factoextra")
+    library("FactoMineR")
+
+    # char only
+    hormoneswidechar <- hormoneswide %>% filter(treatment %in% charlevels)
+    df <- hormoneswidechar %>% select(prolactin:progesterone)
+    res.pca <- PCA(df)
+
+![](../figures/hormones/PCA-1.png)![](../figures/hormones/PCA-2.png)
+
+    a <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization only") 
+    # Contributions of variables to PC1
+
+    b <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
+                                                                          title = element_blank())
+    # Contributions of variables to PC2
+    c <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
+      labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
+
+    plot_grid(a,b,c, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+
+![](../figures/hormones/PCA-3.png)
+
+    # char and manip
+    df <- hormoneswide %>% select(prolactin:progesterone)
+    res.pca <- PCA(df)
+
+![](../figures/hormones/PCA-4.png)![](../figures/hormones/PCA-5.png)
+
+    a <- fviz_pca_var(res.pca, col.var = "black", title = "Charactherization & manipluation") 
+    # Contributions of variables to PC1
+
+    b <- fviz_contrib(res.pca, choice = "var", axes = 1, top = 10) + labs(y = "Dim 1 contibutions (%)",
+                                                                          title = element_blank())
+    # Contributions of variables to PC2
+    c <- fviz_contrib(res.pca, choice = "var", axes = 2, top = 10) +
+      labs(y = "Dim 2 contibutions (%)") + theme(title = element_blank())
+
+    plot_grid(a,b,c, nrow = 1, rel_widths = c(1,0.425,0.425), align = "hv")
+
+![](../figures/hormones/PCA-6.png)
