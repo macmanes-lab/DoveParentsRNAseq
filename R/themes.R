@@ -156,38 +156,18 @@ colorstissue <- c("hypothalamus" = "#d95f02",
 
 sexcolors <- c("female" = "#969696", "male" = "#525252")
 
-colorsvolcano <-  c("control" = "#F8766D", 
-                     "bldg"= "#D39200", 
-                     "lay"= "#93AA00", 
-                     "inc.d3"= "#00BA38", 
-                     "inc.d9"= "#00C19F", 
-                     "inc.d17"= "#00B9E3", 
-                     "hatch"= "#619CFF", 
-                     "n5"= "#DB72FB", 
-                     "n9"= "#FF61C3",
-                     "m.inc.d3" = "#CDCDCD", 
-                     "m.inc.d9" = "#959595", 
-                     "m.inc.d17" = "#626262",
-                     "m.n2" = "#262625", 
+colorsvolcano <-  c(colorscharnew,
                     
-                    "m.inc.d8" = "#fcc5c0", 
-                    "prolong" = "#ae017e" , 
-                     "extend" = "#7a0177",
+                    "m.inc.d8" = "#cbc9e2", 
+                    "prolong" = "#9e9ac8" , 
+                     "extend" = "#6a51a3",
                     
                     "male" = "#525252",
                     "female" = "#969696",
                     
                     "NS" = "#bdbdbd")
 
-colorsvolcanochar <-  c("control" = "#F8766D", 
-                    "bldg"= "#D39200", 
-                    "lay"= "#93AA00", 
-                    "inc.d3"= "#00BA38", 
-                    "inc.d9"= "#00C19F", 
-                    "inc.d17"= "#00B9E3", 
-                    "hatch"= "#619CFF", 
-                    "n5"= "#DB72FB", 
-                    "n9"= "#FF61C3",
+colorsvolcanochar <-  c(colorscharnew,
                     "NS" = "#bdbdbd")
 
 myannotationcolors <- list(sex = sexcolors,
