@@ -1010,9 +1010,6 @@ table2 <- resall %>%
   pivot_wider( names_from = hormone, values_from = diffsig)
 table2
 
-write.csv(table1, "../../parentalhormones/data/table-1.csv")
-write.csv(table2, "../../parentalhormones/data/table-2.csv")
-
 
 ```
 
@@ -1030,6 +1027,14 @@ meanTE <- hormoneswide %>%
   dplyr::mutate(timepoint = as.numeric(treatment)) %>%
   select(timepoint, treatment, meanTestosterone, meanEstradiol)
 meanTE
-write.csv("../results/07_meanTE.csv", row.names = F)
 ```
+
+
+```{r savefiles}
+write.csv(meanTE, "../results/07_meanTE.csv", row.names = F)
+write.csv(hormones, "../results/07_hormones.csv", row.names = F)
+write.csv(hormoneswide, "../results/07_hormoneswide.csv", row.names = F)
+```
+
+
 

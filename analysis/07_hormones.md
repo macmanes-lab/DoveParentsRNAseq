@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✔ ggplot2 3.2.1     ✔ purrr   0.3.3
     ## ✔ tibble  2.1.3     ✔ dplyr   0.8.3
     ## ✔ tidyr   1.0.0     ✔ stringr 1.4.0
     ## ✔ readr   1.3.1     ✔ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## ✖ dplyr::filter() masks stats::filter()
     ## ✖ dplyr::lag()    masks stats::lag()
 
@@ -3493,5 +3493,34 @@ stats
     ## 10 inc.d17-m.inc.d3  -0.22, NS -0.07, NS 0.46, *    0.62, ***    0.81, *** 
     ## # … with 46 more rows
 
-    write.csv(table1, "../../parentalhormones/data/table-1.csv")
-    write.csv(table2, "../../parentalhormones/data/table-2.csv")
+summary for owen
+----------------
+
+    meanTE <- hormoneswide %>% 
+      dplyr::group_by(treatment) %>%
+      dplyr::summarise(meanTestosterone = (mean(testosterone, na.rm = TRUE)), 
+                       meanEstradiol = mean(estradiol, na.rm = TRUE)) %>%
+      dplyr::mutate(meanTestosterone = round(meanTestosterone,2)) %>%
+      dplyr::mutate(meanEstradiol = round(meanEstradiol,2)) %>%
+      dplyr::filter(treatment %in% charlevels) %>%
+      droplevels() %>%
+      dplyr::mutate(timepoint = as.numeric(treatment)) %>%
+      select(timepoint, treatment, meanTestosterone, meanEstradiol)
+    meanTE
+
+    ## # A tibble: 9 x 4
+    ##   timepoint treatment meanTestosterone meanEstradiol
+    ##       <dbl> <fct>                <dbl>         <dbl>
+    ## 1         1 control               0.96          0.12
+    ## 2         2 bldg                  1.54          0.34
+    ## 3         3 lay                   0.66          0.3 
+    ## 4         4 inc.d3                0.59          0.33
+    ## 5         5 inc.d9                0.81          0.15
+    ## 6         6 inc.d17               1.39          0.25
+    ## 7         7 hatch                 1.23          0.31
+    ## 8         8 n5                    0.51          0.22
+    ## 9         9 n9                    2.33          0.54
+
+    write.csv(meanTE, "../results/07_meanTE.csv", row.names = F)
+    write.csv(hormones, "../results/07_hormones.csv", row.names = F)
+    write.csv(hormoneswide, "../results/07_hormoneswide.csv", row.names = F)

@@ -91,7 +91,7 @@ savecols <- as.vector(savecols)
 vsd.pit <- vsd.pit %>% dplyr::select(one_of(savecols)) 
 vsd.pit$genes <- row.names(vsd.pit)
 
-candidategenes <- c("PRL", "BRCA1")
+candidategenes <- c("PRL", "BRCA1", "PRLR")
 candidates.pit <- vsd.pit %>% dplyr::filter(genes %in% candidategenes)
 candidates.pit <- as.data.frame(candidates.pit)
 row.names(candidates.pit) <- candidates.pit$genes
@@ -493,19 +493,19 @@ p2
 ## music for own
 
 ```{r}
-meanBrcaPrl <- candidates.pit %>% 
+meanPRLPRLR <- candidates.pit %>% 
     droplevels() %>% 
   dplyr::group_by(treatment, sex) %>%
-  dplyr::summarise(meanBRCA1 = mean(BRCA1), 
+  dplyr::summarise(meanPRLR = mean(PRLR), 
                    meanPRL = mean(PRL)) %>%
-  dplyr::mutate(meanBRCA1 = round(meanBRCA1,2)) %>%
+  dplyr::mutate(meanPRLR = round(meanPRLR,2)) %>%
   dplyr::mutate(meanPRL = round(meanPRL,1)) %>%
   dplyr::filter(treatment %in% charlevels) %>%
   droplevels() %>%
   dplyr::mutate(timepoint = as.numeric(treatment)) %>%
-  select(timepoint, treatment, sex, meanPRL, meanBRCA1)
-meanBrcaPrl
-summary(meanBrcaPrl)
+  select(timepoint, treatment, sex, meanPRL, meanPRLR)
+meanPRLPRLR
+
 ```
 
 
@@ -514,7 +514,7 @@ summary(meanBrcaPrl)
 write.csv(candidates.pit, "../results/16_pitPRL.csv")
 write.csv(aov_all, "../results/16_aov_PRLsex.csv")
 write.csv(aov_manip, "../results/16_aov_PRLsextreatment.csv")
-write.csv(meanBrcaPrl, "../results/16_meanBrcaPrl.csv", row.names = F)
+write.csv(meanPRLPRLR, "../results/16_meanPRLPRLR.csv", row.names = F)
 
 ```
 
