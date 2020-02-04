@@ -1016,3 +1016,20 @@ write.csv(table2, "../../parentalhormones/data/table-2.csv")
 
 ```
 
+## summary for owen
+
+```{r}
+meanTE <- hormoneswide %>% 
+  dplyr::group_by(treatment) %>%
+  dplyr::summarise(meanTestosterone = (mean(testosterone, na.rm = TRUE)), 
+                   meanEstradiol = mean(estradiol, na.rm = TRUE)) %>%
+  dplyr::mutate(meanTestosterone = round(meanTestosterone,2)) %>%
+  dplyr::mutate(meanEstradiol = round(meanEstradiol,2)) %>%
+  dplyr::filter(treatment %in% charlevels) %>%
+  droplevels() %>%
+  dplyr::mutate(timepoint = as.numeric(treatment)) %>%
+  select(timepoint, treatment, meanTestosterone, meanEstradiol)
+meanTE
+write.csv("../results/07_meanTE.csv", row.names = F)
+```
+
