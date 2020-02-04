@@ -904,7 +904,8 @@ box <- ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc)) +
         legend.position = "none",
         panel.background = element_rect(fill = "transparent",colour = NA),
         plot.background = element_rect(fill = "transparent",colour = NA)) +
-  labs(y = "plasma conc. (ng/mL)", x = "parental stage")
+  labs(y = "plasma conc. (ng/mL)", x = "parental stage") +
+  scale_fill_manual(values = colorscharmaip)
 
 line <- ggplot(hormones, aes(x = as.numeric(treatment), y = plasma_conc)) +
   #geom_boxplot(aes(fill = treatment)) +
