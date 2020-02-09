@@ -86,11 +86,12 @@ PETC <- read_excel("../results/hormones.xlsx", sheet = 1)  %>%
                             "male" = "m"),
                        study = fct_collapse(treatment,
                                 characterization = charlevels,
-                                manipulation = maniplevels1)) %>% 
+                                manipulation = maniplevels1),
+                       moltbin = as.integer(moltbin)) %>% 
               dplyr::mutate(bird_id = gsub("[[:punct:]]", "." , id)) %>% 
               dplyr::select(bird_id, treatment, sex, study, 
-                            corticosterone, estradiol, testosterone, progesterone) %>% 
-              pivot_longer(cols = corticosterone:progesterone,
+                            corticosterone, estradiol, testosterone, progesterone, moltbin) %>% 
+              pivot_longer(cols = corticosterone:moltbin,
                            names_to = "hormone", values_to = "plasma_conc",
                            values_drop_na = TRUE) %>% 
               drop_na() %>% droplevels()  
@@ -108,7 +109,6 @@ hormones$okay <- ifelse(hormones$hormone == "corticosterone" & hormones$plasma_c
                                ifelse(hormones$hormone == "estradiol" & hormones$sex == "male", "bad", "okay")))))
 hormones <- hormones %>% filter(okay == "okay") %>% droplevels() %>% select(-okay)
 
-write.csv(hormones, "../results/hormones.csv", row.names = F)
 
 # make a winder one for correlations
 hormoneswide <- hormones %>% pivot_wider(names_from = "hormone", values_from = "plasma_conc", 
@@ -116,15 +116,13 @@ hormoneswide <- hormones %>% pivot_wider(names_from = "hormone", values_from = "
 hormoneswide$treatment <- factor(hormoneswide$treatment, levels = alllevels)
 head(hormoneswide)
 
-# for facet wrapping
-hormones <- left_join(hormones, birds)
-
+# for faceting
+hormones <- hormones %>% filter(hormone != "moltbin")
 hormones$treatment <- factor(hormones$treatment, levels = alllevels)
-
-
 hormones$hormone <- factor(hormones$hormone, 
                            levels = c("prolactin", "corticosterone", "progesterone", 
                                       "estradiol", "testosterone"))
+# for stats
 hormones$logconc <- log10(hormones$plasma_conc)
 head(hormones)
 ```
@@ -166,6 +164,9 @@ meanTE
 write.csv(meanTE, "../results/07_meanTE.csv", row.names = F)
 write.csv(hormones, "../results/07_hormones.csv", row.names = F)
 write.csv(hormoneswide, "../results/07_hormoneswide.csv", row.names = F)
+
+#write.csv(hormones, "../../parentalhormones/data/hormones.csv", row.names = F)
+#write.csv(hormoneswide, "../../parentalhormones/data/hormoneswide.csv", row.names = F)
 ```
 
 
