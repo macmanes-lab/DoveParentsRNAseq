@@ -806,3 +806,85 @@ network_plot.cor_df <- function(rdf,
   
 }
 
+## friz pca with genes and PCs 
+
+makefvizdf <-  function(whichtissue, whichtreatment, whichsex){
+  colData <- colData %>%
+    dplyr::filter(tissue %in% whichtissue,
+                  treatment %in% whichtreatment,
+                  sex %in% whichsex) 
+  row.names(colData) <- colData$V1
+  
+  
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  countData <- as.data.frame(t(countData))
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  countData <- as.data.frame(t(countData))
+  
+  mypca <- prcomp(countData)
+  return(mypca)
+}
+
+plotfriz <- function(frizdf){
+  
+  p <- fviz_pca_var(frizdf,  labelsize = 3.5 , axes.linetype = "blank", 
+                    repel = T ,  select.var= list(contrib = 3))  + 
+    labs(title = NULL) + 
+    theme_B3() + 
+    theme(axis.text = element_blank())
+  print(p)
+}
+
+# pca 
+
+subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
+  
+  colData <- colData %>%
+    dplyr::filter(tissue %in% whichtissue,
+                  treatment %in% whichtreatment,
+                  sex %in% whichsex) 
+  row.names(colData) <- colData$V1
+  
+  
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  countData <- as.data.frame(t(countData))
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  countData <- as.data.frame(t(countData))
+  
+  mypca <- prcomp(countData)
+  
+  mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
+                        PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
+                        ID = row.names(countData))
+  mypcadf$V1 <- row.names(mypcadf)
+  mypcadf <- left_join(colData, mypcadf)
+  mypcadf <- mypcadf %>% select(bird,sex,tissue,treatment,PC1:PC6)
+  return(mypcadf)
+}
+
+#  subsetmakepca(tissuelevels, charlevels, sexlevels)
+#  subsetmakepca("hypothalamus", charlevels, sexlevels)
+
+# plotcolorfulpcs(charpca, charpca$tissue, colorstissue)  
+plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){
+  p <- mypcadf %>%
+    ggplot(aes(x = PC1, y = PC2, color = whichfactor )) +
+    geom_point(size = 1)  +
+    theme_B3() +
+    theme(legend.title = element_blank(),
+          axis.text = element_blank(),
+          legend.position = "none") +
+    labs(x = "PC1", y = "PC2")  +
+    scale_color_manual(values = whichcolors) +
+    scale_shape_manual(values = myshapes)
+  print(p)
+}
+
+
+

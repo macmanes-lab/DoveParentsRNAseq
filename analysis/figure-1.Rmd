@@ -1,0 +1,131 @@
+---
+title: "Fig1"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggfortify)
+library(factoextra)
+library(cowplot)
+library(Rtsne)
+library(viridis)
+library(forcats)
+
+source("../R/themes.R")
+
+knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
+```
+
+# Figure 1. Experimental design and tSNE analysis
+
+## wrange data
+
+Note, the input file is too big for storage on github :(
+
+```{r read}
+pseudocounts <- read_csv("../results/01_pseudo.counts.csv")
+head(pseudocounts[1:3])
+pseudocounts <- as.data.frame(pseudocounts)
+row.names(pseudocounts) <- pseudocounts$X1
+pseudocounts$X1 <- NULL
+# prep count data for all samples
+countData <- as.data.frame(t(pseudocounts))
+head(countData[1:3])
+```
+
+```{r colData}
+# prep col data for all samples
+colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+colData$treatment <- factor(colData$treatment, levels = alllevels)
+colData <- colData %>% mutate(tissue = fct_recode(tissue, "gonads" = "gonad"))
+colData$tissue <- factor(colData$tissue, levels = tissuelevels)
+row.names(colData) <- colData$V1
+
+# check ready for analysis
+#row.names(countData) == row.names(colData)
+
+head(colData)
+```
+
+
+```{r tSNE-df}
+# prep for tsne
+
+subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
+
+  colData <- colData %>%
+    dplyr::filter(tissue %in% whichtissue,
+                  treatment %in% whichtreatment,
+                  sex %in% whichsex) 
+  row.names(colData) <- colData$V1
+
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  countData <- as.data.frame(t(countData))
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  countData <- as.data.frame(t(countData))
+
+  euclidist <- dist(countData) # euclidean distances between the rows
+
+  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
+  tsne_df = as.data.frame(tsne_model$Y) 
+
+  # prep for adding columns
+  colData2 <- colData 
+  colData2$V1 <- NULL
+  tsne_df_cols <- cbind(colData2, tsne_df)
+  return(tsne_df_cols)
+}
+
+chartsne <- subsetmaketsne(tissuelevels, charlevels, sexlevels)
+hyptsne <- subsetmaketsne("hypothalamus", charlevels, sexlevels)
+pittsne <- subsetmaketsne("pituitary", charlevels, sexlevels)
+gontsne <- subsetmaketsne("gonads", charlevels, sexlevels)
+
+ftsne <-  subsetmaketsne(tissuelevels, charlevels, "female")
+mtsne <-  subsetmaketsne(tissuelevels, charlevels, "male")
+
+```
+
+## make figure
+
+```{r fig1, fig.width=7}
+
+plottsneelipse <- function(tsnedf, whichfactor, whichcolors){
+  p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
+    geom_point(size = 1, aes(color = whichfactor)) +
+    theme_B3() +
+    labs(x = "tSNE 1", y = "tSNE 2") +
+    scale_color_manual(values = whichcolors) +
+    theme(legend.position = "none",
+          axis.text = element_blank()) +
+    stat_ellipse(linetype = 2, aes(color = tissue )) 
+  return(p)
+}
+
+
+a <- plottsneelipse(chartsne, chartsne$tissue, allcolors) + labs(subtitle = "tissue\n")    
+b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "tissue * sex\n")    
+c <- plottsneelipse(ftsne, ftsne$treatment, allcolors ) + labs(y = " ", subtitle = "females\ntissue * treatment")
+d <- plottsneelipse(mtsne, mtsne$treatment, allcolors ) + labs(y = " ", subtitle = "males\ntissue * treatment") 
+
+abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("b", "c", "d", "e"), label_size = 12 )
+
+expdesign <- png::readPNG("../figures/images/fig1a_fig1a.png")
+expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
+
+fig1 <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 12, rel_heights = c(0.5,1))
+fig1
+```
+
+
+
+
+
+
+
+
+

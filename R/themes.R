@@ -167,6 +167,8 @@ colorsvolcano <-  c(colorscharnew,
                     
                     "NS" = "#bdbdbd")
 
+allcolors <- c(colorscharmaip, sexcolors, colorstissue)
+
 colorsvolcanochar <-  c(colorscharnew,
                     "NS" = "#bdbdbd")
 
