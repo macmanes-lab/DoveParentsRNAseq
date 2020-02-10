@@ -615,10 +615,7 @@ selectcBRCA1vsds <- function(listofgenes, vsd, colData){
 
 
 
-
-
-
-### modified corrr fucniont
+### modified corrr function
 
 network_plot.cor_df <- function(rdf,
                                 min_cor = .30,
@@ -714,85 +711,84 @@ network_plot.cor_df <- function(rdf,
   
 }
 
-## friz pca with genes and PCs 
+## PCA and FVIZ plots
 
-makefvizdf <-  function(whichtissue, whichtreatment, whichsex){
-  colData <- colData %>%
-    dplyr::filter(tissue %in% whichtissue,
-                  treatment %in% whichtreatment,
-                  sex %in% whichsex) 
-  row.names(colData) <- colData$V1
+subsetmakepca <- function(whichtissue, whichtreatment, whichsex){	
+  colData <- colData %>%	
+    dplyr::filter(tissue %in% whichtissue,	
+                  treatment %in% whichtreatment,	
+                  sex %in% whichsex) 	
+  row.names(colData) <- colData$V1	
+  # save counts that match colData	
+  savecols <- as.character(colData$V1) 	
+  savecols <- as.vector(savecols) 	
   
+  countData <- as.data.frame(t(countData))	
+  countData <- countData %>% dplyr::select(one_of(savecols)) 	
+  countData <- as.data.frame(t(countData))	
   
-  # save counts that match colData
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
+  mypca <- prcomp(countData)	
+  mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 	
+                        PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],	
+                        ID = row.names(countData))	
+  mypcadf$V1 <- row.names(mypcadf)	
+  mypcadf <- left_join(colData, mypcadf)	
+  mypcadf <- mypcadf %>% dplyr::select(bird,sex,tissue,treatment,PC1:PC6)	
+  return(mypcadf)	
+}	
+
+
+plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){	
+  p <- mypcadf %>%	
+    ggplot(aes(x = PC1, y = PC2, shape = tissue, color = whichfactor )) +	
+    geom_point(size = 1)  +	
+    theme_B3() +	
+    theme(legend.title = element_blank(),	
+          axis.text = element_blank(),	
+          legend.position = "none") +	
+    labs(x = "PC1", y = "PC2")  +	
+    scale_color_manual(values = whichcolors) +	
+    scale_shape_manual(values = myshapes)	+
+    stat_ellipse( )
   
-  countData <- as.data.frame(t(countData))
-  countData <- countData %>% dplyr::select(one_of(savecols)) 
-  countData <- as.data.frame(t(countData))
+  return(p)	
+}	
+
+
+makefvizdf <-  function(whichtissue, whichtreatment, whichsex){	
+  colData <- colData %>%	
+    dplyr::filter(tissue %in% whichtissue,	
+                  treatment %in% whichtreatment,	
+                  sex %in% whichsex) 	
+  row.names(colData) <- colData$V1	
+  # save counts that match colData	
+  savecols <- as.character(colData$V1) 	
+  savecols <- as.vector(savecols) 	
   
-  mypca <- prcomp(countData)
-  return(mypca)
-}
+  countData <- as.data.frame(t(countData))	
+  countData <- countData %>% dplyr::select(one_of(savecols)) 	
+  countData <- as.data.frame(t(countData))	
+  mypca <- prcomp(countData)	
+  return(mypca)	
+}	
+
 
 plotfriz <- function(frizdf){
   
-  p <- fviz_pca_var(frizdf,  labelsize = 3.5 , axes.linetype = "blank", 
-                    repel = T ,  select.var= list(contrib = 3))  + 
+  p <- fviz_pca_var(frizdf,  labelsize = 3.5 , 
+                    #axes.linetype = "blank", 
+                    repel = T , 
+                    col.var = "black",
+                    ind.var = "black",
+                    select.var= list(contrib = 3))  + 
     labs(title = NULL) + 
     theme_B3() + 
-    theme(axis.text = element_blank())
-  print(p)
+    theme(axis.text = element_blank(),
+          text = element_text(colour = "black"))
+  return(p)
 }
 
-# pca 
 
-subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
-  
-  colData <- colData %>%
-    dplyr::filter(tissue %in% whichtissue,
-                  treatment %in% whichtreatment,
-                  sex %in% whichsex) 
-  row.names(colData) <- colData$V1
-  
-  
-  # save counts that match colData
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
-  
-  countData <- as.data.frame(t(countData))
-  countData <- countData %>% dplyr::select(one_of(savecols)) 
-  countData <- as.data.frame(t(countData))
-  
-  mypca <- prcomp(countData)
-  
-  mypcadf <- data.frame(PC1 = mypca$x[, 1], PC2 = mypca$x[, 2], PC3 = mypca$x[, 3], 
-                        PC4 = mypca$x[, 4],PC5 = mypca$x[, 5],PC6 = mypca$x[, 6],
-                        ID = row.names(countData))
-  mypcadf$V1 <- row.names(mypcadf)
-  mypcadf <- left_join(colData, mypcadf)
-  mypcadf <- mypcadf %>% select(bird,sex,tissue,treatment,PC1:PC6)
-  return(mypcadf)
-}
-
-#  subsetmakepca(tissuelevels, charlevels, sexlevels)
-#  subsetmakepca("hypothalamus", charlevels, sexlevels)
-
-# plotcolorfulpcs(charpca, charpca$tissue, colorstissue)  
-plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){
-  p <- mypcadf %>%
-    ggplot(aes(x = PC1, y = PC2, color = whichfactor )) +
-    geom_point(size = 1)  +
-    theme_B3() +
-    theme(legend.title = element_blank(),
-          axis.text = element_blank(),
-          legend.position = "none") +
-    labs(x = "PC1", y = "PC2")  +
-    scale_color_manual(values = whichcolors) +
-    scale_shape_manual(values = myshapes)
-  print(p)
-}
 
 
 ## create DEGs
@@ -826,4 +822,21 @@ createDEGdfsave <- function(up, down, mytissue){
   # return DEGs frome with all data, included NS genes
   print(head(DEGs))
 }  
+
+
+## prolactin plots 
+
+plotprolactin <- function(df, myy, myylab, mysubtitle ){
+  
+  p <-  ggplot(df, aes(x = treatment, y = myy)) +
+    geom_boxplot(aes(fill = treatment, color = sex)) +
+    theme_B3() +
+    scale_fill_manual(values = allcolors) +
+    scale_color_manual(values = sexcolors) +
+    labs(y = "prolactin (ng/mL)", x = NULL) +
+    theme(legend.position = c(0.85,0.15), legend.direction = "horizontal") + 
+    labs(x = "parental stage", subtitle = mysubtitle, y= myylab) +
+    guides(fill = guide_legend(nrow = 1)) 
+  return(p)
+}
 

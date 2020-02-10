@@ -1,90 +1,5 @@
-Figure 1. Experimental design and tSNE analysis
-===============================================
-
-wrange data
------------
-
-Note, the input file is too big for storage on github :(
-
-    pseudocounts <- read_csv("../results/01_pseudo.counts.csv")
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-
-    ## See spec(...) for full column specifications.
-
-    head(pseudocounts[1:3])
-
-    ## # A tibble: 6 x 3
-    ##   X1     L.Blu13_male_gonad_control.NY… L.Blu13_male_hypothalamus_control.…
-    ##   <chr>                           <dbl>                               <dbl>
-    ## 1 A2ML1                          42.7                               201.   
-    ## 2 A2ML2                           4.44                                4.86 
-    ## 3 A2ML3                         212.                               6920.   
-    ## 4 A2ML4                           6.91                                0.810
-    ## 5 A4GALT                         14.3                                 8.53 
-    ## 6 A4GNT                           0.206                               0.105
-
-    pseudocounts <- as.data.frame(pseudocounts)
-    row.names(pseudocounts) <- pseudocounts$X1
-    pseudocounts$X1 <- NULL
-    # prep count data for all samples
-    countData <- as.data.frame(t(pseudocounts))
-    head(countData[1:3])
-
-    ##                                            A2ML1     A2ML2      A2ML3
-    ## L.Blu13_male_gonad_control.NYNO         42.65677 4.4397552  211.96191
-    ## L.Blu13_male_hypothalamus_control.NYNO 201.26331 4.8633048 6919.87335
-    ## L.Blu13_male_pituitary_control.NYNO    161.22614 0.3158851  212.10845
-    ## L.G107_male_gonad_control               43.22441 2.0404458  203.74048
-    ## L.G107_male_hypothalamus_control       382.33084 4.9190817 9531.52550
-    ## L.G107_male_pituitary_control           85.34910 0.3577761   69.02124
-
-    # prep col data for all samples
-    colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
-    colData$treatment <- factor(colData$treatment, levels = alllevels)
-    colData <- colData %>% mutate(tissue = fct_recode(tissue, "gonads" = "gonad"))
-    colData$tissue <- factor(colData$tissue, levels = tissuelevels)
-    row.names(colData) <- colData$V1
-
-    # check ready for analysis
-    #row.names(countData) == row.names(colData)
-
-    head(colData)
-
-    ##                                                                            V1
-    ## L.Blu13_male_gonad_control.NYNO               L.Blu13_male_gonad_control.NYNO
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
-    ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
-    ## L.G107_male_gonad_control                           L.G107_male_gonad_control
-    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
-    ## L.G107_male_pituitary_control                   L.G107_male_pituitary_control
-    ##                                           bird  sex       tissue treatment
-    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male       gonads   control
-    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus   control
-    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male    pituitary   control
-    ## L.G107_male_gonad_control               L.G107 male       gonads   control
-    ## L.G107_male_hypothalamus_control        L.G107 male hypothalamus   control
-    ## L.G107_male_pituitary_control           L.G107 male    pituitary   control
-    ##                                                            group
-    ## L.Blu13_male_gonad_control.NYNO               male.gonad.control
-    ## L.Blu13_male_hypothalamus_control.NYNO male.hypothalamus.control
-    ## L.Blu13_male_pituitary_control.NYNO       male.pituitary.control
-    ## L.G107_male_gonad_control                     male.gonad.control
-    ## L.G107_male_hypothalamus_control       male.hypothalamus.control
-    ## L.G107_male_pituitary_control             male.pituitary.control
-    ##                                                  study
-    ## L.Blu13_male_gonad_control.NYNO        charcterization
-    ## L.Blu13_male_hypothalamus_control.NYNO charcterization
-    ## L.Blu13_male_pituitary_control.NYNO    charcterization
-    ## L.G107_male_gonad_control              charcterization
-    ## L.G107_male_hypothalamus_control       charcterization
-    ## L.G107_male_pituitary_control          charcterization
+Figure 1. Experimental design, tSNE analysis, PCA, and prolactin
+================================================================
 
     # prep for tsne
 
@@ -127,9 +42,9 @@ Note, the input file is too big for storage on github :(
 make figure
 -----------
 
-    plottsneelipse <- function(tsnedf, whichfactor, whichcolors){
+    plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
       p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-        geom_point(size = 1, aes(color = whichfactor)) +
+        geom_point(size = 1, aes(color = pointcolor)) +
         theme_B3() +
         labs(x = "tSNE 1", y = "tSNE 2") +
         scale_color_manual(values = whichcolors) +
@@ -142,15 +57,64 @@ make figure
 
     a <- plottsneelipse(chartsne, chartsne$tissue, allcolors) + labs(subtitle = "tissue\n")    
     b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "tissue * sex\n")    
-    c <- plottsneelipse(ftsne, ftsne$treatment, allcolors ) + labs(y = " ", subtitle = "females\ntissue * treatment")
-    d <- plottsneelipse(mtsne, mtsne$treatment, allcolors ) + labs(y = " ", subtitle = "males\ntissue * treatment") 
+    c <- plottsneelipse(ftsne, ftsne$treatment, allcolors ) + labs(y = " ", subtitle = "treatment * tissue\nfemales")
+    d <- plottsneelipse(mtsne, mtsne$treatment, allcolors ) + labs(y = " ", subtitle = "treatment * tissue\nmales") 
 
     abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("b", "c", "d", "e"), label_size = 12 )
 
     expdesign <- png::readPNG("../figures/images/fig1a_fig1a.png")
     expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
-    fig1 <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 12, rel_heights = c(0.5,1))
-    fig1
+    abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 12, rel_heights = c(0.5,1))
+    abcde
+
+![](../figures/unnamed-chunk-1-1.png)
+
+pca
+---
+
+    charpca <- subsetmakepca(tissuelevels, charlevels, sexlevels)   
+
+    ## Joining, by = "V1"
+
+    ## Warning: Column `V1` joining factor and character vector, coercing into
+    ## character vector
+
+    charfviz <- makefvizdf(tissuelevels, charlevels, sexlevels)
+
+    f <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
+      theme(legend.position = c(0.6,0.2), 
+            #legend.direction = "horizontal", 
+            legend.key.size = unit(0.5, 'lines')) + 
+      guides(color = FALSE) +
+      labs(subtitle = "tissue * treatment")   
+    g <- plotfriz(charfviz) + labs(subtitle = "  ")
+
+    pcaplots <- plot_grid(f,g, labels = c("f", "g"), label_size = 12, align = "hv")
+    pcaplots
+
+![](../figures/supplfig1-1.png)
+
+PRL
+---
+
+    PRLplot <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "treatment * sex, pituitary only") + 
+      theme(legend.position = "none", 
+            axis.text.x = element_text(angle = 45, hjust = 1), 
+            axis.title.x = element_blank(),
+            axis.title.y = element_text(face = "italic"))
+
+    fgh <- plot_grid(pcaplots, PRLplot, labels = c(" ", "h"), label_size = 12)
+
+    ## Warning: Removed 959 rows containing non-finite values (stat_boxplot).
+
+    fgh
+
+![](../figures/unnamed-chunk-2-1.png)
+
+all together now
+----------------
+
+    plot_grid(abcde, fgh, nrow = 2, rel_heights = c(2,1.5))
 
 ![](../figures/fig1-1.png)
