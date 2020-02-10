@@ -1,0 +1,4 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"ABCB5",0.0241426586779014,1.61721490550784,4.44456095910475,"female_hypothalamus","hatch"
+"CAPN2",1.94761574070967e-05,4.71049672412628,2.19259249740508,"female_hypothalamus","hatch"
+"PSMD14",0.00649568788338284,2.18737485103614,1.05956805602184,"female_hypothalamus","hatch"
