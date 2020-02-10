@@ -50,7 +50,7 @@ make figure
         scale_color_manual(values = whichcolors) +
         theme(legend.position = "none",
               axis.text = element_blank()) +
-        stat_ellipse(linetype = 2, aes(color = tissue )) 
+        stat_ellipse(linetype = 1, aes(color = tissue )) 
       return(p)
     }
 
@@ -66,55 +66,28 @@ make figure
     expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
     abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 12, rel_heights = c(0.5,1))
-    abcde
 
-![](../figures/unnamed-chunk-1-1.png)
 
-pca
----
 
-    charpca <- subsetmakepca(tissuelevels, charlevels, sexlevels)   
+    plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
+      p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
+        geom_point(size = 1, aes(color = pointcolor)) +
+        theme_B3() +
+        labs(x = "tSNE 1", y = "tSNE 2") +
+        scale_color_manual(values = whichcolors) +
+        theme(legend.position = "none",
+              axis.text = element_blank()) +
+        stat_ellipse(linetype = 1, aes(color = treatment)) 
+      return(p)
+    }
 
-    ## Joining, by = "V1"
+    h <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "hypothalamus")  + facet_wrap(~sex)
+    i <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + labs(subtitle = "pituitary", y = NULL) + facet_wrap(~sex) 
+    j <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads", y = NULL)  + facet_wrap(~sex)
 
-    ## Warning: Column `V1` joining factor and character vector, coercing into
-    ## character vector
+    hij <- plot_grid(h,i,j, nrow = 1, labels = c("h", "i", "j"), label_size = 12)
 
-    charfviz <- makefvizdf(tissuelevels, charlevels, sexlevels)
-
-    f <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
-      theme(legend.position = c(0.6,0.2), 
-            #legend.direction = "horizontal", 
-            legend.key.size = unit(0.5, 'lines')) + 
-      guides(color = FALSE) +
-      labs(subtitle = "tissue * treatment")   
-    g <- plotfriz(charfviz) + labs(subtitle = "  ")
-
-    pcaplots <- plot_grid(f,g, labels = c("f", "g"), label_size = 12, align = "hv")
-    pcaplots
-
-![](../figures/supplfig1-1.png)
-
-PRL
----
-
-    PRLplot <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "treatment * sex, pituitary only") + 
-      theme(legend.position = "none", 
-            axis.text.x = element_text(angle = 45, hjust = 1), 
-            axis.title.x = element_blank(),
-            axis.title.y = element_text(face = "italic"))
-
-    fgh <- plot_grid(pcaplots, PRLplot, labels = c(" ", "h"), label_size = 12)
-
-    ## Warning: Removed 959 rows containing non-finite values (stat_boxplot).
-
-    fgh
-
-![](../figures/unnamed-chunk-2-1.png)
-
-all together now
-----------------
-
-    plot_grid(abcde, fgh, nrow = 2, rel_heights = c(2,1.5))
+    fig1 <- plot_grid(abcde, hij, nrow = 2, rel_heights = c(0.6,0.4))
+    fig1
 
 ![](../figures/fig1-1.png)
