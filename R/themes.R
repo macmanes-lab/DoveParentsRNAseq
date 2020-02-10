@@ -45,8 +45,8 @@ controlstiming <- c( "inc.d9" , "hatch" , "n5")
 controlsremoval <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
 
 
-comparisonlevels <- c("control.bldg", "bldg.lay" ,"lay.inc_d3", "inc_d3.inc_d9",
-                      "inc_d9.inc_d17", "inc_d17.hatch" , "hatch.n5", "n5.n9"   )
+comparisonlevels <- c("control_bldg", "bldg_lay" ,"lay_inc.d3", "inc.d3_inc.d9",
+                      "inc.d9_inc.d17", "inc.d17_hatch" , "hatch_n5", "n5_n9"   )
 
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
                 "inc.d9", "m.inc.d8" ,"m.inc.d9" ,
@@ -65,6 +65,8 @@ alllevels3 <- c("control", "bldg", "lay", "inc.d3", "inc.d9",
                 "m.inc.d3" ,  "m.inc.d9" , "m.inc.d17" , "m.n2")
 
 tissuelevels <- c("hypothalamus", "pituitary", "gonads")
+tissuelevel <- c("hypothalamus", "pituitary", "gonad")
+
 sexlevels <- c("female", "male")
 
 
@@ -111,17 +113,7 @@ colorsmanip <- c( "m.inc.d3" = "#CDCDCD",
                          "prolong" = "#f768a1" , 
                          "extend" = "#f768a1")
 
-colorschar <-  c("control" = "#F8766D", 
-                         "bldg"= "#D39200", 
-                         "lay"= "#93AA00", 
-                         "inc.d3"= "#00BA38", 
-                         "inc.d9"= "#00C19F", 
-                         "inc.d17"= "#00B9E3", 
-                         "hatch"= "#619CFF", 
-                         "n5"= "#DB72FB", 
-                         "n9"= "#FF61C3")
-
-colorscharnew <-  c("control" = "#cc4c02", 
+colorschar <-  c("control" = "#cc4c02", 
                  "bldg"= "#fe9929", 
                  "lay"= "#fed98e", 
                  "inc.d3"= "#78c679", 
@@ -130,6 +122,8 @@ colorscharnew <-  c("control" = "#cc4c02",
                  "hatch"= "#08519c",
                  "n5"= "#3182bd", 
                  "n9"= "#6baed6")
+
+colorscharnew  <- colorschar
 
 colorsnewgrouping <-  c("control" = "#F8766D", 
                  "bldg"= "#D39200", 

@@ -1,0 +1,100 @@
+---
+title: "Fig2"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(cowplot)
+source("../R/themes.R")
+
+knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
+```
+
+## DEGs
+
+```{r fig2, fig.width=7}
+
+DEG_path <- "../results/DEseq2/"   # path to the data
+DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
+DEG_pathfiles <- paste0(DEG_path, DEG_files)
+DEG_files
+
+allDEG <- DEG_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name") %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
+  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
+  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
+  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
+  mutate(comparison = paste(down,up, sep = "_")) %>%
+  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
+  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
+dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
+head(allDEG)
+
+
+allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
+allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
+allDEG$direction <- factor(allDEG$direction, levels = charlevels)
+
+
+allDEG %>%
+  group_by(sex, tissue, comparison) %>%
+  summarize(n = n())
+
+p1 <- allDEG %>%
+  filter(comparison == "control_bldg") %>%
+ggplot(aes(x = comparison,  fill = direction)) +
+  geom_bar(position = "dodge") +
+  facet_grid(tissue~sex) +
+  theme_B3() +
+  theme(#axis.text.x = element_text(angle = 45, hjust = 1),
+         axis.text.x = element_blank(),
+        legend.position = "none",
+        strip.text.y = element_blank())  +
+  guides(fill = guide_legend(nrow = 1)) +
+  labs(x = " ", y = "Total Differentially Expressed Genes") +
+  scale_fill_manual(values = colorscharnew,
+                       name = " ",
+                       drop = FALSE) +
+  scale_color_manual(values = sexcolors)
+
+p2 <- allDEG %>%
+  filter(comparison != "control_bldg") %>%
+ggplot(aes(x = comparison,  fill = direction)) +
+  geom_bar(position = "dodge") +
+  facet_grid(tissue~sex) +
+  theme_B3() +
+  theme(#axis.text.x = element_text(angle = 45, hjust = 1),
+         axis.text.x = element_blank(),
+        legend.position = "none",
+        strip.placement = "right")  +
+  guides(fill = guide_legend(nrow = 1)) +
+  labs(x = "Sequential Parental Care Stages  ", y = NULL) +
+  scale_fill_manual(values = colorscharnew,
+                       name = " ", drop = FALSE) +
+  scale_color_manual(values = sexcolors) +
+  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+            position = position_dodge(width = 1),
+            size = 2.5, color = "black") 
+  
+forlegend <- allDEG %>%
+ggplot(aes(x = comparison,  fill = direction)) +
+  geom_bar(position = "dodge") +
+   scale_fill_manual(values = colorscharnew,
+                       name = "increased in", drop = FALSE) +
+  scale_color_manual(values = sexcolors) +
+  guides(color = F) +
+  guides(fill= guide_legend(nrow =1)) +
+  theme_B3() +
+  theme(legend.position = "bottom")
+
+mylegend <- get_legend(forlegend)
+
+barplots <- plot_grid(p1,p2, nrow=1, rel_widths = c(0.9,3))
+
+fig2 <- plot_grid(barplots, mylegend, nrow = 2, rel_heights = c(1,0.1))
+fig2
+```

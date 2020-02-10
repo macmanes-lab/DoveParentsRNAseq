@@ -22,70 +22,8 @@ subsetcolData2 <- function(colData, eachgroup){
   return(colData)
 }
 
-############ subsetDESeq #########
-
-# run DESeq on subset of data - treatment only
-subsetDESeq <- function(colData, countData, eachgroup){
-  
-  colData <- subsetcolData(colData, eachgroup)
-  
-  # save counts that match colData
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
-  countData <- countData %>% dplyr::select(one_of(savecols)) 
-  
-  # assert that row and col lenghts are equal
-  
-  dds <- DESeqDataSetFromMatrix(countData = countData,
-                                colData = colData,
-                                design = ~ treatment )
-  
-  print(dds)
-  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
-  print(dim(dds))
-  
-  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
-  return(dds)
-}
-
-############ subsetDESeq2 #########
-
-# run DESeq on subset of data sex * treatment 
-subsetDESeq2 <- function(colData, countData, eachgroup){
-  
-  # subset to look within one tissue in one sex
-  colData <- subsetcolData2(colData, eachgroup)
-  
-  # save counts that match colData
-  savecols <- as.character(colData$V1) 
-  savecols <- as.vector(savecols) 
-  countData <- countData %>% dplyr::select(one_of(savecols)) 
-  
-  # check that row and col lenghts are equal
-  stopifnot(ncol(countData) == nrow(colData))
-  
-  dds <- DESeqDataSetFromMatrix(countData = countData,
-                                colData = colData,
-                                design = ~ treatment * sex )
-  
-  print(dds)
-  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
-  print(dim(dds))
-  
-  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
-  return(dds)
-}
 
 
-# used for making line graphs in 03_DESeq2_characterization.Rmd
-subsetDEGs <- function(DEGs, groupname){
-  DEGs <- DEGs %>%
-    dplyr::mutate(comparison = row.names(.),
-                  sextissue = groupname) %>%
-    dplyr::filter(comparison %in% serialtimepoints) 
-  DEGs$comparison <- factor(DEGs$comparison, levels = serialtimepoints)
-  return(DEGs)
-}
 
 ############ numDEGs #########
 
@@ -642,36 +580,6 @@ subsetDESeq3 <- function(colData, countData, eachgroup, eachtreatment){
 }
 
 
-## for DESeqALL
-createDEGdfsave <- function(mydds, whichfactor, up, down, mytissue){
-  
-  res <- results(mydds, contrast = c(whichfactor, up, down), independentFiltering = T, alpha = 0.1)
-  
-  data <- data.frame(gene = row.names(res),
-                     padj = res$padj, 
-                     logpadj = -log10(res$padj),
-                     lfc = res$log2FoldChange,
-                     tissue = mytissue)
-  data <- na.omit(data)
-  
-  data <- data %>%
-    dplyr::mutate(direction = ifelse(data$lfc > 0 & data$padj < 0.1, 
-                                     yes = up, no = ifelse(data$lfc < 0 & data$padj < 0.1, 
-                                                           yes = down, no = "NS"))) %>% 
-    dplyr::arrange(desc(lfc)) 
-    
-  data$direction <- factor(data$direction, levels = c(down, "NS", up)) 
-  
-  # write dataframe of only significant genes
-  DEGs <- data %>% dplyr::filter(direction != "NS")
-  print(str(DEGs))
-  myfilename = paste("../results/DESeqAll", mytissue, down,up, "csv", sep = ".")
-  write.csv(DEGs, myfilename, row.names = F)
-  
-  # return data frome with all data, included NS genes
-  return(data)
-}  
-
 
 
 selectcBRCA1vsds <- function(listofgenes, vsd, colData){
@@ -887,4 +795,35 @@ plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){
 }
 
 
+## create DEGs
+
+createDEGdfsave <- function(up, down, mytissue){
+  
+  res <- results(dds, contrast = c("treatment", up, down), independentFiltering = T, alpha = 0.1)
+  
+  DEGs <- data.frame(gene = row.names(res),
+                        padj = res$padj, 
+                        logpadj = -log10(res$padj),
+                        lfc = res$log2FoldChange,
+                        sextissue = mytissue)
+  DEGs <- na.omit(DEGs)
+  DEGs <- DEGs %>%
+    dplyr::mutate(direction = ifelse(DEGs$lfc > 0 & DEGs$padj < 0.1, 
+                                     yes = up, no = ifelse(DEGs$lfc < 0 & DEGs$padj < 0.1, 
+                                                           yes = down, no = "NS"))) %>% 
+    dplyr::arrange(desc(lfc)) 
+  
+  DEGs$direction <- factor(DEGs$direction, levels = c(down, "NS", up)) 
+  
+  # write DEGsframe of only significant genes
+  DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+  print(str(DEGs))
+  
+  partialfilename = paste("_", down, "_", up, sep = "")
+  myfilename = paste0("../results/DESeq2/", mytissue, partialfilename, "_DEGs.csv")
+  
+  write.csv(DEGs, myfilename, row.names = F)
+  # return DEGs frome with all data, included NS genes
+  print(head(DEGs))
+}  
 
