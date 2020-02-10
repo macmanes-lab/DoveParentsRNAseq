@@ -13,17 +13,13 @@ library(viridis)
 library(forcats)
 
 source("../R/themes.R")
+source("../R/functions.R")
+source("../R/wrangledata.R")
 
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
 ```
 
-# Figure 1. Experimental design and tSNE analysis
-
-## wrange data
-
-```{r wrangle}
-source("../R/wrangledata.R")
-```
+# Figure 1. Experimental design, tSNE analysis, PCA, and prolactin
 
 
 ```{r tSNE-df}
@@ -69,11 +65,11 @@ mtsne <-  subsetmaketsne(tissuelevels, charlevels, "male")
 
 ## make figure
 
-```{r fig1, fig.width=7}
+```{r }
 
-plottsneelipse <- function(tsnedf, whichfactor, whichcolors){
+plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-    geom_point(size = 1, aes(color = whichfactor)) +
+    geom_point(size = 1, aes(color = pointcolor)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2") +
     scale_color_manual(values = whichcolors) +
@@ -86,23 +82,56 @@ plottsneelipse <- function(tsnedf, whichfactor, whichcolors){
 
 a <- plottsneelipse(chartsne, chartsne$tissue, allcolors) + labs(subtitle = "tissue\n")    
 b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "tissue * sex\n")    
-c <- plottsneelipse(ftsne, ftsne$treatment, allcolors ) + labs(y = " ", subtitle = "females\ntissue * treatment")
-d <- plottsneelipse(mtsne, mtsne$treatment, allcolors ) + labs(y = " ", subtitle = "males\ntissue * treatment") 
+c <- plottsneelipse(ftsne, ftsne$treatment, allcolors ) + labs(y = " ", subtitle = "treatment * tissue\nfemales")
+d <- plottsneelipse(mtsne, mtsne$treatment, allcolors ) + labs(y = " ", subtitle = "treatment * tissue\nmales") 
 
 abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("b", "c", "d", "e"), label_size = 12 )
 
 expdesign <- png::readPNG("../figures/images/fig1a_fig1a.png")
 expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
-fig1 <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 12, rel_heights = c(0.5,1))
-fig1
+abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 12, rel_heights = c(0.5,1))
+abcde
 ```
 
 
 
+## pca 
 
+```{r supplfig1}
+charpca <- subsetmakepca(tissuelevels, charlevels, sexlevels)	
+charfviz <- makefvizdf(tissuelevels, charlevels, sexlevels)
 
+f <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
+  theme(legend.position = c(0.6,0.2), 
+        #legend.direction = "horizontal", 
+        legend.key.size = unit(0.5, 'lines')) + 
+  guides(color = FALSE) +
+  labs(subtitle = "tissue * treatment")   
+g <- plotfriz(charfviz) + labs(subtitle = "  ")
 
+pcaplots <- plot_grid(f,g, labels = c("f", "g"), label_size = 12, align = "hv")
+pcaplots
+```
+
+## PRL
+
+```{r}
+PRLplot <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "treatment * sex, pituitary only") + 
+  theme(legend.position = "none", 
+        axis.text.x = element_text(angle = 45, hjust = 1), 
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(face = "italic"))
+
+fgh <- plot_grid(pcaplots, PRLplot, labels = c(" ", "h"), label_size = 12)
+fgh
+```
+
+## all together now 
+
+```{r fig1, fig.width=7, fig.height=6}
+plot_grid(abcde, fgh, nrow = 2, rel_heights = c(2,1.5))
+```
 
 
 
