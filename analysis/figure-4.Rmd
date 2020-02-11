@@ -28,19 +28,18 @@ allvsd <- vsd_pathfiles %>%
                names_to = "samples", values_to = "counts") 
 
 hypgenes <- read_csv("../results/DEseq2/female_hypothalamus_hatch_n5_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 3) %>% pull(gene)
+  arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
 hypgenes
 
 pitgenes <- read_csv("../results/DEseq2/female_pituitary_inc.d9_inc.d17_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 3) %>% pull(gene)
+  arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
 pitgenes
 
 gongenes <- read_csv("../results/DEseq2/female_gonad_lay_inc.d3_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 3) %>% pull(gene)
+  arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
 gongenes
 
-
-plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle){
+plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtstages){
   candidates  <- allvsd %>%
     filter(gene %in% whichgenes) %>%
     dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
@@ -50,16 +49,18 @@ plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle){
                 treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
     dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
     dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
-    filter(tissue == whichtissue) 
+    filter(tissue == whichtissue, sex %in% whichsex) 
   
   candidates$treatment <- factor(candidates$treatment, levels = alllevels)
   
-  p <- ggplot(candidates,  aes(x = treatment, y = counts, fill = treatment, color = sex)) +
+  p <- candidates %>%
+    filter(treatment %in% whichtstages) %>%
+    ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
     geom_boxplot() + facet_wrap(~gene, scales = "free_y") + 
     theme_B3() +
     scale_fill_manual(values = allcolors) +
     scale_color_manual(values = allcolors) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1), 
+    theme(axis.text.x = element_blank(),
           legend.position = "none",
           axis.title.x = element_blank(),
           strip.text = element_text(face = "italic")) +
@@ -68,11 +69,21 @@ plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle){
   
 }
 
-a <- plottopgenes(hypgenes, "hypothalamus", "female", "hypothalamus") + theme(axis.text.x = element_blank())
-b <- plottopgenes(pitgenes, "pituitary", "female", "pituitary") + theme(axis.text.x = element_blank())
-c <- plottopgenes(gongenes, "gonad", "female", "gonads")
 
-plot_grid(a,b,c, ncol = 1)
-  
+a <- plottopgenes(hypgenes, "hypothalamus", c("female"), "hypothalamus", c("hatch", "n5")) 
+b <- plottopgenes(pitgenes, "pituitary", c("female"), "pituitary", c("inc.d9", "inc.d17")) 
+c <- plottopgenes(gongenes, "gonad", c("female"), "gonads", c("lay", "inc.d3"))
+
+fig4a <- plot_grid(a,b,c, ncol = 1) 
+
+d <- plottopgenes(hypgenes, "hypothalamus", c("female", "male"), NULL, charlevels) 
+e <- plottopgenes(pitgenes, "pituitary", c("female", "male"), NULL, charlevels) 
+f <- plottopgenes(gongenes, "gonad", c("female", "male"), NULL, charlevels) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+fig4b <- plot_grid(d,e,f, ncol = 1)
+
+fig4 <- plot_grid(fig4a, fig4b, rel_widths = c(1,2))
+fig4
 ```
 
