@@ -17,22 +17,22 @@
                    names_to = "samples", values_to = "counts") 
 
     hypgenes <- read_csv("../results/DEseq2/female_hypothalamus_hatch_n5_DEGs.csv") %>%
-      arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
+      arrange(desc(logpadj)) %>% head(., n = 3) %>% pull(gene)
     hypgenes
 
-    ## [1] "CAPN2"        "LOC107054855"
+    ## [1] "CAPN2"        "LOC107054855" "PAPOLA"
 
     pitgenes <- read_csv("../results/DEseq2/female_pituitary_inc.d9_inc.d17_DEGs.csv") %>%
-      arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
+      arrange(desc(logpadj)) %>% head(., n = 3) %>% pull(gene)
     pitgenes
 
-    ## [1] "LBH"  "CDK1"
+    ## [1] "LBH"  "CDK1" "BUB1"
 
     gongenes <- read_csv("../results/DEseq2/female_gonad_lay_inc.d3_DEGs.csv") %>%
-      arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
+      arrange(desc(logpadj)) %>% head(., n = 3) %>% pull(gene)
     gongenes
 
-    ## [1] "OVSTL"  "BPIFB2"
+    ## [1] "OVSTL"  "BPIFB2" "SPON2"
 
     plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle){
       candidates  <- allvsd %>%
