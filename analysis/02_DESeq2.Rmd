@@ -1,5 +1,5 @@
 ---
-title: "06_DESeq2"
+title: "02_DESeq2"
 output: md_document
 ---
 
@@ -13,16 +13,15 @@ register(MulticoreParam(6))
 
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
-source("../R/icons.R")  # for images
 
 knitr::opts_chunk$set(fig.path = '../figures/DESeq2/',  message=F, comment=F, warning=F)
 ```
 
-# Warning: This script takes a very long time to run. 
+## Warning: This script can take a very long time to run. 
 
-DESeq2 was not designed to run on 300 samples. But, I really like it, so I do it anyways. Some of these commands take like 15 min to run using 6 cores. 
+DESeq2 was not designed to run on 100+ samples. But, I really like it, so I do it anyways. Some of these commands take like 15 min to run using 6 cores. 
 
-## DEseq2 on all chaacterization and manipulations
+## Characterization 
 
 ```{r readfiles}
 # import "colData" which contains sample information and "countData" which contains read counts
@@ -84,3 +83,96 @@ for(i in levels(colData$sextissue)){
 
 ```
 
+## Manipulation
+
+
+```{r manipulation}
+# import "colData" which contains sample information and "countData" which contains read counts
+countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+head(geneinfo)
+
+# craete variable that will be critical for subset later on
+colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+colData$sextissue <- as.factor(paste(colData$sex, colData$tissue, sep = "_"))
+colData$treatment <- factor(colData$treatment, levels = manipulationsandcontrols)
+colData$tissue <- factor(colData$tissue, levels = tissuelevel)
+levels(colData$treatment)
+levels(colData$sex)
+levels(colData$sextissue)
+levels(colData$tissue)
+colData <- colData %>% drop_na()
+
+colData <- colData %>% filter(sex == "male")
+
+createDEGdfsaveManip <- function(up, down, mytissue){
+  
+  res <- results(dds, contrast = c("treatment", up, down), independentFiltering = T, alpha = 0.1)
+  
+  DEGs <- data.frame(gene = row.names(res),
+                        padj = res$padj, 
+                        logpadj = -log10(res$padj),
+                        lfc = res$log2FoldChange,
+                        sextissue = mytissue)
+  DEGs <- na.omit(DEGs)
+  DEGs <- DEGs %>%
+    dplyr::mutate(direction = ifelse(DEGs$lfc > 0 & DEGs$padj < 0.1, 
+                                     yes = up, no = ifelse(DEGs$lfc < 0 & DEGs$padj < 0.1, 
+                                                           yes = down, no = "NS"))) %>% 
+    dplyr::arrange(desc(lfc)) 
+  
+  DEGs$direction <- factor(DEGs$direction, levels = c(down, "NS", up)) 
+  
+  # write DEGsframe of only significant genes
+  DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+  print(str(DEGs))
+  
+  partialfilename = paste("_", down, "_", up, sep = "")
+  myfilename = paste0("../results/DESeq2/manip/", mytissue, partialfilename, "_DEGs.csv")
+  
+  write.csv(DEGs, myfilename, row.names = F)
+  # return DEGs frome with all data, included NS genes
+  #print(head(DEGs))
+}  
+
+
+
+
+for(i in levels(colData$sextissue)){
+  
+  newcolData <- subsetcolData2(colData, i)
+  
+  # save counts that match colData
+  savecols <- as.character(newcolData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  newcountData <- countData %>% dplyr::select(one_of(savecols)) 
+  
+  dds <- DESeqDataSetFromMatrix(countData = newcountData,
+                                colData = newcolData,
+                                design = ~ treatment )
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dds)
+  print(dim(dds))
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  
+  vsd <- as.data.frame(assay(vst(dds, blind=FALSE)))
+  
+  myfilename = paste0("../results/DEseq2/manip/", i, "_vsd.csv")
+  write.csv(vsd, myfilename)
+  
+  #return(dds)
+  #return(vsd)
+  #print(head(vsd))
+
+  # save differential gene expression results
+  inc.d3.m.inc.d3 <- createDEGdfsaveManip("m.inc.d3", "inc.d3",  i) 
+  inc.d9.m.inc.d9 <- createDEGdfsaveManip("m.inc.d9", "inc.d9",  i) 
+  inc.d17.m.inc.d17 <- createDEGdfsaveManip("m.inc.d17", "inc.d17",  i) 
+  hatch.m.n2 <- createDEGdfsaveManip("hatch", "m.n2",  i) 
+  inc.d9.m.inc.d8 <- createDEGdfsaveManip("m.inc.d8", "inc.d9",  i) 
+  inc.d17.prolong <- createDEGdfsaveManip("prolong", "inc.d17",  i) 
+  hatch.extend <- createDEGdfsaveManip("extend", "hatch",  i) 
+}
+
+```

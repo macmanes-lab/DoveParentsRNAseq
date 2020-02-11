@@ -6,7 +6,7 @@
 
 This repository contains the data and analysis for a collaboration between Drs. Rebecca Calisi and Matt MacManes that focuses on one characterizing the neurogenomocs of parental care in the rock dove.
 
-## Main research questions
+## Research questions
 
 1. What genes differ in expression between timepoints?
 1. What stages are most different, stressful, responsive? 
@@ -15,12 +15,6 @@ This repository contains the data and analysis for a collaboration between Drs. 
 1. How do tissues differ?
 1. What is the relationship between genes and hormones across timepoints?
 
-
-## Preliminary analyses, results and interpretations presented as a poster at the Society for Behavioral Neuroendocrinology Annual Meeting
-
-![poseter](./figures/sbnposter/SBN.png)
-
-See also <https://macmanes-lab.github.io/DoveParentsRNAseq/> for a more user-friendly way to read the information on the poster. The bulk of the analysis for the SBN poster were created using the script [analysis/04_DESeq2_sexes.Rmd](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/04_DESeq2_sexes.Rmd), which really needs a different name. 
 
 ## Organization
 
@@ -33,7 +27,25 @@ These repositories is broken down into the following sub-repositories, each with
 
 There are two hidden directories, `kallisto_mappings` and `mapping`, which contain the results of the kallisto and salmon algorithms that transform read counts into gene counts.  
 
-## More information
 
-For more details about the collaboration, visit <http://www.dovelovegenomics.org/>. See also the GitHub repository <https://github.com/macmanes-lab/RockDove> which contains related data and scripts. 
+## Working figures
 
+![](./figures/fig1-1.png)
+![](./figures/fig2-1.png)
+![](./figures/fig3-1.png)
+![](./figures/fig4-1.png)
+
+
+
+## Related documentation.
+
+Another website <http://www.dovelovegenomics.org/>
+
+Another GitHub repository <https://github.com/macmanes-lab/RockDove> 
+
+A talk from 2020 <https://speakerdeck.com/raynamharris/peaks-and-valleys-of-prolactin-driven-gene-expression-during-parental-care>
+
+An poster from 2019
+![poster](./figures/sbnposter/SBN.png)
+
+See also <https://macmanes-lab.github.io/DoveParentsRNAseq/> for a more user-friendly way to read the information on the poster. The bulk of the analysis for the SBN poster were created using the script [analysis/04_DESeq2_sexes.Rmd](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/04_DESeq2_sexes.Rmd), which really needs a different name. 

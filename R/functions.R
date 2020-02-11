@@ -221,8 +221,7 @@ readcolData <- function(filename){
   colData <- read_csv(filename)
   colData <- as.data.frame(colData)
   
-  colData$treatment <- factor(colData$treatment, levels = 
-                                  c("control",  "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9"))
+  colData$treatment <- factor(colData$treatment, levels = charlevels)
   
   row.names(colData) <- colData$V1
   colData$sample <- colData$V1
