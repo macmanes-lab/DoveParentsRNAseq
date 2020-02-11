@@ -1,0 +1,73 @@
+---
+title: "Fig5"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(cowplot)
+source("../R/themes.R")
+
+knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
+```
+
+## DEGs
+
+```{r fig2, fig.width=7}
+
+DEG_path <- "../results/DEseq2/manip/"   # path to the data
+DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
+DEG_pathfiles <- paste0(DEG_path, DEG_files)
+DEG_files
+
+allDEG <- DEG_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name") %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/manip/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
+  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
+  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
+  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
+  mutate(comparison = paste(down,up, sep = "_")) %>%
+  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
+  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
+dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
+head(allDEG)
+
+
+
+comparisonlevels <- c( "inc.d3_m.inc.d3" ,  "inc.d9_m.inc.d9", 
+                        "inc.d17_m.inc.d17", "m.n2_hatch" ,
+                        "inc.d9_m.inc.d8", "inc.d17_prolong", "hatch_extend"  )
+
+
+allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
+allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
+allDEG$direction <- factor(allDEG$direction, levels = manipulationsandcontrols)
+
+
+allDEG %>%
+  group_by(sex, tissue, comparison) %>%
+  summarize(n = n())
+
+allDEG
+
+allDEG %>%
+ggplot(aes(x = comparison,  fill = direction)) +
+  geom_bar(position = "dodge") +
+  facet_grid(tissue~sex) +
+  theme_B3() +
+  theme(#axis.text.x = element_text(angle = 45, hjust = 1),
+         axis.text.x = element_blank(),
+        legend.position = "none",
+        strip.placement = "right")  +
+  guides(fill = guide_legend(nrow = 1)) +
+  labs(x = "Parental stage-specific manipulations", y = NULL) +
+  scale_fill_manual(values = allcolors,
+                       name = " ", drop = FALSE) +
+  scale_color_manual(values = sexcolors) +
+  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+            position = position_dodge(width = 1),
+            size = 2.5, color = "black") 
+
+```
