@@ -23,7 +23,7 @@ DESeq2 was not designed to run on 100+ samples. But, I really like it, so I do i
 
 ## Characterization 
 
-```{r readfiles}
+```{r readfiles, eval=F, include=F}
 # import "colData" which contains sample information and "countData" which contains read counts
 countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
@@ -42,7 +42,7 @@ levels(colData$tissue)
 
 
 
-```{r deseq2, eval=T}
+```{r deseq2, eval=F, include=F}
 for(i in levels(colData$sextissue)){
   
   newcolData <- subsetcolData2(colData, i)
@@ -92,6 +92,14 @@ countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
 head(geneinfo)
 
+
+levelsreplace <- c( "m.inc.d8" , "prolong" , "extend")
+levelsremoval <- c( "m.inc.d3" ,    "m.inc.d9" , "m.inc.d17" , "m.n2")
+controlsremovalreplace <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
+
+manipulationsandcontrols <- c(controlsremoval, levelsreplace, levelsremoval)
+
+
 # craete variable that will be critical for subset later on
 colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
 colData$sextissue <- as.factor(paste(colData$sex, colData$tissue, sep = "_"))
@@ -102,8 +110,6 @@ levels(colData$sex)
 levels(colData$sextissue)
 levels(colData$tissue)
 colData <- colData %>% drop_na()
-
-colData <- colData %>% filter(sex == "male")
 
 createDEGdfsaveManip <- function(up, down, mytissue){
   

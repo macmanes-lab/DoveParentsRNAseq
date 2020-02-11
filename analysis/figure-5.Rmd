@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 
 ## DEGs
 
-```{r fig2, fig.width=7}
+```{r fig5, fig.width=7, fig.height=7}
 
 DEG_path <- "../results/DEseq2/manip/"   # path to the data
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
@@ -36,9 +36,17 @@ head(allDEG)
 
 
 
-comparisonlevels <- c( "inc.d3_m.inc.d3" ,  "inc.d9_m.inc.d9", 
-                        "inc.d17_m.inc.d17", "m.n2_hatch" ,
-                        "inc.d9_m.inc.d8", "inc.d17_prolong", "hatch_extend"  )
+comparisonlevels <- c( "inc.d9_m.inc.d8", "inc.d17_prolong", "hatch_extend" , 
+                       "inc.d3_m.inc.d3" ,  "inc.d9_m.inc.d9", 
+                        "inc.d17_m.inc.d17", "m.n2_hatch" 
+                        )
+
+levelsreplace <- c( "m.inc.d8" , "prolong" , "extend")
+levelsremoval <- c( "m.inc.d3" ,    "m.inc.d9" , "m.inc.d17" , "m.n2")
+controlsremovalreplace <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
+
+manipulationsandcontrols <- c(controlsremoval, levelsreplace, levelsremoval)
+
 
 
 allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
@@ -50,24 +58,56 @@ allDEG %>%
   group_by(sex, tissue, comparison) %>%
   summarize(n = n())
 
-allDEG
+expdesign <- png::readPNG("../figures/images/fig5a_fig5a.png")
+expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
-allDEG %>%
+replacementplots <- allDEG %>%
+  filter(comparison %in% c("inc.d9_m.inc.d8", "inc.d17_prolong", "hatch_extend" ))  %>%
 ggplot(aes(x = comparison,  fill = direction)) +
   geom_bar(position = "dodge") +
   facet_grid(tissue~sex) +
   theme_B3() +
   theme(#axis.text.x = element_text(angle = 45, hjust = 1),
-         axis.text.x = element_blank(),
-        legend.position = "none",
-        strip.placement = "right")  +
+        axis.text.x = element_blank(),
+        legend.position = "bottom",
+        strip.text.y =  element_blank())  +
   guides(fill = guide_legend(nrow = 1)) +
-  labs(x = "Parental stage-specific manipulations", y = NULL) +
+  labs(x = "Offspring replacement", y = "Total differentially expressed genes") +
   scale_fill_manual(values = allcolors,
-                       name = " ", drop = FALSE) +
+                       name = "increased in", drop = FALSE) +
   scale_color_manual(values = sexcolors) +
   geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
             position = position_dodge(width = 1),
-            size = 2.5, color = "black") 
+            size = 2.5, color = "black") +
+  guides(fill =  guide_legend(nrow =2)) +
+  ylim(0,3500)
 
+mylegend <- get_legend(replacementplots)
+
+removalplots <- allDEG %>%
+  filter(comparison %in% c("inc.d3_m.inc.d3" ,  "inc.d9_m.inc.d9", 
+                        "inc.d17_m.inc.d17", "m.n2_hatch" ))  %>%
+ggplot(aes(x = comparison,  fill = direction)) +
+  geom_bar(position = "dodge") +
+  facet_grid(tissue~sex) +
+  theme_B3() +
+  theme(#axis.text.x = element_text(angle = 45, hjust = 1),
+        axis.text.x = element_blank(),
+         axis.text.y = element_blank(),
+        legend.position = "none",
+        strip.placement = "right")  +
+  guides(fill = guide_legend(nrow = 1)) +
+  labs(x = "Offspring removal", y = NULL) +
+  scale_fill_manual(values = allcolors,
+                       name = "increased in", drop = FALSE) +
+  scale_color_manual(values = sexcolors) +
+  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+            position = position_dodge(width = 1),
+            size = 2.5, color = "black") +
+  ylim(0,3500)
+
+barplots <- plot_grid( replacementplots + theme(legend.position = "none"),  removalplots,  ncol = 2, rel_widths = c(1,1.2))
+
+fig5 <- plot_grid(expdesign, barplots, mylegend, ncol =1, rel_heights = c(0.25,1,0.1))
+fig5
 ```
