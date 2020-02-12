@@ -3,7 +3,9 @@ title: "fig4"
 output: md_document
 ---
 
-```{r setup, include=FALSE}
+# Figure 4
+
+```{r setup, include=TRUE}
 library(tidyverse)
 library(cowplot)
 
