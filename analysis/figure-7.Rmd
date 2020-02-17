@@ -1,0 +1,58 @@
+---
+title: "Fig7"
+output: md_document
+---
+
+# Figure 7
+
+```{r setup, include=TRUE}
+library(tidyverse)
+library(cowplot)
+
+source("../R/themes.R")
+
+knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
+```
+
+```{r fig6, fig.height=7, fig.width=7}
+geneids <- read_csv("../metadata/00_geneinfo.csv")
+
+DEG_manip_path <- "../results/DEseq2/manip/"   # path to the data
+DEG_manip_files <- dir(DEG_manip_path, pattern = "*_DEGs.csv") 
+DEG_manip_pathfiles <- paste0(DEG_manip_path, DEG_manip_files)
+DEG_manip_files
+
+manipDEGs <- DEG_manip_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name")  %>% 
+  dplyr::mutate(comparison = sapply(strsplit(file_name,'./results/DEseq2/manip/'), "[", 2),
+                comparison = sapply(strsplit(comparison,'_DEGs.csv'), "[", 1)) %>%
+  dplyr::select(comparison, gene, padj,logpadj, lfc, sextissue, direction)
+head(manipDEGs)
+
+
+
+DEG_char_path <- "../results/DEseq2/"   # path to the data
+DEG_char_files <- dir(DEG_char_path, pattern = "*_DEGs.csv") 
+DEG_char_pathfiles <- paste0(DEG_char_path, DEG_char_files)
+DEG_char_files
+
+charDEGs <- DEG_char_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name")  %>% 
+  dplyr::mutate(comparison = sapply(strsplit(file_name,'./results/DEseq2/'), "[", 2),
+                comparison = sapply(strsplit(comparison,'_DEGs.csv'), "[", 1)) %>%
+  dplyr::select(comparison, gene, padj,logpadj, lfc, sextissue, direction)
+head(charDEGs)
+
+allDEGs <- rbind(charDEGs, manipDEGs)
+head(allDEGs)
+
+nearhatch <- allDEGs %>% 
+  dplyr::mutate(comparison = str_c(str_split_fixed(comparison,'\\_', 4)[,c(1,3)],collapse="_")) %>% 
+  dplyr::filter(grepl("inc.d17|hatch|prolong|extend|m.inc.d8", comparison)) %>%
+  dplyr::filter(!grepl("inc.d9|m.inc.d3", comparison))
+head(nearhatch)
+
+unique(nearhatch$comparison)
+```

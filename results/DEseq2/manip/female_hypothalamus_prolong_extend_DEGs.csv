@@ -1,0 +1,5 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"PMCH",0.00410181686513524,2.38702373359142,3.26458559943338,"female_hypothalamus","extend"
+"ZBTB16",0.000107698528645644,3.96779022990019,0.765848867143058,"female_hypothalamus","extend"
+"FKBP5",0.00248392443072551,2.60486162098263,0.649236910352325,"female_hypothalamus","extend"
+"TTPA",0.0433182064075332,1.36332953365884,0.578721712816444,"female_hypothalamus","extend"

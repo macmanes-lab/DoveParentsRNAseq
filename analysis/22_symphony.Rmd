@@ -128,16 +128,17 @@ sinnermansong <- ggplot(sinnerman, aes(x = position, y = genes)) +
                      limits = c(-1,12)) +
   geom_hline(yintercept=c(2.15,4.15,6.15,8.15,10.15))   +
   theme_B3() +
-  theme(axis.ticks = element_blank()) +
+  theme(axis.ticks = element_blank(),
+        axis.text.x = element_text(angle = 10, hjust = 1)) +
   labs(subtitle = "Sinnerman by Nina Simone", y = NULL)
 sinnermansong
 
-
 ```
 ```{r soulmusic}
-p1 <- plot_grid(respectsong + theme(legend.position = "none"), feelinggoodsong + theme(legend.position = "none"), rel_widths = c(0.45,0.55))
 
-p3 <- plot_grid(p1, sinnermansong, nrow = 2)
+p3 <- plot_grid(respectsong + theme(legend.position = "bottom"), 
+                sinnermansong + theme(legend.position = "bottom"), 
+                nrow = 1, rel_widths = c(0.45, 0.55))
 p3
 ```
 
@@ -146,14 +147,18 @@ modules <- read_csv("../results/08_genes_modules.csv") %>%
   rename(modulecolor = `net$colors`)  
 
 candidategenes <- c("PRL", "PRLR", 
-                 "VIP", "VIPR1", "VIPR2", 
-                 "OXT", "AVP", "AVPR1A", "AVPR1B", 
-                 "GNRH1","GNRHR", "NPVF",
-                 "NR3C1", "NR3C2",
-                 "ESR1", "ESR2", "AR",
-                 "DIO2","LEPR", "DIO3", "DIO1","CYP19A1",
-                 "HSPA14", "HSPA12A",
-                 "PTGES3", "HSD11B2","DRD5", "DRD1", "DRD2","PGE1", "PGF")
+                 #"VIP", "VIPR1", "VIPR2", 
+                 "OXT", "AVP",  "AVPR1B", # "AVPR1A",
+                # "GNRH1","GNRHR", "NPVF",
+                # "NR3C1", "NR3C2",
+                # "ESR1", "ESR2",
+                "AR",
+                # "DIO2","LEPR", "DIO3", "DIO1","CYP19A1",
+                # "HSPA14", "HSPA12A",
+                # "PTGES3", "HSD11B2",
+                 "DRD5", "DRD1", "DRD2",
+                 #"PGE1", "PGF",
+                 "BRCA1", "MYC", "PRKCZ" ,"FOSL2")
 
 modulescandidates <- modules %>% filter(gene %in% candidategenes)  %>%
   group_by(modulecolor)  %>%
@@ -237,33 +242,56 @@ d4 %>%
     theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1)) +
     guides(color = guide_legend(nrow = 2, byrow = T)) 
 
-d4 %>%
-  filter( modulecolor != "turquoise",
-          # modulecolor != "greenyellow",
+turquoisegenes <- d4 %>%
+  filter( modulecolor == "turquoise",
           tissue == "pituitary") %>%
   droplevels() %>% 
     ggplot(aes(x = treatment, y = m)) +
   geom_image(aes(image=image), size = 0.15) +
+  geom_smooth(aes(x = as.numeric(treatment)), se = F, color = "turquoise") +
   facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
-  labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "gene expression", x = "parental stage") +
+  labs(subtitle = "WGCNA turquoise module", 
+       y = "gene expression  in the pitutiary", x = "parental stage") +
     facet_wrap(~gene, scales = "free_y", nrow = ) +
     theme_B3() +
-    theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) 
+    theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.text = element_text(face = "italic")) 
 
-
-d4 %>%
-  filter( modulecolor != "turquoise",
-          # modulecolor != "greenyellow",
+redgenes <- d4 %>%
+  filter( modulecolor == "red",
           tissue == "pituitary") %>%
   droplevels() %>% 
     ggplot(aes(x = treatment, y = m)) +
-  geom_image(aes(image=image), size = 0.1) +
-  labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "gene expression", x = "parental stage") +
+  geom_image(aes(image=image), size = 0.15) +
+  geom_smooth(aes(x = as.numeric(treatment)), se = F, color = "red") +
+  facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
+  labs(subtitle = "WGCNA red module", 
+       y = "gene expression  in the pitutiary", x = "parental stage") +
+    facet_wrap(~gene, scales = "free_y", nrow = ) +
     theme_B3() +
-    theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) +
-  scale_y_log10()
+    theme(legend.position = "none", 
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.text = element_text(face = "italic")) 
 
+
+turquoisegenes
+redgenes
+
+plot_grid(turquoisegenes, redgenes)
 ```
+
+```{r}
+
+d4 %>% 
+  filter(gene %in% c("PRL", "PRLR", "ESR2")) %>%
+ggplot( aes(x = treatment, y = m, color = gene)) +
+    geom_smooth(aes(x = as.numeric(treatment)), se = F) +
+    facet_grid(gene~tissue, scales = "free")
+
+head(df)
+head(df2)
+```
+
 
 ## outline
 

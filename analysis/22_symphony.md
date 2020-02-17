@@ -138,15 +138,16 @@ R Markdown
                          limits = c(-1,12)) +
       geom_hline(yintercept=c(2.15,4.15,6.15,8.15,10.15))   +
       theme_B3() +
-      theme(axis.ticks = element_blank()) +
+      theme(axis.ticks = element_blank(),
+            axis.text.x = element_text(angle = 10, hjust = 1)) +
       labs(subtitle = "Sinnerman by Nina Simone", y = NULL)
     sinnermansong
 
 ![](../figures/favegenes/sinnerman-1.png)
 
-    p1 <- plot_grid(respectsong + theme(legend.position = "none"), feelinggoodsong + theme(legend.position = "none"), rel_widths = c(0.45,0.55))
-
-    p3 <- plot_grid(p1, sinnermansong, nrow = 2)
+    p3 <- plot_grid(respectsong + theme(legend.position = "bottom"), 
+                    sinnermansong + theme(legend.position = "bottom"), 
+                    nrow = 1, rel_widths = c(0.45, 0.55))
     p3
 
 ![](../figures/favegenes/soulmusic-1.png)
@@ -161,14 +162,18 @@ R Markdown
     ## )
 
     candidategenes <- c("PRL", "PRLR", 
-                     "VIP", "VIPR1", "VIPR2", 
-                     "OXT", "AVP", "AVPR1A", "AVPR1B", 
-                     "GNRH1","GNRHR", "NPVF",
-                     "NR3C1", "NR3C2",
-                     "ESR1", "ESR2", "AR",
-                     "DIO2","LEPR", "DIO3", "DIO1","CYP19A1",
-                     "HSPA14", "HSPA12A",
-                     "PTGES3", "HSD11B2","DRD5", "DRD1", "DRD2","PGE1", "PGF")
+                     #"VIP", "VIPR1", "VIPR2", 
+                     "OXT", "AVP",  "AVPR1B", # "AVPR1A",
+                    # "GNRH1","GNRHR", "NPVF",
+                    # "NR3C1", "NR3C2",
+                    # "ESR1", "ESR2",
+                    "AR",
+                    # "DIO2","LEPR", "DIO3", "DIO1","CYP19A1",
+                    # "HSPA14", "HSPA12A",
+                    # "PTGES3", "HSD11B2",
+                     "DRD5", "DRD1", "DRD2",
+                     #"PGE1", "PGF",
+                     "BRCA1", "MYC", "PRKCZ" ,"FOSL2")
 
     modulescandidates <- modules %>% filter(gene %in% candidategenes)  %>%
       group_by(modulecolor)  %>%
@@ -176,17 +181,14 @@ R Markdown
 
     modulescandidates
 
-    ## # A tibble: 8 x 2
-    ##   modulecolor gene                                                         
-    ##   <chr>       <chr>                                                        
-    ## 1 black       DRD5                                                         
-    ## 2 green       PTGES3                                                       
-    ## 3 greenyellow AVP, GNRH1, NPVF, OXT                                        
-    ## 4 grey        DIO1, DIO3                                                   
-    ## 5 magenta     PRLR                                                         
-    ## 6 red         PRL                                                          
-    ## 7 salmon      VIP                                                          
-    ## 8 turquoise   AR, AVPR1A, AVPR1B, CYP19A1, DIO2, DRD1, ESR1, ESR2, GNRHR, …
+    ## # A tibble: 5 x 2
+    ##   modulecolor gene                   
+    ##   <chr>       <chr>                  
+    ## 1 black       DRD5                   
+    ## 2 greenyellow AVP, OXT               
+    ## 3 magenta     PRLR                   
+    ## 4 red         BRCA1, FOSL2, MYC, PRL 
+    ## 5 turquoise   AR, AVPR1B, DRD1, PRKCZ
 
     datapath <- "../results/"   # path to the data
     datafiles <- dir(datapath, pattern = "*allvsd.csv") # get file names
@@ -248,14 +250,14 @@ R Markdown
 
     ## # A tibble: 6 x 6
     ## # Groups:   treatment, tissue [1]
-    ##   treatment tissue      gene       m     se image                          
-    ##   <fct>     <fct>       <fct>  <dbl>  <dbl> <chr>                          
-    ## 1 control   hypothalam… AR      7.15 0.0800 ../figures/images/DoveParentsR…
-    ## 2 control   hypothalam… AVP    10.0  0.313  ../figures/images/DoveParentsR…
-    ## 3 control   hypothalam… AVPR1A  8.32 0.0993 ../figures/images/DoveParentsR…
-    ## 4 control   hypothalam… AVPR1B  5.59 0.0462 ../figures/images/DoveParentsR…
-    ## 5 control   hypothalam… CYP19…  9.06 0.188  ../figures/images/DoveParentsR…
-    ## 6 control   hypothalam… DIO1    5.61 0.0541 ../figures/images/DoveParentsR…
+    ##   treatment tissue      gene      m     se image                           
+    ##   <fct>     <fct>       <fct> <dbl>  <dbl> <chr>                           
+    ## 1 control   hypothalam… AR     7.15 0.0800 ../figures/images/DoveParentsRN…
+    ## 2 control   hypothalam… AVP   10.0  0.313  ../figures/images/DoveParentsRN…
+    ## 3 control   hypothalam… AVPR…  5.59 0.0462 ../figures/images/DoveParentsRN…
+    ## 4 control   hypothalam… BRCA1  7.19 0.109  ../figures/images/DoveParentsRN…
+    ## 5 control   hypothalam… DRD1   7.88 0.162  ../figures/images/DoveParentsRN…
+    ## 6 control   hypothalam… DRD5   6.46 0.0930 ../figures/images/DoveParentsRN…
 
     d4 <- left_join(df3, modules, by = "gene")
 
@@ -296,34 +298,172 @@ R Markdown
 
 ![](../figures/favegenes/symphonymodules-4.png)
 
-    d4 %>%
-      filter( modulecolor != "turquoise",
-              # modulecolor != "greenyellow",
+    turquoisegenes <- d4 %>%
+      filter( modulecolor == "turquoise",
               tissue == "pituitary") %>%
       droplevels() %>% 
         ggplot(aes(x = treatment, y = m)) +
       geom_image(aes(image=image), size = 0.15) +
+      geom_smooth(aes(x = as.numeric(treatment)), se = F, color = "turquoise") +
       facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
-      labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "gene expression", x = "parental stage") +
+      labs(subtitle = "WGCNA turquoise module", 
+           y = "gene expression  in the pitutiary", x = "parental stage") +
         facet_wrap(~gene, scales = "free_y", nrow = ) +
         theme_B3() +
-        theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) 
+        theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1),
+              strip.text = element_text(face = "italic")) 
 
-![](../figures/favegenes/symphonymodules-5.png)
-
-    d4 %>%
-      filter( modulecolor != "turquoise",
-              # modulecolor != "greenyellow",
+    redgenes <- d4 %>%
+      filter( modulecolor == "red",
               tissue == "pituitary") %>%
       droplevels() %>% 
         ggplot(aes(x = treatment, y = m)) +
-      geom_image(aes(image=image), size = 0.1) +
-      labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "gene expression", x = "parental stage") +
+      geom_image(aes(image=image), size = 0.15) +
+      geom_smooth(aes(x = as.numeric(treatment)), se = F, color = "red") +
+      facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
+      labs(subtitle = "WGCNA red module", 
+           y = "gene expression  in the pitutiary", x = "parental stage") +
+        facet_wrap(~gene, scales = "free_y", nrow = ) +
         theme_B3() +
-        theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) +
-      scale_y_log10()
+        theme(legend.position = "none", 
+              axis.text.x = element_text(angle = 45, hjust = 1),
+              strip.text = element_text(face = "italic")) 
+
+
+    turquoisegenes
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](../figures/favegenes/symphonymodules-5.png)
+
+    redgenes
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](../figures/favegenes/symphonymodules-6.png)
+
+    plot_grid(turquoisegenes, redgenes)
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](../figures/favegenes/symphonymodules-7.png)
+
+    d4 %>% 
+      filter(gene %in% c("PRL", "PRLR", "ESR2")) %>%
+    ggplot( aes(x = treatment, y = m, color = gene)) +
+        geom_smooth(aes(x = as.numeric(treatment)), se = F) +
+        facet_grid(gene~tissue, scales = "free")
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+![](../figures/favegenes/unnamed-chunk-1-1.png)
+
+    head(df)
+
+    ## # A tibble: 6 x 990
+    ##   tissue X1    filename L.Blu13_male_go… L.G107_male_gon… L.G118_female_g…
+    ##   <chr>  <chr> <chr>               <dbl>            <dbl>            <dbl>
+    ## 1 gon    A2ML1 ../resu…             6.42             6.44            14.5 
+    ## 2 gon    A2ML2 ../resu…             5.43             5.14             4.75
+    ## 3 gon    A2ML3 ../resu…             8.05             7.98             9.70
+    ## 4 gon    A2ML4 ../resu…             5.43             5.61             5.46
+    ## 5 gon    A4GA… ../resu…             5.71             5.89             6.22
+    ## 6 gon    A4GNT ../resu…             4.75             4.75             6.31
+    ## # … with 984 more variables: L.R3_male_gonad_control.NYNO <dbl>,
+    ## #   L.R8_male_gonad_control <dbl>, L.W33_male_gonad_control <dbl>,
+    ## #   L.W3_male_gonad_control.NYNO <dbl>,
+    ## #   L.W4_male_gonad_control.NYNO <dbl>, R.G106_female_gonad_control <dbl>,
+    ## #   R.R20_female_gonad_control <dbl>, R.R9_female_gonad_control <dbl>,
+    ## #   R.W44_female_gonad_control <dbl>, R.Y108.W29_male_gonad_control <dbl>,
+    ## #   blk.s030.o.g_male_gonad_prolong <dbl>,
+    ## #   blk.s031.pu.d_female_gonad_prolong <dbl>,
+    ## #   blk.s032.g.w_female_gonad_m.hatch <dbl>,
+    ## #   blk.s049.y.g_female_gonad_m.inc.d3 <dbl>,
+    ## #   blk.s060.pu.w_female_gonad_m.inc.d3 <dbl>,
+    ## #   blk.s061.pu.y_female_gonad_inc.d9 <dbl>,
+    ## #   blk.y.l.s109_female_gonad_m.inc.d8 <dbl>,
+    ## #   blk0.x_female_gonad_m.n2 <dbl>, blk11.x_female_gonad_bldg <dbl>,
+    ## #   blk12.x_male_gonad_n5 <dbl>, blk17.x_male_gonad_inc.d17 <dbl>,
+    ## #   blk19.x_female_gonad_extend <dbl>, blk21.x_female_gonad_hatch <dbl>,
+    ## #   blk4.x_female_gonad_n9 <dbl>, blk5.x_male_gonad_m.inc.d3 <dbl>,
+    ## #   blu.o.x.ATLAS_female_gonad_control <dbl>,
+    ## #   blu10.w26.x_male_gonad_m.hatch <dbl>,
+    ## #   blu103.x_female_gonad_hatch.NYNO <dbl>,
+    ## #   blu104.w120.x_male_gonad_hatch <dbl>,
+    ## #   blu108.w40.o158_male_gonad_inc.d9 <dbl>,
+    ## #   blu111.w113.x_male_gonad_inc.d3 <dbl>,
+    ## #   blu113.w124.x_male_gonad_inc.d17 <dbl>,
+    ## #   blu114.r38.w198_male_gonad_bldg <dbl>,
+    ## #   blu115.y150.x_female_gonad_inc.prolong <dbl>,
+    ## #   blu119.w84.x_female_gonad_m.inc.d8 <dbl>,
+    ## #   blu121.w91.x_male_gonad_inc.d17 <dbl>,
+    ## #   blu124.w180.x_female_gonad_hatch <dbl>,
+    ## #   blu33.y88.x_male_gonad_bldg <dbl>, blu36.w16_female_gonad_n9 <dbl>,
+    ## #   blu37.r65.x_male_gonad_n5 <dbl>, blu38.g135.x_female_gonad_bldg <dbl>,
+    ## #   blu39.o26.x_female_gonad_inc.d3 <dbl>,
+    ## #   blu41.y100.x_male_gonad_n5 <dbl>,
+    ## #   blu44.y102_female_gonad_extend <dbl>,
+    ## #   blu47.y96.x_female_gonad_inc.d9 <dbl>,
+    ## #   blu55.g51_female_gonad_n5 <dbl>,
+    ## #   blu56.o53_female_gonad_m.inc.d3 <dbl>,
+    ## #   blu63.g62_female_gonad_m.inc.d9 <dbl>,
+    ## #   blu80.r97_female_gonad_m.inc.d8 <dbl>, blu81.r88_male_gonad_n9 <dbl>,
+    ## #   blu84.x_male_gonad_extend.hatch <dbl>,
+    ## #   d.r.blk.s159_female_gonad_m.inc.d9 <dbl>,
+    ## #   d.s008.y.blk_male_gonad_n5 <dbl>, d.s047.blk.o_male_gonad_n5 <dbl>,
+    ## #   d.s110.g.blk_male_gonad_m.inc.d3 <dbl>,
+    ## #   d.s112.blk.w_female_gonad_m.inc.d17 <dbl>,
+    ## #   d.s177.blk.r_female_gonad_m.inc.d3 <dbl>,
+    ## #   g.blk.s004.pk_female_gonad_lay <dbl>,
+    ## #   g.blk.s041.r_male_gonad_m.inc.d3 <dbl>,
+    ## #   g.o.y.s037_male_gonad_m.inc.d17 <dbl>, g.s.blk.d_male_gonad_n9 <dbl>,
+    ## #   g.s.blk.y_male_gonad_lay <dbl>, g.s043.pu.blk_male_gonad_lay <dbl>,
+    ## #   g.s075.pk.pu_male_gonad_m.hatch <dbl>,
+    ## #   g.s076.pk.r_female_gonad_m.hatch <dbl>,
+    ## #   g.s078.blk.o_female_gonad_lay <dbl>,
+    ## #   g.s111.r.blk_male_gonad_m.inc.d8 <dbl>,
+    ## #   g.s179.o.pk_male_gonad_m.inc.d8 <dbl>,
+    ## #   g.s351.pk.w_male_gonad_extend <dbl>,
+    ## #   g.x.ATLAS_female_gonad_control <dbl>,
+    ## #   g.y.blk.s006_female_gonad_m.inc.d17 <dbl>,
+    ## #   g.y.o.s_male_gonad_prolong <dbl>, g104.w82.x_male_gonad_bldg <dbl>,
+    ## #   g114.w83.x_male_gonad_hatch.NYNO <dbl>,
+    ## #   g130.y81.x_male_gonad_inc.d17 <dbl>,
+    ## #   g137.r24.w5_male_gonad_m.inc.d8 <dbl>,
+    ## #   g141.blu27.x_female_gonad_bldg <dbl>,
+    ## #   g142.r40.x_female_gonad_inc.d17 <dbl>,
+    ## #   g143.blu32.x_male_gonad_inc.d17 <dbl>,
+    ## #   g144.r54.x_female_gonad_m.inc.d3 <dbl>,
+    ## #   g146.blu51_male_gonad_inc.d3 <dbl>,
+    ## #   g17.w108.x_female_gonad_extend <dbl>,
+    ## #   g20.w106.x_male_gonad_inc.d3 <dbl>,
+    ## #   g22.blu118_female_gonad_extend <dbl>,
+    ## #   g3.g119.w20_male_gonad_extend <dbl>,
+    ## #   g32.blu79_male_gonad_m.inc.d17 <dbl>,
+    ## #   g34.x_male_gonad_m.hatch.NYNO <dbl>,
+    ## #   g38.x_male_gonad_inc.prolong <dbl>, g52.blu58_male_gonad_bldg <dbl>,
+    ## #   g53.y84_male_gonad_hatch <dbl>, g6.w197.x_female_gonad_inc.d3 <dbl>,
+    ## #   g63.blu65_female_gonad_m.inc.d17 <dbl>,
+    ## #   g73.x_female_gonad_m.inc.d9 <dbl>, g75.x_female_gonad_inc.d9 <dbl>,
+    ## #   g8.y197_male_gonad_extend <dbl>, l.s.o.blk_male_gonad_extend <dbl>,
+    ## #   l.s.w.d_female_gonad_m.hatch <dbl>,
+    ## #   l.s024.y.g_male_gonad_m.inc.d17 <dbl>,
+    ## #   l.s052.pk.r_female_gonad_prolong <dbl>,
+    ## #   l.s080.blk.r_male_gonad_prolong <dbl>, …
+
+    head(df2)
+
+    ## # A tibble: 6 x 6
+    ##   bird    sex    treatment tissue gene    vsd
+    ##   <chr>   <chr>  <fct>     <fct>  <fct> <dbl>
+    ## 1 L.Blu13 male   control   gonads AR     7.64
+    ## 2 L.G107  male   control   gonads AR     7.61
+    ## 3 L.G118  female control   gonads AR     8.93
+    ## 4 L.R3    male   control   gonads AR     7.85
+    ## 5 L.R8    male   control   gonads AR     7.35
+    ## 6 L.W33   male   control   gonads AR     7.57
 
 outline
 -------
