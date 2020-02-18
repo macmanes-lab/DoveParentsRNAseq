@@ -159,3 +159,5 @@ DEGs
     fig2
 
 ![](../figures/fig2-1.png)
+
+    write_csv(allDEG, "../results/DEGs-char.csv")
