@@ -23,7 +23,7 @@ DESeq2 was not designed to run on 100+ samples. But, I really like it, so I do i
 
 ## Characterization 
 
-```{r readfiles, eval=F, include=F}
+```{r readfiles, eval=T}
 # import "colData" which contains sample information and "countData" which contains read counts
 countData <- read.csv("../results/00_countData_characterization.csv", header = T, row.names = 1)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
@@ -87,7 +87,7 @@ for(i in levels(colData$sextissue)){
 
 ### Data wrangle
 
-```{r manipulation1, include = F}
+```{r manipulation1, eval = F, include = F}
 # import "colData" which contains sample information and "countData" which contains read counts
 countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
@@ -331,8 +331,6 @@ dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
   
 vsd <- as.data.frame(assay(vst(dds, blind=FALSE)))
 
-plotDispEsts( dds, ylim = c(1e-6, 1e1) )
-
 ressex <- results( dds, contrast = c("sex", "male", "female") )
 reshiloPRL <- results( dds, contrast = c("hiloPRL", "hi", "lo") )
 hist( ressex$pvalue, breaks=20, col="grey" )
@@ -350,12 +348,7 @@ restoDEGs <- function(res, up, down){
                                                            yes = down, no = "NS"))) %>% 
     dplyr::arrange(gene)
   DEGs$direction <- factor(DEGs$direction, levels = c(down, "NS", up)) 
-  # write DEGsframe of only significant genes
   DEGs <- DEGs %>% dplyr::filter(direction != "NS")
-  print(str(DEGs))
-  #partialfilename = paste("_", down, "_", up, sep = "")
-  #myfilename = paste0("../results/DESeq2/", mytissue, partialfilename, "_DEGs.csv")
-  #write.csv(DEGs, myfilename, row.names = F)
   print(head(DEGs))
   return(DEGs)
 }  
@@ -385,13 +378,11 @@ plotbarvolcano <- function(df, mylabels, mycolorname){
 }
 
 top <- plotbarvolcano(sexdegs, c("a","b"), "sex")
-bottom <- plotbarvolcano(PRLdegs, c("c","d"), "prolactin expression")
+bottom <- plotbarvolcano(PRLdegs, c("c","d"), "PRL")
 
-plot_grid(top,bottom, nrow = 2)
+ab <- plot_grid(top,bottom, nrow = 2)
 
-
-head(PRLdegs)
-head(sexdegs)
+sexPRLdesg <- full_join(sexdegs, PRLdegs, by = "gene")
 
 sexPRLdesg$direction.x <- as.character(sexPRLdesg$direction.x)
 
@@ -400,27 +391,35 @@ sexPRLdesg <- full_join(sexdegs, PRLdegs, by = "gene") %>%
   tidyr::replace_na(list(direction.x = "no sex effect", direction.y = "no PRL effect"))
 sexPRLdesg
 
-ggplot(sexPRLdesg, aes(x = direction.x, fill = direction.y)) +
+write.csv(sexPRLdesg, "../results/DEG-PRLsex.csv")
+
+sexPRLdesg2 <- sexPRLdesg %>%
+  mutate(higherin = paste(direction.x, direction.y, sep = "_")) %>%
+  mutate(direction = paste(higherin, "PRL", sep = "")) %>%
+  select(gene, direction) %>%
+  group_by(direction) %>%
+  summarize(DEGs = str_c(gene , collapse = " "))
+sexPRLdesg2
+write.csv(sexPRLdesg2, "../results/PRLsexinteraction.csv")
+
+c <- ggplot(sexPRLdesg, aes(x = direction.x, fill = direction.y)) +
   geom_bar(position = "dodge") +
   scale_fill_manual(values = allcolors, na.value= "#bdbdbd",
-                    labels= c("low PRL", "hi PRL", "NS"),
-                    name = "PRL DEGs") +
+                    labels= c("lo", "hi", "NS"),
+                    name = "PRL") +
   scale_x_discrete(breaks = c("female", "male", NA),
                    labels = c("female", "male", "NS"),
-                   name = "Sex DEGs") 
-
-interaction <- sexPRLdesg %>% filter(direction.x %in% c("male", "female") & 
-                                       direction.y %in% c("hi", "lo"))
-interaction
-
-sexonly <- sexPRLdesg %>% filter(direction.x %in% c("male", "female") & 
-                                       !direction.y %in% c("hi", "lo") )
-sexonly
-PRLonly <- sexPRLdesg %>% filter(!direction.x %in% c("male", "female")& 
-                                       direction.y %in% c("hi", "lo"))
-PRLonly
+                   name = "Sex")  +
+  labs(y = "Total DEGs") +
+  theme_B3() +
+  theme(legend.position = "top")
 
 
-write.csv(sexPRLdesg, "../results/DEG-PRLsex.csv")
+
+plot_grid(ab, c, nrow = 1, rel_widths = c(2,1.2), labels = c(" ", "d"), label_size = 12)
+
 ```
+
+
+
 
