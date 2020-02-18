@@ -3,7 +3,7 @@ title: "fig6"
 output: md_document
 ---
 
-# Figure 4
+# Figure 6
 
 ```{r setup, include=TRUE}
 library(tidyverse)
@@ -17,91 +17,26 @@ knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
 ```{r fig6, fig.height=7, fig.width=7}
 geneids <- read_csv("../metadata/00_geneinfo.csv")
 
-vsd_path <- "../results/DEseq2/manip/"   # path to the data
-vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
-vsd_pathfiles <- paste0(vsd_path, vsd_files)
-vsd_files
+DEGchar <- read_csv("../results/DEGs-char.csv")
+DEGmanip <- read_csv("../results/DEGs-manip.csv")
+DEGall <- rbind(DEGchar, DEGmanip)
+tail(DEGall)
 
-allvsd <- vsd_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_csv(.x), .id = "file_name")  %>% 
-  dplyr::rename("gene" = "X1")  %>% 
-  pivot_longer(cols = blk.s031.pu.d_female_gonad_prolong:y98.o50.x_male_pituitary_inc.d3, 
-               names_to = "samples", values_to = "counts") 
+hatchnocontrol <- DEGall %>% filter(grepl("inc.d17", comparison)) %>% filter(!grepl("control", comparison))
+hatchnocontrol %>% group_by(comparison) %>% summarize(n = n())
 
-hypreplace <- read_csv("../results/DEseq2/manip/female_hypothalamus_hatch_extend_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 1) %>% pull(gene)
-hypreplace
+incd17hatch <- DEGall %>% filter(comparison == "inc.d17_hatch") %>%
+  arrange(gene) %>% distinct(comparison, gene)
+incd17hatch
 
-hypremove <- read_csv("../results/DEseq2/manip/female_hypothalamus_m.n2_hatch_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 1) %>% pull(gene)
-hypremove
+incd17prolong <- DEGall %>% filter(comparison == "inc.d17_prolong") %>%
+  arrange(gene) %>% distinct(comparison, gene)
+incd17prolong
 
+bothincs <- full_join(incd17hatch,incd17prolong, by = "gene" )
+bothincs
 
-
-pitreplace <- read_csv("../results/DEseq2/manip/female_pituitary_hatch_extend_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 1) %>% pull(gene)
-pitreplace
-
-pitremove <- read_csv("../results/DEseq2/manip/female_pituitary_m.n2_hatch_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 1) %>% pull(gene)
-pitremove
-
-
-gonreplace <- read_csv("../results/DEseq2/manip/female_gonad_inc.d17_prolong_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 1) %>% pull(gene)
-gonreplace
-
-gonremove <- read_csv("../results/DEseq2/manip/female_gonad_inc.d17_m.inc.d17_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 1) %>% pull(gene)
-gonremove
-
-
-plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtstages){
-  candidates  <- allvsd %>%
-    filter(gene %in% whichgenes) %>%
-    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
-    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/manip/'), "[", 2)) %>%
-    dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
-                tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
-                treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
-    dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
-    dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
-    filter(tissue == whichtissue, sex %in% whichsex) 
-  
-  candidates$treatment <- factor(candidates$treatment, levels = alllevels2)
-  
-  p <- candidates %>%
-    filter(treatment %in% whichtstages) %>%
-    ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
-    geom_boxplot() + facet_wrap(~gene, scales = "free_y") + 
-    theme_B3() +
-    scale_fill_manual(values = allcolors) +
-    scale_color_manual(values = allcolors) +
-    theme(axis.text.x = element_blank(),
-          legend.position = "none",
-          axis.title.x = element_blank(),
-          strip.text = element_text(face = "italic")) +
-    labs(y = mysubtitle) 
-  return(p)
-  
-}
-
-
-a <- plottopgenes(hypreplace, "hypothalamus", c("female"), "hypothalamus", c("hatch", "extend")) 
-b <- plottopgenes(pitreplace, "pituitary", c("female"), "pituitary", c("hatch", "extend")) 
-c <- plottopgenes(gonreplace, "gonad", c("female"), "gonads", c("inc.d17", "prolong"))
-
-fig6a <- plot_grid(a,b,c, ncol = 1) 
-
-d <- plottopgenes(hypreplace, "hypothalamus", c("female", "male"), NULL, alllevels2) 
-e <- plottopgenes(pitreplace, "pituitary", c("female", "male"), NULL, alllevels2) 
-f <- plottopgenes(gonreplace, "gonad", c("female", "male"), NULL, alllevels2) + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-fig6b <- plot_grid(d,e,f, ncol = 1)
-
-fig6 <- plot_grid(fig6a, fig6b, rel_widths = c(1,2))
-fig6
+onlyhatch <- subset(bothincs, is.na(bothincs$comparison.y))
+onlyhatch
 ```
-
+ 

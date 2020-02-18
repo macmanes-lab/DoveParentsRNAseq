@@ -98,3 +98,7 @@ barplots <- plot_grid(p1,p2, nrow=1, rel_widths = c(0.9,3))
 fig2 <- plot_grid(barplots, mylegend, nrow = 2, rel_heights = c(1,0.1))
 fig2
 ```
+
+```{r writefiles}
+write_csv(allDEG, "../results/DEGs-char.csv")
+```

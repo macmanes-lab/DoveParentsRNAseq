@@ -281,7 +281,6 @@ plot_grid(turquoisegenes, redgenes)
 ```
 
 ```{r}
-
 d4 %>% 
   filter(gene %in% c("PRL", "PRLR", "ESR2")) %>%
 ggplot( aes(x = treatment, y = m, color = gene)) +

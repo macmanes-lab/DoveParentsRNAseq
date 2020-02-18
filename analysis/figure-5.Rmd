@@ -111,3 +111,7 @@ barplots <- plot_grid( replacementplots + theme(legend.position = "none"),  remo
 fig5 <- plot_grid(expdesign, barplots, mylegend, ncol =1, rel_heights = c(0.25,1,0.1))
 fig5
 ```
+
+```{r writefiles}
+write_csv(allDEG, "../results/DEGs-manip.csv")
+```
