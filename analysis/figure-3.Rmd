@@ -133,6 +133,6 @@ PRLvsd3 %>%
   group_by(sex, tissue, hiloPRL) %>%
   summarize(n = n())
 
-write.csv(PRLvsd,"../results/PRLvsd3.csv", row.names = F)
+write.csv(PRLvsd3,"../results/PRLvsd.csv", row.names = F)
 ```
 
