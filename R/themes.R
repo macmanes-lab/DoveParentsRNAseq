@@ -150,6 +150,9 @@ colorstissue <- c("hypothalamus" = "#d95f02",
 
 sexcolors <- c("female" = "#969696", "male" = "#525252")
 
+
+colorsPRL <-  c( "lo"= "#78c679",  "hi"= "#006837")
+
 colorsvolcano <-  c(colorscharnew,
                     
                     "m.inc.d8" = "#cbc9e2", 
@@ -161,7 +164,7 @@ colorsvolcano <-  c(colorscharnew,
                     
                     "NS" = "#bdbdbd")
 
-allcolors <- c(colorscharmaip, sexcolors, colorstissue)
+allcolors <- c(colorscharmaip, sexcolors, colorstissue, colorsPRL)
 
 colorsvolcanochar <-  c(colorscharnew,
                     "NS" = "#bdbdbd")
