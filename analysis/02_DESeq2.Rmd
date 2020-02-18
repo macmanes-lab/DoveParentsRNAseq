@@ -4,12 +4,11 @@ output: md_document
 ---
 
 ```{r setup}
-
 library(tidyverse)
 library(DESeq2)
-
 library(BiocParallel)
 register(MulticoreParam(6))
+library(caret) 
 
 source("../R/functions.R")  # load custom functions 
 source("../R/themes.R")  # load custom themes and color palletes
@@ -189,7 +188,7 @@ for(i in levels(colData$sextissue)){
 
 ## Manipulation: comparisons to other manipluations
 
-```{r manipulationwithin}
+```{r manipulationwithin, eval = F}
 # import "colData" which contains sample information and "countData" which contains read counts
 countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
 geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
@@ -286,4 +285,47 @@ for(i in levels(colData$sextissue)){
   extend.m.n2 <- createDEGdfsaveManip("extend", "m.n2",  i) 
 }
 
+```
+
+
+## PRL-driven DESeq2
+
+```{r PRL}
+PRLdata <- read_csv("../results/PRLvsd.csv")
+PRLsamples <- colData %>%
+  mutate(samples = sapply(strsplit(as.character(V1), '.NYNO'), "[", 1))  %>%
+  select(samples) 
+PRLsamples
+
+# join with hi lo, and drop controls
+colDataPRL <- full_join(PRLdata, PRLsamples) %>% 
+  drop_na() %>%
+  select(samples, tissue, sex, treatment, hiloPRL) %>% 
+  filter(!treatment %in% c("control", "bldg"))
+
+# sample 100 only, better for deseq2
+colDataPRL <- colDataPRL[sample(1:nrow(colDataPRL), 100,
+   replace=FALSE),]
+
+colDataPRL <- as.data.frame(colDataPRL)
+row.names(colDataPRL) <- colDataPRL$samples
+
+savecols <- as.character(colDataPRL$samples) 
+savecols <- as.vector(savecols) 
+  
+newcountData <- countData %>% dplyr::select(one_of(savecols)) 
+
+colDataPRL %>%
+  group_by(sex, tissue, hiloPRL) %>%
+  summarize(n = n())
+  
+dds <- DESeqDataSetFromMatrix(countData = newcountData,
+                                colData = colDataPRL,
+                                design = ~ tissue * sex * hiloPRL )
+dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+print(dds)
+print(dim(dds))
+dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  
+vsd <- as.data.frame(assay(vst(dds, blind=FALSE)))
 ```

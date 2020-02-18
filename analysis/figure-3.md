@@ -1,16 +1,16 @@
-Plots with Prolactin
-====================
+Figure 3
+========
 
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3
     ## ✓ tibble  2.1.3     ✓ dplyr   0.8.3
     ## ✓ tidyr   1.0.0     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -95,10 +95,11 @@ Data: PCA, hormones, PRL expression
                     tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
                     treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
       dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
-      dplyr::select(sex, tissue, treatment, gene, samples, counts)
-    PRLvsd$treatment <- factor(PRLvsd$treatment, levels = alllevels)
+      dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
+      drop_na()
+    PRLvsd$treatment <- factor(PRLvsd$treatment, levels = alllevels) 
 
-    PRLhyp <- PRLvsd %>% filter(tissue == "hypothalamus")
+    PRLhyp <- PRLvsd %>% filter(tissue == "hypothalamus") 
     PRLpit <- PRLvsd %>% filter(tissue == "pituitary")
     PRLgon <- PRLvsd %>% filter(tissue == "gonad")
 
@@ -132,3 +133,66 @@ Data: PCA, hormones, PRL expression
     plot_grid(a,b,c,d,e,f, labels = "auto", ncol = 2, rel_heights = c(1,1,1.2))
 
 ![](../figures/fig3-1.png)
+
+    PRLvsd2 <- PRLvsd %>%
+      filter(tissue == "pituitary")
+    head(PRLvsd2)
+
+    ## # A tibble: 6 x 6
+    ##   sex    tissue    treatment gene  samples                           counts
+    ##   <chr>  <chr>     <fct>     <chr> <chr>                              <dbl>
+    ## 1 female pituitary control   PRL   L.G118_female_pituitary_control.…   17.9
+    ## 2 female pituitary control   PRL   R.G106_female_pituitary_control     17.0
+    ## 3 female pituitary control   PRL   R.R20_female_pituitary_control      18.6
+    ## 4 female pituitary control   PRL   R.R9_female_pituitary_control.NY…   16.8
+    ## 5 female pituitary control   PRL   R.W44_female_pituitary_control.N…   18.6
+    ## 6 female pituitary inc.d9    PRL   blk.s061.pu.y_female_pituitary_i…   17.6
+
+    PRLvsd2 %>%
+      group_by(sex) %>%
+      summarize(median = median(counts))
+
+    ## # A tibble: 2 x 2
+    ##   sex    median
+    ##   <chr>   <dbl>
+    ## 1 female   18.1
+    ## 2 male     17.9
+
+    a <- ggplot(PRLvsd2, aes(x = sex, y = counts, fill = sex))  +
+      geom_boxplot() +
+      labs(x = "Sex", y = "Prolactin expression")+
+      theme_B3() + theme(legend.position = "none") +
+      scale_fill_manual(values = sexcolors) +
+      geom_hline(yintercept=18, linetype="dashed", color = "black") 
+
+
+    PRLvsd3 <- PRLvsd2 %>%
+      mutate(hiloPRL = ifelse(counts >= 18, "hi", "lo"))  %>%
+      drop_na()
+    PRLvsd3$hiloPRL <- factor(PRLvsd3$hiloPRL, levels = c("lo", "hi"))
+
+
+    b <- ggplot(PRLvsd3, aes(x = hiloPRL, y = counts, fill = sex))  +
+      geom_boxplot() +
+      labs(x = "Prolactin, binned", y = "Prolactin expression")+
+      theme_B3() + theme(legend.position = "none") +
+      scale_fill_manual(values = sexcolors)
+
+    plot_grid(a,b, nrow = 1, rel_widths = c(1,1))
+
+![](../figures/determinePRLhiglow-1.png)
+
+    PRLvsd3 %>%
+      group_by(sex, tissue, hiloPRL) %>%
+      summarize(n = n())
+
+    ## # A tibble: 4 x 4
+    ## # Groups:   sex, tissue [2]
+    ##   sex    tissue    hiloPRL     n
+    ##   <chr>  <chr>     <fct>   <int>
+    ## 1 female pituitary lo         47
+    ## 2 female pituitary hi         49
+    ## 3 male   pituitary lo         51
+    ## 4 male   pituitary hi         46
+
+    write.csv(PRLvsd,"../results/PRLvsd3.csv", row.names = F)

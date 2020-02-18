@@ -3,10 +3,6 @@ title: "Fig3"
 output: md_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 # Figure 3
 
 ```{r setup}
@@ -57,10 +53,11 @@ PRLvsd <- vsd_pathfiles %>%
                 tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
                 treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
   dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
-  dplyr::select(sex, tissue, treatment, gene, samples, counts)
-PRLvsd$treatment <- factor(PRLvsd$treatment, levels = alllevels)
+  dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
+  drop_na()
+PRLvsd$treatment <- factor(PRLvsd$treatment, levels = alllevels) 
 
-PRLhyp <- PRLvsd %>% filter(tissue == "hypothalamus")
+PRLhyp <- PRLvsd %>% filter(tissue == "hypothalamus") 
 PRLpit <- PRLvsd %>% filter(tissue == "pituitary")
 PRLgon <- PRLvsd %>% filter(tissue == "gonad")
 ```
@@ -101,5 +98,41 @@ plot_grid(a,b,c,d,e,f, labels = "auto", ncol = 2, rel_heights = c(1,1,1.2))
 
 ```
 
+```{r determinePRLhiglow}
+PRLvsd2 <- PRLvsd %>%
+  filter(tissue == "pituitary")
+head(PRLvsd2)
 
+PRLvsd2 %>%
+  group_by(sex) %>%
+  summarize(median = median(counts))
+
+a <- ggplot(PRLvsd2, aes(x = sex, y = counts, fill = sex))  +
+  geom_boxplot() +
+  labs(x = "Sex", y = "Prolactin expression")+
+  theme_B3() + theme(legend.position = "none") +
+  scale_fill_manual(values = sexcolors) +
+  geom_hline(yintercept=18, linetype="dashed", color = "black") 
+
+
+PRLvsd3 <- PRLvsd2 %>%
+  mutate(hiloPRL = ifelse(counts >= 18, "hi", "lo"))  %>%
+  drop_na()
+PRLvsd3$hiloPRL <- factor(PRLvsd3$hiloPRL, levels = c("lo", "hi"))
+
+
+b <- ggplot(PRLvsd3, aes(x = hiloPRL, y = counts, fill = sex))  +
+  geom_boxplot() +
+  labs(x = "Prolactin, binned", y = "Prolactin expression")+
+  theme_B3() + theme(legend.position = "none") +
+  scale_fill_manual(values = sexcolors)
+
+plot_grid(a,b, nrow = 1, rel_widths = c(1,1))
+
+PRLvsd3 %>%
+  group_by(sex, tissue, hiloPRL) %>%
+  summarize(n = n())
+
+write.csv(PRLvsd,"../results/PRLvsd3.csv", row.names = F)
+```
 
