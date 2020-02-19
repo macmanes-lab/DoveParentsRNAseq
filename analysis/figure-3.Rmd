@@ -80,7 +80,9 @@ b <- plotprolactin(PRLhyp, PRLhyp$counts, "PRL", "hypothalamus") +
         axis.title.y = element_text(face = "italic"),
         legend.title = element_blank()) + guides(fill = F)
 
-c <- plotfriz(charfviz) + labs(subtitle = "  ")
+c <- plotfriz(charfviz) + labs(subtitle = "  ") +
+  ylim(-250000,500000) + xlim(-250000,500000) + 
+  theme(axis.text = element_blank())
 
 d <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "pituitary") + 
   theme(legend.position = "none", axis.text.x = element_blank(), axis.title.x = element_blank(),
@@ -98,7 +100,7 @@ plot_grid(a,b,c,d,e,f, labels = "auto", ncol = 2, rel_heights = c(1,1,1.2))
 
 ```
 
-```{r determinePRLhiglow}
+```{r determinePRLhiglo, fig.height = 6, fig.width=3}
 PRLvsd2 <- PRLvsd %>%
   filter(tissue == "pituitary")
 head(PRLvsd2)
@@ -121,13 +123,14 @@ PRLvsd3 <- PRLvsd2 %>%
 PRLvsd3$hiloPRL <- factor(PRLvsd3$hiloPRL, levels = c("lo", "hi"))
 
 
-b <- ggplot(PRLvsd3, aes(x = hiloPRL, y = counts, fill = sex))  +
+b <- ggplot(PRLvsd3, aes(x = sex, y = counts, fill = sex, color = hiloPRL))  +
   geom_boxplot() +
-  labs(x = "Prolactin, binned", y = "Prolactin expression")+
+  labs(x = "Prolactin, binned into `lo` and `hi`", y = "Prolactin expression")+
   theme_B3() + theme(legend.position = "none") +
-  scale_fill_manual(values = sexcolors)
+  scale_fill_manual(values = allcolors) +
+  scale_color_manual(values = allcolors)
 
-plot_grid(a,b, nrow = 1, rel_widths = c(1,1))
+plot_grid(a,b, nrow = 2, rel_widths = c(1,1))
 
 PRLvsd3 %>%
   group_by(sex, tissue, hiloPRL) %>%

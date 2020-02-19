@@ -3,14 +3,14 @@ Figure 3
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3
     ## ✓ tibble  2.1.3     ✓ dplyr   0.8.3
     ## ✓ tidyr   1.0.0     ✓ stringr 1.4.0
     ## ✓ readr   1.3.1     ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -116,7 +116,9 @@ Data: PCA, hormones, PRL expression
             axis.title.y = element_text(face = "italic"),
             legend.title = element_blank()) + guides(fill = F)
 
-    c <- plotfriz(charfviz) + labs(subtitle = "  ")
+    c <- plotfriz(charfviz) + labs(subtitle = "  ") +
+      ylim(-250000,500000) + xlim(-250000,500000) + 
+      theme(axis.text = element_blank())
 
     d <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "pituitary") + 
       theme(legend.position = "none", axis.text.x = element_blank(), axis.title.x = element_blank(),
@@ -172,15 +174,16 @@ Data: PCA, hormones, PRL expression
     PRLvsd3$hiloPRL <- factor(PRLvsd3$hiloPRL, levels = c("lo", "hi"))
 
 
-    b <- ggplot(PRLvsd3, aes(x = hiloPRL, y = counts, fill = sex))  +
+    b <- ggplot(PRLvsd3, aes(x = sex, y = counts, fill = sex, color = hiloPRL))  +
       geom_boxplot() +
-      labs(x = "Prolactin, binned", y = "Prolactin expression")+
+      labs(x = "Prolactin, binned into `lo` and `hi`", y = "Prolactin expression")+
       theme_B3() + theme(legend.position = "none") +
-      scale_fill_manual(values = sexcolors)
+      scale_fill_manual(values = allcolors) +
+      scale_color_manual(values = allcolors)
 
-    plot_grid(a,b, nrow = 1, rel_widths = c(1,1))
+    plot_grid(a,b, nrow = 2, rel_widths = c(1,1))
 
-![](../figures/determinePRLhiglow-1.png)
+![](../figures/determinePRLhiglo-1.png)
 
     PRLvsd3 %>%
       group_by(sex, tissue, hiloPRL) %>%
