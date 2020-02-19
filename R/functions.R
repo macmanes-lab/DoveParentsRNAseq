@@ -774,16 +774,12 @@ makefvizdf <-  function(whichtissue, whichtreatment, whichsex){
 
 plotfriz <- function(frizdf){
   
-  p <- fviz_pca_var(frizdf,  labelsize = 3.5 , 
-                    #axes.linetype = "blank", 
+  p <- fviz_pca_var(frizdf,  
+                    axes.linetype = "blank", 
                     repel = T , 
-                    col.var = "black",
-                    ind.var = "black",
                     select.var= list(contrib = 3))  + 
     labs(title = NULL) + 
-    theme_B3() + 
-    theme(axis.text = element_blank(),
-          text = element_text(colour = "black"))
+    theme_B3() 
   return(p)
 }
 
