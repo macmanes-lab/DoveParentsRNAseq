@@ -418,6 +418,26 @@ c <- ggplot(sexPRLdesg, aes(x = direction.x, fill = direction.y)) +
 
 plot_grid(ab, c, nrow = 1, rel_widths = c(2,1.2), labels = c(" ", "d"), label_size = 12)
 
+
+head(sexPRLdesg)
+
+PRLhi <- sexPRLdesg %>%
+  filter(direction.y == "hi")
+PRLhi
+
+PRLwgcna <- read_csv("../results/08_PRL_associated.csv") %>%
+  dplyr::rename("gene" =  "x") %>%
+  mutate(wgcna = "yes")
+PRLwgcna
+
+PRLwgcnaDEGs <- left_join(PRLwgcna, sexPRLdesg) %>%
+  select(-direction.x) %>%
+  dplyr::rename("PRL" =  "direction.y") 
+PRLwgcnaDEGs %>%
+  group_by(wgcna, PRL) %>%
+  summarize(n = n())
+head(PRLwgcnaDEGs)
+# 90 of the 98 genes in the wgcna module are also DEGs, with increase expression in hi PRL
 ```
 
 
