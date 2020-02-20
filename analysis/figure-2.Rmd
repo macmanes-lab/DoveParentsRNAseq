@@ -6,7 +6,10 @@ output: md_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(cowplot)
-library(kableExtra)
+library(kableExtra) 
+library(ggtext) # for italic fonts
+library(ggsignif) # fot stats on plots
+
 source("../R/themes.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
@@ -15,11 +18,10 @@ knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 ## DEGs
 
 ```{r allDEGs}
-
 DEG_path <- "../results/DEseq2/"   # path to the data
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
 DEG_pathfiles <- paste0(DEG_path, DEG_files)
-DEG_files
+#DEG_files
 
 allDEG <- DEG_pathfiles %>%
   setNames(nm = .) %>% 
@@ -48,22 +50,17 @@ overlappingDEGs <- allDEG %>%
   arrange(desc(n))
 overlappingDEGs 
 
-HYPcandidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
+candidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
                        "CRH", "AVPR1A", "AVPR1B", "AVPR2",
-                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR") 
+                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR",
+                    "SOX9") 
 
-suppletable1 <- allDEG %>%
-  filter(gene %in% HYPcandidategenes, 
-         tissue == "hypothalamus") %>%
-  group_by(sex, tissue, comparison) %>%
-  summarize(genes = str_c(gene, collapse = " ")) %>%
-  pivot_wider(names_from = comparison, values_from = genes ) %>%
-  select(sex, tissue, control_bldg,  
-         inc.d9_inc.d17, hatch_n5)  %>%
-  arrange(sex, tissue)
-suppletable1
 
-write.csv(suppletable1, "../results/suppltable-1.csv", row.names = F)
+nocontrol <- allDEG %>%
+  filter(comparison != "control_bldg")
+
+malegon <- nocontrol %>%
+  filter(sex == "male", tissue == "gonad")
 ```
 
 ## variance stabilized gene expression  (vsd)
@@ -76,76 +73,15 @@ vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
 vsd_pathfiles <- paste0(vsd_path, vsd_files)
 vsd_files
 
+
 allvsd <- vsd_pathfiles %>%
   setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name")  %>% 
   dplyr::rename("gene" = "X1") %>% 
   pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                names_to = "samples", values_to = "counts") 
-```
 
-```{r fig2, fig.width=7, fig.height=7}
-
-p1 <- allDEG %>%
-  filter(comparison == "control_bldg") %>%
-  filter(tissue == "hypothalamus") %>%
-ggplot(aes(x = comparison,  fill = direction)) +
-  geom_bar(position = "dodge") +
-  facet_grid(tissue~sex) +
-  theme_B3() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-         #axis.text.x = element_blank(),
-        legend.position = "none",
-        strip.text.y = element_blank())  +
-  guides(fill = guide_legend(nrow = 1)) +
-  labs(x = " ", y = "Hypothalamic DEGs") +
-  scale_fill_manual(values = colorscharnew,
-                       name = " ",
-                       drop = FALSE) +
-  scale_color_manual(values = sexcolors) +
-  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
-            position = position_dodge(width = 1),
-            size = 2.5, color = "black")  +
-  ylim(0,4200)
-
-p2 <- allDEG %>%
-  filter(comparison != "control_bldg") %>%
-    filter(tissue == "hypothalamus") %>%
-ggplot(aes(x = comparison,  fill = direction)) +
-  geom_bar(position = "dodge") +
-  facet_wrap(~sex) +
-  theme_B3() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1),
-         #axis.text.x = element_blank(),
-        legend.position = "none",
-        strip.placement = "right")  +
-  guides(fill = guide_legend(nrow = 1)) +
-  labs(x = "Sequential Parental Care Stages  ", y = NULL) +
-  scale_fill_manual(values = colorscharnew,
-                       name = " ", drop = FALSE) +
-  scale_color_manual(values = sexcolors) +
-  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
-            position = position_dodge(width = 1),
-            size = 2.5, color = "black")  +
-  ylim(0,1150)
-  
-forlegend <- allDEG %>%
-ggplot(aes(x = comparison,  fill = direction)) +
-  geom_bar(position = "dodge") +
-   scale_fill_manual(values = colorscharnew,
-                       name = "increased in", drop = FALSE) +
-  scale_color_manual(values = sexcolors) +
-  guides(color = F) +
-  guides(fill= guide_legend(nrow =1)) +
-  theme_B3() +
-  theme(legend.position = "bottom") 
-
-mylegend <- get_legend(forlegend)
-
-barplots <- plot_grid(p1,p2, nrow=1, rel_widths = c(0.9,3))
-
-
-plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtstages){
+getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   candidates  <- allvsd %>%
     filter(gene %in% whichgenes) %>%
     dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
@@ -157,42 +93,164 @@ plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtst
     dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
     filter(tissue == whichtissue, sex %in% whichsex)  %>%
     drop_na()
-  
   candidates$treatment <- factor(candidates$treatment, levels = alllevels)
-  
-  p <- candidates %>%
-    filter(treatment %in% whichtstages) %>%
+  return(candidates)
+}
+
+hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
+pitvsd <- getcandidatevsd(candidategenes, "pituitary", sexlevels)
+gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
+head(hypvsd)
+head(pitvsd)
+head(gonvsd)
+```
+
+```{r figurefunctions}
+
+makebargraph <- function(whichtissue, myylab, lowlim){
+  p <- allDEG %>%
+    filter(tissue == whichtissue,
+           comparison != "control_bldg") %>%
+  ggplot(aes(x = comparison,  fill = direction)) +
+    geom_bar(position = "dodge") +
+    facet_grid(tissue~sex) +
+    theme_B3() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none",
+          strip.text.y = element_blank())  +
+    guides(fill = guide_legend(nrow = 1)) +
+    labs(x = "Sequential parental care stage comparisons", 
+         y = myylab,
+         subtitle = " ") +
+  scale_fill_manual(values = allcolors,
+                       name = " ",
+                       drop = FALSE) +
+  scale_color_manual(values = allcolors)  #+
+ # geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+ #           position = position_dodge(width = 1),
+ #           size = 2.5, color = "black")  +
+ # ylim(lowlim, higherlim)
+  return(p)
+}
+
+
+makeboxplots <- function(df, whichgene, myylab, whichsex){
+  p <- df %>%
+    filter(treatment %in% charlevels,
+           gene %in% whichgene,
+           sex %in% whichsex) %>%
+    filter(treatment != "control") %>%
     ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
     geom_boxplot() + 
-    facet_wrap(~gene, scales = "free_y") + 
+    #geom_point() +
+    facet_wrap(~sex) +
     theme_B3() +
     scale_fill_manual(values = allcolors) +
     scale_color_manual(values = allcolors) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "none",
-          strip.text = element_text(face = "italic")) +
-    labs(y = mysubtitle, x = "Parental stage") 
+          legend.position = "none") +
+    labs(y = myylab , x = "Parental stage", subtitle = "") +
+    theme(axis.title.y = element_markdown())
   return(p)
-  
 }
+```
 
-hypDEGs <- c("OXT", "AVP", "GNRH1",  "AR")
-topgenes <- plottopgenes(hypDEGs, "hypothalamus", c("female", "male"), "Hypothalamic expression", charlevels) 
+## HPG
 
-plot_grid(barplots, topgenes, nrow = 2, rel_heights = c(0.4,0.6))
+```{r fig2, fig.width=7, fig.height=7}
+
+allDEG %>%
+  filter(gene %in% candidategenes, 
+         tissue == "hypothalamus") %>%
+  group_by(sex, tissue, comparison) %>%
+  summarize(genes = str_c(gene, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = genes ) %>%
+  select(sex, tissue, control_bldg,  
+        inc.d9_inc.d17, hatch_n5)  %>%
+  arrange(sex, tissue)
+
+
+write.csv(table1, "../results/table-1.csv", row.names = F)
+
+
+# hyp
+p1 <- makebargraph("hypothalamus","Hypothalamic DEGs") + theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+p2 <- makeboxplots(hypvsd, "AR","*AR* expression", "male") +
+              geom_signif(comparisons=list(c("inc.d9", "inc.d17")), annotations= "*", 
+              y_position = 8, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) +
+              theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+
+p3 <- makeboxplots(hypvsd, "DRD1","*DRD1* expression", "female") +
+              geom_signif(comparisons=list(c("hatch", "n5")), annotations= "*", 
+              y_position = 10, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) +
+              #geom_signif(comparisons=list(c("control", "bldg")), annotations= "*", 
+              #y_position = 10, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) + 
+              theme(axis.text.x = element_blank(), axis.title.x = element_blank())
+
+p23 <- plot_grid(p3,p2, labels = c("b", "c"), label_size = 12)
+
+# pit
+
+p4 <- makebargraph("pituitary","Pituitary DEGs")  +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), strip.text = element_blank())
+p5 <- makeboxplots(pitvsd, "PRL","*PRL* expression", "male") +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), strip.text = element_blank())+
+              #geom_signif(comparisons=list(c("control", "bldg")), annotations= "*", 
+              #y_position = 21.5, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) +
+              geom_signif(comparisons=list(c("inc.d9", "inc.d17")), annotations= "*", 
+              y_position = 21.5, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) 
+p6 <- makeboxplots(pitvsd, "PRL","*PRL* expression", "female")  +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), strip.text = element_blank()) +
+              geom_signif(comparisons=list(c("inc.d9", "inc.d17")), annotations= "*", 
+              y_position = 21, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) +
+              #geom_signif(comparisons=list(c("control", "bldg")), annotations= "*", 
+              #y_position = 21, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) +
+              geom_signif(comparisons=list(c("hatch", "n5")), annotations= "*", 
+              y_position = 21, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 )
+
+p56 <- plot_grid(p6,p5, labels = c("e", "f"), label_size = 12)
+
+# gon
+
+p7 <- makebargraph("gonad","Gonadal DEGs") +  theme(strip.text = element_blank())
+p8 <- makeboxplots(gonvsd, "SOX9","*SOX9* expression", "male")  +  theme(strip.text = element_blank()) +
+              geom_signif(comparisons=list(c("lay", "inc.d3")), annotations= "*", 
+              y_position = 7.5, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 )
+p9 <- makeboxplots(gonvsd, "AVPR1A","*AVPR1A* expression", "female") +  theme(strip.text = element_blank()) +
+              #geom_signif(comparisons=list(c("control", "bldg")), annotations= "*", 
+              #y_position = 9.5, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) +
+              geom_signif(comparisons=list(c("lay", "inc.d3")), annotations= "*", 
+              y_position = 9.5, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 ) +
+              geom_signif(comparisons=list(c("inc.d3", "inc.d9")), annotations= "*", 
+              y_position = 9.5, tip_length = 0.005, vjust = 0.5, color= "black" , textsize = 3 )
+
+p89 <- plot_grid(p9,p8, labels = c("h", "i"), label_size = 12)
+
+
+a <- plot_grid(p1, p23, nrow = 1, rel_heights = c(0.5,0.5), labels = c("a", " "), label_size = 12)
+b <- plot_grid(p4, p56, nrow = 1, rel_heights = c(0.5,0.5), labels = c("d", " "), label_size = 12)
+c <- plot_grid(p7, p89, nrow = 1, rel_heights = c(0.5,0.5), labels = c("g", " "), label_size = 12)
+plot_grid(a,b,c, nrow = 3, rel_heights = c(1,0.9,1.3))
 
 ```
 
-
-```{r suppletable1}
-kable(suppletable1)
+```{r}
+allDEG %>%
+  group_by(tissue, comparison) %>%
+  summarize(totalDEGs = n()) %>%
+  arrange(tissue, comparison)
 ```
-
-
 
 
 ```{r writefiles}
-#write_csv(allDEG, "../results/DEGs-char.csv")
+table1 <- allDEG %>%
+  filter(gene %in% candidategenes) %>%
+  group_by(sex, tissue, comparison) %>%
+  summarize(genes = str_c(gene, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = genes ) %>%
+  select(sex, tissue, control_bldg, lay_inc.d3, inc.d3_inc.d9,
+        inc.d9_inc.d17, hatch_n5)  %>%
+  arrange( tissue, sex)
+table1
+
+write_csv(table1, "../results/table1.csv")
 ```
 
 
