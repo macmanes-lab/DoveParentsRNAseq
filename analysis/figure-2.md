@@ -83,52 +83,124 @@ DEGs
     allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
     allDEG$direction <- factor(allDEG$direction, levels = charlevels)
 
+    overlappingDEGs <- allDEG %>%
+      filter(tissue == "hypothalamus",
+             comparison != "control_bldg") %>%
+      mutate(group = paste(sex, tissue,comparison, sep = ".")) %>%
+      group_by(gene) %>%
+      summarize(n = n()) %>%
+      arrange(desc(n))
+    overlappingDEGs 
 
-    allDEG %>%
+    ## # A tibble: 2,008 x 2
+    ##    gene          n
+    ##    <chr>     <int>
+    ##  1 C1QB          2
+    ##  2 C4H4ORF50     2
+    ##  3 CAPN2         2
+    ##  4 CCDC60        2
+    ##  5 COL1A1        2
+    ##  6 CSF3R         2
+    ##  7 DYTN          2
+    ##  8 IGJ           2
+    ##  9 IGLL1         2
+    ## 10 KCNC4         2
+    ## # … with 1,998 more rows
+
+    HYPcandidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
+                           "CRH", "AVPR1A", "AVPR1B", "AVPR2",
+                           "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR") 
+
+    suppletable1 <- allDEG %>%
+      filter(gene %in% HYPcandidategenes) %>%
       group_by(sex, tissue, comparison) %>%
-      summarize(n = n())
+      summarize(genes = str_c(gene, collapse = " ")) %>%
+      pivot_wider(names_from = comparison, values_from = genes ) %>%
+      select(sex, tissue, control_bldg, lay_inc.d3, inc.d3_inc.d9,
+             inc.d9_inc.d17, hatch_n5)  %>%
+      arrange(sex, tissue)
+    suppletable1
 
-    ## # A tibble: 37 x 4
+    ## # A tibble: 6 x 7
     ## # Groups:   sex, tissue [6]
-    ##    sex    tissue       comparison         n
-    ##    <chr>  <fct>        <fct>          <int>
-    ##  1 female hypothalamus control_bldg    5683
-    ##  2 female hypothalamus bldg_lay           1
-    ##  3 female hypothalamus inc.d3_inc.d9      1
-    ##  4 female hypothalamus inc.d9_inc.d17     5
-    ##  5 female hypothalamus inc.d17_hatch      3
-    ##  6 female hypothalamus hatch_n5        1927
-    ##  7 female pituitary    control_bldg    6129
-    ##  8 female pituitary    bldg_lay         279
-    ##  9 female pituitary    lay_inc.d3       353
-    ## 10 female pituitary    inc.d9_inc.d17  2004
-    ## # … with 27 more rows
+    ##   sex   tissue control_bldg lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
+    ##   <chr> <fct>  <chr>        <chr>      <chr>         <chr>         
+    ## 1 fema… hypot… DRD1 AR PRL… <NA>       <NA>          <NA>          
+    ## 2 fema… pitui… AVPR2 AR DR… <NA>       <NA>          PRL           
+    ## 3 fema… gonad  AVPR1A AR C… AVPR1A PR… AVPR1A        <NA>          
+    ## 4 male  hypot… CRH AR AVPR… <NA>       <NA>          AR            
+    ## 5 male  pitui… AR AVPR2 AV… <NA>       <NA>          PRL           
+    ## 6 male  gonad  AR PRLR PRL… <NA>       <NA>          <NA>          
+    ## # … with 1 more variable: hatch_n5 <chr>
+
+    write.csv(suppletable1, "../results/suppltable-1.csv", row.names = F)
+
+variance stabilized gene expression (vsd)
+-----------------------------------------
+
+    geneids <- read_csv("../metadata/00_geneinfo.csv")
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    vsd_path <- "../results/DEseq2/"   # path to the data
+    vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
+    vsd_pathfiles <- paste0(vsd_path, vsd_files)
+    vsd_files
+
+    ## [1] "female_gonad_vsd.csv"        "female_hypothalamus_vsd.csv"
+    ## [3] "female_pituitary_vsd.csv"    "male_gonad_vsd.csv"         
+    ## [5] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
+
+    allvsd <- vsd_pathfiles %>%
+      setNames(nm = .) %>% 
+      map_df(~read_csv(.x), .id = "file_name")  %>% 
+      dplyr::rename("gene" = "X1") %>% 
+      pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
+                   names_to = "samples", values_to = "counts") 
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Warning: Missing column names filled in: 'X1' [1]
 
     p1 <- allDEG %>%
       filter(comparison == "control_bldg") %>%
+      filter(tissue == "hypothalamus") %>%
     ggplot(aes(x = comparison,  fill = direction)) +
       geom_bar(position = "dodge") +
       facet_grid(tissue~sex) +
       theme_B3() +
-      theme(#axis.text.x = element_text(angle = 45, hjust = 1),
-             axis.text.x = element_blank(),
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+             #axis.text.x = element_blank(),
             legend.position = "none",
             strip.text.y = element_blank())  +
       guides(fill = guide_legend(nrow = 1)) +
-      labs(x = " ", y = "Total Differentially Expressed Genes") +
+      labs(x = " ", y = "Hypothalamic DEGs") +
       scale_fill_manual(values = colorscharnew,
                            name = " ",
                            drop = FALSE) +
-      scale_color_manual(values = sexcolors)
+      scale_color_manual(values = sexcolors) +
+      geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+                position = position_dodge(width = 1),
+                size = 2.5, color = "black")  +
+      ylim(0,4200)
 
     p2 <- allDEG %>%
       filter(comparison != "control_bldg") %>%
+        filter(tissue == "hypothalamus") %>%
     ggplot(aes(x = comparison,  fill = direction)) +
       geom_bar(position = "dodge") +
-      facet_grid(tissue~sex) +
+      facet_wrap(~sex) +
       theme_B3() +
-      theme(#axis.text.x = element_text(angle = 45, hjust = 1),
-             axis.text.x = element_blank(),
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+             #axis.text.x = element_blank(),
             legend.position = "none",
             strip.placement = "right")  +
       guides(fill = guide_legend(nrow = 1)) +
@@ -138,7 +210,8 @@ DEGs
       scale_color_manual(values = sexcolors) +
       geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
                 position = position_dodge(width = 1),
-                size = 2.5, color = "black") 
+                size = 2.5, color = "black")  +
+      ylim(0,1150)
       
     forlegend <- allDEG %>%
     ggplot(aes(x = comparison,  fill = direction)) +
@@ -149,15 +222,219 @@ DEGs
       guides(color = F) +
       guides(fill= guide_legend(nrow =1)) +
       theme_B3() +
-      theme(legend.position = "bottom")
+      theme(legend.position = "bottom") 
 
     mylegend <- get_legend(forlegend)
 
     barplots <- plot_grid(p1,p2, nrow=1, rel_widths = c(0.9,3))
 
-    fig2 <- plot_grid(barplots, mylegend, nrow = 2, rel_heights = c(1,0.1))
-    fig2
+
+    plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtstages){
+      candidates  <- allvsd %>%
+        filter(gene %in% whichgenes) %>%
+        dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
+        dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/'), "[", 2)) %>%
+        dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+                    tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
+                    treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
+        dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+        dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
+        filter(tissue == whichtissue, sex %in% whichsex)  %>%
+        drop_na()
+      
+      candidates$treatment <- factor(candidates$treatment, levels = alllevels)
+      
+      p <- candidates %>%
+        filter(treatment %in% whichtstages) %>%
+        ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
+        geom_boxplot() + 
+        facet_wrap(~gene, scales = "free_y") + 
+        theme_B3() +
+        scale_fill_manual(values = allcolors) +
+        scale_color_manual(values = allcolors) +
+        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+              legend.position = "none",
+              strip.text = element_text(face = "italic")) +
+        labs(y = mysubtitle, x = "Parental stage") 
+      return(p)
+      
+    }
+
+    hypDEGs <- c("OXT", "AVP", "GNRH1",  "AR")
+    topgenes <- plottopgenes(hypDEGs, "hypothalamus", c("female", "male"), "Hypothalamic expression", charlevels) 
+
+    plot_grid(barplots, topgenes, nrow = 2, rel_heights = c(0.4,0.6))
 
 ![](../figures/fig2-1.png)
 
-    write_csv(allDEG, "../results/DEGs-char.csv")
+    kable(suppletable1)
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+sex
+</th>
+<th style="text-align:left;">
+tissue
+</th>
+<th style="text-align:left;">
+control\_bldg
+</th>
+<th style="text-align:left;">
+lay\_inc.d3
+</th>
+<th style="text-align:left;">
+inc.d3\_inc.d9
+</th>
+<th style="text-align:left;">
+inc.d9\_inc.d17
+</th>
+<th style="text-align:left;">
+hatch\_n5
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+<td style="text-align:left;">
+DRD1 AR PRLR PRL CYP19A1 POMC AGRP
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+DRD1 CYP19A1 POMC
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+<td style="text-align:left;">
+AVPR2 AR DRD1 CYP19A1 PRLR PRL OXT AVP
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+PRL
+</td>
+<td style="text-align:left;">
+AVPR2 PRL
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+gonad
+</td>
+<td style="text-align:left;">
+AVPR1A AR CYP19A1 POMC
+</td>
+<td style="text-align:left;">
+AVPR1A PRLR AGRP
+</td>
+<td style="text-align:left;">
+AVPR1A
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+<td style="text-align:left;">
+CRH AR AVPR2 CYP19A1 PRL GNRH1 AGRP POMC
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+AR
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+<td style="text-align:left;">
+AR AVPR2 AVPR1B CYP19A1 PRL POMC PRLR OXT AVP
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+PRL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+gonad
+</td>
+<td style="text-align:left;">
+AR PRLR PRL POMC
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
+
+    #write_csv(allDEG, "../results/DEGs-char.csv")

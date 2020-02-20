@@ -1,0 +1,7 @@
+"sex","tissue","control_bldg","lay_inc.d3","inc.d3_inc.d9","inc.d9_inc.d17","hatch_n5"
+"female","hypothalamus","DRD1 AR PRLR PRL CYP19A1 POMC AGRP",NA,NA,NA,"DRD1 CYP19A1 POMC"
+"female","pituitary","AVPR2 AR DRD1 CYP19A1 PRLR PRL OXT AVP",NA,NA,"PRL","AVPR2 PRL"
+"female","gonad","AVPR1A AR CYP19A1 POMC","AVPR1A PRLR AGRP","AVPR1A",NA,NA
+"male","hypothalamus","CRH AR AVPR2 CYP19A1 PRL GNRH1 AGRP POMC",NA,NA,"AR",NA
+"male","pituitary","AR AVPR2 AVPR1B CYP19A1 PRL POMC PRLR OXT AVP",NA,NA,"PRL",NA
+"male","gonad","AR PRLR PRL POMC",NA,NA,NA,NA

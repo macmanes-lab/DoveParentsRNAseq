@@ -6,6 +6,7 @@ output: md_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(cowplot)
+library(kableExtra)
 source("../R/themes.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
@@ -13,7 +14,7 @@ knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 
 ## DEGs
 
-```{r fig2, fig.width=7}
+```{r allDEGs}
 
 DEG_path <- "../results/DEseq2/"   # path to the data
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
@@ -34,41 +35,87 @@ allDEG <- DEG_pathfiles %>%
 dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
 head(allDEG)
 
-
 allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
 allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
 allDEG$direction <- factor(allDEG$direction, levels = charlevels)
 
+overlappingDEGs <- allDEG %>%
+  filter(tissue == "hypothalamus",
+         comparison != "control_bldg") %>%
+  mutate(group = paste(sex, tissue,comparison, sep = ".")) %>%
+  group_by(gene) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+overlappingDEGs 
 
-allDEG %>%
+HYPcandidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
+                       "CRH", "AVPR1A", "AVPR1B", "AVPR2",
+                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR") 
+
+suppletable1 <- allDEG %>%
+  filter(gene %in% HYPcandidategenes) %>%
   group_by(sex, tissue, comparison) %>%
-  summarize(n = n())
+  summarize(genes = str_c(gene, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = genes ) %>%
+  select(sex, tissue, control_bldg, lay_inc.d3, inc.d3_inc.d9,
+         inc.d9_inc.d17, hatch_n5)  %>%
+  arrange(sex, tissue)
+suppletable1
+
+write.csv(suppletable1, "../results/suppltable-1.csv", row.names = F)
+```
+
+## variance stabilized gene expression  (vsd)
+
+```{r vsd}
+geneids <- read_csv("../metadata/00_geneinfo.csv")
+
+vsd_path <- "../results/DEseq2/"   # path to the data
+vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
+vsd_pathfiles <- paste0(vsd_path, vsd_files)
+vsd_files
+
+allvsd <- vsd_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name")  %>% 
+  dplyr::rename("gene" = "X1") %>% 
+  pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
+               names_to = "samples", values_to = "counts") 
+```
+
+```{r fig2, fig.width=7, fig.height=7}
 
 p1 <- allDEG %>%
   filter(comparison == "control_bldg") %>%
+  filter(tissue == "hypothalamus") %>%
 ggplot(aes(x = comparison,  fill = direction)) +
   geom_bar(position = "dodge") +
   facet_grid(tissue~sex) +
   theme_B3() +
-  theme(#axis.text.x = element_text(angle = 45, hjust = 1),
-         axis.text.x = element_blank(),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+         #axis.text.x = element_blank(),
         legend.position = "none",
         strip.text.y = element_blank())  +
   guides(fill = guide_legend(nrow = 1)) +
-  labs(x = " ", y = "Total Differentially Expressed Genes") +
+  labs(x = " ", y = "Hypothalamic DEGs") +
   scale_fill_manual(values = colorscharnew,
                        name = " ",
                        drop = FALSE) +
-  scale_color_manual(values = sexcolors)
+  scale_color_manual(values = sexcolors) +
+  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+            position = position_dodge(width = 1),
+            size = 2.5, color = "black")  +
+  ylim(0,4200)
 
 p2 <- allDEG %>%
   filter(comparison != "control_bldg") %>%
+    filter(tissue == "hypothalamus") %>%
 ggplot(aes(x = comparison,  fill = direction)) +
   geom_bar(position = "dodge") +
-  facet_grid(tissue~sex) +
+  facet_wrap(~sex) +
   theme_B3() +
-  theme(#axis.text.x = element_text(angle = 45, hjust = 1),
-         axis.text.x = element_blank(),
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+         #axis.text.x = element_blank(),
         legend.position = "none",
         strip.placement = "right")  +
   guides(fill = guide_legend(nrow = 1)) +
@@ -78,7 +125,8 @@ ggplot(aes(x = comparison,  fill = direction)) +
   scale_color_manual(values = sexcolors) +
   geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
             position = position_dodge(width = 1),
-            size = 2.5, color = "black") 
+            size = 2.5, color = "black")  +
+  ylim(0,1150)
   
 forlegend <- allDEG %>%
 ggplot(aes(x = comparison,  fill = direction)) +
@@ -89,16 +137,63 @@ ggplot(aes(x = comparison,  fill = direction)) +
   guides(color = F) +
   guides(fill= guide_legend(nrow =1)) +
   theme_B3() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") 
 
 mylegend <- get_legend(forlegend)
 
 barplots <- plot_grid(p1,p2, nrow=1, rel_widths = c(0.9,3))
 
-fig2 <- plot_grid(barplots, mylegend, nrow = 2, rel_heights = c(1,0.1))
-fig2
+
+plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtstages){
+  candidates  <- allvsd %>%
+    filter(gene %in% whichgenes) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/'), "[", 2)) %>%
+    dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+                tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
+                treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
+    dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+    dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
+    filter(tissue == whichtissue, sex %in% whichsex)  %>%
+    drop_na()
+  
+  candidates$treatment <- factor(candidates$treatment, levels = alllevels)
+  
+  p <- candidates %>%
+    filter(treatment %in% whichtstages) %>%
+    ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
+    geom_boxplot() + 
+    facet_wrap(~gene, scales = "free_y") + 
+    theme_B3() +
+    scale_fill_manual(values = allcolors) +
+    scale_color_manual(values = allcolors) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none",
+          strip.text = element_text(face = "italic")) +
+    labs(y = mysubtitle, x = "Parental stage") 
+  return(p)
+  
+}
+
+hypDEGs <- c("OXT", "AVP", "GNRH1",  "AR")
+topgenes <- plottopgenes(hypDEGs, "hypothalamus", c("female", "male"), "Hypothalamic expression", charlevels) 
+
+plot_grid(barplots, topgenes, nrow = 2, rel_heights = c(0.4,0.6))
+
+
 ```
 
-```{r writefiles}
-write_csv(allDEG, "../results/DEGs-char.csv")
+
+```{r suppletable1}
+kable(suppletable1)
 ```
+
+
+
+
+```{r writefiles}
+#write_csv(allDEG, "../results/DEGs-char.csv")
+```
+
+
+
