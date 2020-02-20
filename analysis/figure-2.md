@@ -112,26 +112,22 @@ DEGs
                            "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR") 
 
     suppletable1 <- allDEG %>%
-      filter(gene %in% HYPcandidategenes) %>%
+      filter(gene %in% HYPcandidategenes, 
+             tissue == "hypothalamus") %>%
       group_by(sex, tissue, comparison) %>%
       summarize(genes = str_c(gene, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = genes ) %>%
-      select(sex, tissue, control_bldg, lay_inc.d3, inc.d3_inc.d9,
+      select(sex, tissue, control_bldg,  
              inc.d9_inc.d17, hatch_n5)  %>%
       arrange(sex, tissue)
     suppletable1
 
-    ## # A tibble: 6 x 7
+    ## # A tibble: 2 x 5
     ## # Groups:   sex, tissue [6]
-    ##   sex   tissue control_bldg lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
-    ##   <chr> <fct>  <chr>        <chr>      <chr>         <chr>         
-    ## 1 fema… hypot… DRD1 AR PRL… <NA>       <NA>          <NA>          
-    ## 2 fema… pitui… AVPR2 AR DR… <NA>       <NA>          PRL           
-    ## 3 fema… gonad  AVPR1A AR C… AVPR1A PR… AVPR1A        <NA>          
-    ## 4 male  hypot… CRH AR AVPR… <NA>       <NA>          AR            
-    ## 5 male  pitui… AR AVPR2 AV… <NA>       <NA>          PRL           
-    ## 6 male  gonad  AR PRLR PRL… <NA>       <NA>          <NA>          
-    ## # … with 1 more variable: hatch_n5 <chr>
+    ##   sex    tissue     control_bldg                inc.d9_inc.d17 hatch_n5    
+    ##   <chr>  <fct>      <chr>                       <chr>          <chr>       
+    ## 1 female hypothala… DRD1 AR PRLR PRL CYP19A1 P… <NA>           DRD1 CYP19A…
+    ## 2 male   hypothala… CRH AR AVPR2 CYP19A1 PRL G… AR             <NA>
 
     write.csv(suppletable1, "../results/suppltable-1.csv", row.names = F)
 
@@ -282,12 +278,6 @@ tissue
 control\_bldg
 </th>
 <th style="text-align:left;">
-lay\_inc.d3
-</th>
-<th style="text-align:left;">
-inc.d3\_inc.d9
-</th>
-<th style="text-align:left;">
 inc.d9\_inc.d17
 </th>
 <th style="text-align:left;">
@@ -310,59 +300,7 @@ DRD1 AR PRLR PRL CYP19A1 POMC AGRP
 NA
 </td>
 <td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
 DRD1 CYP19A1 POMC
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-female
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-<td style="text-align:left;">
-AVPR2 AR DRD1 CYP19A1 PRLR PRL OXT AVP
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-PRL
-</td>
-<td style="text-align:left;">
-AVPR2 PRL
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-female
-</td>
-<td style="text-align:left;">
-gonad
-</td>
-<td style="text-align:left;">
-AVPR1A AR CYP19A1 POMC
-</td>
-<td style="text-align:left;">
-AVPR1A PRLR AGRP
-</td>
-<td style="text-align:left;">
-AVPR1A
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
 </td>
 </tr>
 <tr>
@@ -376,59 +314,7 @@ hypothalamus
 CRH AR AVPR2 CYP19A1 PRL GNRH1 AGRP POMC
 </td>
 <td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
 AR
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-male
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-<td style="text-align:left;">
-AR AVPR2 AVPR1B CYP19A1 PRL POMC PRLR OXT AVP
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-PRL
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-male
-</td>
-<td style="text-align:left;">
-gonad
-</td>
-<td style="text-align:left;">
-AR PRLR PRL POMC
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
 </td>
 <td style="text-align:left;">
 NA

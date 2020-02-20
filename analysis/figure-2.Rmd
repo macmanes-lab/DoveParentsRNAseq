@@ -53,11 +53,12 @@ HYPcandidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
                        "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR") 
 
 suppletable1 <- allDEG %>%
-  filter(gene %in% HYPcandidategenes) %>%
+  filter(gene %in% HYPcandidategenes, 
+         tissue == "hypothalamus") %>%
   group_by(sex, tissue, comparison) %>%
   summarize(genes = str_c(gene, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = genes ) %>%
-  select(sex, tissue, control_bldg, lay_inc.d3, inc.d3_inc.d9,
+  select(sex, tissue, control_bldg,  
          inc.d9_inc.d17, hatch_n5)  %>%
   arrange(sex, tissue)
 suppletable1
@@ -179,7 +180,6 @@ hypDEGs <- c("OXT", "AVP", "GNRH1",  "AR")
 topgenes <- plottopgenes(hypDEGs, "hypothalamus", c("female", "male"), "Hypothalamic expression", charlevels) 
 
 plot_grid(barplots, topgenes, nrow = 2, rel_heights = c(0.4,0.6))
-
 
 ```
 
