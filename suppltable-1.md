@@ -14,15 +14,15 @@
   <tr>
    <td style="text-align:left;"> female </td>
    <td style="text-align:left;"> hypothalamus </td>
-   <td style="text-align:left;"> *DRD1 AR PRLR PRL CYP19A1 POMC AGRP* </td>
+   <td style="text-align:left;"> DRD1 AR PRLR PRL CYP19A1 POMC AGRP </td>
    <td style="text-align:left;"> NA </td>
-   <td style="text-align:left;"> *DRD1 CYP19A1 POMC* </td>
+   <td style="text-align:left;"> DRD1 CYP19A1 POMC </td>
   </tr>
   <tr>
    <td style="text-align:left;"> male </td>
    <td style="text-align:left;"> hypothalamus </td>
-   <td style="text-align:left;"> *CRH AR AVPR2 CYP19A1 PRL GNRH1 AGRP POMC* </td>
-   <td style="text-align:left;"> *AR* </td>
+   <td style="text-align:left;"> CRH AR AVPR2 CYP19A1 PRL GNRH1 AGRP POMC </td>
+   <td style="text-align:left;"> AR </td>
    <td style="text-align:left;"> NA </td>
   </tr>
 </tbody>
