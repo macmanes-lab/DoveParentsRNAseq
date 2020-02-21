@@ -8,7 +8,7 @@ library(tidyverse)
 library(DESeq2)
 library(BiocParallel)
 register(MulticoreParam(6))
-library(caret) 
+library(caret)  # for sampling data
 library(cowplot)
 
 source("../R/functions.R")  # load custom functions 
@@ -17,9 +17,11 @@ source("../R/themes.R")  # load custom themes and color palletes
 knitr::opts_chunk$set(fig.path = '../figures/DESeq2/',  message=F, comment=F, warning=F)
 ```
 
-## Warning: This script can take a very long time to run. 
+## Notes
 
-DESeq2 was not designed to run on 100+ samples. But, I really like it, so I do it anyways. Some of these commands take like 15 min to run using 6 cores. 
+
+- DESeq2 was not designed to run on 100+ samples. But, I really like it, so I do it anyways. Some of these commands take like 15 min to run using 6 cores. 
+_ Also, I don't run every chuck every time. When I want new analysese, I add them to the bottom and set `eval = T` for chunks I don't want to rerurn 
 
 ## Characterization 
 
@@ -143,9 +145,6 @@ createDEGdfsaveManip <- function(up, down, mytissue){
   # return DEGs frome with all data, included NS genes
   #print(head(DEGs))
 }  
-
-
-
 
 for(i in levels(colData$sextissue)){
   
@@ -414,8 +413,6 @@ c <- ggplot(sexPRLdesg, aes(x = direction.x, fill = direction.y)) +
   theme_B3() +
   theme(legend.position = "top")
 
-
-
 plot_grid(ab, c, nrow = 1, rel_widths = c(2,1.2), labels = c(" ", "d"), label_size = 12)
 
 
@@ -439,6 +436,107 @@ PRLwgcnaDEGs %>%
 head(PRLwgcnaDEGs)
 # 90 of the 98 genes in the wgcna module are also DEGs, with increase expression in hi PRL
 ```
+
+
+
+## Hypothesis testing - external stimuli and/or prolactin
+
+```{r}
+# label each bird with weather or not their pituitary had hi PRL or not
+# then make new column with nest, eggs, or chicks, drop controls
+
+PRLdata <- read_csv("../results/PRLvsd.csv") %>%
+  mutate(V1 = samples) %>%
+  mutate(bird = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
+  select(bird,hiloPRL)
+
+# join with hi lo, and drop controls
+colDatahypothesis <- full_join(colData, PRLdata, by = "bird") %>% 
+  drop_na() %>%
+  select(V1, tissue, sex, sextissue, treatment, hiloPRL) %>% 
+  filter(!treatment %in% c("control", "bldg")) %>%
+  mutate(external = fct_collapse(treatment, eggs = c("lay", "inc.d3", "inc.d9", "inc.d17"),
+                                            chicks = c("hatch", "n5", "n9")))
+
+colDatahypothesis <- as.data.frame(colDatahypothesis)
+row.names(colDatahypothesis) <- colDatahypothesis$V1
+
+savecols <- as.character(colDatahypothesis$V1) 
+savecols <- as.vector(savecols) 
+  
+newcountData <- countData %>% dplyr::select(one_of(savecols)) 
+
+colDatahypothesis %>%
+  group_by(sex, tissue, hiloPRL, external) %>%
+  summarize(n = n())
+
+
+hypothesesistesting <- function(whichfactor, up, down, mytissue){
+  
+  res <- results(dds, contrast = c(whichfactor, up, down), independentFiltering = T, alpha = 0.1)
+  
+  DEGs <- data.frame(gene = row.names(res),
+                        padj = res$padj, 
+                        logpadj = -log10(res$padj),
+                        lfc = res$log2FoldChange,
+                        sextissue = mytissue)
+  DEGs <- na.omit(DEGs)
+  DEGs <- DEGs %>%
+    dplyr::mutate(direction = ifelse(DEGs$lfc > 0 & DEGs$padj < 0.1, 
+                                     yes = up, no = ifelse(DEGs$lfc < 0 & DEGs$padj < 0.1, 
+                                                           yes = down, no = "NS"))) %>% 
+    dplyr::arrange(desc(lfc)) 
+  
+  DEGs$direction <- factor(DEGs$direction, levels = c(down, "NS", up)) 
+  
+  # write DEGsframe of only significant genes
+  DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+  print(str(DEGs))
+  
+  partialfilename = paste("_", down, "_", up, sep = "")
+  myfilename = paste0("../results/DESeq2/hypothesis/", mytissue, partialfilename, "_DEGs.csv")
+  
+  write.csv(DEGs, myfilename, row.names = F)
+  # return DEGs frome with all data, included NS genes
+  #print(head(DEGs))
+}  
+
+for(i in levels(colDatahypothesis$sextissue)){
+  
+  newcolData <- subsetcolData2(colDatahypothesis, i)
+  
+  # save counts that match colData
+  savecols <- as.character(newcolData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  newcountData <- countData %>% dplyr::select(one_of(savecols)) 
+  
+  dds <- DESeqDataSetFromMatrix(countData = newcountData,
+                                colData = newcolData,
+                                design = ~ external + hiloPRL )
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dds)
+  print(dim(dds))
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  
+  vsd <- as.data.frame(assay(vst(dds, blind=FALSE)))
+  
+  myfilename = paste0("../results/DEseq2/hypothesis/", i, "_vsd.csv")
+  write.csv(vsd, myfilename)
+
+  # save differential gene expression results
+  # sexmalefemale <- hypothesesistesting("sex", "male", "female",  i) 
+  externalschickseggs <- hypothesesistesting("external", "chicks", "eggs",  i) 
+  hiloPRL <- hypothesesistesting("hiloPRL", "hi","lo",  i) 
+}
+```
+
+
+
+
+
+
+
 
 
 
