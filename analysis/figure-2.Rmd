@@ -215,7 +215,8 @@ allDEG %>%
 ```{r writefiles}
 geneids <- read_csv("../metadata/00_geneinfo.csv")
 
-candidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
+candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", "CGNRH-R",
+                    "AR", "POMC", "AGRP",
                        "CRH", "AVPR1A", "AVPR1B", "AVPR2",
                        "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9", 
                     "ESR1","ESR2", "LBH", "CDK1", "BRCA1",
@@ -226,6 +227,8 @@ candidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
 table1 <- allDEG %>%
   filter(gene %in% candidategenes,
          comparison != "group_bldg") %>%
+    arrange(gene) %>%
+
   group_by(sex, tissue, comparison) %>%
   summarize(genes = str_c(gene, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = genes ) %>%
@@ -239,12 +242,29 @@ write_csv(table1, "../results/table1.csv")
 suppletable1 <- allDEG %>%
   filter(comparison != "control_bldg") %>%
   group_by(sex, tissue, comparison) %>%
-  arrange( tissue, sex)
+  arrange( tissue, sex, direction, gene)
+head(suppletable1)
 
 suppletable1 %>%
   group_by(tissue) %>%
   summarize(totalDEGs = n())
 
-write_csv(table1, "../results/suppletable1.csv")
+write_csv(suppletable1, "../results/suppletable1.csv")
 
+allDEG2 %>%
+  filter(gene %in% candidategenes,
+         comparison != "group_bldg") %>%
+  arrange(gene) %>%
+  group_by(sex, tissue, comparison) %>%
+  summarize(genes = str_c(gene, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = genes ) %>%
+  arrange( tissue, sex)
+
+
+suppletable2 <- allDEG2 %>%
+  filter(comparison != "control_bldg") %>%
+  group_by(sex, tissue, comparison) %>%
+  arrange( tissue, sex, direction, gene)
+head(suppletable2)
+write_csv(suppletable2, "../results/suppletable1.csv")
 ```
