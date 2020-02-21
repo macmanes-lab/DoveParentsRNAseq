@@ -272,17 +272,24 @@ allDEG %>%
 
 ## candidate genes 
 ```{r writefiles}
+geneids <- read_csv("../metadata/00_geneinfo.csv")
+
 candidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
                        "CRH", "AVPR1A", "AVPR1B", "AVPR2",
-                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9") 
+                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9", 
+                    "ESR1","ESR2", "LBH", "CDK1", "BRCA1",
+                    "PTEN", "CREBBP", "FOS", "JUN", "EGR1",
+                     "BDNF", "GRM2",
+                    "KCNJ5", "CISH", "PTGER3", "CEBPD", "ZBTB16") 
 
 table1 <- allDEG %>%
-  filter(gene %in% candidategenes) %>%
+  filter(gene %in% candidategenes,
+         comparison != "group_bldg") %>%
   group_by(sex, tissue, comparison) %>%
   summarize(genes = str_c(gene, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = genes ) %>%
-  select(sex, tissue, control_bldg, lay_inc.d3, inc.d3_inc.d9,
-        inc.d9_inc.d17, hatch_n5)  %>%
+  select(sex, tissue, bldg_lay, lay_inc.d3, inc.d3_inc.d9,
+        inc.d9_inc.d17,inc.d17_hatch, hatch_n5, n5_n9)  %>%
   arrange( tissue, sex)
 table1
 

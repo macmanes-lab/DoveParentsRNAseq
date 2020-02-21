@@ -7680,31 +7680,41 @@ total degs
 candidate genes
 ---------------
 
+    geneids <- read_csv("../metadata/00_geneinfo.csv")
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
     candidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
                            "CRH", "AVPR1A", "AVPR1B", "AVPR2",
-                           "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9") 
+                           "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9", 
+                        "ESR1","ESR2", "LBH", "CDK1", "BRCA1",
+                        "PTEN", "CREBBP", "FOS", "JUN", "EGR1",
+                         "BDNF", "GRM2",
+                        "KCNJ5", "CISH", "PTGER3", "CEBPD", "ZBTB16") 
 
     table1 <- allDEG %>%
-      filter(gene %in% candidategenes) %>%
+      filter(gene %in% candidategenes,
+             comparison != "group_bldg") %>%
       group_by(sex, tissue, comparison) %>%
       summarize(genes = str_c(gene, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = genes ) %>%
-      select(sex, tissue, control_bldg, lay_inc.d3, inc.d3_inc.d9,
-            inc.d9_inc.d17, hatch_n5)  %>%
+      select(sex, tissue, bldg_lay, lay_inc.d3, inc.d3_inc.d9,
+            inc.d9_inc.d17,inc.d17_hatch, hatch_n5, n5_n9)  %>%
       arrange( tissue, sex)
     table1
 
-    ## # A tibble: 6 x 7
+    ## # A tibble: 6 x 9
     ## # Groups:   sex, tissue [6]
-    ##   sex   tissue control_bldg lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
-    ##   <chr> <fct>  <chr>        <chr>      <chr>         <chr>         
-    ## 1 fema… hypot… DRD1 AR PRL… <NA>       <NA>          <NA>          
-    ## 2 male  hypot… CRH AR AVPR… <NA>       <NA>          AR            
-    ## 3 fema… pitui… AVPR2 AR DR… <NA>       <NA>          PRL           
-    ## 4 male  pitui… AR AVPR2 AV… <NA>       <NA>          PRL           
-    ## 5 fema… gonad  SOX9 AVPR1A… AVPR1A PR… AVPR1A        SOX9          
-    ## 6 male  gonad  AR SOX9 PRL… SOX9       <NA>          <NA>          
-    ## # … with 1 more variable: hatch_n5 <chr>
+    ##   sex   tissue bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
+    ##   <chr> <fct>  <chr>    <chr>      <chr>         <chr>         
+    ## 1 fema… hypot… <NA>     <NA>       <NA>          <NA>          
+    ## 2 male  hypot… <NA>     <NA>       <NA>          AR            
+    ## 3 fema… pitui… ESR1     PTEN ESR1… <NA>          CDK1 PRL LBH …
+    ## 4 male  pitui… <NA>     <NA>       <NA>          CDK1 PRL BRCA…
+    ## 5 fema… gonad  <NA>     AVPR1A EG… AVPR1A        SOX9          
+    ## 6 male  gonad  <NA>     SOX9       <NA>          <NA>          
+    ## # … with 3 more variables: inc.d17_hatch <chr>, hatch_n5 <chr>,
+    ## #   n5_n9 <chr>
 
     write_csv(table1, "../results/table1.csv")
 
