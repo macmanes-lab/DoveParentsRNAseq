@@ -156,25 +156,25 @@ total degs
 ----------
 
     allDEG %>%
-      group_by(tissue, comparison) %>%
+      group_by(sex, tissue, comparison) %>%
       summarize(totalDEGs = n()) %>%
       arrange(tissue, comparison)
 
-    ## # A tibble: 23 x 3
-    ## # Groups:   tissue [3]
-    ##    tissue       comparison     totalDEGs
-    ##    <fct>        <fct>              <int>
-    ##  1 hypothalamus control_bldg       12366
-    ##  2 hypothalamus bldg_lay               2
-    ##  3 hypothalamus inc.d3_inc.d9          1
-    ##  4 hypothalamus inc.d9_inc.d17        92
-    ##  5 hypothalamus inc.d17_hatch          9
-    ##  6 hypothalamus hatch_n5            1927
-    ##  7 hypothalamus n5_n9                  1
-    ##  8 pituitary    control_bldg       12789
-    ##  9 pituitary    bldg_lay             279
-    ## 10 pituitary    lay_inc.d3           358
-    ## # … with 13 more rows
+    ## # A tibble: 37 x 4
+    ## # Groups:   sex, tissue [6]
+    ##    sex    tissue       comparison     totalDEGs
+    ##    <chr>  <fct>        <fct>              <int>
+    ##  1 female hypothalamus control_bldg        5683
+    ##  2 male   hypothalamus control_bldg        6683
+    ##  3 female hypothalamus bldg_lay               1
+    ##  4 male   hypothalamus bldg_lay               1
+    ##  5 female hypothalamus inc.d3_inc.d9          1
+    ##  6 female hypothalamus inc.d9_inc.d17         5
+    ##  7 male   hypothalamus inc.d9_inc.d17        87
+    ##  8 female hypothalamus inc.d17_hatch          3
+    ##  9 male   hypothalamus inc.d17_hatch          6
+    ## 10 female hypothalamus hatch_n5            1927
+    ## # … with 27 more rows
 
 candidate genes
 ---------------
@@ -182,7 +182,6 @@ candidate genes
     candidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
                            "CRH", "AVPR1A", "AVPR1B", "AVPR2",
                            "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9") 
-
 
     table1 <- allDEG %>%
       filter(gene %in% candidategenes) %>%
@@ -207,3 +206,21 @@ candidate genes
     ## # … with 1 more variable: hatch_n5 <chr>
 
     write_csv(table1, "../results/table1.csv")
+
+    suppletable1 <- allDEG %>%
+      filter(comparison != "control_bldg") %>%
+      group_by(sex, tissue, comparison) %>%
+      arrange( tissue, sex)
+
+    suppletable1 %>%
+      group_by(tissue) %>%
+      summarize(totalDEGs = n())
+
+    ## # A tibble: 3 x 2
+    ##   tissue       totalDEGs
+    ##   <fct>            <int>
+    ## 1 hypothalamus      2032
+    ## 2 pituitary         4440
+    ## 3 gonad             3770
+
+    write_csv(table1, "../results/suppletable1.csv")

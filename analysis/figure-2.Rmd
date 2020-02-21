@@ -161,7 +161,7 @@ plot_grid(b, c, rel_widths = c(1,1), nrow = 1, labels = "auto", label_size = 12)
 
 ```{r}
 allDEG %>%
-  group_by(tissue, comparison) %>%
+  group_by(sex, tissue, comparison) %>%
   summarize(totalDEGs = n()) %>%
   arrange(tissue, comparison)
 ```
@@ -172,7 +172,6 @@ allDEG %>%
 candidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
                        "CRH", "AVPR1A", "AVPR1B", "AVPR2",
                        "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9") 
-
 
 table1 <- allDEG %>%
   filter(gene %in% candidategenes) %>%
@@ -185,4 +184,16 @@ table1 <- allDEG %>%
 table1
 
 write_csv(table1, "../results/table1.csv")
+
+suppletable1 <- allDEG %>%
+  filter(comparison != "control_bldg") %>%
+  group_by(sex, tissue, comparison) %>%
+  arrange( tissue, sex)
+
+suppletable1 %>%
+  group_by(tissue) %>%
+  summarize(totalDEGs = n())
+
+write_csv(table1, "../results/suppletable1.csv")
+
 ```
