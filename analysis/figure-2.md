@@ -142,15 +142,21 @@ DEGS
 
 ![](../figures/fig2-1.png)
 
-    b <- makenewbargraph(tissuelevel, "External stimuli", "eggs vs. chicks", 0, 1250)  + theme(strip.text.y = element_blank()) +
-      scale_fill_manual(values = c("#80cdc1", "#018571"))
-    c <- makenewbargraph(tissuelevel, "Pituitary PRL expression   ", "lo vs. hi PRL   ", 0, 1250) + labs(y = NULL) + theme(axis.text.y = element_blank()) +
-      scale_fill_manual(values = c("#dfc27d", "#a6611a"))
+    expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_hypothesis.png")
+    expdesign2 <- ggdraw() +  draw_image(expdesign2, scale = 1)
 
-     
-    plot_grid(b, c, rel_widths = c(1,1), nrow = 1, labels = "auto", label_size = 12)
+    b <- makenewbargraph(tissuelevel, NULL, "eggs vs. chicks", 0, 800)  + theme(strip.text.y = element_blank()) +
+      scale_fill_manual(values = allcolors, name = "higher in") +
+      labs(subtitle = " ")
+    c <- makenewbargraph(tissuelevel, NULL, "lo vs. hi PRL   ", 0, 800) + labs(y = NULL) + theme(axis.text.y = element_blank()) +
+      scale_fill_manual(values =  allcolors, name = "higher in") +
+      labs(subtitle = " ")
 
-![](../figures/fig2-2.png)
+    bc <- plot_grid(b, c, rel_widths = c(1,1), nrow = 1, labels = c("b", "c"), label_size = 12)
+
+    plot_grid(expdesign2, bc, labels = c("a", " "), label_size = 12, nrow = 2, rel_heights = c(0.4,1))
+
+![](../figures/fig2b-1.png)
 
 total degs
 ----------
