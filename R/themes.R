@@ -1,7 +1,7 @@
 # custom themes
 
 theme_B3 <- function () { 
-  theme_classic(base_size = 11) +
+  theme_classic(base_size = 8) +
     theme(
       panel.grid.major  = element_blank(),  # remove major gridlines
       panel.grid.minor  = element_blank(),  # remove minor gridlines

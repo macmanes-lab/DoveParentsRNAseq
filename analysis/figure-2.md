@@ -54,7 +54,7 @@ DEGs
       scale_color_manual(values = allcolors) +
       geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
                 position = position_dodge(width = 1),
-                size = 2.5, color = "black")  +
+                size = 2, color = "black")  +
       ylim(lowlim, higherlim)
       return(p)
     }
@@ -112,13 +112,13 @@ DEGS
     # gon
     p3 <- makebargraph("gonad","DEGs", 0, 1250) +  theme(strip.text.x = element_blank())
 
-    bcd <- plot_grid(p1,p2,p3, nrow = 3, rel_heights = c(1.2,1,1.5), labels = c("b", "c", "d"), label_size = 12)
+    bcd <- plot_grid(p1,p2,p3, nrow = 3, rel_heights = c(1.2,1,1.5), labels = c("b", "c", "d"), label_size = 8)
 
 
     expdesign <- png::readPNG("../figures/images/DoveParentsRNAseq_DEGS.png")
     expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
-    plot_grid(expdesign, bcd, labels = c("a", " "), label_size = 12, nrow = 2, rel_heights = c(0.2,1))
+    plot_grid(expdesign, bcd, labels = c("a", " "), label_size = 8, nrow = 2, rel_heights = c(0.2,1))
 
 ![](../figures/fig2-1.png)
 
@@ -135,7 +135,7 @@ DEGS
         labs( y = whichtissue) +
       geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
                position = position_dodge(width = 1),
-               size = 2.5, color = "black")  + 
+               size = 2, color = "black")  + 
           ylim(lowlim, higherlim) +
       scale_fill_manual(values = allcolors, name = "higher in")   + 
         theme(axis.text.x = element_blank()) 
@@ -216,13 +216,13 @@ DEGS
 
 
     hypothesisbars <-  plot_grid(b112131, b122232, c112131, c122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
-              labels = c("b", " ", "c", " "), label_size = 12)
+              labels = c("b", " ", "c", " "), label_size = 8)
 
     expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_hypothesis.png")
     expdesign2 <- ggdraw() +  draw_image(expdesign2, scale = 1)
 
 
-    plot_grid(expdesign2, hypothesisbars, rel_heights = c(0.5,1), nrow = 2, labels = c("a", " "), label_size = 12)
+    plot_grid(expdesign2, hypothesisbars, rel_heights = c(0.5,1), nrow = 2, labels = c("a", " "), label_size = 8)
 
 ![](../figures/fig2b-1.png)
 

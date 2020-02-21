@@ -60,12 +60,12 @@ make figure
     c <- plottsneelipse(ftsne, ftsne$treatment, allcolors ) + labs(y = " ", subtitle = "treatment * tissue\nfemales")
     d <- plottsneelipse(mtsne, mtsne$treatment, allcolors ) + labs(y = " ", subtitle = "treatment * tissue\nmales") 
 
-    abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("b", "c", "d", "e"), label_size = 12 )
+    abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("b", "c", "d", "e"), label_size = 8 )
 
     expdesign <- png::readPNG("../figures/images/fig1a_fig1a.png")
     expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
-    abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 12, rel_heights = c(0.5,1))
+    abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 8, rel_heights = c(0.5,1))
 
 
 
@@ -85,7 +85,9 @@ make figure
     i <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + labs(subtitle = "pituitary", y = NULL) + facet_wrap(~sex) 
     j <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads", y = NULL)  + facet_wrap(~sex)
 
-    hij <- plot_grid(h,i,j, nrow = 1, labels = c("h", "i", "j"), label_size = 12)
+    hij <- plot_grid(h,i,j, nrow = 1, labels = c("h", "i", "j"), label_size = 8)
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
     fig1 <- plot_grid(abcde, hij, nrow = 2, rel_heights = c(0.6,0.4))
     fig1
