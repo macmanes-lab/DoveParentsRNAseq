@@ -104,25 +104,7 @@ allDEG2 <- allDEG2 %>% mutate(comparison = fct_recode(comparison, "lo vs. hi PRL
                                                       "eggs vs. chicks" = "eggs_chicks"))
 allDEG2$direction <- factor(allDEG2$direction, levels = c("eggs", "chicks", "lo", "hi"))
 
-makenewbargraph <- function(whichtissue, myxlab, whichcomparison, lowlim, higherlim){
-  p <- allDEG2 %>%
-    filter(tissue == whichtissue,
-           comparison == whichcomparison) %>%
-  ggplot(aes(x = comparison,  fill = direction)) +
-    geom_bar(position = "dodge") +
-    facet_grid(tissue~sex) +
-    theme_B3() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "none")  +
-    guides(fill = guide_legend(nrow = 1)) +
-    labs(x = myxlab, 
-         y = "Total DEGs") +
-  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
-           position = position_dodge(width = 1),
-           size = 2.5, color = "black")  + 
-      ylim(lowlim, higherlim)
-  return(p)
-}
+
 
 ```
 
@@ -152,22 +134,130 @@ plot_grid(expdesign, bcd, labels = c("a", " "), label_size = 12, nrow = 2, rel_h
 ```
 
 
-```{r fig2b, fig.width=5, fig.height=6}
+```{r fig2b, fig.width=5, fig.height=5}
+
+makenewbargraph <- function(whichtissue, whichsex,  whichcomparison, lowlim, higherlim){
+  p <- allDEG2 %>%
+    filter(tissue == whichtissue,
+           comparison == whichcomparison,
+           sex == whichsex) %>%
+    ggplot(aes(x = comparison,  fill = direction)) +
+    geom_bar(position = "dodge", drop = FALSE) +
+    theme_B3() +
+    theme(legend.position = "none")  +
+    guides(fill = guide_legend(nrow = 1)) +
+    labs( y = whichtissue) +
+  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+           position = position_dodge(width = 1),
+           size = 2.5, color = "black")  + 
+      ylim(lowlim, higherlim) +
+  scale_fill_manual(values = allcolors, name = "higher in")   + 
+    theme(axis.text.x = element_blank()) 
+  return(p)
+}
+
+
+b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 800) +  labs(subtitle = "females", x = NULL, y = "Hyp. DEGS")
+b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 800)  + labs(x = NULL, y = "Pit. DEGS")
+b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 800) + labs(x = "eggs vs. chicks", y = "Gon. DEGS")   
+b112131 <- plot_grid(b11,b21,b31, nrow = 3, rel_heights = c(1.1,1,1.1))
+
+
+b12 <- makenewbargraph("hypothalamus", "male",  "eggs vs. chicks", 0, 800) + labs(subtitle = "males", x = NULL)+ 
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+b22 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 800) + labs(x = NULL)+ 
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+b32 <- makenewbargraph("gonad", "male", "eggs vs. chicks", 0, 800) + labs(x = "eggs vs. chicks")   + 
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+b122232 <- plot_grid(b12, b22,b32, nrow = 3, rel_heights = c(1.1,1,1.1)) 
+
+
+c11 <- makenewbargraph("hypothalamus", "female", "lo vs. hi PRL   ", 0, 2500) +  labs(subtitle = "females", x = NULL) + 
+  theme(axis.title.y = element_blank())
+c21 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2500)  + labs(x = NULL)+ 
+  theme(axis.title.y = element_blank())
+c31 <- makenewbargraph("gonad", "female", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL")  + 
+  theme(axis.title.y = element_blank()) 
+c112131 <- plot_grid(c11,c21,c31, nrow = 3, rel_heights = c(1.1,1,1.1))
+
+
+c12 <- makenewbargraph("hypothalamus", "male",  "lo vs. hi PRL   ", 0, 2500) + labs(subtitle = "males", x = NULL)+ 
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+c22 <- makenewbargraph("pituitary", "male", "lo vs. hi PRL   ", 0, 2500) + labs(x = NULL)+ 
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+c32 <- makenewbargraph("gonad", "male", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL")   + 
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
+c122232 <- plot_grid(c12, c22,c32, nrow = 3, rel_heights = c(1.1,1,1.1)) 
+
+
+hypothesisbars <-  plot_grid(b112131, b122232, c112131, c122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
+          labels = c("b", " ", "c", " "), label_size = 12)
 
 expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_hypothesis.png")
 expdesign2 <- ggdraw() +  draw_image(expdesign2, scale = 1)
 
-b <- makenewbargraph(tissuelevel, NULL, "eggs vs. chicks", 0, 800)  + theme(strip.text.y = element_blank()) +
-  scale_fill_manual(values = allcolors, name = "higher in") +
-  labs(subtitle = " ")
-c <- makenewbargraph(tissuelevel, NULL, "lo vs. hi PRL   ", 0, 800) + labs(y = NULL) + theme(axis.text.y = element_blank()) +
-  scale_fill_manual(values =  allcolors, name = "higher in") +
-  labs(subtitle = " ")
 
-bc <- plot_grid(b, c, rel_widths = c(1,1), nrow = 1, labels = c("b", "c"), label_size = 12)
+plot_grid(expdesign2, hypothesisbars, rel_heights = c(0.5,1), nrow = 2, labels = c("a", " "), label_size = 12)
+```
 
-plot_grid(expdesign2, bc, labels = c("a", " "), label_size = 12, nrow = 2, rel_heights = c(0.4,1))
+```{r GO}
+## shinygo termshttp://bioinformatics.sdstate.edu/go/
+allDEG2 %>% filter(tissue == "pituitary", direction == "chicks") %>% arrange(gene) %>% pull(gene) # nervous systme development, neurogenesis, neuron differentiaion 
+allDEG2 %>% filter(tissue == "pituitary", direction == "eggs") %>% arrange(gene) %>% pull(gene) # miotic cell cycle, cell cycle, cell cycle process
+allDEG2 %>% filter(tissue == "pituitary", direction == "hi") %>% arrange(gene) %>% pull(gene) # this 1000 combined with next 10000
+allDEG2 %>% filter(tissue == "pituitary", direction == "hi") %>% arrange(desc(gene)) %>% pull(gene) # Cellular localization, #Cellular protein localization, Protein targeting to ER
 
+#miotic cell cycle, miotic cell cycle process, cell cycle
+allDEG2 %>% filter(tissue == "pituitary", direction == "lo") %>% arrange(gene)  %>% pull(gene)   # this 1000 combined with next 10000
+allDEG2 %>% filter(tissue == "pituitary", direction == "lo") %>% arrange(desc(gene)) %>% pull(gene) #Anatomical structure morphogenesis, Regulation of developmental process, Regulation of signaling
+
+
+allDEG2 %>%
+  filter(tissue == "pituitary") %>%
+  select(sex, tissue, comparison, gene) %>%
+  group_by(sex, tissue, gene) %>%
+  summarize(groups = str_c(comparison , collapse = " "))   %>%
+   group_by(sex, tissue, groups) %>%
+  summarize(n = n()) %>%
+  arrange(desc(n))
+
+allDEG2 %>%
+  filter(tissue == "pituitary") %>%
+  select(sex, tissue, comparison, gene) %>%
+  group_by(sex, tissue, gene) %>%
+  summarize(groups = str_c(comparison , collapse = " "))  %>%
+  filter(groups == "eggs vs. chicks") %>%
+  arrange(gene) %>%
+  distinct(gene) %>%
+  pull(gene)  # Nervous system development, Cell development, Anatomical structure morphogenesis
+
+allDEG2 %>%
+  filter(comparison == "eggs vs. chicks") %>%
+  group_by(sex, tissue, comparison, direction) %>%
+  summarize(n = n()) %>%
+  arrange(comparison, direction, tissue, sex)
+
+allDEG2 %>%
+  filter(comparison == "lo vs. hi PRL   ") %>%
+  group_by(sex, tissue, comparison, direction) %>%
+  summarize(n = n()) %>%
+  arrange(comparison, direction, tissue, sex)
+
+```
+```{r}
+allDEG2 %>%
+  filter(tissue == "pituitary") %>%
+  select(sex, tissue, comparison, gene) %>%
+  group_by(sex, tissue, gene) %>%
+  summarize(groups = str_c(comparison , collapse = " "))  %>%
+  filter(groups == "lo vs. hi PRL   ") %>%
+  arrange(gene) %>%
+  distinct(gene) %>%
+  pull(gene)  # Nervous system development, Cell development, Anatomical structure morphogenesis
+
+allDEG2 %>%
+  group_by(sex, tissue, comparison, direction) %>%
+  summarize(n = n())
 ```
 
 ## total degs
