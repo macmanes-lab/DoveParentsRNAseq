@@ -470,6 +470,11 @@ colDatahypothesis %>%
   group_by(sex, tissue, hiloPRL, external) %>%
   summarize(n = n())
 
+colDatahypothesis %>%
+  filter(tissue == "pituitary")  %>%
+  group_by(sex, tissue, hiloPRL, treatment) %>%
+  summarize(n = n())
+
 
 hypothesesistesting <- function(whichfactor, up, down, mytissue){
   

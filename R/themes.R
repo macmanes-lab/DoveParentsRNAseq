@@ -140,6 +140,11 @@ colorsmanip <- c("m.inc.d3" = "#CDCDCD",
                    "prolong" = "#9e9ac8" , 
                    "extend" = "#6a51a3" )
 
+colorhypothesis <- c("eggs" = "#7FA163",
+                     "chicks" = "#3A80B9",
+                     "lo" = "#B5C4B2",
+                     "hi" = "#19757A")
+
 colorscharmaip <-  c(colorscharnew, colorsmanip)
 
 colorscharmaip2 <-  c(colorscharnew, colorsmanip)
@@ -150,8 +155,6 @@ colorstissue <- c("hypothalamus" = "#d95f02",
 
 sexcolors <- c("female" = "#969696", "male" = "#525252")
 
-
-colorsPRL <-  c( "lo"= "#78c679",  "hi"= "#006837")
 
 colorsvolcano <-  c(colorscharnew,
                     
@@ -164,7 +167,7 @@ colorsvolcano <-  c(colorscharnew,
                     
                     "NS" = "#bdbdbd")
 
-allcolors <- c(colorscharmaip, sexcolors, colorstissue, colorsPRL)
+allcolors <- c(colorscharmaip, sexcolors, colorstissue, colorhypothesis)
 
 colorsvolcanochar <-  c(colorscharnew,
                     "NS" = "#bdbdbd")
