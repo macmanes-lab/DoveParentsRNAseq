@@ -216,19 +216,19 @@ allDEG %>%
 geneids <- read_csv("../metadata/00_geneinfo.csv")
 
 candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", "CGNRH-R",
-                    "AR", "POMC", "AGRP",
-                       "CRH", "AVPR1A", "AVPR1B", "AVPR2",
+                    "AR", "POMC", "AGRP", 
+                       "CRH", "AVPR1A", "AVPR1B", "AVPR2","VIP",
                        "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9", 
                     "ESR1","ESR2", "LBH", "CDK1", "BRCA1",
                     "PTEN", "CREBBP", "FOS", "JUN", "EGR1",
-                     "BDNF", "GRM2",
-                    "KCNJ5", "CISH", "PTGER3", "CEBPD", "ZBTB16") 
+                     "BDNF", "GRM2","GRIA1",
+                    "KCNJ5", "CISH", "PTGER3", "CEBPD", "ZBTB16", 
+                    "DIO3", "DIO2", "DIO1") 
 
 table1 <- allDEG %>%
   filter(gene %in% candidategenes,
-         comparison != "group_bldg") %>%
+         comparison != "control_bldg") %>%
     arrange(gene) %>%
-
   group_by(sex, tissue, comparison) %>%
   summarize(genes = str_c(gene, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = genes ) %>%
@@ -237,7 +237,26 @@ table1 <- allDEG %>%
   arrange( tissue, sex)
 table1
 
+
+
+table2 <- allDEG2 %>%
+  filter(gene %in% candidategenes) %>%
+  arrange(gene) %>%
+  group_by(sex, tissue, comparison) %>%
+  summarize(genes = str_c(gene, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = genes ) %>%
+  arrange( tissue, sex)
+table2
+
+
 write_csv(table1, "../results/table1.csv")
+write_csv(table2, "../results/table2.csv")
+```
+
+## supplemental tables, all DEGS
+
+```{r}
+
 
 suppletable1 <- allDEG %>%
   filter(comparison != "control_bldg") %>%
@@ -249,22 +268,42 @@ suppletable1 %>%
   group_by(tissue) %>%
   summarize(totalDEGs = n())
 
-write_csv(suppletable1, "../results/suppletable1.csv")
-
-allDEG2 %>%
-  filter(gene %in% candidategenes,
-         comparison != "group_bldg") %>%
-  arrange(gene) %>%
-  group_by(sex, tissue, comparison) %>%
-  summarize(genes = str_c(gene, collapse = " ")) %>%
-  pivot_wider(names_from = comparison, values_from = genes ) %>%
-  arrange( tissue, sex)
-
-
 suppletable2 <- allDEG2 %>%
   filter(comparison != "control_bldg") %>%
   group_by(sex, tissue, comparison) %>%
   arrange( tissue, sex, direction, gene)
 head(suppletable2)
-write_csv(suppletable2, "../results/suppletable1.csv")
+
+write_csv(suppletable1, "../results/suppletable1.csv")
+
+write_csv(suppletable2, "../results/suppletable2.csv")
+
+head(allDEG) 
+```
+
+## female pit, parental/repro only, not PRL
+
+```{r}
+allDEGslim <- allDEG %>% filter(comparison != "control_bldg")
+
+femalepitPRL <- allDEG2 %>% filter(sex == "female", tissue == "pituitary") %>%
+  filter(comparison != "eggs vs. chicks") %>% arrange(gene) %>% pull(gene)
+
+femalepitparental <- allDEGslim %>% 
+  filter(!gene %in% femalepitPRL,
+         sex == "female", tissue == "pituitary") %>%
+  arrange(gene, sex, tissue, comparison, direction) %>%
+  distinct(gene) %>% pull(gene)
+femalepitparental
+
+malepitPRL <- allDEG2 %>% filter(sex == "male", tissue == "pituitary") %>%
+  filter(comparison != "eggs vs. chicks") %>% arrange(gene) %>% pull(gene)
+
+malepitparental <- allDEGslim %>% 
+  filter(!gene %in% malepitPRL,
+         sex == "male", tissue == "pituitary") %>%
+  arrange(gene, sex, tissue, comparison, direction) %>%
+  distinct(gene) %>% pull(gene)
+malepitparental
+
 ```
