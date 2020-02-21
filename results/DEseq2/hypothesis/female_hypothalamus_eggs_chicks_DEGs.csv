@@ -1,0 +1,3 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"FKBP5",0.00667502886302252,2.17554685205712,0.521075642028227,"female_hypothalamus","chicks"
+"ALS2CL",0.00593540442019989,2.2265496842111,0.456441771066463,"female_hypothalamus","chicks"
