@@ -143,35 +143,32 @@ DEGS
     }
 
 
-    b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 800) +  labs(subtitle = "females", x = NULL, y = "Hyp. DEGS")
+    b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 2500) +  labs(subtitle = "females", x = NULL, y = "Hyp. DEGS")
 
     ## Warning: Ignoring unknown parameters: drop
 
-    b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 800)  + labs(x = NULL, y = "Pit. DEGS")
+    b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2500)  + labs(x = NULL, y = "Pit. DEGS")
 
     ## Warning: Ignoring unknown parameters: drop
 
-    b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 800) + labs(x = "eggs vs. chicks", y = "Gon. DEGS")   
+    b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks", y = "Gon. DEGS")   
 
     ## Warning: Ignoring unknown parameters: drop
 
     b112131 <- plot_grid(b11,b21,b31, nrow = 3, rel_heights = c(1.1,1,1.1))
 
-    ## Warning: Removed 1 rows containing missing values (geom_bar).
 
-    ## Warning: Removed 1 rows containing missing values (geom_text).
-
-    b12 <- makenewbargraph("hypothalamus", "male",  "eggs vs. chicks", 0, 800) + labs(subtitle = "males", x = NULL)+ 
+    b12 <- makenewbargraph("hypothalamus", "male",  "eggs vs. chicks", 0, 2500) + labs(subtitle = "males", x = NULL)+ 
       theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 
     ## Warning: Ignoring unknown parameters: drop
 
-    b22 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 800) + labs(x = NULL)+ 
+    b22 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 2500) + labs(x = NULL)+ 
       theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 
     ## Warning: Ignoring unknown parameters: drop
 
-    b32 <- makenewbargraph("gonad", "male", "eggs vs. chicks", 0, 800) + labs(x = "eggs vs. chicks")   + 
+    b32 <- makenewbargraph("gonad", "male", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks")   + 
       theme(axis.title.y = element_blank(), axis.text.y = element_blank())
 
     ## Warning: Ignoring unknown parameters: drop
