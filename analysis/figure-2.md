@@ -274,20 +274,217 @@ candidate genes
       select(sex, tissue, bldg_lay, lay_inc.d3, inc.d3_inc.d9,
             inc.d9_inc.d17,inc.d17_hatch, hatch_n5, n5_n9)  %>%
       arrange( tissue, sex)
-    table1
+    kable(table1)
 
-    ## # A tibble: 6 x 9
-    ## # Groups:   sex, tissue [6]
-    ##   sex   tissue bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
-    ##   <chr> <fct>  <chr>    <chr>      <chr>         <chr>         
-    ## 1 fema… hypot… <NA>     <NA>       <NA>          <NA>          
-    ## 2 male  hypot… <NA>     <NA>       <NA>          AR            
-    ## 3 fema… pitui… DIO3 ES… ESR1 GNRH… <NA>          BRCA1 CDK1 DI…
-    ## 4 male  pitui… <NA>     <NA>       <NA>          BRCA1 CDK1 CI…
-    ## 5 fema… gonad  <NA>     AGRP AVPR… AVPR1A        SOX9          
-    ## 6 male  gonad  <NA>     SOX9       <NA>          <NA>          
-    ## # … with 3 more variables: inc.d17_hatch <chr>, hatch_n5 <chr>,
-    ## #   n5_n9 <chr>
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+sex
+</th>
+<th style="text-align:left;">
+tissue
+</th>
+<th style="text-align:left;">
+bldg\_lay
+</th>
+<th style="text-align:left;">
+lay\_inc.d3
+</th>
+<th style="text-align:left;">
+inc.d3\_inc.d9
+</th>
+<th style="text-align:left;">
+inc.d9\_inc.d17
+</th>
+<th style="text-align:left;">
+inc.d17\_hatch
+</th>
+<th style="text-align:left;">
+hatch\_n5
+</th>
+<th style="text-align:left;">
+n5\_n9
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+BDNF BRCA1 CISH CYP19A1 DRD1 EGR1 GRIA1 POMC
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+AR
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+<td style="text-align:left;">
+DIO3 ESR1 GNRHR
+</td>
+<td style="text-align:left;">
+ESR1 GNRHR PTEN ZBTB16
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+BRCA1 CDK1 DIO2 KCNJ5 LBH PRL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+AVPR2 BRCA1 CDK1 GRIA1 LBH PRL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+BRCA1 CDK1 CISH GRM2 LBH PRL VIP
+</td>
+<td style="text-align:left;">
+GRM2
+</td>
+<td style="text-align:left;">
+CEBPD ZBTB16
+</td>
+<td style="text-align:left;">
+BRCA1 CDK1 CEBPD
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+gonad
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+AGRP AVPR1A DIO2 EGR1 FOS PRLR PTGER3
+</td>
+<td style="text-align:left;">
+AVPR1A
+</td>
+<td style="text-align:left;">
+SOX9
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+gonad
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+SOX9
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+</tbody>
+</table>
 
     table2 <- allDEG2 %>%
       filter(gene %in% candidategenes) %>%
@@ -296,16 +493,91 @@ candidate genes
       summarize(genes = str_c(gene, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = genes ) %>%
       arrange( tissue, sex)
-    table2
+    table(table2)
 
-    ## # A tibble: 4 x 4
-    ## # Groups:   sex, tissue [6]
-    ##   sex    tissue   `eggs vs. chicks`          `lo vs. hi PRL   `            
-    ##   <chr>  <fct>    <chr>                      <chr>                         
-    ## 1 male   hypotha… <NA>                       AR LBH                        
-    ## 2 female pituita… AGRP AVPR1A BRCA1 CDK1 CE… AGRP AR BRCA1 CDK1 DIO2 ESR1 …
-    ## 3 male   pituita… CEBPD GRM2 ZBTB16          BRCA1 CDK1 KCNJ5 LBH PRL PRLR…
-    ## 4 female gonad    AGRP AVPR1A VIP            VIP
+    ## , , eggs vs. chicks = AGRP AVPR1A BRCA1 CDK1 CEBPD PRLR PTEN SOX9 ZBTB16, lo vs. hi PRL    = AGRP AR BRCA1 CDK1 DIO2 ESR1 KCNJ5 LBH PRL PRLR PTEN SOX9 VIP
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         1     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = AGRP AVPR1A VIP, lo vs. hi PRL    = AGRP AR BRCA1 CDK1 DIO2 ESR1 KCNJ5 LBH PRL PRLR PTEN SOX9 VIP
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = CEBPD GRM2 ZBTB16, lo vs. hi PRL    = AGRP AR BRCA1 CDK1 DIO2 ESR1 KCNJ5 LBH PRL PRLR PTEN SOX9 VIP
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = AGRP AVPR1A BRCA1 CDK1 CEBPD PRLR PTEN SOX9 ZBTB16, lo vs. hi PRL    = AR LBH
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = AGRP AVPR1A VIP, lo vs. hi PRL    = AR LBH
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = CEBPD GRM2 ZBTB16, lo vs. hi PRL    = AR LBH
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = AGRP AVPR1A BRCA1 CDK1 CEBPD PRLR PTEN SOX9 ZBTB16, lo vs. hi PRL    = BRCA1 CDK1 KCNJ5 LBH PRL PRLR PTEN PTGER3
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = AGRP AVPR1A VIP, lo vs. hi PRL    = BRCA1 CDK1 KCNJ5 LBH PRL PRLR PTEN PTGER3
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = CEBPD GRM2 ZBTB16, lo vs. hi PRL    = BRCA1 CDK1 KCNJ5 LBH PRL PRLR PTEN PTGER3
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         1     0
+    ## 
+    ## , , eggs vs. chicks = AGRP AVPR1A BRCA1 CDK1 CEBPD PRLR PTEN SOX9 ZBTB16, lo vs. hi PRL    = VIP
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = AGRP AVPR1A VIP, lo vs. hi PRL    = VIP
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     1
+    ##   male              0         0     0
+    ## 
+    ## , , eggs vs. chicks = CEBPD GRM2 ZBTB16, lo vs. hi PRL    = VIP
+    ## 
+    ##         tissue
+    ## sex      hypothalamus pituitary gonad
+    ##   female            0         0     0
+    ##   male              0         0     0
 
     write_csv(table1, "../results/table1.csv")
     write_csv(table2, "../results/table2.csv")

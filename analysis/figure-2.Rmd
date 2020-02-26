@@ -235,7 +235,7 @@ table1 <- allDEG %>%
   select(sex, tissue, bldg_lay, lay_inc.d3, inc.d3_inc.d9,
         inc.d9_inc.d17,inc.d17_hatch, hatch_n5, n5_n9)  %>%
   arrange( tissue, sex)
-table1
+kable(table1)
 
 
 
@@ -246,7 +246,7 @@ table2 <- allDEG2 %>%
   summarize(genes = str_c(gene, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = genes ) %>%
   arrange( tissue, sex)
-table2
+table(table2)
 
 
 write_csv(table1, "../results/table1.csv")
