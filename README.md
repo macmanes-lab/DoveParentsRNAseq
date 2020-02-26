@@ -18,47 +18,239 @@ These repositories is broken down into the following sub-repositories, each with
 
 There are two hidden directories, `kallisto_mappings` and `mapping`, which contain the results of the kallisto and salmon algorithms that transform read counts into gene counts.  
 
-## Tables
+## Figures and Tables
 
-### Supplementary table 1
 
+## Table 1: Candidate gene DEGs
 
 <table>
- <thead>
-  <tr>
-   <th style="text-align:left;"> sex </th>
-   <th style="text-align:left;"> tissue </th>
-   <th style="text-align:left;"> control_bldg </th>
-   <th style="text-align:left;"> inc.d9_inc.d17 </th>
-   <th style="text-align:left;"> hatch_n5 </th>
-  </tr>
- </thead>
+<thead>
+<tr>
+<th style="text-align:left;">
+sex
+</th>
+<th style="text-align:left;">
+tissue
+</th>
+<th style="text-align:left;">
+bldg\_lay
+</th>
+<th style="text-align:left;">
+lay\_inc.d3
+</th>
+<th style="text-align:left;">
+inc.d3\_inc.d9
+</th>
+<th style="text-align:left;">
+inc.d9\_inc.d17
+</th>
+<th style="text-align:left;">
+inc.d17\_hatch
+</th>
+<th style="text-align:left;">
+hatch\_n5
+</th>
+<th style="text-align:left;">
+n5\_n9
+</th>
+</tr>
+</thead>
 <tbody>
-  <tr>
-   <td style="text-align:left;"> female </td>
-   <td style="text-align:left;"> hypothalamus </td>
-   <td style="text-align:left;"> DRD1 AR PRLR PRL CYP19A1 POMC AGRP </td>
-   <td style="text-align:left;"> NA </td>
-   <td style="text-align:left;"> DRD1 CYP19A1 POMC </td>
-  </tr>
-  <tr>
-   <td style="text-align:left;"> male </td>
-   <td style="text-align:left;"> hypothalamus </td>
-   <td style="text-align:left;"> CRH AR AVPR2 CYP19A1 PRL GNRH1 AGRP POMC </td>
-   <td style="text-align:left;"> AR </td>
-   <td style="text-align:left;"> NA </td>
-  </tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+BDNF BRCA1 CISH CYP19A1 DRD1 EGR1 GRIA1 POMC
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+hypothalamus
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+AR
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+<td style="text-align:left;">
+DIO3 ESR1 GNRHR
+</td>
+<td style="text-align:left;">
+ESR1 GNRHR PTEN ZBTB16
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+BRCA1 CDK1 DIO2 KCNJ5 LBH PRL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+AVPR2 BRCA1 CDK1 GRIA1 LBH PRL
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+pituitary
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+BRCA1 CDK1 CISH GRM2 LBH PRL VIP
+</td>
+<td style="text-align:left;">
+GRM2
+</td>
+<td style="text-align:left;">
+CEBPD ZBTB16
+</td>
+<td style="text-align:left;">
+BRCA1 CDK1 CEBPD
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+female
+</td>
+<td style="text-align:left;">
+gonad
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+AGRP AVPR1A DIO2 EGR1 FOS PRLR PTGER3
+</td>
+<td style="text-align:left;">
+AVPR1A
+</td>
+<td style="text-align:left;">
+SOX9
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+male
+</td>
+<td style="text-align:left;">
+gonad
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+SOX9
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
 </tbody>
 </table>
 
 
-
-## Working figures
+## Figure 1: Overall pattern of gene expression
 
 ![](./figures/fig1-1.png)
+## Figure 2: Sequential differential gene expression in the HPG
+
 ![](./figures/fig2-1.png)
+
+## Figure 3: Prolactin gene expression in the pituitary explains most of the variation in the whole data set and is correlated with circulating prolactin
+
 ![](./figures/fig3-1.png)
+
+## Figure 4: In the pituitary, more chagnes gene expression are due to changes in internal _PRL_ expression (high versus lo) than the external enviornment (eggs versus chicks)
+
 ![](./figures/fig2b-1.png)
+
+## Figure 5: manipualations, work in progess...
+
 ![](./figures/fig5-1.png)
 
 
