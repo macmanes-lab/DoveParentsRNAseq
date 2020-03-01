@@ -41,6 +41,32 @@ gongenes <- read_csv("../results/DEseq2/female_gonad_lay_inc.d3_DEGs.csv") %>%
   arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
 gongenes
 
+candidategenes <- c("PRL", "PRLR" ,  "AVPR1B" , "MYC" ,  
+                "MAP2KA", "MSH" ,   "PALB2" , "BRCA1", 
+                "OXT", "ESR1", "ESR2", "CISH", 
+                "POU2F1", "RAP1GAP", "CEBPB","ARHGAP32"
+                )
+
+returnvsds <- function(whichgenes){
+  
+  df  <- allvsd %>%
+    filter(gene %in% whichgenes) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/'), "[", 2)) %>%
+    dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+                tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
+                treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
+    dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+    dplyr::select(sex, tissue, treatment, gene, samples, counts) 
+  
+  df$treatment <- factor(df$treatment, levels = alllevels)
+  print(head(df))
+  return(df)
+}
+
+candidatevsd <- returnvsds(candidategenes)
+
+
 plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtstages){
   candidates  <- allvsd %>%
     filter(gene %in% whichgenes) %>%
@@ -89,3 +115,6 @@ fig4 <- plot_grid(fig4a, fig4b, rel_widths = c(1,2))
 fig4
 ```
 
+```{r savefiles}
+write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+```

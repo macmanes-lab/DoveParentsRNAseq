@@ -3,14 +3,14 @@ Figure 4
 
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
-    ## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3
-    ## ✓ tibble  2.1.3     ✓ dplyr   0.8.3
-    ## ✓ tidyr   1.0.0     ✓ stringr 1.4.0
-    ## ✓ readr   1.3.1     ✓ forcats 0.4.0
+    ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
+    ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
+    ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
+    ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -63,6 +63,41 @@ Figure 4
 
     ## [1] "OVSTL"  "BPIFB2"
 
+    candidategenes <- c("PRL", "PRLR" ,  "AVPR1B" , "MYC" ,  
+                    "MAP2KA", "MSH" ,   "PALB2" , "BRCA1", 
+                    "OXT", "ESR1", "ESR2", "CISH", 
+                    "POU2F1", "RAP1GAP", "CEBPB","ARHGAP32"
+                    )
+
+    returnvsds <- function(whichgenes){
+      
+      df  <- allvsd %>%
+        filter(gene %in% whichgenes) %>%
+        dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
+        dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/'), "[", 2)) %>%
+        dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+                    tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
+                    treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
+        dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+        dplyr::select(sex, tissue, treatment, gene, samples, counts) 
+      
+      df$treatment <- factor(df$treatment, levels = alllevels)
+      print(head(df))
+      return(df)
+    }
+
+    candidatevsd <- returnvsds(candidategenes)
+
+    ## # A tibble: 6 x 6
+    ##   sex    tissue treatment gene     samples                           counts
+    ##   <chr>  <chr>  <fct>     <chr>    <chr>                              <dbl>
+    ## 1 female gonad  control   ARHGAP32 L.G118_female_gonad_control         8.03
+    ## 2 female gonad  control   ARHGAP32 R.G106_female_gonad_control         8.36
+    ## 3 female gonad  control   ARHGAP32 R.R20_female_gonad_control          8.21
+    ## 4 female gonad  control   ARHGAP32 R.R9_female_gonad_control           7.74
+    ## 5 female gonad  control   ARHGAP32 R.W44_female_gonad_control          8.68
+    ## 6 female gonad  inc.d9    ARHGAP32 blk.s061.pu.y_female_gonad_inc.d9   8.81
+
     plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtstages){
       candidates  <- allvsd %>%
         filter(gene %in% whichgenes) %>%
@@ -111,3 +146,5 @@ Figure 4
     fig4
 
 ![](../figures/fig4-1.png)
+
+    write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
