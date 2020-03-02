@@ -3,14 +3,14 @@ Figure 3
 
     library(tidyverse)
 
-    ## ── Attaching packages ────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
-    ## ✓ ggplot2 3.2.1     ✓ purrr   0.3.3
-    ## ✓ tibble  2.1.3     ✓ dplyr   0.8.3
-    ## ✓ tidyr   1.0.0     ✓ stringr 1.4.0
-    ## ✓ readr   1.3.1     ✓ forcats 0.4.0
+    ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
+    ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
+    ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
+    ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -62,8 +62,8 @@ Data: PCA, hormones, PRL expression
 -----------------------------------
 
     # pca
-    charpca <- subsetmakepca(tissuelevels, charlevels, sexlevels)   
-    charfviz <- makefvizdf(tissuelevels, charlevels, sexlevels)
+    charpca <- subsetmakepca("pituitary", charlevels, sexlevels)    
+    charfviz <- makefvizdf("pituitary", charlevels, sexlevels)
 
     # hormones
     prolactin <- read_csv("../results/07_hormones.csv") %>%
@@ -104,35 +104,31 @@ Data: PCA, hormones, PRL expression
     PRLgon <- PRLvsd %>% filter(tissue == "gonad")
 
     a <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
-      theme(legend.position = c(0.6,0.1), 
+      theme(legend.position = "none", 
             legend.direction = "horizontal", 
             legend.key.size = unit(0.5, 'lines')) + 
       guides(color = FALSE) +
-      labs(subtitle = " ")   
+      labs(subtitle = "pituitary")   
 
-    b <- plotprolactin(PRLhyp, PRLhyp$counts, "PRL", "hypothalamus") + 
-      theme(legend.position = c(0.7,0.9), axis.text.x = element_blank(), 
-            axis.title.x = element_blank(),
-            axis.title.y = element_text(face = "italic"),
-            legend.title = element_blank()) + guides(fill = F)
-
-    c <- plotfriz(charfviz) + labs(subtitle = "  ") +
-      ylim(-250000,500000) + xlim(-250000,500000) + 
+    b <- plotfriz(charfviz) + labs(subtitle = "pituitary") +
+      #ylim(-250000,500000) + xlim(-250000,500000) + 
       theme(axis.text = element_blank())
 
-    d <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "pituitary") + 
-      theme(legend.position = "none", axis.text.x = element_blank(), axis.title.x = element_blank(),
+    c <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "pituitary") + 
+      theme(legend.position = "none", 
+             axis.text.x = element_text(angle = 45, hjust = 1),
             axis.title.y = element_text(face = "italic"))
 
-    e <- plotprolactin(prolactin, prolactin$plasma_conc, "prolactin (ng/mL)", "blood") +
+    d <- plotprolactin(prolactin, prolactin$plasma_conc, "prolactin (ng/mL)", "blood") +
       theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) 
 
-    f <- plotprolactin(PRLgon, PRLgon$counts, "PRL", "gonads") + 
-      theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1),
-            axis.title.y = element_text(face = "italic"))
+    abcd <- plot_grid(a,b,c,d, labels = c("b", "c", "d", "e"), ncol = 2, label_size = 8)
 
+    expdesign <- png::readPNG("../figures/images/parentalstages_fig1a.png")
+    expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
-    plot_grid(a,b,c,d,e,f, labels = "auto", ncol = 2, rel_heights = c(1,1,1.2))
+    abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 8, rel_heights = c(0.3,1))
+    abcde
 
 ![](../figures/fig3-1.png)
 
