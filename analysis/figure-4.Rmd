@@ -14,7 +14,7 @@ source("../R/themes.R")
 knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
 ```
 
-```{r fig4, fig.height=7, fig.width=7}
+```{r data}
 geneids <- read_csv("../metadata/00_geneinfo.csv")
 
 vsd_path <- "../results/DEseq2/"   # path to the data
@@ -29,17 +29,9 @@ allvsd <- vsd_pathfiles %>%
   pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                names_to = "samples", values_to = "counts") 
 
-hypgenes <- read_csv("../results/DEseq2/female_hypothalamus_hatch_n5_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
-hypgenes
-
-pitgenes <- read_csv("../results/DEseq2/female_pituitary_inc.d9_inc.d17_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
-pitgenes
-
-gongenes <- read_csv("../results/DEseq2/female_gonad_lay_inc.d3_DEGs.csv") %>%
-  arrange(desc(logpadj)) %>% head(., n = 2) %>% pull(gene)
-gongenes
+hypgenes <- c("POMC", "DRD1")
+pitgenes <- c("PRL", "BRCA1")
+gongenes <- c("AVPR1A", "PRLR")
 
 candidategenes <- c("PRL", "PRLR" ,  "AVPR1B" , "MYC" ,  
                 "MAP2KA", "MSH" ,   "PALB2" , "BRCA1", 
@@ -66,7 +58,9 @@ returnvsds <- function(whichgenes){
 
 candidatevsd <- returnvsds(candidategenes)
 
+```
 
+```{r fig4, fig.height=7, fig.width=7}
 plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtstages){
   candidates  <- allvsd %>%
     filter(gene %in% whichgenes) %>%
@@ -100,7 +94,8 @@ plottopgenes <- function(whichgenes, whichtissue, whichsex, mysubtitle, whichtst
 
 a <- plottopgenes(hypgenes, "hypothalamus", c("female"), "hypothalamus", c("hatch", "n5")) 
 b <- plottopgenes(pitgenes, "pituitary", c("female"), "pituitary", c("inc.d9", "inc.d17")) 
-c <- plottopgenes(gongenes, "gonad", c("female"), "gonads", c("lay", "inc.d3"))
+c <- plottopgenes(gongenes, "gonad", c("female"), "gonads", c("lay", "inc.d3")) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 fig4a <- plot_grid(a,b,c, ncol = 1) 
 
