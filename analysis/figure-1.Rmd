@@ -116,5 +116,8 @@ fig1
 
 
 
+```{r}
+write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
+```
 
 
