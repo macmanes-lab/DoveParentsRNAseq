@@ -55,10 +55,10 @@ make figure
     }
 
 
-    a <- plottsneelipse(chartsne, chartsne$tissue, allcolors) + labs(subtitle = "tissue\n")    
-    b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "tissue * sex\n")    
-    c <- plottsneelipse(ftsne, ftsne$treatment, allcolors ) + labs(y = " ", subtitle = "treatment * tissue\nfemales")
-    d <- plottsneelipse(mtsne, mtsne$treatment, allcolors ) + labs(y = " ", subtitle = "treatment * tissue\nmales") 
+    a <- plottsneelipse(chartsne, chartsne$tissue, allcolors) + labs(subtitle = "~ tissue")    
+    b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "~ tissue * sex")    
+    c <- plottsneelipse(ftsne, ftsne$tissue, allcolors ) + labs(y = " ", subtitle = "female ~ tissue")
+    d <- plottsneelipse(mtsne, mtsne$tissue, allcolors ) + labs(y = " ", subtitle = "male * tissue") 
 
     abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("b", "c", "d", "e"), label_size = 8 )
 
@@ -66,8 +66,6 @@ make figure
     expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
     abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 8, rel_heights = c(0.5,1))
-
-
 
     plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
       p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
@@ -81,13 +79,11 @@ make figure
       return(p)
     }
 
-    h <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "hypothalamus")  + facet_wrap(~sex)
-    i <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + labs(subtitle = "pituitary", y = NULL) + facet_wrap(~sex) 
-    j <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads", y = NULL)  + facet_wrap(~sex)
+    h <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "hypothalamus ~ treatment")  + facet_wrap(~sex, scales = "free")
+    i <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + labs(subtitle = "pituitary ~ treatment", y = NULL) + facet_wrap(~sex, scales = "free") + theme(legend.position = )
+    j <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads ~ treatment", y = NULL)  + facet_wrap(~sex, scales = "free")
 
     hij <- plot_grid(h,i,j, nrow = 1, labels = c("h", "i", "j"), label_size = 8)
-
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
     fig1 <- plot_grid(abcde, hij, nrow = 2, rel_heights = c(0.6,0.4))
     fig1
