@@ -39,10 +39,38 @@ candidategenes <- c("PRL", "PRLR" ,  "AVPR1B" , "MYC" ,
                 "POU2F1", "RAP1GAP", "CEBPB","ARHGAP32"
                 )
 
+DEGs <- read_csv("../results/DEGs-char.csv")  %>%
+  dplyr::filter(comparison != "control_bldg") %>%
+  dplyr::distinct(gene)  %>% arrange(gene) %>%
+  filter(!grepl("LOC", gene)) #%>% 
+  #pull(gene)
+
+
+HUGO <- read_table("../metadata/HUGOGeneNomenclature.txt")
+names(HUGO)[1] <- "all"
+HUGO$gene <- sapply(strsplit(HUGO$all,'\t'), "[", 3)
+HUGO$name <- sapply(strsplit(HUGO$all,'\t'), "[", 4)
+HUGO <- HUGO %>%distinct(gene,name)
+
+DEGsHUGO <- inner_join(DEGs, HUGO, by = "gene") %>% pull(gene)
+
+
+parentalbehavior <- read_table("../results/goterms/parentalbehavior.txt")
+names(parentalbehavior)[1] <- "allGO"
+parentalbehavior$id <- sapply(strsplit(parentalbehavior$allGO,'\t'), "[", 1)
+parentalbehavior$gene <- sapply(strsplit(parentalbehavior$allGO,'\t'), "[", 2)
+parentalbehavior$name <- sapply(strsplit(parentalbehavior$allGO,'\t'), "[", 3)
+parentalbehavior$GO <- sapply(strsplit(parentalbehavior$allGO,'\t'), "[", 6)
+parentalbehavior$allGO <- NULL
+parentalbehaviorgenes <- parentalbehavior %>% 
+  mutate(gene = str_to_upper(gene)) %>%  pull(gene)
+parentalbehaviorgenes
+
 returnvsds <- function(whichgenes){
   
   df  <- allvsd %>%
-    filter(gene %in% whichgenes) %>%
+    dplyr::filter(!grepl("control", samples)) %>%
+    dplyr::filter(gene %in% whichgenes) %>%
     dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
     dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/'), "[", 2)) %>%
     dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
@@ -57,7 +85,8 @@ returnvsds <- function(whichgenes){
 }
 
 candidatevsd <- returnvsds(candidategenes)
-
+#DEGvsd <- returnvsds(DEGsHUGO) too big 1G
+parentalvsd <- returnvsds(parentalbehaviorgenes)
 ```
 
 ```{r fig4, fig.height=7, fig.width=7}
@@ -112,4 +141,6 @@ fig4
 
 ```{r savefiles}
 write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+write.csv(parentalvsd, "../../musicalgenes/data/parentalcounts.csv")
+
 ```

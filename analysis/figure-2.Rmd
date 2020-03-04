@@ -307,3 +307,13 @@ malepitparental <- allDEGslim %>%
 malepitparental
 
 ```
+
+
+```{r savefiles}
+allDEG %>%
+  drop_na()
+
+write.csv(allDEG2, "../../musicalgenes/data/allDEG2.csv")
+write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
+
+```

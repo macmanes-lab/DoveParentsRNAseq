@@ -135,3 +135,44 @@ PRLvsd3 %>%
 write.csv(PRLvsd3,"../results/PRLvsd.csv", row.names = F)
 ```
 
+
+```{r gon}
+# pca
+charpca <- subsetmakepca("gonads", charlevels, sexlevels)	
+charfviz <- makefvizdf("gonads", charlevels, sexlevels)
+
+a <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
+  theme(legend.position = "none", 
+        legend.direction = "horizontal", 
+        legend.key.size = unit(0.5, 'lines')) + 
+  guides(color = FALSE) +
+  labs(subtitle = "gonad")   
+
+b <- plotfriz(charfviz) + labs(subtitle = "gonad") +
+  #ylim(-250000,500000) + xlim(-250000,500000) + 
+  theme(axis.text = element_blank())
+
+plot_grid(a,b)
+
+head(charpca)
+
+ggplot(charpca, aes(x = PC1, y = PC2, shape = tissue, color = treatment )) +	
+    geom_point(size = 1)  +	
+  stat_ellipse( ) +
+    theme_B3() +
+  scale_color_manual(values = colorschar)
+
+ggplot(charpca, aes(x = PC1, y = PC3, shape = tissue, color = treatment )) +	
+    geom_point(size = 1)  +	
+  stat_ellipse( ) +
+    theme_B3() +
+  scale_color_manual(values = colorschar) +
+  facet_wrap(~sex)
+
+ggplot(charpca, aes(x = PC1, y = PC3, shape = tissue, color = treatment )) +	
+    geom_point(size = 1)  +	
+  stat_ellipse( ) +
+    theme_B3() +
+  scale_color_manual(values = colorschar) +
+  facet_wrap(~sex)
+```
