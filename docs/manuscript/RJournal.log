@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.3.6)  6 MAR 2020 09:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019) (preloaded format=pdflatex 2020.3.6)  6 MAR 2020 11:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1688,7 +1688,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.180 \renewcommand{\thefigure}
+l.191 \renewcommand{\thefigure}
                                {\@arabic\c@figure}
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1700,7 +1700,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.181 \renewcommand{\thetable}
+l.192 \renewcommand{\thetable}
                               {\@arabic\c@table}
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1712,7 +1712,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.188 \renewcommand{\contentsname}
+l.199 \renewcommand{\contentsname}
                                   {Contents}
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1724,7 +1724,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.189 \renewcommand\tableofcontents
+l.200 \renewcommand\tableofcontents
                                    {%
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.
@@ -1736,7 +1736,7 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.195 \renewcommand{\titlepage}
+l.206 \renewcommand{\titlepage}
                                {%
 Try typing  <return>  to proceed.
 If that doesn't work, type  X <return>  to quit.

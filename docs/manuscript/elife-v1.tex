@@ -152,22 +152,81 @@ day 3) than in any other comparison (Fig. \ref{figure:fig2}).
 \hypertarget{materials-and-methods}{%
 \subsection{Materials and Methods}\label{materials-and-methods}}
 
-\hypertarget{rnaseq}{%
-\subsubsection{RNAseq}\label{rnaseq}}
+\hypertarget{animal-care}{%
+\subsubsection{Animal Care}\label{animal-care}}
 
-See \citet{Lang2019} for details RNAseq.
+All animal care and use comply with the Public Health Service Policy on
+Humane Care and Use of Laboratory Animals and were approved by the
+University of California, Davis IACUC permit \#18895. Birds were housed
+at the University of California, Davis in enclosed aviaries with
+\textasciitilde{}8 sexually reproductive adult pairs per aviary. All
+adults birds are uniquely associated with nests by their unique color
+band combination. Food and water were provided ad libitum, and nests
+were monitored daily.
 
-Differential gene expression conducted wtih d Binder
-\citep{project_jupyter-proc-scipy-2018, Love2014, Wilke2016}.
+\hypertarget{experimental-design-and-tissue-processing}{%
+\subsubsection{Experimental design and tissue
+processing}\label{experimental-design-and-tissue-processing}}
 
-\hypertarget{summary}{%
-\subsection{Summary}\label{summary}}
+To characterize reproduction and parental care, birds were sampled at 8
+timepoints across the parental care cycle (Fig. 1a) as perviously
+described in Austin et al 2020. Briefly, nest-building pairs where at
+least was individual was seen carrying nesting material or shaping a
+nest (bldg); the day the 1st egg was laid (lay), clutch completion (also
+known as incubation day 3 (inc.d3)), mid-incubation (inc.d9), late
+incubation (inc.d17), the day the first chick hatched (where hatch),
+nestling care days 5 and 9 (n5 and n9). Additionally, a non-breeding
+(control) timepoint was adding using control birds from previously
+published studies (2,3).
 
-This file is only a basic article template. For full details of
-\emph{The R Journal} style and information on how to prepare your
-article for submission, see the
-\href{https://journal.r-project.org/share/author-guide.pdf}{Instructions
-for Authors}.
+To test our hypothesis that gene expression is govern more by internal
+mechanisms than external cues, we conducted multiple offpsring
+replacement or removal manipuations\ldots{}. Add details here.
+
+To control for circadian rhythm confounds, each member of the pair was
+collected between 0900-1200 (PST). We sampled a total of 331 birds (16
+treatments with \textasciitilde{}10 pairs per treatment). Pairs were
+captured and collected simultaneously within 5 min of entering their
+cage, were anesthetized using isoflurane until unresponsive
+(\textless{}2 min), and then decapitated. Trunk blood, brains,
+pituitaries, and gonads were collected. Processing and analysis of truck
+blood is described in Austin et al.~2020.
+
+\hypertarget{rna-sequencing-analysis}{%
+\subsubsection{RNA sequencing analysis}\label{rna-sequencing-analysis}}
+
+Processing of brains, pituitaries, and gonads for RNA sequenceing is
+described in detail in Lang et al.~2020. Briefly, RNA from the
+hypothalamus, pituitary, and gonads was processed for Illumina
+sequencing using the NEB Next Ultra Directional RNA Library Prep Kit.
+Reads were pseudomapped (insert Kalisto citation) to the Rock Dove
+transcriptome v1.1.0 whose transcripts were annotated with genes from
+Gallus gallus genome v5.
+
+Statistical analyses and modeling were perforeming using R
+\citep{RDevelopmentCoreTeam2013, Wickham2016}. Limma was use to process
+all samples using the model \textasciitilde{} tissue * sex * treatment
+(citation). t-Distributed Stochastic Neighbor Embedding (t-SNE) analysis
+was conducted using a perplexity of 10 \citep{VanDerMaaten2008}.
+Principal Component Analysis (PCA) was conducted using the top 500 most
+varying genes (citation). DESeq2 was used to model gene express for sex
+and tissue combination separately using the model
+\textasciitilde{}treatment \textbackslash{}citep\{Love2014). Weighted
+correlation network analysis (WGCNA) was used to identify set of genes
+with simliar patterns of gene expression over the course of reprodution
+and parental care (citation). ANOVAs were used to test whether specific
+genes were differnetially expressed between between sequential
+timepoints.
+
+\hypertarget{data-availablility}{%
+\subsubsection{Data availablility}\label{data-availablility}}
+
+RNA sequencing data for available through the European Nucleotide
+Archive (ENA) project ID PRJEB16136 and XXXXX. Code and data for
+reproducing the results described in the manuscript are available at
+\url{https://github.com/macmanes-lab/DoveParentsRNAseq} (upload to zendo
+and cite). Data can be explored in the cloud using Binder
+\citep{project_jupyter-proc-scipy-2018}.
 
 \hypertarget{acknowledgements}{%
 \subsection{Acknowledgements}\label{acknowledgements}}
