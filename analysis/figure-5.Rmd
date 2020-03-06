@@ -30,16 +30,36 @@ allDEG <- DEG_pathfiles %>%
   mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
   mutate(comparison = paste(down,up, sep = "_")) %>%
   mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
-  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
-head(allDEG)
+  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) 
+  
+allDEG <- allDEG %>%
+dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj)  
 
+allDEG %>% distinct(comparison)
 
+comparisonlevels <-  c(	 "inc.d3_m.inc.d3",			
+                             "inc.d9_m.inc.d9",	
+                             "inc.d17_m.inc.d17",		
+                           "hatch_m.n2",				
+                          		
+                           "inc.d9_m.inc.d8",	
 
-comparisonlevels <- c( "inc.d9_m.inc.d8", "inc.d17_prolong", "hatch_extend" , 
-                       "inc.d3_m.inc.d3" ,  "inc.d9_m.inc.d9", 
-                        "inc.d17_m.inc.d17", "m.n2_hatch" 
-                        )
+                         "m.inc.d9_m.n2",
+                         "m.inc.d9_m.inc.d8",
+                         
+                         "m.inc.d8_extend",
+                         "prolong_extend",
+                           "hatch_extend",
+                         "m.n2_extend",
+                         
+                         "m.inc.d8_prolong",
+                            "inc.d17_prolong",	
+                           "m.inc.d17_prolong",
+                         
+                           "m.inc.d3_m.inc.d9",
+                           "m.inc.d3_m.inc.d17",
+                         "m.inc.d3_m.n2",
+                         "m.inc.d9_m.inc.d17")
 
 levelsreplace <- c( "m.inc.d8" , "prolong" , "extend")
 levelsremoval <- c( "m.inc.d3" ,    "m.inc.d9" , "m.inc.d17" , "m.n2")
@@ -80,13 +100,13 @@ ggplot(aes(x = comparison,  fill = direction)) +
             position = position_dodge(width = 1),
             size = 2.5, color = "black") +
   guides(fill =  guide_legend(nrow =2)) +
-  ylim(0,3500)
+  ylim(0,3500) 
 
 mylegend <- get_legend(replacementplots)
 
 removalplots <- allDEG %>%
   filter(comparison %in% c("inc.d3_m.inc.d3" ,  "inc.d9_m.inc.d9", 
-                        "inc.d17_m.inc.d17", "m.n2_hatch" ))  %>%
+                        "inc.d17_m.inc.d17", "hatch_m.n2" ))  %>%
 ggplot(aes(x = comparison,  fill = direction)) +
   geom_bar(position = "dodge") +
   facet_grid(tissue~sex) +
@@ -104,14 +124,44 @@ ggplot(aes(x = comparison,  fill = direction)) +
   geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
             position = position_dodge(width = 1),
             size = 2.5, color = "black") +
-  ylim(0,3500)
+  ylim(0,3500) 
 
 barplots <- plot_grid( replacementplots + theme(legend.position = "none"),  removalplots,  ncol = 2, rel_widths = c(1,1.2))
 
-fig5 <- plot_grid(expdesign, barplots, mylegend, ncol =1, rel_heights = c(0.25,1,0.1))
+fig5 <- plot_grid(expdesign, barplots, ncol =1, rel_heights = c(0.5,1))
 fig5
+
+
 ```
 
 ```{r writefiles}
 write_csv(allDEG, "../results/DEGs-manip.csv")
 ```
+
+## subset. examine for E, T, hyp, and gonad hypotheses
+
+
+```{r subset}
+
+subsetDEGs <- function(whichsex, whichtissue, whichcomparison) {
+df <- allDEG %>%
+  filter(sex %in% whichsex,
+         tissue %in% whichtissue,
+         comparison %in% whichcomparison)  %>%
+  group_by(sex, tissue, comparison) #%>%
+  #summarize(DEGs = n()) %>%
+  #arrange(desc(DEGs)) %>%
+  #drop_na()
+print(df)
+}
+
+
+subsetDEGs(c("male","female"), c("hypothalamus", "pituitary", "gonad"), comparisonlevels)
+fhyphatchext <- subsetDEGs("female", "hypothalamus", "hatch_extend") %>% arrange (gene)
+mhyphatchext <- subsetDEGs("male", "hypothalamus", "hatch_extend") %>% arrange (gene)
+
+ggplot(fhyphatchext, aes(x = lfc, y = logpadj)) + geom_point() + xlim(-5,5) + ylim(0,7)
+ggplot(mhyphatchext, aes(x = lfc, y = logpadj)) + geom_point() + xlim(-5,5) + ylim(0,7)
+
+```
+
