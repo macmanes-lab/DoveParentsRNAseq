@@ -835,3 +835,59 @@ plotprolactin <- function(df, myy, myylab, mysubtitle ){
   return(p)
 }
 
+
+## tsne  figure 1 and 5
+
+subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
+  
+  colData <- colData %>%
+    dplyr::filter(tissue %in% whichtissue,
+                  treatment %in% whichtreatment,
+                  sex %in% whichsex) 
+  row.names(colData) <- colData$V1
+  
+  # save counts that match colData
+  savecols <- as.character(colData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  countData <- as.data.frame(t(countData))
+  countData <- countData %>% dplyr::select(one_of(savecols)) 
+  countData <- as.data.frame(t(countData))
+  
+  euclidist <- dist(countData) # euclidean distances between the rows
+  
+  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
+  tsne_df = as.data.frame(tsne_model$Y) 
+  
+  # prep for adding columns
+  colData2 <- colData 
+  colData2$V1 <- NULL
+  tsne_df_cols <- cbind(colData2, tsne_df)
+  return(tsne_df_cols)
+}
+
+plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
+  p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
+    geom_point(size = 1, aes(color = pointcolor)) +
+    theme_B3() +
+    labs(x = "tSNE 1", y = "tSNE 2") +
+    scale_color_manual(values = whichcolors) +
+    theme(legend.position = "none",
+          axis.text = element_blank()) +
+    stat_ellipse(linetype = 1, aes(color = tissue )) 
+  return(p)
+}
+
+plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
+  p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
+    geom_point(size = 1, aes(color = pointcolor)) +
+    theme_B3() +
+    labs(x = "tSNE 1", y = "tSNE 2") +
+    scale_color_manual(values = whichcolors) +
+    theme(legend.position = "none",
+          axis.text = element_blank()) +
+    stat_ellipse(linetype = 1, aes(color = pointcolor)) 
+  return(p)
+}
+
+

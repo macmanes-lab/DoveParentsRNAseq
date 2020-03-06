@@ -51,6 +51,8 @@ comparisonlevels <- c("control_bldg", "bldg_lay" ,"lay_inc.d3", "inc.d3_inc.d9",
                       "inc.d9_inc.d17", "inc.d17_hatch" , "hatch_n5", "n5_n9"   )
 
 
+allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay")
+
 
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
                 "inc.d9", "m.inc.d8" ,"m.inc.d9" ,
@@ -147,7 +149,10 @@ colorsmanip <- c("m.inc.d3" = "#CDCDCD",
 colorhypothesis <- c("eggs" = "#7FA163",
                      "chicks" = "#3A80B9",
                      "lo" = "#B5C4B2",
-                     "hi" = "#19757A")
+                     "hi" = "#19757A",
+                     "loss" = "#08306b")
+
+levelsextint <- c("eggs" , "chicks" , "loss")
 
 colorscharmaip <-  c(colorscharnew, colorsmanip)
 
