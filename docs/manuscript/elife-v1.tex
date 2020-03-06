@@ -1,0 +1,240 @@
+% !TeX root = RJwrapper.tex
+\title{Internal physiology and external cues drive changes in reproductive axis
+of parenting pigeons}
+\author{by Rayna M Harris \footnote{equal contribtion}, Suzanne H. Austin \footnote{equal contribtion}, Andrew S. Lang, Victoria S. Farrar, April Booth, Tanner Feustel, Matthew D. MacManes, Rebecca M. Calisi \footnote{corresponding author}}
+
+\maketitle
+
+
+% Any extra LaTeX you need in the preamble
+
+In species that provide parental care, successful rearing of offspring involves a shift from aggressive and sexual behaviors to more caring and nurturing ones.  We hypothesize that these shifts in behavior are related to changes in gene expression that are controlled by internal mechanisms rather than by the external cues.  We found that gene expression in the hypothalamus is fairly insensitive to the natural transition between egg and nestling stages; however, in the pituitary and gonads, gene expression showed much more plasticity over the course of reproduction. We show evidence that natural transitions in reproductive and parental behavior by mediated internal clock controlling gene expression in the pitary and gonads but that the hypothalamus is very sensitive to external cues that signal a distruption in the natural parental care cycle. This research provides a deeper understanding of the interplay of genes, hormones, and parental care and has important implications for understanding molecular processes that underlie behavior transitions.
+
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
+
+Reproduction is a critical period in an organism's life cycle. Parents
+must balance their own needs with the energetic costs and
+time-constraints required to successfully reproduce and rear their
+offspring to independence(1). A complex series of evolutionarily
+conserved physiological processes underlie behaviors typically
+associated with reproduction in vertebrates, including courtship,
+nesting, and parental care. These processes are primarily mediated by
+the reproductive axis, which consists of the hypothalamus in the brain,
+the pituitary, and the gonads (i.e., the HPG). Our understanding of the
+physiological changes that adults navigate as they transition through
+reproductive states are primarily limited to a number of circulating
+hormones and a small set of well-known genes (cite). We have yet to come
+close to conceptualizing the larger symphony of reproductive events that
+occur to yield reproductive and parental care behaviors.
+
+Using the model of a biparental vertebrate species, the rock dove
+(Columba livia), our team has previously demonstrated the dynamic nature
+of gene activity within the reproductive or HPG axis.
+\citet{MacManes2017} reported that HPG gene activity varied by sex, with
+females exhibiting higher levels of overall gene expression than males.
+\citet{Calisi2018} reported that HPG gene activity varied response to
+restraint-stress, and Austin et al.~identify genes that responds to both
+corticosterone treatment and restraint stress. While each of these
+studies advanced our understanding of sex-differences and
+transcriptional plasticity in the reproducitve axis, none of these
+studies examined activity of the reproducitve axis of bird that are
+actively reproducing or caring for offspring. Studying parental care in
+both sexes of mammalian species is challenging because only the females
+are able to use lactation to feed their young, and the physiological
+mechanisms regulating this process are hard to control for. The rock
+dove is an excellent system for studying reproduction and parental care
+in both sexes because both males and females feed their young an
+energy-rich secretion produced from the epithelial lining of their
+crops, known as crop milk.
+
+In this study, we investigate the activity of the HPG axis over the
+course of reproduction and parental care by characterizing gene
+expression as birds transition from non-breeding to nest-building, as
+they lay and incubate their clutches, and finally as they become parents
+and raise their chicks. Then, we conducted a series of nest
+manipulations to ascertain constraints associated with biological timing
+versus input from external stimuli. We conducted a comprehensive series
+of analyses examine broad patterns of variation as well as the activity
+of specific genes in specific tissues. We have also made our data and
+scripts available so that others can reuse the data to ask different
+questions or reproduce our results. This research provides a deeper
+understanding of the interplay of genes, hormones, and parental care and
+has important implications for understanding molecular processes that
+underlie behavioral transitions. \citep[reviewed in][]{Lea1989} say
+this, but other say that \citep[reviewed in][]{Dulac2014}.
+
+\hypertarget{results}{%
+\subsection{Results}\label{results}}
+
+To characterize transcriptional activity, we first examined broad
+patterns of variation in gene expression in the hypothalamus, pituitary,
+and gonads of male and female rock doves across a series of timepoints
+that encapsulate important transitions in reproduction and and parental
+care (Fig. \ref{figure:fig1}a). t-Distributed Stochastic Neighbor
+Embedding (t-SNE) is a nonlinear, dimension reduction technique is used
+to visualize high-dimensional data by giving each datapoint a location
+in a two-dimensional map (van der Maaten and Hinton 2008). t-SNE is
+widely using in single-cell data process for identify related cell
+types. Here, we use t-SNE to identify variation associated with tissue,
+sex, and treatment (Fig. \ref{figure:fig1}j).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.0\textwidth]{../../figures/fig1-1}
+  \caption{Broad patterns of variation in hypothalamic, pituitary, and gonadal gene expression in male and female rock doves across reproductive and parental transitions. a) Experimental design. b) t-SNE plot highlighting tissue differences in gene expression. Each dot represents 1 sample and is colored by the source tissue (hypothalamus: orange, pituitary: teal, gonads: purple). c) t-SNE plot highlighting sex differences in tissue and sex, as shown in light grey (females) and dark grey (males). t-SNE plots highlight treatment effects in females (d), males (e), the hypothalamus (h), pituitary (i), and gonads (j), with samples colored by parental stage (control: red or , nest-building: orange, lay: yellow; inc.d3: light green, inc.d9: green, inc.d17: dark green, hatch: dark blue, n5: blue, and n9: light blue.}
+  \label{figure:fig1}
+\end{figure}
+
+Our results suggest that tissue is the greatest source of variation in
+the dataset, with hypothalamic, pituitary, and gonadal samples all
+forming distinct clusters, with only a few pituitary and gonad samples
+falling outside the 95\% confidence interval (Fig. \ref{figure:fig1}b).
+Sex-differences are most prounounced in the gonads with male and female
+samples form two discrete clusters (Fig. \ref{figure:fig1}c). Treatment
+accounts for much less of the variation than tissue and sex, and even
+after removing sex as a variatble, treatment effects in all three
+tissues are hard to visualize simultatenously (Fig.
+\ref{figure:fig1}d,e), so we next looked at each tissue and sex
+separately. In the hypothalamus, control samples form tight clusters
+that stands out from all other timepoints that are largely overlapping
+in space (Fig. \ref{figure:fig1}h). The pituitary shows the strongest
+treatment effect with one cluster of the ``earlier'' parental timepoints
+(nest-building, lay, incubation days 3 and 9), a second cluster of
+``later'' parental timpoints (incubation day 17, hatch, and nestling
+care days 5 and 9; Fig. \ref{figure:fig1}i). Like the hypothalamus, in
+the gonads, the control timepoints appear to be much less variable that
+the parental timepoints, but there is no clear separation of gonadal
+samples by parental stage (Fig. \ref{figure:fig1}j). While the tSNE
+analysis reveals broad patterns across all levels of the experiment,
+additional tools are needed it hone in on the specific differences
+associated with parental care in each tissue.
+
+Differential gene expression analysis can shed insight into specific
+differences between treatment groups and thus deepen our understand of
+the transitions between reproduction and parental care behaviors. We
+used DESEq2 to identify genes whose expression changed significantly
+between sequential timepoints in each tissue and sex separately (Fig.
+\ref{figure:fig2}a).
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=1.0\textwidth]{../../figures/fig2-1}
+  \caption{Differential gene expression differences between sequential parental stages. a) We calculated the differentail gene expression between each consequtive parental stage samples, for a total of 8 pair-wise comparisons for each sex in each tissue. The y-axis of these bar plots displays the total number of differentially expressed genes for each comparsison in the hypothalamus (b), pituitary (c), gonads (d). Bars are collored by the direction of the change in gene expression. Control: control: red or , nest-building (bldg): orange, lay: yellow; incubation day 3 (inc.d3): light green, inc.d9: green, inc.d17: dark green, hatch: dark blue, nestling care day 5 (n5): blue, and n9: light blue.}
+  \label{figure:fig2}
+\end{figure}
+
+In the hypothalamus only two sequential stage comparisons results in a
+sizable change in expression; in females, 1927 genes changes their
+expression betwen hatch to nesting care day 5 (with 1076 decreasing and
+851 increased their expression), and in the male hypothalamus,87 genes
+were diferentially expressed bewteen incubation days 9 and 17 (with 38
+decreasing and 49 increasing their expression (Fig.
+\ref{figure:fig2}b)). In the pituitary, differential gene expression
+differenes are greatest when compariing incubation days 9 and 17, and
+this difference is more pronounced in females (Fig. \ref{figure:fig2}c).
+The next largest difference in the pituitary is between hatch and n5.
+The female putitary shows moderate chagnes from nest-bilding to lay to
+incuabation day 3 (Fig. \ref{figure:fig2}c). The male pituitary changes
+more that the female pitutiary changes between nestling care days 5 and
+9 (Fig. \ref{figure:fig2}c). About 2000 genes also change their
+expression in the female pituitary and about 425 in the male pituitary
+when comparing incubation days 9 and 17 (Fig. \ref{figure:fig2}). In the
+female gonads, 270 genes are decreased while only 56 are increased when
+comparing incubation days 9 and 17(Fig. 2). Many more significant
+changes in gene expression in the female gonad occur between
+nest-building and lay and between lay and clutch completion (incubation
+day 3) than in any other comparison (Fig. \ref{figure:fig2}).
+
+\hypertarget{discussion}{%
+\subsection{Discussion}\label{discussion}}
+
+\hypertarget{materials-and-methods}{%
+\subsection{Materials and Methods}\label{materials-and-methods}}
+
+\hypertarget{rnaseq}{%
+\subsubsection{RNAseq}\label{rnaseq}}
+
+See \citet{Lang2019} for details RNAseq.
+
+Differential gene expression conducted wtih d Binder
+\citep{project_jupyter-proc-scipy-2018, Love2014, Wilke2016}.
+
+\hypertarget{summary}{%
+\subsection{Summary}\label{summary}}
+
+This file is only a basic article template. For full details of
+\emph{The R Journal} style and information on how to prepare your
+article for submission, see the
+\href{https://journal.r-project.org/share/author-guide.pdf}{Instructions
+for Authors}.
+
+\hypertarget{acknowledgements}{%
+\subsection{Acknowledgements}\label{acknowledgements}}
+
+Thanks to Owen for discussion of data sonfification. Thanks to DIB lab
+members for software and methods discussion (Titus, Taylor, Luiz,
+Amanda, Alicia, Picaso).
+
+\hypertarget{references}{%
+\subsection{References}\label{references}}
+
+\bibliography{RJreferences}
+
+
+\address{%
+Rayna M Harris \footnote{equal contribtion}\\
+UC Davis\\
+\\
+}
+
+
+\address{%
+Suzanne H. Austin \footnote{equal contribtion}\\
+UC Davis\\
+\\
+}
+
+
+\address{%
+Andrew S. Lang\\
+UNH\\
+\\
+}
+
+
+\address{%
+Victoria S. Farrar\\
+UC Davis\\
+\\
+}
+
+
+\address{%
+April Booth\\
+UC Davis\\
+\\
+}
+
+
+\address{%
+Tanner Feustel\\
+UC Davis\\
+\\
+}
+
+
+\address{%
+Matthew D. MacManes\\
+UNH\\
+\\
+}
+
+
+\address{%
+Rebecca M. Calisi \footnote{corresponding author}\\
+UC Davis\\
+\\
+}
+\href{mailto:author7@work}{\nolinkurl{author7@work}}
+

@@ -13,3 +13,8 @@ con <- dbConnect(
 
 tbl(con, in_schema("public", "alldeg")) %>% 
   filter(gene == "AOC1")
+
+df <- as_tibble(tbl(con, in_schema("public", "alldeg")))
+head(df)
+
+
