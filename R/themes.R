@@ -51,7 +51,7 @@ comparisonlevels <- c("control_bldg", "bldg_lay" ,"lay_inc.d3", "inc.d3_inc.d9",
                       "inc.d9_inc.d17", "inc.d17_hatch" , "hatch_n5", "n5_n9"   )
 
 
-allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay")
+allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay", "bldg")
 
 
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
