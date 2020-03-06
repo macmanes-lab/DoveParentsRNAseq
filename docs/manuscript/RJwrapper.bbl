@@ -35,13 +35,6 @@ P.~Jupyter, M.~Bussonnier, J.~Forde, J.~Freeman, B.~Granger, T.~Head,
   {\{}C{\}}onference}, pages 113--120, 2018.
 \newblock \doi{10.25080/Majora-4af1f417-011}.
 
-\bibitem[Lang et~al.(2019)Lang, Austin, Harris, Calisi, and MacManes]{Lang2019}
-A.~S. Lang, S.~H. Austin, R.~M. Harris, R.~M. Calisi, and M.~D. MacManes.
-\newblock {Stress-mediated convergence of splicing landscapes in male and
-  female Rock Doves}.
-\newblock \emph{bioRxiv}, page 798413, oct 2019.
-\newblock \doi{10.1101/798413}.
-
 \bibitem[Lea and Sharp(1989)]{Lea1989}
 R.~W. Lea and P.~J. Sharp.
 \newblock {Concentrations of plasma prolactin and luteinizing hormone following
@@ -50,15 +43,6 @@ R.~W. Lea and P.~J. Sharp.
   1989.
 \newblock ISSN 10956867.
 \newblock \doi{10.1016/0018-506X(89)90067-6}.
-
-\bibitem[Love et~al.(2014)Love, Huber, and Anders]{Love2014}
-M.~I. Love, W.~Huber, and S.~Anders.
-\newblock {Moderated estimation of fold change and dispersion for RNA-seq data
-  with DESeq2}.
-\newblock \emph{Genome Biology}, 15\penalty0 (12):\penalty0 550, dec 2014.
-\newblock ISSN 1465-6906.
-\newblock \doi{10.1186/s13059-014-0550-8}.
-\newblock URL \url{http://genomebiology.com/2014/15/12/550}.
 
 \bibitem[MacManes et~al.(2017)MacManes, Austin, Lang, Booth, Farrar, and
   Calisi]{MacManes2017}
@@ -70,10 +54,21 @@ M.~D. MacManes, S.~H. Austin, A.~S. Lang, A.~Booth, V.~Farrar, and R.~M.
 \newblock ISSN 20452322.
 \newblock \doi{10.1038/srep45125}.
 
-\bibitem[Wilke(2016)]{Wilke2016}
-C.~O. Wilke.
-\newblock {cowplot: Streamlined Plot Theme and Plot Annotations for 'ggplot2'},
-  2016.
-\newblock URL \url{https://cran.r-project.org/package=cowplot}.
+\bibitem[{R Development Core Team}(2013)]{RDevelopmentCoreTeam2013}
+{R Development Core Team}.
+\newblock {R: A language and environment for statistical computing}, 2013.
+\newblock URL \url{http://www.r-project.org/}.
+
+\bibitem[{Van Der Maaten} and Hinton(2008)]{VanDerMaaten2008}
+L.~{Van Der Maaten} and G.~Hinton.
+\newblock {Visualizing Data using t-SNE}.
+\newblock Technical report, 2008.
+
+\bibitem[Wickham and Grolemund(2016)]{Wickham2016}
+H.~Wickham and G.~Grolemund.
+\newblock \emph{{R for Data Science: Import, Tidy, Transform, Visualize, and
+  Model Data}}.
+\newblock 2016.
+\newblock ISBN 978-1491910399.
 
 \end{thebibliography}

@@ -28,15 +28,12 @@ output:
   rticles::rjournal_article:
     includes:
       in_header: preamble.tex
-      
-      
-      
 ---
 
 ## Introduction
 
 
-Reproduction is a critical period in an organism’s life cycle. Parents must balance their own needs with the energetic costs and time-constraints required to successfully reproduce and rear their offspring to independence(1).  A complex series of evolutionarily conserved physiological processes underlie behaviors typically associated with reproduction in vertebrates, including courtship, nesting, and parental care. These processes are primarily mediated by the reproductive axis, which consists of the hypothalamus in the brain, the pituitary, and the gonads (i.e., the HPG). Our understanding of the physiological changes that adults navigate as they transition through reproductive states are primarily limited to a number of circulating hormones and a small set of well-known genes (cite). We have yet to come close to conceptualizing the larger symphony of reproductive events that occur to yield reproductive and parental care behaviors. 
+Reproduction is a critical period in an organism’s life cycle. Parents must balance their own needs with the energetic costs and time-constraints required to successfully reproduce and rear their offspring to independence (cite).  A complex series of evolutionarily conserved physiological processes underlie behaviors typically associated with reproduction in vertebrates, including courtship, nesting, and parental care. These processes are primarily mediated by the reproductive axis, which consists of the hypothalamus in the brain, the pituitary, and the gonads (i.e., the HPG). Our understanding of the physiological changes that adults navigate as they transition through reproductive states are primarily limited to a number of circulating hormones and a small set of well-known genes (cite). We have yet to come close to conceptualizing the larger symphony of reproductive events that occur to yield reproductive and parental care behaviors. 
 
 Using the model of a biparental vertebrate species, the rock dove (Columba livia), our team has previously demonstrated the dynamic nature of gene activity within the reproductive or HPG axis. \citet{MacManes2017} reported that HPG gene activity varied by sex, with females exhibiting higher levels of overall gene expression than males. \citet{Calisi2018} reported that HPG gene activity varied response to restraint-stress, and Austin et al. identify genes that responds to both corticosterone treatment and restraint stress. While each of these studies advanced our understanding of sex-differences and transcriptional plasticity in the reproducitve axis, none of these studies examined activity of the reproducitve axis of bird that are actively reproducing or caring for offspring. Studying parental care in both sexes of mammalian species is challenging because only the females are able to use lactation to feed their young, and the physiological mechanisms regulating this process are hard to control for. The rock dove is an excellent system for studying reproduction and parental care in both sexes because both males and females feed their young an energy-rich secretion produced from the epithelial lining of their crops, known as crop milk. 
 
@@ -71,28 +68,33 @@ In the hypothalamus only two sequential stage comparisons results in a sizable c
 
 
 
-
-
-
 ## Discussion
 
 ## Materials and Methods
 
 
-### RNAseq
+### Animal Care 
 
-See \citet{Lang2019} for details RNAseq.
+All animal care and use comply with the Public Health Service Policy on Humane Care and Use of Laboratory Animals and were approved by the University of California, Davis IACUC permit #18895. Birds were housed at the University of California, Davis in enclosed aviaries with ~8 sexually reproductive adult pairs per aviary. All adults birds are uniquely associated with nests by their unique color band combination. Food and water were provided ad libitum, and nests were monitored daily. 
 
-Differential gene expression conducted wtih d Binder \citep{project_jupyter-proc-scipy-2018, Love2014, Wilke2016}. 
+### Experimental design and tissue processing
+
+To characterize reproduction and parental care, birds were sampled at 8 timepoints across the parental care cycle (Fig. 1a) as perviously described in Austin et al 2020. Briefly, nest-building pairs where at least was individual was seen carrying nesting material or shaping a nest (bldg); the day the 1st egg was laid (lay), clutch completion (also known as incubation day 3 (inc.d3)), mid-incubation (inc.d9), late incubation (inc.d17), the day the first chick hatched (where hatch), nestling care days 5 and 9 (n5 and n9). Additionally, a non-breeding (control) timepoint was adding using control birds from previously published studies (2,3). 
+
+To test our hypothesis that gene expression is govern more by internal mechanisms than external cues, we conducted multiple offpsring replacement or removal manipuations…. Add details here. 
+
+To control for circadian rhythm confounds, each member of the pair was collected between 0900-1200 (PST). We sampled a total of 331 birds (16 treatments with ~10 pairs per treatment). Pairs were captured and collected simultaneously within 5 min of entering their cage, were anesthetized using isoflurane until unresponsive (<2 min), and then decapitated. Trunk blood, brains, pituitaries, and gonads were collected. Processing and analysis of truck blood is described in Austin et al. 2020. 
+
+### RNA sequencing analysis
+
+Processing of brains, pituitaries, and gonads for RNA sequenceing is described in detail in Lang et al. 2020. Briefly, RNA from the hypothalamus, pituitary, and gonads was processed for Illumina sequencing using the NEB Next Ultra Directional RNA Library Prep Kit. Reads were pseudomapped (insert Kalisto citation) to the Rock Dove transcriptome v1.1.0 whose transcripts were annotated with genes from Gallus gallus genome v5. 
+
+Statistical analyses and modeling were perforeming using R \citep{RDevelopmentCoreTeam2013, Wickham2016}. Limma was use to process all samples using the model ~ tissue * sex * treatment (citation). t-Distributed Stochastic Neighbor Embedding (t-SNE) analysis was conducted using a perplexity of 10 \citep{VanDerMaaten2008}. Principal Component Analysis (PCA) was conducted using the top 500 most varying genes (citation). DESeq2 was used to model gene express for sex and tissue combination separately using the model ~treatment \citep{Love2014). Weighted correlation network analysis (WGCNA) was used to identify set of genes with simliar patterns of gene expression over the course of reprodution and parental care (citation). ANOVAs were used to test whether specific genes were differnetially expressed between between sequential timepoints. 
 
 
+### Data availablility
 
-
-
-
-## Summary
-
-This file is only a basic article template. For full details of _The R Journal_ style and information on how to prepare your article for submission, see the [Instructions for Authors](https://journal.r-project.org/share/author-guide.pdf).
+RNA sequencing data for available through the European Nucleotide Archive (ENA) project ID PRJEB16136 and XXXXX. Code and data for reproducing the results described in the manuscript are available at https://github.com/macmanes-lab/DoveParentsRNAseq (upload to zendo and cite). Data can be explored in the cloud using Binder \citep{project_jupyter-proc-scipy-2018}. 
 
 ## Acknowledgements
 
