@@ -10,12 +10,12 @@ Figure 1. Experimental design, tSNE analysis, PCA, and prolactin
     addgroupings <- function(df){
       
       df <- df %>% mutate(hiloPRL = fct_collapse(treatment, 
-                                      lo = c("m.inc.d8", "m.inc.d3", "m.inc.d9", "inc.d3", "inc.d9", "lay"),
-                                      hi = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch"  ,   "m.n2", "extend", "n5")),
+                                      lo = c("m.inc.d8", "m.inc.d3", "m.inc.d9", "inc.d3", "inc.d9", "lay", "bldg"),
+                                      hi = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" ,  "m.n2", "extend", "n5")),
                     extint = fct_collapse(treatment, 
                                       eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong", "lay"),
                                       chicks = c( "m.inc.d8", "hatch", "extend", "n5"),
-                                      loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17")))
+                                      loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg")))
       df$extint <- factor(df$extint, levels = levelsextint)
       return(df)
     }
@@ -28,7 +28,7 @@ Figure 1. Experimental design, tSNE analysis, PCA, and prolactin
 make figure
 -----------
 
-    expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_hypothesis.png")
+    expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_maniptsne.png")
     expdesign2 <- ggdraw() +  draw_image(expdesign2, scale = 1)
 
 
@@ -37,6 +37,10 @@ make figure
     d <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads ~ parental stage")  + facet_wrap(~sex, scales = "free")  
 
     bcd <- plot_grid(b,c,d, nrow = 3, labels = c("b", "c", "d"), label_size = 8, rel_heights = c(1,1,1))
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
     ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
@@ -55,7 +59,7 @@ make figure
     bcdhijefg <- plot_grid(bcd, hij,  efg, nrow = 1)
 
 
-    fig6 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("e"), label_size = 8, rel_heights = c(0.4,1))
+    fig6 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("e"), label_size = 8, rel_heights = c(0.5,1))
     fig6
 
 ![](../figures/fig5-1.png)
