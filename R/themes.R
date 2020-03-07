@@ -150,7 +150,7 @@ colorhypothesis <- c("eggs" = "#7FA163",
                      "chicks" = "#3A80B9",
                      "lo" = "#B5C4B2",
                      "hi" = "#19757A",
-                     "loss" = "#08306b")
+                     "loss" = "#8B4513")
 
 levelsextint <- c("eggs" , "chicks" , "loss")
 
