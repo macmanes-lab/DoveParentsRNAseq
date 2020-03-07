@@ -3,14 +3,14 @@ Figure 3
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -184,26 +184,23 @@ Internal versus external
     expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
 
-    a <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
+    b <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
       theme(legend.position = "none", 
             legend.direction = "horizontal", 
             legend.key.size = unit(0.5, 'lines')) + 
       guides(color = FALSE) +
       labs(subtitle = "pituitary")   
 
-    b <- plotfriz(charfviz) + labs(subtitle = "pituitary") +
-      #ylim(-250000,500000) + xlim(-250000,500000) + 
-      theme(axis.text = element_blank())
-
     c <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "pituitary") + 
       theme(legend.position = "none", 
-             axis.text.x = element_text(angle = 45, hjust = 1),
+             axis.text.x = element_blank(),
+            axis.title.x = element_blank(),
             axis.title.y = element_text(face = "italic"))
 
     d <- plotprolactin(prolactin, prolactin$plasma_conc, "prolactin (ng/mL)", "blood") +
       theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) 
 
-    bcde <- plot_grid(a,b,c,d, labels = c("b", "c", "d", "e"), ncol = 2, label_size = 8)
+    bcd <- plot_grid(b,c,d, labels = c("b", "c", "d"), ncol = 1, label_size = 8, rel_heights = c(1,1,1.3))
 
 
 
@@ -269,7 +266,7 @@ Internal versus external
     hypothesisbars <-  plot_grid(c112131, c122232, b112131, b122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
               labels = c("f", " ", "g", " "), label_size = 8)
 
-    dataplots <- plot_grid(bcde, hypothesisbars)
+    dataplots <- plot_grid(bcd, hypothesisbars)
 
 
     fig3 <- plot_grid(expdesign, dataplots, rel_heights = c(0.25,1), nrow = 2, labels = c("a"), label_size = 8)
