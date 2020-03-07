@@ -44,7 +44,7 @@ allDEG$direction <- factor(allDEG$direction, levels = charlevels)
 
 
 
-```{r figurefunctions}
+```{r fig2, fig.width=7, fig.height=7}
 
 makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
   p <- allDEG %>%
@@ -71,134 +71,28 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
   return(p)
 }
 
-```
 
-
-## Internal versus external 
-
-
-```{r hypothesis}
-DEG_path <- "../results/DEseq2/hypothesis/"   # path to the data
-DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
-DEG_pathfiles <- paste0(DEG_path, DEG_files)
-#DEG_files
-
-allDEG2 <- DEG_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_csv(.x), .id = "file_name") %>% 
-  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/hypothesis/'), "[", 2))  %>% 
-  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
-  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
-  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
-  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
-  mutate(comparison = paste(down,up, sep = "_")) %>%
-  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
-  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
-head(allDEG)
-
-allDEG2$tissue <- factor(allDEG2$tissue, levels = tissuelevel)
-
-allDEG2$comparison <- factor(allDEG2$comparison, levels = c("eggs_chicks", "lo_hi"))
-allDEG2 <- allDEG2 %>% mutate(comparison = fct_recode(comparison, "lo vs. hi PRL   " = "lo_hi",
-                                                      "eggs vs. chicks" = "eggs_chicks"))
-allDEG2$direction <- factor(allDEG2$direction, levels = c("eggs", "chicks", "lo", "hi"))
-
-
-
-```
-
-## DEGS
-
-```{r fig2, fig.width=6, fig.height=5}
 # hyp
 p1 <- makebargraph("hypothalamus","DEGs", 0, 1250) + theme(axis.text.x = element_blank(), 
                                                                axis.title.x = element_blank())
-
 # pit
 p2 <- makebargraph("pituitary","DEGs", 0, 1250)  +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), 
                                                               strip.text.x = element_blank())
-
 # gon
 p3 <- makebargraph("gonad","DEGs", 0, 1250) +  theme(strip.text.x = element_blank())
-
 bcd <- plot_grid(p1,p2,p3, nrow = 3, rel_heights = c(1.2,1,1.5), labels = c("b", "c", "d"), label_size = 8)
 
-
-expdesign <- png::readPNG("../figures/images/DoveParentsRNAseq_DEGS.png")
+expdesign <- png::readPNG("../figures/images/fig_fig2a.png")
 expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
-plot_grid(expdesign, bcd, labels = c("a", " "), label_size = 8, nrow = 2, rel_heights = c(0.2,1))
-
+plot_grid(expdesign, bcd, labels = c("a", " "), label_size = 8, nrow = 2, rel_heights = c(0.25,1))
 
 ```
 
 
-```{r fig2b, fig.width=5, fig.height=5}
-
-makenewbargraph <- function(whichtissue, whichsex,  whichcomparison, lowlim, higherlim){
-  p <- allDEG2 %>%
-    filter(tissue == whichtissue,
-           comparison == whichcomparison,
-           sex == whichsex) %>%
-    ggplot(aes(x = comparison,  fill = direction)) +
-    geom_bar(position = "dodge", drop = FALSE) +
-    theme_B3() +
-    theme(legend.position = "none")  +
-    guides(fill = guide_legend(nrow = 1)) +
-    labs( y = whichtissue) +
-  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
-           position = position_dodge(width = 1),
-           size = 2, color = "black")  + 
-      ylim(lowlim, higherlim) +
-  scale_fill_manual(values = allcolors, name = "higher in")   + 
-    theme(axis.text.x = element_blank()) 
-  return(p)
-}
 
 
-b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 2500) +  labs(subtitle = "females", x = NULL, y = "Hyp. DEGS")
-b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2500)  + labs(x = NULL, y = "Pit. DEGS")
-b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks", y = "Gon. DEGS")   
-b112131 <- plot_grid(b11,b21,b31, nrow = 3, rel_heights = c(1.1,1,1.1))
 
-
-b12 <- makenewbargraph("hypothalamus", "male",  "eggs vs. chicks", 0, 2500) + labs(subtitle = "males", x = NULL)+ 
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
-b22 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 2500) + labs(x = NULL)+ 
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
-b32 <- makenewbargraph("gonad", "male", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks")   + 
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
-b122232 <- plot_grid(b12, b22,b32, nrow = 3, rel_heights = c(1.1,1,1.1)) 
-
-
-c11 <- makenewbargraph("hypothalamus", "female", "lo vs. hi PRL   ", 0, 2500) +  labs(subtitle = "females", x = NULL) + 
-  theme(axis.title.y = element_blank())
-c21 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2500)  + labs(x = NULL)+ 
-  theme(axis.title.y = element_blank())
-c31 <- makenewbargraph("gonad", "female", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL")  + 
-  theme(axis.title.y = element_blank()) 
-c112131 <- plot_grid(c11,c21,c31, nrow = 3, rel_heights = c(1.1,1,1.1))
-
-
-c12 <- makenewbargraph("hypothalamus", "male",  "lo vs. hi PRL   ", 0, 2500) + labs(subtitle = "males", x = NULL)+ 
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
-c22 <- makenewbargraph("pituitary", "male", "lo vs. hi PRL   ", 0, 2500) + labs(x = NULL)+ 
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
-c32 <- makenewbargraph("gonad", "male", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL")   + 
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank())
-c122232 <- plot_grid(c12, c22,c32, nrow = 3, rel_heights = c(1.1,1,1.1)) 
-
-
-hypothesisbars <-  plot_grid(b112131, b122232, c112131, c122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
-          labels = c("b", " ", "c", " "), label_size = 8)
-
-expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_hypothesis.png")
-expdesign2 <- ggdraw() +  draw_image(expdesign2, scale = 1)
-
-
-plot_grid(expdesign2, hypothesisbars, rel_heights = c(0.5,1), nrow = 2, labels = c("a", " "), label_size = 8)
-```
 
 
 ## total degs
@@ -209,6 +103,10 @@ allDEG %>%
   summarize(totalDEGs = n()) %>%
   arrange(tissue, comparison)
 ```
+
+
+
+
 
 
 ## candidate genes 
@@ -239,18 +137,7 @@ kable(table1)
 
 
 
-table2 <- allDEG2 %>%
-  filter(gene %in% candidategenes) %>%
-  arrange(gene) %>%
-  group_by(sex, tissue, comparison) %>%
-  summarize(genes = str_c(gene, collapse = " ")) %>%
-  pivot_wider(names_from = comparison, values_from = genes ) %>%
-  arrange( tissue, sex)
-table(table2)
-
-
 write_csv(table1, "../results/table1.csv")
-write_csv(table2, "../results/table2.csv")
 ```
 
 ## supplemental tables, all DEGS
@@ -268,52 +155,20 @@ suppletable1 %>%
   group_by(tissue) %>%
   summarize(totalDEGs = n())
 
-suppletable2 <- allDEG2 %>%
-  filter(comparison != "control_bldg") %>%
-  group_by(sex, tissue, comparison) %>%
-  arrange( tissue, sex, direction, gene)
-head(suppletable2)
 
 write_csv(suppletable1, "../results/suppletable1.csv")
 
-write_csv(suppletable2, "../results/suppletable2.csv")
 
 head(allDEG) 
 ```
 
-## female pit, parental/repro only, not PRL
 
-```{r}
-allDEGslim <- allDEG %>% filter(comparison != "control_bldg")
-
-femalepitPRL <- allDEG2 %>% filter(sex == "female", tissue == "pituitary") %>%
-  filter(comparison != "eggs vs. chicks") %>% arrange(gene) %>% pull(gene)
-
-femalepitparental <- allDEGslim %>% 
-  filter(!gene %in% femalepitPRL,
-         sex == "female", tissue == "pituitary") %>%
-  arrange(gene, sex, tissue, comparison, direction) %>%
-  distinct(gene) %>% pull(gene)
-femalepitparental
-
-malepitPRL <- allDEG2 %>% filter(sex == "male", tissue == "pituitary") %>%
-  filter(comparison != "eggs vs. chicks") %>% arrange(gene) %>% pull(gene)
-
-malepitparental <- allDEGslim %>% 
-  filter(!gene %in% malepitPRL,
-         sex == "male", tissue == "pituitary") %>%
-  arrange(gene, sex, tissue, comparison, direction) %>%
-  distinct(gene) %>% pull(gene)
-malepitparental
-
-```
 
 
 ```{r savefiles}
 allDEG %>%
   drop_na()
 
-write.csv(allDEG2, "../../musicalgenes/data/allDEG2.csv")
 write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
 
 ```
