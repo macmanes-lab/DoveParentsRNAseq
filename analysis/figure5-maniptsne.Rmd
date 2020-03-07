@@ -58,25 +58,25 @@ b <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "
 c <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + labs(subtitle = "pituitary ~ parental stage", x = NULL) + facet_wrap(~sex, scales = "free") 
 d <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads ~ parental stage")  + facet_wrap(~sex, scales = "free")  
 
-bcd <- plot_grid(b,c,d, nrow = 3, labels = c("b", "c", "d"), label_size = 8, rel_heights = c(1,1,1))
+bcd <- plot_grid(b,c,d, nrow = 3, labels = c("b"), label_size = 8, rel_heights = c(1,1,1))
 
 
-e <- plottsneelipsev2(hyptsne, hyptsne$hiloPRL, allcolors ) + labs(subtitle = "hypothalamus ~ estimated prolactin", x = NULL) + facet_wrap(~sex, scales = "free")  
-f <- plottsneelipsev2(pittsne, pittsne$hiloPRL, allcolors ) + labs(subtitle = "pituitary ~ estimated prolactin", x = NULL) + facet_wrap(~sex, scales = "free")   
-g <- plottsneelipsev2(gontsne, gontsne$hiloPRL, allcolors ) + labs(subtitle = "gonads ~ estimated prolactin" ) + facet_wrap(~sex, scales = "free")   
+e <- plottsneelipsev2(hyptsne, hyptsne$hiloPRL, allcolors ) + labs(subtitle = "hypothalamus ~ internal physiology", x = NULL) + facet_wrap(~sex, scales = "free")  
+f <- plottsneelipsev2(pittsne, pittsne$hiloPRL, allcolors ) + labs(subtitle = "pituitary ~ internal physiology", x = NULL) + facet_wrap(~sex, scales = "free")   
+g <- plottsneelipsev2(gontsne, gontsne$hiloPRL, allcolors ) + labs(subtitle = "gonads ~ internal physiology" ) + facet_wrap(~sex, scales = "free")   
 
-efg <- plot_grid(e,f,g, nrow = 3, labels = c("h", "i", "j"), label_size = 8, rel_heights = c(1,1,1))
+efg <- plot_grid(e,f,g, nrow = 3, labels = c("d"), label_size = 8, rel_heights = c(1,1,1))
 
 h <- plottsneelipsev2(hyptsne, hyptsne$extint, allcolors ) + labs(subtitle = "hypothalamus ~ external enviornment", x = NULL) + facet_wrap(~sex, scales = "free")  
 i <- plottsneelipsev2(pittsne, pittsne$extint, allcolors ) + labs(subtitle = "pituitary ~ external enviornment", x = NULL) + facet_wrap(~sex, scales = "free")   
 j <- plottsneelipsev2(gontsne, gontsne$extint, allcolors ) + labs(subtitle = "gonads ~ external enviornment" ) + facet_wrap(~sex, scales = "free")   
 
-hij <- plot_grid(h,i,j, nrow = 3, labels = c("e", "f", "g"), label_size = 8, rel_heights = c(1,1,1))
+hij <- plot_grid(h,i,j, nrow = 3, labels = c("c"), label_size = 8, rel_heights = c(1,1,1))
 
 bcdhijefg <- plot_grid(bcd, hij,  efg, nrow = 1)
 
 
-fig6 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("e"), label_size = 8, rel_heights = c(0.5,1))
+fig6 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("a"), label_size = 8, rel_heights = c(0.4,1))
 fig6
 
 
