@@ -247,7 +247,7 @@ NA
 
 ## Figure 5: manipualations, work in progess...
 
-![](./figures/fig5-1.png)
+![](./figures/fig4-1.png)
 
 
 
