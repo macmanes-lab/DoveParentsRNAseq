@@ -37,7 +37,7 @@ mtsne <-  subsetmaketsne(tissuelevels, charlevels, "male")
 
 ## make figure
 
-```{r fig1, fig.width=7, fig.height=6}
+```{r fig1, fig.width=7, fig.height=7}
 
 
 a <- plottsneelipse(chartsne, chartsne$tissue, allcolors) + labs(subtitle = "~ tissue")    
@@ -47,7 +47,7 @@ d <- plottsneelipse(mtsne, mtsne$tissue, allcolors ) + labs(y = " ", subtitle = 
 
 abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("b", "c", "d", "e"), label_size = 8 )
 
-expdesign <- png::readPNG("../figures/images/fig1a_fig1a.png")
+expdesign <- png::readPNG("../figures/images/fig_fig1a.png")
 expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
 
 abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 8, rel_heights = c(0.5,1))

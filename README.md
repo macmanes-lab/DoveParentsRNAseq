@@ -241,11 +241,7 @@ NA
 
 ![](./figures/fig2-1.png)
 
-## Figure 3: Prolactin gene expression in the pituitary explains most of the variation in the whole data set and is correlated with circulating prolactin
-
-![](./figures/fig4-1.png)
-
-## Figure 4: In the pituitary, more chagnes gene expression are due to changes in internal _PRL_ expression (high versus lo) than the external enviornment (eggs versus chicks)
+## Figure 3: Prolactin gene expression in the pituitary explains most of the variation in the whole data set and is correlated with circulating prolactin. In the pituitary, more chagnes gene expression are due to changes in internal _PRL_ expression (high versus lo) than the external enviornment (eggs versus chicks)
 
 ![](./figures/fig3-1.png)
 

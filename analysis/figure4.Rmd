@@ -48,9 +48,9 @@ gontsne <- addgroupings(gontsne)
 
 ## make figure
 
-```{r fig5, fig.width=7, fig.height=6}
+```{r fig4, fig.width=7, fig.height=7}
 
-expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_maniptsne.png")
+expdesign2 <- png::readPNG("../figures/images/fig_fig4a.png")
 expdesign2 <- ggdraw() +  draw_image(expdesign2, scale = 1)
 
 b <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "hypothalamus ~ parental stage", x = NULL)  + facet_wrap(~sex, scales = "free")
@@ -75,7 +75,7 @@ hij <- plot_grid(h,i,j, nrow = 3, labels = c("c"), label_size = 8, rel_heights =
 bcdhijefg <- plot_grid(bcd, hij,  efg, nrow = 1)
 
 
-fig5 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("a"), label_size = 8, rel_heights = c(0.4,1))
+fig5 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("a"), label_size = 8, rel_heights = c(0.25,1))
 fig5
 
 ```
