@@ -3,14 +3,14 @@ Figure 3
 
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -39,11 +39,6 @@ Figure 3
 
     source("../R/themes.R") 
     source("../R/functions.R")
-    source("../R/icons.R")
-
-    ## Warning: Column `icons` joining factor and character vector, coercing into
-    ## character vector
-
     source("../R/wrangledata.R")
 
     ## Warning: Missing column names filled in: 'X1' [1]
@@ -103,35 +98,6 @@ Data: PCA, hormones, PRL expression
     PRLpit <- PRLvsd %>% filter(tissue == "pituitary")
     PRLgon <- PRLvsd %>% filter(tissue == "gonad")
 
-    a <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
-      theme(legend.position = "none", 
-            legend.direction = "horizontal", 
-            legend.key.size = unit(0.5, 'lines')) + 
-      guides(color = FALSE) +
-      labs(subtitle = "pituitary")   
-
-    b <- plotfriz(charfviz) + labs(subtitle = "pituitary") +
-      #ylim(-250000,500000) + xlim(-250000,500000) + 
-      theme(axis.text = element_blank())
-
-    c <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "pituitary") + 
-      theme(legend.position = "none", 
-             axis.text.x = element_text(angle = 45, hjust = 1),
-            axis.title.y = element_text(face = "italic"))
-
-    d <- plotprolactin(prolactin, prolactin$plasma_conc, "prolactin (ng/mL)", "blood") +
-      theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) 
-
-    abcd <- plot_grid(a,b,c,d, labels = c("b", "c", "d", "e"), ncol = 2, label_size = 8)
-
-    expdesign <- png::readPNG("../figures/images/parentalstages_fig1a.png")
-    expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
-
-    abcde <- plot_grid(expdesign, abcd, nrow = 2, labels = c("a", "b"), label_size = 8, rel_heights = c(0.3,1))
-    abcde
-
-![](../figures/fig3-1.png)
-
     PRLvsd2 <- PRLvsd %>%
       filter(tissue == "pituitary")
     head(PRLvsd2)
@@ -156,30 +122,11 @@ Data: PCA, hormones, PRL expression
     ## 1 female   18.1
     ## 2 male     17.9
 
-    a <- ggplot(PRLvsd2, aes(x = sex, y = counts, fill = sex))  +
-      geom_boxplot() +
-      labs(x = "Sex", y = "Prolactin expression")+
-      theme_B3() + theme(legend.position = "none") +
-      scale_fill_manual(values = sexcolors) +
-      geom_hline(yintercept=18, linetype="dashed", color = "black") 
-
-
     PRLvsd3 <- PRLvsd2 %>%
       mutate(hiloPRL = ifelse(counts >= 18, "hi", "lo"))  %>%
       drop_na()
     PRLvsd3$hiloPRL <- factor(PRLvsd3$hiloPRL, levels = c("lo", "hi"))
 
-
-    b <- ggplot(PRLvsd3, aes(x = sex, y = counts, fill = sex, color = hiloPRL))  +
-      geom_boxplot() +
-      labs(x = "Prolactin, binned into `lo` and `hi`", y = "Prolactin expression")+
-      theme_B3() + theme(legend.position = "none") +
-      scale_fill_manual(values = allcolors) +
-      scale_color_manual(values = allcolors)
-
-    plot_grid(a,b, nrow = 2, rel_widths = c(1,1))
-
-![](../figures/determinePRLhiglo-1.png)
 
     PRLvsd3 %>%
       group_by(sex, tissue, hiloPRL) %>%
@@ -194,4 +141,140 @@ Data: PCA, hormones, PRL expression
     ## 3 male   pituitary lo         51
     ## 4 male   pituitary hi         46
 
-    write.csv(PRLvsd3,"../results/PRLvsd.csv", row.names = F)
+Internal versus external
+------------------------
+
+    DEG_path <- "../results/DEseq2/hypothesis/"   # path to the data
+    DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
+    DEG_pathfiles <- paste0(DEG_path, DEG_files)
+    #DEG_files
+
+    allDEG2 <- DEG_pathfiles %>%
+      setNames(nm = .) %>% 
+      map_df(~read_csv(.x), .id = "file_name") %>% 
+      mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/hypothesis/'), "[", 2))  %>% 
+      mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
+      mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
+      mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
+      mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
+      mutate(comparison = paste(down,up, sep = "_")) %>%
+      mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
+      mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
+    dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
+    head(allDEG2)
+
+    ## # A tibble: 6 x 8
+    ##   sex    tissue comparison  direction gene           lfc     padj logpadj
+    ##   <chr>  <chr>  <chr>       <chr>     <chr>        <dbl>    <dbl>   <dbl>
+    ## 1 female gonad  eggs_chicks chicks    OVALX         6.17 7.05e- 3    2.15
+    ## 2 female gonad  eggs_chicks chicks    LOC101749216  5.19 2.45e- 6    5.61
+    ## 3 female gonad  eggs_chicks chicks    BPIFB2        4.95 5.23e- 3    2.28
+    ## 4 female gonad  eggs_chicks chicks    OvoDA1        4.90 2.69e- 4    3.57
+    ## 5 female gonad  eggs_chicks chicks    CDC20B        4.07 2.99e-10    9.52
+    ## 6 female gonad  eggs_chicks chicks    WFIKKN2       4.01 1.90e- 2    1.72
+
+    allDEG2$tissue <- factor(allDEG2$tissue, levels = tissuelevel)
+
+    allDEG2$comparison <- factor(allDEG2$comparison, levels = c("eggs_chicks", "lo_hi"))
+    allDEG2 <- allDEG2 %>% mutate(comparison = fct_recode(comparison, "lo vs. hi PRL   " = "lo_hi",
+                                                          "eggs vs. chicks" = "eggs_chicks"))
+    allDEG2$direction <- factor(allDEG2$direction, levels = c("eggs", "chicks", "lo", "hi"))
+
+    expdesign <- png::readPNG("../figures/images/fig_fig3a.png")
+    expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
+
+
+    a <- plotcolorfulpcs(charpca,charpca$treatment, allcolors) + labs(subtitle = " ") +
+      theme(legend.position = "none", 
+            legend.direction = "horizontal", 
+            legend.key.size = unit(0.5, 'lines')) + 
+      guides(color = FALSE) +
+      labs(subtitle = "pituitary")   
+
+    b <- plotfriz(charfviz) + labs(subtitle = "pituitary") +
+      #ylim(-250000,500000) + xlim(-250000,500000) + 
+      theme(axis.text = element_blank())
+
+    c <- plotprolactin(PRLpit, PRLpit$counts, "PRL", "pituitary") + 
+      theme(legend.position = "none", 
+             axis.text.x = element_text(angle = 45, hjust = 1),
+            axis.title.y = element_text(face = "italic"))
+
+    d <- plotprolactin(prolactin, prolactin$plasma_conc, "prolactin (ng/mL)", "blood") +
+      theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+    bcde <- plot_grid(a,b,c,d, labels = c("b", "c", "d", "e"), ncol = 2, label_size = 8)
+
+
+
+    makenewbargraph <- function(whichtissue, whichsex,  whichcomparison, lowlim, higherlim){
+      p <- allDEG2 %>%
+        filter(tissue == whichtissue,
+               comparison == whichcomparison,
+               sex == whichsex) %>%
+        ggplot(aes(x = comparison,  fill = direction)) +
+        geom_bar(position = "dodge", drop = FALSE) +
+        theme_B3() +
+        theme(legend.position = "none")  +
+        guides(fill = guide_legend(nrow = 1)) +
+        labs( y = whichtissue) +
+      geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+               position = position_dodge(width = 1),
+               size = 2, color = "black")  + 
+          ylim(lowlim, higherlim) +
+      scale_fill_manual(values = allcolors, name = "higher in")   + 
+        theme(axis.text.x = element_blank()) 
+      return(p)
+    }
+
+
+    b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 2500) +  labs(subtitle = "females", x = NULL, y = " ") + 
+      theme( axis.text = element_blank())
+    b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2500)  + labs(x = NULL, y = " ") + 
+      theme(axis.text = element_blank())
+    b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks", y = " ")    + 
+      theme(axis.text = element_blank())
+    b112131 <- plot_grid(b11,b21,b31, nrow = 3, rel_heights = c(1.1,1,1.1))
+
+
+    b12 <- makenewbargraph("hypothalamus", "male",  "eggs vs. chicks", 0, 2500) + labs(subtitle = "males", x = NULL)+ 
+      theme(axis.title.y = element_blank(), axis.text = element_blank())
+    b22 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 2500) + labs(x = NULL)+ 
+      theme(axis.title.y = element_blank(), axis.text = element_blank())
+    b32 <- makenewbargraph("gonad", "male", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks")   + 
+      theme(axis.title.y = element_blank(), axis.text = element_blank())
+    b122232 <- plot_grid(b12, b22,b32, nrow = 3, rel_heights = c(1.1,1,1.1)) 
+
+
+
+
+    c11 <- makenewbargraph("hypothalamus", "female", "lo vs. hi PRL   ", 0, 2500) +  labs(subtitle = "females", x = NULL, y = "hypothalamus DEGs") + 
+      theme( axis.text.x = element_blank()) 
+    c21 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2500)  + labs(x = NULL, y = "pituitary DEGs")+ 
+      theme( axis.text.x = element_blank())
+    c31 <- makenewbargraph("gonad", "female", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL", y = "gonad DEGs")  + 
+      theme(axis.text.x = element_blank()) 
+    c112131 <- plot_grid(c11,c21,c31, nrow = 3, rel_heights = c(1.1,1,1.1))
+
+
+    c12 <- makenewbargraph("hypothalamus", "male",  "lo vs. hi PRL   ", 0, 2500) + labs(subtitle = "males", x = NULL)+ 
+      theme(axis.title.y = element_blank(), axis.text = element_blank())
+    c22 <- makenewbargraph("pituitary", "male", "lo vs. hi PRL   ", 0, 2500) + labs(x = NULL)+ 
+      theme(axis.title.y = element_blank(), axis.text = element_blank())
+    c32 <- makenewbargraph("gonad", "male", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL")   + 
+      theme(axis.title.y = element_blank(), axis.text = element_blank())
+    c122232 <- plot_grid(c12, c22,c32, nrow = 3, rel_heights = c(1.1,1,1.1)) 
+
+
+    hypothesisbars <-  plot_grid(c112131, c122232, b112131, b122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
+              labels = c("f", " ", "g", " "), label_size = 8)
+
+    dataplots <- plot_grid(bcde, hypothesisbars)
+
+
+    fig3 <- plot_grid(expdesign, dataplots, rel_heights = c(0.25,1), nrow = 2, labels = c(" ", "e"), label_size = 8)
+    fig3
+
+![](../figures/fig3-1.png)
+
+    #write.csv(PRLvsd3,"../results/PRLvsd.csv", row.names = F)
