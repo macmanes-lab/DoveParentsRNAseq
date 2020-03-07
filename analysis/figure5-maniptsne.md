@@ -31,12 +31,13 @@ make figure
     expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_maniptsne.png")
     expdesign2 <- ggdraw() +  draw_image(expdesign2, scale = 1)
 
-
     b <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "hypothalamus ~ parental stage", x = NULL)  + facet_wrap(~sex, scales = "free")
     c <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + labs(subtitle = "pituitary ~ parental stage", x = NULL) + facet_wrap(~sex, scales = "free") 
     d <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads ~ parental stage")  + facet_wrap(~sex, scales = "free")  
 
     bcd <- plot_grid(b,c,d, nrow = 3, labels = c("b"), label_size = 8, rel_heights = c(1,1,1))
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
     ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
