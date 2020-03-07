@@ -39,8 +39,6 @@ make figure
 
     ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
     e <- plottsneelipsev2(hyptsne, hyptsne$hiloPRL, allcolors ) + labs(subtitle = "hypothalamus ~ internal physiology", x = NULL) + facet_wrap(~sex, scales = "free")  
     f <- plottsneelipsev2(pittsne, pittsne$hiloPRL, allcolors ) + labs(subtitle = "pituitary ~ internal physiology", x = NULL) + facet_wrap(~sex, scales = "free")   
     g <- plottsneelipsev2(gontsne, gontsne$hiloPRL, allcolors ) + labs(subtitle = "gonads ~ internal physiology" ) + facet_wrap(~sex, scales = "free")   

@@ -75,7 +75,7 @@ hij <- plot_grid(h,i,j, nrow = 3, labels = c("c"), label_size = 8, rel_heights =
 bcdhijefg <- plot_grid(bcd, hij,  efg, nrow = 1)
 
 
-fig6 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("a"), label_size = 8, rel_heights = c(0.4,1))
-fig6
+fig5 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("a"), label_size = 8, rel_heights = c(0.4,1))
+fig5
 
 ```
