@@ -272,7 +272,7 @@ Internal versus external
     dataplots <- plot_grid(bcde, hypothesisbars)
 
 
-    fig3 <- plot_grid(expdesign, dataplots, rel_heights = c(0.25,1), nrow = 2, labels = c(" ", "e"), label_size = 8)
+    fig3 <- plot_grid(expdesign, dataplots, rel_heights = c(0.25,1), nrow = 2, labels = c("a"), label_size = 8)
     fig3
 
 ![](../figures/fig3-1.png)

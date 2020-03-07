@@ -28,7 +28,7 @@ Figure 1. Experimental design, tSNE analysis, PCA, and prolactin
 make figure
 -----------
 
-    expdesign2 <- png::readPNG("../figures/images/DoveParentsRNAseq_maniptsne.png")
+    expdesign2 <- png::readPNG("../figures/images/fig_fig4a.png")
     expdesign2 <- ggdraw() +  draw_image(expdesign2, scale = 1)
 
     b <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "hypothalamus ~ parental stage", x = NULL)  + facet_wrap(~sex, scales = "free")
@@ -36,6 +36,10 @@ make figure
     d <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads ~ parental stage")  + facet_wrap(~sex, scales = "free")  
 
     bcd <- plot_grid(b,c,d, nrow = 3, labels = c("b"), label_size = 8, rel_heights = c(1,1,1))
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
     ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
@@ -54,7 +58,7 @@ make figure
     bcdhijefg <- plot_grid(bcd, hij,  efg, nrow = 1)
 
 
-    fig6 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("a"), label_size = 8, rel_heights = c(0.4,1))
-    fig6
+    fig5 <- plot_grid(expdesign2, bcdhijefg, nrow = 2, labels = c("a"), label_size = 8, rel_heights = c(0.25,1))
+    fig5
 
-![](../figures/fig5-1.png)
+![](../figures/fig4-1.png)
