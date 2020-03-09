@@ -12,16 +12,24 @@ output: html_document
 ## candidate genes
 
 ```{r}
-candidategenes <- c("OXT", "AVP", "GNRH1",  "AR", "POMC", "AGRP",
-                       "CRH", "AVPR1A", "AVPR1B", "AVPR2",
-                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9") 
+library(tidyverse)
+source("../R/themes.R")
 
+candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", "CGNRH-R",
+                    "AR", "POMC", "AGRP", 
+                       "CRH", "AVPR1A", "AVPR1B", "AVPR2","VIP",
+                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9", 
+                    "ESR1","ESR2", "LBH", "CDK1", "BRCA1",
+                    "PTEN", "CREBBP", "FOS", "JUN", "EGR1",
+                     "BDNF", "GRM2","GRIA1",
+                    "KCNJ5", "CISH", "PTGER3", "CEBPD", "ZBTB16", 
+                    "DIO3", "DIO2", "DIO1") 
 
 ```
 
 ## variance stabilized gene expression  (vsd)
 
-```{r vsd}
+```{r fig-x}
 geneids <- read_csv("../metadata/00_geneinfo.csv")
 
 vsd_path <- "../results/DEseq2/"   # path to the data
@@ -59,11 +67,14 @@ gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
 head(hypvsd)
 head(pitvsd)
 head(gonvsd)
+
+candidatevsd <- rbind(hypvsd, pitvsd)
+candidatevsd <- rbind(candidatevsd, gonvsd)
 ```
 
 ## Figs 
 
-```{r}
+```{r, fig.width=5, fig.height=5}
 makeboxplots <- function(df, whichgene, myylab, whichsex){
   p <- df %>%
     filter(treatment %in% charlevels,
@@ -132,5 +143,52 @@ p9 <- makeboxplots(gonvsd, "AVPR1A","*AVPR1A* expression", "female") +  theme(st
 
 p89 <- plot_grid(p9,p8, labels = c("h", "i"), label_size = 12)
 
+
+
+plot_grid(p23, p56, p89, nrow = 3)
+
+
+candidatevsd$tissue = factor(candidatevsd$tissue, levels = tissuelevel)
+
+candidatevsd %>%
+    filter(treatment %in% charlevels,
+           gene %in% "PRL",
+           sex %in% sexlevels) %>%
+    filter(treatment != "control") %>%
+    ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
+    geom_boxplot() + 
+    #geom_point() +
+    facet_wrap(~tissue, scales = "free_y") +
+    theme_B3() +
+    scale_fill_manual(values = allcolors) +
+    scale_color_manual(values = allcolors) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none") +
+    theme(axis.title.y = element_markdown()) +
+  labs(y = "variance-stabilized gene expression", x = "parental stage", 
+       subtitle = "PRL and ePRL expression")
+
+
+candidatevsd %>%
+    filter(treatment %in% charlevels,
+           gene %in% "VIP",
+           sex %in% sexlevels) %>%
+    filter(treatment != "control") %>%
+    ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
+    geom_boxplot() + 
+    #geom_point() +
+    facet_wrap(~tissue, scales = "free_y") +
+    theme_B3() +
+    scale_fill_manual(values = allcolors) +
+    scale_color_manual(values = allcolors) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none") +
+    theme(axis.title.y = element_markdown()) +
+  labs(y = "variance-stabilized gene expression", x = "parental stage", 
+       subtitle = "VIP expression")
+
 ```
 
+```{r writefiles}
+write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+```
