@@ -3,14 +3,14 @@ Figure 3
 
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -225,12 +225,12 @@ Internal versus external
     }
 
 
-    b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 2500) +  labs(subtitle = "females", x = NULL, y = " ") + 
-      theme( axis.text = element_blank())
-    b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2500)  + labs(x = NULL, y = " ") + 
-      theme(axis.text = element_blank())
-    b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks", y = " ")    + 
-      theme(axis.text = element_blank())
+    b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 2500) +  labs(subtitle = "females", x = NULL, y = "hypothalamus DEGs") + 
+      theme( axis.text.x = element_blank())
+    b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2500)  + labs(x = NULL, y = "hypothalamus DEGs") + 
+      theme(axis.text.x = element_blank())
+    b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks", y = "hypothalamus DEGs")    + 
+      theme(axis.text.x = element_blank())
     b112131 <- plot_grid(b11,b21,b31, nrow = 3, rel_heights = c(1.1,1,1.1))
 
 
@@ -245,12 +245,12 @@ Internal versus external
 
 
 
-    c11 <- makenewbargraph("hypothalamus", "female", "lo vs. hi PRL   ", 0, 2500) +  labs(subtitle = "females", x = NULL, y = "hypothalamus DEGs") + 
-      theme( axis.text.x = element_blank()) 
-    c21 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2500)  + labs(x = NULL, y = "pituitary DEGs")+ 
-      theme( axis.text.x = element_blank())
-    c31 <- makenewbargraph("gonad", "female", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL", y = "gonad DEGs")  + 
-      theme(axis.text.x = element_blank()) 
+    c11 <- makenewbargraph("hypothalamus", "female", "lo vs. hi PRL   ", 0, 2500) +  labs(subtitle = "females", x = NULL, y = " ") + 
+      theme( axis.text = element_blank()) 
+    c21 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2500)  + labs(x = NULL, y = " ")+ 
+      theme( axis.text = element_blank())
+    c31 <- makenewbargraph("gonad", "female", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL", y = " ")  + 
+      theme(axis.text = element_blank()) 
     c112131 <- plot_grid(c11,c21,c31, nrow = 3, rel_heights = c(1.1,1,1.1))
 
 
@@ -263,7 +263,7 @@ Internal versus external
     c122232 <- plot_grid(c12, c22,c32, nrow = 3, rel_heights = c(1.1,1,1.1)) 
 
 
-    hypothesisbars <-  plot_grid(c112131, c122232, b112131, b122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
+    hypothesisbars <-  plot_grid(b112131, b122232, c112131, c122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
               labels = c("f", " ", "g", " "), label_size = 8)
 
     dataplots <- plot_grid(bcd, hypothesisbars)

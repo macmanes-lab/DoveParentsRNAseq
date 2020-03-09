@@ -88,17 +88,8 @@ Data accessibility and reproducibility are key challenges for today's researcher
 
 ## Discussion
 
-_Results in context to literature. _
+This RNA-sequencing project was designed to characterize the reproductive axis of bi-parental pigeons across a characteristic reproductive cycle and through the parental main parental stages of egg incubation and parental care using data- and hypotheses driven approaches. We hypothesized that differences in gene expression would be driven by either internal physiology or external stimuli. In the pituitary, we found that the most explanatory source of variation in gene expression was the expression level of prolactin (PRL). Circulating levels of prolactin in the blood in this species are known to rise around day nine and peak on or the day before hatch. Our results confirm this and also identified one hundred genes whose expression is highly correlated with prolactin. Today, this variation, which changes more within a parental stage (e.g. egg incubation or nestling care) suggests that internal physiology drives changes in gene expression that precede changes in external stimuli that lead to behavioral changes (e.g. crop milk or regurgitation). We predicted that either sex steroid peptide hormones would play a role in governing the reproductive transitions, but we did not anticipate discovering a link between PRL expression to genes that are involved with DNA repair and regulation of the cycle. Finally, we aimed to make these data and analyses FAIR (findable, accessible, interoperable, and reproducible), open and reproducible to encourage others to reuse our data to test new hypotheses or explore the data with a different perspective or toolset. The scripts that made the figures and tables are browseable online thanks to RStudio, GitHub and Binder. The data can be visualized and sonified (turned into sound) interactively thanks to RStudio, GitHub, and Shiny. 
 
-blah blah balh
-
-_Significance. _
-
-blah blah balh
-
-_Limitations._
-
-blah blah balh
 
 ## Materials and Methods
 
@@ -127,7 +118,9 @@ RNA sequencing data for available through the European Nucleotide Archive (ENA) 
 
 ## Acknowledgements
 
-Thanks to Owen for discussion of data sonfification. Thanks to DIB lab members for software and methods discussion (Titus, Taylor, Luiz, Amanda, Alicia, Picaso).
+Thanks to Owen for discussion of data sonfification. Thanks to DIB lab members for software and methods discussion (Titus, Taylor, Luiz, Amanda, Alicia, Picaso). We thank Pacha for help with database and Shiny.
+
+We thank Irene, Erica, Beth Krestoff and Tiffany Chen for assistance in managing the aviary and collecting nest stage data. We thank Candice Lee, Annie Bond, and Tanner Feustel and others?? for assistance with tissue collections. We thank Dr. Fred Angelier for performing the prolactin RIA.This research was supported by NSF IOS 1455960 to R.M.C. and M.D.M. Author contributions: RMC designed the experiment. RMC and MDM acquired funding. SHA contributed to the experimental design by adding several time points. SHA, with the assistance of VF, AB, and RMC, conducted the data collection. SHA and a team of trained undergraduate students biopsy punched the hypothalami and lateral septum. ASL extracted the RNA, created the libraries, and conducted all early bioinformatic work. RMH conducted all later analyses of the genomic data. RMH and SHA drafted the manuscript and all other authors provided edits.
 
 ## References
 
