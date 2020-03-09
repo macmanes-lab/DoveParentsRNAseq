@@ -171,12 +171,12 @@ makenewbargraph <- function(whichtissue, whichsex,  whichcomparison, lowlim, hig
 }
 
 
-b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 2500) +  labs(subtitle = "females", x = NULL, y = " ") + 
-  theme( axis.text = element_blank())
-b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2500)  + labs(x = NULL, y = " ") + 
-  theme(axis.text = element_blank())
-b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks", y = " ")    + 
-  theme(axis.text = element_blank())
+b11 <- makenewbargraph("hypothalamus", "female","eggs vs. chicks", 0, 2500) +  labs(subtitle = "females", x = NULL, y = "hypothalamus DEGs") + 
+  theme( axis.text.x = element_blank())
+b21 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2500)  + labs(x = NULL, y = "hypothalamus DEGs") + 
+  theme(axis.text.x = element_blank())
+b31 <- makenewbargraph("gonad", "female", "eggs vs. chicks", 0, 2500) + labs(x = "eggs vs. chicks", y = "hypothalamus DEGs")    + 
+  theme(axis.text.x = element_blank())
 b112131 <- plot_grid(b11,b21,b31, nrow = 3, rel_heights = c(1.1,1,1.1))
 
 
@@ -191,12 +191,12 @@ b122232 <- plot_grid(b12, b22,b32, nrow = 3, rel_heights = c(1.1,1,1.1))
 
 
 
-c11 <- makenewbargraph("hypothalamus", "female", "lo vs. hi PRL   ", 0, 2500) +  labs(subtitle = "females", x = NULL, y = "hypothalamus DEGs") + 
-  theme( axis.text.x = element_blank()) 
-c21 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2500)  + labs(x = NULL, y = "pituitary DEGs")+ 
-  theme( axis.text.x = element_blank())
-c31 <- makenewbargraph("gonad", "female", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL", y = "gonad DEGs")  + 
-  theme(axis.text.x = element_blank()) 
+c11 <- makenewbargraph("hypothalamus", "female", "lo vs. hi PRL   ", 0, 2500) +  labs(subtitle = "females", x = NULL, y = " ") + 
+  theme( axis.text = element_blank()) 
+c21 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2500)  + labs(x = NULL, y = " ")+ 
+  theme( axis.text = element_blank())
+c31 <- makenewbargraph("gonad", "female", "lo vs. hi PRL   ", 0, 2500) + labs(x = "lo vs. hi PRL", y = " ")  + 
+  theme(axis.text = element_blank()) 
 c112131 <- plot_grid(c11,c21,c31, nrow = 3, rel_heights = c(1.1,1,1.1))
 
 
@@ -209,7 +209,7 @@ c32 <- makenewbargraph("gonad", "male", "lo vs. hi PRL   ", 0, 2500) + labs(x = 
 c122232 <- plot_grid(c12, c22,c32, nrow = 3, rel_heights = c(1.1,1,1.1)) 
 
 
-hypothesisbars <-  plot_grid(c112131, c122232, b112131, b122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
+hypothesisbars <-  plot_grid(b112131, b122232, c112131, c122232, nrow = 1, rel_widths = c(1.3, 1, 1.1, 1),
           labels = c("f", " ", "g", " "), label_size = 8)
 
 dataplots <- plot_grid(bcd, hypothesisbars)

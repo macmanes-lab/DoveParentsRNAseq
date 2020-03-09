@@ -34,6 +34,8 @@ make figure
 
     hij <- plot_grid(h,i,j, nrow = 1, labels = c("h", "i", "j"), label_size = 8)
 
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
     fig1 <- plot_grid(abcde, hij, nrow = 2, rel_heights = c(0.6,0.4))
     fig1
 
