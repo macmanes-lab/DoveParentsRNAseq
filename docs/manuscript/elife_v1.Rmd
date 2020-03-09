@@ -47,7 +47,6 @@ To characterize transcriptional activity, we first examined broad patterns of va
 
 Our results suggest that tissue is the greatest source of variation in the dataset, with hypothalamic, pituitary, and gonadal samples all forming distinct clusters, with only a few pituitary and gonad samples falling outside the 95% confidence interval (Fig. \ref{figure:fig1}b). Sex-differences are most prounounced in the gonads with male and female samples form two discrete clusters (Fig. \ref{figure:fig1}c). Treatment accounts for much less of the variation than tissue and sex, and even after removing sex as a variatble, treatment effects in all three tissues are hard to visualize simultatenously (Fig. \ref{figure:fig1}d,e), so we next looked at each tissue and sex separately. In the hypothalamus, control samples form tight clusters that stands out from all other timepoints that are largely overlapping in space (Fig. \ref{figure:fig1}h). The pituitary shows the strongest treatment effect with one cluster of the “earlier” parental timepoints (nest-building, lay, incubation days 3 and 9), a second cluster of “later” parental timpoints (incubation day 17, hatch, and nestling care days 5 and 9; Fig. \ref{figure:fig1}i). Like the hypothalamus, in the gonads, the control timepoints appear to be much less variable that the parental timepoints, but there is no clear separation of gonadal samples by parental stage (Fig. \ref{figure:fig1}j). While the tSNE analysis reveals broad patterns across all levels of the experiment, additional tools are needed it hone in on the specific differences associated with parental care in each tissue. Differential gene expression analysis can shed insight into specific differences between treatment groups and thus deepen our understand of the transitions between reproduction and parental care behaviors. We used DESEq2 to identify genes whose expression changed significantly between sequential timepoints in each tissue and sex separately (Fig. \ref{figure:fig2}a). 
 
-
 In the hypothalamus only two sequential stage comparisons results in a sizable change in expression; in females, 1927 genes changes their expression betwen hatch to nesting care day 5 (with 1076 decreasing and 851 increased their expression), and in the male hypothalamus,87 genes were diferentially expressed bewteen incubation days 9 and 17 (with 38 decreasing and 49 increasing their expression (Fig. \ref{figure:fig2}b)). In the pituitary, differential gene expression differenes are greatest when compariing incubation days 9 and 17, and this difference is more pronounced in females (Fig. \ref{figure:fig2}c). The next largest difference in the pituitary is between hatch and n5. The female putitary shows moderate chagnes from nest-bilding to lay to incuabation day 3 (Fig. \ref{figure:fig2}c). The male pituitary changes more that the female pitutiary changes between nestling care days 5 and 9  (Fig. \ref{figure:fig2}c).   About 2000 genes also change their expression in the female pituitary and about 425 in the male pituitary when comparing incubation days 9 and 17 (Fig. \ref{figure:fig2}). In the female gonads, 270 genes are decreased while only 56 are increased when comparing incubation days 9 and 17(Fig. 2). Many more significant changes in gene expression in the female gonad occur between nest-building and lay and between lay and clutch completion (incubation day 3) than in any other comparison (Fig. \ref{figure:fig2}).
 
 
@@ -171,6 +170,13 @@ We thank Irene, Erica, Beth Krestoff and Tiffany Chen for assistance in managing
   \centering
   \includegraphics[width=1.0\textwidth]{../../figures/supplfig3}
   \caption{R shiny, image 1}
+  \label{figure:supplfig3}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=1.0\textwidth]{../../figures/images/fig_fig5}
+  \caption{Hypothesis-driven data exploration and software development.}
   \label{figure:supplfig3}
 \end{figure}
 
