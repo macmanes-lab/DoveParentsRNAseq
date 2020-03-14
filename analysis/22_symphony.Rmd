@@ -16,7 +16,6 @@ knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 ## R Markdown
 
 
-
 ```{r respect}
 song <- c("What", "you", "want,", "ba-", "by", "I", "got.")
 stage <- c( "bldg", "lay", "inc.d9", "inc.d17", "hatch", "n5", "n9")
@@ -242,28 +241,14 @@ d4 %>%
     theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1)) +
     guides(color = guide_legend(nrow = 2, byrow = T)) 
 
-turquoisegenes <- d4 %>%
-  filter( modulecolor == "turquoise",
-          tissue == "pituitary") %>%
-  droplevels() %>% 
-    ggplot(aes(x = treatment, y = m)) +
-  geom_image(aes(image=image), size = 0.15) +
-  geom_smooth(aes(x = as.numeric(treatment)), se = F, color = "turquoise") +
-  facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
-  labs(subtitle = "WGCNA turquoise module", 
-       y = "gene expression  in the pitutiary", x = "parental stage") +
-    facet_wrap(~gene, scales = "free_y", nrow = ) +
-    theme_B3() +
-    theme(legend.position = "none", axis.text.x = element_text(angle = 45, hjust = 1),
-          strip.text = element_text(face = "italic")) 
-
 redgenes <- d4 %>%
   filter( modulecolor == "red",
           tissue == "pituitary") %>%
   droplevels() %>% 
     ggplot(aes(x = treatment, y = m)) +
+  geom_errorbar(aes(ymin=m-se, ymax=m+se, color=treatment), width=.1) +
   geom_image(aes(image=image), size = 0.15) +
-  geom_smooth(aes(x = as.numeric(treatment)), se = F, color = "red") +
+  #geom_smooth(aes(x = as.numeric(treatment)), se = F, color = "red") +
   facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
   labs(subtitle = "WGCNA red module", 
        y = "gene expression  in the pitutiary", x = "parental stage") +
@@ -271,13 +256,11 @@ redgenes <- d4 %>%
     theme_B3() +
     theme(legend.position = "none", 
           axis.text.x = element_text(angle = 45, hjust = 1),
-          strip.text = element_text(face = "italic")) 
+          strip.text = element_text(face = "italic")) +
+  scale_color_manual(values = allcolors) 
 
-
-turquoisegenes
 redgenes
 
-plot_grid(turquoisegenes, redgenes)
 ```
 
 ```{r}
