@@ -77,7 +77,18 @@ questions or reproduce our results. This research provides a deeper
 understanding of the interplay of genes, hormones, and parental care and
 has important implications for understanding molecular processes that
 underlie behavioral transitions. \citep[reviewed in][]{Lea1989} say
-this, but other say that \citep[reviewed in][]{Dulac2014}.
+this, but other say that \citep[reviewed in][]{Dulac2014}. 
+
+
+OR 
+
+Reproduction is an essential process for all living things, but
+only a subset of vertebrates and invertebrates require parental care for offspring survival. Identifying the mechanisms that regulate parental care behavior is like a thing for scientists in many disciplines (ecology, neuroscience, psychology), but it is hard to disentangle the mechanisms that regulate reproduction from those that regulate parental care. Or maybe that contrast doesn't work... 
+
+Cumbia livia has been used by many scientists to study evolutionary processes and behavior stuff. Building on previous research, we sought to identify the transcriptional mechanisms that regulate parental care in the hypothalamic-pituitary-gonadal axis (or the reproductive axis). With a highly replicated experimental design, we aimed to distinguish the reproductive process from the behavioral process. 
+
+Discuss parental care candidate genes and reproductive candidate genes. Cite some literature.  Oxytocin and arginine vasopressin are known to regulate pair-bonding.  Oxytocin also promotes cervical contractions. These all occur before birth of the offspring and therefore do not count as parental care according to that book I read. Oh crap, but they are also involved in pair-bonding with offspring... how to dissociate reproduction and parental care..... Prolactin is known for promoting lactation, hence it's name. In mammals, typically (or always?) only the female lactates to provide nutrition for the offspring thus even in bi-parental species where both parents provide parental care, only the female provides breastfeeding-related care. In Cumbia livia, however (maybe other species) both males and females produce "crop milk" thus both males and females can feed and care for their offspring in a way that other species cannot. Indeed, prolactin promotes this pseudo-lactation.  In some species lactation promotes.
+
 
 \hypertarget{results}{%
 \subsection{Results}\label{results}}
@@ -212,6 +223,18 @@ figures and tables are browseable online thanks to RStudio, GitHub and
 Binder. The data can be visualized and sonified (turned into sound)
 interactively thanks to RStudio, GitHub, and Shiny.
 
+
+OR 
+
+
+In the hormone experiment, we replicated the peak in prolactin. Then, unexpectedly or can I find this elsewhere, we confirmed that prolactin gene expression in the pituitary is strongly correlated with circulating prolactin. Oh, maybe do stats comparing the curve of prolactin hormone and prolactin gene expression. could use those same stats that I used for hormone papers or maybe just show correlations... 
+
+hypothesis-driven. this research is hypothesis-driven... we had these hypotheses and came to these conclusions... Add GO analysis comparing observed versus expected hits for a given go term. \ref{figure:fig5}
+
+A data-driven analysis using PCA identifies prolactin gene expression in the pituitary is the major explainer of variation in our entire dataset. This leads us to ask what genes are correlated with prolactin and what genes are differentially expressed when comparing samples that had higher or lower levels of prolactin. We found 100 genes that mirrored the prolactin curve. GO analysis suggested that these genes regulate the cell cycle. Many are associated with breast- and testicular cancers. This suggests/confirms? that there may be a strong link between prolactin and cancer in the tissues that receive strong inputs from the pituitary (like the mammary glands, the gonads, and the adrenals). this research uses a readily available data-driven approach for identifying the most variable genes. our data-driven approach supported existing knowledge and shed light on new gene-gene interactions that need future investigation and could potentially yield new insight into unsolved problems in basic biology and biomedicine. 
+
+Our software tool provides a unique oportunity for professionals with differnt levels of proficiency in bioinformatics to itneract with the data to advance science and medicien. Futuremore, we turn our data into sounds, providing a unique insight into transcripional variation that cannot be captured with the traditional data viauzliations that are the foundation of omics science communication. 
+
 \hypertarget{materials-and-methods}{%
 \subsection{Materials and Methods}\label{materials-and-methods}}
 
@@ -286,6 +309,12 @@ reproducing the results described in the manuscript are available at
 and cite). Data can be explored in the cloud using Binder
 \citep{project_jupyter-proc-scipy-2018}.
 
+
+\emph{Findable, accessible, interoperable, and reusable}
+
+In addition to making our data and code open by sharing it in open-access repositories (e.g GitHub and that repo were are using that hopefully, Andrew has the link to), we also wanted to make it findable, accessible, and interoperable, and reusable (the tenants of FAIR data) \citep{Wilkinson2016}. Our first step in doing this was to create a "binderized" \citep{project_jupyter-proc-scipy-2018} GitHub repository where the R scripts can be executed in an RStudio server on the cloud. This means that no local installations or downloads are required, ensuring (or at least increasing the likelihood of) interoperability and reproducibility. To make the data more reusable and accessible to those familiar and unfamiliar with R, we created Shiny application (define) that allows users to interactively pick a gene of interest and visualize their expression level in this data set. (If Rayna adds a download button, or a new shiny tab then the can get the raw data too.) This saves researcher hours of computing time downloading files and running scripts if they had to start from the links we provided above to the raw data and scripts. Finally, we musical representations of the data to our software so that uses who are not familiar with interpreting the complex graphs typically associated with the RNA-seq project can immerse themselves in data exploration. We call this software application "Musical Genes". We believe our approach is a novel way of communicating scientific information to broad audiences \ref{figure:fig6}.
+
+
 \hypertarget{acknowledgements}{%
 \subsection{Acknowledgements}\label{acknowledgements}}
 
@@ -354,19 +383,22 @@ edits.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/supplfig3}
-  \caption{R shiny, image 1}
-  \label{figure:supplfig3}
+  \includegraphics[width=1.0\textwidth]{../../figures/images/fig_fig5}
+  \caption{Hypothesis-driven research, data exploration and software development. We integrate hypothesis driven experimental testing with data-driven exploration and sofware develop to make new discoveries and advance our understanding reproduction and parental care.}
+  \label{figure:fig5}
 \end{figure}
+
+
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/images/fig_fig5}
-  \caption{Hypothesis-driven data exploration and software development.}
-  \label{figure:supplfig3}
+  \includegraphics[width=1.0\textwidth]{../../figures/supplfig3}
+  \caption{Shiny Musical Genes. Musical Genes is a R-based Shiny application for vizualizing and sonifying gene expression associated with transitions through reproduction and parental care.}
+  \label{figure:fig6}
 \end{figure}
 
-\newpage
+
+
 
 \hypertarget{author-affiliations}{%
 \subsection{Author affiliations}\label{author-affiliations}}
