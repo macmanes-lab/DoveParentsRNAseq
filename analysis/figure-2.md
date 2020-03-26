@@ -108,7 +108,7 @@ candidate genes
 
     ## Warning: Missing column names filled in: 'X1' [1]
 
-    candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", "CGNRH-R",
+    candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", 
                         "AR",  "CYP19A1", 
                          "AVPR1A", "AVPR1B", "AVPR2","VIP",
                       "DRD1", "DRD2", 
@@ -169,7 +169,7 @@ female
 hypothalamus
 </td>
 <td style="text-align:left;">
-AR+ CGNRH-R- CYP19A1- DRD1+ ESR1+ GNRHR- JUN- PRL- PRLR- VIP-
+AR+ CYP19A1- DRD1+ ESR1+ GNRHR- JUN- PRL- PRLR- VIP-
 </td>
 <td style="text-align:left;">
 NA
@@ -247,7 +247,7 @@ male
 pituitary
 </td>
 <td style="text-align:left;">
-AR+ AVP- AVPR1B+ AVPR2+ BDNF+ CGNRH-R- CYP19A1- OXT- PRL- PRLR-
+AR+ AVP- AVPR1B+ AVPR2+ BDNF+ CYP19A1- OXT- PRL- PRLR-
 </td>
 <td style="text-align:left;">
 NA

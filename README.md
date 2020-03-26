@@ -40,7 +40,7 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
   <tr>
    <td style="text-align:left;"> female </td>
    <td style="text-align:left;"> hypothalamus </td>
-   <td style="text-align:left;"> AR+ CGNRH-R- CYP19A1- DRD1+ ESR1+ GNRHR- JUN- PRL- PRLR- VIP- </td>
+   <td style="text-align:left;"> AR+ CYP19A1- DRD1+ ESR1+ GNRHR- JUN- PRL- PRLR- VIP- </td>
    <td style="text-align:left;"> NA </td>
    <td style="text-align:left;"> NA </td>
    <td style="text-align:left;"> NA </td>
@@ -70,7 +70,7 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
   <tr>
    <td style="text-align:left;"> male </td>
    <td style="text-align:left;"> pituitary </td>
-   <td style="text-align:left;"> AR+ AVP- AVPR1B+ AVPR2+ BDNF+ CGNRH-R- CYP19A1- OXT- PRL- PRLR- </td>
+   <td style="text-align:left;"> AR+ AVP- AVPR1B+ AVPR2+ BDNF+ CYP19A1- OXT- PRL- PRLR- </td>
    <td style="text-align:left;"> NA </td>
    <td style="text-align:left;"> NA </td>
    <td style="text-align:left;"> NA </td>
