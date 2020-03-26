@@ -109,24 +109,25 @@ candidate genes
     ## Warning: Missing column names filled in: 'X1' [1]
 
     candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", "CGNRH-R",
-                        "AR", "POMC", "AGRP", 
-                           "CRH", "AVPR1A", "AVPR1B", "AVPR2","VIP",
-                           "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9", 
-                        "ESR1","ESR2", "LBH", "CDK1", "BRCA1",
-                        "PTEN", "CREBBP", "FOS", "JUN", "EGR1",
-                         "BDNF", "GRM2","GRIA1",
-                        "KCNJ5", "CISH", "PTGER3", "CEBPD", "ZBTB16", 
-                        "DIO3", "DIO2", "DIO1") 
+                        "AR",  "CYP19A1", 
+                         "AVPR1A", "AVPR1B", "AVPR2","VIP",
+                      "DRD1", "DRD2", 
+                      "PRL", "PRLR",  
+                        "ESR1","ESR2", "LBH",  
+                       
+                        "FOS", "JUN", "EGR1", "BDNF"
+                          ) 
 
     table1 <- allDEG %>%
-      filter(gene %in% candidategenes,
-             comparison != "control_bldg") %>%
-        arrange(gene) %>%
+      mutate(updown = ifelse(lfc > 0, "+", "-"))  %>%
+      mutate(geneupdown = paste(gene, updown, sep = "")) %>%
+      filter(gene %in% candidategenes) %>%
+      arrange(geneupdown) %>%
       group_by(sex, tissue, comparison) %>%
-      summarize(genes = str_c(gene, collapse = " ")) %>%
+      summarize(genes = str_c(geneupdown, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = genes ) %>%
-      select(sex, tissue, bldg_lay, lay_inc.d3, inc.d3_inc.d9,
-            inc.d9_inc.d17,inc.d17_hatch, hatch_n5, n5_n9)  %>%
+      select(sex, tissue, control_bldg, bldg_lay, lay_inc.d3, inc.d3_inc.d9,
+            inc.d9_inc.d17, hatch_n5)  %>%
       arrange( tissue, sex)
     kable(table1)
 
@@ -138,6 +139,9 @@ sex
 </th>
 <th style="text-align:left;">
 tissue
+</th>
+<th style="text-align:left;">
+control\_bldg
 </th>
 <th style="text-align:left;">
 bldg\_lay
@@ -152,13 +156,7 @@ inc.d3\_inc.d9
 inc.d9\_inc.d17
 </th>
 <th style="text-align:left;">
-inc.d17\_hatch
-</th>
-<th style="text-align:left;">
 hatch\_n5
-</th>
-<th style="text-align:left;">
-n5\_n9
 </th>
 </tr>
 </thead>
@@ -171,7 +169,7 @@ female
 hypothalamus
 </td>
 <td style="text-align:left;">
-NA
+AR+ CGNRH-R- CYP19A1- DRD1+ ESR1+ GNRHR- JUN- PRL- PRLR- VIP-
 </td>
 <td style="text-align:left;">
 NA
@@ -186,10 +184,7 @@ NA
 NA
 </td>
 <td style="text-align:left;">
-BDNF BRCA1 CISH CYP19A1 DRD1 EGR1 GRIA1 POMC
-</td>
-<td style="text-align:left;">
-NA
+BDNF- CYP19A1+ DRD1+ EGR1+
 </td>
 </tr>
 <tr>
@@ -200,7 +195,7 @@ male
 hypothalamus
 </td>
 <td style="text-align:left;">
-NA
+AR+ AVPR2- CYP19A1- EGR1+ ESR1+ GNRH1- GNRHR- PRL- VIP-
 </td>
 <td style="text-align:left;">
 NA
@@ -209,13 +204,10 @@ NA
 NA
 </td>
 <td style="text-align:left;">
-AR
-</td>
-<td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
-NA
+AR+
 </td>
 <td style="text-align:left;">
 NA
@@ -229,25 +221,22 @@ female
 pituitary
 </td>
 <td style="text-align:left;">
-DIO3 ESR1 GNRHR
+AR+ AVP- AVPR2+ BDNF+ CYP19A1- DRD1+ FOS- LBH- OXT- PRL- PRLR-
 </td>
 <td style="text-align:left;">
-ESR1 GNRHR PTEN ZBTB16
+ESR1+ GNRHR-
 </td>
 <td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-BRCA1 CDK1 DIO2 KCNJ5 LBH PRL
+ESR1- GNRHR+
 </td>
 <td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
-AVPR2 BRCA1 CDK1 GRIA1 LBH PRL
+LBH+ PRL+
 </td>
 <td style="text-align:left;">
-NA
+AVPR2+ LBH- PRL-
 </td>
 </tr>
 <tr>
@@ -258,7 +247,7 @@ male
 pituitary
 </td>
 <td style="text-align:left;">
-NA
+AR+ AVP- AVPR1B+ AVPR2+ BDNF+ CGNRH-R- CYP19A1- OXT- PRL- PRLR-
 </td>
 <td style="text-align:left;">
 NA
@@ -267,16 +256,13 @@ NA
 NA
 </td>
 <td style="text-align:left;">
-BRCA1 CDK1 CISH GRM2 LBH PRL VIP
+NA
 </td>
 <td style="text-align:left;">
-GRM2
+LBH+ PRL+ VIP+
 </td>
 <td style="text-align:left;">
-CEBPD ZBTB16
-</td>
-<td style="text-align:left;">
-BRCA1 CDK1 CEBPD
+NA
 </td>
 </tr>
 <tr>
@@ -287,19 +273,16 @@ female
 gonad
 </td>
 <td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-AGRP AVPR1A DIO2 EGR1 FOS PRLR PTGER3
-</td>
-<td style="text-align:left;">
-AVPR1A
-</td>
-<td style="text-align:left;">
-SOX9
+AR+ AVPR1A+ CYP19A1- EGR1- ESR1+ ESR2- LBH-
 </td>
 <td style="text-align:left;">
 NA
+</td>
+<td style="text-align:left;">
+AVPR1A+ EGR1+ FOS+ PRLR-
+</td>
+<td style="text-align:left;">
+AVPR1A-
 </td>
 <td style="text-align:left;">
 NA
@@ -316,10 +299,7 @@ male
 gonad
 </td>
 <td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-SOX9
+AR+ ESR1+ PRL- PRLR-
 </td>
 <td style="text-align:left;">
 NA

@@ -90,11 +90,6 @@ plot_grid(expdesign, bcd, labels = c("a", " "), label_size = 8, nrow = 2, rel_he
 ```
 
 
-
-
-
-
-
 ## total degs
 
 ```{r}
@@ -104,34 +99,30 @@ allDEG %>%
   arrange(tissue, comparison)
 ```
 
-
-
-
-
-
 ## candidate genes 
 ```{r writefiles}
 geneids <- read_csv("../metadata/00_geneinfo.csv")
 
 candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", "CGNRH-R",
-                    "AR", "POMC", "AGRP", 
-                       "CRH", "AVPR1A", "AVPR1B", "AVPR2","VIP",
-                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9", 
-                    "ESR1","ESR2", "LBH", "CDK1", "BRCA1",
-                    "PTEN", "CREBBP", "FOS", "JUN", "EGR1",
-                     "BDNF", "GRM2","GRIA1",
-                    "KCNJ5", "CISH", "PTGER3", "CEBPD", "ZBTB16", 
-                    "DIO3", "DIO2", "DIO1") 
+                    "AR",  "CYP19A1", 
+                     "AVPR1A", "AVPR1B", "AVPR2","VIP",
+                  "DRD1", "DRD2", 
+                  "PRL", "PRLR",  
+                    "ESR1","ESR2", "LBH",  
+                   
+                    "FOS", "JUN", "EGR1", "BDNF"
+                      ) 
 
 table1 <- allDEG %>%
-  filter(gene %in% candidategenes,
-         comparison != "control_bldg") %>%
-    arrange(gene) %>%
+  mutate(updown = ifelse(lfc > 0, "+", "-"))  %>%
+  mutate(geneupdown = paste(gene, updown, sep = "")) %>%
+  filter(gene %in% candidategenes) %>%
+  arrange(geneupdown) %>%
   group_by(sex, tissue, comparison) %>%
-  summarize(genes = str_c(gene, collapse = " ")) %>%
+  summarize(genes = str_c(geneupdown, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = genes ) %>%
-  select(sex, tissue, bldg_lay, lay_inc.d3, inc.d3_inc.d9,
-        inc.d9_inc.d17,inc.d17_hatch, hatch_n5, n5_n9)  %>%
+  select(sex, tissue, control_bldg, bldg_lay, lay_inc.d3, inc.d3_inc.d9,
+        inc.d9_inc.d17, hatch_n5)  %>%
   arrange( tissue, sex)
 kable(table1)
 
