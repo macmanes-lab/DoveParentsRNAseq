@@ -24,212 +24,79 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 ## Table 1: Candidate gene DEGs
 
 <table>
-<thead>
-<tr>
-<th style="text-align:left;">
-sex
-</th>
-<th style="text-align:left;">
-tissue
-</th>
-<th style="text-align:left;">
-bldg\_lay
-</th>
-<th style="text-align:left;">
-lay\_inc.d3
-</th>
-<th style="text-align:left;">
-inc.d3\_inc.d9
-</th>
-<th style="text-align:left;">
-inc.d9\_inc.d17
-</th>
-<th style="text-align:left;">
-inc.d17\_hatch
-</th>
-<th style="text-align:left;">
-hatch\_n5
-</th>
-<th style="text-align:left;">
-n5\_n9
-</th>
-</tr>
-</thead>
+ <thead>
+  <tr>
+   <th style="text-align:left;"> sex </th>
+   <th style="text-align:left;"> tissue </th>
+   <th style="text-align:left;"> control_bldg </th>
+   <th style="text-align:left;"> bldg_lay </th>
+   <th style="text-align:left;"> lay_inc.d3 </th>
+   <th style="text-align:left;"> inc.d3_inc.d9 </th>
+   <th style="text-align:left;"> inc.d9_inc.d17 </th>
+   <th style="text-align:left;"> hatch_n5 </th>
+  </tr>
+ </thead>
 <tbody>
-<tr>
-<td style="text-align:left;">
-female
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-BDNF BRCA1 CISH CYP19A1 DRD1 EGR1 GRIA1 POMC
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-male
-</td>
-<td style="text-align:left;">
-hypothalamus
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-AR
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-female
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-<td style="text-align:left;">
-DIO3 ESR1 GNRHR
-</td>
-<td style="text-align:left;">
-ESR1 GNRHR PTEN ZBTB16
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-BRCA1 CDK1 DIO2 KCNJ5 LBH PRL
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-AVPR2 BRCA1 CDK1 GRIA1 LBH PRL
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-male
-</td>
-<td style="text-align:left;">
-pituitary
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-BRCA1 CDK1 CISH GRM2 LBH PRL VIP
-</td>
-<td style="text-align:left;">
-GRM2
-</td>
-<td style="text-align:left;">
-CEBPD ZBTB16
-</td>
-<td style="text-align:left;">
-BRCA1 CDK1 CEBPD
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-female
-</td>
-<td style="text-align:left;">
-gonad
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-AGRP AVPR1A DIO2 EGR1 FOS PRLR PTGER3
-</td>
-<td style="text-align:left;">
-AVPR1A
-</td>
-<td style="text-align:left;">
-SOX9
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-male
-</td>
-<td style="text-align:left;">
-gonad
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-SOX9
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
+  <tr>
+   <td style="text-align:left;"> female </td>
+   <td style="text-align:left;"> hypothalamus </td>
+   <td style="text-align:left;"> AR+ CGNRH-R- CYP19A1- DRD1+ ESR1+ GNRHR- JUN- PRL- PRLR- VIP- </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> BDNF- CYP19A1+ DRD1+ EGR1+ </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> male </td>
+   <td style="text-align:left;"> hypothalamus </td>
+   <td style="text-align:left;"> AR+ AVPR2- CYP19A1- EGR1+ ESR1+ GNRH1- GNRHR- PRL- VIP- </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> AR+ </td>
+   <td style="text-align:left;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> female </td>
+   <td style="text-align:left;"> pituitary </td>
+   <td style="text-align:left;"> AR+ AVP- AVPR2+ BDNF+ CYP19A1- DRD1+ FOS- LBH- OXT- PRL- PRLR- </td>
+   <td style="text-align:left;"> ESR1+ GNRHR- </td>
+   <td style="text-align:left;"> ESR1- GNRHR+ </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> LBH+ PRL+ </td>
+   <td style="text-align:left;"> AVPR2+ LBH- PRL- </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> male </td>
+   <td style="text-align:left;"> pituitary </td>
+   <td style="text-align:left;"> AR+ AVP- AVPR1B+ AVPR2+ BDNF+ CGNRH-R- CYP19A1- OXT- PRL- PRLR- </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> LBH+ PRL+ VIP+ </td>
+   <td style="text-align:left;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> female </td>
+   <td style="text-align:left;"> gonad </td>
+   <td style="text-align:left;"> AR+ AVPR1A+ CYP19A1- EGR1- ESR1+ ESR2- LBH- </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> AVPR1A+ EGR1+ FOS+ PRLR- </td>
+   <td style="text-align:left;"> AVPR1A- </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> male </td>
+   <td style="text-align:left;"> gonad </td>
+   <td style="text-align:left;"> AR+ ESR1+ PRL- PRLR- </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+   <td style="text-align:left;"> NA </td>
+  </tr>
 </tbody>
 </table>
 
