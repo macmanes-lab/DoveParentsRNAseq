@@ -6,14 +6,14 @@ candidate genes
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -77,6 +77,15 @@ candidate genes
                        
                         "FOS", "JUN", "EGR1", "BDNF"
                           ) 
+
+
+
+    # all candidate genes: AR, AVP, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, EGR1, ESR1, ESR2, FOS, GNRH1, GNRHR, JUN, LBH, OXT, PRL, PRLR, VIP
+
+
+    # DEG candidate genes: AR, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, ESR1, FOS, GNRHR, LBH, PRL, PRLR, 
+
+    # Candidate genes that were not differentially expressed: AVP, AVPR1B, ESR2,  GNRH1, JUN, OXT, VIP
 
 variance stabilized gene expression (vsd)
 -----------------------------------------
@@ -193,9 +202,9 @@ Figs
         theme_B3() +
         scale_fill_manual(values = allcolors) +
         scale_color_manual(values = allcolors) +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        theme(#axis.text.x = element_text(angle = 45, hjust = 1),
               legend.position = "none") +
-        labs(y = "expression" , x = "Parental stages", subtitle = mysubtitle) +
+        labs(y = "gene expression" , x = "Sequential stages with candidate DEGs", subtitle = mysubtitle) +
         theme(strip.text = element_text(face = "italic"))
       return(p)
     }
@@ -205,6 +214,11 @@ Figs
                       "Female hypothalamus", "female", c("hatch", "n5"))  +
       theme(axis.title.x = element_blank())
 
+    b <- makeboxplots(hypvsd, c("AR"),"Male hypothalamus", "male", 
+                      c( "inc.d9", "inc.d17"))  +
+      theme(axis.title = element_blank())
+
+    ab <- plot_grid(a,b, rel_widths = c(4,1),  labels = "auto", label_size = 8)
 
     c <- makeboxplots(pitvsd, c("ESR1","GNRHR"), "Female pituitary", "female", c("bldg", "lay", "inc.d3"))   +
       theme(axis.title.x = element_blank())
@@ -213,28 +227,22 @@ Figs
     e <- makeboxplots(pitvsd, c( "AVPR2"), " ", "female", c( "hatch", "n5"))  +
       theme(axis.title  = element_blank())
 
-    cde <- plot_grid(c,d, e, rel_widths = c(2.5,2.5,1), nrow = 1)
+    cde <- plot_grid(c,e,d, rel_widths = c(6,2.25,7), nrow = 1,  labels = c("c"), label_size = 8)
 
 
     g <- makeboxplots(gonvsd, c( "AVPR1A"), "Female gonads", "female", c( "lay", "inc.d3", "inc.d9"))  +
-      theme(axis.title.x = element_blank())
+      labs(caption = " ", x = " ")
     h <- makeboxplots(gonvsd, c( "EGR1", "FOS", "PRLR"), " ", "female", c( "lay", "inc.d3"))  +
-      theme(axis.title = element_blank())
-
-    gh <- plot_grid(g,h,nrow = 1, rel_widths = c(1,2.5))
-
-
-    b <- makeboxplots(hypvsd, c("AR"),"Male hypothalamic expression", "male", 
-                      c( "inc.d9", "inc.d17"))  + labs(caption = " ")
-    f <- makeboxplots(pitvsd, c("LBH", "PRL"), "Male pituitary expression", "male", 
+      theme(axis.title.y = element_blank()) + labs(caption = " ")
+    f <- makeboxplots(pitvsd, c("LBH", "PRL"), "Male pituitary", "male", 
                       c("inc.d9", "inc.d17")) + 
-      theme(axis.title.y  = element_blank(),
-            plot.caption = element_text(face = "italic")) + 
-      labs(caption = "candidate genes: AR, AVP, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, EGR1, ESR1, ESR2, FOS, GNRH1, GNRHR, JUN, LBH, OXT, PRL, PRLR, VIP")
+      theme(plot.caption = element_text(face = "italic")) + 
+      labs(x = " ",
+           caption = "Candidate genes that were not differentially expressed from bldg to n5: AVP, AVPR1B, ESR2,  GNRH1, JUN, OXT, VIP.")
 
-    bf <- plot_grid(b,f,nrow = 1, rel_widths = c(1,2))
+    ghf <- plot_grid(g,h,f, nrow = 1, rel_widths = c(3,6,4),  labels = c("d", " ", "e"), label_size = 8)
 
-    plot_grid(a, cde, gh, bf, nrow = 4, rel_heights = c(1,1,1,1.2), labels = "auto", label_size = 8)
+    plot_grid(ab, cde, ghf, nrow = 3, rel_heights = c(1,1,1.25))
 
 ![](../figures/fig3-1.png)
 
