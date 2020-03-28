@@ -109,56 +109,38 @@ GO_DEGs <- left_join(allGO, DEGs) %>%
   map(~.x) %>%
   discard(~all(is.na(.x))) %>%
   map_df(~.x)
-head(GO_DEGs)
+#head(GO_DEGs)
 ```
 
 
 ## Tissue-specifiic differentially expressed genes 
 
 ```{r bytissue}
-hyp <- GO_DEGs %>% select(GO, starts_with("male_hyp"), starts_with("female_hyp"))
-pit <- GO_DEGs %>% select(GO, starts_with("male_pit"), starts_with("female_pit"))
-gon <- GO_DEGs %>% select(GO, starts_with("male_gon"), starts_with("emale_gon"))
+fhyp <- GO_DEGs %>% select(GO, starts_with("female_hyp"))
+mhyp <- GO_DEGs %>% select(GO, starts_with("male_hyp"))
 
-kable(hyp)  
-# top GO therms for hyp:
-# endocrine process, regulation of hormone levels,
-# signal release # hormone secretion, # system process
-# hormone transport, cell-cell signaling
+fpit <- GO_DEGs %>% select(GO, starts_with("female_pit"))
+mpit <- GO_DEGs %>% select(GO, starts_with("male_pit"))
 
-kable(pit)
-# endocrine process, mating behavior, system process,
-# reproductive behavior, mating, regulation of blood pressure
-# signal release, regulation of hormone levels
+fgon <- GO_DEGs %>% select(GO, starts_with("female_gon"))
+mgon <- GO_DEGs %>% select(GO, starts_with("male_gon"))
 
-kable(gon)  
-# endocrine process, regulation of blood pressure
-# blood circutation, circulatory system
+kable(fhyp) 
+kable(mhyp)  
+
+kable(fpit)
+kable(mpit)
+
+kable(fgon) 
+kable(mgon) 
+
 ```
 
 
-## Candidate genes
-
-```{r}
-candidate_DEGs <- left_join(candidates, DEGs) %>%
-  arrange(GO, gene) %>%
-  group_by(GO, comparison) %>%
-  summarize(genes = str_c(gene, collapse = ", ")) %>%
-  pivot_wider(names_from = comparison, values_from = genes) %>% 
-  select(GO, contains("control_bldg"), contains("bldg_lay"), contains("lay_inc.d3"),
-         contains("inc.d3_inc.d9"), contains("inc.d9_inc.d17"), contains("inc.d17_hatch"),
-         contains("hatch_n5"), contains("n5_n9"))
-candidate_DEGs <- as.data.frame(candidate_DEGs)
-
-row.names(candidate_DEGs) <- candidate_DEGs$GO  
-candidate_DEGs <- t(candidate_DEGs)
-candidate_DEGs <- as.data.frame(candidate_DEGs)
-kable(candidate_DEGs) 
-```
 
 ```{r write}
 write.csv(GO_DEGs, "../results/12_GO_DEGs.csv")
-write.csv(hyp, "../results/12_GO_DEGs_hyp.csv")
-write.csv(pit, "../results/12_GO_DEGs_pit.csv")
-write.csv(gon, "../results/12_GO_DEGs_gon.csv")
+#write.csv(hyp, "../results/12_GO_DEGs_hyp.csv")
+#write.csv(pit, "../results/12_GO_DEGs_pit.csv")
+#write.csv(gon, "../results/12_GO_DEGs_gon.csv")
 ```
