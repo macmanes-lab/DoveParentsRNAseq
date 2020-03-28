@@ -136,52 +136,6 @@ kable(gon)
 # blood circutation, circulatory system
 ```
 
-## Stage-specific differentially expressed genes 
-
-```{r bystage}
-one <- GO_DEGs %>% select(GO, contains("control.bldg"))
-two <- GO_DEGs %>% select(GO, contains("bldg.lay"))
-three <- GO_DEGs %>% select(GO, contains("lay.inc.d3"))
-four <- GO_DEGs %>% select(GO, contains("inc.d3.inc.d9"))
-five <- GO_DEGs %>% select(GO, contains("inc.d9.inc.d17"))
-six <- GO_DEGs %>% select(GO, contains("inc.d17.hatch"))
-seven <- GO_DEGs %>% select(GO, contains("hatch.n5"))
-eight <- GO_DEGs %>% select(GO, contains("n5.n9"))
-
-
-kable(one) 
-# top GOs of these genes: endocrine porcess, 
-#regulation of blood pressure (by hormones or chemical signals), 
-#system process, regulation of hormone levels
-
-kable(two) 
-# top Gos maternal, parental, reproductive behavior; 
-# reproduction, reproductive process
-
-kable(three) 
-# response to chemical, maternal and parental behaviors, 
-# regulation of RNApolI transcription
-
-kable(four) 
-# insuffiencient genes for GO analysis
-
-kable(five) 
-# (cellular) response to organic substance, endocrine process, 
-# response to stimulus, response to chemical 
-
-kable(six)  
-# insuffiencient genes
-
-kable(seven) 
-# endocrine process, system process, hormone transport, 
-# synaptic transmission (dopamineric), secretion by cell
-
-kable(eight) 
-# (positive) regulation of gap junction assembly, 
-# regulation of cardiac conduction, regualation of blood pressure
-
-```
-
 
 ## Candidate genes
 
