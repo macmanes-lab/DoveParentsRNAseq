@@ -115,9 +115,9 @@ head(GO_DEGs)
 ## Tissue-specifiic differentially expressed genes 
 
 ```{r bytissue}
-hyp <- GO_DEGs %>% select(GO, starts_with("hyp"))
-pit <- GO_DEGs %>% select(GO, starts_with("pit"))
-gon <- GO_DEGs %>% select(GO, starts_with("gon"))
+hyp <- GO_DEGs %>% select(GO, starts_with("male_hyp"), starts_with("female_hyp"))
+pit <- GO_DEGs %>% select(GO, starts_with("male_pit"), starts_with("female_pit"))
+gon <- GO_DEGs %>% select(GO, starts_with("male_gon"), starts_with("emale_gon"))
 
 kable(hyp)  
 # top GO therms for hyp:
