@@ -104,10 +104,11 @@ GO_DEGs <- left_join(allGO, DEGs) %>%
          contains("hatch_n5"), contains("n5_n9")) %>%
   filter(GO %in% c("endocrineprocess", "lactation", 
                    "parentalbehavior", "matingbehavior",
-                   "candidategenes")) %>% 
+                   "candidategenes", "cellcycleprocess")) %>% 
   map(~.x) %>%
   discard(~all(is.na(.x))) %>%
   map_df(~.x)
+head(GO_DEGs)
 ```
 
 
