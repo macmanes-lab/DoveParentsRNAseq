@@ -155,6 +155,7 @@ h <- makeboxplots(gonvsd, c( "EGR1", "FOS", "PRLR"), " ", "female", c( "lay", "i
 f <- makeboxplots(pitvsd, c("LBH", "PRL"), "Male pituitary", "male", 
                   c("inc.d9", "inc.d17")) + 
   theme(plot.caption = element_text(face = "italic")) + 
+  theme(axis.title.y = element_blank()) +
   labs(x = " ",
        caption = "Candidate genes that were not differentially expressed from bldg to n5: AVP, AVPR1B, ESR2,  GNRH1, JUN, OXT, VIP.")
 
