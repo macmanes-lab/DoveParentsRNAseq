@@ -6,7 +6,6 @@
 
 This repository contains the data and analysis for a collaboration between Drs. Rebecca Calisi and Matt MacManes that focuses on one characterizing the neurogenomocs of parental care in the rock dove.
 
-
 ## Organization
 
 These repositories is broken down into the following sub-repositories, each with their own unique purpose and structure.
@@ -37,6 +36,12 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 ## Figure 5
 
 ![](./figures/fig5-1.png)
+
+## Figure 6
+
+![](./figures/fig6-1.png)
+
+
 
 ## Related documentation.
 
