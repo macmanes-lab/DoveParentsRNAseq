@@ -99,7 +99,9 @@ GO_DEGs <- left_join(allGO, DEGs) %>%
   group_by(GO, comparison) %>%
   summarize(genes = str_c(gene, collapse = ", ")) %>% 
   pivot_wider(names_from = comparison, values_from = genes) %>% 
-  select(GO, contains("control_bldg"), contains("bldg_lay"), contains("lay_inc.d3"),
+  select(GO, 
+         #contains("control_bldg"), 
+         contains("bldg_lay"), contains("lay_inc.d3"),
          contains("inc.d3_inc.d9"), contains("inc.d9_inc.d17"), contains("inc.d17_hatch"),
          contains("hatch_n5"), contains("n5_n9")) %>%
   filter(GO %in% c("endocrineprocess", "lactation", 
