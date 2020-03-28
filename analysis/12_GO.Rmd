@@ -104,7 +104,7 @@ GO_DEGs <- left_join(allGO, DEGs) %>%
          contains("inc.d3_inc.d9"), contains("inc.d9_inc.d17"), contains("inc.d17_hatch"),
          contains("hatch_n5"), contains("n5_n9")) %>%
   filter(GO %in% c("endocrineprocess", "lactation", 
-                   "parentalbehavior", "matingbehavior",
+                   "parentalbehavior", "matingbehavior", "reproduction",
                    "candidategenes", "cellcycleprocess")) %>% 
   map(~.x) %>%
   discard(~all(is.na(.x))) %>%
