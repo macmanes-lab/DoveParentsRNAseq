@@ -38,7 +38,8 @@ charlevelsnocontrol <- c( "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch",
 
 maniplevels <- c( "remove.d03" ,  "remove.d09" ,  "remove.d17" , "remove.d20" ,  "extend" , "prolong", "early")
 
-maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2", "prolong" , "extend")
+maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , 
+                   "m.n2", "prolong" , "extend")
 
 levelstiming <- c( "m.inc.d8" , "prolong" , "extend")
 levelsremoval <- c( "m.inc.d3" ,    "m.inc.d9" , "m.inc.d17" , "m.n2")
@@ -48,7 +49,16 @@ controlsremoval <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
 
 
 comparisonlevels <- c("control_bldg", "bldg_lay" ,"lay_inc.d3", "inc.d3_inc.d9",
-                      "inc.d9_inc.d17", "inc.d17_hatch" , "hatch_n5", "n5_n9"   )
+                      "inc.d9_inc.d17", "inc.d17_hatch" , "hatch_n5", "n5_n9",
+                     
+                       "hatch_extend",  "hatch_m.n2",         "inc.d17_m.inc.d17", 
+                      "inc.d17_prolong" ,   "inc.d3_m.inc.d3",    "inc.d9_m.inc.d8",   
+                      "inc.d9_m.inc.d9" ,   "m.inc.d17_prolong",  "m.inc.d3_m.inc.d17",
+                      "m.inc.d3_m.inc.d9",  "m.inc.d3_m.n2",      "m.inc.d8_extend",   
+                      "m.inc.d8_prolong",   "m.inc.d9_m.inc.d8",  "m.n2_extend",       
+                      "prolong_extend",     "m.inc.d17_m.n2",     "m.inc.d9_m.inc.d17",
+                      "m.inc.d9_m.n2"
+                      )
 
 
 allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay", "bldg")
