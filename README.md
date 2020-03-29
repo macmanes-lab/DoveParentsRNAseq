@@ -41,17 +41,12 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 
 ![](./figures/fig6-1.png)
 
+## Related documentation 
 
+Another website <http://www.dovelovegenomics.org/>.
 
-## Related documentation.
+Another GitHub repository <https://github.com/macmanes-lab/RockDove>. 
 
-Another website <http://www.dovelovegenomics.org/>
-
-Another GitHub repository <https://github.com/macmanes-lab/RockDove> 
-
-A talk from 2020 <https://speakerdeck.com/raynamharris/peaks-and-valleys-of-prolactin-driven-gene-expression-during-parental-care>
-
-An poster from 2019
-![poster](./figures/sbnposter/SBN.png)
+A talk from 2020 <https://speakerdeck.com/raynamharris/peaks-and-valleys-of-prolactin-driven-gene-expression-during-parental-care>.
 
 See also <https://macmanes-lab.github.io/DoveParentsRNAseq/> for a more user-friendly way to read the information on the poster. The bulk of the analysis for the SBN poster were created using the script [analysis/04_DESeq2_sexes.Rmd](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/04_DESeq2_sexes.Rmd), which really needs a different name. 
