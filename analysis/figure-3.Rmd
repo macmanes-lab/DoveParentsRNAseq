@@ -157,7 +157,7 @@ f <- makeboxplots(pitvsd, c("LBH", "PRL"), "Male pituitary", "male",
   theme(plot.caption = element_text(face = "italic")) + 
   theme(axis.title.y = element_blank()) +
   labs(x = " ",
-       caption = "Candidate genes that were not differentially expressed from bldg to n5: AVP, AVPR1B, ESR2,  GNRH1, JUN, OXT, VIP.")
+       caption = "Candidate genes that were not differentially expressed from bldg to n5: AVP, AVPR1B, ESR2,  GNRH1, JUN, and OXT.")
 
 ghf <- plot_grid(g,h,f, nrow = 1, rel_widths = c(3,6,4),  labels = c("d", " ", "e"), label_size = 8)
 
