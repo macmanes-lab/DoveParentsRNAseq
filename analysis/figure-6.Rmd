@@ -76,9 +76,6 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
 hypvsd <- getcandidatevsd(candidategenesslim, "hypothalamus", sexlevels)
 pitvsd <- getcandidatevsd(candidategenesslim, "pituitary", sexlevels)
 gonvsd <- getcandidatevsd(candidategenesslim, "gonad", sexlevels)
-head(hypvsd)
-head(pitvsd)
-head(gonvsd)
 
 candidatevsd <- rbind(hypvsd, pitvsd)
 candidatevsd <- rbind(candidatevsd, gonvsd)
@@ -135,10 +132,7 @@ table1 <- allDEG %>%
 
 
 
-
-## Figs 
-
-```{r fig6, fig.height=7, fig.width=7}
+```{r boxplotfunction}
 makeboxplotsmanip <- function(df, whichgene, mysubtitle, whichsex, whichtimepoint){
   p <- df %>%
     filter(treatment %in% alllevels,
@@ -156,17 +150,24 @@ makeboxplotsmanip <- function(df, whichgene, mysubtitle, whichsex, whichtimepoin
           legend.position = "none",
           plot.caption = element_text(face = "italic")) +
     labs(y = "gene expression" , x = "Parental Stages and Manipulations", subtitle = mysubtitle) +
-    theme(strip.text = element_text(face = "italic"))
+    theme(strip.text = element_text(face = "italic", size = 5)) + 
+    scale_y_continuous(labels = scales::number_format(accuracy = 1))
   return(p)
 }
+```
 
-## hyp 
-a2 <- makeboxplotsmanip(hypvsd, c("DRD1","EGR1","PRLR"), "Female hypothalamus", "female",
+
+## Figs 
+
+```{r fig6, fig.height=8, fig.width=10}
+
+## hypothatlamus
+a <- makeboxplotsmanip(hypvsd, c("DRD1","EGR1","PRLR"), "Female hypothalamus", "female",
                   c("inc.d3", "m.inc.d3", "inc.d17", "m.inc.d17",  "hatch", "m.n2"))  +
   theme(axis.title.x = element_blank())
-b2 <- makeboxplotsmanip(hypvsd, c("BDNF","ESR2", "FOS"), " ", "female",
+b <- makeboxplotsmanip(hypvsd, c("BDNF","ESR2", "FOS"), " ", "female",
                   c("inc.d3", "m.inc.d3", "inc.d17", "m.inc.d17"))  +
-  theme(axis.title.x = element_blank())
+  theme(axis.title = element_blank())
 
 c <- makeboxplotsmanip(hypvsd, c("AVP","OXT"), " ", "female", 
                        c("inc.d17", "m.inc.d17"))  +
@@ -178,35 +179,57 @@ e <- makeboxplotsmanip(hypvsd, c("JUN"), " ", "female",
                  c("hatch", "m.n2"))  +
   theme(axis.title = element_blank()) + labs(subtitle = " ")
 
-
-
-f1 <- makeboxplotsmanip(hypvsd, c("DRD1", "EGR1", "PRLR"), "Male hypothalamus", "male",
+f <- makeboxplotsmanip(hypvsd, c("DRD1", "EGR1", "PRLR"), "Male hypothalamus", "male",
                   c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  +
   theme(axis.title.x = element_blank())
 
-f2 <- makeboxplotsmanip(hypvsd, c( "PRL"), " ", "male",
+g <- makeboxplotsmanip(hypvsd, c( "PRL"), " ", "male",
                   c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  +
   theme(axis.title = element_blank())
 
-
 h <- makeboxplotsmanip(hypvsd, c("AR", "AVP", "BDNF", "ESR1", "LBH"), " ", "male",
-                  c( "inc.d17", "m.inc.d17"))  + labs(caption = " ")
+                  c( "inc.d17", "m.inc.d17")) +
+  theme(axis.title = element_blank()) 
 
 i <- makeboxplotsmanip(hypvsd, c("GNRH1"), " ", "male",
                   c("hatch", "m.n2"))  +
-  theme(axis.title = element_blank()) +
-  labs(x = " ",
-       caption = "Candidate genes that were not differentially expressed following removal: AVPR1B, AVPR2, ESR1, GNRHR, VIP")
+  theme(axis.title = element_blank()) 
 
-ab2 <- plot_grid(a2,c, rel_widths = c(18,5), labels = "auto", label_size = 8)
-cde <- plot_grid(b2,d,e, rel_widths = c(12,6,2), nrow =  1, align = "h",  
-                 labels = c("c", "d", " "), label_size = 8)
-f12 <- plot_grid(f1,f2, rel_widths = c(3,1), labels = c("e",  " "), label_size = 8)
-hi <- plot_grid(h,i, ncol = 2, rel_widths = c(10,2),labels = c("f",  "g"), label_size = 8, align = "h")
 
-plot_grid(ab2, cde, f12,hi, nrow = 4, rel_heights = c(1,1,1,1.25))
+j <- makeboxplotsmanip(pitvsd, c("AR", "PRL", "LBH"), "Female pituitary", "female",
+                  c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  + theme(axis.title.x = element_blank())
 
+k <- makeboxplotsmanip(pitvsd, c("DRD1"), " ", "female",
+                  c( "inc.d3", "m.inc.d3"))  + theme(axis.title = element_blank())
+
+l <- makeboxplotsmanip(pitvsd, c("BDNF", "PRLR"), " ", "female",
+                  c( "inc.d17", "m.inc.d17"))  +  theme(axis.title = element_blank())
+
+m <- makeboxplotsmanip(pitvsd, c("AVPR1B", "AVPR2", "EGR1", "GNRHR", "JUN"), " ", "female",
+                  c("hatch", "m.n2"))  + theme(axis.title = element_blank())
+
+
+n <- makeboxplotsmanip(pitvsd, c("LBH"), "Male pituitary", "male",
+                  c("inc.d17", "m.inc.d17", "hatch", "m.n2"))  
+o <- makeboxplotsmanip(pitvsd, c("DRD1", "ESR2"), " ", "male",
+                  c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
+p <- makeboxplotsmanip(pitvsd, c("AVPR1A", "PRLR"), " ", "male",
+                  c("hatch", "m.n2"))  + theme(axis.title  = element_blank())
+
+q <- makeboxplotsmanip(gonvsd, c("LBH"), "Male gonads ", "male",
+                  c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
+r <- makeboxplotsmanip(gonvsd, c("JUN"), "Female gonads ", "female",
+                  c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
+
+
+abcd <- plot_grid(a,b,c,d,e, nrow = 1, rel_widths = c(16,10,4,6,2), align = "h", labels = c("a", "b", "c", "d"), label_size = 8)
+efgh <- plot_grid(f,g,h,i, nrow = 1, rel_widths = c(10,3,10,2), align = "h", labels = c("e", " ", "f", "g"), label_size = 8)
+jklm <- plot_grid(j,k,l,m, nrow = 1, rel_widths = c(12,2,4,10), align = "h",  labels = c("h", "i", "j", "k"), label_size = 8)
+nopqr <- plot_grid(n,o,p,q,r, nrow = 1, rel_widths = c(4,4,4,2,2), align = "h",  labels = c("l", "m", "n", "o", "p"), label_size = 8)
+
+plot_grid(abcd, efgh, jklm,nopqr, ncol = 1)
 ```
+
 
 ```{r writefiles}
 write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")

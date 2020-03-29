@@ -3,14 +3,14 @@ manipulation box plots for candidate genes
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -135,41 +135,6 @@ variance stabilized gene expression (vsd)
     hypvsd <- getcandidatevsd(candidategenesslim, "hypothalamus", sexlevels)
     pitvsd <- getcandidatevsd(candidategenesslim, "pituitary", sexlevels)
     gonvsd <- getcandidatevsd(candidategenesslim, "gonad", sexlevels)
-    head(hypvsd)
-
-    ## # A tibble: 6 x 6
-    ##   sex    tissue     treatment gene  samples                          counts
-    ##   <chr>  <chr>      <fct>     <chr> <chr>                             <dbl>
-    ## 1 female hypothala… prolong   AR    blk.s031.pu.d_female_hypothalam…   7.60
-    ## 2 female hypothala… m.n2      AR    blk.s032.g.w_female_hypothalamu…   7.65
-    ## 3 female hypothala… m.inc.d3  AR    blk.s049.y.g_female_hypothalamu…   7.80
-    ## 4 female hypothala… m.inc.d3  AR    blk.s060.pu.w_female_hypothalam…   7.69
-    ## 5 female hypothala… inc.d9    AR    blk.s061.pu.y_female_hypothalam…   7.64
-    ## 6 female hypothala… m.inc.d8  AR    blk.y.l.s109_female_hypothalamu…   7.71
-
-    head(pitvsd)
-
-    ## # A tibble: 6 x 6
-    ##   sex    tissue   treatment gene  samples                            counts
-    ##   <chr>  <chr>    <fct>     <chr> <chr>                               <dbl>
-    ## 1 female pituita… prolong   AR    blk.s031.pu.d_female_pituitary_pr…  10.1 
-    ## 2 female pituita… m.n2      AR    blk.s032.g.w_female_pituitary_m.h…   9.48
-    ## 3 female pituita… m.inc.d3  AR    blk.s049.y.g_female_pituitary_m.i…  10.5 
-    ## 4 female pituita… <NA>      AR    blk.s060.pu.w_female_pituitary_m.…  10.5 
-    ## 5 female pituita… inc.d9    AR    blk.s061.pu.y_female_pituitary_in…  10.2 
-    ## 6 female pituita… m.inc.d8  AR    blk.y.l.s109_female_pituitary_m.i…   9.72
-
-    head(gonvsd)
-
-    ## # A tibble: 6 x 6
-    ##   sex    tissue treatment gene  samples                             counts
-    ##   <chr>  <chr>  <fct>     <chr> <chr>                                <dbl>
-    ## 1 female gonad  prolong   AR    blk.s031.pu.d_female_gonad_prolong    9.63
-    ## 2 female gonad  m.n2      AR    blk.s032.g.w_female_gonad_m.hatch     9.45
-    ## 3 female gonad  m.inc.d3  AR    blk.s049.y.g_female_gonad_m.inc.d3    8.89
-    ## 4 female gonad  m.inc.d3  AR    blk.s060.pu.w_female_gonad_m.inc.d3   9.32
-    ## 5 female gonad  inc.d9    AR    blk.s061.pu.y_female_gonad_inc.d9     9.52
-    ## 6 female gonad  m.inc.d8  AR    blk.y.l.s109_female_gonad_m.inc.d8    9.80
 
     candidatevsd <- rbind(hypvsd, pitvsd)
     candidatevsd <- rbind(candidatevsd, gonvsd)
@@ -283,9 +248,6 @@ DEGs
     ## [5] NA                                                   
     ## [6] NA
 
-Figs
-----
-
     makeboxplotsmanip <- function(df, whichgene, mysubtitle, whichsex, whichtimepoint){
       p <- df %>%
         filter(treatment %in% alllevels,
@@ -303,17 +265,21 @@ Figs
               legend.position = "none",
               plot.caption = element_text(face = "italic")) +
         labs(y = "gene expression" , x = "Parental Stages and Manipulations", subtitle = mysubtitle) +
-        theme(strip.text = element_text(face = "italic"))
+        theme(strip.text = element_text(face = "italic", size = 5)) + 
+        scale_y_continuous(labels = scales::number_format(accuracy = 1))
       return(p)
     }
 
-    ## hyp 
-    a2 <- makeboxplotsmanip(hypvsd, c("DRD1","EGR1","PRLR"), "Female hypothalamus", "female",
+Figs
+----
+
+    ## hypothatlamus
+    a <- makeboxplotsmanip(hypvsd, c("DRD1","EGR1","PRLR"), "Female hypothalamus", "female",
                       c("inc.d3", "m.inc.d3", "inc.d17", "m.inc.d17",  "hatch", "m.n2"))  +
       theme(axis.title.x = element_blank())
-    b2 <- makeboxplotsmanip(hypvsd, c("BDNF","ESR2", "FOS"), " ", "female",
+    b <- makeboxplotsmanip(hypvsd, c("BDNF","ESR2", "FOS"), " ", "female",
                       c("inc.d3", "m.inc.d3", "inc.d17", "m.inc.d17"))  +
-      theme(axis.title.x = element_blank())
+      theme(axis.title = element_blank())
 
     c <- makeboxplotsmanip(hypvsd, c("AVP","OXT"), " ", "female", 
                            c("inc.d17", "m.inc.d17"))  +
@@ -325,33 +291,55 @@ Figs
                      c("hatch", "m.n2"))  +
       theme(axis.title = element_blank()) + labs(subtitle = " ")
 
-
-
-    f1 <- makeboxplotsmanip(hypvsd, c("DRD1", "EGR1", "PRLR"), "Male hypothalamus", "male",
+    f <- makeboxplotsmanip(hypvsd, c("DRD1", "EGR1", "PRLR"), "Male hypothalamus", "male",
                       c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  +
       theme(axis.title.x = element_blank())
 
-    f2 <- makeboxplotsmanip(hypvsd, c( "PRL"), " ", "male",
+    g <- makeboxplotsmanip(hypvsd, c( "PRL"), " ", "male",
                       c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  +
       theme(axis.title = element_blank())
 
-
     h <- makeboxplotsmanip(hypvsd, c("AR", "AVP", "BDNF", "ESR1", "LBH"), " ", "male",
-                      c( "inc.d17", "m.inc.d17"))  + labs(caption = " ")
+                      c( "inc.d17", "m.inc.d17")) +
+      theme(axis.title = element_blank()) 
 
     i <- makeboxplotsmanip(hypvsd, c("GNRH1"), " ", "male",
                       c("hatch", "m.n2"))  +
-      theme(axis.title = element_blank()) +
-      labs(x = " ",
-           caption = "Candidate genes that were not differentially expressed following removal: AVPR1B, AVPR2, ESR1, GNRHR, VIP")
+      theme(axis.title = element_blank()) 
 
-    ab2 <- plot_grid(a2,c, rel_widths = c(18,5), labels = "auto", label_size = 8)
-    cde <- plot_grid(b2,d,e, rel_widths = c(12,6,2), nrow =  1, align = "h",  
-                     labels = c("c", "d", " "), label_size = 8)
-    f12 <- plot_grid(f1,f2, rel_widths = c(3,1), labels = c("e",  " "), label_size = 8)
-    hi <- plot_grid(h,i, ncol = 2, rel_widths = c(10,2),labels = c("f",  "g"), label_size = 8, align = "h")
 
-    plot_grid(ab2, cde, f12,hi, nrow = 4, rel_heights = c(1,1,1,1.25))
+    j <- makeboxplotsmanip(pitvsd, c("AR", "PRL", "LBH"), "Female pituitary", "female",
+                      c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  + theme(axis.title.x = element_blank())
+
+    k <- makeboxplotsmanip(pitvsd, c("DRD1"), " ", "female",
+                      c( "inc.d3", "m.inc.d3"))  + theme(axis.title = element_blank())
+
+    l <- makeboxplotsmanip(pitvsd, c("BDNF", "PRLR"), " ", "female",
+                      c( "inc.d17", "m.inc.d17"))  +  theme(axis.title = element_blank())
+
+    m <- makeboxplotsmanip(pitvsd, c("AVPR1B", "AVPR2", "EGR1", "GNRHR", "JUN"), " ", "female",
+                      c("hatch", "m.n2"))  + theme(axis.title = element_blank())
+
+
+    n <- makeboxplotsmanip(pitvsd, c("LBH"), "Male pituitary", "male",
+                      c("inc.d17", "m.inc.d17", "hatch", "m.n2"))  
+    o <- makeboxplotsmanip(pitvsd, c("DRD1", "ESR2"), " ", "male",
+                      c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
+    p <- makeboxplotsmanip(pitvsd, c("AVPR1A", "PRLR"), " ", "male",
+                      c("hatch", "m.n2"))  + theme(axis.title  = element_blank())
+
+    q <- makeboxplotsmanip(gonvsd, c("LBH"), "Male gonads ", "male",
+                      c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
+    r <- makeboxplotsmanip(gonvsd, c("JUN"), "Female gonads ", "female",
+                      c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
+
+
+    abcd <- plot_grid(a,b,c,d,e, nrow = 1, rel_widths = c(16,10,4,6,2), align = "h", labels = c("a", "b", "c", "d"), label_size = 8)
+    efgh <- plot_grid(f,g,h,i, nrow = 1, rel_widths = c(10,3,10,2), align = "h", labels = c("e", " ", "f", "g"), label_size = 8)
+    jklm <- plot_grid(j,k,l,m, nrow = 1, rel_widths = c(12,2,4,10), align = "h",  labels = c("h", "i", "j", "k"), label_size = 8)
+    nopqr <- plot_grid(n,o,p,q,r, nrow = 1, rel_widths = c(4,4,4,2,2), align = "h",  labels = c("l", "m", "n", "o", "p"), label_size = 8)
+
+    plot_grid(abcd, efgh, jklm,nopqr, ncol = 1)
 
 ![](../figures/fig6-1.png)
 
