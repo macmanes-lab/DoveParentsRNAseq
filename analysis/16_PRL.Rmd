@@ -20,7 +20,6 @@ library(apaTables)
 
 source("../R/themes.R") 
 source("../R/functions.R")
-source("../R/icons.R")
 
 knitr::opts_chunk$set(fig.path = '../figures/PRL/',message=F, warning=FALSE)
 ```
@@ -28,7 +27,7 @@ knitr::opts_chunk$set(fig.path = '../figures/PRL/',message=F, warning=FALSE)
 ## Circulating levels of prolactin
 
 ```{r data}
-hormones <- read_csv("../results/hormones.csv")
+hormones <- read_csv("../results/07_hormones.csv")
 hormones$treatment <- factor(hormones$treatment, levels = alllevels)
 
 meanprolactin <- hormones %>% 
@@ -63,49 +62,27 @@ p1 <- hormones %>%
   labs(x = "increasing time >>", y = "prolactin (ng/mL)")
 p1
 
-p1 +
-  annotation_custom(control, ymin = -20, ymax = 0, xmin = -7.8) +
-  annotation_custom(bldg, ymin = -20, ymax = 0, xmin = -5.8) +
-  annotation_custom(lay, ymin = -20, ymax = 0, xmin = -3.8) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = -1.8) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = 0.6) +
-  annotation_custom(inc, ymin = -20, ymax = 0, xmin = 2.4) +
-  annotation_custom(hatch, ymin = -20, ymax = 0, xmin = 4.4) +
-  annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 6.4) +
-  annotation_custom(nestling, ymin = -20, ymax = 0, xmin = 8.4) + 
-  ylim(c(-10,120)) 
 
 ```
 
 
-## Prolactin (_PRL_) and _BRCA1_ expression in the pituitary
+## Prolactin expression 
 
 ```{r candidatevsds}
-colData.pit <-  read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
-colData.pit <- colData.pit %>% filter(tissue == "pituitary")
+prl <- read_csv("../results/candidatecounts.csv") %>%
+  filter(gene ==  "PRL")  %>% 
+  mutate(bird_id = sapply(strsplit(samples, '_'), "[", 1)) %>%
+  select(-X1, -samples) %>% 
+  select(bird_id, everything())
+  
+prl
 
-vsd.pit <- read.csv("../results/06_pitallvsd.csv", header = T, row.names = 1)
+hormonesslim <- hormones %>%
+  select(bird_id, hormone, plasma_conc, logconc)
+head(hormonesslim)
 
-savecols <- as.character(colData.pit$V1) 
-savecols <- as.vector(savecols) 
-vsd.pit <- vsd.pit %>% dplyr::select(one_of(savecols)) 
-vsd.pit$genes <- row.names(vsd.pit)
-
-candidategenes <- c("PRL", "BRCA1", "PRLR")
-candidates.pit <- vsd.pit %>% dplyr::filter(genes %in% candidategenes)
-candidates.pit <- as.data.frame(candidates.pit)
-row.names(candidates.pit) <- candidates.pit$genes
-candidates.pit$genes <- NULL
-candidates.pit <- as.data.frame(t(candidates.pit))
-candidates.pit$V1 <- row.names(candidates.pit) 
-candidates.pit <- left_join(colData.pit, candidates.pit) 
-candidates.pit$treatment <- factor(candidates.pit$treatment, levels = alllevels)
-candidates.pit$study2 <- ifelse(candidates.pit$treatment %in% charlevels, "charcterization",
-                              ifelse(candidates.pit$treatment %in% levelstiming, "timing",
-                                     ifelse(candidates.pit$treatment %in% levelsremoval, "removal", NA)))
-tail(candidates.pit)
-
-
+hormonesandPRL <- full_join(prl, hormonesslim, by = "bird_id")
+hormonesandPRL
 ```
 
 ```{r PRL.pit}
@@ -133,37 +110,10 @@ p2 <- candidates.pit %>%
   guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) +
   theme(axis.title.y  = element_text(face = "italic")) 
 p2
-p2+
-  annotation_custom(control, ymin = 13.5, ymax = 15, xmin = -7.5) +
-  annotation_custom(bldg, ymin = 13.5, ymax = 15, xmin = -5.5) +
-  annotation_custom(lay, ymin = 13.5, ymax = 15, xmin = -3.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = -1.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = 0.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = 2.5) +
-  annotation_custom(hatch, ymin = 13.5, ymax = 15, xmin = 4.5) +
-  annotation_custom(nestling, ymin = 13.5, ymax = 15, xmin = 6.5) +
-  annotation_custom(nestling, ymin = 13.5, ymax = 15, xmin = 8.5) 
-
 
 ```
 
-```{r hormonesandgenes}
-plot_grid(p1 + theme(legend.position ="none",
-                     axis.title.x = element_blank(),
-                     axis.text.x = element_blank()),
-          p2 + theme(legend.position = c(0.85,0.3)) +
-            labs(subtitle = NULL) +
-  annotation_custom(control, ymin = 13.5, ymax = 15.5, xmin = -7.5) +
-  annotation_custom(bldg, ymin = 13.5, ymax = 15.5, xmin = -5.5) +
-  annotation_custom(lay, ymin = 13.5, ymax = 15.5, xmin = -3.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15.5, xmin = -1.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15.5, xmin = 0.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15.5, xmin = 2.5) +
-  annotation_custom(hatch, ymin = 13.5, ymax = 15.5, xmin = 4.5) +
-  annotation_custom(nestling, ymin = 13.5, ymax = 15.5, xmin = 6.5) +
-  annotation_custom(nestling, ymin = 13.5, ymax = 15.5, xmin = 8.5), 
-          nrow = 2,rel_heights = c(0.4,0.6)) 
-```
+
 
 
 
@@ -189,15 +139,7 @@ p3 <- candidates.pit %>%
   scale_fill_manual(values = colorscharnew) +
   theme(legend.position = "none") + 
   labs(x = "increasing time >>", y = "BRCA1", subtitle = "Pituitary") +
-  annotation_custom(control, ymin = 6.65, ymax = 7, xmin = -7.8) +
-  annotation_custom(bldg, ymin = 6.65, ymax = 7, xmin = -5.8) +
-  annotation_custom(lay, ymin = 6.65, ymax = 7, xmin = -3.8) +
-  annotation_custom(inc, ymin = 6.65, ymax = 7, xmin = -1.8) +
-  annotation_custom(inc, ymin = 6.65, ymax = 7, xmin = 0.6) +
-  annotation_custom(inc, ymin = 6.65, ymax = 7, xmin = 2.4) +
-  annotation_custom(hatch, ymin = 6.65, ymax = 7, xmin = 4.4) +
-  annotation_custom(nestling, ymin = 6.65, ymax = 7, xmin = 6.4) +
-  annotation_custom(nestling, ymin = 6.65, ymax = 7, xmin = 8.4) +
+
   ylim(6.8,8.5) +
   guides(fill = FALSE, alpha = FALSE, color = guide_legend(order=1)) +
   theme(legend.position = c(0.85,0.2), legend.direction = "horizontal") + 
@@ -374,16 +316,7 @@ p2 <- candidates.pit %>%
   scale_color_manual(values = sexcolors) +
   labs(y = "Pituitary PRL", x = "parental stage" ) +
   theme(axis.title.y  = element_text(face = "italic"),
-        axis.text.x = element_blank())  +
-  annotation_custom(control, ymin = 13.5, ymax = 15, xmin = -7.5) +
-  annotation_custom(bldg, ymin = 13.5, ymax = 15, xmin = -5.5) +
-  annotation_custom(lay, ymin = 13.5, ymax = 15, xmin = -3.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = -1.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = 0.5) +
-  annotation_custom(inc, ymin = 13.5, ymax = 15, xmin = 2.5) +
-  annotation_custom(hatch, ymin = 13.5, ymax = 15, xmin = 4.5) +
-  annotation_custom(nestling, ymin = 13.5, ymax = 15, xmin = 6.5) +
-  annotation_custom(nestling, ymin = 13.5, ymax = 15, xmin = 8.5) 
+        axis.text.x = element_blank())  
 
 p8 <- ggplot(meanPRL, aes(treatment, m)) +
    geom_image(aes(image=music), size=.12)  +
@@ -515,6 +448,10 @@ write.csv(candidates.pit, "../results/16_pitPRL.csv")
 write.csv(aov_all, "../results/16_aov_PRLsex.csv")
 write.csv(aov_manip, "../results/16_aov_PRLsextreatment.csv")
 write.csv(meanPRLPRLR, "../results/16_meanPRLPRLR.csv", row.names = F)
+
+write.csv(prl, "../results/16_PRL.csv", row.names = F)
+write.csv(hormonesandPRL, "../results/16_hormonesandPRL.csv", row.names = F)
+
 
 ```
 
