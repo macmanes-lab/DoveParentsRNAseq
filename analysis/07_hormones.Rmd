@@ -13,7 +13,6 @@ library(ggsignif)
 library(apaTables)
 
 source("../R/themes.R")  # load custom themes and color palletes
-source("../R/icons.R")
 
 knitr::opts_chunk$set(fig.path = '../figures/hormones/',message=F, warning=FALSE, cache = T)
 ```

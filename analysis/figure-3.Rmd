@@ -167,4 +167,6 @@ plot_grid(ab, cde, ghf, nrow = 3, rel_heights = c(1,1,1.25))
 
 ```{r writefiles}
 write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+#write.csv(candidatevsd, "../results/candidatecounts.csv")
+
 ```
