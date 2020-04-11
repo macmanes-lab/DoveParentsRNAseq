@@ -455,3 +455,19 @@ write.csv(hormonesandPRL, "../results/16_hormonesandPRL.csv", row.names = F)
 
 ```
 
+
+```{r include=F, eval=F}
+# data from VF
+library(tidyverse)
+counts <- read_csv("../results/2020-04-10_Suzanne_gene_counts_VF.csv") %>%
+  mutate(logcounts = log(counts)) %>%
+  select(bird_id, sex, tissue, stage, timept, geneid, counts, logcounts) %>%
+  drop_na()
+head(counts)
+
+counts %>%
+  filter(geneid == "prl") %>%
+  ggplot(aes(x = as.factor(timept), y = logcounts)) +
+  geom_boxplot(aes(color = sex)) +
+  facet_wrap(~ tissue)
+```
