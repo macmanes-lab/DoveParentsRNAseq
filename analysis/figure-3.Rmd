@@ -203,15 +203,20 @@ vsdhormones <- candidatevsd %>%
 vsdhormones
 
 
-plotcorrs <- function(whichtissue){
+vsdhormoneshyp <- vsdhormones %>% filter(tissue == "hypothalamus" )
+vsdhormonespit <- vsdhormones %>% filter(tissue == "pituitary" )
+vsdhormonesgon <- vsdhormones %>% filter(tissue == "gonad" )
+
+plotcorrs <- function(whichtissue, whichsex){
   
   x <- vsdhormones  %>%
-    filter(tissue == whichtissue) %>%
+    filter(tissue == whichtissue, 
+           sex == whichsex) %>%
     select(-sex, - tissue, - treatment, -samples, -bird_id, -moltbin) %>%
     correlate()
   print(fashion(x))
   
-  p <- rplot(x, colors = c("#0571b0", "#92c5de", "#f7f7f7","#f7f7f7","#f7f7f7", "#f4a582", "#ca0020")) +
+  p <-rplot(x, colors = c("#0571b0", "#92c5de", "#f7f7f7","#f7f7f7","#f7f7f7", "#f4a582", "#ca0020")) +
     theme_B3() +
     theme(legend.position = "bottom",
           axis.text.x = element_text(angle = 45, hjust = 1),
@@ -220,13 +225,38 @@ plotcorrs <- function(whichtissue){
   return(p)
 }
 
-a <- plotcorrs("hypothalamus") 
-b <- plotcorrs("pituitary") + theme(axis.text.y = element_blank())
-c <- plotcorrs("gonad") + theme(axis.text.y = element_blank())
+a <- plotcorrs("hypothalamus", "female") + theme(legend.position = "none")
+b <- plotcorrs("pituitary", "female") + theme(axis.text.y = element_blank()) + theme(legend.position = "none")
+c <- plotcorrs("gonad", "female") + theme(axis.text.y = element_blank()) + theme(legend.position = "none")
 
-plot_grid(a,b,c, nrow = 1, rel_widths = c(1.2,1,1))
+d <- plotcorrs("hypothalamus", "male") 
+e <- plotcorrs("pituitary", "male") + theme(axis.text.y = element_blank())
+f <- plotcorrs("gonad", "male") + theme(axis.text.y = element_blank())
+
+plot_grid(a,b,c, d,e,f, nrow = 2, rel_widths = c(1.2,1,1), rel_heights = c(1,1.2))
+
+plotspecificcorrs <- function(df, myx, myy, myxlab, myylab){
+  p <- df %>%
+    mutate(tissue = factor(tissue, levels = tissuelevel)) %>%
+    ggplot(aes(x = myx, y = myy)) +
+    geom_point(aes(color = treatment)) +
+    geom_smooth(method = "lm", aes(color = sex)) +
+    facet_wrap(~sex, scales = "free", nrow = 2) +
+    scale_color_manual(values = allcolors) +
+    labs(x = myxlab, y = myylab) +
+    theme_B3() +
+    theme(legend.position = "none",
+          axis.title = element_text(face = "italic"))
+  return(p)
+}
 
 
+a <- plotspecificcorrs(vsdhormoneshyp, vsdhormoneshyp$FSHB, vsdhormoneshyp$PRL, "FSHB", "PRL") + labs(subtitle = "Hypothalamus")
+b <- plotspecificcorrs(vsdhormonespit, vsdhormonespit$prolactin, vsdhormonespit$PRL, "circulating prolactin", "PRL") +
+  theme(axis.title.x = element_text(face = "plain")) + labs(subtitle = "Pituitary")
+c <- plotspecificcorrs(vsdhormonesgon, vsdhormonesgon$ESR1, vsdhormonesgon$PGR, "ESR1", "PGR")  + labs(subtitle = "Gonads")
+
+plot_grid(a,b,c,nrow = 1, labels = "auto", label_size = 8)
 ```
 
 ```{r writefiles}
