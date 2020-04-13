@@ -189,12 +189,25 @@ plot_grid(ab,c, nrow = 2)
 # correlations
 library(corrr)
 
+
+hormones <- read_csv("../results/07_hormoneswide.csv") %>%
+  select(-study, -treatment, -sex)
+head(hormones)
+
+head(candidatevsd)
+
+vsdhormones <- candidatevsd %>%
+  pivot_wider(names_from = gene, values_from = counts) %>%
+  mutate(bird_id = sapply(strsplit(samples,"\\_"), "[", 1)) %>%
+  left_join(.,hormones, by =  "bird_id")
+vsdhormones
+
+
 plotcorrs <- function(whichtissue){
   
-  x <- candidatevsd %>%
-    filter(tissue == whichtissue)  %>%
-    pivot_wider(names_from = gene, values_from = counts) %>%
-    select(-sex, - tissue, - treatment, -samples) %>%
+  x <- vsdhormones  %>%
+    filter(tissue == whichtissue) %>%
+    select(-sex, - tissue, - treatment, -samples, -bird_id, -moltbin) %>%
     correlate()
   print(fashion(x))
   
