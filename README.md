@@ -41,6 +41,10 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 
 ![](./figures/fig6-1.png)
 
+## Suppl Fig 1
+
+![](./figures/supplfig1.png)
+
 ## Related documentation 
 
 Another website <http://www.dovelovegenomics.org/>.
