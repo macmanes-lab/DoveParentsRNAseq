@@ -37,30 +37,30 @@ candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", "CGNRH-R",
 
 candidategenesslim <- c("OXT", "AVP", "GNRH1", "GNRHR", 
                     "AR",  "CYP19A1", 
-                     "AVPR1A", "AVPR1B", "AVPR2","VIP",
-                  "DRD1", "DRD2", 
-                  "PRL", "PRLR",  
+                    "AVPR1A", "AVPR1B", "AVPR2","VIP",
+                    "DRD1", "DRD2", 
+                    "PRL", "PRLR",  
                     "ESR1","ESR2", "LBH",  
-                   
-                    "FOS", "JUN", "EGR1", "BDNF"
-                      ) 
+                    "FOS", "JUN", "EGR1", "BDNF") 
+
+# candidategenesslim: AR, AVP, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, EGR1, ESR1, ESR2, FOS, GNRH1, GNRHR, JUN, LBH, OXT, PRL, PRLR, VIP
+# DEG candidategenesslim: AR, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, ESR1, FOS, GNRHR, LBH, PRL, PRLR, 
+# non-DEG candidategenesslim: AVP, AVPR1B, ESR2,  GNRH1, JUN, OXT, VIP
 
 
 
-# all candidate genes: AR, AVP, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, EGR1, ESR1, ESR2, FOS, GNRH1, GNRHR, JUN, LBH, OXT, PRL, PRLR, VIP
-
-
-# DEG candidate genes: AR, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, ESR1, FOS, GNRHR, LBH, PRL, PRLR, 
-
-# Candidate genes that were not differentially expressed: AVP, AVPR1B, ESR2,  GNRH1, JUN, OXT, VIP
-
-
+hormonepapergenes <- c("GNRH1", "CGNRH-R", "GNRHR",  
+                       "FSHB", "FSHR", "LHCGR", # no LSH
+                       "VIP", "VIPR1",
+                       "ESR1", "AR", "CYP19A1", "HSD17B1", # receptors synthesis
+                       "PGR" , "HSD3B2", 
+                       "PRL", "PRLR")
 ```
 
 ## variance stabilized gene expression  (vsd)
 
 ```{r }
-geneids <- read_csv("../metadata/00_geneinfo.csv")
+geneids <- read_csv("../metadata/00_geneinfo.csv") %>% select(-X1)
 
 vsd_path <- "../results/DEseq2/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
@@ -91,12 +91,11 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   return(candidates)
 }
 
-hypvsd <- getcandidatevsd(candidategenesslim, "hypothalamus", sexlevels)
-pitvsd <- getcandidatevsd(candidategenesslim, "pituitary", sexlevels)
-gonvsd <- getcandidatevsd(candidategenesslim, "gonad", sexlevels)
+hypvsd <- getcandidatevsd(hormonepapergenes, "hypothalamus", sexlevels)
+pitvsd <- getcandidatevsd(hormonepapergenes, "pituitary", sexlevels)
+gonvsd <- getcandidatevsd(hormonepapergenes, "gonad", sexlevels)
 head(hypvsd)
-head(pitvsd)
-head(gonvsd)
+tail(gonvsd)
 
 candidatevsd <- rbind(hypvsd, pitvsd)
 candidatevsd <- rbind(candidatevsd, gonvsd)
@@ -106,67 +105,93 @@ unique(candidatevsd$gene)
 
 ## Figs 
 
-```{r fig3, fig.width=7, fig.height=7}
-makeboxplots <- function(df, whichgene, mysubtitle, whichsex, whichtimepoint){
+
+```{r DEGs}
+# summary DEG results from DESeq2
+candidateDEGS <- read_csv("../../musicalgenes/data/allDEG.csv") %>%
+  select(-X1) %>%
+  filter(gene %in% hormonepapergenes)
+head(candidateDEGS)
+
+# get genes to plot
+candidateDEGS %>% filter(tissue == "hypothalamus", sex == "female", comparison != "control_bldg") 
+candidateDEGS %>% filter(tissue == "hypothalamus", sex == "male", comparison != "control_bldg") 
+candidateDEGS %>% filter(tissue == "pituitary", sex == "male", comparison != "control_bldg") 
+candidateDEGS %>% filter(tissue == "pituitary", sex == "female", comparison != "control_bldg") 
+candidateDEGS %>% filter(tissue == "gonad", sex == "female", comparison != "control_bldg") 
+
+# summarize all differences
+candidateDEGtable <- candidateDEGS %>%
+  mutate(posneg = ifelse(lfc >= 0, "+", "-")) %>%
+  mutate(geneposneg = paste(gene, posneg, sep = "")) %>%
+  select(sex, tissue, comparison, geneposneg) %>%
+  group_by(sex, tissue, comparison) %>%
+   arrange(geneposneg) %>%
+  summarize(genes = str_c(geneposneg, collapse = " ")) %>% 
+  pivot_wider(names_from = comparison, values_from = genes)  %>% 
+  ungroup(tissue) %>%
+  mutate(tissue = factor(tissue, levels =  tissuelevel))  %>% 
+  arrange(sex, tissue)  %>% 
+  select(sex, tissue, bldg_lay, lay_inc.d3, inc.d9_inc.d17, hatch_n5, control_bldg)
+candidateDEGtable
+
+newboxplot <- function(df, mygenes, whichsex, whichstage){
+  
   p <- df %>%
-    filter(treatment %in% charlevels,
-           gene %in% whichgene,
-           sex %in% whichsex) %>%
-    filter(treatment %in% whichtimepoint) %>%
+    filter(gene %in% mygenes, 
+           sex %in% whichsex,
+           treatment %in% whichstage) %>%
+    droplevels() %>%
+    mutate(tissue = factor(tissue, levels = tissuelevel)) %>%
     ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
-    geom_boxplot(outlier.shape = NA) + 
+    geom_boxplot() +
     geom_jitter(size = 0.5, width = 0.1) +
-    facet_wrap(~gene, scales = "free_y", nrow = 1) +
+    facet_grid(tissue~gene, scales = "free_y") +
     theme_B3() +
-    scale_fill_manual(values = allcolors) +
     scale_color_manual(values = allcolors) +
-    theme(#axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "none") +
-    labs(y = "gene expression" , x = "Sequential stages with candidate DEGs", subtitle = mysubtitle) +
-    theme(strip.text = element_text(face = "italic"))
+    scale_fill_manual(values = allcolors) +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.text.x = element_text(face = "italic"),
+          axis.title.x = element_blank())  +
+    labs(x = "Parental stage",
+         y = "variance stabilized expression")
   return(p)
 }
 
-## hyp 
-a <- makeboxplots(hypvsd, c("BDNF","CYP19A1", "DRD1", "EGR1"), 
-                  "Female hypothalamus", "female", c("hatch", "n5"))  +
-  theme(axis.title.x = element_blank())
+a1 <- newboxplot(hypvsd, c("PGR",  "CYP19A1", "LHCGR" ), "female", c( "hatch", "n5")) + 
+  theme(strip.text.y = element_blank()) + labs(subtitle = "Females")
+a2 <- newboxplot(hypvsd, c("AR"), "male", c( "hatch", "n5")) + 
+  theme(axis.title.y = element_blank()) + labs(subtitle = "Males")
 
-b <- makeboxplots(hypvsd, c("AR"),"Male hypothalamus", "male", 
-                  c( "inc.d9", "inc.d17"))  +
-  theme(axis.title = element_blank())
+b1 <- newboxplot(gonvsd, c("HSD3B2"), "female", c( "bldg", "lay"))  +
+  theme(strip.text.y = element_blank(),
+        axis.title.y = element_blank()) + labs(subtitle = "Females")
+b2 <- newboxplot(gonvsd, c("VIPR1",  "PRLR" ), "female", c( "lay", "inc.d3"))  + 
+  theme(axis.title.y = element_blank()) + labs(subtitle = " ")
 
-ab <- plot_grid(a,b, rel_widths = c(4,1),  labels = "auto", label_size = 8)
+ab <- plot_grid(a1,a2,b1,b2, rel_widths = c(6,2.5,2,4), labels = c("a", " ", "b", " "), label_size = 8, nrow = 1)
 
-c <- makeboxplots(pitvsd, c("ESR1","GNRHR"), "Female pituitary", "female", c("bldg", "lay", "inc.d3"))   +
-  theme(axis.title.x = element_blank())
-d <- makeboxplots(pitvsd, c("LBH", "PRL" ), " ", "female", c("inc.d9", "inc.d17", "hatch", "n5"))  +
-  theme(axis.title  = element_blank())
-e <- makeboxplots(pitvsd, c( "AVPR2"), " ", "female", c( "hatch", "n5"))  +
-  theme(axis.title  = element_blank())
-
-cde <- plot_grid(c,e,d, rel_widths = c(6,2.25,7), nrow = 1,  labels = c("c"), label_size = 8)
+c1 <- newboxplot(pitvsd, c( "ESR1", "GNRHR"), "female", c("bldg", "lay",  "inc.d3")) 
+c2 <- newboxplot(pitvsd, c( "PRL"), "female", c("inc.d9", "inc.d17", "hatch", "n5")) 
+c3 <- newboxplot(pitvsd, c("VIPR1",  "PRL" ), "male", c( "inc.d9", "inc.d17")) 
 
 
-g <- makeboxplots(gonvsd, c( "AVPR1A"), "Female gonads", "female", c( "lay", "inc.d3", "inc.d9"))  +
-  labs(caption = " ", x = " ")
-h <- makeboxplots(gonvsd, c( "EGR1", "FOS", "PRLR"), " ", "female", c( "lay", "inc.d3"))  +
-  theme(axis.title.y = element_blank()) + labs(caption = " ")
-f <- makeboxplots(pitvsd, c("LBH", "PRL"), "Male pituitary", "male", 
-                  c("inc.d9", "inc.d17")) + 
-  theme(plot.caption = element_text(face = "italic")) + 
-  theme(axis.title.y = element_blank()) +
-  labs(x = " ",
-       caption = "Candidate genes that were not differentially expressed from bldg to n5: AVP, AVPR1B, ESR2,  GNRH1, JUN, and OXT.")
+c <- plot_grid(c1 + theme(strip.text.y = element_blank()) + labs(subtitle = "Females"),
+          c2 + theme(strip.text.y = element_blank(),
+                    axis.title.y = element_blank()) + labs(subtitle = " ") ,
+          c3 + theme(axis.title.y = element_blank()) + labs(subtitle = "Males"), 
+          nrow = 1, rel_widths = c(6,4,4),
+          labels = c("c"), label_size = 8)
 
-ghf <- plot_grid(g,h,f, nrow = 1, rel_widths = c(3,6,4),  labels = c("d", " ", "e"), label_size = 8)
-
-plot_grid(ab, cde, ghf, nrow = 3, rel_heights = c(1,1,1.25))
+plot_grid(ab,c, nrow = 2)
 
 ```
 
+
 ```{r writefiles}
-write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+#write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
 #write.csv(candidatevsd, "../results/candidatecounts.csv")
+write.csv(candidateDEGtable, "../results/candidateDEGtable.csv")
 
 ```
