@@ -106,7 +106,7 @@ unique(candidatevsd$gene)
 ## Figs 
 
 
-```{r DEGs}
+```{r fig3, fig.width = 7}
 # summary DEG results from DESeq2
 candidateDEGS <- read_csv("../../musicalgenes/data/allDEG.csv") %>%
   select(-X1) %>%
@@ -186,8 +186,35 @@ c <- plot_grid(c1 + theme(strip.text.y = element_blank()) + labs(subtitle = "Fem
 
 plot_grid(ab,c, nrow = 2)
 
-```
+# correlations
+library(corrr)
 
+plotcorrs <- function(whichtissue){
+  
+  x <- candidatevsd %>%
+    filter(tissue == whichtissue)  %>%
+    pivot_wider(names_from = gene, values_from = counts) %>%
+    select(-sex, - tissue, - treatment, -samples) %>%
+    correlate()
+  print(fashion(x))
+  
+  p <- rplot(x, colors = c("#0571b0", "#92c5de", "#f7f7f7","#f7f7f7","#f7f7f7", "#f4a582", "#ca0020")) +
+    theme_B3() +
+    theme(legend.position = "bottom",
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          axis.text = element_text(face = "italic")) +
+    labs(subtitle = whichtissue)
+  return(p)
+}
+
+a <- plotcorrs("hypothalamus") 
+b <- plotcorrs("pituitary") + theme(axis.text.y = element_blank())
+c <- plotcorrs("gonad") + theme(axis.text.y = element_blank())
+
+plot_grid(a,b,c, nrow = 1, rel_widths = c(1.2,1,1))
+
+
+```
 
 ```{r writefiles}
 #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
