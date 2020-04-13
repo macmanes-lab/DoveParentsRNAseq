@@ -233,7 +233,10 @@ d <- plotcorrs("hypothalamus", "male")
 e <- plotcorrs("pituitary", "male") + theme(axis.text.y = element_blank())
 f <- plotcorrs("gonad", "male") + theme(axis.text.y = element_blank())
 
-plot_grid(a,b,c, d,e,f, nrow = 2, rel_widths = c(1.2,1,1), rel_heights = c(1,1.2))
+plot_grid(a,b,c, d,e,f, nrow = 2, rel_widths = c(1.2,1,1), rel_heights = c(1,1.2),
+          labels = c("females", " ", " ",
+                     "males", " ", ""),
+          label_size = 8)
 
 plotspecificcorrs <- function(df, myx, myy, myxlab, myylab){
   p <- df %>%
