@@ -232,5 +232,11 @@ plot_grid(abcd, efgh, jklm,nopqr, ncol = 1)
 
 
 ```{r writefiles}
-write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+#write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+
+# for victoria
+prlmanip <- candidatevsd %>%
+  filter(gene == "PRL", 
+         treatment %in% c("extend", "m.inc.d8"))
+write.csv(prlmanip, "../results/prlmanip.csv")
 ```
