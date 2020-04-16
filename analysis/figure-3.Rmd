@@ -55,6 +55,19 @@ hormonepapergenes <- c("GNRH1", "CGNRH-R", "GNRHR",
                        "ESR1", "AR", "CYP19A1", "HSD17B1", # receptors synthesis
                        "PGR" , "HSD3B2", 
                        "PRL", "PRLR")
+
+curleychampagnegenes <- c("AVPR1A", "ADRA2A",    
+                         "COMT", "CRH", "CRHBP", "CRHR1", "CRHR2", 
+                          "DRD1", "DRD4","ESR1", "ESR2", #ERa ERbeta
+                          "FOS", "HTR2C", "MEST", "NR3C1", #GR
+                          "OPRM1", "PGR", "PRL", "PRLR",  "SLC6A4" #5HTT
+                         )
+
+parentalcareGO <- c("AVP", "AVPR1A", "BRINP1", "CREBRF", "DBH", "DRD1",  
+                    "GNAQ", "HUBB", "KALRN", "MBD2","NPAS1", "NPAS3",
+                     "NR3C1", "OPRK1", "OXT", "OXTR", "PRL", "PTEN")
+
+# can't find NOS1 or OXTR or FOX1B or HTR5A
 ```
 
 ## variance stabilized gene expression  (vsd)
@@ -91,9 +104,9 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   return(candidates)
 }
 
-hypvsd <- getcandidatevsd(hormonepapergenes, "hypothalamus", sexlevels)
-pitvsd <- getcandidatevsd(hormonepapergenes, "pituitary", sexlevels)
-gonvsd <- getcandidatevsd(hormonepapergenes, "gonad", sexlevels)
+hypvsd <- getcandidatevsd(curleychampagnegenes, "hypothalamus", sexlevels)
+pitvsd <- getcandidatevsd(curleychampagnegenes, "pituitary", sexlevels)
+gonvsd <- getcandidatevsd(curleychampagnegenes, "gonad", sexlevels)
 head(hypvsd)
 tail(gonvsd)
 
@@ -106,11 +119,11 @@ unique(candidatevsd$gene)
 ## Figs 
 
 
-```{r fig3, fig.width = 7}
+```{r }
 # summary DEG results from DESeq2
 candidateDEGS <- read_csv("../../musicalgenes/data/allDEG.csv") %>%
   select(-X1) %>%
-  filter(gene %in% hormonepapergenes)
+  filter(gene %in% curleychampagnegenes)
 head(candidateDEGS)
 
 # get genes to plot
@@ -132,8 +145,12 @@ candidateDEGtable <- candidateDEGS %>%
   ungroup(tissue) %>%
   mutate(tissue = factor(tissue, levels =  tissuelevel))  %>% 
   arrange(sex, tissue)  %>% 
-  select(sex, tissue, bldg_lay, lay_inc.d3, inc.d9_inc.d17, hatch_n5, control_bldg)
+  select(sex, tissue, bldg_lay, lay_inc.d3, inc.d3_inc.d9,  
+         inc.d9_inc.d17,  hatch_n5, control_bldg)
 candidateDEGtable
+```
+
+```{r fig3, fig.width = 7}
 
 newboxplot <- function(df, mygenes, whichsex, whichstage){
   
