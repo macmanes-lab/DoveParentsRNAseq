@@ -61,6 +61,8 @@ candidategenesslim <- c("OXT", "AVP", "GNRH1", "GNRHR",
                       ) 
 
 
+
+
 candidates <- candidategenesslim
 
 candidates <- as.data.frame(candidates)
@@ -139,7 +141,7 @@ kable(mgon)
 
 
 ```{r write}
-write.csv(GO_DEGs, "../results/12_GO_DEGs.csv")
+#write.csv(GO_DEGs, "../results/12_GO_DEGs.csv")
 #write.csv(hyp, "../results/12_GO_DEGs_hyp.csv")
 #write.csv(pit, "../results/12_GO_DEGs_pit.csv")
 #write.csv(gon, "../results/12_GO_DEGs_gon.csv")
