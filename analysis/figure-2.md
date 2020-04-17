@@ -3,14 +3,14 @@ Candidate gene analysis
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -810,37 +810,49 @@ variance stabilized gene expression (vsd)
     gonadDEGs <- c("AVPR1A", "CREBRF", "FOS", "GNAQ", 
                    "NR3C1", "OPRM1", "PRLR")
 
-    makelineplots <- function(whichtissue, whichgenes){
+    candidateboxplot <- function(whichtissue, whichgenes, whichsex){
       
       p <- candidatevsd %>%
-        filter(tissue == whichtissue,
-              gene %in% whichgenes) %>%
+        filter(tissue %in% whichtissue,
+              gene %in% whichgenes,
+              sex %in% whichsex) %>%
         mutate(treatment = factor(treatment, levels = charlevels)) %>%
         mutate(treatmentNum = as.numeric(treatment)) %>%
         ggplot(aes(x = treatmentNum, y = counts)) +
         geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
         #geom_smooth(aes(color = sex)) +
         geom_jitter(size = 0.25, aes(color = sex)) +
-        facet_grid(gene~sex, scales = "free") +
+        facet_wrap(~gene, scales = "free_y", nrow = 1) +
         scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9),
                            labels = charlevels) +
         scale_fill_manual(values = allcolors) +
         scale_color_manual(values = allcolors) +
         theme_B3() + 
         theme(legend.position = "none",
-              strip.text.y = element_text(face = "italic"),
-              axis.text.x = element_text(angle = 45, hjust = 1)) +
-        labs(subtitle = whichtissue, 
-             y = "gene expression (variance stabilized)",
-             x = "Parental Care Stage") 
+              strip.text = element_text(face = "italic"),
+              axis.text.x = element_blank()) +
+        labs(subtitle = whichsex,
+             y = "gene expression",
+             x = NULL) 
       return(p)
     }
 
-    a <- makelineplots("hypothalamus", hypDEGs)
-    b <- makelineplots("pituitary", pitDEGs) + labs(y = NULL)
-    c <- makelineplots("gonad", gonadDEGs) + labs(y = NULL)
+    a1 <- candidateboxplot("hypothalamus", hypDEGs, "female") + labs(x = NULL, title = "hypothalamus") 
+    a2 <- candidateboxplot("hypothalamus", hypDEGs, "male") + labs(x = NULL) +
+      theme(strip.text = element_blank())
 
-    plot_grid(a,b,c, nrow = 1, labels = "AUTO", label_size = 8)
+    b1 <- candidateboxplot("pituitary", pitDEGs, "female") + labs(x = NULL, title = "pituitary")
+    b2 <- candidateboxplot("pituitary", pitDEGs, "male") + labs(x = NULL) +
+      theme(strip.text = element_blank())
+
+    c1 <- candidateboxplot("gonad", gonadDEGs, "female") + labs(x = NULL, title = "gonad")
+    c2 <- candidateboxplot("gonad", gonadDEGs, "male") + 
+      theme(strip.text = element_blank(),
+            axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+    plot_grid(a1,a2, b1,b2, c1,c2, nrow = 6, labels = c("A", " ","B", " ", "C", " "), label_size = 8,
+              rel_heights = c(1, 0.75, 1, 0.75, 1, 1))
 
 ![](../figures/fig2-1.png)
 
