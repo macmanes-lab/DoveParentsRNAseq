@@ -1,11 +1,11 @@
 # custom themes
 
 theme_B3 <- function () { 
-  theme_classic(base_size = 8) +
+  theme_classic(base_size = 6,
+                base_family = 'Helvetica') +
     theme(
       panel.grid.major  = element_blank(),  # remove major gridlines
-      panel.grid.minor  = element_blank(),  # remove minor gridlines
-      plot.title = element_text(hjust = 0.5, face = "bold") # center & bold 
+      panel.grid.minor  = element_blank()  # remove minor gridlines
     )
 }
 
