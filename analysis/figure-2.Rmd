@@ -8,7 +8,7 @@ output: md_document
 
 # Candidate gene analysis 
 
-```{r}
+```{r setup}
 library(tidyverse)
 library(ggtext)
 library(cowplot)
@@ -106,7 +106,7 @@ candidateDEGS <- read_csv("../results/suppletable1.csv") %>%
 candidateDEGS
 
 table1 <- left_join(candidateDEGS, GOgenesWide) %>%
-  select(gene, bldg_lay:n5_n9, parentalcare, parentalbehavior, NCBI, ) %>%
+  select(gene, bldg_lay:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
   mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
          parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
   rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
@@ -119,7 +119,7 @@ kable(table1)
 
 ## variance stabilized gene expression  (vsd)
 
-```{r eval = F}
+```{r vsds}
 
 vsd_path <- "../results/DEseq2/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
@@ -149,7 +149,6 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   return(candidates)
 }
 
-head(allvsd)
 candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
 
 hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
@@ -161,134 +160,49 @@ head(candidatevsd)
 ```
 
 
-```{r fig2, fig.width = 7, eval = F}
+```{r fig2, fig.width = 7.25, fig.height = 7.25}
 
-newboxplot <- function(df, mygenes, whichsex, whichstage){
+# significant candidate genes
+hypDEGs <- c("CRHBP", "CRHR2", "DRD1", "GNAQ", 
+             "HTR2C", "OPRK1", "PGR")
+pitDEGs <- c("ESR1", "MEST", "PRL", "PTEN")
+gonadDEGs <- c("AVPR1A", "CREBRF", "FOS", "GNAQ", 
+               "NR3C1", "OPRM1", "PRLR")
+
+makelineplots <- function(whichtissue, whichgenes){
   
-  p <- df %>%
-    filter(gene %in% mygenes, 
-           sex %in% whichsex,
-           treatment %in% whichstage) %>%
-    droplevels() %>%
-    mutate(tissue = factor(tissue, levels = tissuelevel)) %>%
-    ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
-    geom_boxplot() +
-    geom_jitter(size = 0.5, width = 0.1) +
-    facet_grid(tissue~gene, scales = "free_y") +
-    theme_B3() +
-    scale_color_manual(values = allcolors) +
+  p <- candidatevsd %>%
+    filter(tissue == whichtissue,
+          gene %in% whichgenes) %>%
+    mutate(treatment = factor(treatment, levels = charlevels)) %>%
+    mutate(treatmentNum = as.numeric(treatment)) %>%
+    ggplot(aes(x = treatmentNum, y = counts)) +
+    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
+    #geom_smooth(aes(color = sex)) +
+    geom_jitter(size = 0.5, aes(color = sex)) +
+    facet_grid(gene~sex, scales = "free") +
+    scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9),
+                       labels = charlevels) +
     scale_fill_manual(values = allcolors) +
-    theme(legend.position = "none",
-          axis.text.x = element_text(angle = 45, hjust = 1),
-          strip.text.x = element_text(face = "italic"),
-          axis.title.x = element_blank())  +
-    labs(x = "Parental stage",
-         y = "variance stabilized expression")
-  return(p)
-}
-
-a1 <- newboxplot(hypvsd, c("PGR",  "CYP19A1", "LHCGR" ), "female", c( "hatch", "n5")) + 
-  theme(strip.text.y = element_blank()) + labs(subtitle = "Females")
-a2 <- newboxplot(hypvsd, c("AR"), "male", c( "hatch", "n5")) + 
-  theme(axis.title.y = element_blank()) + labs(subtitle = "Males")
-
-b1 <- newboxplot(gonvsd, c("HSD3B2"), "female", c( "bldg", "lay"))  +
-  theme(strip.text.y = element_blank(),
-        axis.title.y = element_blank()) + labs(subtitle = "Females")
-b2 <- newboxplot(gonvsd, c("VIPR1",  "PRLR" ), "female", c( "lay", "inc.d3"))  + 
-  theme(axis.title.y = element_blank()) + labs(subtitle = " ")
-
-ab <- plot_grid(a1,a2,b1,b2, rel_widths = c(6,2.5,2,4), labels = c("a", " ", "b", " "), label_size = 8, nrow = 1)
-
-c1 <- newboxplot(pitvsd, c( "ESR1", "GNRHR"), "female", c("bldg", "lay",  "inc.d3")) 
-c2 <- newboxplot(pitvsd, c( "PRL"), "female", c("inc.d9", "inc.d17", "hatch", "n5")) 
-c3 <- newboxplot(pitvsd, c("VIPR1",  "PRL" ), "male", c( "inc.d9", "inc.d17")) 
-
-
-c <- plot_grid(c1 + theme(strip.text.y = element_blank()) + labs(subtitle = "Females"),
-          c2 + theme(strip.text.y = element_blank(),
-                    axis.title.y = element_blank()) + labs(subtitle = " ") ,
-          c3 + theme(axis.title.y = element_blank()) + labs(subtitle = "Males"), 
-          nrow = 1, rel_widths = c(6,4,4),
-          labels = c("c"), label_size = 8)
-
-plot_grid(ab,c, nrow = 2)
-
-# correlations
-library(corrr)
-
-
-hormones <- read_csv("../results/07_hormoneswide.csv") %>%
-  select(-study, -treatment, -sex)
-head(hormones)
-
-head(candidatevsd)
-
-vsdhormones <- candidatevsd %>%
-  pivot_wider(names_from = gene, values_from = counts) %>%
-  mutate(bird_id = sapply(strsplit(samples,"\\_"), "[", 1)) %>%
-  left_join(.,hormones, by =  "bird_id")
-vsdhormones
-
-
-vsdhormoneshyp <- vsdhormones %>% filter(tissue == "hypothalamus" )
-vsdhormonespit <- vsdhormones %>% filter(tissue == "pituitary" )
-vsdhormonesgon <- vsdhormones %>% filter(tissue == "gonad" )
-
-plotcorrs <- function(whichtissue, whichsex){
-  
-  x <- vsdhormones  %>%
-    filter(tissue == whichtissue, 
-           sex == whichsex) %>%
-    select(-sex, - tissue, - treatment, -samples, -bird_id, -moltbin) %>%
-    correlate()
-  print(fashion(x))
-  
-  p <-rplot(x, colors = c("#0571b0", "#92c5de", "#f7f7f7","#f7f7f7","#f7f7f7", "#f4a582", "#ca0020")) +
-    theme_B3() +
-    theme(legend.position = "bottom",
-          axis.text.x = element_text(angle = 45, hjust = 1),
-          axis.text = element_text(face = "italic")) +
-    labs(subtitle = whichtissue)
-  return(p)
-}
-
-a <- plotcorrs("hypothalamus", "female") + theme(legend.position = "none")
-b <- plotcorrs("pituitary", "female") + theme(axis.text.y = element_blank()) + theme(legend.position = "none")
-c <- plotcorrs("gonad", "female") + theme(axis.text.y = element_blank()) + theme(legend.position = "none")
-
-d <- plotcorrs("hypothalamus", "male") 
-e <- plotcorrs("pituitary", "male") + theme(axis.text.y = element_blank())
-f <- plotcorrs("gonad", "male") + theme(axis.text.y = element_blank())
-
-plot_grid(a,b,c, d,e,f, nrow = 2, rel_widths = c(1.2,1,1), rel_heights = c(1,1.2),
-          labels = c("females", " ", " ",
-                     "males", " ", ""),
-          label_size = 8)
-
-plotspecificcorrs <- function(df, myx, myy, myxlab, myylab){
-  p <- df %>%
-    mutate(tissue = factor(tissue, levels = tissuelevel)) %>%
-    ggplot(aes(x = myx, y = myy)) +
-    geom_point(aes(color = treatment)) +
-    geom_smooth(method = "lm", aes(color = sex)) +
-    facet_wrap(~sex, scales = "free", nrow = 2) +
     scale_color_manual(values = allcolors) +
-    labs(x = myxlab, y = myylab) +
-    theme_B3() +
+    theme_B3() + 
     theme(legend.position = "none",
-          axis.title = element_text(face = "italic"))
+          strip.text.y = element_text(face = "italic"),
+          axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(subtitle = whichtissue, 
+         y = "gene expression (variance stabilized)",
+         x = "Parental Care Stage") 
   return(p)
 }
 
+a <- makelineplots("hypothalamus", hypDEGs)
+b <- makelineplots("pituitary", pitDEGs) + labs(y = NULL)
+c <- makelineplots("gonad", gonadDEGs) + labs(y = NULL)
 
-a <- plotspecificcorrs(vsdhormoneshyp, vsdhormoneshyp$FSHB, vsdhormoneshyp$PRL, "FSHB", "PRL") + labs(subtitle = "Hypothalamus")
-b <- plotspecificcorrs(vsdhormonespit, vsdhormonespit$prolactin, vsdhormonespit$PRL, "circulating prolactin", "PRL") +
-  theme(axis.title.x = element_text(face = "plain")) + labs(subtitle = "Pituitary")
-c <- plotspecificcorrs(vsdhormonesgon, vsdhormonesgon$ESR1, vsdhormonesgon$PGR, "ESR1", "PGR")  + labs(subtitle = "Gonads")
-
-plot_grid(a,b,c,nrow = 1, labels = "auto", label_size = 8)
+plot_grid(a,b,c, nrow = 1, labels = "AUTO", label_size = 8)
 ```
+
+
 
 ```{r writefiles}
 #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
