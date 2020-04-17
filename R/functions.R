@@ -868,7 +868,7 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
 
 plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-    geom_point(size = 1, aes(color = pointcolor)) +
+    geom_point(size = 0.5, aes(color = pointcolor)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2") +
     scale_color_manual(values = whichcolors) +
@@ -880,9 +880,10 @@ plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
 
 plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-    geom_point(size = 1, aes(color = pointcolor)) +
+    geom_point(size = 0.5, aes(color = pointcolor)) +
     theme_B3() +
-    labs(x = "tSNE 1", y = "tSNE 2") +
+    labs(x = "tSNE 1", y = "tSNE 2",
+         subtitle = " ") +
     scale_color_manual(values = whichcolors) +
     theme(legend.position = "none",
           axis.text = element_blank()) +
@@ -891,3 +892,27 @@ plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
 }
 
 
+makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
+  p <- allDEG %>%
+    filter(tissue == whichtissue,
+           comparison != "control_bldg") %>%
+    ggplot(aes(x = comparison,  fill = direction)) +
+    geom_bar(position = "dodge") +
+    facet_grid(tissue~sex) +
+    theme_B3() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "none")  +
+    guides(fill = guide_legend(nrow = 1)) +
+    labs(x = NULL, 
+         y = myylab,
+         subtitle = " ") +
+    scale_fill_manual(values = allcolors,
+                      name = " ",
+                      drop = FALSE) +
+    scale_color_manual(values = allcolors) +
+    geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+              position = position_dodge(width = 1),
+              size = 2, color = "black")  +
+    ylim(lowlim, higherlim)
+  return(p)
+}

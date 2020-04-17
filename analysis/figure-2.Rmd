@@ -3,89 +3,22 @@ title: "Fig2"
 output: md_document
 ---
 
+
+## this file no longer works! 
+
+The code here is incomplete. Saving it to use for creating tables.
+
+
 ```{r setup, include=FALSE}
-library(tidyverse)
-library(cowplot)
-library(kableExtra) 
-library(ggtext) # for italic fonts
-library(ggsignif) # fot stats on plots
 
 source("../R/themes.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 ```
 
-## DEGs
-
-```{r allDEGs}
-DEG_path <- "../results/DEseq2/"   # path to the data
-DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
-DEG_pathfiles <- paste0(DEG_path, DEG_files)
-#DEG_files
-
-allDEG <- DEG_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_csv(.x), .id = "file_name") %>% 
-  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/'), "[", 2))  %>% 
-  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
-  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
-  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
-  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
-  mutate(comparison = paste(down,up, sep = "_")) %>%
-  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
-  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
-head(allDEG)
-
-allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
-allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
-allDEG$direction <- factor(allDEG$direction, levels = charlevels)
-```
-
-
 
 ```{r fig2, fig.width=7, fig.height=7}
 
-makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
-  p <- allDEG %>%
-    filter(tissue == whichtissue,
-           comparison != "control_bldg") %>%
-  ggplot(aes(x = comparison,  fill = direction)) +
-    geom_bar(position = "dodge") +
-    facet_grid(tissue~sex) +
-    theme_B3() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "none")  +
-    guides(fill = guide_legend(nrow = 1)) +
-    labs(x = "Sequential parental care stage comparisons", 
-         y = myylab,
-         subtitle = " ") +
-  scale_fill_manual(values = allcolors,
-                       name = " ",
-                       drop = FALSE) +
-  scale_color_manual(values = allcolors) +
-  geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
-            position = position_dodge(width = 1),
-            size = 2, color = "black")  +
-  ylim(lowlim, higherlim)
-  return(p)
-}
-
-
-# hyp
-p1 <- makebargraph("hypothalamus","DEGs", 0, 1250) + theme(axis.text.x = element_blank(), 
-                                                               axis.title.x = element_blank())
-# pit
-p2 <- makebargraph("pituitary","DEGs", 0, 1250)  +  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), 
-                                                              strip.text.x = element_blank())
-# gon
-p3 <- makebargraph("gonad","DEGs", 0, 1250) +  theme(strip.text.x = element_blank())
-bcd <- plot_grid(p1,p2,p3, nrow = 3, rel_heights = c(1.2,1,1.5), labels = c("b", "c", "d"), label_size = 8)
-
-expdesign <- png::readPNG("../figures/images/fig_fig2a.png")
-expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
-
-plot_grid(expdesign, bcd, labels = c("a", " "), label_size = 8, nrow = 2, rel_heights = c(0.25,1))
 
 ```
 
@@ -158,6 +91,6 @@ head(allDEG)
 allDEG %>%
   drop_na()
 
-write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
+#write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
 
 ```

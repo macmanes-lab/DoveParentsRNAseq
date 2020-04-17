@@ -50,7 +50,6 @@ controlsremoval <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
 
 comparisonlevels <- c("control_bldg", "bldg_lay" ,"lay_inc.d3", "inc.d3_inc.d9",
                       "inc.d9_inc.d17", "inc.d17_hatch" , "hatch_n5", "n5_n9",
-                     
                        "hatch_extend",  "hatch_m.n2",         "inc.d17_m.inc.d17", 
                       "inc.d17_prolong" ,   "inc.d3_m.inc.d3",    "inc.d9_m.inc.d8",   
                       "inc.d9_m.inc.d9" ,   "m.inc.d17_prolong",  "m.inc.d3_m.inc.d17",
@@ -59,6 +58,9 @@ comparisonlevels <- c("control_bldg", "bldg_lay" ,"lay_inc.d3", "inc.d3_inc.d9",
                       "prolong_extend",     "m.inc.d17_m.n2",     "m.inc.d9_m.inc.d17",
                       "m.inc.d9_m.n2"
                       )
+
+comparisonlabels = c("bldg vs lay" ,"lay vs inc.d3", "inc.d3 vs inc.d9", "inc.d9 vs inc.d17", 
+                     "inc.d17 vs hatch" , "hatch vs n5", "n5 vs n9")
 
 
 allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay", "bldg")
@@ -86,7 +88,8 @@ tissuelevel <- c("hypothalamus", "pituitary", "gonad")
 sexlevels <- c("female", "male")
 
 
-charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9", "NS")
+charlevelsvocano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
+                      "inc.d17", "hatch", "n5", "n9", "NS")
 
 alllevels3volcano <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                       "inc.d17", "hatch", "n5", "n9",
