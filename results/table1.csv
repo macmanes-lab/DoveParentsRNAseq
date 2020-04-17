@@ -1,7 +1,18 @@
-sex,tissue,control_bldg,bldg_lay,lay_inc.d3,inc.d3_inc.d9,inc.d9_inc.d17,hatch_n5
-female,hypothalamus,AR+ CYP19A1- DRD1+ ESR1+ GNRHR- JUN- PRL- PRLR- VIP-,NA,NA,NA,NA,BDNF- CYP19A1+ DRD1+ EGR1+
-male,hypothalamus,AR+ AVPR2- CYP19A1- EGR1+ ESR1+ GNRH1- GNRHR- PRL- VIP-,NA,NA,NA,AR+,NA
-female,pituitary,AR+ AVP- AVPR2+ BDNF+ CYP19A1- DRD1+ FOS- LBH- OXT- PRL- PRLR-,ESR1+ GNRHR-,ESR1- GNRHR+,NA,LBH+ PRL+,AVPR2+ LBH- PRL-
-male,pituitary,AR+ AVP- AVPR1B+ AVPR2+ BDNF+ CYP19A1- OXT- PRL- PRLR-,NA,NA,NA,LBH+ PRL+ VIP+,NA
-female,gonad,AR+ AVPR1A+ CYP19A1- EGR1- ESR1+ ESR2- LBH-,NA,AVPR1A+ EGR1+ FOS+ PRLR-,AVPR1A-,NA,NA
-male,gonad,AR+ ESR1+ PRL- PRLR-,NA,NA,NA,NA,NA
+"","gene","bldg_lay","lay_inc.d3","inc.d3_inc.d9","inc.d9_inc.d17","hatch_n5","n5_n9","Literature","GO","NCBI"
+"1","AVPR1A"," ","FG+","FG-"," "," "," ","X","X","NP_001103908.1"
+"2","CREBRF","FG+","FG-"," "," "," "," "," ","X","XP_001231574.1"
+"3","CRHBP"," "," "," "," ","FH+"," ","X"," ","XP_003643006.2"
+"4","CRHR2"," "," "," "," ","FH+"," ","X"," ","NP_989785.1"
+"5","DRD1"," "," "," "," ","FH+"," ","X","X","NP_001138320.1"
+"6","ESR1","FP+","FP-"," "," "," "," ","X"," ","XP_015139536.1"
+"7","FOS"," ","FG+"," "," "," "," ","X"," ","NP_990839.1"
+"8","GNAQ"," ","FG-"," "," ","FH+"," "," ","X","NP_001026598.1"
+"9","HTR2C"," "," "," "," ","FH+"," ","X"," ","XP_004940707.1"
+"10","MEST"," "," "," ","FP+","FP-"," ","X"," ","XP_015142671.1"
+"11","NR3C1"," ","FG-"," "," "," "," ","X","X","XP_015149519.1"
+"12","OPRK1"," "," "," "," ","FH+"," "," ","X","XP_426087.2"
+"13","OPRM1","FG-"," "," "," "," ","FG+","X"," ","XP_003641008.2"
+"14","PGR"," "," "," "," ","FH+"," ","X"," ","NP_990593.1"
+"15","PRL"," "," "," ","FP+ MP+","FP-"," ","X","X","NP_990797.2"
+"16","PRLR"," ","FG-"," "," "," "," ","X"," ","XP_015132722.1"
+"17","PTEN"," ","FP-"," "," "," "," "," ","X","XP_015134187.1"
