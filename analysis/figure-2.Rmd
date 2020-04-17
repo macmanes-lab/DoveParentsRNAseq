@@ -20,34 +20,6 @@ source("../R/themes.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 
-candidategenes <- c("OXT", "AVP", "GNRH1", "GNRHR", "CGNRH-R",
-                    "AR", "POMC", "AGRP", 
-                       "CRH", "AVPR1A", "AVPR1B", "AVPR2","VIP",
-                       "CYP19A1", "DRD1", "DRD2", "PRL", "PRLR", "SOX9", 
-                    "ESR1","ESR2", "LBH", "CDK1", "BRCA1",
-                    "PTEN", "CREBBP", "FOS", "JUN", "EGR1",
-                     "BDNF", "GRM2","GRIA1",
-                    "KCNJ5", "CISH", "PTGER3", "CEBPD", "ZBTB16", 
-                    "DIO3", "DIO2", "DIO1",
-                    
-                     "VIPR1", "VIPR2", "NPY", "LH", "FSH", "FSHB",
-                    "JAK2", "HCRT", "TRH", "TSHB",
-                    "MC3R", "MC4R", "MC5R",  "NR3C1", "NR3C2",
-                    "STAT5B","NPVF") 
-
-candidategenesslim <- c("OXT", "AVP", "GNRH1", "GNRHR", 
-                    "AR",  "CYP19A1", 
-                    "AVPR1A", "AVPR1B", "AVPR2","VIP",
-                    "DRD1", "DRD2", 
-                    "PRL", "PRLR",  
-                    "ESR1","ESR2", "LBH",  
-                    "FOS", "JUN", "EGR1", "BDNF") 
-
-# candidategenesslim: AR, AVP, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, EGR1, ESR1, ESR2, FOS, GNRH1, GNRHR, JUN, LBH, OXT, PRL, PRLR, VIP
-# DEG candidategenesslim: AR, AVPR1A, AVPR1B, AVPR2, BDNF, CYP19A1, DRD1, ESR1, FOS, GNRHR, LBH, PRL, PRLR, 
-# non-DEG candidategenesslim: AVP, AVPR1B, ESR2,  GNRH1, JUN, OXT, VIP
-
-
 
 hormonepapergenes <- c("GNRH1", "CGNRH-R", "GNRHR",  
                        "FSHB", "FSHR", "LHCGR", # no LSH
