@@ -121,10 +121,20 @@ fig1 <- plot_grid(abcd, efghij, nrow = 2, rel_heights = c(1,1.5))
 fig1
 ```
 
-
+# supple table 1 of all but control-bldg DEGs
 
 ```{r}
+suppletable1 <- allDEG %>%
+  filter(comparison != "control_bldg") %>%
+  group_by(sex, tissue, comparison) %>%
+  arrange( tissue, sex, direction, gene)
+head(suppletable1)
+
+write_csv(suppletable1, "../results/suppletable1.csv")
+
+# save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
+#write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
+
+# tsne files too big to save
 #write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
 ```
-
-
