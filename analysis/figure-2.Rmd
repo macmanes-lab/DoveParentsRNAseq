@@ -179,7 +179,7 @@ makelineplots <- function(whichtissue, whichgenes){
     ggplot(aes(x = treatmentNum, y = counts)) +
     geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
     #geom_smooth(aes(color = sex)) +
-    geom_jitter(size = 0.5, aes(color = sex)) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
     facet_grid(gene~sex, scales = "free") +
     scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9),
                        labels = charlevels) +
