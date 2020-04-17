@@ -533,6 +533,8 @@ make figure
     egi <- plot_grid(e,g,i, nrow = 3, rel_heights = c(1,1,1.4),
                      labels = c("E", "G", "I"), label_size = 8)
 
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
     # hyp
     f <- makebargraph("hypothalamus","DEGs", 0, 1250) + 
       theme(axis.text.x = element_blank(), 
@@ -557,4 +559,30 @@ make figure
 
 ![](../figures/fig1-1.png)
 
+supple table 1 of all but control-bldg DEGs
+===========================================
+
+    suppletable1 <- allDEG %>%
+      filter(comparison != "control_bldg") %>%
+      group_by(sex, tissue, comparison) %>%
+      arrange( tissue, sex, direction, gene)
+    head(suppletable1)
+
+    ## # A tibble: 6 x 8
+    ## # Groups:   sex, tissue, comparison [3]
+    ##   sex    tissue    comparison   direction gene         lfc     padj logpadj
+    ##   <chr>  <fct>     <fct>        <fct>     <chr>      <dbl>    <dbl>   <dbl>
+    ## 1 female hypothal… bldg_lay     bldg      HEMGN     -1.37  1.93e- 2    1.72
+    ## 2 female hypothal… inc.d3_inc.… inc.d3    LOC1070… -17.2   9.56e-16   15.0 
+    ## 3 female hypothal… inc.d9_inc.… inc.d9    CFAP44    -0.708 4.54e- 2    1.34
+    ## 4 female hypothal… inc.d9_inc.… inc.d9    GMNN      -0.512 4.54e- 2    1.34
+    ## 5 female hypothal… inc.d9_inc.… inc.d17   IGLL1      4.20  2.45e- 2    1.61
+    ## 6 female hypothal… inc.d9_inc.… inc.d17   LOC1070…  17.8   9.74e-19   18.0
+
+    write_csv(suppletable1, "../results/suppletable1.csv")
+
+    # save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
+    #write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
+
+    # tsne files too big to save
     #write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
