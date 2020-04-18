@@ -43,6 +43,44 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 
 ![](./figures/supplfig1.png)
 
+## Table 1
+
+| gene | bldg_lay | lay_inc.d3 | inc.d3_inc.d9 | inc.d9_inc.d17 | hatch_n5 | n5_n9 | Literature | GO | NCBI |
+|--------|----------|------------|---------------|----------------|----------|-------|------------|----|----------------|
+| AVPR1A |  | FG+ | FG- |  |  |  | X | X | NP_001103908.1 |
+| CREBRF | FG+ | FG- |  |  |  |  |  | X | XP_001231574.1 |
+| CRHBP |  |  |  |  | FH+ |  | X |  | XP_003643006.2 |
+| CRHR2 |  |  |  |  | FH+ |  | X |  | NP_989785.1 |
+| DRD1 |  |  |  |  | FH+ |  | X | X | NP_001138320.1 |
+| ESR1 | FP+ | FP- |  |  |  |  | X |  | XP_015139536.1 |
+| FOS |  | FG+ |  |  |  |  | X |  | NP_990839.1 |
+| GNAQ |  | FG- |  |  | FH+ |  |  | X | NP_001026598.1 |
+| HTR2C |  |  |  |  | FH+ |  | X |  | XP_004940707.1 |
+| MEST |  |  |  | FP+ | FP- |  | X |  | XP_015142671.1 |
+| NR3C1 |  | FG- |  |  |  |  | X | X | XP_015149519.1 |
+| OPRK1 |  |  |  |  | FH+ |  |  | X | XP_426087.2 |
+| OPRM1 | FG- |  |  |  |  | FG+ | X |  | XP_003641008.2 |
+| PGR |  |  |  |  | FH+ |  | X |  | NP_990593.1 |
+| PRL |  |  |  | FP+ MP+ | FP- |  | X | X | NP_990797.2 |
+| PRLR |  | FG- |  |  |  |  | X |  | XP_015132722.1 |
+| PTEN |  | FP- |  |  |  |  |  | X | XP_015134187.1 |
+| ADRA2A |  |  |  |  |  |  | X |  | XP_004942333.2 |
+| AVP |  |  |  |  |  |  |  | X | NP_990516.1 |
+| BRINP1 |  |  |  |  |  |  |  | X | NP_989780.1 |
+| COMT |  |  |  |  |  |  | X |  | XP_001233014.1 |
+| CRH |  |  |  |  |  |  | X |  | NP_001116503.1 |
+| CRHR1 |  |  |  |  |  |  | X |  | NP_989652.1 |
+| DBH |  |  |  |  |  |  |  | X | XP_415429.5 |
+| DRD4 |  |  |  |  |  |  | X |  | NP_001136321.1 |
+| ESR2 |  |  |  |  |  |  | X |  | NP_990125.1 |
+| KALRN |  |  |  |  |  |  |  | X | XP_015145468.1 |
+| MBD2 |  |  |  |  |  |  |  | X | NP_001012403.1 |
+| NPAS3 |  |  |  |  |  |  |  | X | XP_015143131.1 |
+| NPAS3 |  |  |  |  |  |  |  | X | XP_015143132.1 |
+| OXT |  |  |  |  |  |  |  | X | XP_004936337.1 |
+| SLC6A4 |  |  |  |  |  |  | X |  | XP_015151186.1 |
+| ZFX |  |  |  |  |  |  |  | X | XP_015127980.1 |
+
 ## Related documentation 
 
 Another website <http://www.dovelovegenomics.org/>.
