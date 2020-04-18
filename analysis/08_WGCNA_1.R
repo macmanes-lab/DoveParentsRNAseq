@@ -54,7 +54,7 @@ countDataGon <- subsetcountData3(colDataGon)
 
 # WGCNA
 
-datExpr0 <- as.data.frame(t(countDataHyp))
+datExpr0 <- as.data.frame(t(countDataGon))
 head(names(datExpr0))  # columns are genes
 head(rownames(datExpr0)) # rows are samples
 
@@ -98,9 +98,7 @@ datTraits <-  allTraits[traitRows, ]
 datTraits$sample <- NULL
 head(datTraits)
 
-# ?
 collectGarbage()
-
 
 # Re-cluster samples
 sampleTree2 = hclust(dist(datExpr), method = "average")
@@ -109,7 +107,7 @@ traitColors = numbers2colors(datTraits, signed = TRUE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
-                    main = "Hypothalamus dendrogram with trait heatmap",
+                    main = "Gonad dendrogram with trait heatmap",
                     cex.dendroLabels = 0.4
                     )
 
