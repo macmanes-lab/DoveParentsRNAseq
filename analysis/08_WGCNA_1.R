@@ -42,9 +42,9 @@ countData <- read.csv("../results/00_countData_characterization.csv",
 colnames(countData) <- colData$sample
 
 # subset col and count data for each tissue
-colDataHyp <- subsetcolData3(colData, c("M.H", "F.H"))
-colDataPit <- subsetcolData3(colData, c("M.P", "F.P"))
-colDataGon <- subsetcolData3(colData, c("M.G", "F.G"))
+colDataHyp <- subsetcolData3(colData, c("F.H"))
+colDataPit <- subsetcolData3(colData, c("F.P"))
+colDataGon <- subsetcolData3(colData, c("F.G"))
 
 countDataHyp <- subsetcountData3(colDataHyp)
 countDataPit <- subsetcountData3(colDataPit)
@@ -74,7 +74,8 @@ if (!gsg$allOK)
 
 # detect outlier samples
 sampleTree = hclust(dist(datExpr0), method = "average");
-plot(sampleTree, main = "Sample clustering to detect outliers", 
+plot(sampleTree, 
+     main = "Sample clustering to detect outliers", 
      sub="", xlab="", cex.main = 1, cex = 0.4)
 abline(h = 2000000, col = "red");
 
@@ -107,7 +108,7 @@ traitColors = numbers2colors(datTraits, signed = TRUE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
-                    main = "Gonad dendrogram with trait heatmap",
+                    main = "Gonad dendrogram",
                     cex.dendroLabels = 0.4
                     )
 
