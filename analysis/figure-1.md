@@ -509,12 +509,16 @@ make figure
     a <- png::readPNG("../figures/images/fig_fig1a.png")
     a <- ggdraw() +  draw_image(a, scale = 1)
 
-    b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "~ tissue * sex")    
-    c <- plottsneelipse(ftsne, ftsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, females only")
-    d <- plottsneelipse(mtsne, mtsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, males only") 
+    b <- png::readPNG("../figures/images/fig_fig1b.png")
+    b <- ggdraw() +  draw_image(b, scale = 1)
 
-    bcd <- plot_grid(b,c,d, nrow = 1, labels = c("B", "C", "D"), label_size = 8 )
-    abcd <- plot_grid(a, bcd, nrow = 2, labels = c("A"), label_size = 8, rel_heights = c(1,1))
+
+    c <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "~ tissue * sex")    
+    d <- plottsneelipse(ftsne, ftsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, females only")
+    e <- plottsneelipse(mtsne, mtsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, males only") 
+
+    bcde <- plot_grid(b,c,d,e, nrow = 1, labels = c("B", "C", "D", "E"), label_size = 8 )
+    abcd <- plot_grid(a, bcde, nrow = 2, labels = c("A"), label_size = 8, rel_heights = c(1,1))
 
     e <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
       labs( x = NULL)  + 
@@ -531,7 +535,7 @@ make figure
       labs(x = "tSNE1 \n \n \n \n")
 
     egi <- plot_grid(e,g,i, nrow = 3, rel_heights = c(1,1,1.4),
-                     labels = c("E", "G", "I"), label_size = 8)
+                     labels = c("F", "H", "J"), label_size = 8)
 
     # hyp
     f <- makebargraph("hypothalamus","DEGs", 0, 1250) + 
@@ -548,7 +552,7 @@ make figure
       scale_x_discrete(labels = comparisonlabels)
 
     fhj <- plot_grid(f,h,j, nrow = 3, rel_heights = c(1,1,1.4),
-                     labels = c("F", "H", "J"), label_size = 8)  
+                     labels = c("G", "I", "K"), label_size = 8)  
 
     efghij <- plot_grid(egi, fhj, nrow = 1, align = "h", rel_widths = c(1.5,2))
 
