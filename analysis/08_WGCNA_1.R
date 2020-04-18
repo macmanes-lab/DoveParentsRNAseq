@@ -54,7 +54,7 @@ countDataGon <- subsetcountData3(colDataGon)
 
 # WGCNA
 
-datExpr0 <- as.data.frame(t(countDataPit))
+datExpr0 <- as.data.frame(t(countDataHyp))
 head(names(datExpr0))  # columns are genes
 head(rownames(datExpr0)) # rows are samples
 
@@ -109,7 +109,7 @@ traitColors = numbers2colors(datTraits, signed = TRUE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
-                    main = "Pituitary dendrogram with trait heatmap",
+                    main = "Hypothalamus dendrogram with trait heatmap",
                     cex.dendroLabels = 0.4
                     )
 
@@ -148,8 +148,6 @@ names(net)
 head(net$colors)
 head(net$unmergedColors)
 
-
-
 # Convert labels to colors for plotting	
 mergedColors = labels2colors(net$colors)	
 unmergedColors	= labels2colors(net$unmergedColors)	
@@ -166,10 +164,6 @@ genes_modules <- as.data.frame(net$colors)
 genes_modules %>%
   group_by(`net$colors`) %>%
   summarize(n = n()) %>% arrange(n) 
-
-# find candidate genes, PRL and PRLR	
-# PRL = NP_990797.2	
-# PRLR = XP_015132722.1	
 
 genes_modules$gene <- row.names(genes_modules)	
 
