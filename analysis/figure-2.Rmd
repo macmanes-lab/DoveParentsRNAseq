@@ -224,4 +224,5 @@ plot_grid(a1,a2, b1,b2, c1,c2, nrow = 6, labels = c("A", " ","B", " ", "C", " ")
 #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
 #write.csv(candidatevsd, "../results/candidatecounts.csv")
 write.csv(table1, "../results/table1.csv")
+write.csv(candidategenes, "../results/candidategenes.csv")
 ```

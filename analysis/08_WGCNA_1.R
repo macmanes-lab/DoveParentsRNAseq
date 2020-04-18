@@ -1,11 +1,4 @@
-
-
-#=====================================================================================
-#
-#  Code chunk 1
-#
-#=====================================================================================
-
+# WGCNA pipeline
 
 # Load the packages
 library(tidyverse)
@@ -14,93 +7,61 @@ library(dplyr)
 library(magrittr)
 library(forcats)
 
-
-# read the count data
-countData <- read.csv("../results/00_countData_characterization.csv", row.names = 1)
-head(countData[1:2])
+source("../R/functions.R")
 
 # read the sample meta data or column data
-colData <- read.csv("../metadata/00_colData_characterization.csv", row.names = 1, stringsAsFactors = T)
-
-
-## rename rownames and colnames for better vizualiation
-colData <- colData %>%
-  mutate(sex = fct_recode(sex,
-                          "F" = "female",
-                          "M" = "male"),
+colData <- read_csv("../metadata/00_colData_characterization.csv") %>%
+  mutate(sex = factor(sex),
+         tissue = factor(tissue),
+         treatment = factor(treatment)) %>%
+  mutate(sex = fct_recode(sex, "F" = "female", "M" = "male"),
          tissue = fct_recode(tissue,
-                             "pit" = "pituitary",
-                             "hyp" = "hypothalamus",
-                             "gon" = "gonad"),
-         hypothesis = fct_recode(treatment,
-                                 "non.parental" = "control",
-                                 "non.parental" = "bldg",
-                                 "incubation" = "lay",
-                                 "incubation" = "inc.d3",
-                                 "incubation" = "inc.d9",
-                                 "incubation" = "inc.d17",
-                                 "hatchling.care" = "hatch",
-                                 "hatchling.care" = "n5",
-                                 "hatchling.care" = "n9"))
-
-# wgcna needs numeric identifiers
-colData$ID <- as.numeric(colData$bird)
-
-# create a short sample desctiption, make it the row and columns names of colData and countData
-colData$sample <- paste(colData$treatment, colData$sex, colData$tissue,  colData$ID, sep = ".")
-  
-# set row and count names to be the same
+                             "P" = "pituitary",
+                             "H" = "hypothalamus",
+                             "G" = "gonad"),
+         H1 = fct_collapse(treatment,
+                                 "NP" = c("control", "bldg"),
+                                 "eggs" = c("lay","inc.d3","inc.d9","inc.d17"),
+                                 "chicks" = c("hatch","n5", "n9")),
+         H2 = fct_collapse(treatment,
+                         "NP" = c("control", "bldg"),
+                         "early" = c("lay","inc.d3","inc.d9"),
+                         "late" = c("inc.d17", "hatch","n5", "n9"))) %>%
+  mutate(id = as.numeric(factor(bird))) %>% # wgcna needs numeric identifiers
+  select(id, bird, group, sex, tissue, treatment, H1, H2) %>%
+  mutate(sample = paste(treatment, sex, tissue, id, sep = "."),
+         sextissue = paste(sex, tissue, sep = "."))
+colData <- as.data.frame(colData)
 row.names(colData) <- colData$sample
+head(colData)
+
+
+# read the count data
+countData <- read.csv("../results/00_countData_characterization.csv", 
+                      row.names = 1) 
 colnames(countData) <- colData$sample
 
-# create new grouping for subsets
-colData$sextissue <-  as.factor(paste(colData$sex, colData$tissue, sep = "."))
-levels(colData$sextissue)
+# subset col and count data for each tissue
+colDataHyp <- subsetcolData3(colData, c("M.H", "F.H"))
+colDataPit <- subsetcolData3(colData, c("M.P", "F.P"))
+colDataGon <- subsetcolData3(colData, c("M.G", "F.G"))
 
-# subset to samples
-colData <- colData %>% dplyr::filter(sextissue %in% c("F.pit", "M.pit")) 
+countDataHyp <- subsetcountData3(colDataHyp)
+countDataPit <- subsetcountData3(colDataPit)
+countDataGon <- subsetcountData3(colDataGon)
 
-# which counts to save
-savecols <- as.character(colData$sample) 
-savecols <- as.vector(savecols) 
-  
-# read counts, save counts that match colData
-countData <- countData %>% dplyr::select(one_of(savecols)) 
+##### first pass, pituitary
 
-  
-#=====================================================================================
-#
-#  Code chunk 2
-#
-#=====================================================================================
+# WGCNA
 
-
-datExpr0 <- as.data.frame(t(countData))
-
+datExpr0 <- as.data.frame(t(countDataPit))
 head(names(datExpr0))  # columns are genes
 head(rownames(datExpr0)) # rows are samples
 
+gsg = goodSamplesGenes(datExpr0, verbose = 0); # check good genes
+gsg$allOK 
 
-
-#=====================================================================================
-#
-#  Code chunk 3
-#
-#=====================================================================================
-
-
-gsg = goodSamplesGenes(datExpr0, verbose = 0);
-gsg$allOK
-
-
-
-#=====================================================================================
-#
-#  Code chunk 4 removing genes
-#
-#=====================================================================================
-
-
+# remove bad genes
 if (!gsg$allOK)
 {
   if (sum(!gsg$goodGenes)>0)
@@ -111,70 +72,33 @@ if (!gsg$allOK)
 }
 
 
-#=====================================================================================
-#
-#  Code chunk 5
-#
-#=====================================================================================
-
-
+# detect outlier samples
 sampleTree = hclust(dist(datExpr0), method = "average");
-
-# Plot the sample tree: Open a graphic output window of size 12 by 9 inches
-# The user should change the dimensions if the window is too large or too small.
-
 plot(sampleTree, main = "Sample clustering to detect outliers", 
      sub="", xlab="", cex.main = 1, cex = 0.4)
 abline(h = 2000000, col = "red");
 
-
-
-#=====================================================================================
-#
-#  Code chunk 6
-#
-#=====================================================================================
-
-
-# Plot a line to show the cut
-
-# Determine cluster under the line
 clust = cutreeStatic(sampleTree, cutHeight = 2000000, minSize = 3)
 table(clust)
-
-# clust 1 contains the samples we want to keep.
 keepSamples = (clust==1)
 datExpr = datExpr0[keepSamples, ]
 nGenes = ncol(datExpr)
 nSamples = nrow(datExpr)
 
+# keep only the "good samples" and important variables
 
-#=====================================================================================
-#
-#  Code chunk 7
-#
-#=====================================================================================
-
-traitData <- colData %>% select(tissue,sex,treatment,hypothesis)
-
-# numeric
-head(traitData)
+traitData <- colData %>% select(tissue,sex,treatment,H1, H2)
 traitData %<>% mutate_if(is.factor,as.numeric)
-head(traitData)
-
-
-# remove columns or add that hold information we do not need, if necessary
-
 allTraits <- traitData
 allTraits$sample <- colData$sample
 row.names(allTraits) <- allTraits$sample
-# subset to keep only the "good samples"
 Samples <- rownames(datExpr)
 traitRows <-  match(Samples, allTraits$sample)
 datTraits <-  allTraits[traitRows, ]
 datTraits$sample <- NULL
+head(datTraits)
 
-
+# ?
 collectGarbage()
 
 
@@ -189,3 +113,90 @@ plotDendroAndColors(sampleTree2, traitColors,
                     cex.dendroLabels = 0.4
                     )
 
+
+# Choose a set of soft-thresholding powers	
+powers = c(c(1:10), seq(from = 12, to=20, by=2))	
+# Call the network topology analysis function	
+sft = pickSoftThreshold(datExpr0, powerVector = powers, verbose = 5)	
+# Plot the results:	
+
+par(mfrow = c(1,2));	
+cex1 = 0.9;	
+# Scale-free topology fit index as a function of the soft-thresholding power	
+plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],	
+     xlab="Soft Threshold (power)",ylab="Scale Free Topology Model Fit,signed R^2",type="n",	
+     main = paste("Scale independence"));	
+text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],	
+     labels=powers,cex=cex1,col="red");	
+# this line corresponds to using an R^2 cut-off of h	
+abline(h=0.60,col="red")	
+# Mean connectivity as a function of the soft-thresholding power	
+plot(sft$fitIndices[,1], sft$fitIndices[,5],	
+     xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",	
+     main = paste("Mean connectivity"))	
+text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")	
+
+
+enableWGCNAThreads()	
+
+# this is my attempt to solve an error	
+datExpr %<>% mutate_if(is.integer,as.numeric)	
+head(str(datExpr))	
+net = blockwiseModules(datExpr, power = 8,	
+                       verbose = 5)	
+names(net)	
+head(net$colors)
+head(net$unmergedColors)
+
+
+
+# Convert labels to colors for plotting	
+mergedColors = labels2colors(net$colors)	
+unmergedColors	= labels2colors(net$unmergedColors)	
+
+# Plot the dendrogram and the module colors underneath	
+plotDendroAndColors(net$dendrograms[[1]], 
+                    mergedColors[net$blockGenes[[1]]],	
+                    "Module colors",	
+                    dendroLabels = FALSE)	
+
+# save data frame with genes and their module colors	
+genes_modules <- as.data.frame(net$colors)	
+
+genes_modules %>%
+  group_by(`net$colors`) %>%
+  summarize(n = n()) %>% arrange(n) 
+
+# find candidate genes, PRL and PRLR	
+# PRL = NP_990797.2	
+# PRLR = XP_015132722.1	
+
+genes_modules$gene <- row.names(genes_modules)	
+
+candidategenes <- read_csv("../results/candidategenes.csv") %>% pull(x)
+
+candidategenemodules <- genes_modules %>%	
+  filter(gene %in% candidategenes)	 %>%
+  arrange(`net$colors`, gene) %>%
+  distinct(`net$colors`) %>% pull(`net$colors`) %>%
+  droplevels()
+candidategenemodules
+
+candidategenesdf <- genes_modules %>%	
+  filter(gene %in% candidategenes)	 %>%
+  arrange(`net$colors`, gene) 
+candidategenesdf
+
+candidategeneassociated <- genes_modules %>% 
+  filter(`net$colors` %in% candidategenemodules)  %>% 
+  filter(!`net$colors` %in% c("turquoise", "grey")) %>%
+  filter(!grepl('LOC', gene)) %>%
+  arrange(`net$colors`, gene) %>%
+  group_by(`net$colors`) %>%
+  summarize(genes = str_c(gene, collapse = ", "))
+head(candidategeneassociated)	
+
+
+### save files
+write.csv(candidategeneassociated, "../results/candidategeneassociated.csv", row.names = F)
+write.csv(genes_modules, "../results/08_genes_modules.csv", row.names = F)
