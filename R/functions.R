@@ -23,6 +23,23 @@ subsetcolData2 <- function(colData, eachgroup){
 }
 
 
+subsetcolData3 <- function(colData, eachgroup){
+  
+  colData <- colData %>%
+    dplyr::filter(sextissue %in% eachgroup) %>%
+    droplevels()
+  colData <- as.data.frame(colData)
+  row.names(colData) <- colData$sample
+  return(colData)
+}
+
+
+subsetcountData3 <- function(df){
+  savecols <- as.character(df$sample) 
+  savecols <- as.vector(savecols)  
+  df2 <- countData %>% dplyr::select(one_of(savecols)) 
+  return(df2)
+}
 
 
 ############ numDEGs #########
