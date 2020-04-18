@@ -1,7 +1,0 @@
-"","sex","tissue","bldg_lay","lay_inc.d3","inc.d9_inc.d17","hatch_n5","control_bldg"
-"1","female","hypothalamus",NA,NA,NA,"CYP19A1+ LHCGR- PGR+","AR+ CGNRH-R- CYP19A1- ESR1+ FSHB- GNRHR- HSD3B2- PRL- PRLR- VIP-"
-"2","female","pituitary","ESR1+ GNRHR-","ESR1- GNRHR+","PRL+","PRL-","AR+ CYP19A1- HSD3B2- PRL- PRLR- VIPR1-"
-"3","female","gonad","HSD3B2-","PRLR- VIPR1-",NA,NA,"AR+ CYP19A1- ESR1+ FSHB- FSHR- HSD3B2+ PGR+"
-"4","male","hypothalamus",NA,NA,"AR+",NA,"AR+ CYP19A1- ESR1+ FSHB- GNRH1- GNRHR- HSD17B1- PRL- VIP- VIPR1+"
-"5","male","pituitary",NA,NA,"PRL+ VIP+",NA,"AR+ CGNRH-R- CYP19A1- FSHB- HSD17B1+ PRL- PRLR- VIPR1-"
-"6","male","gonad",NA,NA,NA,NA,"AR+ ESR1+ HSD3B2- PRL- PRLR- VIPR1-"

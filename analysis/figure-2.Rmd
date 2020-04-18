@@ -110,8 +110,12 @@ table1 <- left_join(candidateDEGS, GOgenesWide) %>%
   mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
          parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
   rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
-table1[is.na(table1)] <- " "
-table1
+table1$numDEGs <- rowSums(is.na(table1)) # count NAs to know how many are NS
+table1 <- table1 %>% 
+  mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
+  arrange(sig, gene)  %>%  select(-sig, -numDEGs)
+table1[is.na(table1)] <- " " # replace NA with blank space so it's pretty
+#table1
 
 kable(table1)
 ```

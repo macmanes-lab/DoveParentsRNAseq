@@ -125,7 +125,7 @@ fig1
 
 ```{r}
 suppletable1 <- allDEG %>%
-  filter(comparison != "control_bldg") %>%
+  #filter(comparison != "control_bldg") %>%
   group_by(sex, tissue, comparison) %>%
   arrange( tissue, sex, direction, gene)
 head(suppletable1)

@@ -533,8 +533,6 @@ make figure
     egi <- plot_grid(e,g,i, nrow = 3, rel_heights = c(1,1,1.4),
                      labels = c("E", "G", "I"), label_size = 8)
 
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
     # hyp
     f <- makebargraph("hypothalamus","DEGs", 0, 1250) + 
       theme(axis.text.x = element_blank(), 
@@ -563,21 +561,21 @@ supple table 1 of all but control-bldg DEGs
 ===========================================
 
     suppletable1 <- allDEG %>%
-      filter(comparison != "control_bldg") %>%
+      #filter(comparison != "control_bldg") %>%
       group_by(sex, tissue, comparison) %>%
       arrange( tissue, sex, direction, gene)
     head(suppletable1)
 
     ## # A tibble: 6 x 8
-    ## # Groups:   sex, tissue, comparison [3]
-    ##   sex    tissue    comparison   direction gene         lfc     padj logpadj
-    ##   <chr>  <fct>     <fct>        <fct>     <chr>      <dbl>    <dbl>   <dbl>
-    ## 1 female hypothal… bldg_lay     bldg      HEMGN     -1.37  1.93e- 2    1.72
-    ## 2 female hypothal… inc.d3_inc.… inc.d3    LOC1070… -17.2   9.56e-16   15.0 
-    ## 3 female hypothal… inc.d9_inc.… inc.d9    CFAP44    -0.708 4.54e- 2    1.34
-    ## 4 female hypothal… inc.d9_inc.… inc.d9    GMNN      -0.512 4.54e- 2    1.34
-    ## 5 female hypothal… inc.d9_inc.… inc.d17   IGLL1      4.20  2.45e- 2    1.61
-    ## 6 female hypothal… inc.d9_inc.… inc.d17   LOC1070…  17.8   9.74e-19   18.0
+    ## # Groups:   sex, tissue, comparison [1]
+    ##   sex    tissue      comparison   direction gene     lfc       padj logpadj
+    ##   <chr>  <fct>       <fct>        <fct>     <chr>  <dbl>      <dbl>   <dbl>
+    ## 1 female hypothalam… control_bldg control   A2ML1 -0.617    6.25e-2    1.20
+    ## 2 female hypothalam… control_bldg control   A2ML3 -0.502    2.73e-6    5.56
+    ## 3 female hypothalam… control_bldg control   AAED1 -0.568    5.86e-3    2.23
+    ## 4 female hypothalam… control_bldg control   AATK  -0.312    6.48e-2    1.19
+    ## 5 female hypothalam… control_bldg control   ABAT  -0.440    4.10e-8    7.39
+    ## 6 female hypothalam… control_bldg control   ABCA2 -0.409    4.45e-2    1.35
 
     write_csv(suppletable1, "../results/suppletable1.csv")
 

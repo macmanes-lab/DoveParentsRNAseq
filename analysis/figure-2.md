@@ -3,14 +3,14 @@ Candidate gene analysis
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -190,58 +190,33 @@ Candidate DEGs
       select(gene, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
     candidateDEGS
 
-    ## # A tibble: 17 x 7
-    ## # Groups:   gene [17]
+    ## # A tibble: 32 x 7
+    ## # Groups:   gene [32]
     ##    gene   bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
     ##    <chr>  <chr>    <chr>      <chr>         <chr>          <chr>    <chr>
-    ##  1 AVPR1A <NA>     FG+        FG-           <NA>           <NA>     <NA> 
-    ##  2 CREBRF FG+      FG-        <NA>          <NA>           <NA>     <NA> 
-    ##  3 CRHBP  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ##  4 CRHR2  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ##  5 DRD1   <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ##  6 ESR1   FP+      FP-        <NA>          <NA>           <NA>     <NA> 
-    ##  7 FOS    <NA>     FG+        <NA>          <NA>           <NA>     <NA> 
-    ##  8 GNAQ   <NA>     FG-        <NA>          <NA>           FH+      <NA> 
-    ##  9 HTR2C  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ## 10 MEST   <NA>     <NA>       <NA>          FP+            FP-      <NA> 
-    ## 11 NR3C1  <NA>     FG-        <NA>          <NA>           <NA>     <NA> 
-    ## 12 OPRK1  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ## 13 OPRM1  FG-      <NA>       <NA>          <NA>           <NA>     FG+  
-    ## 14 PGR    <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ## 15 PRL    <NA>     <NA>       <NA>          FP+ MP+        FP-      <NA> 
-    ## 16 PRLR   <NA>     FG-        <NA>          <NA>           <NA>     <NA> 
-    ## 17 PTEN   <NA>     FP-        <NA>          <NA>           <NA>     <NA>
+    ##  1 ADRA2A <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
+    ##  2 AVP    <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
+    ##  3 AVPR1A <NA>     FG+        FG-           <NA>           <NA>     <NA> 
+    ##  4 BRINP1 <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
+    ##  5 COMT   <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
+    ##  6 CREBRF FG+      FG-        <NA>          <NA>           <NA>     <NA> 
+    ##  7 CRH    <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
+    ##  8 CRHBP  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
+    ##  9 CRHR1  <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
+    ## 10 CRHR2  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
+    ## # … with 22 more rows
 
     table1 <- left_join(candidateDEGS, GOgenesWide) %>%
       select(gene, bldg_lay:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
       mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
              parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
       rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
-    table1[is.na(table1)] <- " "
-    table1
-
-    ## # A tibble: 17 x 10
-    ## # Groups:   gene [17]
-    ##    gene  bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
-    ##    <chr> <chr>    <chr>      <chr>         <chr>          <chr>    <chr>
-    ##  1 AVPR… " "      "FG+"      "FG-"         " "            " "      " "  
-    ##  2 CREB… "FG+"    "FG-"      " "           " "            " "      " "  
-    ##  3 CRHBP " "      " "        " "           " "            "FH+"    " "  
-    ##  4 CRHR2 " "      " "        " "           " "            "FH+"    " "  
-    ##  5 DRD1  " "      " "        " "           " "            "FH+"    " "  
-    ##  6 ESR1  "FP+"    "FP-"      " "           " "            " "      " "  
-    ##  7 FOS   " "      "FG+"      " "           " "            " "      " "  
-    ##  8 GNAQ  " "      "FG-"      " "           " "            "FH+"    " "  
-    ##  9 HTR2C " "      " "        " "           " "            "FH+"    " "  
-    ## 10 MEST  " "      " "        " "           "FP+"          "FP-"    " "  
-    ## 11 NR3C1 " "      "FG-"      " "           " "            " "      " "  
-    ## 12 OPRK1 " "      " "        " "           " "            "FH+"    " "  
-    ## 13 OPRM1 "FG-"    " "        " "           " "            " "      "FG+"
-    ## 14 PGR   " "      " "        " "           " "            "FH+"    " "  
-    ## 15 PRL   " "      " "        " "           "FP+ MP+"      "FP-"    " "  
-    ## 16 PRLR  " "      "FG-"      " "           " "            " "      " "  
-    ## 17 PTEN  " "      "FP-"      " "           " "            " "      " "  
-    ## # … with 3 more variables: Literature <chr>, GO <chr>, NCBI <chr>
+    table1$numDEGs <- rowSums(is.na(table1)) # count NAs to know how many are NS
+    table1 <- table1 %>% 
+      mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
+      arrange(sig, gene)  %>%  select(-sig, -numDEGs)
+    table1[is.na(table1)] <- " " # replace NA with blank space so it's pretty
+    #table1
 
     kable(table1)
 
@@ -732,6 +707,406 @@ X
 </td>
 <td style="text-align:left;">
 XP\_015134187.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ADRA2A
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+XP\_004942333.2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+AVP
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+NP\_990516.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+BRINP1
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+NP\_989780.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+COMT
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+XP\_001233014.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CRH
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NP\_001116503.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+CRHR1
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NP\_989652.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DBH
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+XP\_415429.5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+DRD4
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NP\_001136321.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ESR2
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+NP\_990125.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+KALRN
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+XP\_015145468.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+MBD2
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+NP\_001012403.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NPAS3
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+XP\_015143131.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+NPAS3
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+XP\_015143132.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+OXT
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+XP\_004936337.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+SLC6A4
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+XP\_015151186.1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ZFX
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+</td>
+<td style="text-align:left;">
+X
+</td>
+<td style="text-align:left;">
+XP\_015127980.1
 </td>
 </tr>
 </tbody>
