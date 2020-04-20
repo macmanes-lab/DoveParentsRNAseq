@@ -537,6 +537,10 @@ make figure
     egi <- plot_grid(e,g,i, nrow = 3, rel_heights = c(1,1,1.4),
                      labels = c("F", "H", "J"), label_size = 8)
 
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
     # hyp
     f <- makebargraph("hypothalamus","DEGs", 0, 1250) + 
       theme(axis.text.x = element_blank(), 
