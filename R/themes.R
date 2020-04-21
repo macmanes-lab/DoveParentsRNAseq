@@ -59,7 +59,8 @@ comparisonlevels <- c("control_bldg", "bldg_lay" ,"lay_inc.d3", "inc.d3_inc.d9",
                       "m.inc.d9_m.n2"
                       )
 
-comparisonlabels = c("bldg vs lay" ,"lay vs inc.d3", "inc.d3 vs inc.d9", "inc.d9 vs inc.d17", 
+comparisonlabels = c("control vs bldg", "bldg vs lay" ,"lay vs inc.d3", 
+                     "inc.d3 vs inc.d9", "inc.d9 vs inc.d17", 
                      "inc.d17 vs hatch" , "hatch vs n5", "n5 vs n9")
 
 

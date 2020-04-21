@@ -911,15 +911,13 @@ plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
 
 makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
   p <- allDEG %>%
-    filter(tissue == whichtissue,
-           comparison != "control_bldg") %>%
+    filter(tissue == whichtissue) %>%
     ggplot(aes(x = comparison,  fill = direction)) +
     geom_bar(position = "dodge") +
-    facet_grid(tissue~sex) +
+    facet_wrap(~sex) +
     theme_B3() +
     theme(axis.text.x = element_text(angle = 45, hjust = 1),
           legend.position = "none")  +
-    guides(fill = guide_legend(nrow = 1)) +
     labs(x = NULL, 
          y = myylab,
          subtitle = " ") +
@@ -929,7 +927,7 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
     scale_color_manual(values = allcolors) +
     geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
               position = position_dodge(width = 1),
-              size = 2, color = "black")  +
+              size = 1.5, color = "black")  +
     ylim(lowlim, higherlim)
   return(p)
 }

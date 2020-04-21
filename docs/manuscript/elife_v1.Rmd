@@ -1,5 +1,5 @@
 ---
-title: Pituitary prolactin drives transcriptional changes in the reproductive axis of parenting pigeons
+title: Transcriptional changes in the reproductive axis of parenting pigeons
 author:
   - name: Rayna M Harris ^[equal contribtion] 
     affiliation: University of California, Davis
@@ -59,7 +59,7 @@ We show that samples from the pituitary on
                      have the greatest effect on gene expression rather than suggesting 
                      that gene expression responds to changes in the external enviornament.
 
-Blah \ref{figure:fig3}, blah, \ref{figure:fig4} blah.
+Blah, blah, \ref{figure:fig4} blah.
 
 
 
@@ -145,14 +145,7 @@ We thank Irene, Erica, Beth Krestoff and Tiffany Chen for assistance in managing
   \label{figure:fig2}
 \end{figure}
 
-\newpage
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/fig3-1}
-  \caption{Another figure}
-  \label{figure:fig3}
-\end{figure}
 
 \newpage
 
