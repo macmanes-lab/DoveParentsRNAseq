@@ -7,7 +7,7 @@ output: md_document
 
 ## manipulation box plots for candidate genes
 
-```{r}
+```{r setup}
 library(tidyverse)
 library(ggtext)
 library(cowplot)
@@ -17,33 +17,23 @@ library(kableExtra)
 source("../R/themes.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
-
-
-candidategenesslim <- c("OXT", "AVP", "GNRH1", "GNRHR", 
-                    "AR",  "CYP19A1", 
-                     "AVPR1A", "AVPR1B", "AVPR2","VIP",
-                  "DRD1", "DRD2", 
-                  "PRL", "PRLR",  
-                    "ESR1","ESR2", "LBH",  
-                   
-                    "FOS", "JUN", "EGR1", "BDNF"
-                      ) 
-
-candidategenes <- candidategenesslim
-
-
 ```
+
+
+## Candidate Genes (from literature and relevant GO terms) 
+
+```{r GO}
+source("../R/wrangledata.R")
+```
+
 
 ## variance stabilized gene expression  (vsd)
 
-```{r }
-geneids <- read_csv("../metadata/00_geneinfo.csv")
-
+```{r vsd}
 vsd_path <- "../results/DEseq2/manip/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
 vsd_pathfiles <- paste0(vsd_path, vsd_files)
 vsd_files
-
 
 allvsd <- vsd_pathfiles %>%
   setNames(nm = .) %>% 
@@ -73,14 +63,15 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   return(candidates)
 }
 
-hypvsd <- getcandidatevsd(candidategenesslim, "hypothalamus", sexlevels)
-pitvsd <- getcandidatevsd(candidategenesslim, "pituitary", sexlevels)
-gonvsd <- getcandidatevsd(candidategenesslim, "gonad", sexlevels)
+hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
+pitvsd <- getcandidatevsd(candidategenes, "pituitary", sexlevels)
+gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
 
 candidatevsd <- rbind(hypvsd, pitvsd)
 candidatevsd <- rbind(candidatevsd, gonvsd)
 
 head(candidatevsd)
+
 levels(candidatevsd$treatment)
 ```
 
@@ -113,126 +104,38 @@ allDEG$direction <- factor(allDEG$direction, levels = alllevels)
 
 head(allDEG)
 
-table1 <- allDEG %>%
-  mutate(updown = ifelse(lfc > 0, "+", "-"))  %>%
-  mutate(geneupdown = paste(gene, updown, sep = "")) %>%
+candidateDEGS <- allDEG %>%
   filter(gene %in% candidategenes) %>%
-  arrange(geneupdown) %>%
-  group_by(sex, tissue, comparison) %>%
-  summarize(genes = str_c(geneupdown, collapse = " ")) %>%
-  pivot_wider(names_from = comparison, values_from = genes ) %>%
-  select(sex, tissue, contains("m."))  %>%
-  arrange( tissue, sex)
+  mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+         sex = recode(sex, "female" = "F", "male" = "M" ),
+         tissue = recode(tissue, 
+                         "hypothalamus" = "H",
+                         "pituitary" = "P", "gonad" = "G")) %>%
+  mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
+  select(gene, res, comparison)  %>%
+  group_by(gene,  comparison) %>%
+  summarize(res = str_c(res, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = res) %>%
+  select(gene, contains("m.")) 
+candidateDEGS
 
-(table1$inc.d3_m.inc.d3)
-(table1$inc.d9_m.inc.d9)
-(table1$inc.d17_m.inc.d17)
-(table1$hatch_m.n2)
+table2 <- left_join(candidateDEGS, GOgenesWide) %>%
+  select(gene, m.inc.d17_prolong:m.inc.d9_m.inc.d17, parentalcare, parentalbehavior, NCBI) %>%
+  mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
+         parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
+  rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
+table2$numDEGs <- rowSums(is.na(table2)) # count NAs to know how many are NS
+table2 <- table2 %>% 
+  mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
+  arrange(sig, gene)  %>%  select(-sig, -numDEGs)
+table2[is.na(table2)] <- " " # replace NA with blank space so it's pretty
+table2
 ```
 
-
-
-```{r boxplotfunction}
-makeboxplotsmanip <- function(df, whichgene, mysubtitle, whichsex, whichtimepoint){
-  p <- df %>%
-    filter(treatment %in% alllevels,
-           gene %in% whichgene,
-           sex %in% whichsex) %>%
-    filter(treatment %in% whichtimepoint) %>%
-    ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
-    geom_boxplot(outlier.shape = NA) + 
-    geom_jitter(size = 0.5, width = 0.1) +
-    facet_wrap(~gene, scales = "free_y", nrow = 1) +
-    theme_B3() +
-    scale_fill_manual(values = allcolors) +
-    scale_color_manual(values = allcolors) +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "none",
-          plot.caption = element_text(face = "italic")) +
-    labs(y = "gene expression" , x = "Parental Stages and Manipulations", subtitle = mysubtitle) +
-    theme(strip.text = element_text(face = "italic", size = 5)) + 
-    scale_y_continuous(labels = scales::number_format(accuracy = 1))
-  return(p)
-}
-```
-
-
-## Figs 
-
-```{r fig6, fig.height=8, fig.width=10}
-
-## hypothatlamus
-a <- makeboxplotsmanip(hypvsd, c("DRD1","EGR1","PRLR"), "Female hypothalamus", "female",
-                  c("inc.d3", "m.inc.d3", "inc.d17", "m.inc.d17",  "hatch", "m.n2"))  +
-  theme(axis.title.x = element_blank())
-b <- makeboxplotsmanip(hypvsd, c("BDNF","ESR2", "FOS"), " ", "female",
-                  c("inc.d3", "m.inc.d3", "inc.d17", "m.inc.d17"))  +
-  theme(axis.title = element_blank())
-
-c <- makeboxplotsmanip(hypvsd, c("AVP","OXT"), " ", "female", 
-                       c("inc.d17", "m.inc.d17"))  +
-  theme(axis.title = element_blank())
-d <- makeboxplotsmanip(hypvsd, c("AVPR1A","CYP19A1","GNRH1"), " ", "female",
-                   c("hatch", "m.n2"))  +
-  theme(axis.title = element_blank())
-e <- makeboxplotsmanip(hypvsd, c("JUN"), " ", "female", 
-                 c("hatch", "m.n2"))  +
-  theme(axis.title = element_blank()) + labs(subtitle = " ")
-
-f <- makeboxplotsmanip(hypvsd, c("DRD1", "EGR1", "PRLR"), "Male hypothalamus", "male",
-                  c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  +
-  theme(axis.title.x = element_blank())
-
-g <- makeboxplotsmanip(hypvsd, c( "PRL"), " ", "male",
-                  c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  +
-  theme(axis.title = element_blank())
-
-h <- makeboxplotsmanip(hypvsd, c("AR", "AVP", "BDNF", "ESR1", "LBH"), " ", "male",
-                  c( "inc.d17", "m.inc.d17")) +
-  theme(axis.title = element_blank()) 
-
-i <- makeboxplotsmanip(hypvsd, c("GNRH1"), " ", "male",
-                  c("hatch", "m.n2"))  +
-  theme(axis.title = element_blank()) 
-
-
-j <- makeboxplotsmanip(pitvsd, c("AR", "PRL", "LBH"), "Female pituitary", "female",
-                  c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  + theme(axis.title.x = element_blank())
-
-k <- makeboxplotsmanip(pitvsd, c("DRD1"), " ", "female",
-                  c( "inc.d3", "m.inc.d3"))  + theme(axis.title = element_blank())
-
-l <- makeboxplotsmanip(pitvsd, c("BDNF", "PRLR"), " ", "female",
-                  c( "inc.d17", "m.inc.d17"))  +  theme(axis.title = element_blank())
-
-m <- makeboxplotsmanip(pitvsd, c("AVPR1B", "AVPR2", "EGR1", "GNRHR", "JUN"), " ", "female",
-                  c("hatch", "m.n2"))  + theme(axis.title = element_blank())
-
-
-n <- makeboxplotsmanip(pitvsd, c("LBH"), "Male pituitary", "male",
-                  c("inc.d17", "m.inc.d17", "hatch", "m.n2"))  
-o <- makeboxplotsmanip(pitvsd, c("DRD1", "ESR2"), " ", "male",
-                  c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
-p <- makeboxplotsmanip(pitvsd, c("AVPR1A", "PRLR"), " ", "male",
-                  c("hatch", "m.n2"))  + theme(axis.title  = element_blank())
-
-q <- makeboxplotsmanip(gonvsd, c("LBH"), "Male gonads ", "male",
-                  c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
-r <- makeboxplotsmanip(gonvsd, c("JUN"), "Female gonads ", "female",
-                  c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
-
-
-abcd <- plot_grid(a,b,c,d,e, nrow = 1, rel_widths = c(16,10,4,6,2), align = "h", labels = c("a", "b", "c", "d"), label_size = 8)
-efgh <- plot_grid(f,g,h,i, nrow = 1, rel_widths = c(10,3,10,2), align = "h", labels = c("e", " ", "f", "g"), label_size = 8)
-jklm <- plot_grid(j,k,l,m, nrow = 1, rel_widths = c(12,2,4,10), align = "h",  labels = c("h", "i", "j", "k"), label_size = 8)
-nopqr <- plot_grid(n,o,p,q,r, nrow = 1, rel_widths = c(4,4,4,2,2), align = "h",  labels = c("l", "m", "n", "o", "p"), label_size = 8)
-
-plot_grid(abcd, efgh, jklm,nopqr, ncol = 1)
-```
 
 
 ```{r writefiles}
-#write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+write.csv(table2, "../results/table2.csv")
 
 # for victoria
 prlmanip <- candidatevsd %>%

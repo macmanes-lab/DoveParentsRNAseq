@@ -24,61 +24,8 @@ knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 
 ## Candidate Genes (from literature and relevant GO terms) 
 
-
 ```{r GO}
-
-# all genes in this parental care dataset 
-
-geneids <- read_csv("../metadata/00_geneinfo.csv") %>%
-  select(-X1) %>%
-  rename("NCBI" = "entrezid",
-         "gene" = "Name")
-
-# From Ch 17 Evolution of parental care
-curleychampagnegenes <- c("AVPR1A", "ADRA2A",    
-                         "COMT", "CRH", "CRHBP", "CRHR1", "CRHR2", 
-                          "DRD1", "DRD4","ESR1", "ESR2", #ERa ERbeta
-                          "FOS", "HTR2C", "MEST", "NR3C1", #GR
-                          "OPRM1", "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
-curleychampagnegenes <- as.data.frame(curleychampagnegenes) %>%
-  mutate(GO = "parentalcare", gene = curleychampagnegenes)  %>%
-  select(GO, gene)
-curleychampagnegenes
-
-
-# Candidate GO terms 
-GO_path <- "../metadata/goterms/"   # path to the data
-GO_files <- dir(GO_path, pattern = "*.txt") # get file names
-GO_pathfiles <- paste0(GO_path, GO_files)
-
-GOgenesLong <- GO_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_table(.x, col_types = cols(), col_names = FALSE), .id = "file_name") %>% 
-  mutate(GO = sapply(strsplit(as.character(file_name),'../metadata/goterms/'), "[", 2)) %>% 
-  mutate(GO = sapply(strsplit(as.character(GO),'.txt'), "[", 1)) %>% 
-  mutate(gene = sapply(strsplit(as.character(X1), "[\\\\]|[^[:print:]]" ), "[", 2)) %>% 
-  select(GO, gene)  %>%
-  filter(gene != "Symbol") %>%
-  distinct(GO,gene)  %>%
-  mutate(gene = toupper(gene)) %>%
-  rbind(., curleychampagnegenes) %>%
-  arrange(gene) %>%
-  left_join(., geneids, by = "gene") %>%
-  drop_na() 
-GOgenesLong
-
-GOgenesWide <- GOgenesLong %>% 
-  pivot_wider(
-    names_from = GO,
-    values_from = gene) %>%
-  mutate(numGOs = 4 - rowSums(is.na(.))) %>%
-  arrange(desc(numGOs)) %>%
-  select(-numGOs) %>%
-  left_join(geneids, by = c("geneid","NCBI"))
-GOgenesWide
-
-# genes I can't find in dataset 
-# NOS1 or OXTR or FOX1B or HTR5A
+source("../R/wrangledata.R")
 ```
 
 
@@ -86,9 +33,6 @@ GOgenesWide
 
 
 ```{r DEGs}
-
-candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
-
 # summary DEG results from DESeq2
 candidateDEGS <- read_csv("../results/suppletable1.csv") %>%
   filter(gene %in% candidategenes) %>%
