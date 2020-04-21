@@ -3,14 +3,14 @@ manipulation box plots for candidate genes
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -59,25 +59,17 @@ manipulation box plots for candidate genes
 
     knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 
+Candidate Genes (from literature and relevant GO terms)
+-------------------------------------------------------
 
-    candidategenesslim <- c("OXT", "AVP", "GNRH1", "GNRHR", 
-                        "AR",  "CYP19A1", 
-                         "AVPR1A", "AVPR1B", "AVPR2","VIP",
-                      "DRD1", "DRD2", 
-                      "PRL", "PRLR",  
-                        "ESR1","ESR2", "LBH",  
-                       
-                        "FOS", "JUN", "EGR1", "BDNF"
-                          ) 
+    source("../R/wrangledata.R")
 
-    candidategenes <- candidategenesslim
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Warning: Missing column names filled in: 'X1' [1]
 
 variance stabilized gene expression (vsd)
 -----------------------------------------
-
-    geneids <- read_csv("../metadata/00_geneinfo.csv")
-
-    ## Warning: Missing column names filled in: 'X1' [1]
 
     vsd_path <- "../results/DEseq2/manip/"   # path to the data
     vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
@@ -132,9 +124,9 @@ variance stabilized gene expression (vsd)
       return(candidates)
     }
 
-    hypvsd <- getcandidatevsd(candidategenesslim, "hypothalamus", sexlevels)
-    pitvsd <- getcandidatevsd(candidategenesslim, "pituitary", sexlevels)
-    gonvsd <- getcandidatevsd(candidategenesslim, "gonad", sexlevels)
+    hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
+    pitvsd <- getcandidatevsd(candidategenes, "pituitary", sexlevels)
+    gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
 
     candidatevsd <- rbind(hypvsd, pitvsd)
     candidatevsd <- rbind(candidatevsd, gonvsd)
@@ -142,14 +134,14 @@ variance stabilized gene expression (vsd)
     head(candidatevsd)
 
     ## # A tibble: 6 x 6
-    ##   sex    tissue     treatment gene  samples                          counts
-    ##   <chr>  <chr>      <fct>     <chr> <chr>                             <dbl>
-    ## 1 female hypothala… prolong   AR    blk.s031.pu.d_female_hypothalam…   7.60
-    ## 2 female hypothala… m.n2      AR    blk.s032.g.w_female_hypothalamu…   7.65
-    ## 3 female hypothala… m.inc.d3  AR    blk.s049.y.g_female_hypothalamu…   7.80
-    ## 4 female hypothala… m.inc.d3  AR    blk.s060.pu.w_female_hypothalam…   7.69
-    ## 5 female hypothala… inc.d9    AR    blk.s061.pu.y_female_hypothalam…   7.64
-    ## 6 female hypothala… m.inc.d8  AR    blk.y.l.s109_female_hypothalamu…   7.71
+    ##   sex    tissue      treatment gene  samples                         counts
+    ##   <chr>  <chr>       <fct>     <chr> <chr>                            <dbl>
+    ## 1 female hypothalam… prolong   ADRA… blk.s031.pu.d_female_hypothala…   9.20
+    ## 2 female hypothalam… m.n2      ADRA… blk.s032.g.w_female_hypothalam…   9.07
+    ## 3 female hypothalam… m.inc.d3  ADRA… blk.s049.y.g_female_hypothalam…   9.21
+    ## 4 female hypothalam… m.inc.d3  ADRA… blk.s060.pu.w_female_hypothala…   9.13
+    ## 5 female hypothalam… inc.d9    ADRA… blk.s061.pu.y_female_hypothala…   9.19
+    ## 6 female hypothalam… m.inc.d8  ADRA… blk.y.l.s109_female_hypothalam…   9.31
 
     levels(candidatevsd$treatment)
 
@@ -206,141 +198,78 @@ DEGs
     ## 5 female gonad  hatch_extend extend    KRT20         4.87 1.46e- 2    1.84
     ## 6 female gonad  hatch_extend extend    LOC107057630  4.14 8.24e- 2    1.08
 
-    table1 <- allDEG %>%
-      mutate(updown = ifelse(lfc > 0, "+", "-"))  %>%
-      mutate(geneupdown = paste(gene, updown, sep = "")) %>%
+    candidateDEGS <- allDEG %>%
       filter(gene %in% candidategenes) %>%
-      arrange(geneupdown) %>%
-      group_by(sex, tissue, comparison) %>%
-      summarize(genes = str_c(geneupdown, collapse = " ")) %>%
-      pivot_wider(names_from = comparison, values_from = genes ) %>%
-      select(sex, tissue, contains("m."))  %>%
-      arrange( tissue, sex)
+      mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+             sex = recode(sex, "female" = "F", "male" = "M" ),
+             tissue = recode(tissue, 
+                             "hypothalamus" = "H",
+                             "pituitary" = "P", "gonad" = "G")) %>%
+      mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
+      select(gene, res, comparison)  %>%
+      group_by(gene,  comparison) %>%
+      summarize(res = str_c(res, collapse = " ")) %>%
+      pivot_wider(names_from = comparison, values_from = res) %>%
+      select(gene, contains("m.")) 
+    candidateDEGS
 
-    (table1$inc.d3_m.inc.d3)
+    ## # A tibble: 32 x 16
+    ## # Groups:   gene [32]
+    ##    gene  m.inc.d17_prolo… inc.d17_m.inc.d… inc.d9_m.inc.d8 hatch_m.n2
+    ##    <chr> <chr>            <chr>            <chr>           <chr>     
+    ##  1 ADRA… MG+              <NA>             <NA>            <NA>      
+    ##  2 AVP   <NA>             FH- MH-          MP+             <NA>      
+    ##  3 AVPR… <NA>             <NA>             <NA>            FH+ MP+   
+    ##  4 BRIN… <NA>             FG- FH+          <NA>            MH+       
+    ##  5 COMT  <NA>             FH- MH-          MH-             FH- MH-   
+    ##  6 CREB… <NA>             FP+ MP+          MP+             FH+ FP+ M…
+    ##  7 CRH   <NA>             <NA>             <NA>            <NA>      
+    ##  8 CRHBP <NA>             FH+ MH+          MH+             FH+ MH+   
+    ##  9 CRHR1 <NA>             <NA>             MH+             FH+ FP+ M…
+    ## 10 CRHR2 <NA>             FH+ MH+          MH+             FH+ MH+   
+    ## # … with 22 more rows, and 11 more variables: m.inc.d3_m.inc.d17 <chr>,
+    ## #   m.inc.d3_m.n2 <chr>, inc.d3_m.inc.d3 <chr>, m.inc.d3_m.inc.d9 <chr>,
+    ## #   m.inc.d8_extend <chr>, m.inc.d8_prolong <chr>,
+    ## #   m.inc.d9_m.inc.d8 <chr>, m.inc.d9_m.n2 <chr>, inc.d9_m.inc.d9 <chr>,
+    ## #   m.n2_extend <chr>, m.inc.d9_m.inc.d17 <chr>
 
-    ## [1] "BDNF+ DRD1+ EGR1+ ESR2- FOS+ PRLR+"
-    ## [2] NA                                  
-    ## [3] "DRD1+"                             
-    ## [4] NA                                  
-    ## [5] NA                                  
-    ## [6] NA
+    table2 <- left_join(candidateDEGS, GOgenesWide) %>%
+      select(gene, m.inc.d17_prolong:m.inc.d9_m.inc.d17, parentalcare, parentalbehavior, NCBI) %>%
+      mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
+             parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
+      rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
+    table2$numDEGs <- rowSums(is.na(table2)) # count NAs to know how many are NS
+    table2 <- table2 %>% 
+      mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
+      arrange(sig, gene)  %>%  select(-sig, -numDEGs)
+    table2[is.na(table2)] <- " " # replace NA with blank space so it's pretty
+    table2
 
-    (table1$inc.d9_m.inc.d9)
+    ## # A tibble: 33 x 19
+    ## # Groups:   gene [32]
+    ##    gene  m.inc.d17_prolo… inc.d17_m.inc.d… inc.d9_m.inc.d8 hatch_m.n2
+    ##    <chr> <chr>            <chr>            <chr>           <chr>     
+    ##  1 ADRA… "MG+"            " "              " "             " "       
+    ##  2 AVP   " "              "FH- MH-"        "MP+"           " "       
+    ##  3 AVPR… " "              " "              " "             "FH+ MP+" 
+    ##  4 BRIN… " "              "FG- FH+"        " "             "MH+"     
+    ##  5 COMT  " "              "FH- MH-"        "MH-"           "FH- MH-" 
+    ##  6 CREB… " "              "FP+ MP+"        "MP+"           "FH+ FP+ …
+    ##  7 CRH   " "              " "              " "             " "       
+    ##  8 CRHBP " "              "FH+ MH+"        "MH+"           "FH+ MH+" 
+    ##  9 CRHR1 " "              " "              "MH+"           "FH+ FP+ …
+    ## 10 CRHR2 " "              "FH+ MH+"        "MH+"           "FH+ MH+" 
+    ## # … with 23 more rows, and 14 more variables: m.inc.d3_m.inc.d17 <chr>,
+    ## #   m.inc.d3_m.n2 <chr>, inc.d3_m.inc.d3 <chr>, m.inc.d3_m.inc.d9 <chr>,
+    ## #   m.inc.d8_extend <chr>, m.inc.d8_prolong <chr>,
+    ## #   m.inc.d9_m.inc.d8 <chr>, m.inc.d9_m.n2 <chr>, inc.d9_m.inc.d9 <chr>,
+    ## #   m.n2_extend <chr>, m.inc.d9_m.inc.d17 <chr>, Literature <chr>,
+    ## #   GO <chr>, NCBI <chr>
 
-    ## [1] NA     NA     "VIP+" NA     NA     NA
+    write.csv(table2, "../results/table2.csv")
 
-    (table1$inc.d17_m.inc.d17)
-
-    ## [1] "AVP- BDNF+ DRD1+ EGR1+ ESR2- FOS+ OXT- PRLR+"    
-    ## [2] "AR- AVP- BDNF+ DRD1+ EGR1+ ESR2- LBH- PRL- PRLR+"
-    ## [3] "AR+ BDNF+ LBH- PRL- PRLR-"                       
-    ## [4] "DRD1+ ESR2- LBH-"                                
-    ## [5] "JUN-"                                            
-    ## [6] "LBH-"
-
-    (table1$hatch_m.n2)
-
-    ## [1] "AVPR1A+ CYP19A1+ DRD1+ EGR1+ GNRH1+ JUN- PRL- PRLR+"
-    ## [2] "DRD1+ EGR1+ GNRH1+ PRL- PRLR+"                      
-    ## [3] "AR+ AVPR1B+ AVPR2+ EGR1+ GNRHR+ JUN+ LBH- PRL-"     
-    ## [4] "AVPR1A+ LBH- PRL- VIP+"                             
-    ## [5] NA                                                   
-    ## [6] NA
-
-    makeboxplotsmanip <- function(df, whichgene, mysubtitle, whichsex, whichtimepoint){
-      p <- df %>%
-        filter(treatment %in% alllevels,
-               gene %in% whichgene,
-               sex %in% whichsex) %>%
-        filter(treatment %in% whichtimepoint) %>%
-        ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
-        geom_boxplot(outlier.shape = NA) + 
-        geom_jitter(size = 0.5, width = 0.1) +
-        facet_wrap(~gene, scales = "free_y", nrow = 1) +
-        theme_B3() +
-        scale_fill_manual(values = allcolors) +
-        scale_color_manual(values = allcolors) +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1),
-              legend.position = "none",
-              plot.caption = element_text(face = "italic")) +
-        labs(y = "gene expression" , x = "Parental Stages and Manipulations", subtitle = mysubtitle) +
-        theme(strip.text = element_text(face = "italic", size = 5)) + 
-        scale_y_continuous(labels = scales::number_format(accuracy = 1))
-      return(p)
-    }
-
-Figs
-----
-
-    ## hypothatlamus
-    a <- makeboxplotsmanip(hypvsd, c("DRD1","EGR1","PRLR"), "Female hypothalamus", "female",
-                      c("inc.d3", "m.inc.d3", "inc.d17", "m.inc.d17",  "hatch", "m.n2"))  +
-      theme(axis.title.x = element_blank())
-    b <- makeboxplotsmanip(hypvsd, c("BDNF","ESR2", "FOS"), " ", "female",
-                      c("inc.d3", "m.inc.d3", "inc.d17", "m.inc.d17"))  +
-      theme(axis.title = element_blank())
-
-    c <- makeboxplotsmanip(hypvsd, c("AVP","OXT"), " ", "female", 
-                           c("inc.d17", "m.inc.d17"))  +
-      theme(axis.title = element_blank())
-    d <- makeboxplotsmanip(hypvsd, c("AVPR1A","CYP19A1","GNRH1"), " ", "female",
-                       c("hatch", "m.n2"))  +
-      theme(axis.title = element_blank())
-    e <- makeboxplotsmanip(hypvsd, c("JUN"), " ", "female", 
-                     c("hatch", "m.n2"))  +
-      theme(axis.title = element_blank()) + labs(subtitle = " ")
-
-    f <- makeboxplotsmanip(hypvsd, c("DRD1", "EGR1", "PRLR"), "Male hypothalamus", "male",
-                      c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  +
-      theme(axis.title.x = element_blank())
-
-    g <- makeboxplotsmanip(hypvsd, c( "PRL"), " ", "male",
-                      c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  +
-      theme(axis.title = element_blank())
-
-    h <- makeboxplotsmanip(hypvsd, c("AR", "AVP", "BDNF", "ESR1", "LBH"), " ", "male",
-                      c( "inc.d17", "m.inc.d17")) +
-      theme(axis.title = element_blank()) 
-
-    i <- makeboxplotsmanip(hypvsd, c("GNRH1"), " ", "male",
-                      c("hatch", "m.n2"))  +
-      theme(axis.title = element_blank()) 
-
-
-    j <- makeboxplotsmanip(pitvsd, c("AR", "PRL", "LBH"), "Female pituitary", "female",
-                      c( "inc.d17", "m.inc.d17", "hatch", "m.n2"))  + theme(axis.title.x = element_blank())
-
-    k <- makeboxplotsmanip(pitvsd, c("DRD1"), " ", "female",
-                      c( "inc.d3", "m.inc.d3"))  + theme(axis.title = element_blank())
-
-    l <- makeboxplotsmanip(pitvsd, c("BDNF", "PRLR"), " ", "female",
-                      c( "inc.d17", "m.inc.d17"))  +  theme(axis.title = element_blank())
-
-    m <- makeboxplotsmanip(pitvsd, c("AVPR1B", "AVPR2", "EGR1", "GNRHR", "JUN"), " ", "female",
-                      c("hatch", "m.n2"))  + theme(axis.title = element_blank())
-
-
-    n <- makeboxplotsmanip(pitvsd, c("LBH"), "Male pituitary", "male",
-                      c("inc.d17", "m.inc.d17", "hatch", "m.n2"))  
-    o <- makeboxplotsmanip(pitvsd, c("DRD1", "ESR2"), " ", "male",
-                      c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
-    p <- makeboxplotsmanip(pitvsd, c("AVPR1A", "PRLR"), " ", "male",
-                      c("hatch", "m.n2"))  + theme(axis.title  = element_blank())
-
-    q <- makeboxplotsmanip(gonvsd, c("LBH"), "Male gonads ", "male",
-                      c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
-    r <- makeboxplotsmanip(gonvsd, c("JUN"), "Female gonads ", "female",
-                      c("inc.d17", "m.inc.d17"))  + theme(axis.title  = element_blank())
-
-
-    abcd <- plot_grid(a,b,c,d,e, nrow = 1, rel_widths = c(16,10,4,6,2), align = "h", labels = c("a", "b", "c", "d"), label_size = 8)
-    efgh <- plot_grid(f,g,h,i, nrow = 1, rel_widths = c(10,3,10,2), align = "h", labels = c("e", " ", "f", "g"), label_size = 8)
-    jklm <- plot_grid(j,k,l,m, nrow = 1, rel_widths = c(12,2,4,10), align = "h",  labels = c("h", "i", "j", "k"), label_size = 8)
-    nopqr <- plot_grid(n,o,p,q,r, nrow = 1, rel_widths = c(4,4,4,2,2), align = "h",  labels = c("l", "m", "n", "o", "p"), label_size = 8)
-
-    plot_grid(abcd, efgh, jklm,nopqr, ncol = 1)
-
-![](../figures/fig6-1.png)
-
-    write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
+    # for victoria
+    prlmanip <- candidatevsd %>%
+      filter(gene == "PRL", 
+             treatment %in% c("extend", "m.inc.d8"))
+    write.csv(prlmanip, "../results/prlmanip.csv")
