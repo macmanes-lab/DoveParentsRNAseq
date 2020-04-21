@@ -43,6 +43,8 @@ allvsd <- vsd_pathfiles %>%
                names_to = "samples", values_to = "counts") 
 allvsd <- as.tibble(allvsd)
 
+head(allvsd)
+
 getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   candidates  <- allvsd %>%
     filter(gene %in% whichgenes) %>%
@@ -51,12 +53,24 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
     dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
                 tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
                 treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
-    #dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1))# %>%
-   # dplyr::recode(treatment, "m.hatch" = "m.n2", .default = levels(treatment)) 
+    dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+     dplyr::mutate(treatment = recode(treatment, "m.hatch" = "m.n2",
+                                                  "extend.hatch" = "m.n2",
+                                      "inc.prolong" = "prolong")) %>%
     
-     dplyr::mutate(treatment = recode(treatment, "m.hatch" = "m.n2"))%>%
+    dplyr::mutate(day = fct_collapse(treatment,
+                                     "day 3" = c("inc.d3", "m.inc.d3" ),
+                                     "day 9" = c("inc.d9", "m.inc.d9", "m.inc.d8"  ),
+                                     "day 17" = c("inc.d17", "m.inc.d17", "prolong"  ),
+                                     "hatch" = c("hatch", "m.n2", "extend"  )
+                                     )) %>%
     
-    dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
+    dplyr::mutate(manip = fct_collapse(treatment,
+                                       "reference" = charlevels,
+                                       "removal" = c("m.inc.d3", "m.inc.d9", "m.inc.d17","m.n2"),
+                                       "replacement" = c("m.inc.d8", "prolong", "extend"))) %>%
+    
+    dplyr::select(sex, tissue, treatment, day,  manip, gene, samples, counts) %>%
     filter(tissue == whichtissue, sex %in% whichsex)  %>%
     drop_na()
   candidates$treatment <- factor(candidates$treatment, levels = alllevels)
@@ -66,13 +80,9 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
 hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
 pitvsd <- getcandidatevsd(candidategenes, "pituitary", sexlevels)
 gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
-
 candidatevsd <- rbind(hypvsd, pitvsd)
 candidatevsd <- rbind(candidatevsd, gonvsd)
-
 head(candidatevsd)
-
-levels(candidatevsd$treatment)
 ```
 
 
@@ -101,7 +111,6 @@ head(allDEG)
 allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
 allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
 allDEG$direction <- factor(allDEG$direction, levels = alllevels)
-
 head(allDEG)
 
 candidateDEGS <- allDEG %>%
@@ -130,6 +139,16 @@ table2 <- table2 %>%
   arrange(sig, gene)  %>%  select(-sig, -numDEGs)
 table2[is.na(table2)] <- " " # replace NA with blank space so it's pretty
 table2
+```
+
+
+```{r fig6}
+candidatevsd %>%
+  filter(gene == "PRL") %>%
+  ggplot(aes(y = counts, x = day, color = manip)) +
+  geom_boxplot() +
+  facet_wrap(tissue~sex, scales = "free") +
+  theme(legend.position = "bottom") 
 ```
 
 
