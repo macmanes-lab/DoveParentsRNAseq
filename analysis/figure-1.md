@@ -5,8 +5,6 @@ tsne
 ----
 
     # prep for tsne
-
-
     chartsne <- subsetmaketsne(tissuelevels, charlevels, sexlevels)
     hyptsne <- subsetmaketsne("hypothalamus", charlevels, sexlevels)
     pittsne <- subsetmaketsne("pituitary", charlevels, sexlevels)
@@ -506,61 +504,59 @@ DEGs
 make figure
 -----------
 
-    a <- png::readPNG("../figures/images/fig_fig1a.png")
+    a <- png::readPNG("../figures/images/fig_fig1b.png")
     a <- ggdraw() +  draw_image(a, scale = 1)
 
-    b <- png::readPNG("../figures/images/fig_fig1b.png")
-    b <- ggdraw() +  draw_image(b, scale = 1)
+    b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "~ tissue * sex")    
+    c <- plottsneelipse(ftsne, ftsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, females only")
+    d <- plottsneelipse(mtsne, mtsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, males only") 
 
+    abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("A", "B", "C", "D"), label_size = 8 )
 
-    c <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "~ tissue * sex")    
-    d <- plottsneelipse(ftsne, ftsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, females only")
-    e <- plottsneelipse(mtsne, mtsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, males only") 
+    e <- png::readPNG("../figures/images/fig_fig1a.png")
+    e <- ggdraw() +  draw_image(e, scale = 1)
 
-    bcde <- plot_grid(b,c,d,e, nrow = 1, labels = c("B", "C", "D", "E"), label_size = 8 )
-    abcd <- plot_grid(a, bcde, nrow = 2, labels = c("A"), label_size = 8, rel_heights = c(1,1))
-
-    e <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
-      labs( x = NULL)  + 
+    f <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
+      labs(x = NULL, subtitle = "hypothalamus")  + 
       facet_wrap(~sex, scales = "free")
 
-    g <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
-      labs(  x = NULL) + 
+    h <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
+      labs(x = NULL, subtitle = "pituitary") + 
       facet_wrap(~sex, scales = "free") +
       theme(strip.text = element_blank())
 
-    i <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
+    j <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
        facet_wrap(~sex, scales = "free") +
       theme(strip.text = element_blank()) +
-      labs(x = "tSNE1 \n \n \n \n")
-
-    egi <- plot_grid(e,g,i, nrow = 3, rel_heights = c(1,1,1.4),
-                     labels = c("F", "H", "J"), label_size = 8)
-
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
-    # hyp
-    f <- makebargraph("hypothalamus","DEGs", 0, 1250) + 
-      theme(axis.text.x = element_blank(), 
-            axis.title.x = element_blank())  
-    # pit
-    h <- makebargraph("pituitary","DEGs", 0, 1250)  +  
-      theme(axis.text.x = element_blank(), 
-            axis.title.x = element_blank(), 
-            strip.text.x = element_blank())  
-    # gon
-    j <- makebargraph("gonad","DEGs", 0, 1250) +  
-      theme(strip.text.x = element_blank()) +
-      scale_x_discrete(labels = comparisonlabels)
+      labs(x = "tSNE1 \n \n \n \n", subtitle = "gonads")
 
     fhj <- plot_grid(f,h,j, nrow = 3, rel_heights = c(1,1,1.4),
+                     labels = c("F", "H", "J"), label_size = 8)
+
+    # hyp
+    g <- makebargraph("hypothalamus","DEGs", 0, 4300) + 
+      theme(axis.text.x = element_blank(), 
+            axis.title.x = element_blank())  +
+      labs(subtitle = "hypothalamus")
+    # pit
+    i <- makebargraph("pituitary","DEGs", 0, 4300)  +  
+      theme(axis.text.x = element_blank(), 
+            axis.title.x = element_blank(), 
+            strip.text.x = element_blank())  +
+      labs(subtitle = "pituitary")
+    # gon
+    k <- makebargraph("gonad","DEGs", 0, 4300) +  
+      theme(strip.text.x = element_blank()) +
+      scale_x_discrete(labels = comparisonlabels)+
+      labs(subtitle = "gonads")
+
+    gik <- plot_grid(g,i,k, nrow = 3, rel_heights = c(1,1,1.4),
                      labels = c("G", "I", "K"), label_size = 8)  
 
-    efghij <- plot_grid(egi, fhj, nrow = 1, align = "h", rel_widths = c(1.5,2))
+    fhjgik <- plot_grid(fhj, gik, nrow = 1, align = "h", rel_widths = c(1.5,2))
 
-    fig1 <- plot_grid(abcd, efghij, nrow = 2, rel_heights = c(1,1.5))
+    fig1 <- plot_grid(abcd, e, fhjgik, nrow = 3, rel_heights = c(0.7,0.5,1.5),
+                      labels = c(" ","E"), label_size = 8 )
     fig1
 
 ![](../figures/fig1-1.png)
