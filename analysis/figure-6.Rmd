@@ -14,6 +14,7 @@ library(cowplot)
 library(ggpubr)
 library(kableExtra)
 
+
 source("../R/themes.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
@@ -44,7 +45,10 @@ allvsd <- vsd_pathfiles %>%
 allvsd <- as.tibble(allvsd)
 
 head(allvsd)
+```
 
+```{r candidate vsd}
+# for plotting gene expression over time
 getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   candidates  <- allvsd %>%
     filter(gene %in% whichgenes) %>%
@@ -59,17 +63,17 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
                                       "inc.prolong" = "prolong")) %>%
     
     dplyr::mutate(day = fct_collapse(treatment,
-                                     "day 3" = c("inc.d3", "m.inc.d3" ),
-                                     "day 9" = c("inc.d9", "m.inc.d9", "m.inc.d8"  ),
-                                     "day 17" = c("inc.d17", "m.inc.d17", "prolong"  ),
-                                     "hatch" = c("hatch", "m.n2", "extend"  )
+                                     "1" = c("inc.d3", "m.inc.d3" ),
+                                     "2" = c("inc.d9", "m.inc.d9", "m.inc.d8"  ),
+                                     "2" = c("inc.d17", "m.inc.d17", "prolong"  ),
+                                     "4" = c("hatch", "m.n2", "extend"  )
                                      )) %>%
-    
+    dplyr::mutate(day = as.numeric(day)) %>%
     dplyr::mutate(manip = fct_collapse(treatment,
                                        "reference" = charlevels,
                                        "removal" = c("m.inc.d3", "m.inc.d9", "m.inc.d17","m.n2"),
                                        "replacement" = c("m.inc.d8", "prolong", "extend"))) %>%
-    
+    dplyr::mutate(manip = factor(manip, levels = c("reference", "removal", "replacement"))) %>%
     dplyr::select(sex, tissue, treatment, day,  manip, gene, samples, counts) %>%
     filter(tissue == whichtissue, sex %in% whichsex)  %>%
     drop_na()
@@ -139,18 +143,66 @@ table2 <- table2 %>%
   arrange(sig, gene)  %>%  select(-sig, -numDEGs)
 table2[is.na(table2)] <- " " # replace NA with blank space so it's pretty
 table2
+
+table2 %>% select(gene,inc.d3_m.inc.d3, inc.d9_m.inc.d9, inc.d17_m.inc.d17, hatch_m.n2)
 ```
 
 
-```{r fig6}
-candidatevsd %>%
-  filter(gene == "PRL") %>%
-  ggplot(aes(y = counts, x = day, color = manip)) +
+```{r fig6, fig.height=7.25, fig.width=10}
+
+plotcandidatemanip <- function(whichtissue, whichsex, whichgenes){
+  
+  p <- candidatevsd %>%
+  filter(tissue == whichtissue, sex == whichsex) %>%
+  filter(gene %in% whichgenes) %>%
+  filter(treatment %in% c(levelsremoval, controlsremoval)) %>%
+  mutate(treatment = factor(treatment, levels = alllevels3)) %>%
+  ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
   geom_boxplot() +
-  facet_wrap(tissue~sex, scales = "free") +
-  theme(legend.position = "bottom") 
+  facet_wrap(~gene, scales = "free_y", nrow = 2) +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.text = element_text(face = "italic")) +
+  scale_color_manual(values = allcolors) +
+  scale_fill_manual(values = allcolors) 
+  
+  
+  return(p)
+}
+
+p1 <- plotcandidatemanip("hypothalamus", "female", c("AVP", "BRINP1", "COMT", "CREBRF", "CRH", "CRHBP", "CRHR1", "CRHR2", "OPRK1")) +
+  labs(subtitle = "hypothalamus") +
+  theme(axis.text.x = element_blank(), axis.title.x = element_blank()) 
+p2 <- plotcandidatemanip("pituitary", "female", c("CREBRF", "CRHR1", "DRD1", "DRD4", "GNAQ")) +
+  labs(subtitle = "pituitary")
+p3 <- plotcandidatemanip("gonad", "female", c("BRINP1", "OPRK1"))  +
+  labs(subtitle = "gonads")
+
+
+p23 <- plot_grid(p2,p3, nrow = 1, rel_widths = c(3,1))
+
+plot_grid(p1,p23, nrow = 2, rel_heights = c(1,1.2))
+
+## hypothesis
 ```
 
+```{r, eval = F}
+
+## not working
+meanse <- candidatevsd %>%
+  dplyr::group_by(sex, tissue, treatment, day, manip, gene) %>%
+  dplyr::summarise(m = mean(counts), 
+                   se = sd(counts)/sqrt(length(counts))) %>%
+  dplyr::mutate(m = round(m,0))
+head(meanse)
+
+meanse %>%
+  filter(gene == "PRL") %>%
+  ggplot(aes(x = day, y = m, color = manip)) +
+  geom_errorbar(aes(ymin=m-se, ymax=m+se), width=.1) +
+    geom_point(size = 1) +
+  facet_wrap(sex~tissue, scales = "free")
+```
 
 
 ```{r writefiles}
