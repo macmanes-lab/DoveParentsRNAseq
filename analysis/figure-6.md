@@ -3,14 +3,14 @@ manipulation box plots for candidate genes
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -104,6 +104,19 @@ variance stabilized gene expression (vsd)
     ## Warning: `as.tibble()` is deprecated, use `as_tibble()` (but mind the new semantics).
     ## This warning is displayed once per session.
 
+    head(allvsd)
+
+    ## # A tibble: 6 x 4
+    ##   file_name                         gene  samples                    counts
+    ##   <chr>                             <chr> <chr>                       <dbl>
+    ## 1 ../results/DEseq2/manip/female_g… A2ML1 blk.s031.pu.d_female_gona…   7.60
+    ## 2 ../results/DEseq2/manip/female_g… A2ML1 blk.s032.g.w_female_gonad…   7.49
+    ## 3 ../results/DEseq2/manip/female_g… A2ML1 blk.s049.y.g_female_gonad…   7.81
+    ## 4 ../results/DEseq2/manip/female_g… A2ML1 blk.s060.pu.w_female_gona…   7.16
+    ## 5 ../results/DEseq2/manip/female_g… A2ML1 blk.s061.pu.y_female_gona…   7.19
+    ## 6 ../results/DEseq2/manip/female_g… A2ML1 blk.y.l.s109_female_gonad…   7.50
+
+    # for plotting gene expression over time
     getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
       candidates  <- allvsd %>%
         filter(gene %in% whichgenes) %>%
@@ -112,12 +125,24 @@ variance stabilized gene expression (vsd)
         dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
                     tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
                     treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
-        #dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1))# %>%
-       # dplyr::recode(treatment, "m.hatch" = "m.n2", .default = levels(treatment)) 
+        dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+         dplyr::mutate(treatment = recode(treatment, "m.hatch" = "m.n2",
+                                                      "extend.hatch" = "m.n2",
+                                          "inc.prolong" = "prolong")) %>%
         
-         dplyr::mutate(treatment = recode(treatment, "m.hatch" = "m.n2"))%>%
-        
-        dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
+        dplyr::mutate(day = fct_collapse(treatment,
+                                         "1" = c("inc.d3", "m.inc.d3" ),
+                                         "2" = c("inc.d9", "m.inc.d9", "m.inc.d8"  ),
+                                         "2" = c("inc.d17", "m.inc.d17", "prolong"  ),
+                                         "4" = c("hatch", "m.n2", "extend"  )
+                                         )) %>%
+        dplyr::mutate(day = as.numeric(day)) %>%
+        dplyr::mutate(manip = fct_collapse(treatment,
+                                           "reference" = charlevels,
+                                           "removal" = c("m.inc.d3", "m.inc.d9", "m.inc.d17","m.n2"),
+                                           "replacement" = c("m.inc.d8", "prolong", "extend"))) %>%
+        dplyr::mutate(manip = factor(manip, levels = c("reference", "removal", "replacement"))) %>%
+        dplyr::select(sex, tissue, treatment, day,  manip, gene, samples, counts) %>%
         filter(tissue == whichtissue, sex %in% whichsex)  %>%
         drop_na()
       candidates$treatment <- factor(candidates$treatment, levels = alllevels)
@@ -125,30 +150,30 @@ variance stabilized gene expression (vsd)
     }
 
     hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
+
+    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
+
     pitvsd <- getcandidatevsd(candidategenes, "pituitary", sexlevels)
+
+    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
+
     gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
+
+    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
 
     candidatevsd <- rbind(hypvsd, pitvsd)
     candidatevsd <- rbind(candidatevsd, gonvsd)
-
     head(candidatevsd)
 
-    ## # A tibble: 6 x 6
-    ##   sex    tissue      treatment gene  samples                         counts
-    ##   <chr>  <chr>       <fct>     <chr> <chr>                            <dbl>
-    ## 1 female hypothalam… prolong   ADRA… blk.s031.pu.d_female_hypothala…   9.20
-    ## 2 female hypothalam… m.n2      ADRA… blk.s032.g.w_female_hypothalam…   9.07
-    ## 3 female hypothalam… m.inc.d3  ADRA… blk.s049.y.g_female_hypothalam…   9.21
-    ## 4 female hypothalam… m.inc.d3  ADRA… blk.s060.pu.w_female_hypothala…   9.13
-    ## 5 female hypothalam… inc.d9    ADRA… blk.s061.pu.y_female_hypothala…   9.19
-    ## 6 female hypothalam… m.inc.d8  ADRA… blk.y.l.s109_female_hypothalam…   9.31
-
-    levels(candidatevsd$treatment)
-
-    ##  [1] "control"   "bldg"      "lay"       "inc.d3"    "m.inc.d3" 
-    ##  [6] "inc.d9"    "m.inc.d8"  "m.inc.d9"  "inc.d17"   "m.inc.d17"
-    ## [11] "prolong"   "hatch"     "m.n2"      "extend"    "n5"       
-    ## [16] "n9"
+    ## # A tibble: 6 x 8
+    ##   sex    tissue    treatment   day manip   gene  samples             counts
+    ##   <chr>  <chr>     <fct>     <dbl> <fct>   <chr> <chr>                <dbl>
+    ## 1 female hypothal… prolong       2 replac… ADRA… blk.s031.pu.d_fema…   9.20
+    ## 2 female hypothal… m.n2          1 removal ADRA… blk.s032.g.w_femal…   9.07
+    ## 3 female hypothal… m.inc.d3      3 removal ADRA… blk.s049.y.g_femal…   9.21
+    ## 4 female hypothal… m.inc.d3      3 removal ADRA… blk.s060.pu.w_fema…   9.13
+    ## 5 female hypothal… inc.d9        2 refere… ADRA… blk.s061.pu.y_fema…   9.19
+    ## 6 female hypothal… m.inc.d8      2 replac… ADRA… blk.y.l.s109_femal…   9.31
 
 DEGs
 ----
@@ -185,7 +210,6 @@ DEGs
     allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
     allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
     allDEG$direction <- factor(allDEG$direction, levels = alllevels)
-
     head(allDEG)
 
     ## # A tibble: 6 x 8
@@ -265,6 +289,76 @@ DEGs
     ## #   m.inc.d9_m.inc.d8 <chr>, m.inc.d9_m.n2 <chr>, inc.d9_m.inc.d9 <chr>,
     ## #   m.n2_extend <chr>, m.inc.d9_m.inc.d17 <chr>, Literature <chr>,
     ## #   GO <chr>, NCBI <chr>
+
+    table2 %>% select(gene,inc.d3_m.inc.d3, inc.d9_m.inc.d9, inc.d17_m.inc.d17, hatch_m.n2)
+
+    ## # A tibble: 33 x 5
+    ## # Groups:   gene [32]
+    ##    gene   inc.d3_m.inc.d3 inc.d9_m.inc.d9 inc.d17_m.inc.d17 hatch_m.n2   
+    ##    <chr>  <chr>           <chr>           <chr>             <chr>        
+    ##  1 ADRA2A " "             " "             " "               " "          
+    ##  2 AVP    " "             " "             "FH- MH-"         " "          
+    ##  3 AVPR1A " "             " "             " "               "FH+ MP+"    
+    ##  4 BRINP1 "FH+"           " "             "FG- FH+"         "MH+"        
+    ##  5 COMT   "FH-"           " "             "FH- MH-"         "FH- MH-"    
+    ##  6 CREBRF " "             "MG+"           "FP+ MP+"         "FH+ FP+ MP+"
+    ##  7 CRH    "FH+"           " "             " "               " "          
+    ##  8 CRHBP  " "             " "             "FH+ MH+"         "FH+ MH+"    
+    ##  9 CRHR1  " "             " "             " "               "FH+ FP+ MH+"
+    ## 10 CRHR2  "FH+"           " "             "FH+ MH+"         "FH+ MH+"    
+    ## # … with 23 more rows
+
+    plotcandidatemanip <- function(whichtissue, whichsex, whichgenes){
+      
+      p <- candidatevsd %>%
+      filter(tissue == whichtissue, sex == whichsex) %>%
+      filter(gene %in% whichgenes) %>%
+      filter(treatment %in% c(levelsremoval, controlsremoval)) %>%
+      mutate(treatment = factor(treatment, levels = alllevels3)) %>%
+      ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
+      geom_boxplot() +
+      facet_wrap(~gene, scales = "free_y", nrow = 2) +
+      theme(legend.position = "none",
+            axis.text.x = element_text(angle = 45, hjust = 1),
+            strip.text = element_text(face = "italic")) +
+      scale_color_manual(values = allcolors) +
+      scale_fill_manual(values = allcolors) 
+      
+      
+      return(p)
+    }
+
+    p1 <- plotcandidatemanip("hypothalamus", "female", c("AVP", "BRINP1", "COMT", "CREBRF", "CRH", "CRHBP", "CRHR1", "CRHR2", "OPRK1")) +
+      labs(subtitle = "hypothalamus") +
+      theme(axis.text.x = element_blank(), axis.title.x = element_blank()) 
+    p2 <- plotcandidatemanip("pituitary", "female", c("CREBRF", "CRHR1", "DRD1", "DRD4", "GNAQ")) +
+      labs(subtitle = "pituitary")
+    p3 <- plotcandidatemanip("gonad", "female", c("BRINP1", "OPRK1"))  +
+      labs(subtitle = "gonads")
+
+
+    p23 <- plot_grid(p2,p3, nrow = 1, rel_widths = c(3,1))
+
+    plot_grid(p1,p23, nrow = 2, rel_heights = c(1,1.2))
+
+![](../figures/fig6-1.png)
+
+    ## hypothesis
+
+    ## not working
+    meanse <- candidatevsd %>%
+      dplyr::group_by(sex, tissue, treatment, day, manip, gene) %>%
+      dplyr::summarise(m = mean(counts), 
+                       se = sd(counts)/sqrt(length(counts))) %>%
+      dplyr::mutate(m = round(m,0))
+    head(meanse)
+
+    meanse %>%
+      filter(gene == "PRL") %>%
+      ggplot(aes(x = day, y = m, color = manip)) +
+      geom_errorbar(aes(ymin=m-se, ymax=m+se), width=.1) +
+        geom_point(size = 1) +
+      facet_wrap(sex~tissue, scales = "free")
 
     write.csv(table2, "../results/table2.csv")
 
