@@ -507,7 +507,7 @@ make figure
     a <- png::readPNG("../figures/images/fig_fig1b.png")
     a <- ggdraw() +  draw_image(a, scale = 1)
 
-    b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = " ", subtitle = "~ tissue * sex")    
+    b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = "tSNE 2 ", subtitle = "~ tissue * sex")    
     c <- plottsneelipse(ftsne, ftsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, females only")
     d <- plottsneelipse(mtsne, mtsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, males only") 
 

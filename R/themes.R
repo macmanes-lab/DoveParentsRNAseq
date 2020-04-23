@@ -1,7 +1,7 @@
 # custom themes
 
 theme_B3 <- function () { 
-  theme_classic(base_size = 6,
+  theme_classic(base_size = 7,
                 base_family = 'Helvetica') +
     theme(
       panel.grid.major  = element_blank(),  # remove major gridlines
