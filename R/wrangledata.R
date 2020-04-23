@@ -61,10 +61,26 @@ GOgenesLong <- GO_pathfiles %>%
   rbind(., curleychampagnegenes) %>%
   arrange(gene) %>%
   left_join(., geneids, by = "gene") %>%
+  arrange(gene) %>%
   drop_na() 
 GOgenesLong
 
-GOgenesWide <- GOgenesLong %>% 
+mamglanddev <- GOgenesLong %>% 
+  filter(!GO %in% c("parentalbehavior", "parentalcare")) %>% 
+  pivot_wider(
+    names_from = GO,
+    values_from = gene) %>%
+  mutate(numGOs = 4 - rowSums(is.na(.))) %>%
+  arrange(desc(numGOs)) %>%
+  select(-numGOs) %>%
+  left_join(geneids, by = c("geneid","NCBI")) %>%
+  select(gene, mamglanddev, prostglanddev,  NCBI) %>%
+  arrange(mamglanddev, prostglanddev)
+mamglanddev
+
+
+parentalcaregenes <- GOgenesLong %>% 
+  filter(!GO %in% c("mamglanddev", "prostglanddev") ) %>% 
   pivot_wider(
     names_from = GO,
     values_from = gene) %>%
@@ -72,9 +88,9 @@ GOgenesWide <- GOgenesLong %>%
   arrange(desc(numGOs)) %>%
   select(-numGOs) %>%
   left_join(geneids, by = c("geneid","NCBI"))
-GOgenesWide
+parentalcaregenes
 
-candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
+candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
 
 # note: I can't find these genes in dataset: NOS1 or OXTR or FOX1B or HTR5A
 
