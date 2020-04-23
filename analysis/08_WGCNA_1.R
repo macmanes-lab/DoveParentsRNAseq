@@ -49,14 +49,16 @@ colDataGon <- subsetcolData3(colData, c("F.G"))
 countDataHyp <- subsetcountData3(colDataHyp)
 countDataPit <- subsetcountData3(colDataPit)
 countDataGon <- subsetcountData3(colDataGon)
+str(countDataPit)
 
 ##### first pass, pituitary
 
 # WGCNA
 
-datExpr0 <- as.data.frame(t(countDataGon))
+datExpr0 <- as.data.frame(t(countDataPit))
 head(names(datExpr0))  # columns are genes
 head(rownames(datExpr0)) # rows are samples
+head(datExpr0)
 
 gsg = goodSamplesGenes(datExpr0, verbose = 0); # check good genes
 gsg$allOK 
@@ -108,7 +110,7 @@ traitColors = numbers2colors(datTraits, signed = TRUE);
 # Plot the sample dendrogram and the colors underneath.
 plotDendroAndColors(sampleTree2, traitColors,
                     groupLabels = names(datTraits), 
-                    main = "Gonad dendrogram",
+                    main = "Pituitary dendrogram",
                     cex.dendroLabels = 0.4
                     )
 
@@ -167,22 +169,27 @@ genes_modules %>%
 genes_modules$gene <- row.names(genes_modules)	
 
 candidategenes <- read_csv("../results/candidategenes.csv") %>% pull(x)
+devgenes <- mamglanddev  %>% pull(gene)
+
 
 candidategenemodules <- genes_modules %>%	
-  filter(gene %in% candidategenes)	 %>%
+  filter(gene %in% devgenes)	 %>%
   arrange(`net$colors`, gene) %>%
   distinct(`net$colors`) %>% pull(`net$colors`) %>%
   droplevels()
 candidategenemodules
 
+# candidate modules: magenta*   pink      tan       turquoise  yellow   
+# cancer modules: blue   cyan   greenyellow  grey  magenta*   midnightblue
+
+
 candidategenesdf <- genes_modules %>%	
-  filter(gene %in% candidategenes)	 %>%
+  filter(gene %in% devgenes)	 %>%
   arrange(`net$colors`, gene) 
 candidategenesdf
 
 candidategeneassociated <- genes_modules %>% 
   filter(`net$colors` %in% candidategenemodules)  %>% 
-  filter(!`net$colors` %in% c("turquoise", "grey")) %>%
   filter(!grepl('LOC', gene)) %>%
   arrange(`net$colors`, gene) %>%
   group_by(`net$colors`) %>%

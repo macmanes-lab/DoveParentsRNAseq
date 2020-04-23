@@ -1,0 +1,127 @@
+MGI Gene/Marker ID	Symbol	Name	Chr	Qualifier	Annotated Term	Context	Proteoform	Evidence	Inferred From	Reference(s)
+MGI:105043	Ahr	aryl-hydrocarbon receptor	12		prostate gland development	results in the development of anterior prostate gland|results in the development of prostate gland dorsolateral lobe		IMP	MGI:1857427 	J:126176 	
+MGI:96819	Anxa1	annexin A1	19		prostate gland development			IBA	PTN002574794 	J:265628 	
+MGI:88039	Apc	APC, WNT signaling pathway regulator	18		negative regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in prostate gland epithelium,regulates the proliferation of epithelial cell		IMP	MGI:1857966 MGI:2385927 	J:120308 	
+MGI:88064	Ar	androgen receptor	X		activation of prostate induction by androgen receptor signaling pathway	happens in prostate gland		IMP	MGI:3716756 	J:122327 	
+MGI:88064	Ar	androgen receptor	X		epithelial cell differentiation involved in prostate gland development	happens in prostate gland epithelium,results in the differentiation of epithelial cell		IMP	MGI:2385927 MGI:2451025 	J:123402 	
+MGI:88064	Ar	androgen receptor	X		positive regulation of epithelial cell proliferation involved in prostate gland development			IDA		J:71472 	
+MGI:88064	Ar	androgen receptor	X		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium		IMP	MGI:2385927 MGI:2451025 	J:123402 	
+MGI:88064	Ar	androgen receptor	X		prostate gland growth	happens in prostate gland epithelium|happens in ventral prostate gland		IMP	MGI:2385927 MGI:2451025 	J:123402 	
+MGI:88064	Ar	androgen receptor	X		prostate gland growth	happens in anterior prostate gland|happens in prostate gland dorsolateral lobe|happens in ventral prostate gland		IMP	MGI:3716756 	J:122327 	
+MGI:88064	Ar	androgen receptor	X		regulation of prostatic bud formation			IGI	MGI:1099809 	J:85295 	
+MGI:88180	Bmp4	bone morphogenetic protein 4	14		branching involved in prostate gland morphogenesis			IMP	MGI:1857137 	J:69382 	
+MGI:88180	Bmp4	bone morphogenetic protein 4	14		negative regulation of prostatic bud formation			IDA		J:134349 	
+MGI:88180	Bmp4	bone morphogenetic protein 4	14		negative regulation of prostatic bud formation	regulates the formation of prostate gland		IMP	MGI:1857137 	J:69382 	
+MGI:88180	Bmp4	bone morphogenetic protein 4	14		prostate gland morphogenesis			IMP	MGI:1857137 	J:42445 J:69382 	
+MGI:88180	Bmp4	bone morphogenetic protein 4	14		regulation of branching involved in prostate gland morphogenesis	regulates a function/process that happens in prostate gland		IMP	MGI:2158495 	J:97517 	
+MGI:103302	Bmp7	bone morphogenetic protein 7	2		negative regulation of prostatic bud formation			IDA		J:104840 	
+MGI:103302	Bmp7	bone morphogenetic protein 7	2		regulation of branching involved in prostate gland morphogenesis	regulates a function/process that happens in anterior prostate gland		IMP	MGI:2136986 	J:104840 	
+MGI:103302	Bmp7	bone morphogenetic protein 7	2		regulation of branching involved in prostate gland morphogenesis	regulates a function/process that happens in prostate duct		IMP	MGI:2136986 	J:104840 	
+MGI:88338	Cd44	CD44 antigen	2		branching involved in prostate gland morphogenesis			IMP		J:43768 	
+MGI:104565	Cdkn1b	cyclin-dependent kinase inhibitor 1B	6		negative regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in ventral prostate gland,regulates the proliferation of epithelial cell|regulates a function/process that happens in prostate gland dorsolateral lobe,regulates the proliferation of epithelial cell		IMP	MGI:1888808 	J:115443 	
+MGI:88276	Ctnnb1	catenin (cadherin associated protein), beta 1	9		epithelial cell differentiation involved in prostate gland development	happens in prostate gland epithelium,results in the differentiation of epithelial cell		IMP	MGI:1858008 	J:84340 	
+MGI:88276	Ctnnb1	catenin (cadherin associated protein), beta 1	9		positive regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in prostate gland epithelium		IMP	MGI:1858008 	J:84340 	
+MGI:104978	Cyp7b1	cytochrome P450, family 7, subfamily b, polypeptide 1	3		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium,has the participant epithelial cell|has the participant ventral prostate gland,has the participant epithelial cell		IMP	MGI:2182328 	J:126711 	
+MGI:88587	Cyp19a1	cytochrome P450, family 19, subfamily a, polypeptide 1	9		prostate gland growth	happens in prostate gland		IMP	MGI:2154536 	J:70204 J:109128 	
+MGI:2146616	Eaf2	ELL associated factor 2	16		negative regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in heart|regulates a function/process that happens in prostate gland epithelium,regulates the proliferation of epithelial cell		IMP	MGI:3834174 	J:145228 	
+MGI:1352467	Esr1	estrogen receptor 1 (alpha)	10		prostate epithelial cord arborization involved in prostate glandular acinus morphogenesis	has the participant prostate gland		IMP	MGI:2150897 	J:145499 	
+MGI:1352467	Esr1	estrogen receptor 1 (alpha)	10		prostate epithelial cord elongation	has the participant prostate gland		IMP	MGI:2150897 	J:145499 	
+MGI:1352467	Esr1	estrogen receptor 1 (alpha)	10		regulation of branching involved in prostate gland morphogenesis	regulates a function/process that happens in ventral prostate gland		IMP	MGI:2150897 	J:96107 	
+MGI:1352467	Esr1	estrogen receptor 1 (alpha)	10		regulation of branching involved in prostate gland morphogenesis	regulates a function/process that happens in ventral prostate gland|regulates a function/process that happens in prostate gland dorsolateral lobe		IMP	MGI:2150897 	J:147000 	
+MGI:109392	Esr2	estrogen receptor 2 (beta)	12		epithelial cell maturation involved in prostate gland development	happens in prostate gland epithelium,results in the maturation of epithelial cell		IMP	MGI:2152217 	J:91449 	
+MGI:109392	Esr2	estrogen receptor 2 (beta)	12		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium,has the participant epithelial cell		IMP	MGI:2152217 	J:91449 	
+MGI:109392	Esr2	estrogen receptor 2 (beta)	12		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium,has the participant epithelial cell|has the participant ventral prostate gland,has the participant epithelial cell		IMP	MGI:2152217 	J:126711 	
+MGI:1335087	Fem1b	fem 1 homolog b	9		branching involved in prostate gland morphogenesis	has the participant anterior prostate gland		IMP	MGI:3811024 	J:139640 	
+MGI:1335087	Fem1b	fem 1 homolog b	9		epithelial cell maturation involved in prostate gland development	happens in prostate gland epithelium		IMP	MGI:3811024 	J:139640 	
+MGI:1099809	Fgf10	fibroblast growth factor 10	13		prostatic bud formation			IGI	MGI:88064 	J:85295 	
+MGI:95523	Fgfr2	fibroblast growth factor receptor 2	7		branching involved in prostate gland morphogenesis	has the participant prostate gland epithelium		IMP	MGI:1856633 	J:82767 	
+MGI:95523	Fgfr2	fibroblast growth factor receptor 2	7		branching involved in prostate gland morphogenesis	regulates a function/process that happens in prostate gland epithelium		IMP	MGI:1856633 	J:119935 	
+MGI:95523	Fgfr2	fibroblast growth factor receptor 2	7		branching involved in prostate gland morphogenesis	has the participant anterior prostate gland|has the participant ventral prostate gland		IMP	MGI:3044679 	J:119911 	
+MGI:95523	Fgfr2	fibroblast growth factor receptor 2	7		prostate epithelial cord arborization involved in prostate glandular acinus morphogenesis	has the participant prostate gland		IMP	MGI:3044679 	J:119911 	
+MGI:95523	Fgfr2	fibroblast growth factor receptor 2	7		prostate epithelial cord elongation	has the participant prostate gland		IMP	MGI:3044679 	J:119911 	
+MGI:95523	Fgfr2	fibroblast growth factor receptor 2	7		prostate gland morphogenesis	has the participant prostate gland,has the participant epithelial cell		IMP		J:131096 	
+MGI:95523	Fgfr2	fibroblast growth factor receptor 2	7		squamous basal epithelial stem cell differentiation involved in prostate gland acinus development	happens in prostate gland epithelium		IMP	MGI:3044679 	J:119911 	
+MGI:95543	Fkbp4	FK506 binding protein 4	6		prostate gland development	results in the development of prostate gland		IMP	MGI:3690438 	J:120960 	
+MGI:1347472	Foxa1	forkhead box A1	12		epithelial cell maturation involved in prostate gland development	happens in prostate gland epithelium,results in the maturation of duct epithelial cell|happens in prostate gland epithelium,results in the maturation of secretory cell		IMP	MGI:2384404 	J:101172 	
+MGI:1347472	Foxa1	forkhead box A1	12		epithelial-mesenchymal signaling involved in prostate gland development	happens in prostate gland		IGI	MGI:98297 	J:101172 	
+MGI:1347472	Foxa1	forkhead box A1	12		prostate gland epithelium morphogenesis			IMP	MGI:2384404 	J:101172 	
+MGI:1347472	Foxa1	forkhead box A1	12		prostate gland stromal morphogenesis	has the participant prostate gland stroma		IMP	MGI:2384404 	J:101172 	
+MGI:1347472	Foxa1	forkhead box A1	12		secretory columnal luminar epithelial cell differentiation involved in prostate glandular acinus development	happens in prostate gland epithelium,results in the differentiation of duct epithelial cell|happens in prostate gland epithelium,results in the differentiation of secretory cell		IMP	MGI:2384404 	J:101172 	
+MGI:1100860	Frs2	fibroblast growth factor receptor substrate 2	10		prostate epithelial cord arborization involved in prostate glandular acinus morphogenesis	has the participant anterior prostate gland|has the participant prostate gland dorsolateral lobe|has the participant ventral prostate gland|has the participant male reproductive system		IMP	MGI:3689997 MGI:3768912 	J:131096 	
+MGI:95728	Gli2	GLI-Kruppel family member GLI2	1		prostatic bud formation	results in the formation of prostate gland		IMP	MGI:1857509 	J:144902 	
+MGI:96173	Hoxa13	homeobox A13	6		branching involved in prostate gland morphogenesis	has the participant prostate gland		IMP	MGI:1857336 	J:54823 	
+MGI:107730	Hoxb13	homeobox B13	11		epithelial cell maturation involved in prostate gland development	happens in ventral prostate gland,results in the maturation of epithelial cell|happens in prostate gland epithelium,results in the maturation of epithelial cell		IMP	MGI:2655242 	J:82540 	
+MGI:107730	Hoxb13	homeobox B13	11		prostate epithelial cord arborization involved in prostate glandular acinus morphogenesis	has the participant ventral prostate gland		IGI	MGI:96205 	J:82450 	
+MGI:96205	Hoxd13	homeobox D13	2		prostate epithelial cord arborization involved in prostate glandular acinus morphogenesis	has the participant ventral prostate gland		IGI	MGI:107730 	J:82540 	
+MGI:96205	Hoxd13	homeobox D13	2		regulation of branching involved in prostate gland morphogenesis	regulates a function/process that happens in prostate gland dorsolateral lobe|regulates a function/process that happens in ventral prostate gland		IMP	MGI:1857871 	J:39392 	
+MGI:99414	Id4	inhibitor of DNA binding 4	13		prostate gland epithelium morphogenesis			IMP	MGI:3505549 	J:207823 	
+MGI:99414	Id4	inhibitor of DNA binding 4	13		prostate gland morphogenesis			IMP	MGI:3505549 	J:207823 	
+MGI:99414	Id4	inhibitor of DNA binding 4	13		prostate gland stromal morphogenesis			IMP	MGI:3505549 	J:207823 	
+MGI:96432	Igf1	insulin-like growth factor 1	10		prostate epithelial cord arborization involved in prostate glandular acinus morphogenesis	has the participant prostate duct		IMP	MGI:1857466 	J:54846 	
+MGI:96432	Igf1	insulin-like growth factor 1	10		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium		IMP	MGI:1857466 	J:129595 	
+MGI:96432	Igf1	insulin-like growth factor 1	10		prostate gland growth	happens in prostate gland		IDA		J:129595 	
+MGI:96432	Igf1	insulin-like growth factor 1	10		prostate gland growth	happens in prostate gland epithelium|happens in prostate gland smooth muscle		IMP	MGI:2152423 	J:142809 	
+MGI:96432	Igf1	insulin-like growth factor 1	10		prostate gland stromal morphogenesis	has the participant prostate gland smooth muscle		IMP	MGI:1857466 	J:129595 	
+MGI:96433	Igf1r	insulin-like growth factor I receptor	7		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium		IMP	MGI:2386328 	J:134608 	
+MGI:97009	Mmp2	matrix metallopeptidase 2	8		prostate gland epithelium morphogenesis			ISO	RGD:621316 	J:155856 	
+MGI:97352	Nkx3-1	NK3 homeobox 1	14		branching involved in prostate gland morphogenesis			IMP	MGI:1926960 	J:54465 	
+MGI:97352	Nkx3-1	NK3 homeobox 1	14		branching involved in prostate gland morphogenesis			IMP	MGI:1928654 	J:63764 	
+MGI:97352	Nkx3-1	NK3 homeobox 1	14		branching involved in prostate gland morphogenesis	has the participant ventral prostate gland|has the participant prostate gland dorsolateral lobe		IMP	MGI:1928655 	J:64981 	
+MGI:97352	Nkx3-1	NK3 homeobox 1	14		negative regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in ventral prostate gland|regulates a function/process that happens in prostate gland dorsolateral lobe		IMP	MGI:1928655 	J:64981 	
+MGI:97352	Nkx3-1	NK3 homeobox 1	14		negative regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in prostate gland epithelium,regulates the proliferation of epithelial cell		IMP	MGI:3045877 	J:74350 	
+MGI:97352	Nkx3-1	NK3 homeobox 1	14		prostate gland development			TAS		J:48404 	
+MGI:104327	Nog	noggin	11		prostatic bud formation	results in the formation of pelvic urethra of male		IMP	MGI:1862000 	J:130204 	
+MGI:97363	Notch1	notch 1	2		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium		IMP	MGI:1933835 	J:104805 	
+MGI:97363	Notch1	notch 1	2		regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in prostate gland epithelium		IMP	MGI:1933835 	J:104805 	
+MGI:97363	Notch1	notch 1	2		secretory columnal luminar epithelial cell differentiation involved in prostate glandular acinus development	happens in prostate gland epithelium		IMP	MGI:1933835 	J:104805 	
+MGI:1891916	Plag1	pleiomorphic adenoma gene 1	4		prostate gland growth	happens in prostate gland		IMP	MGI:3580633 	J:96846 	
+MGI:97612	Plaur	plasminogen activator, urokinase receptor	7		epithelial cell differentiation involved in prostate gland development			ISO	RGD:620597 	J:155856 	
+MGI:97763	Prlr	prolactin receptor	15		prostate gland growth	happens in prostate gland		IMP	MGI:1888377 	J:84352 	
+MGI:97783	Psap	prosaposin	10		epithelial cell differentiation involved in prostate gland development			IBA	PTN000159338 	J:265628 	
+MGI:97783	Psap	prosaposin	10		epithelial cell differentiation involved in prostate gland development	happens in prostate gland epithelium,results in the differentiation of epithelial cell		IMP	MGI:1888378 	J:106511 	
+MGI:97783	Psap	prosaposin	10		prostate gland growth			IBA	PTN000159338 	J:265628 	
+MGI:97783	Psap	prosaposin	10		prostate gland growth	happens in prostate gland		IMP	MGI:1888378 	J:106511 	
+MGI:1924193	Psapl1	prosaposin-like 1	5		epithelial cell differentiation involved in prostate gland development			IBA	PTN000159338 	J:265628 	
+MGI:1924193	Psapl1	prosaposin-like 1	5		prostate gland growth			IBA	PTN000159338 	J:265628 	
+MGI:109583	Pten	phosphatase and tensin homolog	19		prostate gland growth	happens in prostate gland epithelium		IMP	MGI:2183284 	J:99524 	
+MGI:97858	Rarg	retinoic acid receptor, gamma	15		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium		IMP	MGI:1931079 	J:12691 	
+MGI:97931	Rln1	relaxin 1	19		prostate gland growth	happens in prostate gland epithelium		IMP	MGI:2668458 	J:84575 	
+MGI:97931	Rln1	relaxin 1	19	NOT	prostate gland growth	happens in prostate gland epithelium		IMP	MGI:2668458 	J:150610 	
+MGI:98214	Rxra	retinoid X receptor alpha	2		regulation of branching involved in prostate gland morphogenesis	regulates a function/process that happens in prostate gland epithelium		IMP	MGI:2385918 	J:78553 	
+MGI:98214	Rxra	retinoid X receptor alpha	2		secretory columnal luminar epithelial cell differentiation involved in prostate glandular acinus development	happens in prostate gland epithelium,results in the differentiation of secretory cell		IMP	MGI:2385918 	J:78553 	
+MGI:109579	Serpinb5	serine (or cysteine) peptidase inhibitor, clade B, member 5	1		prostate gland morphogenesis	has the participant prostate gland epithelium		IMP	MGI:3040188 	J:138880 	
+MGI:108080	Serpinf1	serine (or cysteine) peptidase inhibitor, clade F, member 1	11		negative regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in prostate gland epithelium		IMP	MGI:2664515 	J:83748 	
+MGI:892014	Sfrp1	secreted frizzled-related protein 1	8		prostate epithelial cord arborization involved in prostate glandular acinus morphogenesis	has the participant prostate gland		IMP	MGI:3796251 	J:136160 	
+MGI:892014	Sfrp1	secreted frizzled-related protein 1	8		regulation of branching involved in prostate gland morphogenesis	regulates a function/process that happens in prostate gland		IMP	MGI:3796251 	J:136160 	
+MGI:98297	Shh	sonic hedgehog	5		branching involved in prostate gland morphogenesis			IDA		J:54642 	
+MGI:98297	Shh	sonic hedgehog	5		epithelial-mesenchymal signaling involved in prostate gland development	happens in prostate gland		IGI	MGI:1347472 	J:101172 	
+MGI:98297	Shh	sonic hedgehog	5		epithelial-mesenchymal signaling involved in prostate gland development			ISO	Q15465 	J:78990 	
+MGI:98297	Shh	sonic hedgehog	5		mesenchymal smoothened signaling pathway involved in prostate gland development	happens in pelvic urethra of male,happens in mesenchymal stem cell		IMP		J:78990 	
+MGI:98297	Shh	sonic hedgehog	5		positive regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in pelvic urethra of male,regulates the proliferation of epithelial cell		IMP		J:78990 	
+MGI:98297	Shh	sonic hedgehog	5		primary prostatic bud elongation			IDA		J:54642 	
+MGI:98297	Shh	sonic hedgehog	5		prostate epithelial cord elongation	has the participant prostate gland epithelium		IDA		J:88802 	
+MGI:98297	Shh	sonic hedgehog	5		prostate gland development			IMP		J:54642 	
+MGI:98297	Shh	sonic hedgehog	5		prostate gland development	results in the development of prostate gland		IMP	MGI:1857796 	J:88802 	
+MGI:98297	Shh	sonic hedgehog	5	NOT	prostatic bud formation	results in the formation of prostate gland		IGI	MGI:88064 	J:88802 	
+MGI:98297	Shh	sonic hedgehog	5		regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in pelvic urethra of male,regulates the proliferation of epithelial cell		IMP		J:78990 	
+MGI:98297	Shh	sonic hedgehog	5		regulation of mesenchymal cell proliferation involved in prostate gland development	regulates a function/process that happens in pelvic urethra of male,regulates the proliferation of mesenchymal stem cell		IMP		J:78990 	
+MGI:98297	Shh	sonic hedgehog	5		regulation of prostatic bud formation			IDA		J:134349 	
+MGI:98297	Shh	sonic hedgehog	5		regulation of prostatic bud formation	regulates the formation of pelvic urethra of male,regulates a function/process that has the participant epithelial cell		IMP		J:78990 	
+MGI:98371	Sox9	SRY (sex determining region Y)-box 9	11		epithelial cell proliferation involved in prostatic bud elongation			IMP	MGI:2429649 MGI:3689997 	J:135788 	
+MGI:98371	Sox9	SRY (sex determining region Y)-box 9	11		prostate gland morphogenesis			IMP	MGI:2429649 MGI:3689997 	J:135788 	
+MGI:103036	Stat5a	signal transducer and activator of transcription 5A	11		epithelial cell differentiation involved in prostate gland development	happens in prostate gland epithelium,results in the differentiation of epithelial cell		IMP	MGI:1857249 	J:63495 	
+MGI:103036	Stat5a	signal transducer and activator of transcription 5A	11		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium		IMP	MGI:1857249 	J:63495 	
+MGI:1341870	Stk11	serine/threonine kinase 11	10		negative regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in prostate gland epithelium,regulates the proliferation of epithelial cell		IMP	MGI:3579498 	J:133330 	
+MGI:2138563	Sulf1	sulfatase 1	1		negative regulation of prostatic bud formation			IDA		J:169510 	
+MGI:101922	Tnc	tenascin C	4		mesenchymal-epithelial cell signaling involved in prostate gland development	happens in prostate gland epithelium|happens in prostate gland smooth muscle		IMP	MGI:2148540 	J:144885 	
+MGI:101922	Tnc	tenascin C	4		prostate gland epithelium morphogenesis	has the participant prostate gland epithelium		IMP	MGI:2148540 	J:144885 	
+MGI:1330810	Trp63	transformation related protein 63	16		prostate gland development	results in the development of prostate gland		IMP	MGI:1934269 	J:66126 	
+MGI:1330810	Trp63	transformation related protein 63	16		prostatic bud formation	results in the formation of prostate gland		IMP	MGI:1934269 	J:66126 	
+MGI:1330810	Trp63	transformation related protein 63	16		squamous basal epithelial stem cell differentiation involved in prostate gland acinus development			IMP	MGI:1934580 	J:93615 	
+MGI:105098	Ube3a	ubiquitin protein ligase E3A	7		prostate gland growth	happens in prostate gland		IMP	MGI:2181811 	J:99980 J:105872 	
+MGI:1917715	Wdr77	WD repeat domain 77	3		negative regulation of epithelial cell proliferation involved in prostate gland development			IBA	PTN005323416 	J:265628 	
+MGI:1917715	Wdr77	WD repeat domain 77	3		negative regulation of epithelial cell proliferation involved in prostate gland development	regulates a function/process that happens in prostate gland epithelium,regulates the proliferation of epithelial cell		IMP	MGI:3798419 	J:137003 	
+MGI:1917715	Wdr77	WD repeat domain 77	3		secretory columnal luminar epithelial cell differentiation involved in prostate glandular acinus development			IBA	PTN005323416 	J:265628 	
+MGI:1917715	Wdr77	WD repeat domain 77	3		secretory columnal luminar epithelial cell differentiation involved in prostate glandular acinus development	happens in prostate gland epithelium,results in the differentiation of epithelial cell		IMP	MGI:3798419 	J:137003 	
+MGI:98958	Wnt5a	wingless-type MMTV integration site family, member 5A	14		negative regulation of prostatic bud formation			IMP	MGI:1857617 	J:142714 	
+
