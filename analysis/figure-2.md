@@ -3,14 +3,14 @@ Candidate gene analysis
 
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -63,116 +63,14 @@ Candidate gene analysis
 Candidate Genes (from literature and relevant GO terms)
 -------------------------------------------------------
 
-    # all genes in this parental care dataset 
-
-    geneids <- read_csv("../metadata/00_geneinfo.csv") %>%
-      select(-X1) %>%
-      rename("NCBI" = "entrezid",
-             "gene" = "Name")
+    source("../R/wrangledata.R")
 
     ## Warning: Missing column names filled in: 'X1' [1]
 
-    # From Ch 17 Evolution of parental care
-    curleychampagnegenes <- c("AVPR1A", "ADRA2A",    
-                             "COMT", "CRH", "CRHBP", "CRHR1", "CRHR2", 
-                              "DRD1", "DRD4","ESR1", "ESR2", #ERa ERbeta
-                              "FOS", "HTR2C", "MEST", "NR3C1", #GR
-                              "OPRM1", "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
-    curleychampagnegenes <- as.data.frame(curleychampagnegenes) %>%
-      mutate(GO = "parentalcare", gene = curleychampagnegenes)  %>%
-      select(GO, gene)
-    curleychampagnegenes
-
-    ##              GO   gene
-    ## 1  parentalcare AVPR1A
-    ## 2  parentalcare ADRA2A
-    ## 3  parentalcare   COMT
-    ## 4  parentalcare    CRH
-    ## 5  parentalcare  CRHBP
-    ## 6  parentalcare  CRHR1
-    ## 7  parentalcare  CRHR2
-    ## 8  parentalcare   DRD1
-    ## 9  parentalcare   DRD4
-    ## 10 parentalcare   ESR1
-    ## 11 parentalcare   ESR2
-    ## 12 parentalcare    FOS
-    ## 13 parentalcare  HTR2C
-    ## 14 parentalcare   MEST
-    ## 15 parentalcare  NR3C1
-    ## 16 parentalcare  OPRM1
-    ## 17 parentalcare    PGR
-    ## 18 parentalcare    PRL
-    ## 19 parentalcare   PRLR
-    ## 20 parentalcare SLC6A4
-
-    # Candidate GO terms 
-    GO_path <- "../metadata/goterms/"   # path to the data
-    GO_files <- dir(GO_path, pattern = "*.txt") # get file names
-    GO_pathfiles <- paste0(GO_path, GO_files)
-
-    GOgenesLong <- GO_pathfiles %>%
-      setNames(nm = .) %>% 
-      map_df(~read_table(.x, col_types = cols(), col_names = FALSE), .id = "file_name") %>% 
-      mutate(GO = sapply(strsplit(as.character(file_name),'../metadata/goterms/'), "[", 2)) %>% 
-      mutate(GO = sapply(strsplit(as.character(GO),'.txt'), "[", 1)) %>% 
-      mutate(gene = sapply(strsplit(as.character(X1), "[\\\\]|[^[:print:]]" ), "[", 2)) %>% 
-      select(GO, gene)  %>%
-      filter(gene != "Symbol") %>%
-      distinct(GO,gene)  %>%
-      mutate(gene = toupper(gene)) %>%
-      rbind(., curleychampagnegenes) %>%
-      arrange(gene) %>%
-      left_join(., geneids, by = "gene") %>%
-      drop_na() 
-    GOgenesLong
-
-    ## # A tibble: 37 x 4
-    ##    GO               gene   geneid NCBI          
-    ##    <chr>            <chr>   <dbl> <chr>         
-    ##  1 parentalcare     ADRA2A 428980 XP_004942333.2
-    ##  2 parentalbehavior AVP    396101 NP_990516.1   
-    ##  3 parentalbehavior AVPR1A 771773 NP_001103908.1
-    ##  4 parentalcare     AVPR1A 771773 NP_001103908.1
-    ##  5 parentalbehavior BRINP1 395098 NP_989780.1   
-    ##  6 parentalcare     COMT   416783 XP_001233014.1
-    ##  7 parentalbehavior CREBRF 416206 XP_001231574.1
-    ##  8 parentalcare     CRH    404297 NP_001116503.1
-    ##  9 parentalcare     CRHBP  427214 XP_003643006.2
-    ## 10 parentalcare     CRHR1  374218 NP_989652.1   
-    ## # … with 27 more rows
-
-    GOgenesWide <- GOgenesLong %>% 
-      pivot_wider(
-        names_from = GO,
-        values_from = gene) %>%
-      mutate(numGOs = 4 - rowSums(is.na(.))) %>%
-      arrange(desc(numGOs)) %>%
-      select(-numGOs) %>%
-      left_join(geneids, by = c("geneid","NCBI"))
-    GOgenesWide
-
-    ## # A tibble: 33 x 5
-    ##    geneid NCBI           parentalcare parentalbehavior gene  
-    ##     <dbl> <chr>          <chr>        <chr>            <chr> 
-    ##  1 771773 NP_001103908.1 AVPR1A       AVPR1A           AVPR1A
-    ##  2 427633 NP_001138320.1 DRD1         DRD1             DRD1  
-    ##  3 416343 XP_015149519.1 NR3C1        NR3C1            NR3C1 
-    ##  4 396453 NP_990797.2    PRL          PRL              PRL   
-    ##  5 428980 XP_004942333.2 ADRA2A       <NA>             ADRA2A
-    ##  6 396101 NP_990516.1    <NA>         AVP              AVP   
-    ##  7 395098 NP_989780.1    <NA>         BRINP1           BRINP1
-    ##  8 416783 XP_001233014.1 COMT         <NA>             COMT  
-    ##  9 416206 XP_001231574.1 <NA>         CREBRF           CREBRF
-    ## 10 404297 NP_001116503.1 CRH          <NA>             CRH   
-    ## # … with 23 more rows
-
-    # genes I can't find in dataset 
-    # NOS1 or OXTR or FOX1B or HTR5A
+    ## Warning: Missing column names filled in: 'X1' [1]
 
 Candidate DEGs
 --------------
-
-    candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
 
     # summary DEG results from DESeq2
     candidateDEGS <- read_csv("../results/suppletable1.csv") %>%
@@ -1213,21 +1111,20 @@ variance stabilized gene expression (vsd)
     }
 
     a1 <- candidateboxplot("hypothalamus", hypDEGs, "female") + labs(x = NULL, title = "hypothalamus") 
-    a2 <- candidateboxplot("hypothalamus", hypDEGs, "male") + labs(x = NULL) +
-      theme(strip.text = element_blank())
 
     b1 <- candidateboxplot("pituitary", pitDEGs, "female") + labs(x = NULL, title = "pituitary")
-    b2 <- candidateboxplot("pituitary", pitDEGs, "male") + labs(x = NULL) +
-      theme(strip.text = element_blank())
 
-    c1 <- candidateboxplot("gonad", gonadDEGs, "female") + labs(x = NULL, title = "gonad")
-    c2 <- candidateboxplot("gonad", gonadDEGs, "male") + 
-      theme(strip.text = element_blank(),
-            axis.text.x = element_text(angle = 45, hjust = 1))
+    b2 <- candidateboxplot("pituitary", "PRL", "male") + labs(x = NULL, y = NULL,  title = "pituitary") 
+
+    b12 <- plot_grid(b1,b2,nrow = 1, labels = c("B", "C"),
+              label_size = 8, rel_widths = c(4,1))
+
+    c1 <- candidateboxplot("gonad", gonadDEGs, "female") + 
+      labs(x = NULL, title = "gonad")
 
 
-    plot_grid(a1,a2, b1,b2, c1,c2, nrow = 6, labels = c("A", " ","B", " ", "C", " "), label_size = 8,
-              rel_heights = c(1, 0.75, 1, 0.75, 1, 1))
+    plot_grid(a1, b12, c1, nrow = 3, labels = c("A", " ","D"), 
+              label_size = 8)
 
 ![](../figures/fig2-1.png)
 
