@@ -145,21 +145,20 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
 }
 
 a1 <- candidateboxplot("hypothalamus", hypDEGs, "female") + labs(x = NULL, title = "hypothalamus") 
-a2 <- candidateboxplot("hypothalamus", hypDEGs, "male") + labs(x = NULL) +
-  theme(strip.text = element_blank())
 
 b1 <- candidateboxplot("pituitary", pitDEGs, "female") + labs(x = NULL, title = "pituitary")
-b2 <- candidateboxplot("pituitary", pitDEGs, "male") + labs(x = NULL) +
-  theme(strip.text = element_blank())
 
-c1 <- candidateboxplot("gonad", gonadDEGs, "female") + labs(x = NULL, title = "gonad")
-c2 <- candidateboxplot("gonad", gonadDEGs, "male") + 
-  theme(strip.text = element_blank(),
-        axis.text.x = element_text(angle = 45, hjust = 1))
+b2 <- candidateboxplot("pituitary", "PRL", "male") + labs(x = NULL, y = NULL,  title = "pituitary") 
+
+b12 <- plot_grid(b1,b2,nrow = 1, labels = c("B", "C"),
+          label_size = 8, rel_widths = c(4,1))
+
+c1 <- candidateboxplot("gonad", gonadDEGs, "female") + 
+  labs(x = NULL, title = "gonad")
 
 
-plot_grid(a1,a2, b1,b2, c1,c2, nrow = 6, labels = c("A", " ","B", " ", "C", " "), label_size = 8,
-          rel_heights = c(1, 0.75, 1, 0.75, 1, 1))
+plot_grid(a1, b12, c1, nrow = 3, labels = c("A", " ","D"), 
+          label_size = 8)
 ```
 
 
