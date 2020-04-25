@@ -931,3 +931,81 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
     ylim(lowlim, higherlim)
   return(p)
 }
+
+getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
+  candidates  <- allvsd %>%
+    filter(gene %in% whichgenes) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/'), "[", 2)) %>%
+    dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+                  tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
+                  treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
+    dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+    dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
+    filter(tissue == whichtissue, sex %in% whichsex)  %>%
+    drop_na()
+  candidates$treatment <- factor(candidates$treatment, levels = alllevels)
+  return(candidates)
+}
+
+
+
+
+#### modified rplot
+# from https://github.com/tidymodels/corrr/blob/207ba60b3d2cd771643e97b5844369f05792c411/R/cor_df.R#L119 
+
+rplot2 <- function(rdf,
+                         legend = TRUE,
+                         shape = 16,
+                         colours = c("#2c7bb6", "#ffffbf",  "#d7191c"),
+                         print_cor = FALSE,
+                         colors) {
+  
+  if (!missing(colors))
+    colours <- colors
+  
+  # Store order for factoring the variables
+  row_order <- rdf$rowname
+  
+  # Convert data to relevant format for plotting
+  pd <- stretch(rdf, na.rm = TRUE) 
+  pd$size = abs(pd$r)
+  pd$label = fashion(pd$r)
+  
+  plot_ <- list(
+    # Geoms
+    geom_point(shape = shape, size = 2),
+    if (print_cor) geom_text(color = "black", size = 1, show.legend = FALSE),
+    scale_colour_gradientn(limits = c(-1, 1), colors = colours),
+    # Theme, labels, and legends
+    theme_classic(),
+    labs(x = "", y =""),
+    guides(size = "none", alpha = "none"),
+    if (legend)  labs(colour = NULL),
+    if (!legend) theme(legend.position = "none")
+  )
+  
+  ggplot(pd, aes_string(x = "x", y = "y", color = "r",
+                        size = "size", alpha = "size",
+                        label = "label")) +
+    plot_
+  
+  #   # plot
+  #   ggplot(aes_string(x = "x", y = "y", color = "r",
+  #                                       size = "size", alpha = "size",
+  #                                       label = "label")) +
+  #   geom_point(shape = shape) +
+  #   scale_colour_gradientn(limits = c(-1, 1), colors = colours) +
+  #   labs(x = "", y ="") +
+  #   theme_classic()
+  # 
+  # if (print_cor) {
+  #   p <- p + geom_text(color = "black", size = 3, show.legend = FALSE)
+  # }
+  # 
+  # if (!legend) {
+  #   p <- p + theme(legend.position = "none")
+  # }
+  # 
+  # p
+}

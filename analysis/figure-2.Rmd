@@ -17,16 +17,11 @@ library(knitr)
 library(kableExtra)
 
 source("../R/themes.R")
+source("../R/wrangledata.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 ```
 
-
-## Candidate Genes (from literature and relevant GO terms) 
-
-```{r GO}
-source("../R/wrangledata.R")
-```
 
 
 ## Candidate DEGs
@@ -65,50 +60,13 @@ kable(table1)
 ```
 
 
-## variance stabilized gene expression  (vsd)
+## Candidate variance stabilized gene expression (vsds)
 
-```{r vsds}
-
-vsd_path <- "../results/DEseq2/"   # path to the data
-vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
-vsd_pathfiles <- paste0(vsd_path, vsd_files)
-vsd_files
-
-allvsd <- vsd_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_csv(.x), .id = "file_name")  %>% 
-  dplyr::rename("gene" = "X1") %>% 
-  pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
-               names_to = "samples", values_to = "counts") 
-
-getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
-  candidates  <- allvsd %>%
-    filter(gene %in% whichgenes) %>%
-    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
-    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/'), "[", 2)) %>%
-    dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
-                tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
-                treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
-    dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
-    dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
-    filter(tissue == whichtissue, sex %in% whichsex)  %>%
-    drop_na()
-  candidates$treatment <- factor(candidates$treatment, levels = alllevels)
-  return(candidates)
-}
-
-candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
-
-hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
-pitvsd <- getcandidatevsd(candidategenes, "pituitary", sexlevels)
-gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
-candidatevsd <- rbind(hypvsd, pitvsd)
-candidatevsd <- rbind(candidatevsd, gonvsd)
-head(candidatevsd)
-```
 
 
 ```{r fig2, fig.width = 7.25, fig.height = 7.25}
+
+# `candidatevsd` loaded with source(../R/wrangleata.R)
 
 # significant candidate genes
 hypDEGs <- c("CRHBP", "CRHR2", "DRD1", "GNAQ", 
