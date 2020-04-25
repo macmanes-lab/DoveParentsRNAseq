@@ -32,11 +32,11 @@ geneids <- read_csv("../metadata/00_geneinfo.csv") %>%
          "gene" = "Name")
 
 # genes from Ch 17 Evolution of parental care
-curleychampagnegenes <- c("AVPR1A", "ADRA2A",    
+curleychampagnegenes <- c("AVP", "AVPR1A", "ADRA2A",    
                           "COMT", "CRH", "CRHBP", "CRHR1", "CRHR2", 
                           "DRD1", "DRD4","ESR1", "ESR2", #ERa ERbeta
                           "FOS", "HTR2C", "MEST", "NR3C1", #GR
-                          "OPRM1", "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
+                          "OPRM1", "OXT" , "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
 curleychampagnegenes <- as.data.frame(curleychampagnegenes) %>%
   mutate(GO = "parentalcare", gene = curleychampagnegenes)  %>%
   select(GO, gene)
@@ -95,3 +95,23 @@ candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
 # note: I can't find these genes in dataset: NOS1 or OXTR or FOX1B or HTR5A
 
 
+
+#### variance stabilized gene expression  (vsd) for all and candidate genes
+vsd_path <- "../results/DEseq2/"   # path to the data
+vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
+vsd_pathfiles <- paste0(vsd_path, vsd_files)
+vsd_files
+
+allvsd <- vsd_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name")  %>% 
+  dplyr::rename("gene" = "X1") %>% 
+  pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
+               names_to = "samples", values_to = "counts") 
+
+candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
+hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
+pitvsd <- getcandidatevsd(candidategenes, "pituitary", sexlevels)
+gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
+candidatevsd <- rbind(hypvsd, pitvsd)
+candidatevsd <- rbind(candidatevsd, gonvsd)
