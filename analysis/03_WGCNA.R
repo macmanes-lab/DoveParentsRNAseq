@@ -3,7 +3,6 @@
 # Load the packages
 library(tidyverse)
 library(WGCNA)
-library(dplyr)
 library(magrittr)
 library(forcats)
 
@@ -19,18 +18,19 @@ colData <- read_csv("../metadata/00_colData_characterization.csv") %>%
                              "P" = "pituitary",
                              "H" = "hypothalamus",
                              "G" = "gonad"),
-         H1 = fct_collapse(treatment,
+         extenv = fct_collapse(treatment,
                                  "NP" = c("control", "bldg"),
                                  "eggs" = c("lay","inc.d3","inc.d9","inc.d17"),
                                  "chicks" = c("hatch","n5", "n9")),
-         H2 = fct_collapse(treatment,
+         earlylate = fct_collapse(treatment,
                          "NP" = c("control", "bldg"),
                          "early" = c("lay","inc.d3","inc.d9"),
                          "late" = c("inc.d17", "hatch","n5", "n9"))) %>%
   mutate(id = as.numeric(factor(bird))) %>% # wgcna needs numeric identifiers
-  select(id, bird, group, sex, tissue, treatment, H1, H2) %>%
+  select(id, bird, group, sex, tissue, treatment, extenv, earlylate) %>%
   mutate(sample = paste(treatment, sex, tissue, id, sep = "."),
-         sextissue = paste(sex, tissue, sep = "."))
+         sextissue = paste(sex, tissue, sep = ".")) 
+
 colData <- as.data.frame(colData)
 row.names(colData) <- colData$sample
 head(colData)
@@ -41,15 +41,12 @@ countData <- read.csv("../results/00_countData_characterization.csv",
                       row.names = 1) 
 colnames(countData) <- colData$sample
 
-# subset col and count data for each tissue
-colDataHyp <- subsetcolData3(colData, c("F.H"))
-colDataPit <- subsetcolData3(colData, c("F.P"))
-colDataGon <- subsetcolData3(colData, c("F.G"))
+#remove controls
+colData <- colData %>% filter(treatment != "control")
 
-countDataHyp <- subsetcountData3(colDataHyp)
+# subset col and count data for each tissue
+colDataPit <- subsetcolData3(colData, c("F.P", "M.P"))
 countDataPit <- subsetcountData3(colDataPit)
-countDataGon <- subsetcountData3(colDataGon)
-str(countDataPit)
 
 ##### first pass, pituitary
 
@@ -58,7 +55,6 @@ str(countDataPit)
 datExpr0 <- as.data.frame(t(countDataPit))
 head(names(datExpr0))  # columns are genes
 head(rownames(datExpr0)) # rows are samples
-head(datExpr0)
 
 gsg = goodSamplesGenes(datExpr0, verbose = 0); # check good genes
 gsg$allOK 
@@ -90,7 +86,7 @@ nSamples = nrow(datExpr)
 
 # keep only the "good samples" and important variables
 
-traitData <- colData %>% select(tissue,sex,treatment,H1, H2)
+traitData <- colData %>% select(tissue,sex,treatment,extenv, earlylate)
 traitData %<>% mutate_if(is.factor,as.numeric)
 allTraits <- traitData
 allTraits$sample <- colData$sample
@@ -142,7 +138,6 @@ enableWGCNAThreads()
 
 # this is my attempt to solve an error	
 datExpr %<>% mutate_if(is.integer,as.numeric)	
-head(str(datExpr))	
 net = blockwiseModules(datExpr, power = 8,	
                        verbose = 5)	
 names(net)	
@@ -160,43 +155,48 @@ plotDendroAndColors(net$dendrograms[[1]],
                     dendroLabels = FALSE)	
 
 # save data frame with genes and their module colors	
-genes_modules <- as.data.frame(net$colors)	
+genes_modules <- as.data.frame(net$colors)	%>%
+  rename("module" = `net$colors`) 
 
 genes_modules %>%
-  group_by(`net$colors`) %>%
+  group_by(module) %>%
   summarize(n = n()) %>% arrange(n) 
 
 genes_modules$gene <- row.names(genes_modules)	
 
 candidategenes <- read_csv("../results/candidategenes.csv") %>% pull(x)
-devgenes <- mamglanddev  %>% pull(gene)
-
 
 candidategenemodules <- genes_modules %>%	
-  filter(gene %in% devgenes)	 %>%
-  arrange(`net$colors`, gene) %>%
-  distinct(`net$colors`) %>% pull(`net$colors`) %>%
+  filter(gene %in% candidategenes)	 %>%
+  arrange(module, gene) %>%
+  distinct(module) %>% pull(module) %>%
   droplevels()
 candidategenemodules
 
 # candidate modules: magenta*   pink      tan       turquoise  yellow   
 # cancer modules: blue   cyan   greenyellow  grey  magenta*   midnightblue
 
-
 candidategenesdf <- genes_modules %>%	
-  filter(gene %in% devgenes)	 %>%
-  arrange(`net$colors`, gene) 
+  filter(gene %in% candidategenes)	 %>%
+  arrange(module, gene) 
 candidategenesdf
 
 candidategeneassociated <- genes_modules %>% 
-  filter(`net$colors` %in% candidategenemodules)  %>% 
+  filter(module %in% candidategenemodules)  %>% 
   filter(!grepl('LOC', gene)) %>%
-  arrange(`net$colors`, gene) %>%
-  group_by(`net$colors`) %>%
+  arrange(module, gene) %>%
+  group_by(module) %>%
   summarize(genes = str_c(gene, collapse = ", "))
 head(candidategeneassociated)	
+
+# PRL associated
+
+PRLmodule <- genes_modules %>%
+  filter(module == 'purple') %>%
+  pull(gene)
 
 
 ### save files
 write.csv(candidategeneassociated, "../results/candidategeneassociated.csv", row.names = F)
 write.csv(genes_modules, "../results/08_genes_modules.csv", row.names = F)
+write.csv(PRLmodule, "../results/PRLmodule.csv", row.names = F)

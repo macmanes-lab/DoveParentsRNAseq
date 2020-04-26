@@ -795,8 +795,8 @@ plotfriz <- function(frizdf){
   p <- fviz_pca_var(frizdf,  
                     axes.linetype = "blank", 
                     repel = T , 
-                    select.var= list(contrib = 3),
-                    labelsize = 3)  + 
+                    select.var= list(contrib = 5),
+                    labelsize = 2)  + 
     labs(title = NULL) + 
     theme_B3() +
     theme(axis.text = element_blank(),
@@ -1012,23 +1012,38 @@ rplot2 <- function(rdf,
                         size = "size", alpha = "size",
                         label = "label")) +
     plot_
-  
-  #   # plot
-  #   ggplot(aes_string(x = "x", y = "y", color = "r",
-  #                                       size = "size", alpha = "size",
-  #                                       label = "label")) +
-  #   geom_point(shape = shape) +
-  #   scale_colour_gradientn(limits = c(-1, 1), colors = colours) +
-  #   labs(x = "", y ="") +
-  #   theme_classic()
-  # 
-  # if (print_cor) {
-  #   p <- p + geom_text(color = "black", size = 3, show.legend = FALSE)
-  # }
-  # 
-  # if (!legend) {
-  #   p <- p + theme(legend.position = "none")
-  # }
-  # 
-  # p
 }
+
+
+##### 3 funcitons  for correlation plots
+
+makecorrdf <- function(whichsex, whichtissue, whichgenes){
+  
+  corrrdf <- candidatevsd %>%
+    filter(sex == whichsex, tissue == whichtissue,
+           gene %in% whichgenes) %>%
+    pivot_wider(names_from = gene, values_from = counts) %>%
+    select(-sex,-tissue, -treatment, -samples) %>%
+    correlate() %>%
+    rearrange()
+  print(head(corrrdf))
+  return(corrrdf)
+}
+
+subsetcandidatevsdwide <- function(whichsex, whichtissue){
+  df <- candidatevsdwide %>%
+    filter(sex == whichsex, tissue == whichtissue,
+           treatment != "control") 
+  return(df)
+}
+
+plotcorrplot <- function(df, subtitle){  
+  p <- df %>%
+    rplot2() +
+    theme_B3() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+          axis.text = element_text(face = "italic"))
+  
+  return(p)
+}
+
