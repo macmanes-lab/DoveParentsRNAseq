@@ -756,12 +756,13 @@ subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
 
 plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){	
   p <- mypcadf %>%	
-    ggplot(aes(x = PC1, y = PC2, shape = tissue, color = whichfactor )) +	
+    ggplot(aes(x = PC1, y = PC2, color = whichfactor )) +	
     geom_point(size = 1)  +	
     theme_B3() +	
     theme(legend.title = element_blank(),	
           axis.text = element_blank(),	
-          legend.position = "none") +	
+          legend.position = "none",
+          axis.ticks = element_blank()) +	
     labs(x = "PC1", y = "PC2")  +	
     scale_color_manual(values = whichcolors) +	
     scale_shape_manual(values = myshapes)	+
@@ -794,13 +795,35 @@ plotfriz <- function(frizdf){
   p <- fviz_pca_var(frizdf,  
                     axes.linetype = "blank", 
                     repel = T , 
-                    select.var= list(contrib = 3))  + 
+                    select.var= list(contrib = 3),
+                    labelsize = 3)  + 
     labs(title = NULL) + 
-    theme_B3() 
+    theme_B3() +
+    theme(axis.text = element_blank(),
+          axis.ticks = element_blank())
   return(p)
 }
 
+## bar graphs for PRL fig 4
 
+makenewbargraph <- function(whichtissue, whichsex,  whichcomparison, lowlim, higherlim){
+  p <- allDEG2 %>%
+    filter(tissue == whichtissue,
+           comparison == whichcomparison,
+           sex == whichsex) %>%
+    ggplot(aes(x = comparison,  fill = direction)) +
+    geom_bar(position = "dodge", drop = FALSE) +
+    theme_B3() +
+    theme(legend.position = "none")  +
+    guides(fill = guide_legend(nrow = 1)) +
+    labs( y = "Directional DEGs") +
+    geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+              position = position_dodge(width = 1),
+              size = 2, color = "black")  + 
+    ylim(lowlim, higherlim) +
+    scale_fill_manual(values = allcolors, name = "higher in")    
+  return(p)
+}
 
 
 ## create DEGs
