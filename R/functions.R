@@ -1037,12 +1037,13 @@ subsetcandidatevsdwide <- function(whichsex, whichtissue){
   return(df)
 }
 
-plotcorrplot <- function(df, subtitle){  
+plotcorrplot <- function(df, mysubtitle){  
   p <- df %>%
     rplot2() +
     theme_B3() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1),
-          axis.text = element_text(face = "italic"))
+          axis.text = element_text(face = "italic")) +
+    labs(subtitle = mysubtitle)
   
   return(p)
 }
