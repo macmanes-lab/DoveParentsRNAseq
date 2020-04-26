@@ -33,24 +33,6 @@ curleychampagnegenes <- curleychampagnegenes %>% pull(gene)
 
 # widen for correlations 
 
-candidatevsdwide <- candidatevsd  %>%
-    pivot_wider(names_from = gene, values_from = counts) 
-head(candidatevsdwide)
-
-makecorrdf <- function(whichsex, whichtissue, whichgenes){
- 
-  corrrdf <- candidatevsd %>%
-    filter(sex == whichsex, tissue == whichtissue,
-           gene %in% whichgenes) %>%
-    pivot_wider(names_from = gene, values_from = counts) %>%
-    select(-sex,-tissue, -treatment, -samples) %>%
-    correlate() %>%
-    rearrange()
-  print(head(corrrdf))
-  return(corrrdf)
-}
-
-
 c1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
 c2 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
 c3 <- makecorrdf("female", "gonad", curleychampagnegenes)  
@@ -59,12 +41,9 @@ c4 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)
 c5 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
 c6 <- makecorrdf("male", "gonad", curleychampagnegenes)  
 
-subsetcandidatevsdwide <- function(whichsex, whichtissue){
-  df <- candidatevsdwide %>%
-    filter(sex == whichsex, tissue == whichtissue,
-           treatment != "control") 
-  return(df)
-}
+candidatevsdwide <- candidatevsd  %>%
+    pivot_wider(names_from = gene, values_from = counts) 
+head(candidatevsdwide)
 
 FH <- subsetcandidatevsdwide("female", "hypothalamus")
 FP <- subsetcandidatevsdwide("female", "pituitary")
@@ -80,17 +59,6 @@ MG <- subsetcandidatevsdwide("male", "gonad")
 
 
 ```{r fig3, fig.width = 7.25, fig.height = 7.25}
-
-
-plotcorrplot <- function(df, subtitle){  
-  p <- df %>%
-    rplot2() +
-    theme_B3() +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1),
-          axis.text = element_text(face = "italic"))
-
-  return(p)
-}
 
 p1 <- plotcorrplot(c1, "FH") + theme(legend.position = "none", axis.text.x = element_blank()) + labs(subtitle = "Hypothalamus")
 p2 <- plotcorrplot(c2, "FP") + theme(legend.position = "none", axis.text.x = element_blank()) + 
