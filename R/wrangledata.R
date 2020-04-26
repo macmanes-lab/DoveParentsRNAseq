@@ -65,6 +65,8 @@ GOgenesLong <- GO_pathfiles %>%
   drop_na() 
 GOgenesLong
 
+
+
 mamglanddev <- GOgenesLong %>% 
   filter(!GO %in% c("parentalbehavior", "parentalcare")) %>% 
   pivot_wider(

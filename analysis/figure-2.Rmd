@@ -8,15 +8,17 @@ output: md_document
 
 # Candidate gene analysis 
 
-```{r setup}
+```{r setup, message=F}
 library(tidyverse)
 library(ggtext)
 library(cowplot)
 library(ggpubr)
 library(knitr)
 library(kableExtra)
+library(corrr)
 
 source("../R/themes.R")
+source("../R/functions.R")
 source("../R/wrangledata.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
@@ -44,7 +46,8 @@ candidateDEGS <- read_csv("../results/suppletable1.csv") %>%
   select(gene, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
 candidateDEGS
 
-table1 <- left_join(candidateDEGS, GOgenesWide) %>%
+## table 1 summary candidate genes
+table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
   select(gene, bldg_lay:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
   mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
          parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
@@ -54,27 +57,48 @@ table1 <- table1 %>%
   mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
   arrange(sig, gene)  %>%  select(-sig, -numDEGs)
 table1[is.na(table1)] <- " " # replace NA with blank space so it's pretty
-#table1
+table1
 
 kable(table1)
 ```
 
-
-## Candidate variance stabilized gene expression (vsds)
-
+## Candidate Correlations
 
 
-```{r fig2, fig.width = 7.25, fig.height = 7.25}
+```{r}
+# load `candidatevsd` with `source("../R/wrangledata.R")`
+head(candidatevsd)
 
-# `candidatevsd` loaded with source(../R/wrangleata.R)
+curleychampagnegenes <- curleychampagnegenes %>% pull(gene)
 
-# significant candidate genes
-hypDEGs <- c("CRHBP", "CRHR2", "DRD1", "GNAQ", 
-             "HTR2C", "OPRK1", "PGR")
-pitDEGs <- c("ESR1", "MEST", "PRL", "PTEN")
-gonadDEGs <- c("AVPR1A", "CREBRF", "FOS", "GNAQ", 
-               "NR3C1", "OPRM1", "PRLR")
+hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
+pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
+gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
 
+hyp2 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)  
+pit2 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
+gon2 <- makecorrdf("male", "gonad", curleychampagnegenes)  
+
+hyp3 <- makecorrdf(sexlevels, "hypothalamus", curleychampagnegenes)  
+pit3 <- makecorrdf(sexlevels, "pituitary", curleychampagnegenes)  
+gon3 <- makecorrdf(sexlevels, "gonad", curleychampagnegenes)  
+
+
+candidatevsdwide <- candidatevsd  %>%
+    pivot_wider(names_from = gene, values_from = counts) 
+FH <- subsetcandidatevsdwide("female", "hypothalamus")
+FP <- subsetcandidatevsdwide("female", "pituitary")
+FG <- subsetcandidatevsdwide("female", "gonad")
+MH <- subsetcandidatevsdwide("male", "hypothalamus")
+MP <- subsetcandidatevsdwide("male", "pituitary")
+MG <- subsetcandidatevsdwide("male", "gonad") 
+```
+
+
+### Candidate gene functions
+
+
+```{r}
 candidateboxplot <- function(whichtissue, whichgenes, whichsex){
   
   p <- candidatevsd %>%
@@ -87,36 +111,63 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
     geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
     #geom_smooth(aes(color = sex)) +
     geom_jitter(size = 0.25, aes(color = sex)) +
-    facet_wrap(~gene, scales = "free_y", nrow = 1) +
+    facet_wrap(~sex, scales = "free_y", nrow = 2) +
     scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9),
                        labels = charlevels) +
     scale_fill_manual(values = allcolors) +
     scale_color_manual(values = allcolors) +
     theme_B3() + 
     theme(legend.position = "none",
-          strip.text = element_text(face = "italic"),
+          axis.title.y = element_text(face = "italic"),
           axis.text.x = element_blank()) +
-    labs(subtitle = whichsex,
-         y = "gene expression",
+    labs(y = whichgenes,
          x = NULL) 
   return(p)
 }
 
-a1 <- candidateboxplot("hypothalamus", hypDEGs, "female") + labs(x = NULL, title = "hypothalamus") 
 
-b1 <- candidateboxplot("pituitary", pitDEGs, "female") + labs(x = NULL, title = "pituitary")
+scattercorrelations <- function(df, gene1, gene2, mylinecolor, myxlab, myylab){
+  p <- ggplot(df, aes(x = gene1, y = gene2)) +
+    labs(subtitle = " ", x = myxlab, y = myylab) + 
+    scale_color_manual(values = allcolors) +
+    geom_smooth(method = "lm",  color = mylinecolor) +
+    geom_point(aes(color = treatment))  +
+    theme_B3() +  
+    theme(axis.title = element_text(face = "italic"), 
+            legend.position = "none") +
+    stat_cor( size = 2)
+  return(p)
+}
 
-b2 <- candidateboxplot("pituitary", "PRL", "male") + labs(x = NULL, y = NULL,  title = "pituitary") 
-
-b12 <- plot_grid(b1,b2,nrow = 1, labels = c("B", "C"),
-          label_size = 8, rel_widths = c(4,1))
-
-c1 <- candidateboxplot("gonad", gonadDEGs, "female") + 
-  labs(x = NULL, title = "gonad")
+```
 
 
-plot_grid(a1, b12, c1, nrow = 3, labels = c("A", " ","D"), 
-          label_size = 8)
+```{r fig2, fig.width = 7.25, fig.height = 7.25}
+
+## plot sig candidate genes
+a <- candidateboxplot("hypothalamus", "DRD1", sexlevels) + labs(x = NULL, title = "Hypothalamus") 
+
+g <- candidateboxplot("pituitary", "PRL", sexlevels) + labs(x = NULL, title = "Pituitary")
+
+m <- candidateboxplot("gonad", "CREBRF", sexlevels) + labs(x = NULL, title = "Gonad") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+c <- plotcorrplot(hyp3, "females and males") + theme(legend.position = "none")  + labs(title = "")
+i <- plotcorrplot(pit3, "females and males") + theme(legend.position = "none") + labs(title = "")
+o <- plotcorrplot(gon3, "females and males") + theme(legend.position = "bottom")  + labs(title = "")
+
+
+e <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female")+ labs(title = "")
+k <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = "female")+ labs(title = "")
+q <- scattercorrelations(FG, FG$ESR2, FG$CRHBP, "#969696", "ESR2", "CRHBP")   + labs(subtitle = "female")+ labs(title = "")
+
+f <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C") + theme(axis.title.y = element_blank()) + labs(subtitle = "male") + labs(title = "")
+l <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1") + theme(axis.title.y = element_blank()) + labs(subtitle = "male") + labs(title = "")
+r <- scattercorrelations(MG, MG$ESR2, MG$CRHBP, "#525252", "ESR2", "CRHBP")  + theme(axis.title.y = element_blank()) + labs(subtitle = "male") + labs(title = "")
+
+plot_grid(a,c,e,f,g,i,k,l,m,o,q,r, nrow = 3, rel_widths = c(1,1.2,0.8,0.75), rel_heights = c(1,1,1.2),
+          labels = "AUTO", label_size =  8)
 ```
 
 
