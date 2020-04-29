@@ -50,41 +50,41 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 
 ## Table 1
 
-| gene | bldg_lay | lay_inc.d3 | inc.d3_inc.d9 | inc.d9_inc.d17 | hatch_n5 | n5_n9 | Literature | GO | NCBI |
-|--------|----------|------------|---------------|----------------|----------|-------|------------|----|----------------|
-| AVPR1A |  | FG+ | FG- |  |  |  | X | X | NP_001103908.1 |
-| CREBRF | FG+ | FG- |  |  |  |  |  | X | XP_001231574.1 |
-| CRHBP |  |  |  |  | FH+ |  | X |  | XP_003643006.2 |
-| CRHR2 |  |  |  |  | FH+ |  | X |  | NP_989785.1 |
-| DRD1 |  |  |  |  | FH+ |  | X | X | NP_001138320.1 |
-| ESR1 | FP+ | FP- |  |  |  |  | X |  | XP_015139536.1 |
-| FOS |  | FG+ |  |  |  |  | X |  | NP_990839.1 |
-| GNAQ |  | FG- |  |  | FH+ |  |  | X | NP_001026598.1 |
-| HTR2C |  |  |  |  | FH+ |  | X |  | XP_004940707.1 |
-| MEST |  |  |  | FP+ | FP- |  | X |  | XP_015142671.1 |
-| NR3C1 |  | FG- |  |  |  |  | X | X | XP_015149519.1 |
-| OPRK1 |  |  |  |  | FH+ |  |  | X | XP_426087.2 |
-| OPRM1 | FG- |  |  |  |  | FG+ | X |  | XP_003641008.2 |
-| PGR |  |  |  |  | FH+ |  | X |  | NP_990593.1 |
-| PRL |  |  |  | FP+ MP+ | FP- |  | X | X | NP_990797.2 |
-| PRLR |  | FG- |  |  |  |  | X |  | XP_015132722.1 |
-| PTEN |  | FP- |  |  |  |  |  | X | XP_015134187.1 |
-| ADRA2A |  |  |  |  |  |  | X |  | XP_004942333.2 |
-| AVP |  |  |  |  |  |  |  | X | NP_990516.1 |
-| BRINP1 |  |  |  |  |  |  |  | X | NP_989780.1 |
-| COMT |  |  |  |  |  |  | X |  | XP_001233014.1 |
-| CRH |  |  |  |  |  |  | X |  | NP_001116503.1 |
-| CRHR1 |  |  |  |  |  |  | X |  | NP_989652.1 |
-| DBH |  |  |  |  |  |  |  | X | XP_415429.5 |
-| DRD4 |  |  |  |  |  |  | X |  | NP_001136321.1 |
-| ESR2 |  |  |  |  |  |  | X |  | NP_990125.1 |
-| KALRN |  |  |  |  |  |  |  | X | XP_015145468.1 |
-| MBD2 |  |  |  |  |  |  |  | X | NP_001012403.1 |
-| NPAS3 |  |  |  |  |  |  |  | X | XP_015143131.1 |
-| NPAS3 |  |  |  |  |  |  |  | X | XP_015143132.1 |
-| OXT |  |  |  |  |  |  |  | X | XP_004936337.1 |
-| SLC6A4 |  |  |  |  |  |  | X |  | XP_015151186.1 |
-| ZFX |  |  |  |  |  |  |  | X | XP_015127980.1 |
+|  | gene | control_bldg | bldg_lay | lay_inc.d3 | inc.d3_inc.d9 | inc.d9_inc.d17 | hatch_n5 | n5_n9 | Literature | GO | NCBI |
+|----|--------|-------------------------|----------|------------|---------------|----------------|----------|-------|------------|----|----------------|
+| 1 | AVPR1A | FG+ |  | FG+ | FG- |  |  |  | X | X | NP_001103908.1 |
+| 2 | CREBRF | MG- | FG+ | FG- |  |  |  |  |  | X | XP_001231574.1 |
+| 3 | CRHBP | FH+ FG- |  |  |  |  | FH+ |  | X |  | XP_003643006.2 |
+| 4 | CRHR2 | FG- MG- |  |  |  |  | FH+ |  | X |  | NP_989785.1 |
+| 5 | DRD1 | FH+ FP+ |  |  |  |  | FH+ |  | X | X | NP_001138320.1 |
+| 6 | ESR1 | FH+ MH+ FG+ MG+ | FP+ | FP- |  |  |  |  | X |  | XP_015139536.1 |
+| 7 | FOS | FP- |  | FG+ |  |  |  |  | X |  | NP_990839.1 |
+| 8 | GNAQ | FH+ MH+ FP+ MP+ FG+ MG- |  | FG- |  |  | FH+ |  |  | X | NP_001026598.1 |
+| 9 | HTR2C | FH+ FG- |  |  |  |  | FH+ |  | X |  | XP_004940707.1 |
+| 10 | MEST | FG+ |  |  |  | FP+ | FP- |  | X |  | XP_015142671.1 |
+| 11 | NR3C1 | FH+ MH+ FP+ MP+ FG+ MG+ |  | FG- |  |  |  |  | X | X | XP_015149519.1 |
+| 12 | OPRK1 | FH+ FG- |  |  |  |  | FH+ |  |  | X | XP_426087.2 |
+| 13 | OPRM1 | FH+ MH+ MP+ FG+ | FG- |  |  |  |  | FG+ | X |  | XP_003641008.2 |
+| 14 | PGR | FG+ |  |  |  |  | FH+ |  | X |  | NP_990593.1 |
+| 15 | PRL | FH- MH- FP- MP- MG- |  |  |  | FP+ MP+ | FP- |  | X | X | NP_990797.2 |
+| 16 | PRLR | FH- FP- MP- MG- |  | FG- |  |  |  |  | X |  | XP_015132722.1 |
+| 17 | PTEN | FH+ FP+ MP+ FG+ MG- |  | FP- |  |  |  |  |  | X | XP_015134187.1 |
+| 18 | ADRA2A | FH+ FP+ |  |  |  |  |  |  | X |  | XP_004942333.2 |
+| 19 | AVP | FP- MP- |  |  |  |  |  |  | X | X | NP_990516.1 |
+| 20 | BRINP1 | FH- MP- FG- |  |  |  |  |  |  |  | X | NP_989780.1 |
+| 21 | COMT | FH- MH- MP- |  |  |  |  |  |  | X |  | XP_001233014.1 |
+| 22 | CRH | MH+ |  |  |  |  |  |  | X |  | NP_001116503.1 |
+| 23 | CRHR1 | FG- |  |  |  |  |  |  | X |  | NP_989652.1 |
+| 24 | DBH | FG+ |  |  |  |  |  |  |  | X | XP_415429.5 |
+| 25 | DRD4 | FH- FP- MP- |  |  |  |  |  |  | X |  | NP_001136321.1 |
+| 26 | ESR2 | FG- |  |  |  |  |  |  | X |  | NP_990125.1 |
+| 27 | KALRN | FH+ |  |  |  |  |  |  |  | X | XP_015145468.1 |
+| 28 | MBD2 | FP+ |  |  |  |  |  |  |  | X | NP_001012403.1 |
+| 29 | NPAS3 | FH- MP- FG- MG- |  |  |  |  |  |  |  | X | XP_015143131.1 |
+| 30 | NPAS3 | FH- MP- FG- MG- |  |  |  |  |  |  |  | X | XP_015143132.1 |
+| 31 | OXT | FP- MP- |  |  |  |  |  |  | X | X | XP_004936337.1 |
+| 32 | SLC6A4 | FP+ |  |  |  |  |  |  | X |  | XP_015151186.1 |
+| 33 | ZFX | FP- MP- MG- |  |  |  |  |  |  |  | X | XP_015127980.1 |
 
 ## Related documentation 
 

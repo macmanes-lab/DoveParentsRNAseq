@@ -47,28 +47,28 @@ Candidate DEGs
       group_by(gene,  comparison) %>%
       summarize(res = str_c(res, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = res) %>%
-      select(gene, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
+      select(gene, control_bldg, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
     candidateDEGS
 
-    ## # A tibble: 114 x 7
-    ## # Groups:   gene [114]
-    ##    gene   bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
-    ##    <chr>  <chr>    <chr>      <chr>         <chr>          <chr>    <chr>
-    ##  1 ADRA2A <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
-    ##  2 AHR    <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
-    ##  3 ANXA1  <NA>     <NA>       <NA>          FG-            <NA>     <NA> 
-    ##  4 AR     <NA>     <NA>       <NA>          MH+            <NA>     <NA> 
-    ##  5 AREG   <NA>     <NA>       <NA>          <NA>           <NA>     FP+  
-    ##  6 ATP2C2 <NA>     <NA>       <NA>          <NA>           <NA>     FG+  
-    ##  7 AVP    <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
-    ##  8 AVPR1A <NA>     FG+        FG-           <NA>           <NA>     <NA> 
-    ##  9 BMP4   <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
-    ## 10 BRCA2  <NA>     <NA>       <NA>          <NA>           <NA>     <NA> 
-    ## # … with 104 more rows
+    ## # A tibble: 32 x 8
+    ## # Groups:   gene [32]
+    ##    gene  control_bldg bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
+    ##    <chr> <chr>        <chr>    <chr>      <chr>         <chr>         
+    ##  1 ADRA… FH+ FP+      <NA>     <NA>       <NA>          <NA>          
+    ##  2 AVP   FP- MP-      <NA>     <NA>       <NA>          <NA>          
+    ##  3 AVPR… FG+          <NA>     FG+        FG-           <NA>          
+    ##  4 BRIN… FH- MP- FG-  <NA>     <NA>       <NA>          <NA>          
+    ##  5 COMT  FH- MH- MP-  <NA>     <NA>       <NA>          <NA>          
+    ##  6 CREB… MG-          FG+      FG-        <NA>          <NA>          
+    ##  7 CRH   MH+          <NA>     <NA>       <NA>          <NA>          
+    ##  8 CRHBP FH+ FG-      <NA>     <NA>       <NA>          <NA>          
+    ##  9 CRHR1 FG-          <NA>     <NA>       <NA>          <NA>          
+    ## 10 CRHR2 FG- MG-      <NA>     <NA>       <NA>          <NA>          
+    ## # … with 22 more rows, and 2 more variables: hatch_n5 <chr>, n5_n9 <chr>
 
     ## table 1 summary candidate genes
     table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
-      select(gene, bldg_lay:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
+      select(gene, control_bldg:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
       mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
              parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
       rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
@@ -77,24 +77,20 @@ Candidate DEGs
       mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
       arrange(sig, gene)  %>%  select(-sig, -numDEGs)
     table1[is.na(table1)] <- " " # replace NA with blank space so it's pretty
-    table1
+    head(table1)
 
-    ## # A tibble: 115 x 10
-    ## # Groups:   gene [114]
-    ##    gene  bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
-    ##    <chr> <chr>    <chr>      <chr>         <chr>          <chr>    <chr>
-    ##  1 AHR   " "      " "        " "           " "            " "      " "  
-    ##  2 AVPR… " "      "FG+"      "FG-"         " "            " "      " "  
-    ##  3 BMP4  " "      " "        " "           " "            " "      " "  
-    ##  4 BRCA2 " "      " "        " "           " "            " "      " "  
-    ##  5 BTRC  " "      " "        " "           " "            " "      " "  
-    ##  6 CCND1 " "      " "        " "           " "            " "      " "  
-    ##  7 CEBPB " "      " "        " "           " "            " "      " "  
-    ##  8 CREB… "FG+"    "FG-"      " "           " "            " "      " "  
-    ##  9 CRHBP " "      " "        " "           " "            "FH+"    " "  
-    ## 10 CRHR2 " "      " "        " "           " "            "FH+"    " "  
-    ## # … with 105 more rows, and 3 more variables: Literature <chr>, GO <chr>,
-    ## #   NCBI <chr>
+    ## # A tibble: 6 x 11
+    ## # Groups:   gene [6]
+    ##   gene  control_bldg bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
+    ##   <chr> <chr>        <chr>    <chr>      <chr>         <chr>         
+    ## 1 AVPR… FG+          " "      "FG+"      "FG-"         " "           
+    ## 2 CREB… MG-          "FG+"    "FG-"      " "           " "           
+    ## 3 CRHBP FH+ FG-      " "      " "        " "           " "           
+    ## 4 CRHR2 FG- MG-      " "      " "        " "           " "           
+    ## 5 DRD1  FH+ FP+      " "      " "        " "           " "           
+    ## 6 ESR1  FH+ MH+ FG+… "FP+"    "FP-"      " "           " "           
+    ## # … with 5 more variables: hatch_n5 <chr>, n5_n9 <chr>, Literature <chr>,
+    ## #   GO <chr>, NCBI <chr>
 
     kable(table1)
 
@@ -103,6 +99,9 @@ Candidate DEGs
 <tr>
 <th style="text-align:left;">
 gene
+</th>
+<th style="text-align:left;">
+control\_bldg
 </th>
 <th style="text-align:left;">
 bldg\_lay
@@ -136,30 +135,10 @@ NCBI
 <tbody>
 <tr>
 <td style="text-align:left;">
-AHR
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 AVPR1A
+</td>
+<td style="text-align:left;">
+FG+
 </td>
 <td style="text-align:left;">
 </td>
@@ -187,122 +166,10 @@ NP\_001103908.1
 </tr>
 <tr>
 <td style="text-align:left;">
-BMP4
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-BRCA2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-BTRC
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CCND1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CEBPB
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 CREBRF
+</td>
+<td style="text-align:left;">
+MG-
 </td>
 <td style="text-align:left;">
 FG+
@@ -332,6 +199,9 @@ XP\_001231574.1
 CRHBP
 </td>
 <td style="text-align:left;">
+FH+ FG-
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -358,6 +228,9 @@ XP\_003643006.2
 CRHR2
 </td>
 <td style="text-align:left;">
+FG- MG-
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -381,53 +254,10 @@ NP\_989785.1
 </tr>
 <tr>
 <td style="text-align:left;">
-CTNNB1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CYP7B1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 DRD1
+</td>
+<td style="text-align:left;">
+FH+ FP+
 </td>
 <td style="text-align:left;">
 </td>
@@ -454,53 +284,10 @@ NP\_001138320.1
 </tr>
 <tr>
 <td style="text-align:left;">
-EAF2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ERBB4
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 ESR1
+</td>
+<td style="text-align:left;">
+FH+ MH+ FG+ MG+
 </td>
 <td style="text-align:left;">
 FP+
@@ -527,101 +314,10 @@ XP\_015139536.1
 </tr>
 <tr>
 <td style="text-align:left;">
-ETV5
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FGF10
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FGF2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FKBP4
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 FOS
+</td>
+<td style="text-align:left;">
+FP-
 </td>
 <td style="text-align:left;">
 </td>
@@ -647,30 +343,10 @@ NP\_990839.1
 </tr>
 <tr>
 <td style="text-align:left;">
-FOXA1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 GNAQ
+</td>
+<td style="text-align:left;">
+FH+ MH+ FP+ MP+ FG+ MG-
 </td>
 <td style="text-align:left;">
 </td>
@@ -697,30 +373,10 @@ NP\_001026598.1
 </tr>
 <tr>
 <td style="text-align:left;">
-HOXA5
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 HTR2C
+</td>
+<td style="text-align:left;">
+FH+ FG-
 </td>
 <td style="text-align:left;">
 </td>
@@ -746,126 +402,10 @@ XP\_004940707.1
 </tr>
 <tr>
 <td style="text-align:left;">
-ID2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-IGF1
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-JAK2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-LBH
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+ MP+
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-LRP6
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 MEST
+</td>
+<td style="text-align:left;">
+FG+
 </td>
 <td style="text-align:left;">
 </td>
@@ -892,78 +432,10 @@ XP\_015142671.1
 </tr>
 <tr>
 <td style="text-align:left;">
-MST1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MSX2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NCOA3
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 NR3C1
+</td>
+<td style="text-align:left;">
+FH+ MH+ FP+ MP+ FG+ MG+
 </td>
 <td style="text-align:left;">
 </td>
@@ -993,6 +465,9 @@ XP\_015149519.1
 OPRK1
 </td>
 <td style="text-align:left;">
+FH+ FG-
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -1019,6 +494,9 @@ XP\_426087.2
 OPRM1
 </td>
 <td style="text-align:left;">
+FH+ MH+ MP+ FG+
+</td>
+<td style="text-align:left;">
 FG-
 </td>
 <td style="text-align:left;">
@@ -1043,32 +521,10 @@ XP\_003641008.2
 </tr>
 <tr>
 <td style="text-align:left;">
-ORAI1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 PGR
+</td>
+<td style="text-align:left;">
+FG+
 </td>
 <td style="text-align:left;">
 </td>
@@ -1094,78 +550,10 @@ NP\_990593.1
 </tr>
 <tr>
 <td style="text-align:left;">
-PHB2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PLAG1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PML
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 PRL
+</td>
+<td style="text-align:left;">
+FH- MH- FP- MP- MG-
 </td>
 <td style="text-align:left;">
 </td>
@@ -1196,6 +584,9 @@ NP\_990797.2
 PRLR
 </td>
 <td style="text-align:left;">
+FH- FP- MP- MG-
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 FG-
@@ -1219,32 +610,10 @@ XP\_015132722.1
 </tr>
 <tr>
 <td style="text-align:left;">
-PSAP
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 PTEN
+</td>
+<td style="text-align:left;">
+FH+ FP+ MP+ FG+ MG-
 </td>
 <td style="text-align:left;">
 </td>
@@ -1270,477 +639,10 @@ XP\_015134187.1
 </tr>
 <tr>
 <td style="text-align:left;">
-PTHLH
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ROBO1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SCRIB
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SERPINB5
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SERPINF1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SFRP1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SHH
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SLC12A2
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SOSTDC1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+ MP+
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SOX9
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-STK11
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SULF1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TBX3
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TFAP2C
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TGFB1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TNC
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-TNFSF11
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-UBE3A
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-WDR77
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+
-</td>
-<td style="text-align:left;">
-FP- MP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-WNT5A
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 ADRA2A
+</td>
+<td style="text-align:left;">
+FH+ FP+
 </td>
 <td style="text-align:left;">
 </td>
@@ -1765,103 +667,10 @@ XP\_004942333.2
 </tr>
 <tr>
 <td style="text-align:left;">
-ANXA1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AR
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-MH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AREG
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ATP2C2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 AVP
+</td>
+<td style="text-align:left;">
+FP- MP-
 </td>
 <td style="text-align:left;">
 </td>
@@ -1890,6 +699,9 @@ NP\_990516.1
 BRINP1
 </td>
 <td style="text-align:left;">
+FH- MP- FG-
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -1912,55 +724,10 @@ NP\_989780.1
 </tr>
 <tr>
 <td style="text-align:left;">
-CD44
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CDKN1B
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 COMT
+</td>
+<td style="text-align:left;">
+FH- MH- MP-
 </td>
 <td style="text-align:left;">
 </td>
@@ -1988,6 +755,9 @@ XP\_001233014.1
 CRH
 </td>
 <td style="text-align:left;">
+MH+
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -2013,6 +783,9 @@ NP\_001116503.1
 CRHR1
 </td>
 <td style="text-align:left;">
+FG-
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -2035,55 +808,10 @@ NP\_989652.1
 </tr>
 <tr>
 <td style="text-align:left;">
-CSF1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CYP19A1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 DBH
+</td>
+<td style="text-align:left;">
+FG+
 </td>
 <td style="text-align:left;">
 </td>
@@ -2111,6 +839,9 @@ XP\_415429.5
 DRD4
 </td>
 <td style="text-align:left;">
+FH- FP- MP-
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -2133,31 +864,10 @@ NP\_001136321.1
 </tr>
 <tr>
 <td style="text-align:left;">
-EPHA2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 ESR2
+</td>
+<td style="text-align:left;">
+FG-
 </td>
 <td style="text-align:left;">
 </td>
@@ -2182,175 +892,10 @@ NP\_990125.1
 </tr>
 <tr>
 <td style="text-align:left;">
-FEM1B
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-MP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FGFR2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FRS2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GLI2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HIF1A
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG- MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ID4
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP- FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-IGF1R
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 KALRN
+</td>
+<td style="text-align:left;">
+FH+
 </td>
 <td style="text-align:left;">
 </td>
@@ -2375,79 +920,10 @@ XP\_015145468.1
 </tr>
 <tr>
 <td style="text-align:left;">
-LATS1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-LRP5
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MAPK1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 MBD2
+</td>
+<td style="text-align:left;">
+FP+
 </td>
 <td style="text-align:left;">
 </td>
@@ -2472,79 +948,10 @@ NP\_001012403.1
 </tr>
 <tr>
 <td style="text-align:left;">
-MED1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MMP2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NOG
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 NPAS3
+</td>
+<td style="text-align:left;">
+FH- MP- FG- MG-
 </td>
 <td style="text-align:left;">
 </td>
@@ -2572,6 +979,9 @@ XP\_015143131.1
 NPAS3
 </td>
 <td style="text-align:left;">
+FH- MP- FG- MG-
+</td>
+<td style="text-align:left;">
 </td>
 <td style="text-align:left;">
 </td>
@@ -2594,31 +1004,10 @@ XP\_015143132.1
 </tr>
 <tr>
 <td style="text-align:left;">
-NTN1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 OXT
+</td>
+<td style="text-align:left;">
+FP- MP-
 </td>
 <td style="text-align:left;">
 </td>
@@ -2644,151 +1033,10 @@ XP\_004936337.1
 </tr>
 <tr>
 <td style="text-align:left;">
-PTCH1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
+SLC6A4
 </td>
 <td style="text-align:left;">
 FP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PYGO2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP- MP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-RLN1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-RREB1
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-RTN4
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+ MP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-RXRA
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SLC6A4
 </td>
 <td style="text-align:left;">
 </td>
@@ -2813,103 +1061,10 @@ XP\_015151186.1
 </tr>
 <tr>
 <td style="text-align:left;">
-SLIT2
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SMO
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-STAT6
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-WNT4
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 ZFX
+</td>
+<td style="text-align:left;">
+FP- MP- MG-
 </td>
 <td style="text-align:left;">
 </td>
@@ -3049,17 +1204,17 @@ Candidate Correlations
     ## shorter object length
 
     ## # A tibble: 6 x 23
-    ##   rowname  HTR2C   DRD1  CRHR2  CRHBP  CRHR1   DRD4   CRH  MEST   ESR1
-    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl>  <dbl>
-    ## 1 HTR2C   NA      0.864  0.851  0.731  0.526  0.370 0.460 0.498 0.385 
-    ## 2 DRD1     0.864 NA      0.775  0.683  0.472  0.533 0.349 0.238 0.0413
-    ## 3 CRHR2    0.851  0.775 NA      0.658  0.357  0.407 0.171 0.548 0.217 
-    ## 4 CRHBP    0.731  0.683  0.658 NA      0.403  0.166 0.350 0.370 0.228 
-    ## 5 CRHR1    0.526  0.472  0.357  0.403 NA      0.309 0.717 0.259 0.202 
-    ## 6 DRD4     0.370  0.533  0.407  0.166  0.309 NA     0.139 0.542 0.0486
-    ## # … with 13 more variables: AVPR1A <dbl>, FOS <dbl>, OPRM1 <dbl>,
-    ## #   SLC6A4 <dbl>, NR3C1 <dbl>, PRLR <dbl>, ADRA2A <dbl>, PGR <dbl>,
-    ## #   ESR2 <dbl>, AVP <dbl>, OXT <dbl>, PRL <dbl>, COMT <dbl>
+    ##   rowname  HTR2C   DRD1  CRHR2  CRHBP  CRHR1    CRH  DRD4  ESR1  MEST
+    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>
+    ## 1 HTR2C   NA      0.854  0.851  0.731  0.526  0.460 0.480 0.385 0.179
+    ## 2 DRD1     0.854 NA      0.740  0.718  0.571  0.356 0.533 0.244 0.238
+    ## 3 CRHR2    0.851  0.740 NA      0.658  0.357  0.171 0.365 0.217 0.210
+    ## 4 CRHBP    0.731  0.718  0.658 NA      0.403  0.350 0.362 0.228 0.430
+    ## 5 CRHR1    0.526  0.571  0.357  0.403 NA      0.717 0.441 0.202 0.581
+    ## 6 CRH      0.460  0.356  0.171  0.350  0.717 NA     0.355 0.556 0.504
+    ## # … with 13 more variables: FOS <dbl>, SLC6A4 <dbl>, ADRA2A <dbl>,
+    ## #   NR3C1 <dbl>, PGR <dbl>, AVPR1A <dbl>, AVP <dbl>, PRLR <dbl>,
+    ## #   ESR2 <dbl>, OPRM1 <dbl>, OXT <dbl>, PRL <dbl>, COMT <dbl>
 
     pit3 <- makecorrdf(sexlevels, "pituitary", curleychampagnegenes)  
 
@@ -3067,17 +1222,17 @@ Candidate Correlations
     ## shorter object length
 
     ## # A tibble: 6 x 22
-    ##   rowname    AVP    PGR    OXT  CRHBP   PRLR   DRD4    COMT   CRHR2    MEST
-    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>   <dbl>   <dbl>   <dbl>
-    ## 1 AVP     NA      0.204  0.872  0.730  0.550  0.395  0.234  0.402    0.150 
-    ## 2 PGR      0.204 NA      0.277  0.269  0.214  0.328 -0.0943 0.00797 -0.135 
-    ## 3 OXT      0.872  0.277 NA      0.701  0.488  0.355  0.284  0.457    0.0521
-    ## 4 CRHBP    0.730  0.269  0.701 NA      0.413  0.305  0.279  0.444   -0.0792
-    ## 5 PRLR     0.550  0.214  0.488  0.413 NA      0.566  0.219  0.251    0.137 
-    ## 6 DRD4     0.395  0.328  0.355  0.305  0.566 NA     -0.0451 0.0684  -0.206 
-    ## # … with 12 more variables: FOS <dbl>, ADRA2A <dbl>, OPRM1 <dbl>,
-    ## #   ESR1 <dbl>, PRL <dbl>, ESR2 <dbl>, HTR2C <dbl>, NR3C1 <dbl>,
-    ## #   CRHR1 <dbl>, SLC6A4 <dbl>, DRD1 <dbl>, AVPR1A <dbl>
+    ##   rowname   DRD1    OXT  CRHBP  CRHR2   HTR2C  ADRA2A      PGR AVPR1A
+    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>   <dbl>   <dbl>    <dbl>  <dbl>
+    ## 1 DRD1    NA      0.586  0.541  0.315  0.606   0.251  -0.0661  0.457 
+    ## 2 OXT      0.586 NA      0.701  0.457  0.728   0.247   0.277   0.368 
+    ## 3 CRHBP    0.541  0.701 NA      0.444  0.667   0.237   0.269   0.317 
+    ## 4 CRHR2    0.315  0.457  0.444 NA      0.350   0.276   0.00797 0.224 
+    ## 5 HTR2C    0.606  0.728  0.667  0.350 NA       0.0835  0.0408  0.523 
+    ## 6 ADRA2A   0.251  0.247  0.237  0.276  0.0835 NA      -0.363   0.0530
+    ## # … with 13 more variables: ESR1 <dbl>, NR3C1 <dbl>, COMT <dbl>,
+    ## #   OPRM1 <dbl>, FOS <dbl>, MEST <dbl>, CRHR1 <dbl>, PRL <dbl>,
+    ## #   SLC6A4 <dbl>, ESR2 <dbl>, AVP <dbl>, DRD4 <dbl>, PRLR <dbl>
 
     gon3 <- makecorrdf(sexlevels, "gonad", curleychampagnegenes)  
 
