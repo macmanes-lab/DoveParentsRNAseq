@@ -7,10 +7,8 @@ output: md_document
 library(tidyverse)
 library(cowplot)
 library(Rtsne)
-
 library(kableExtra) 
 library(ggtext) # for italic fonts
-
 
 source("../R/themes.R")
 source("../R/functions.R")
