@@ -43,12 +43,12 @@ candidateDEGS <- read_csv("../results/suppletable1.csv") %>%
   group_by(gene,  comparison) %>%
   summarize(res = str_c(res, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = res) %>%
-  select(gene, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
+  select(gene, control_bldg, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
 candidateDEGS
 
 ## table 1 summary candidate genes
 table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
-  select(gene, bldg_lay:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
+  select(gene, control_bldg:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
   mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
          parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
   rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
@@ -57,7 +57,7 @@ table1 <- table1 %>%
   mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
   arrange(sig, gene)  %>%  select(-sig, -numDEGs)
 table1[is.na(table1)] <- " " # replace NA with blank space so it's pretty
-table1
+head(table1)
 
 kable(table1)
 ```

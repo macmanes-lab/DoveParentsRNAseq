@@ -65,24 +65,7 @@ GOgenesLong <- GO_pathfiles %>%
   drop_na() 
 GOgenesLong
 
-
-
-mamglanddev <- GOgenesLong %>% 
-  filter(!GO %in% c("parentalbehavior", "parentalcare")) %>% 
-  pivot_wider(
-    names_from = GO,
-    values_from = gene) %>%
-  mutate(numGOs = 4 - rowSums(is.na(.))) %>%
-  arrange(desc(numGOs)) %>%
-  select(-numGOs) %>%
-  left_join(geneids, by = c("geneid","NCBI")) %>%
-  select(gene, mamglanddev, prostglanddev,  NCBI) %>%
-  arrange(mamglanddev, prostglanddev)
-mamglanddev
-
-
 parentalcaregenes <- GOgenesLong %>% 
-  filter(!GO %in% c("mamglanddev", "prostglanddev") ) %>% 
   pivot_wider(
     names_from = GO,
     values_from = gene) %>%
