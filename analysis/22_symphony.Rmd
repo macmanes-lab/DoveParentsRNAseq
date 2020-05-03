@@ -1,5 +1,5 @@
 ---
-title: "music"
+title: "Transcriptoinal symphony"
 output: md_document
 ---
 
@@ -9,98 +9,31 @@ library(ggimage)
 library(cowplot)
 
 source("../R/themes.R")
+
+theme_music <- function () { 
+  theme_classic(base_size = 12,
+                base_family = 'Helvetica') +
+    theme(
+      panel.grid.major  = element_blank(),  # remove major gridlines
+      panel.grid.minor  = element_blank()  # remove minor gridlines
+    )
+}
+
 knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
 
 ```
 
-## R Markdown
+## Music example
 
-
-```{r respect}
-song <- c("What", "you", "want,", "ba-", "by", "I", "got.")
-stage <- c( "bldg", "lay", "inc.d9", "inc.d17", "hatch", "n5", "n9")
-time <- c(1,2,3,4,5,6,7)
-position <- c(1,2,3,4,5,6,7)
-gene1 <- c(11,9,7,8,8,8,6)
-gene2 <- c(7, 9,5,6,8,8,4)
-gene3 <- c(4, 9,2,4,8,8,1)
-
-respect <- as.data.frame(t(rbind(position, gene1,gene2,gene3)))
-respect$song <- song
-respect$stage <- stage
-respect$image <- sample(c("https://cdn.pixabay.com/photo/2016/03/23/20/49/music-note-1275650_960_720.png"), 
-                        size=7, replace = TRUE)
-respect <- respect %>%
-  pivot_longer(gene1:gene3, names_to = "music", values_to = "genes")  %>% 
-  mutate(songstage = paste(song,stage, sep = "\n\n"))
-
-songstageslim <- unique(respect$songstage)
-
-respectsong <- ggplot(respect, aes(x = position, y = genes)) +
-  geom_line(aes(color = music)) +
-  geom_image(aes(image=image), size = 0.15) +
-  scale_x_continuous(breaks = position,
-                     labels = songstageslim,
-                     name = element_blank()) +
-  scale_y_continuous(breaks = c(3, 5, 7, 9),
-                     labels = c( "F",   "A",   "C",  "E"),
-                     limits = c(-1,12)) +
-  geom_hline(yintercept=c(2.15,4.15,6.15,8.15,10.15))   +
-  theme_B3() +
-  theme(axis.ticks = element_blank()) +
-  labs(subtitle = "RESPECT by Otis Redding, Jr.", y = NULL)
-respectsong
-```
-
-
-
-```{r feelinggood}
-song <- c("Birds", "fly-", "ing", "high,", "you", "know", "how", "I", "feel.")
-stage <- charlevels
-position <- c(1,2,3,4,5,6,7,8,9)
-gene1 <- c(-2,0,1,2,2,1,1,-2,0)
-gene2 <- gene1 - 1
-gene1 <- gene2
-gene3 <- gene2
-
-feelinggood <- as.data.frame(t(rbind(position, gene1,gene2,gene3)))
-feelinggood$song <- song
-feelinggood$stage <- stage
-feelinggood$image <- sample(c("https://cdn.pixabay.com/photo/2016/03/23/20/49/music-note-1275650_960_720.png"), 
-                        size=9, replace = TRUE)
-feelinggood <- feelinggood %>%
-  pivot_longer(gene1:gene3, names_to = "music", values_to = "genes")   %>%
-  mutate(songstage = paste(song,stage, sep = "\n\n"))
-feelinggood
-
-songstageslim <- unique(feelinggood$songstage)
-
-feelinggoodsong <- ggplot(feelinggood, aes(x = position, y = genes)) +
-  geom_line(aes(color = music)) +
-  geom_image(aes(image=image), size = 0.15) +
-  scale_x_continuous(breaks = position,
-                    labels = songstageslim,
-                     name = element_blank()) +
-  scale_y_continuous(breaks = c(3, 5, 7, 9),
-                     labels = c( "F",   "A",   "C",  "E"),
-                     limits = c(-6,12)) +
-  geom_hline(yintercept=c(2.15,4.15,6.15,8.15,10.15))   +
-  theme_B3() +
-  theme(axis.ticks = element_blank()) +
-  labs(subtitle = "Feeling Good by L. Bricusse & A. Newley", y = NULL)
-feelinggoodsong
-
-```
-
-```{r sinnerman}
-song <- c("Oh,", "sin-", "ner", "man,,", "where", "_", "he", "gon'", "run", "_", "to?")
+```{r transcriptionalsymphony}
+song <- c("Oh,", "sin-", "ner", "man,", "where", "_", "he", "gon'", "run", "_", "to?")
 stage <- c( "bldg", "lay", "inc.d3", "m.inc.d3" ,
             "inc.d9", "m.inc.d9"  , 
             "inc.d17", "m.inc.d17" ,
             "hatch", "m.n2" ,
             "n5")
 position <- c(1,2,3,4,5,6,7,8,9,10,11)
-gene1 <- c(0,0,0,0,2,2,1,0,0,0,0)
+gene1 <- c(4,4,4,4,6,6,5,4,4,4,4)
 gene2 <- gene1 + 2
 gene3 <- gene2 + 2
 
@@ -110,177 +43,22 @@ sinnerman$stage <- stage
 sinnerman$image <- sample(c("https://cdn.pixabay.com/photo/2016/03/23/20/49/music-note-1275650_960_720.png"), 
                         size=11, replace = TRUE)
 sinnerman <- sinnerman %>%
-  pivot_longer(gene1:gene3, names_to = "music", values_to = "genes")   %>%
-  mutate(songstage = paste(song,stage, sep = "\n\n"))
-sinnerman
-
-songstageslim <- unique(sinnerman$songstage)
+  pivot_longer(gene1:gene3, names_to = "music", values_to = "genes")  
 
 sinnermansong <- ggplot(sinnerman, aes(x = position, y = genes)) +
-  geom_line(aes(color = music)) +
-  geom_image(aes(image=image), size = 0.1) +
+  #geom_line(aes(color = music)) +
+  geom_image(aes(image=image), size = 0.15) +
   scale_x_continuous(breaks = position,
-                    labels = songstageslim,
+                    labels = song,
                      name = element_blank()) +
   scale_y_continuous(breaks = c(3, 5, 7, 9),
                      labels = c( "F",   "A",   "C",  "E"),
                      limits = c(-1,12)) +
   geom_hline(yintercept=c(2.15,4.15,6.15,8.15,10.15))   +
-  theme_B3() +
-  theme(axis.ticks = element_blank(),
-        axis.text.x = element_text(angle = 10, hjust = 1)) +
+  theme_music() +
+  theme(axis.ticks = element_blank()) +
   labs(subtitle = "Sinnerman by Nina Simone", y = NULL)
 sinnermansong
 
 ```
-```{r soulmusic}
 
-p3 <- plot_grid(respectsong + theme(legend.position = "bottom"), 
-                sinnermansong + theme(legend.position = "bottom"), 
-                nrow = 1, rel_widths = c(0.45, 0.55))
-p3
-```
-
-```{r symphonymodules}
-modules <- read_csv("../results/08_genes_modules.csv") %>%
-  rename(modulecolor = `net$colors`)  
-
-candidategenes <- c("PRL", "PRLR", 
-                 #"VIP", "VIPR1", "VIPR2", 
-                 "OXT", "AVP",  "AVPR1B", # "AVPR1A",
-                # "GNRH1","GNRHR", "NPVF",
-                # "NR3C1", "NR3C2",
-                # "ESR1", "ESR2",
-                "AR",
-                # "DIO2","LEPR", "DIO3", "DIO1","CYP19A1",
-                # "HSPA14", "HSPA12A",
-                # "PTGES3", "HSD11B2",
-                 "DRD5", "DRD1", "DRD2",
-                 #"PGE1", "PGF",
-                 "BRCA1", "MYC", "PRKCZ" ,"FOSL2")
-
-modulescandidates <- modules %>% filter(gene %in% candidategenes)  %>%
-  group_by(modulecolor)  %>%
-  summarize(gene = str_c(gene, collapse = ", "))
-
-modulescandidates
-
-datapath <- "../results/"   # path to the data
-datafiles <- dir(datapath, pattern = "*allvsd.csv") # get file names
-datapathfile <- paste0(datapath, datafiles)
-
-df <- datapathfile %>%
-  setNames(nm = .) %>%
-  map_df(~read_csv(.x, col_types = cols(), col_names = T), .id = "filename") %>% 
-  mutate(tissue = sapply(strsplit(as.character(filename),'../results/06_'), "[", 2)) %>% 
-  mutate(tissue = sapply(strsplit(as.character(tissue),'allvsd.csv'), "[", 1))  %>% 
-  select(tissue, X1, everything()) 
-
-df2 <-  df  %>%
-  filter(X1 %in% c(candidategenes)) %>%
-  pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
-               names_to = "sample", values_to = "vsd") %>%
-   mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
-   mutate(treatment = sapply(strsplit(as.character(sample),'_'), "[", 4))  %>%
-   mutate(treatment = sapply(strsplit(as.character(treatment),'.NYNO'), "[", 1)) %>%
-  mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
-  filter(treatment %in% charlevels) %>%
-  select(bird, sex, treatment, tissue, X1, vsd) %>%
-  mutate(tissue = fct_recode(tissue, "hypothalamus" = "hyp",
-                    "pituitary" = "pit",
-                    "gonads" = "gon"
-                    )) %>%
-  rename(gene = X1) %>%
-  drop_na() %>%
-  droplevels()
-head(df2)
-
-df2$treatment <- factor(df2$treatment, levels = alllevels)
-df2$tissue <- factor(df2$tissue, levels = tissuelevels)
-df2$gene <- factor(df2$gene)
-
-
-df3 <- df2 %>% 
-  mutate(treatment = fct_relevel(treatment, charlevels)) %>% 
-  group_by(treatment, tissue, gene)  %>% 
-  summarize(m = mean(vsd, na.rm = T), se = sd(vsd,  na.rm = T)/sqrt(length(vsd))) %>%
-  mutate(image = "../figures/images/DoveParentsRNAseq_note.png") 
-head(df3)  
-
-d4 <- left_join(df3, modules, by = "gene")
-
-
-for (i in levels(d4$tissue)) {
-  p <-  d4 %>%
-    filter(tissue == i) %>%
-    ggplot(aes(x = treatment, y = m)) +
-    geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
-    geom_point(size = 1, aes(color = gene)) +
-    geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
-    scale_alpha_manual(values = c(0.5, 1)) +
-    labs(subtitle = i, y = "average expression", x = "parental stage") +
-    facet_wrap(~modulecolor, nrow = 2) +
-    theme_B3() +
-    theme(legend.position = "bottom")
- print(p)
-}
-
-
-d4 %>%
-  filter(modulecolor != "turquoise",
-         tissue == "pituitary") %>%
-  droplevels() %>% 
-    ggplot(aes(x = treatment, y = m)) +
-    geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
-    geom_point(size = 1, aes(color = gene)) +
-    geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
-    scale_alpha_manual(values = c(0.5, 1)) +
-    labs(subtitle = "WGCNA + canddiate genes in the pituitary", y = "average expression", x = "parental stage") +
-    facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
-    theme_B3() +
-    theme(legend.position = "bottom", axis.text.x = element_text(angle = 45, hjust = 1)) +
-    guides(color = guide_legend(nrow = 2, byrow = T)) 
-
-redgenes <- d4 %>%
-  filter( modulecolor == "red",
-          tissue == "pituitary") %>%
-  droplevels() %>% 
-    ggplot(aes(x = treatment, y = m)) +
-  geom_errorbar(aes(ymin=m-se, ymax=m+se, color=treatment), width=.1) +
-  geom_image(aes(image=image), size = 0.15) +
-  #geom_smooth(aes(x = as.numeric(treatment)), se = F, color = "red") +
-  facet_wrap(~modulecolor, scales = "free_y", nrow = 2) +
-  labs(subtitle = "WGCNA red module", 
-       y = "gene expression  in the pitutiary", x = "parental stage") +
-    facet_wrap(~gene, scales = "free_y", nrow = ) +
-    theme_B3() +
-    theme(legend.position = "none", 
-          axis.text.x = element_text(angle = 45, hjust = 1),
-          strip.text = element_text(face = "italic")) +
-  scale_color_manual(values = allcolors) 
-
-redgenes
-
-```
-
-```{r}
-d4 %>% 
-  filter(gene %in% c("PRL", "PRLR", "ESR2")) %>%
-ggplot( aes(x = treatment, y = m, color = gene)) +
-    geom_smooth(aes(x = as.numeric(treatment)), se = F) +
-    facet_grid(gene~tissue, scales = "free")
-
-head(df)
-head(df2)
-```
-
-
-## outline
-
-- data-driven
-- hypothesis-drive
-- sonically-driven
-- visually-driven
-- statistcally-driven
-
-Data and hypothesis driven research for the visually, sonically, and statistcially inclined biologists
