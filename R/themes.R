@@ -4,6 +4,7 @@ theme_B3 <- function () {
   theme_classic(base_size = 7,
                 base_family = 'Helvetica') +
     theme(
+      strip.background  = element_blank(),
       panel.grid.major  = element_blank(),  # remove major gridlines
       panel.grid.minor  = element_blank()  # remove minor gridlines
     )

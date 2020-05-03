@@ -7,8 +7,12 @@ output: md_document
 library(tidyverse)
 library(ggimage)
 library(cowplot)
+library(ggsignif)
 
 source("../R/themes.R")
+source("../R/functions.R")
+source("../R/wrangledata.R")
+
 
 theme_music <- function () { 
   theme_classic(base_size = 12,
@@ -60,5 +64,24 @@ sinnermansong <- ggplot(sinnerman, aes(x = position, y = genes)) +
   labs(subtitle = "Sinnerman by Nina Simone", y = NULL)
 sinnermansong
 
+```
+
+```{r, fig.height=6}
+head(candidatevsd)
+
+candidatevsd %>%
+  filter(gene == "PRL")  %>%
+  ggplot(aes(x=treatment, y=counts)) + 
+  geom_boxplot() +
+  theme_B3() +
+  geom_signif(comparisons = list(c("control", "bldg"),
+                                 c( "bldg", "lay"),
+                                 c( "lay", "inc.d3"),
+                                 c("inc.d3", "inc.d9"),
+                                 c( "inc.d9", "inc.d17"),
+                                 c( "inc.d17", "hatch"),
+                                 c("hatch", "n5"),
+                                 c( "n5", "n9")),  map_signif_level=TRUE)  +
+  facet_wrap(tissue~sex, scales = "free_y")
 ```
 
