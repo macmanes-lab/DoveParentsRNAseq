@@ -16,6 +16,7 @@ library(ggpubr)
 library(knitr)
 library(kableExtra)
 library(corrr)
+library(ggsignif)
 
 source("../R/themes.R")
 source("../R/functions.R")
@@ -93,6 +94,7 @@ FG <- subsetcandidatevsdwide("female", "gonad")
 MH <- subsetcandidatevsdwide("male", "hypothalamus")
 MP <- subsetcandidatevsdwide("male", "pituitary")
 MG <- subsetcandidatevsdwide("male", "gonad") 
+
 ```
 
 
@@ -105,33 +107,41 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
   p <- candidatevsd %>%
     filter(tissue %in% whichtissue,
           gene %in% whichgenes,
-          sex %in% whichsex) %>%
+          sex %in% whichsex,
+          treatment != "control") %>%
     mutate(treatment = factor(treatment, levels = charlevels)) %>%
-    mutate(treatmentNum = as.numeric(treatment)) %>%
-    ggplot(aes(x = treatmentNum, y = counts)) +
+    ggplot(aes(x = treatment, y = counts)) +
     geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
-    #geom_smooth(aes(color = sex)) +
     geom_jitter(size = 0.25, aes(color = sex)) +
-    facet_wrap(~sex, scales = "free_y", nrow = 2) +
-    scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9),
-                       labels = charlevels) +
+    facet_wrap(~gene, scales = "free_y", nrow = 2) +
     scale_fill_manual(values = allcolors) +
     scale_color_manual(values = allcolors) +
     theme_B3() + 
     theme(legend.position = "none",
-          axis.title.y = element_text(face = "italic"),
+          strip.text.y = element_text(face = "italic"),
+          strip.text.x = element_text(face = "italic"),
           axis.text.x = element_blank()) +
-    labs(y = whichgenes,
-         x = NULL) 
+    labs(y = paste(whichsex, "gene expression", sep = " "),
+         x = NULL) +
+    geom_signif(comparisons = list(c( "bldg", "lay"),
+                                 c( "lay", "inc.d3"),
+                                 c("inc.d3", "inc.d9"),
+                                 c( "inc.d9", "inc.d17"),
+                                 c( "inc.d17", "hatch"),
+                                 c("hatch", "n5"),
+                                 c( "n5", "n9")),  
+                map_signif_level=TRUE,
+                textsize = 1.5, family = 'Helvetica',
+                vjust = 1.5, size = 0) 
+                
   return(p)
 }
-
 
 scattercorrelations <- function(df, gene1, gene2, mylinecolor, myxlab, myylab){
   p <- ggplot(df, aes(x = gene1, y = gene2)) +
     labs(subtitle = " ", x = myxlab, y = myylab) + 
     scale_color_manual(values = allcolors) +
-    geom_smooth(method = "lm",  color = mylinecolor) +
+    geom_smooth(method = "glm",  color = mylinecolor) +
     geom_point(aes(color = treatment))  +
     theme_B3() +  
     theme(axis.title = element_text(face = "italic"), 
@@ -139,55 +149,59 @@ scattercorrelations <- function(df, gene1, gene2, mylinecolor, myxlab, myylab){
     stat_cor( size = 2)
   return(p)
 }
-
 ```
 
 
 ```{r fig2, fig.width = 7.25, fig.height = 7.25}
 
 ## plot sig candidate genes
-a <- candidateboxplot("hypothalamus", "DRD1", sexlevels) + labs(x = NULL, title = "Hypothalamus") 
+a <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female") + labs(title = "Hypothalamus")
+e <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = "female")+ labs(title = "Pituitary")
+i <- scattercorrelations(FG, FG$ESR1, FG$PGR, "#969696", "ESR1", "PGR")   + labs(subtitle = "female")+ labs(title = "Gonad")
 
-g <- candidateboxplot("pituitary", "PRL", sexlevels) + labs(x = NULL, title = "Pituitary")
+b <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C")  + labs(subtitle = "male") + labs(title = "")
+f <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1")  + labs(subtitle = "male") + labs(title = "")
+j <- scattercorrelations(MG, MG$ESR1, MG$PGR, "#525252", "ESR1", "PGR")  + labs(subtitle = "male") + labs(title = "")
 
-m <- candidateboxplot("gonad", "CREBRF", sexlevels) + labs(x = NULL, title = "Gonad") + 
+
+c <- candidateboxplot("hypothalamus", c("DRD1", "HTR2C"), "female") + labs(x = NULL, title = "") 
+g <- candidateboxplot("pituitary", c( "AVPR1A", "CRHR1" ), "female") + labs(x = NULL, title = "")
+k <- candidateboxplot("gonad", c("ESR1", "PGR"), "female") + labs(x = NULL, title = "") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+d <- candidateboxplot("hypothalamus",  c("DRD1", "HTR2C"), "male") + labs(x = NULL, title = " ") 
+h <- candidateboxplot("pituitary", c("AVPR1A", "CRHR1"), "male") + labs(x = NULL, title = " ")
+l <- candidateboxplot("gonad", c("ESR1", "PGR"), "male") + labs(x = NULL, title = " ") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 
-c <- plotcorrplot(hyp3, "females and males") + theme(legend.position = "none")  + labs(title = "")
-i <- plotcorrplot(pit3, "females and males") + theme(legend.position = "none") + labs(title = "")
-o <- plotcorrplot(gon3, "females and males") + theme(legend.position = "bottom")  + labs(title = "")
-
-
-e <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female")+ labs(title = "")
-k <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = "female")+ labs(title = "")
-q <- scattercorrelations(FG, FG$ESR2, FG$CRHBP, "#969696", "ESR2", "CRHBP")   + labs(subtitle = "female")+ labs(title = "")
-
-f <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C") + theme(axis.title.y = element_blank()) + labs(subtitle = "male") + labs(title = "")
-l <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1") + theme(axis.title.y = element_blank()) + labs(subtitle = "male") + labs(title = "")
-r <- scattercorrelations(MG, MG$ESR2, MG$CRHBP, "#525252", "ESR2", "CRHBP")  + theme(axis.title.y = element_blank()) + labs(subtitle = "male") + labs(title = "")
-
-plot_grid(a,c,e,f,g,i,k,l,m,o,q,r, nrow = 3, rel_widths = c(1,1.2,0.8,0.75), rel_heights = c(1,1,1.2),
-          labels = "AUTO", label_size =  8)
-```
-
-###  tissue specific expression
-
-```{r}
-head(allvsd)
-
-tissuespecificity <- allvsd %>%
-  mutate(tissue = sapply(strsplit(as.character(samples),'\\_'), "[", 3)) %>% 
-  group_by(X1) %>%
-  summarize(tissues = str_c(tissue, collapse = ", ")) %>%
-  filter(tissues != "gon, hyp, pit") %>%
-  group_by(tissues) %>%
-  summarize(genes = str_c(X1, collapse = ", ")) %>% 
-  mutate(n = str_count(genes, ",") + 1) %>% 
-  arrange(desc(n))
-tissuespecificity
+plot_grid(a,b,c,d,e,f,g,h,i,j,k,l, nrow = 3, 
+          rel_widths = c(0.8,0.8,1,1), rel_heights = c(1,1,1.2),
+          labels = c("A", " ", "B", "",
+                     "C", " ", "D", "",
+                     "E", " ", "F", ""), label_size =  8)
 
 ```
+
+
+
+## suplement correlations
+
+
+```{r supplfig2, fig.width = 7.25, fig.height = 7.25}
+
+a <- plotcorrplot(hyp1, "females") + theme(legend.position = "none", axis.text.x = element_blank())  + labs(title = "")
+c <- plotcorrplot(pit1, "females") + theme(legend.position = "none", axis.text.x = element_blank()) + labs(title = "")
+e <- plotcorrplot(gon1, "females") + theme(legend.position = "bottom")  + labs(title = "")
+
+b <- plotcorrplot(hyp2, "males") + theme(legend.position = "none", axis.text.x = element_blank())  + labs(title = "")
+d <- plotcorrplot(pit2, "males") + theme(legend.position = "none", axis.text.x = element_blank()) + labs(title = "")
+f <- plotcorrplot(gon2, "males") + theme(legend.position = "bottom")  + labs(title = "")
+
+plot_grid(a,b,c,d,e,f, nrow = 3, rel_heights = c(1,1,1.5))
+
+```
+
 
 
 
