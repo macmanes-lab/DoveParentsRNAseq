@@ -171,6 +171,25 @@ plot_grid(a,c,e,f,g,i,k,l,m,o,q,r, nrow = 3, rel_widths = c(1,1.2,0.8,0.75), rel
           labels = "AUTO", label_size =  8)
 ```
 
+###  tissue specific expression
+
+```{r}
+head(allvsd)
+
+tissuespecificity <- allvsd %>%
+  mutate(tissue = sapply(strsplit(as.character(samples),'\\_'), "[", 3)) %>% 
+  group_by(X1) %>%
+  summarize(tissues = str_c(tissue, collapse = ", ")) %>%
+  filter(tissues != "gon, hyp, pit") %>%
+  group_by(tissues) %>%
+  summarize(genes = str_c(X1, collapse = ", ")) %>% 
+  mutate(n = str_count(genes, ",") + 1) %>% 
+  arrange(desc(n))
+tissuespecificity
+
+```
+
+
 
 
 ```{r writefiles}
