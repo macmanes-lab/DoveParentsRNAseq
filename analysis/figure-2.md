@@ -1283,7 +1283,7 @@ Candidate Correlations
         theme(legend.position = "none",
               strip.text.y = element_text(face = "italic"),
               strip.text.x = element_text(face = "italic"),
-              axis.text.x = element_blank()) +
+              axis.text.x = element_text(angle = 45, hjust = 1)) +
         labs(y = paste(whichsex, "gene expression", sep = " "),
              x = NULL) +
         geom_signif(comparisons = list(c( "bldg", "lay"),
@@ -1325,14 +1325,11 @@ Candidate Correlations
 
     c <- candidateboxplot("hypothalamus", c("DRD1", "HTR2C"), "female") + labs(x = NULL, title = "") 
     g <- candidateboxplot("pituitary", c( "AVPR1A", "CRHR1" ), "female") + labs(x = NULL, title = "")
-    k <- candidateboxplot("gonad", c("ESR1", "PGR"), "female") + labs(x = NULL, title = "") + 
-      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    k <- candidateboxplot("gonad", c("ESR1", "PGR"), "female") + labs(x = NULL, title = "") 
 
     d <- candidateboxplot("hypothalamus",  c("DRD1", "HTR2C"), "male") + labs(x = NULL, title = " ") 
     h <- candidateboxplot("pituitary", c("AVPR1A", "CRHR1"), "male") + labs(x = NULL, title = " ")
-    l <- candidateboxplot("gonad", c("ESR1", "PGR"), "male") + labs(x = NULL, title = " ") + 
-      theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
+    l <- candidateboxplot("gonad", c("ESR1", "PGR"), "male") + labs(x = NULL, title = " ") 
 
     plot_grid(a,b,c,d,e,f,g,h,i,j,k,l, nrow = 3, 
               rel_widths = c(0.8,0.8,1,1), rel_heights = c(1,1,1.2),
