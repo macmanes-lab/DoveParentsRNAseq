@@ -9,6 +9,10 @@ Candidate gene analysis
     library(kableExtra)
     library(corrr)
     library(ggsignif)
+    library(magick)
+    library(scales)
+    library(ggimage)
+
 
     source("../R/themes.R")
     source("../R/functions.R")
@@ -1331,11 +1335,54 @@ Candidate Correlations
     h <- candidateboxplot("pituitary", c("AVPR1A", "CRHR1"), "male") + labs(x = NULL, title = " ")
     l <- candidateboxplot("gonad", c("ESR1", "PGR"), "male") + labs(x = NULL, title = " ") 
 
-    plot_grid(a,b,c,d,e,f,g,h,i,j,k,l, nrow = 3, 
+    atof <- plot_grid(a,b,c,d,e,f,g,h,i,j,k,l, nrow = 3, 
               rel_widths = c(0.8,0.8,1,1), rel_heights = c(1,1,1.2),
               labels = c("A", " ", "B", "",
                          "C", " ", "D", "",
                          "E", " ", "F", ""), label_size =  8)
+
+
+    musicplot <- function(whichgene, whichtissue){
+        
+        treble <- magick::image_read("../figures/images/fig_treble.png")
+        base <- magick::image_read("../figures/images/fig_base.png")
+        
+        p <- candidatevsd %>%
+          group_by(treatment, tissue, gene, sex)  %>% 
+          summarize(median = median(counts, na.rm = T), 
+                    se = sd(counts,  na.rm = T)/sqrt(length(counts))) %>%
+          dplyr::mutate(scaled = rescale(median, to = c(0, 7))) %>%
+          dplyr::mutate(image = "../figures/images/musicnote.png")   %>%
+          filter(
+            gene %in% whichgene,
+            tissue %in% whichtissue      ) %>% 
+          collect() %>%
+          drop_na() %>%
+          filter(treatment != "control") %>%
+          ggplot( aes(x = treatment, y = median)) +
+          geom_errorbar(aes(ymin = median - se, 
+                            ymax = median + se, color = "white"),  width=0) +
+          geom_image(aes(image=image), size = 0.1)+
+          theme_void(base_size = 7) +
+          theme(legend.position = "none",
+                title = element_text(face = "italic"),
+                strip.text = element_text(color = "white")) +
+          scale_color_manual(values = allcolors) +
+          labs(y = " ", subtitle = " " ) +
+          facet_wrap(~sex, nrow = 2, scales = "free_y")
+          return(p)
+    }
+
+    scales <- png::readPNG("../figures/images/fig_music.png")
+    scales <- ggdraw() +  draw_image(scales, scale = 1)
+
+    p1 <- musicplot(c("DRD1", "HTR2C"), "hypothalamus") + labs(subtitle = " D1DR & HTR2C", title = " " )
+    p2 <- musicplot(c("AVPR1A", "CRHR1"), "pituitary") + labs(subtitle = " AVPR1A & CRHR1 ", title = " " )
+    p3 <- musicplot(c("ESR1", "PGR"), "gonad") + labs(subtitle = "  ESR1 & PGR", title = " ")
+
+    p123 <- plot_grid(p1, NULL,  p2, NULL,p3, NULL,ncol = 1, rel_heights = c(1,0.2,1,0.2,1.2,0.2))
+
+    plot_grid(atof, scales, p123, rel_widths = c(1.5,0.1, 0.3), ncol = 3)
 
 ![](../figures/fig2-1.png)
 
