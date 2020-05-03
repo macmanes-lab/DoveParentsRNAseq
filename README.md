@@ -27,9 +27,9 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 
 ![](./figures/fig2-1.png)
 
-## Figure 3 
+## Figure 3 (placeholder) 
 
-![](./figures/fig3-1.png)
+![](./figures/images/fig_thumbnail.png)
 
 
 ## Figure 4
