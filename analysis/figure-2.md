@@ -1279,7 +1279,7 @@ Candidate Correlations
         ggplot(aes(x = treatment, y = counts)) +
         geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
         geom_jitter(size = 0.25, aes(color = sex)) +
-        facet_wrap(~sex, scales = "free_y", nrow = 1) +
+        facet_wrap(~sex,  nrow = 1) +
         scale_fill_manual(values = allcolors) +
         scale_color_manual(values = allcolors) +
         theme_B3() + 
@@ -1317,38 +1317,38 @@ Candidate Correlations
       return(p)
     }
 
-    header <- png::readPNG("../figures/images/fig_fig2a.png")
-    header <- ggdraw() +  draw_image(header, scale = 1)
+    a <- png::readPNG("../figures/images/fig_fig2a.png")
+    a <- ggdraw() +  draw_image(a, scale = 1)
 
 
-    b <- plotcorrplot(hyp3, "females and males") + theme(legend.position = "none")  + labs(title = "Hypothalamus")
-    g <- plotcorrplot(pit3, NULL) + theme(legend.position = "none") + labs(title = "Pituitary")
-    l <- plotcorrplot(gon3, NULL) + theme(legend.position = "none")  + labs(title = "Gonad")
+    b1 <- plotcorrplot(hyp3, "females and males") + theme(legend.position = "none")  + labs(y = "Hypothalamus", title = "Candidate gene correlations")
+    b2 <- plotcorrplot(pit3, NULL) + theme(legend.position = "none") + labs(y = "Pituitary")
+    b3 <- plotcorrplot(gon3, NULL) + theme(legend.position = "none")  + labs(y = "Gonad")
 
-    c <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female") + labs(title = "")
-    h <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = NULL)+ labs(title = "")
-    m <- scattercorrelations(FG, FG$ESR1, FG$PGR, "#969696", "ESR1", "PGR")   + labs(subtitle = NULL)+ labs(title = "")
+    c1 <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female", title =  "Top correlation")  
+    c3 <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = NULL) 
+    c5 <- scattercorrelations(FG, FG$ESR1, FG$PGR, "#969696", "ESR1", "PGR")   + labs(subtitle = NULL) 
 
-    d <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C")  + labs(subtitle = "male") + labs(title = "")
-    i <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1")  + labs(subtitle = NULL) + labs(title = "")
-    n <- scattercorrelations(MG, MG$ESR1, MG$PGR, "#525252", "ESR1", "PGR")  + labs(subtitle = NULL) + labs(title = "")
-
-
-    d1 <- candidateboxplot("hypothalamus", c("DRD1"), sexlevels) + labs(x = NULL , title = " ")  + theme(axis.line.x = element_blank()) 
-    d2 <- candidateboxplot("hypothalamus", c("HTR2C"), sexlevels) + labs(x = "Parental stage" ) + theme(strip.text = element_blank())
-
-    g1 <- candidateboxplot("pituitary", c("AVPR1A"), sexlevels) + labs(x = NULL, title = " " )  + theme( strip.text = element_blank(), axis.line.x = element_blank())
-    g2 <- candidateboxplot("pituitary", c("CRHR1"), sexlevels) + labs(x = "Parental stage"  )  + theme(strip.text = element_blank())
-
-    j1 <- candidateboxplot("gonad", c("ESR1"), sexlevels) + labs(x = NULL , title = " ") + theme(strip.text = element_blank(), axis.line.x = element_blank())
-    j2 <- candidateboxplot("gonad", c("PGR"), sexlevels) + labs(x = "Parental stage"  ) + theme(strip.text = element_blank())
+    c2 <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C")  + labs(subtitle = "male", title = "", y = NULL)  
+    c4 <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1")  + labs(subtitle = NULL, y = NULL)  
+    c6 <- scattercorrelations(MG, MG$ESR1, MG$PGR, "#525252", "ESR1", "PGR")  + labs(subtitle = NULL, y = NULL)  
 
 
-    btn <- plot_grid(b,c,d, g,h,i,l,m,n, ncol = 3, labels = c("B", "C", " ","E", "F", " ", "H", "I"), label_size = 8, rel_widths = c(1.4,1,1), rel_heights = c(1.1,1,1))
-    dgj <- plot_grid(d1,d2,g1,g2,j1,j2, ncol = 1, labels = c("D", " ", "G", " " , "J"), label_size = 8, rel_heights = c(1.3,1,1.2,1,1.2,1))
-    btoj <- plot_grid(btn,dgj, ncol = 2 , rel_widths = c(1.75,1))
+    d1 <- candidateboxplot("hypothalamus", c("DRD1"), sexlevels) + labs(x = NULL, title = "Temporal expression pattern" )  
+    d2 <- candidateboxplot("hypothalamus", c("HTR2C"), sexlevels) + labs(x = NULL ) + theme(strip.text = element_blank())
+    d3 <- candidateboxplot("pituitary", c("AVPR1A"), sexlevels) + labs(x = NULL )  + theme( strip.text = element_blank())
+    d4 <- candidateboxplot("pituitary", c("CRHR1"), sexlevels) + labs(x = NULL  )  + theme(strip.text = element_blank())
+    d5 <- candidateboxplot("gonad", c("ESR1"), sexlevels) + labs(x = NULL) + theme(strip.text = element_blank())
+    d6 <- candidateboxplot("gonad", c("PGR"), sexlevels) + labs(x = NULL ) + theme(strip.text = element_blank())
 
-    plot_grid(header, btoj,  rel_heights = c(0.2,1), ncol = 1)
+    b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
+    c <- plot_grid(c1,c2,c3,c4,c5,c6, ncol = 2, rel_heights = c(1.1,1,1), rel_widths = c(1.1,1))
+    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.1,1.1, 1,1, 1,1))
+
+    bcd <- plot_grid(b,c,d, ncol = 3, rel_widths = c(1,1,1), labels = c("B", "C", "D"), label_size = 8)
+
+    fig2 <- plot_grid(a,bcd, ncol = 1, labels = c("A"), label_size = 8, rel_heights = c(0.1,1))
+    fig2
 
 ![](../figures/fig2-1.png)
 
