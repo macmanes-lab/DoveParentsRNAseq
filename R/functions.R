@@ -339,37 +339,7 @@ plotcandidates <- function(vsd.df, colData, mysubtitle){
 
 ######### plotcandidates ######### 
 
-plotprolactin <- function(vsd.df, colData, mysubtitle){
 
-  candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
-  head(candidates)
-  
-  candidates <- candidates %>%
-    filter(Name %in% c( "PRL"))
-  row.names(candidates) <- candidates$Name
-  candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -Name, -geneid)
-  candidates <- candidates %>% drop_na()
-  candidates <- as.data.frame(t(candidates))
-  candidates$RNAseqID <- rownames(candidates)
-  candidates <- candidates %>% gather(gene, value, -RNAseqID)  %>% 
-    filter(RNAseqID != "gene")
-  candidates$value <- as.numeric(candidates$value)
-  candidates$V1  <- candidates$RNAseqID
-  
-  candidatecounts <- left_join(candidates, colData, by = "V1")
-  candidatecounts$faketime <- as.numeric(candidatecounts$treatment)
-  candidatecounts$gene <- as.factor(candidatecounts$gene)
-  
-  p1 <- ggplot(candidatecounts, aes(x = treatment, y = value, fill = treatment)) +
-    geom_boxplot() +
-    facet_wrap(~gene, scales = "free") +
-    theme_minimal(base_size = 8) +
-    theme(axis.text.x = element_blank(),
-          legend.position = "bottom") +
-    labs(x = NULL, subtitle = mysubtitle) +
-    guides(fill = guide_legend(nrow = 1))
-  return(p1)
-}
 
 ###### plot wgcna candidates
 
@@ -771,22 +741,6 @@ subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
 }	
 
 
-plotcolorfulpcs <- function(mypcadf,  whichfactor, whichcolors){	
-  p <- mypcadf %>%	
-    ggplot(aes(x = PC1, y = PC2, color = whichfactor )) +	
-    geom_point(size = 1)  +	
-    theme_B3() +	
-    theme(legend.title = element_blank(),	
-          axis.text = element_blank(),	
-          legend.position = "none",
-          axis.ticks = element_blank()) +	
-    labs(x = "PC1", y = "PC2")  +	
-    scale_color_manual(values = whichcolors) +	
-    scale_shape_manual(values = myshapes)	+
-    stat_ellipse( )
-  
-  return(p)	
-}	
 
 
 makefvizdf <-  function(whichtissue, whichtreatment, whichsex){	
@@ -806,20 +760,38 @@ makefvizdf <-  function(whichtissue, whichtreatment, whichsex){
   return(mypca)	
 }	
 
+# plot colorful pca and vector based pcas
 
-plotfriz <- function(frizdf){
+plotpc12 <- function(df1color, df2fviz, whichfactor, whichcolors, mysubtitle){
   
-  p <- fviz_pca_var(frizdf,  
-                    axes.linetype = "blank", 
-                    repel = T , 
-                    select.var= list(contrib = 5),
-                    labelsize = 2)  + 
-    labs(title = NULL) + 
+  pc12color <- df1color %>%	
+    ggplot(aes(x = PC1, y = PC2, color = whichfactor )) +	
+    geom_point(size = 1)  +	
+    theme_B3() +	
+    theme(legend.title = element_blank(),	
+          axis.text = element_blank(),	
+          legend.position = "none",
+          axis.ticks = element_blank()) +	
+    labs(x = "PC1", y = "PC2", subtitle = mysubtitle)  +	
+    scale_color_manual(values = whichcolors)  
+  
+  
+  pc12vector <- fviz_pca_var(df2fviz,  
+                             axes.linetype = "blank", 
+                             repel = T , 
+                             select.var= list(contrib = 5),
+                             labelsize = 2,
+                             axes = c(1, 2))  + 
+    labs(title = NULL, subtitle = " ") + 
     theme_B3() +
     theme(axis.text = element_blank(),
-          axis.ticks = element_blank())
+          axis.ticks = element_blank()) 
+  
+  p <- plot_grid(pc12color, pc12vector, nrow = 1)
   return(p)
+  
 }
+
 
 ## bar graphs for PRL fig 4
 
@@ -833,7 +805,7 @@ makenewbargraph <- function(whichtissue, whichsex,  whichcomparison, lowlim, hig
     theme_B3() +
     theme(legend.position = "none")  +
     guides(fill = guide_legend(nrow = 1)) +
-    labs( y = "Directional DEGs") +
+    labs( y = "DEGs w/ + LFC", x = NULL) +
     geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
               position = position_dodge(width = 1),
               size = 2, color = "black")  + 
@@ -952,12 +924,34 @@ plotprolactin <- function(df, myy, myylab, mysubtitle ){
     theme_B3() +
     scale_fill_manual(values = allcolors) +
     scale_color_manual(values = sexcolors) +
-    labs(y = "prolactin (ng/mL)", x = NULL) +
     theme(legend.position = c(0.85,0.15), legend.direction = "horizontal") + 
-    labs(x = "parental stage", subtitle = mysubtitle, y= myylab) +
-    guides(fill = guide_legend(nrow = 1)) 
+     theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank(),
+          legend.position = "none",
+          axis.ticks = element_blank(),
+          axis.title.y = element_text(face = "italic")) +
+    labs(subtitle = mysubtitle, y= myylab) +
+    guides(fill = guide_legend(nrow = 1)) +
+    geom_signif(comparisons = list(c( "control", "bldg"),
+                                   c( "bldg", "lay"),
+                                   c( "lay", "inc.d3"),
+                                   c("inc.d3", "inc.d9"),
+                                   c( "inc.d9", "inc.d17"),
+                                   c( "inc.d17", "hatch"),
+                                   c("hatch", "n5"),
+                                   c( "n5", "n9")),  
+                map_signif_level=TRUE,
+                textsize = 1.5, family = 'Helvetica',
+                vjust = 1.5, size = 0) 
   return(p)
 }
+
+
+
+
+
+
+
 
 
 ## tsne  figure 1 and 5

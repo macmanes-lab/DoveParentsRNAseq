@@ -186,7 +186,7 @@ d6 <- candidateboxplot("gonad", c("PGR"), sexlevels) + labs(x = NULL ) + theme(s
 
 b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
 c <- plot_grid(c1,c2,c3,c4,c5,c6, ncol = 2, rel_heights = c(1.1,1,1), rel_widths = c(1.1,1))
-d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.1,1.1, 1,1, 1,1))
+d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
 
 bcd <- plot_grid(b,c,d, ncol = 3, rel_widths = c(1,1,1), labels = c("B", "C", "D"), label_size = 8)
 

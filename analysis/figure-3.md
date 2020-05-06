@@ -3,14 +3,14 @@ Figure 4: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -63,6 +63,9 @@ Figure 4: All things prolactin
     ## The following object is masked from 'package:cowplot':
     ## 
     ##     get_legend
+
+    library(ggrepel)
+    library(ggsignif)
 
     source("../R/themes.R") 
     source("../R/functions.R")
@@ -148,22 +151,21 @@ PCA data
 --------
 
     # pca
-    pca1f <- subsetmakepca("pituitary", charlevelsnocontrol, "female")  
-    pca1m <- subsetmakepca("pituitary", charlevelsnocontrol, "male")    
+    pca1f <- subsetmakepca("pituitary", charlevels, "female")   
+    pca2f <- makefvizdf("pituitary", charlevels, "female")  
 
-    pca2f <- makefvizdf("pituitary", charlevelsnocontrol, "female") 
-    pca2m <- makefvizdf("pituitary", charlevelsnocontrol, "male")   
+    pca1m <- subsetmakepca("pituitary", charlevels, "male") 
+    pca2m <- makefvizdf("pituitary", charlevels, "male")    
 
 subset PRL vsd
 ==============
 
     # `candidatevsd` loaded with `source("../R/wrangledata.R")`
 
-    PRLpit <- candidatevsd %>% filter(tissue == "pituitary", gene == "PRL")
-    PRLpitF <- candidatevsd %>% filter(tissue == "pituitary", gene == "PRL", 
-                                       sex == "female" , treatment != "control")
-    PRLpitM <- candidatevsd %>% filter(tissue == "pituitary", gene == "PRL", 
-                                       sex == "male", treatment != "control")
+    PRLpit <- candidatevsd %>% filter(tissue == "pituitary", gene == "PRL") %>%
+      mutate(hiloPRL = ifelse(counts >= 18, "hi", "lo"))  %>%
+      drop_na()
+    PRLpit$hiloPRL <- factor(PRLpit$hiloPRL, levels = c("lo", "hi"))
 
     PRLpit %>%
       group_by(sex) %>%
@@ -175,12 +177,7 @@ subset PRL vsd
     ## 1 female   18.1
     ## 2 male     17.9
 
-    PRLvsd3 <- PRLpit %>%
-      mutate(hiloPRL = ifelse(counts >= 18, "hi", "lo"))  %>%
-      drop_na()
-    PRLvsd3$hiloPRL <- factor(PRLvsd3$hiloPRL, levels = c("lo", "hi"))
-
-    PRLvsd3 %>%
+    PRLpit %>%
       group_by(sex, tissue, hiloPRL) %>%
       summarize(n = n())
 
@@ -192,6 +189,9 @@ subset PRL vsd
     ## 2 female pituitary hi         49
     ## 3 male   pituitary lo         51
     ## 4 male   pituitary hi         46
+
+    PRLpitF <- PRLpit %>% filter( sex == "female" )
+    PRLpitM <- PRLpit %>% filter( sex == "male")
 
 Internal versus external hyotheses
 ----------------------------------
@@ -234,7 +234,8 @@ Internal versus external hyotheses
 
 
     PRLDEGs <- allDEG2 %>%
-      filter(tissue == "pituitary", comparison == "lo vs. hi PRL   ", direction == "hi") %>%
+      filter(tissue == "pituitary", comparison == "lo vs. hi PRL   ",
+             direction == "hi") %>%
       arrange(desc(comparison))
     PRLDEGs
 
@@ -253,27 +254,7 @@ Internal versus external hyotheses
     ## 10 female pituita… "lo vs. hi PR… hi        CCNB3     3.61 1.65e-12   11.8 
     ## # … with 3,012 more rows
 
-    a <-plotcolorfulpcs(pca1f,pca1f$treatment, allcolors) + labs(subtitle = "Female pituitary") 
-    b <- plotfriz(pca2f) + labs(subtitle = " ") 
-    c <- plotprolactin(PRLpitF, PRLpitF$counts, "PRL", " ") + 
-      theme(legend.position = "none", 
-            axis.title.y = element_text(face = "italic"))  
-    d <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2100)   
-    e <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2100) + theme(axis.title.y = element_blank())   
-
-    f <- plotcolorfulpcs(pca1m, pca1m$treatment, allcolors) + labs(subtitle = "Male pituitary")
-    g <- plotfriz(pca2m) + labs(subtitle = " ") 
-    h <- plotprolactin(PRLpitM, PRLpitM$counts, "PRL", " ") + theme(legend.position = "none", 
-            axis.title.y = element_text(face = "italic"))  
-    i <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 2100)  
-    j <- makenewbargraph("pituitary", "male", "lo vs. hi PRL   ", 0, 2100) + theme(axis.title.y = element_blank()) 
-
-
-    d2m <- plot_grid(a,b,c,d,e,f,g,h,i,j, nrow = 2, rel_widths = c(1,1,2,0.8, 0.75), 
-                     labels = c("D", "E", "F", "G", "H", "I", "J", "K", "L", "M"), label_size = 8)
-
-
-    ## resutls from WGCNA prl module
+    ## genes WGCNA prl module
 
     PRLgenes <- read_csv("../results/PRLmodule.csv") %>% pull(x)
 
@@ -302,51 +283,69 @@ Internal versus external hyotheses
     ## 10 COL20A1   0.662
     ## # … with 47 more rows
 
-    k <- df %>%
-      filter(PRL > 0.65) %>% 
+    a1 <- plotpc12(pca1f, pca2f, pca1f$treatment, allcolors, "Female pituitary") 
+    a2 <- plotpc12(pca1m, pca2m, pca1m$treatment, allcolors, "Male pituitary")
+    a <- plot_grid(a1,a2, labels = c("A"),label_size = 8)
+
+    bcd1 <- png::readPNG("../figures/images/fig_fig3a.png")
+    bcd1 <- ggdraw() +  draw_image(bcd1, scale = 1)
+
+
+    b2 <- plotprolactin(PRLpitF, PRLpitF$counts, "PRL", "Female gene expression") 
+    c2 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2200)   + theme(axis.text.x = element_blank() )
+    d2 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2200) + theme(axis.text.x = element_blank())   
+    b3 <- plotprolactin(PRLpitM, PRLpitM$counts, "PRL", "Male gene expression") + theme(axis.text.x = element_text())
+    c3 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 2200)  
+    d3 <- makenewbargraph("pituitary", "male", "lo vs. hi PRL   ", 0, 2200) 
+
+    bcd23 <- plot_grid(b2,c2,d2,b3,c3,d3, nrow = 2, rel_widths = c(2,1,1), rel_heights = c(1,1.1))
+
+
+
+    ## top correlations
+    e <- df %>%
+      arrange(desc(PRL)) %>% 
+      head(10)  %>%
       mutate(PRLrounded = round(PRL, 2))%>% 
       ggplot(aes(x = reorder(rowname, PRL), y = PRL)) +
       geom_bar(stat = "identity") +
       theme_B3() +
       theme(axis.text.y = element_text(face = "italic")) +
-      labs(x = " ", y = "Correlation with PRL", subtitle = "Female and male pituitary") +
-      
+      labs(x = " ", y = "Correlation with PRL", subtitle = "Top 10 co-regulated genes") +
       coord_flip() +
       scale_y_continuous(expand = c(0, 0))
 
-    l <- candidatevsd %>%
-      filter(gene == "LAPTM4B", treatment != "control") %>%
-      ggplot(aes(x = treatment, y = counts, fill = treatment, color = sex)) +
-      geom_boxplot() +
-      scale_fill_manual(values = allcolors) +
-      scale_color_manual(values = allcolors)  +
-      theme_B3()  +
-      theme(legend.position = "none", axis.title.y = element_text(face = "italic")) +
-      labs(x = "Parental stage", y = "LAPTM4B", subtitle = " " ) 
 
-    m <- candidatevsd %>%
-      filter(gene %in% c("LAPTM4B", "PRL"),  treatment != "control") %>%
-      pivot_wider(names_from = gene, values_from = counts) %>%
-      ggplot(aes(x = PRL, y = LAPTM4B)) +
-      geom_point(aes(color = treatment)) +
-      geom_smooth(aes(color = sex), method = "lm") +
-      scale_fill_manual(values = allcolors) +
-      scale_color_manual(values = allcolors)  +
+    # most sig DEGs
+
+    f <-  PRLDEGs %>%
+      arrange(desc(lfc)) %>%
+      filter(sex == "female") %>% head(10) %>% 
+      ggplot(aes(x = reorder(gene, lfc), y = lfc)) + 
+      geom_bar(stat = "identity", fill = "#969696") +
       theme_B3() +
-      theme(axis.title = element_text(face = "italic"),
-            legend.position = "none") +
-      stat_cor( size = 2) + labs(subtitle = " ")
+      theme(axis.text.y = element_text(face = "italic")) +
+      labs(x = " ", y = "Log-fold change, lo vs. hi PRL", subtitle = "Top 10 female DEGs") +
+      coord_flip() +
+      scale_y_continuous(expand = c(0, 0))
 
-    klm <- plot_grid(k,l,m, rel_widths = c(1,1,0.75), nrow = 1, 
-                     labels = c("N", "O", "P"), label_size = 8)
+    g <-  PRLDEGs %>%
+      arrange(desc(lfc)) %>%
+      filter(sex == "male") %>% head(10) %>% 
+      ggplot(aes(x = reorder(gene, lfc), y = lfc)) + 
+      geom_bar(stat = "identity", fill = "#525252") +
+      theme_B3() +
+      theme(axis.text.y = element_text(face = "italic")) +
+      labs(x = " ", y = "Log-fold change, lo vs. hi PRL", subtitle = "Top 10 male DEGs") +
+      coord_flip() +
+      scale_y_continuous(expand = c(0, 0))
 
-    expdesign <- png::readPNG("../figures/images/fig_fig4a.png")
-    expdesign <- ggdraw() +  draw_image(expdesign, scale = 1)
+
+    efg <- plot_grid(e,f,g, nrow = 1, labels = c("E", "F", "G"), label_size = 8)
 
 
-    fig4 <- plot_grid(expdesign,d2m, klm, ncol = 1, rel_heights = c(0.25, 0.75, 0.4))
-    fig4
+    plot_grid(a, bcd1, bcd23, efg, nrow = 4, rel_heights = c(1,1,2,1.2))
 
-![](../figures/fig4-1.png)
+![](../figures/fig3-1.png)
 
-    #write.csv(PRLvsd3,"../results/PRLvsd.csv", row.names = F)
+    write.csv(PRLpit,"../results/PRLvsd.csv", row.names = F)
