@@ -519,12 +519,13 @@ for(i in levels(colDatahypothesis$sextissue)){
 ## tissue and sex differences
 
 
+ 
 ```{r eval = F}
 
 ## first or sex
 
 for(i in levels(colData$tissue)){
-  
+ 
   newcolData <- subsetcolData4(colData, i)
   print(head(newcolData))
   # save counts that match colData
@@ -554,7 +555,7 @@ for(i in levels(colData$tissue)){
   sex <- createDEGdfsavesex("male", "female", i)
 }
 
-
+ 
 ## then for tissue
 
 dds <- DESeqDataSetFromMatrix(countData = countData,
@@ -576,10 +577,6 @@ PG <- createDEGdfsavestissue("gonad", "pituitary")
   
 str(HP)
 ```
-
-
-
-
-
+ 
 
 

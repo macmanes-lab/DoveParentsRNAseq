@@ -580,7 +580,8 @@ make figure
     a <- png::readPNG("../figures/images/fig_fig1a.png")
     a <- ggdraw() +  draw_image(a, scale = 1)
 
-    b1 <- plottsneelipse(chartsne, chartsne$tissue, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")  
+
+    b1 <- plottsneelipse(chartsne, chartsne$tissue, allcolors)  + labs(y = "tSNE 2 ", subtitle = " ")  
     b2 <- sexbarplots(hyppit, 0, 8100) + labs(subtitle = " ", y = "DEGs w/ + LFC") +
       theme(axis.text.y = element_blank(), axis.ticks = element_blank()) +
       scale_x_discrete(labels=c("hypothalamus" = "hyp", "pituitary" = "pit" ))
@@ -628,6 +629,7 @@ make figure
       facet_wrap(~sex, scales = "free") +
       theme(strip.text = element_blank())
 
+
     d5 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
        facet_wrap(~sex, scales = "free") +
       theme(strip.text = element_blank()) +
@@ -665,7 +667,6 @@ make figure
     d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.3), rel_widths = c(1,2),
                       labels = c("D"), label_size = 8)
 
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
 
     fig1 <- plot_grid(a,bc, d, nrow = 3, rel_heights = c(0.7,0.7,2),
                       labels = c("A"), label_size = 8)

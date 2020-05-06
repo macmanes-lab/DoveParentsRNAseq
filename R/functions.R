@@ -269,6 +269,7 @@ selectcandidatevsds <- function(listofgenes, vsd, colData){
   
   candidateentrezids <- geneinfo %>% 
     filter(Name %in% listofgenes) %>%  dplyr::select(entrezid) 
+
   
   print(candidateentrezids$entrezid)
   
@@ -389,6 +390,7 @@ plotWGCNAcandidates <- function(vsd, mygenelist, colData, mysubtitle){
   bysextreatment <- group_by(candidatecounts, sex, treatment, Name)
   bysextreatment
   candidateST <- summarize(bysextreatment, expression = mean(value))
+
   
   p1 <- ggplot(candidateST, aes(x = as.numeric(treatment), y = expression, color = sex)) +
     geom_point() +
@@ -941,9 +943,6 @@ createDEGdfsavestissue <- function(up, down){
 
 
 
-
-
-
 ## prolactin plots 
 
 plotprolactin <- function(df, myy, myylab, mysubtitle ){
@@ -999,7 +998,9 @@ plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
     labs(x = "tSNE 1", y = "tSNE 2") +
     scale_color_manual(values = whichcolors) +
     theme(legend.position = "none",
-          axis.text = element_blank(), axis.ticks = element_blank()) 
+          axis.text = element_blank(), 
+          axis.ticks = element_blank()) +
+    stat_ellipse(linetype = 1, aes(color = tissue )) 
   return(p)
 }
 
@@ -1012,7 +1013,8 @@ plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
          subtitle = " ") +
     scale_color_manual(values = whichcolors) +
     theme(legend.position = "none",
-          axis.text = element_blank(), axis.ticks = element_blank()) 
+          axis.text = element_blank(), axis.ticks = element_blank()) +
+    stat_ellipse(linetype = 1, aes(color = pointcolor)) 
   return(p)
 }
 
@@ -1042,7 +1044,7 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
 
 
 sexbarplots <- function(df, lowlim, higherlim){
-  
+   
   DEGs <- df %>% dplyr::filter(direction != "NS")
   print(nrow(DEGs))
   
@@ -1060,9 +1062,9 @@ sexbarplots <- function(df, lowlim, higherlim){
               size = 1.75, color = "black")  +
     ylim(lowlim, higherlim) +
     theme(legend.position  = "none" )  
-  
+   
   return(p)
-}
+ }
 
 
 

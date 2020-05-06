@@ -64,7 +64,6 @@ hypsex <- read_csv("../results/DEseq2/sex/hypothalamus_female_male_DEGs.csv")
 pitsex <- read_csv("../results/DEseq2/sex/pituitary_female_male_DEGs.csv")
 gonsex <- read_csv("../results/DEseq2/sex/gonad_female_male_DEGs.csv")
 
-
 hyppit <- read_csv("../results/DEseq2/tissue/hypothalamus_pituitary_DEGs.csv") 
 hypgon <- read_csv("../results/DEseq2/tissue/hypothalamus_gonad_DEGs.csv")
 pitgon <- read_csv("../results/DEseq2/tissue/pituitary_gonad_DEGs.csv")
@@ -81,7 +80,8 @@ pitgon$direction <- factor(pitgon$direction, levels = c( "pituitary", "gonad"))
 a <- png::readPNG("../figures/images/fig_fig1a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
 
-b1 <- plottsneelipse(chartsne, chartsne$tissue, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")  
+
+b1 <- plottsneelipse(chartsne, chartsne$tissue, allcolors)  + labs(y = "tSNE 2 ", subtitle = " ")  
 b2 <- sexbarplots(hyppit, 0, 8100) + labs(subtitle = " ", y = "DEGs w/ + LFC") +
   theme(axis.text.y = element_blank(), axis.ticks = element_blank()) +
   scale_x_discrete(labels=c("hypothalamus" = "hyp", "pituitary" = "pit" ))
@@ -114,6 +114,7 @@ d3 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) +
   labs(x = NULL, subtitle = "pituitary") + 
   facet_wrap(~sex, scales = "free") +
   theme(strip.text = element_blank())
+
 
 d5 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
    facet_wrap(~sex, scales = "free") +
