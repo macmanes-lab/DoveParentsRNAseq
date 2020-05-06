@@ -59,64 +59,72 @@ head(allDEG)
 allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
 allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
 allDEG$direction <- factor(allDEG$direction, levels = charlevels)
+
+
+
+hypsex <- read_csv("../results/DEseq2/sex/hypothalamus_female_male_DEGs.csv")
+pitsex <- read_csv("../results/DEseq2/sex/pituitary_female_male_DEGs.csv")
+gonsex <- read_csv("../results/DEseq2/sex/gonad_female_male_DEGs.csv")
+
 ```
 
 ## make figure
 
 ```{r fig1, fig.width=7.25, fig.height=7.25}
-a <- png::readPNG("../figures/images/fig_fig1b.png")
+
+a <- png::readPNG("../figures/images/fig_fig1a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
 
-b <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = "tSNE 2 ", subtitle = "~ tissue * sex")    
-c <- plottsneelipse(ftsne, ftsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, females only")
-d <- plottsneelipse(mtsne, mtsne$tissue, allcolors ) + labs(y = " ", subtitle = "~ tissue, males only") 
+b <- plottsneelipse(chartsne, chartsne$tissue, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")  
+c <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")    
 
-abcd <- plot_grid(a,b,c,d, nrow = 1, labels = c("A", "B", "C", "D"), label_size = 8 )
+d1 <- sexbarplots(hypsex, 0, 7000) + labs(y = "DEGS", subtitle = "hypothalamus" )
+d2 <- sexbarplots(pitsex, 0, 7000) + labs(subtitle = "pituitary" ) + 
+  theme(axis.text.y = element_blank(), axis.line.y = element_blank(), axis.ticks = element_blank())
+d3 <- sexbarplots(gonsex, 0, 7000) + labs(subtitle = "gonads" ) +
+  theme(axis.text.y = element_blank(), axis.line.y = element_blank(), axis.ticks = element_blank())
 
-e <- png::readPNG("../figures/images/fig_fig1a.png")
-e <- ggdraw() +  draw_image(e, scale = 1)
 
-f <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
+e <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
   labs(x = NULL, subtitle = "hypothalamus")  + 
   facet_wrap(~sex, scales = "free")
 
-h <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
+g <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
   labs(x = NULL, subtitle = "pituitary") + 
   facet_wrap(~sex, scales = "free") +
   theme(strip.text = element_blank())
 
-j <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
+i <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
    facet_wrap(~sex, scales = "free") +
   theme(strip.text = element_blank()) +
   labs(x = "tSNE1 \n \n \n \n", subtitle = "gonads")
 
-fhj <- plot_grid(f,h,j, nrow = 3, rel_heights = c(1,1,1.4),
-                 labels = c("F", "H", "J"), label_size = 8)
 
 # hyp
-g <- makebargraph("hypothalamus","DEGs", 0, 4300) + 
+f <- makebargraph("hypothalamus","DEGs", 0, 4300) + 
   theme(axis.text.x = element_blank(), 
         axis.title.x = element_blank())  +
   labs(subtitle = "hypothalamus")
 # pit
-i <- makebargraph("pituitary","DEGs", 0, 4300)  +  
+h <- makebargraph("pituitary","DEGs", 0, 4300)  +  
   theme(axis.text.x = element_blank(), 
         axis.title.x = element_blank(), 
         strip.text.x = element_blank())  +
   labs(subtitle = "pituitary")
 # gon
-k <- makebargraph("gonad","DEGs", 0, 4300) +  
+j <- makebargraph("gonad","DEGs", 0, 4300) +  
   theme(strip.text.x = element_blank()) +
   scale_x_discrete(labels = comparisonlabels)+
   labs(subtitle = "gonads")
 
-gik <- plot_grid(g,i,k, nrow = 3, rel_heights = c(1,1,1.4),
-                 labels = c("G", "I", "K"), label_size = 8)  
+bcd <- plot_grid(b,c,d1,d2,d3, nrow = 1, labels = c("B", "C", "D"), 
+                   label_size = 8, rel_widths = c(1.2,1.2,1.2,1,1))
 
-fhjgik <- plot_grid(fhj, gik, nrow = 1, align = "h", rel_widths = c(1.5,2))
+etoj <- plot_grid(e,f,g,h,i,j, ncol = 2, rel_heights = c(1,1,1.4), rel_widths = c(2.4,3.2),
+                  labels = c("E", "F", "G", "H", "I", "J"), label_size = 8)
 
-fig1 <- plot_grid(abcd, e, fhjgik, nrow = 3, rel_heights = c(0.7,0.5,1.5),
-                  labels = c(" ","E"), label_size = 8 )
+fig1 <- plot_grid(a, bcd, etoj, nrow = 3, rel_heights = c(0.8,0.7,2),
+                  labels = c("A"), label_size = 8)
 fig1
 ```
 
@@ -137,3 +145,7 @@ write_csv(suppletable1, "../results/suppletable1.csv")
 # tsne files too big to save
 #write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
 ```
+
+
+
+

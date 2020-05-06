@@ -33,6 +33,21 @@ subsetcolData3 <- function(colData, eachgroup){
   return(colData)
 }
 
+subsetcolData4 <- function(colData, eachgroup){
+  
+  colData <- colData %>%
+    dplyr::filter(tissue %in% eachgroup) %>%
+    droplevels()
+  colData <- as.data.frame(colData)
+  row.names(colData) <- colData$sample
+  return(colData)
+}
+
+
+
+
+
+
 
 subsetcountData3 <- function(df){
   savecols <- as.character(df$sample) 
@@ -859,6 +874,41 @@ createDEGdfsave <- function(up, down, mytissue){
 }  
 
 
+
+
+
+
+createDEGdfsavesex <- function(up, down, mytissue){
+  
+  res <- results(dds, contrast = c("sex", up, down), independentFiltering = T, alpha = 0.1)
+  
+  DEGs <- data.frame(gene = row.names(res),
+                     padj = res$padj, 
+                     logpadj = -log10(res$padj),
+                     lfc = res$log2FoldChange,
+                     tissue = mytissue)
+  DEGs <- na.omit(DEGs)
+  DEGs <- DEGs %>%
+    dplyr::mutate(direction = ifelse(DEGs$lfc > 0 & DEGs$padj < 0.1, 
+                                     yes = up, no = ifelse(DEGs$lfc < 0 & DEGs$padj < 0.1, 
+                                                           yes = down, no = "NS"))) %>% 
+    dplyr::arrange(desc(lfc)) 
+  
+  DEGs$direction <- factor(DEGs$direction, levels = c(down, "NS", up)) 
+  
+  # write DEGsframe of only significant genes
+  DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+  print(str(DEGs))
+  
+  partialfilename = paste("_", down, "_", up, sep = "")
+  myfilename = paste0("../results/DESeq2/sex/", mytissue, partialfilename, "_DEGs.csv")
+  
+  write.csv(DEGs, myfilename, row.names = F)
+  # return DEGs frome with all data, included NS genes
+  print(head(DEGs))
+}  
+
+
 ## prolactin plots 
 
 plotprolactin <- function(df, myy, myylab, mysubtitle ){
@@ -954,6 +1004,27 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
     ylim(lowlim, higherlim)
   return(p)
 }
+
+
+sexbarplots <- function(df, lowlim, higherlim){
+  df %>%
+    ggplot(aes(x = direction,  fill = direction)) +
+    geom_bar(position = "dodge") +
+    theme_B3() +
+    labs(x = NULL, y = NULL) +
+    scale_fill_manual(values = allcolors,
+                      name = " ",
+                      drop = FALSE) +
+    scale_color_manual(values = allcolors) +
+    geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+              position = position_dodge(width = 1),
+              size = 1.5, color = "black")  +
+    ylim(lowlim, higherlim) +
+    theme(legend.position  = "none" )  
+}
+
+
+
 
 getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   candidates  <- allvsd %>%

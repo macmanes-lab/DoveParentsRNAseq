@@ -290,7 +290,7 @@ for(i in levels(colData$sextissue)){
 
 ## PRL-driven DESeq2
 
-```{r PRL}
+```{r PRL, eval = F}
 PRLdata <- read_csv("../results/PRLvsd.csv")
 
 PRLsamples <- colData %>%
@@ -414,34 +414,13 @@ c <- ggplot(sexPRLdesg, aes(x = direction.x, fill = direction.y)) +
   theme(legend.position = "top")
 
 plot_grid(ab, c, nrow = 1, rel_widths = c(2,1.2), labels = c(" ", "d"), label_size = 12)
-
-
-head(sexPRLdesg)
-
-PRLhi <- sexPRLdesg %>%
-  filter(direction.y == "hi")
-PRLhi
-
-PRLwgcna <- read_csv("../results/08_PRL_associated.csv") %>%
-  dplyr::rename("gene" =  "x") %>%
-  mutate(wgcna = "yes")
-PRLwgcna
-
-PRLwgcnaDEGs <- left_join(PRLwgcna, sexPRLdesg) %>%
-  select(-direction.x) %>%
-  dplyr::rename("PRL" =  "direction.y") 
-PRLwgcnaDEGs %>%
-  group_by(wgcna, PRL) %>%
-  summarize(n = n())
-head(PRLwgcnaDEGs)
-# 90 of the 98 genes in the wgcna module are also DEGs, with increase expression in hi PRL
 ```
 
 
 
 ## Hypothesis testing - external stimuli and/or prolactin
 
-```{r}
+```{r, eval = F}
 # label each bird with weather or not their pituitary had hi PRL or not
 # then make new column with nest, eggs, or chicks, drop controls
 
@@ -536,6 +515,44 @@ for(i in levels(colDatahypothesis$sextissue)){
 }
 ```
 
+
+## tissue and sex differences
+
+
+```{r}
+
+for(i in "gonad"){
+  
+  newcolData <- subsetcolData4(colData, i)
+  print(head(newcolData))
+  # save counts that match colData
+  savecols <- as.character(newcolData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  newcountData <- countData %>% dplyr::select(one_of(savecols)) 
+  
+  dds <- DESeqDataSetFromMatrix(countData = newcountData,
+                                colData = newcolData,
+                                design = ~ sex )
+
+  
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dds)
+  print(dim(dds))
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  
+  vsd <- as.data.frame(assay(vst(dds, blind=FALSE)))
+  
+  myfilename = paste0("../results/DEseq2/sex/", i, "_vsd.csv")
+  write.csv(vsd, myfilename)
+
+  print(head(vsd))
+
+  # save differential gene expression results
+  sex <- createDEGdfsavesex("male", "female", i)
+}
+
+```
 
 
 
