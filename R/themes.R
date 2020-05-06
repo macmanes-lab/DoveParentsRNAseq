@@ -1,7 +1,7 @@
 # custom themes
 
 theme_B3 <- function () { 
-  theme_classic(base_size = 7,
+  theme_classic(base_size = 8,
                 base_family = 'Helvetica') +
     theme(
       strip.background  = element_blank(),

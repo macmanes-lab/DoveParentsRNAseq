@@ -1000,7 +1000,7 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
     scale_color_manual(values = allcolors) +
     geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
               position = position_dodge(width = 1),
-              size = 1.5, color = "black")  +
+              size = 1.75, color = "black")  +
     ylim(lowlim, higherlim)
   return(p)
 }
@@ -1018,7 +1018,7 @@ sexbarplots <- function(df, lowlim, higherlim){
     scale_color_manual(values = allcolors) +
     geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
               position = position_dodge(width = 1),
-              size = 1.5, color = "black")  +
+              size = 1.75, color = "black")  +
     ylim(lowlim, higherlim) +
     theme(legend.position  = "none" )  
 }

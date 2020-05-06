@@ -548,10 +548,10 @@ make figure
     b <- plottsneelipse(chartsne, chartsne$tissue, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")  
     c <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")    
 
-    d1 <- sexbarplots(hypsex, 0, 7000) + labs(y = "DEGS", subtitle = "hypothalamus" )
-    d2 <- sexbarplots(pitsex, 0, 7000) + labs(subtitle = "pituitary" ) + 
+    d1 <- sexbarplots(hypsex, 0, 7100) + labs(y = "DEGS", subtitle = "hypothalamus" )
+    d2 <- sexbarplots(pitsex, 0, 7100) + labs(subtitle = "pituitary" ) + 
       theme(axis.text.y = element_blank(), axis.line.y = element_blank(), axis.ticks = element_blank())
-    d3 <- sexbarplots(gonsex, 0, 7000) + labs(subtitle = "gonads" ) +
+    d3 <- sexbarplots(gonsex, 0, 7100) + labs(subtitle = "gonads" ) +
       theme(axis.text.y = element_blank(), axis.line.y = element_blank(), axis.ticks = element_blank())
 
 
@@ -593,9 +593,7 @@ make figure
     etoj <- plot_grid(e,f,g,h,i,j, ncol = 2, rel_heights = c(1,1,1.4), rel_widths = c(2.4,3.2),
                       labels = c("E", "F", "G", "H", "I", "J"), label_size = 8)
 
-    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
-
-    fig1 <- plot_grid(a, bcd, etoj, nrow = 3, rel_heights = c(0.8,0.8,2),
+    fig1 <- plot_grid(a, bcd, etoj, nrow = 3, rel_heights = c(0.8,0.7,2),
                       labels = c("A"), label_size = 8)
     fig1
 
