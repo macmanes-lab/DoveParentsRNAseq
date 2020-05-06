@@ -501,8 +501,6 @@ DEGs
     allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
     allDEG$direction <- factor(allDEG$direction, levels = charlevels)
 
-
-
     hypsex <- read_csv("../results/DEseq2/sex/hypothalamus_female_male_DEGs.csv")
 
     ## Parsed with column specification:
@@ -539,61 +537,137 @@ DEGs
     ##   direction = col_character()
     ## )
 
+    hyppit <- read_csv("../results/DEseq2/tissue/hypothalamus_pituitary_DEGs.csv") 
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   direction = col_character()
+    ## )
+
+    hypgon <- read_csv("../results/DEseq2/tissue/hypothalamus_gonad_DEGs.csv")
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   direction = col_character()
+    ## )
+
+    pitgon <- read_csv("../results/DEseq2/tissue/pituitary_gonad_DEGs.csv")
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   direction = col_character()
+    ## )
+
+    hyppit$direction <- factor(hyppit$direction, levels = c("hypothalamus", "pituitary"))
+    hypgon$direction <- factor(hypgon$direction, levels = c("hypothalamus",  "gonad"))
+    pitgon$direction <- factor(pitgon$direction, levels = c( "pituitary", "gonad"))
+
 make figure
 -----------
 
     a <- png::readPNG("../figures/images/fig_fig1a.png")
     a <- ggdraw() +  draw_image(a, scale = 1)
 
-    b <- plottsneelipse(chartsne, chartsne$tissue, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")  
-    c <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")    
+    b1 <- plottsneelipse(chartsne, chartsne$tissue, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")  
+    b2 <- sexbarplots(hyppit, 0, 8100) + labs(subtitle = " ", y = "DEGs w/ + LFC") +
+      theme(axis.text.y = element_blank(), axis.ticks = element_blank()) +
+      scale_x_discrete(labels=c("hypothalamus" = "hyp", "pituitary" = "pit" ))
 
-    d1 <- sexbarplots(hypsex, 0, 7100) + labs(y = "DEGS", subtitle = "hypothalamus" )
-    d2 <- sexbarplots(pitsex, 0, 7100) + labs(subtitle = "pituitary" ) + 
-      theme(axis.text.y = element_blank(), axis.line.y = element_blank(), axis.ticks = element_blank())
-    d3 <- sexbarplots(gonsex, 0, 7100) + labs(subtitle = "gonads" ) +
-      theme(axis.text.y = element_blank(), axis.line.y = element_blank(), axis.ticks = element_blank())
+    ## [1] 12419
 
+    b3 <- sexbarplots(hypgon, 0, 8100) + labs(subtitle = " " ) +
+      theme(axis.text.y = element_blank(), axis.line.y = element_blank(), 
+            axis.ticks = element_blank(), axis.title.y = element_blank()) +
+        scale_x_discrete(labels=c("hypothalamus" = "hyp",  "gonad" = "gon"))
 
-    e <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
+    ## [1] 13122
+
+    b4 <- sexbarplots(pitgon, 0, 8100) + labs(subtitle = " " ) +
+      theme(axis.text.y = element_blank(), axis.line.y = element_blank(),  
+            axis.ticks = element_blank(), axis.title.y = element_blank()) +
+        scale_x_discrete(labels=c(  "pituitary" = "pit", "gonad" = "gon"))
+
+    ## [1] 12999
+
+    c1 <- plottsneelipse(chartsne, chartsne$sex, allcolors)   + labs(y = "tSNE 2 ", subtitle = " ")    
+    c2 <- sexbarplots(hypsex, 0, 8100) + labs(y = "DEGs w/ + LFC", subtitle = "hypothalamus" ) +
+      theme(axis.text.y = element_blank(), axis.ticks = element_blank())
+
+    ## [1] 2206
+
+    c3 <- sexbarplots(pitsex, 0, 8100) + labs(subtitle = "pituitary" ) + 
+      theme(axis.text.y = element_blank(), axis.line.y = element_blank(),  
+            axis.ticks = element_blank(), axis.title.y = element_blank())
+
+    ## [1] 3649
+
+    c4 <- sexbarplots(gonsex, 0, 8100) + labs(subtitle = "gonads" ) +
+      theme(axis.text.y = element_blank(), axis.line.y = element_blank(),  
+            axis.ticks = element_blank(), axis.title.y = element_blank())
+
+    ## [1] 12972
+
+    d1 <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
       labs(x = NULL, subtitle = "hypothalamus")  + 
       facet_wrap(~sex, scales = "free")
 
-    g <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
+    d3 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
       labs(x = NULL, subtitle = "pituitary") + 
       facet_wrap(~sex, scales = "free") +
       theme(strip.text = element_blank())
 
-    i <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
+    d5 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
        facet_wrap(~sex, scales = "free") +
       theme(strip.text = element_blank()) +
-      labs(x = "tSNE1 \n \n \n \n", subtitle = "gonads")
+      labs(x = "tSNE1 \n \n DEGs = differentially expressed genes \n + LFC = positive log fold change", 
+           subtitle = "gonads")
 
 
     # hyp
-    f <- makebargraph("hypothalamus","DEGs", 0, 4300) + 
-      theme(axis.text.x = element_blank(), 
+    d2 <- makebargraph("hypothalamus","DEGs w/ + LFC", 0, 4300) + 
+      theme(axis.ticks = element_blank(),
+            axis.text.x = element_blank(),
+            axis.text.y = element_blank(),
             axis.title.x = element_blank())  +
-      labs(subtitle = "hypothalamus")
+      labs(subtitle = " ")
     # pit
-    h <- makebargraph("pituitary","DEGs", 0, 4300)  +  
-      theme(axis.text.x = element_blank(), 
+    d4 <- makebargraph("pituitary","DEGs w/ + LFC", 0, 4300)  +  
+      theme(axis.ticks = element_blank(),
+            axis.text.x = element_blank(), 
+            axis.text.y = element_blank(),
             axis.title.x = element_blank(), 
             strip.text.x = element_blank())  +
-      labs(subtitle = "pituitary")
+      labs(subtitle = " ")
     # gon
-    j <- makebargraph("gonad","DEGs", 0, 4300) +  
-      theme(strip.text.x = element_blank()) +
+    d6 <- makebargraph("gonad","DEGs w/ + LFC", 0, 4300) +  
+      theme(axis.ticks = element_blank(),
+            axis.text.y = element_blank(),
+            strip.text.x = element_blank()) +
       scale_x_discrete(labels = comparisonlabels)+
-      labs(subtitle = "gonads")
+      labs(subtitle = " ")
 
-    bcd <- plot_grid(b,c,d1,d2,d3, nrow = 1, labels = c("B", "C", "D"), 
-                       label_size = 8, rel_widths = c(1.2,1.2,1.2,1,1))
 
-    etoj <- plot_grid(e,f,g,h,i,j, ncol = 2, rel_heights = c(1,1,1.4), rel_widths = c(2.4,3.2),
-                      labels = c("E", "F", "G", "H", "I", "J"), label_size = 8)
+    bc <- plot_grid(b1,b2,b3,b4, c1,c2,c3,c4, nrow = 1, rel_widths = c(1.5,1.1,0.9,0.9,1.5,1.1,0.9,0.9),
+                    labels = c("B", "", "", "", "C"), label_size = 8)
 
-    fig1 <- plot_grid(a, bcd, etoj, nrow = 3, rel_heights = c(0.8,0.7,2),
+    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.3), rel_widths = c(1,2),
+                      labels = c("D"), label_size = 8)
+
+    ## Warning in MASS::cov.trob(data[, vars]): Probable convergence failure
+
+    fig1 <- plot_grid(a,bc, d, nrow = 3, rel_heights = c(0.7,0.7,2),
                       labels = c("A"), label_size = 8)
     fig1
 

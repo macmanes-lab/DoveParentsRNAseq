@@ -931,7 +931,7 @@ createDEGdfsavestissue <- function(up, down){
   DEGs <- DEGs %>% dplyr::filter(direction != "NS")
   print(str(DEGs))
   
-  partialfilename = paste("_", down, "_", up, sep = "")
+  partialfilename = paste(down, "_", up, sep = "")
   myfilename = paste0("../results/DESeq2/tissue/", partialfilename, "_DEGs.csv")
   
   write.csv(DEGs, myfilename, row.names = F)
@@ -993,26 +993,26 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
 
 plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
+    stat_ellipse(linetype = 1, aes(color = tissue ))  +
     geom_point(size = 0.5, aes(color = pointcolor)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2") +
     scale_color_manual(values = whichcolors) +
     theme(legend.position = "none",
-          axis.text = element_blank()) +
-    stat_ellipse(linetype = 1, aes(color = tissue )) 
+          axis.text = element_blank(), axis.ticks = element_blank()) 
   return(p)
 }
 
 plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
+    stat_ellipse(linetype = 1, aes(color = pointcolor)) +
     geom_point(size = 0.5, aes(color = pointcolor)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2",
          subtitle = " ") +
     scale_color_manual(values = whichcolors) +
     theme(legend.position = "none",
-          axis.text = element_blank()) +
-    stat_ellipse(linetype = 1, aes(color = pointcolor)) 
+          axis.text = element_blank(), axis.ticks = element_blank()) 
   return(p)
 }
 
@@ -1042,7 +1042,11 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
 
 
 sexbarplots <- function(df, lowlim, higherlim){
-  df %>%
+  
+  DEGs <- df %>% dplyr::filter(direction != "NS")
+  print(nrow(DEGs))
+  
+  p <- df %>%
     ggplot(aes(x = direction,  fill = direction)) +
     geom_bar(position = "dodge") +
     theme_B3() +
@@ -1056,6 +1060,8 @@ sexbarplots <- function(df, lowlim, higherlim){
               size = 1.75, color = "black")  +
     ylim(lowlim, higherlim) +
     theme(legend.position  = "none" )  
+  
+  return(p)
 }
 
 

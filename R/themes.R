@@ -177,6 +177,10 @@ colorstissue <- c("hypothalamus" = "#d95f02",
                   "pituitary" = "#1b9e77",
                   "gonads" =  "#7570b3")
 
+colorstissue <- c("hypothalamus" = "#d95f02",
+                  "pituitary" = "#1b9e77",
+                  "gonads" =  "#7570b3")
+
 sexcolors <- c("female" = "#969696", "male" = "#525252")
 
 
@@ -191,7 +195,7 @@ colorsvolcano <-  c(colorscharnew,
                     
                     "NS" = "#bdbdbd")
 
-allcolors <- c(colorscharmaip, sexcolors, colorstissue, colorhypothesis)
+allcolors <- c(colorscharmaip, sexcolors, colorstissue, colorhypothesis,  "gonad" =  "#7570b3")
 
 colorsvolcanochar <-  c(colorscharnew,
                     "NS" = "#bdbdbd")
