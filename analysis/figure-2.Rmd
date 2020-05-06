@@ -111,23 +111,23 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
   p <- candidatevsd %>%
     filter(tissue %in% whichtissue,
           gene %in% whichgenes,
-          sex %in% whichsex,
-          treatment != "control") %>%
+          sex %in% whichsex) %>%
     mutate(treatment = factor(treatment, levels = charlevels)) %>%
     ggplot(aes(x = treatment, y = counts)) +
     geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
     geom_jitter(size = 0.25, aes(color = sex)) +
-    facet_wrap(~gene, scales = "free_y", nrow = 2) +
+    facet_wrap(~sex, scales = "free_y", nrow = 1) +
     scale_fill_manual(values = allcolors) +
     scale_color_manual(values = allcolors) +
     theme_B3() + 
     theme(legend.position = "none",
-          strip.text.y = element_text(face = "italic"),
-          strip.text.x = element_text(face = "italic"),
-          axis.text.x = element_text(angle = 45, hjust = 1)) +
-    labs(y = paste(whichsex, "gene expression", sep = " "),
+          axis.title.y = element_text(face = "italic"),
+          axis.text.x = element_blank(),
+          axis.ticks = element_blank()) +
+    labs(y = whichgenes,
          x = NULL) +
-    geom_signif(comparisons = list(c( "bldg", "lay"),
+    geom_signif(comparisons = list(c( "control", "bldg"),
+                                 c( "bldg", "lay"),
                                  c( "lay", "inc.d3"),
                                  c("inc.d3", "inc.d9"),
                                  c( "inc.d9", "inc.d17"),
@@ -153,40 +153,51 @@ scattercorrelations <- function(df, gene1, gene2, mylinecolor, myxlab, myylab){
     stat_cor( size = 2)
   return(p)
 }
+
+
 ```
 
 
 ```{r fig2, fig.width = 7.25, fig.height = 7.25}
 
-## plot sig candidate genes
-a <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female") + labs(title = "Hypothalamus")
-e <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = "female")+ labs(title = "Pituitary")
-i <- scattercorrelations(FG, FG$ESR1, FG$PGR, "#969696", "ESR1", "PGR")   + labs(subtitle = "female")+ labs(title = "Gonad")
-
-b <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C")  + labs(subtitle = "male") + labs(title = "")
-f <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1")  + labs(subtitle = "male") + labs(title = "")
-j <- scattercorrelations(MG, MG$ESR1, MG$PGR, "#525252", "ESR1", "PGR")  + labs(subtitle = "male") + labs(title = "")
+header <- png::readPNG("../figures/images/fig_fig2a.png")
+header <- ggdraw() +  draw_image(header, scale = 1)
 
 
-c <- candidateboxplot("hypothalamus", c("DRD1", "HTR2C"), "female") + labs(x = NULL, title = "") 
-g <- candidateboxplot("pituitary", c( "AVPR1A", "CRHR1" ), "female") + labs(x = NULL, title = "")
-k <- candidateboxplot("gonad", c("ESR1", "PGR"), "female") + labs(x = NULL, title = "") 
+b <- plotcorrplot(hyp3, "females and males") + theme(legend.position = "none")  + labs(title = "Hypothalamus")
+g <- plotcorrplot(pit3, NULL) + theme(legend.position = "none") + labs(title = "Pituitary")
+l <- plotcorrplot(gon3, NULL) + theme(legend.position = "none")  + labs(title = "Gonad")
 
-d <- candidateboxplot("hypothalamus",  c("DRD1", "HTR2C"), "male") + labs(x = NULL, title = " ") 
-h <- candidateboxplot("pituitary", c("AVPR1A", "CRHR1"), "male") + labs(x = NULL, title = " ")
-l <- candidateboxplot("gonad", c("ESR1", "PGR"), "male") + labs(x = NULL, title = " ") 
+c <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female") + labs(title = "")
+h <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = NULL)+ labs(title = "")
+m <- scattercorrelations(FG, FG$ESR1, FG$PGR, "#969696", "ESR1", "PGR")   + labs(subtitle = NULL)+ labs(title = "")
 
-atof <- plot_grid(a,b,c,d,e,f,g,h,i,j,k,l, nrow = 3, 
-          rel_widths = c(0.8,0.8,1,1), rel_heights = c(1,1,1.2),
-          labels = c("A", " ", "B", "",
-                     "C", " ", "D", "",
-                     "E", " ", "F", ""), label_size =  8)
+d <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C")  + labs(subtitle = "male") + labs(title = "")
+i <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1")  + labs(subtitle = NULL) + labs(title = "")
+n <- scattercorrelations(MG, MG$ESR1, MG$PGR, "#525252", "ESR1", "PGR")  + labs(subtitle = NULL) + labs(title = "")
 
+
+d1 <- candidateboxplot("hypothalamus", c("DRD1"), sexlevels) + labs(x = NULL , title = " ")  + theme(axis.line.x = element_blank()) 
+d2 <- candidateboxplot("hypothalamus", c("HTR2C"), sexlevels) + labs(x = "Parental stage" ) + theme(strip.text = element_blank())
+
+g1 <- candidateboxplot("pituitary", c("AVPR1A"), sexlevels) + labs(x = NULL, title = " " )  + theme( strip.text = element_blank(), axis.line.x = element_blank())
+g2 <- candidateboxplot("pituitary", c("CRHR1"), sexlevels) + labs(x = "Parental stage"  )  + theme(strip.text = element_blank())
+
+j1 <- candidateboxplot("gonad", c("ESR1"), sexlevels) + labs(x = NULL , title = " ") + theme(strip.text = element_blank(), axis.line.x = element_blank())
+j2 <- candidateboxplot("gonad", c("PGR"), sexlevels) + labs(x = "Parental stage"  ) + theme(strip.text = element_blank())
+
+
+btn <- plot_grid(b,c,d, g,h,i,l,m,n, ncol = 3, labels = c("B", "C", " ","E", "F", " ", "H", "I"), label_size = 8, rel_widths = c(1.4,1,1), rel_heights = c(1.1,1,1))
+dgj <- plot_grid(d1,d2,g1,g2,j1,j2, ncol = 1, labels = c("D", " ", "G", " " , "J"), label_size = 8, rel_heights = c(1.3,1,1.2,1,1.2,1))
+btoj <- plot_grid(btn,dgj, ncol = 2 , rel_widths = c(1.75,1))
+
+plot_grid(header, btoj,  rel_heights = c(0.2,1), ncol = 1)
+
+```
+
+```{r fig3, fig.height=3, fig.width=7.25}
 
 musicplot <- function(whichgene, whichtissue){
-    
-    treble <- magick::image_read("../figures/images/fig_treble.png")
-    base <- magick::image_read("../figures/images/fig_base.png")
     
     p <- candidatevsd %>%
       group_by(treatment, tissue, gene, sex)  %>% 
@@ -199,54 +210,40 @@ musicplot <- function(whichgene, whichtissue){
         tissue %in% whichtissue      ) %>% 
       collect() %>%
       drop_na() %>%
-      filter(treatment != "control") %>%
       ggplot( aes(x = treatment, y = median)) +
       geom_errorbar(aes(ymin = median - se, 
                         ymax = median + se, color = "white"),  width=0) +
       geom_image(aes(image=image), size = 0.1)+
-      theme_void(base_size = 7) +
+      theme_B3() +
       theme(legend.position = "none",
             title = element_text(face = "italic"),
-            strip.text = element_text(color = "white")) +
+            strip.text = element_text(color = "white"),
+            axis.text.x = element_text(angle = 45, hjust = 1),
+            axis.text.y = element_blank(),
+            axis.line = element_blank(), axis.ticks = element_blank()) +
       scale_color_manual(values = allcolors) +
-      labs(y = " ", subtitle = " " ) +
+      labs(y = " ",x = NULL ) +
       facet_wrap(~sex, nrow = 2, scales = "free_y")
       return(p)
 }
 
-scales <- png::readPNG("../figures/images/fig_music.png")
-scales <- ggdraw() +  draw_image(scales, scale = 1)
+music <- png::readPNG("../figures/images/fig_music.png")
+music <- ggdraw() +  draw_image(music, scale = 1)
 
-p1 <- musicplot(c("DRD1", "HTR2C"), "hypothalamus") + labs(subtitle = " D1DR & HTR2C", title = " " )
-p2 <- musicplot(c("AVPR1A", "CRHR1"), "pituitary") + labs(subtitle = " AVPR1A & CRHR1 ", title = " " )
-p3 <- musicplot(c("ESR1", "PGR"), "gonad") + labs(subtitle = "  ESR1 & PGR", title = " ")
-
-p123 <- plot_grid(p1, NULL,  p2, NULL,p3, NULL,ncol = 1, rel_heights = c(1,0.2,1,0.2,1.2,0.2))
-
-plot_grid(atof, scales, p123, rel_widths = c(1.5,0.1, 0.3), ncol = 3)
-```
+musicalgenes <- png::readPNG("../figures/images/fig_musicalgenes.png")
+musicalgenes <- ggdraw() +  draw_image(musicalgenes, scale = 1)
 
 
+p1 <- musicplot(c("AVP", "OXT"), "hypothalamus") + labs(subtitle = "Hypothalamic AVP & OXT" ) + theme(axis.text.x = element_blank())
+p2 <- musicplot(c("AVP", "OXT"), "pituitary") + labs(subtitle = "Pituitary AVP & OXT " ) + theme(axis.text.x = element_blank())
+p3 <- musicplot(c("AVP", "OXT"), "gonad") + labs(subtitle = "Gonadal  AVP & OXT"  )
 
+p123 <- plot_grid(music, p1, music, p3, ncol = 2, rel_widths = c(0.125,1))
 
-
-
-## suplement correlations
-
-
-```{r supplfig2, fig.width = 7.25, fig.height = 7.25}
-
-a <- plotcorrplot(hyp1, "females") + theme(legend.position = "none", axis.text.x = element_blank())  + labs(title = "")
-c <- plotcorrplot(pit1, "females") + theme(legend.position = "none", axis.text.x = element_blank()) + labs(title = "")
-e <- plotcorrplot(gon1, "females") + theme(legend.position = "bottom")  + labs(title = "")
-
-b <- plotcorrplot(hyp2, "males") + theme(legend.position = "none", axis.text.x = element_blank())  + labs(title = "")
-d <- plotcorrplot(pit2, "males") + theme(legend.position = "none", axis.text.x = element_blank()) + labs(title = "")
-f <- plotcorrplot(gon2, "males") + theme(legend.position = "bottom")  + labs(title = "")
-
-plot_grid(a,b,c,d,e,f, nrow = 3, rel_heights = c(1,1,1.5))
+plot_grid(musicalgenes, p123, nrow = 1, rel_widths = c(1.5,1))
 
 ```
+
 
 
 
