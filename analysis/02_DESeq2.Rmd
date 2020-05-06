@@ -519,9 +519,11 @@ for(i in levels(colDatahypothesis$sextissue)){
 ## tissue and sex differences
 
 
-```{r}
+```{r eval = F}
 
-for(i in "gonad"){
+## first or sex
+
+for(i in levels(colData$tissue)){
   
   newcolData <- subsetcolData4(colData, i)
   print(head(newcolData))
@@ -552,10 +554,27 @@ for(i in "gonad"){
   sex <- createDEGdfsavesex("male", "female", i)
 }
 
+
+## then for tissue
+
+dds <- DESeqDataSetFromMatrix(countData = countData,
+                                colData = colData,
+                                design = ~ tissue )
+dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+print(dds)
+print(dim(dds))
+dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  
+vsd <- as.data.frame(assay(vst(dds, blind=FALSE)))
+write.csv(vsd, "../results/DEseq2/tissue/tissuevsds.csv")
+print(head(vsd))
+
+# save differential gene expression results
+HP <- createDEGdfsavestissue("pituitary", "hypothalamus")
+HG <- createDEGdfsavestissue("gonad", "hypothalamus")
+PG <- createDEGdfsavestissue("gonad", "pituitary")
+  
 ```
-
-
-
 
 
 
