@@ -762,7 +762,7 @@ makefvizdf <-  function(whichtissue, whichtreatment, whichsex){
 
 # plot colorful pca and vector based pcas
 
-plotpc12 <- function(df1color, df2fviz, whichfactor, whichcolors, mysubtitle){
+plotpc12 <- function(df1color, df2fviz, whichfactor, whichcolors, mysubtitle, mytitle){
   
   pc12color <- df1color %>%	
     ggplot(aes(x = PC1, y = PC2, color = whichfactor )) +	
@@ -772,17 +772,16 @@ plotpc12 <- function(df1color, df2fviz, whichfactor, whichcolors, mysubtitle){
           axis.text = element_blank(),	
           legend.position = "none",
           axis.ticks = element_blank()) +	
-    labs(x = "PC1", y = "PC2", subtitle = mysubtitle)  +	
+    labs(x = "PC1", y = "PC2", subtitle = mysubtitle, title = mytitle)  +	
     scale_color_manual(values = whichcolors)  
   
   
   pc12vector <- fviz_pca_var(df2fviz,  
                              axes.linetype = "blank", 
                              repel = T , 
-                             select.var= list(contrib = 5),
-                             labelsize = 2,
-                             axes = c(1, 2))  + 
-    labs(title = NULL, subtitle = " ") + 
+                             select.var= list(contrib = 2),
+                             labelsize = 2)  + 
+    labs(title = mytitle, subtitle = " ") + 
     theme_B3() +
     theme(axis.text = element_blank(),
           axis.ticks = element_blank()) 
@@ -920,7 +919,8 @@ createDEGdfsavestissue <- function(up, down){
 plotprolactin <- function(df, myy, myylab, mysubtitle ){
   
   p <-  ggplot(df, aes(x = treatment, y = myy)) +
-    geom_boxplot(aes(fill = treatment, color = sex)) +
+    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
     theme_B3() +
     scale_fill_manual(values = allcolors) +
     scale_color_manual(values = sexcolors) +
@@ -1155,4 +1155,23 @@ plotcorrplot <- function(df, mysubtitle){
   
   return(p)
 }
+
+
+## fig 3 top degs
+
+plottopDEGs <- function(df, whichsex, whichcolor, myylab, mysubtitle){
+  
+  p <- df %>%
+    arrange(desc(lfc)) %>%
+    filter(sex == whichsex) %>% head(10) %>% 
+    ggplot(aes(x = reorder(gene, lfc), y = lfc)) + 
+    geom_bar(stat = "identity",  fill = whichcolor) +
+    theme_B3() +
+    theme(axis.text.y = element_text(face = "italic")) +
+    labs(x = " ", y = myylab, subtitle = mysubtitle) +
+    coord_flip() +
+    scale_y_continuous(expand = c(0, 0))
+  return(p)
+}
+
 

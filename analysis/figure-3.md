@@ -3,14 +3,14 @@ Figure 4: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -254,6 +254,27 @@ Internal versus external hyotheses
     ## 10 female pituita… "lo vs. hi PR… hi        CCNB3     3.61 1.65e-12   11.8 
     ## # … with 3,012 more rows
 
+    envDEGs <- allDEG2 %>%
+      filter(tissue == "pituitary", comparison == "eggs vs. chicks",
+             direction == "chicks") %>%
+      arrange(desc(comparison))
+    envDEGs
+
+    ## # A tibble: 820 x 8
+    ##    sex    tissue    comparison      direction gene     lfc     padj logpadj
+    ##    <chr>  <fct>     <fct>           <fct>     <chr>  <dbl>    <dbl>   <dbl>
+    ##  1 female pituitary eggs vs. chicks chicks    PNOC    3.88 0.0308      1.51
+    ##  2 female pituitary eggs vs. chicks chicks    NCAN    3.07 0.0682      1.17
+    ##  3 female pituitary eggs vs. chicks chicks    NPY     3.03 0.0197      1.70
+    ##  4 female pituitary eggs vs. chicks chicks    CCK     2.82 0.0274      1.56
+    ##  5 female pituitary eggs vs. chicks chicks    NKX2-1  2.79 0.0906      1.04
+    ##  6 female pituitary eggs vs. chicks chicks    AGRP    2.57 0.0750      1.13
+    ##  7 female pituitary eggs vs. chicks chicks    SEBOX   2.54 0.00282     2.55
+    ##  8 female pituitary eggs vs. chicks chicks    MC4R    2.44 0.0344      1.46
+    ##  9 female pituitary eggs vs. chicks chicks    HAND2   2.00 0.0310      1.51
+    ## 10 female pituitary eggs vs. chicks chicks    VTN     1.98 0.000975    3.01
+    ## # … with 810 more rows
+
     ## genes WGCNA prl module
 
     PRLgenes <- read_csv("../results/PRLmodule.csv") %>% pull(x)
@@ -283,27 +304,8 @@ Internal versus external hyotheses
     ## 10 COL20A1   0.662
     ## # … with 47 more rows
 
-    a1 <- plotpc12(pca1f, pca2f, pca1f$treatment, allcolors, "Female pituitary") 
-    a2 <- plotpc12(pca1m, pca2m, pca1m$treatment, allcolors, "Male pituitary")
-    a <- plot_grid(a1,a2, labels = c("A"),label_size = 8)
-
-    bcd1 <- png::readPNG("../figures/images/fig_fig3a.png")
-    bcd1 <- ggdraw() +  draw_image(bcd1, scale = 1)
-
-
-    b2 <- plotprolactin(PRLpitF, PRLpitF$counts, "PRL", "Female gene expression") 
-    c2 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2200)   + theme(axis.text.x = element_blank() )
-    d2 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2200) + theme(axis.text.x = element_blank())   
-    b3 <- plotprolactin(PRLpitM, PRLpitM$counts, "PRL", "Male gene expression") + theme(axis.text.x = element_text())
-    c3 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 2200)  
-    d3 <- makenewbargraph("pituitary", "male", "lo vs. hi PRL   ", 0, 2200) 
-
-    bcd23 <- plot_grid(b2,c2,d2,b3,c3,d3, nrow = 2, rel_widths = c(2,1,1), rel_heights = c(1,1.1))
-
-
-
     ## top correlations
-    e <- df %>%
+    c <- df %>%
       arrange(desc(PRL)) %>% 
       head(10)  %>%
       mutate(PRLrounded = round(PRL, 2))%>% 
@@ -315,37 +317,53 @@ Internal versus external hyotheses
       coord_flip() +
       scale_y_continuous(expand = c(0, 0))
 
+    a1 <- plotpc12(pca1f, pca2f, pca1f$treatment, allcolors, "Female pituitary gene expression", " ")   
+    a2 <- plotprolactin(PRLpitF, PRLpitF$counts, "PRL", " ") + theme(axis.text.x = element_text())  
+
+    a3 <- plotpc12(pca1m, pca2m, pca1m$treatment, allcolors, "Male pituitary gene expression", NULL)
+    a4 <- plotprolactin(PRLpitM, PRLpitM$counts, "PRL", " ") + theme(axis.text.x = element_text())
+
+    a <- plot_grid(a1,a2,a3,a4, labels = c("A"), label_size = 8, rel_heights = c(1.1,1))
+
+
+    b1 <- png::readPNG("../figures/images/fig_fig3b.png")
+    b1 <- ggdraw() +  draw_image(b1, scale = 1)
+
+
+    b2 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2200) + labs(subtitle = "female")  + labs(title = " ")  
+    b3 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 2200)  + labs(subtitle = "male")  + labs(title = " ") +
+      theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), 
+            axis.text.y = element_blank(), axis.line.y = element_blank())
+
+    b4 <- makenewbargraph("pituitary", "male", "lo vs. hi PRL   ", 0, 2200) 
+    b5 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2200)   + 
+      theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), 
+            axis.text.y = element_blank(), axis.line.y = element_blank())
+
+    b25 <- plot_grid(b2,b3,b4,b5, nrow = 2, rel_widths = c(1.2,1), rel_heights = c(1.2,1))
 
     # most sig DEGs
 
-    f <-  PRLDEGs %>%
-      arrange(desc(lfc)) %>%
-      filter(sex == "female") %>% head(10) %>% 
-      ggplot(aes(x = reorder(gene, lfc), y = lfc)) + 
-      geom_bar(stat = "identity", fill = "#969696") +
-      theme_B3() +
-      theme(axis.text.y = element_text(face = "italic")) +
-      labs(x = " ", y = "Log-fold change, lo vs. hi PRL", subtitle = "Top 10 female DEGs") +
-      coord_flip() +
-      scale_y_continuous(expand = c(0, 0))
-
-    g <-  PRLDEGs %>%
-      arrange(desc(lfc)) %>%
-      filter(sex == "male") %>% head(10) %>% 
-      ggplot(aes(x = reorder(gene, lfc), y = lfc)) + 
-      geom_bar(stat = "identity", fill = "#525252") +
-      theme_B3() +
-      theme(axis.text.y = element_text(face = "italic")) +
-      labs(x = " ", y = "Log-fold change, lo vs. hi PRL", subtitle = "Top 10 male DEGs") +
-      coord_flip() +
-      scale_y_continuous(expand = c(0, 0))
+    c1 <-  plottopDEGs(envDEGs, "female", "#3A80B9", "LFC eggs vs. chicks", "Top 10 female DEGs") + labs(title = " ")
+    c2 <-  plottopDEGs(PRLDEGs, "male", "#3A80B9", "LFC eggs vs. chicks", "Top 10 male DEGs") + labs(title = " ")
+    c3 <-  plottopDEGs(PRLDEGs, "female", "#19757A", "LFC lo vs. hi PRL", NULL)
+    c4 <-  plottopDEGs(PRLDEGs, "male", "#19757A", "LFC lo vs. hi PRL", NULL)
 
 
-    efg <- plot_grid(e,f,g, nrow = 1, labels = c("E", "F", "G"), label_size = 8)
+    b <- plot_grid(b1,b25,nrow = 1, rel_widths = c(1.2,1))
+
+    c <- plot_grid(c1,c2,c3,c4, align = "v" , rel_heights = c(1.2,1))
+
+    bc <- plot_grid(b,c, labels = c("B","C"), label_size = 8, rel_widths = c(1.2,1))
 
 
-    plot_grid(a, bcd1, bcd23, efg, nrow = 4, rel_heights = c(1,1,2,1.2))
+    fig3 <- plot_grid(a, bc, nrow = 2, rel_heights = c(1,1))
+    fig3
 
 ![](../figures/fig3-1.png)
+
+    #pdf(file="../figures/fig3.pdf", width=7.25, height=7.25)
+    #plot(fig3)
+    #dev.off()
 
     write.csv(PRLpit,"../results/PRLvsd.csv", row.names = F)
