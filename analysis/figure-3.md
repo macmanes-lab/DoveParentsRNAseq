@@ -3,14 +3,14 @@ Figure 4: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -155,10 +155,13 @@ PCA data
     pca2f <- makefvizdf("pituitary", charlevels, "female")  
 
     pca1m <- subsetmakepca("pituitary", charlevels, "male") 
-    pca2m <- makefvizdf("pituitary", charlevels, "male")    
+    pca2m <- makefvizdf("pituitary", charlevels, "male")
 
-subset PRL vsd
-==============
+    pca1 <- subsetmakepca("pituitary", charlevels, sexlevels)   
+    pca2 <- makefvizdf("pituitary", charlevels, sexlevels)  
+
+Hi Lo PRL and WGCNA PRL
+=======================
 
     # `candidatevsd` loaded with `source("../R/wrangledata.R")`
 
@@ -192,6 +195,14 @@ subset PRL vsd
 
     PRLpitF <- PRLpit %>% filter( sex == "female" )
     PRLpitM <- PRLpit %>% filter( sex == "male")
+
+### WGCNA prolactin module
+
+    ## genes WGCNA prl module
+
+    WGCNAgenes <- read_csv("../results/PRLmodule.csv") %>% pull(x)
+
+    WGCNAvsd <- getcandidatevsd(WGCNAgenes, "pituitary", sexlevels) 
 
 Internal versus external hyotheses
 ----------------------------------
@@ -236,94 +247,104 @@ Internal versus external hyotheses
     PRLDEGs <- allDEG2 %>%
       filter(tissue == "pituitary", comparison == "lo vs. hi PRL   ",
              direction == "hi") %>%
-      arrange(desc(comparison))
+      arrange(desc(logpadj))
     PRLDEGs
 
     ## # A tibble: 3,022 x 8
-    ##    sex    tissue   comparison     direction gene       lfc     padj logpadj
-    ##    <chr>  <fct>    <fct>          <fct>     <chr>    <dbl>    <dbl>   <dbl>
-    ##  1 female pituita… "lo vs. hi PR… hi        KPNA2     4.39 1.09e-17   17.0 
-    ##  2 female pituita… "lo vs. hi PR… hi        FOXM1     4.19 3.60e- 8    7.44
-    ##  3 female pituita… "lo vs. hi PR… hi        FGF6      4.13 2.41e-16   15.6 
-    ##  4 female pituita… "lo vs. hi PR… hi        PRC1      4.08 1.13e- 3    2.95
-    ##  5 female pituita… "lo vs. hi PR… hi        LOC1017…  4.01 2.31e-17   16.6 
-    ##  6 female pituita… "lo vs. hi PR… hi        SHCBP1    3.83 9.89e-13   12.0 
-    ##  7 female pituita… "lo vs. hi PR… hi        RRM2      3.77 6.24e-15   14.2 
-    ##  8 female pituita… "lo vs. hi PR… hi        CKAP2     3.77 4.76e-17   16.3 
-    ##  9 female pituita… "lo vs. hi PR… hi        CDK1      3.68 6.24e-15   14.2 
-    ## 10 female pituita… "lo vs. hi PR… hi        CCNB3     3.61 1.65e-12   11.8 
+    ##    sex    tissue   comparison      direction gene      lfc     padj logpadj
+    ##    <chr>  <fct>    <fct>           <fct>     <chr>   <dbl>    <dbl>   <dbl>
+    ##  1 male   pituita… "lo vs. hi PRL… hi        PRL      2.66 5.24e-31    30.3
+    ##  2 female pituita… "lo vs. hi PRL… hi        PRL      2.55 1.81e-28    27.7
+    ##  3 female pituita… "lo vs. hi PRL… hi        LAPTM4B  1.44 1.42e-20    19.8
+    ##  4 male   pituita… "lo vs. hi PRL… hi        KPNA2    4.44 1.73e-20    19.8
+    ##  5 male   pituita… "lo vs. hi PRL… hi        RACGAP1  3.57 1.73e-20    19.8
+    ##  6 female pituita… "lo vs. hi PRL… hi        ARAP2    2.10 1.47e-19    18.8
+    ##  7 male   pituita… "lo vs. hi PRL… hi        CKAP2    3.91 1.68e-19    18.8
+    ##  8 female pituita… "lo vs. hi PRL… hi        LOC423…  3.60 2.93e-18    17.5
+    ##  9 female pituita… "lo vs. hi PRL… hi        STT3B    1.05 1.08e-17    17.0
+    ## 10 female pituita… "lo vs. hi PRL… hi        KPNA2    4.39 1.09e-17    17.0
     ## # … with 3,012 more rows
 
     envDEGs <- allDEG2 %>%
       filter(tissue == "pituitary", comparison == "eggs vs. chicks",
              direction == "chicks") %>%
-      arrange(desc(comparison))
+      arrange(desc(logpadj))
     envDEGs
 
     ## # A tibble: 820 x 8
-    ##    sex    tissue    comparison      direction gene     lfc     padj logpadj
-    ##    <chr>  <fct>     <fct>           <fct>     <chr>  <dbl>    <dbl>   <dbl>
-    ##  1 female pituitary eggs vs. chicks chicks    PNOC    3.88 0.0308      1.51
-    ##  2 female pituitary eggs vs. chicks chicks    NCAN    3.07 0.0682      1.17
-    ##  3 female pituitary eggs vs. chicks chicks    NPY     3.03 0.0197      1.70
-    ##  4 female pituitary eggs vs. chicks chicks    CCK     2.82 0.0274      1.56
-    ##  5 female pituitary eggs vs. chicks chicks    NKX2-1  2.79 0.0906      1.04
-    ##  6 female pituitary eggs vs. chicks chicks    AGRP    2.57 0.0750      1.13
-    ##  7 female pituitary eggs vs. chicks chicks    SEBOX   2.54 0.00282     2.55
-    ##  8 female pituitary eggs vs. chicks chicks    MC4R    2.44 0.0344      1.46
-    ##  9 female pituitary eggs vs. chicks chicks    HAND2   2.00 0.0310      1.51
-    ## 10 female pituitary eggs vs. chicks chicks    VTN     1.98 0.000975    3.01
+    ##    sex    tissue   comparison     direction gene        lfc    padj logpadj
+    ##    <chr>  <fct>    <fct>          <fct>     <chr>     <dbl>   <dbl>   <dbl>
+    ##  1 male   pituita… eggs vs. chic… chicks    FKBP5     0.676 3.59e-4    3.45
+    ##  2 male   pituita… eggs vs. chic… chicks    NEMF      0.241 3.59e-4    3.45
+    ##  3 female pituita… eggs vs. chic… chicks    VTN       1.98  9.75e-4    3.01
+    ##  4 female pituita… eggs vs. chic… chicks    LOC10174… 0.268 9.75e-4    3.01
+    ##  5 female pituita… eggs vs. chic… chicks    NKRF      0.187 1.63e-3    2.79
+    ##  6 female pituita… eggs vs. chic… chicks    ZBTB16    0.777 1.94e-3    2.71
+    ##  7 male   pituita… eggs vs. chic… chicks    TULP1     1.71  2.02e-3    2.69
+    ##  8 female pituita… eggs vs. chic… chicks    CTNND2    0.261 2.48e-3    2.60
+    ##  9 female pituita… eggs vs. chic… chicks    SEBOX     2.54  2.82e-3    2.55
+    ## 10 male   pituita… eggs vs. chic… chicks    INSM1     0.551 3.15e-3    2.50
     ## # … with 810 more rows
 
-    ## genes WGCNA prl module
+    hilogenes <- PRLDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
+    eggchickgenes <- envDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
 
-    PRLgenes <- read_csv("../results/PRLmodule.csv") %>% pull(x)
+    hypothesisDEGs <- c(hilogenes, eggchickgenes, WGCNAgenes) %>% unique()
 
-    candidatevsd <- getcandidatevsd(PRLgenes, "pituitary", sexlevels) 
+    candidatevsd <- getcandidatevsd(hypothesisDEGs, "pituitary", sexlevels) 
 
-    df <- candidatevsd %>%
-        pivot_wider(names_from = gene, values_from = counts) %>%
-        select(-sex,-tissue, -treatment, -samples) %>%
-        correlate() %>%
-      focus(PRL)  %>%
-      arrange(rowname)
-    df
+    #candidateboxplot("pituitary", c("PNOC"), "female") + labs(x = NULL )  + theme( strip.text = element_blank())
+    #candidateboxplot("pituitary", c("KPNA2"), "male") + labs(x = NULL )  + theme( strip.text = element_blank())
 
-    ## # A tibble: 57 x 2
-    ##    rowname     PRL
-    ##    <chr>     <dbl>
-    ##  1 ACOT12    0.137
-    ##  2 AGR2      0.633
-    ##  3 ARAP2     0.648
-    ##  4 C2H8ORF46 0.253
-    ##  5 CALN1     0.744
-    ##  6 CD24      0.880
-    ##  7 CDKN3     0.544
-    ##  8 CDT1      0.499
-    ##  9 CHRNB4    0.591
-    ## 10 COL20A1   0.662
-    ## # … with 47 more rows
 
-    ## top correlations
-    c <- df %>%
-      arrange(desc(PRL)) %>% 
-      head(10)  %>%
-      mutate(PRLrounded = round(PRL, 2))%>% 
-      ggplot(aes(x = reorder(rowname, PRL), y = PRL)) +
-      geom_bar(stat = "identity") +
-      theme_B3() +
-      theme(axis.text.y = element_text(face = "italic")) +
-      labs(x = " ", y = "Correlation with PRL", subtitle = "Top 10 co-regulated genes") +
-      coord_flip() +
-      scale_y_continuous(expand = c(0, 0))
+    pithilo <- makecorrdf("female", "pituitary", hilogenes)
 
-    a1 <- plotpc12(pca1f, pca2f, pca1f$treatment, allcolors, "Female pituitary gene expression", " ")   
-    a2 <- plotprolactin(PRLpitF, PRLpitF$counts, "PRL", " ") + theme(axis.text.x = element_text())  
+    ## # A tibble: 6 x 17
+    ##   rowname  OLFM1  STT3B    PRL  ARAP2 LOC101749834    MLN LAPTM4B  FGF6
+    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>        <dbl>  <dbl>   <dbl> <dbl>
+    ## 1 OLFM1   NA      0.831  0.839  0.722        0.752  0.782   0.827 0.692
+    ## 2 STT3B    0.831 NA      0.904  0.809        0.752  0.807   0.863 0.749
+    ## 3 PRL      0.839  0.904 NA      0.817        0.756  0.839   0.928 0.720
+    ## 4 ARAP2    0.722  0.809  0.817 NA            0.710  0.741   0.840 0.724
+    ## 5 LOC101…  0.752  0.752  0.756  0.710       NA      0.768   0.798 0.756
+    ## 6 MLN      0.782  0.807  0.839  0.741        0.768 NA       0.868 0.794
+    ## # … with 8 more variables: CENPI <dbl>, CDK1 <dbl>, BUB1 <dbl>,
+    ## #   LOC423793 <dbl>, KPNA2 <dbl>, RACGAP1 <dbl>, CKAP2 <dbl>, RRM2 <dbl>
 
-    a3 <- plotpc12(pca1m, pca2m, pca1m$treatment, allcolors, "Male pituitary gene expression", NULL)
-    a4 <- plotprolactin(PRLpitM, PRLpitM$counts, "PRL", " ") + theme(axis.text.x = element_text())
+    piteggchick <- makecorrdf("female", "pituitary", eggchickgenes)
 
-    a <- plot_grid(a1,a2,a3,a4, labels = c("A"), label_size = 8, rel_heights = c(1.1,1))
+    ## # A tibble: 6 x 20
+    ##   rowname  SF3A1 LOC101748741 FBXO21  UBAC1   NEMF KIAA1522  NKRF ZC3H18
+    ##   <chr>    <dbl>        <dbl>  <dbl>  <dbl>  <dbl>    <dbl> <dbl>  <dbl>
+    ## 1 SF3A1   NA            0.711  0.556  0.610  0.684    0.725 0.634  0.780
+    ## 2 LOC101…  0.711       NA      0.575  0.589  0.482    0.543 0.524  0.504
+    ## 3 FBXO21   0.556        0.575 NA      0.605  0.467    0.380 0.439  0.313
+    ## 4 UBAC1    0.610        0.589  0.605 NA      0.373    0.497 0.430  0.373
+    ## 5 NEMF     0.684        0.482  0.467  0.373 NA        0.512 0.424  0.547
+    ## 6 KIAA15…  0.725        0.543  0.380  0.497  0.512   NA     0.426  0.708
+    ## # … with 11 more variables: UIMC1 <dbl>, ZBTB16 <dbl>, CTNND2 <dbl>,
+    ## #   TULP1 <dbl>, WIPF3 <dbl>, INSM1 <dbl>, LOC422319 <dbl>, VTN <dbl>,
+    ## #   SEBOX <dbl>, FKBP5 <dbl>, MYBPC3 <dbl>
+
+    pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
+
+    ## # A tibble: 6 x 21
+    ##   rowname ACOT12 C2H8ORF46 CHRNB4  F13A1 COL20A1 FAM83G  CD24 FOSL2  AGR2
+    ##   <chr>    <dbl>     <dbl>  <dbl>  <dbl>   <dbl>  <dbl> <dbl> <dbl> <dbl>
+    ## 1 ACOT12  NA         0.242  0.248  0.299   0.241  0.201 0.133 0.251 0.263
+    ## 2 C2H8OR…  0.242    NA      0.371  0.158   0.388  0.408 0.360 0.370 0.408
+    ## 3 CHRNB4   0.248     0.371 NA      0.336   0.325  0.413 0.618 0.265 0.596
+    ## 4 F13A1    0.299     0.158  0.336 NA       0.361  0.433 0.366 0.484 0.528
+    ## 5 COL20A1  0.241     0.388  0.325  0.361  NA      0.542 0.652 0.413 0.461
+    ## 6 FAM83G   0.201     0.408  0.413  0.433   0.542 NA     0.513 0.588 0.480
+    ## # … with 11 more variables: CALN1 <dbl>, DUSP10 <dbl>, CDT1 <dbl>,
+    ## #   CREM <dbl>, ARAP2 <dbl>, CDKN3 <dbl>, FAM19A1 <dbl>, FKBP11 <dbl>,
+    ## #   FGF6 <dbl>, CRELD2 <dbl>, CREB3L1 <dbl>
+
+    a1 <- plotpc12(pca1, pca2, pca1$treatment, allcolors, "Pituitary gene expression", " ")   
+    a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", " ") + theme(axis.text.x = element_text())  
+
+    a <- plot_grid(a1,a2, labels = c("A"), label_size = 8)
 
 
     b1 <- png::readPNG("../figures/images/fig_fig3b.png")
@@ -356,8 +377,14 @@ Internal versus external hyotheses
 
     bc <- plot_grid(b,c, labels = c("B","C"), label_size = 8, rel_widths = c(1.2,1))
 
+    d1 <-plotcorrplot(piteggchick, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 eggs vs. chicks DEGs")
+    d2 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 lo vs. PRL DEGs")
+    d3 <-plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes from WGCNA module with PRL")
 
-    fig3 <- plot_grid(a, bc, nrow = 2, rel_heights = c(1,1))
+    d <- plot_grid(d1,d2,d3, nrow = 1, align = "h", labels = c("D"), label_size = 8)
+
+
+    fig3 <- plot_grid(a, bc, d, nrow = 3, rel_heights = c(1.2,2,1.8))
     fig3
 
 ![](../figures/fig3-1.png)

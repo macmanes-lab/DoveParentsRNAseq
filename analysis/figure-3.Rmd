@@ -31,11 +31,15 @@ pca1f <- subsetmakepca("pituitary", charlevels, "female")
 pca2f <- makefvizdf("pituitary", charlevels, "female")	
 
 pca1m <- subsetmakepca("pituitary", charlevels, "male")	
-pca2m <- makefvizdf("pituitary", charlevels, "male")	
+pca2m <- makefvizdf("pituitary", charlevels, "male")
+
+pca1 <- subsetmakepca("pituitary", charlevels, sexlevels)	
+pca2 <- makefvizdf("pituitary", charlevels, sexlevels)	
+
 
 ```
 
-# subset PRL vsd
+# Hi Lo PRL and WGCNA PRL
 
 ```{r}
 # `candidatevsd` loaded with `source("../R/wrangledata.R")`
@@ -59,6 +63,18 @@ PRLpitM <- PRLpit %>% filter( sex == "male")
 ```
 
 
+
+### WGCNA prolactin module
+
+
+```{r}
+## genes WGCNA prl module
+
+WGCNAgenes <- read_csv("../results/PRLmodule.csv") %>% pull(x)
+
+WGCNAvsd <- getcandidatevsd(WGCNAgenes, "pituitary", sexlevels) 
+
+```
 
 
 ## Internal versus external hyotheses
@@ -95,57 +111,44 @@ allDEG2$direction <- factor(allDEG2$direction, levels = c("eggs", "chicks", "lo"
 PRLDEGs <- allDEG2 %>%
   filter(tissue == "pituitary", comparison == "lo vs. hi PRL   ",
          direction == "hi") %>%
-  arrange(desc(comparison))
+  arrange(desc(logpadj))
 PRLDEGs
 
 
 envDEGs <- allDEG2 %>%
   filter(tissue == "pituitary", comparison == "eggs vs. chicks",
          direction == "chicks") %>%
-  arrange(desc(comparison))
+  arrange(desc(logpadj))
 envDEGs
 
-## genes WGCNA prl module
 
-PRLgenes <- read_csv("../results/PRLmodule.csv") %>% pull(x)
+hilogenes <- PRLDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
+eggchickgenes <- envDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
 
-candidatevsd <- getcandidatevsd(PRLgenes, "pituitary", sexlevels) 
+hypothesisDEGs <- c(hilogenes, eggchickgenes, WGCNAgenes) %>% unique()
 
-df <- candidatevsd %>%
-    pivot_wider(names_from = gene, values_from = counts) %>%
-    select(-sex,-tissue, -treatment, -samples) %>%
-    correlate() %>%
-  focus(PRL)  %>%
-  arrange(rowname)
-df
+candidatevsd <- getcandidatevsd(hypothesisDEGs, "pituitary", sexlevels) 
+
+#candidateboxplot("pituitary", c("PNOC"), "female") + labs(x = NULL )  + theme( strip.text = element_blank())
+#candidateboxplot("pituitary", c("KPNA2"), "male") + labs(x = NULL )  + theme( strip.text = element_blank())
 
 
-## top correlations
-c <- df %>%
-  arrange(desc(PRL)) %>% 
-  head(10)  %>%
-  mutate(PRLrounded = round(PRL, 2))%>% 
-  ggplot(aes(x = reorder(rowname, PRL), y = PRL)) +
-  geom_bar(stat = "identity") +
-  theme_B3() +
-  theme(axis.text.y = element_text(face = "italic")) +
-  labs(x = " ", y = "Correlation with PRL", subtitle = "Top 10 co-regulated genes") +
-  coord_flip() +
-  scale_y_continuous(expand = c(0, 0))
-
+pithilo <- makecorrdf("female", "pituitary", hilogenes)
+piteggchick <- makecorrdf("female", "pituitary", eggchickgenes)
+pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
 ```
+
+
+
 
 
 
 ```{r fig3, fig.width=7.25, fig.height=7.25}
 
-a1 <- plotpc12(pca1f, pca2f, pca1f$treatment, allcolors, "Female pituitary gene expression", " ")   
-a2 <- plotprolactin(PRLpitF, PRLpitF$counts, "PRL", " ") + theme(axis.text.x = element_text())  
+a1 <- plotpc12(pca1, pca2, pca1$treatment, allcolors, "Pituitary gene expression", " ")   
+a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", " ") + theme(axis.text.x = element_text())  
 
-a3 <- plotpc12(pca1m, pca2m, pca1m$treatment, allcolors, "Male pituitary gene expression", NULL)
-a4 <- plotprolactin(PRLpitM, PRLpitM$counts, "PRL", " ") + theme(axis.text.x = element_text())
-
-a <- plot_grid(a1,a2,a3,a4, labels = c("A"), label_size = 8, rel_heights = c(1.1,1))
+a <- plot_grid(a1,a2, labels = c("A"), label_size = 8)
 
 
 b1 <- png::readPNG("../figures/images/fig_fig3b.png")
@@ -178,8 +181,14 @@ c <- plot_grid(c1,c2,c3,c4, align = "v" , rel_heights = c(1.2,1))
 
 bc <- plot_grid(b,c, labels = c("B","C"), label_size = 8, rel_widths = c(1.2,1))
 
+d1 <-plotcorrplot(piteggchick, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 eggs vs. chicks DEGs")
+d2 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 lo vs. PRL DEGs")
+d3 <-plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes from WGCNA module with PRL")
 
-fig3 <- plot_grid(a, bc, nrow = 2, rel_heights = c(1,1))
+d <- plot_grid(d1,d2,d3, nrow = 1, align = "h", labels = c("D"), label_size = 8)
+
+
+fig3 <- plot_grid(a, bc, d, nrow = 3, rel_heights = c(1.2,2,1.8))
 fig3
 
 
