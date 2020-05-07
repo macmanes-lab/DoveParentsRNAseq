@@ -1226,3 +1226,74 @@ scattercorrelations <- function(df, gene1, gene2, mylinecolor, myxlab, myylab){
     stat_cor( size = 2)
   return(p)
 }
+
+
+## FIg 4 
+
+
+
+plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
+  
+  plotcandidatemanip <- function(whichsex, whichlevels){
+  
+  p <- df %>%
+    filter(tissue == whichtissue, sex == whichsex) %>%
+    filter(gene %in% whichgenes) %>%
+    filter(treatment %in% whichlevels) %>%
+    mutate(treatment = factor(treatment, levels = alllevels)) %>%
+    ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
+    theme_B3() +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          strip.text = element_text(face = "italic")) +
+    scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+    labs(title = whichtissue, subtitle = whichsex ,y = whichgenes)
+  
+  return(p)
+  
+  }  
+  
+  p1 <- plotcandidatemanip("female", c(levelstiming, controlstiming))  +
+    geom_signif(comparisons = list(c( "inc.d9", "m.inc.d8"),
+                                   c( "inc.d17", "prolong"),
+                                   c( "hatch", "prolong"),
+                                   c( "hatch", "extend")),
+                map_signif_level=TRUE,
+                textsize = 3, family = 'Helvetica',
+                vjust = 1.5, size = 0)
+  p2 <- plotcandidatemanip("male", c(levelstiming, controlstiming)) +
+    geom_signif(comparisons = list(c( "inc.d9", "m.inc.d8"),
+                                   c( "inc.d17", "prolong"),
+                                   c( "hatch", "prolong"),
+                                   c( "hatch", "extend")),
+                map_signif_level=TRUE,
+                textsize = 3, family = 'Helvetica',
+                vjust = 1.5, size = 0)
+  
+  p3 <- plotcandidatemanip("female", c(levelsremoval, controlsremoval))  +
+    geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
+                                   c( "inc.d9", "m.inc.d9"),
+                                   c( "inc.d17", "m.inc.d17"),
+                                   c( "hatch", "m.n2")),
+                map_signif_level=TRUE,
+                textsize = 3, family = 'Helvetica',
+                vjust = 1.5, size = 0)
+  p4 <- plotcandidatemanip("male", c(levelsremoval, controlsremoval))  +
+    geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
+                                   c( "inc.d9", "m.inc.d9"),
+                                   c( "inc.d17", "m.inc.d17"),
+                                   c( "hatch", "m.n2")),
+                map_signif_level= TRUE,
+                textsize = 3, family = 'Helvetica',
+                vjust = 1.5, size =0)
+  
+  p <- plot_grid(p1,p2,p3,p4, nrow = 1, rel_widths = c(1,1))
+  
+  
+  return(p)
+}
+
+

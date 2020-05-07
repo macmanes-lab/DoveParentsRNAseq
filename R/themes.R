@@ -69,7 +69,7 @@ allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay", "bldg")
 
 
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
-                "inc.d9", "m.inc.d8" ,"m.inc.d9" ,
+               "inc.d9", "m.inc.d9" , "m.inc.d8" ,
                "inc.d17",  "m.inc.d17","prolong" ,
                "hatch",  "m.n2",   "extend",
                "n5", "n9")

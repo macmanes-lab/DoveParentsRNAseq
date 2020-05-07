@@ -125,7 +125,11 @@ envDEGs
 hilogenes <- PRLDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
 eggchickgenes <- envDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
 
+hypothesisDEGs <- c(hilogenes, eggchickgenes) %>% unique()
+
+
 hypothesisDEGs <- c(hilogenes, eggchickgenes, WGCNAgenes) %>% unique()
+
 
 candidatevsd <- getcandidatevsd(hypothesisDEGs, "pituitary", sexlevels) 
 

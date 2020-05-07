@@ -1,0 +1,227 @@
+---
+title: "Fig5"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(cowplot)
+library(Rtsne)
+library(ggsignif)
+
+source("../R/themes.R")
+source("../R/functions.R")
+source("../R/wrangledata.R")
+
+knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
+```
+
+# Figure 1. Experimental design, tSNE analysis, PCA, and prolactin
+
+
+```{r tSNE-df}
+
+# prep for tsne
+
+hyptsne <- subsetmaketsne("hypothalamus", allmaniplevels, sexlevels)
+pittsne <- subsetmaketsne("pituitary", allmaniplevels, sexlevels)
+gontsne <- subsetmaketsne("gonads", allmaniplevels, sexlevels)
+
+addgroupings <- function(df){
+  
+  df <- df %>% mutate(hiloPRL = fct_collapse(treatment, 
+                                  lo = c("m.inc.d8", "m.inc.d3", "m.inc.d9", "inc.d3", "inc.d9", "lay", "bldg"),
+                                  hi = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" ,  "m.n2", "extend", "n5")),
+                extint = fct_collapse(treatment, 
+                                  eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong", "lay"),
+                                  chicks = c( "m.inc.d8", "hatch", "extend", "n5"),
+                                  loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg")))
+  df$extint <- factor(df$extint, levels = levelsextint)
+  return(df)
+}
+  
+hyptsne <- addgroupings(hyptsne)
+pittsne <- addgroupings(pittsne)
+gontsne <- addgroupings(gontsne)
+
+```
+
+
+## variance stabilized gene expression  (vsd)
+
+```{r vsd}
+vsd_path <- "../results/DEseq2/manip/"   # path to the data
+vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
+vsd_pathfiles <- paste0(vsd_path, vsd_files)
+vsd_files
+
+allvsd <- vsd_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name")  %>% 
+  dplyr::rename("gene" = "X1") %>% 
+  pivot_longer(cols = blk.s031.pu.d_female_gonad_prolong:y98.o50.x_male_pituitary_inc.d3, 
+               names_to = "samples", values_to = "counts") 
+allvsd <- as_tibble(allvsd)
+
+head(allvsd)
+
+# for plotting gene expression over time
+getcandidatevsdmanip <- function(whichgenes, whichtissue, whichsex){
+  candidates  <- allvsd %>%
+    filter(gene %in% whichgenes) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/manip/'), "[", 2)) %>%
+    dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+                tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
+                treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
+    dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+     dplyr::mutate(treatment = recode(treatment, "m.hatch" = "m.n2",
+                                                  "extend.hatch" = "m.n2",
+                                      "inc.prolong" = "prolong")) %>%
+    
+    dplyr::mutate(day = fct_collapse(treatment,
+                                     "1" = c("inc.d3", "m.inc.d3" ),
+                                     "2" = c("inc.d9", "m.inc.d9", "m.inc.d8"  ),
+                                     "2" = c("inc.d17", "m.inc.d17", "prolong"  ),
+                                     "4" = c("hatch", "m.n2", "extend"  )
+                                     )) %>%
+    dplyr::mutate(day = as.numeric(day)) %>%
+    dplyr::mutate(manip = fct_collapse(treatment,
+                                       "reference" = charlevels,
+                                       "removal" = c("m.inc.d3", "m.inc.d9", "m.inc.d17","m.n2"),
+                                       "replacement" = c("m.inc.d8", "prolong", "extend"))) %>%
+    dplyr::mutate(manip = factor(manip, levels = c("reference", "removal", "replacement"))) %>%
+    dplyr::select(sex, tissue, treatment, day,  manip, gene, samples, counts) %>%
+    filter(tissue == whichtissue, sex %in% whichsex)  %>%
+    drop_na()
+  candidates$treatment <- factor(candidates$treatment, levels = alllevels)
+  return(candidates)
+}
+
+hypvsd <- getcandidatevsdmanip(candidategenes, "hypothalamus", sexlevels)
+pitvsd <- getcandidatevsdmanip(candidategenes, "pituitary", sexlevels)
+gonvsd <- getcandidatevsdmanip(candidategenes, "gonad", sexlevels)
+candidatevsd <- rbind(hypvsd, pitvsd)
+candidatevsd <- rbind(candidatevsd, gonvsd)
+head(candidatevsd)
+
+
+hypvsd2 <- getcandidatevsdmanip(hypothesisDEGs, "hypothalamus", sexlevels)
+pitvsd2 <- getcandidatevsdmanip(hypothesisDEGs, "pituitary", sexlevels)
+gonvsd2 <- getcandidatevsdmanip(hypothesisDEGs, "gonad", sexlevels)
+candidatevsd2 <- rbind(hypvsd2, pitvsd2)
+candidatevsd2 <- rbind(candidatevsd2, gonvsd2)
+head(candidatevsd2) 
+```
+
+
+
+## DEGs
+
+```{r allDEGs}
+DEG_path <- "../results/DEseq2/manip/"   # path to the data
+DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
+DEG_pathfiles <- paste0(DEG_path, DEG_files)
+#DEG_files
+
+allDEG <- DEG_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name") %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/manip/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
+  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
+  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
+  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
+  mutate(comparison = paste(down,up, sep = "_")) %>%
+  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
+  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
+dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
+head(allDEG)
+
+allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
+allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
+allDEG$direction <- factor(allDEG$direction, levels = alllevels)
+head(allDEG)
+
+candidateDEGS <- allDEG %>%
+  filter(gene %in% candidategenes) %>%
+  mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+         sex = recode(sex, "female" = "F", "male" = "M" ),
+         tissue = recode(tissue, 
+                         "hypothalamus" = "H",
+                         "pituitary" = "P", "gonad" = "G")) %>%
+  mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
+  select(gene, res, comparison)  %>%
+  group_by(gene,  comparison) %>%
+  summarize(res = str_c(res, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = res) %>%
+  select(gene, contains("m.")) 
+candidateDEGS
+
+hypothesisDEGStable <- allDEG %>%
+  filter(gene %in% hypothesisDEGs) %>%
+  mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+         sex = recode(sex, "female" = "F", "male" = "M" ),
+         tissue = recode(tissue, 
+                         "hypothalamus" = "H",
+                         "pituitary" = "P", "gonad" = "G")) %>%
+  mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
+  select(gene, res, comparison)  %>%
+  group_by(gene,  comparison) %>%
+  summarize(res = str_c(res, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = res) %>%
+  select(gene, contains("m.")) 
+hypothesisDEGStable
+```
+
+
+
+## make figure
+
+```{r fig5, fig.width=7, fig.height=7}
+
+a <- png::readPNG("../figures/images/fig_fig4a.png")
+a <- ggdraw() +  draw_image(a, scale = 1)
+
+b <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + labs(subtitle = "pituitary ~ parental stage", x = NULL) + facet_wrap(~sex, scales = "free") 
+
+c <- plottsneelipsev2(pittsne, pittsne$extint, allcolors ) + labs(subtitle = "pituitary ~ external enviornment", x = NULL) + facet_wrap(~sex, scales = "free")   
+
+d <- plottsneelipsev2(pittsne, pittsne$hiloPRL, allcolors ) + labs(subtitle = "pituitary ~ internal physiology", x = NULL) + facet_wrap(~sex, scales = "free")   
+
+bcd <- plot_grid(b,c,d, nrow = 1)
+
+
+ 
+b <- plotcandidatemanipquad(candidatevsd, "hypothalamus", c("DRD1")) 
+c <- plotcandidatemanipquad(candidatevsd2,"pituitary", c("PRL")) 
+d <- plotcandidatemanipquad(candidatevsd,"gonad", c("PGR")) 
+
+plot_grid(a, b,c,d , ncol = 1, rel_heights = c(1,1,1,1))
+
+
+```
+
+
+
+
+## supplementary figs
+
+```{r}
+
+b <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "hypothalamus ~ parental stage", x = NULL)  + facet_wrap(~sex, scales = "free")
+
+d <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads ~ parental stage")  + facet_wrap(~sex, scales = "free")  
+
+e <- plottsneelipsev2(hyptsne, hyptsne$hiloPRL, allcolors ) + labs(subtitle = "hypothalamus ~ internal physiology", x = NULL) + facet_wrap(~sex, scales = "free")  
+
+g <- plottsneelipsev2(gontsne, gontsne$hiloPRL, allcolors ) + labs(subtitle = "gonads ~ internal physiology" ) + facet_wrap(~sex, scales = "free")   
+
+efg <- plot_grid(e,f,g, nrow = 3, labels = c("d"), label_size = 8, rel_heights = c(1,1,1))
+
+h <- plottsneelipsev2(hyptsne, hyptsne$extint, allcolors ) + labs(subtitle = "hypothalamus ~ external enviornment", x = NULL) + facet_wrap(~sex, scales = "free")  
+
+j <- plottsneelipsev2(gontsne, gontsne$extint, allcolors ) + labs(subtitle = "gonads ~ external enviornment" ) + facet_wrap(~sex, scales = "free")   
+
+```
+
