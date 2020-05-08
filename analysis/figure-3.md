@@ -3,14 +3,14 @@ Figure 4: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -145,6 +145,119 @@ Figure 4: All things prolactin
     ## )
     ## See spec(...) for full column specifications.
 
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
     knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
 
 PCA data
@@ -207,89 +320,9 @@ Hi Lo PRL and WGCNA PRL
 Internal versus external hyotheses
 ----------------------------------
 
-    DEG_path <- "../results/DEseq2/hypothesis/"   # path to the data
-    DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
-    DEG_pathfiles <- paste0(DEG_path, DEG_files)
-    #DEG_files
+    #deg wrangling moved to datawrangling.R
 
-    allDEG2 <- DEG_pathfiles %>%
-      setNames(nm = .) %>% 
-      map_df(~read_csv(.x), .id = "file_name") %>% 
-      mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/hypothesis/'), "[", 2))  %>% 
-      mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
-      mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
-      mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
-      mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
-      mutate(comparison = paste(down,up, sep = "_")) %>%
-      mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
-      mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-    dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
-    head(allDEG2)
-
-    ## # A tibble: 6 x 8
-    ##   sex    tissue comparison  direction gene           lfc     padj logpadj
-    ##   <chr>  <chr>  <chr>       <chr>     <chr>        <dbl>    <dbl>   <dbl>
-    ## 1 female gonad  eggs_chicks chicks    OVALX         6.17 7.05e- 3    2.15
-    ## 2 female gonad  eggs_chicks chicks    LOC101749216  5.19 2.45e- 6    5.61
-    ## 3 female gonad  eggs_chicks chicks    BPIFB2        4.95 5.23e- 3    2.28
-    ## 4 female gonad  eggs_chicks chicks    OvoDA1        4.90 2.69e- 4    3.57
-    ## 5 female gonad  eggs_chicks chicks    CDC20B        4.07 2.99e-10    9.52
-    ## 6 female gonad  eggs_chicks chicks    WFIKKN2       4.01 1.90e- 2    1.72
-
-    allDEG2$tissue <- factor(allDEG2$tissue, levels = tissuelevel)
-
-    allDEG2$comparison <- factor(allDEG2$comparison, levels = c("eggs_chicks", "lo_hi"))
-    allDEG2 <- allDEG2 %>% mutate(comparison = fct_recode(comparison, "lo vs. hi PRL   " = "lo_hi",
-                                                          "eggs vs. chicks" = "eggs_chicks"))
-    allDEG2$direction <- factor(allDEG2$direction, levels = c("eggs", "chicks", "lo", "hi"))
-
-
-    PRLDEGs <- allDEG2 %>%
-      filter(tissue == "pituitary", comparison == "lo vs. hi PRL   ",
-             direction == "hi") %>%
-      arrange(desc(logpadj))
-    PRLDEGs
-
-    ## # A tibble: 3,022 x 8
-    ##    sex    tissue   comparison      direction gene      lfc     padj logpadj
-    ##    <chr>  <fct>    <fct>           <fct>     <chr>   <dbl>    <dbl>   <dbl>
-    ##  1 male   pituita… "lo vs. hi PRL… hi        PRL      2.66 5.24e-31    30.3
-    ##  2 female pituita… "lo vs. hi PRL… hi        PRL      2.55 1.81e-28    27.7
-    ##  3 female pituita… "lo vs. hi PRL… hi        LAPTM4B  1.44 1.42e-20    19.8
-    ##  4 male   pituita… "lo vs. hi PRL… hi        KPNA2    4.44 1.73e-20    19.8
-    ##  5 male   pituita… "lo vs. hi PRL… hi        RACGAP1  3.57 1.73e-20    19.8
-    ##  6 female pituita… "lo vs. hi PRL… hi        ARAP2    2.10 1.47e-19    18.8
-    ##  7 male   pituita… "lo vs. hi PRL… hi        CKAP2    3.91 1.68e-19    18.8
-    ##  8 female pituita… "lo vs. hi PRL… hi        LOC423…  3.60 2.93e-18    17.5
-    ##  9 female pituita… "lo vs. hi PRL… hi        STT3B    1.05 1.08e-17    17.0
-    ## 10 female pituita… "lo vs. hi PRL… hi        KPNA2    4.39 1.09e-17    17.0
-    ## # … with 3,012 more rows
-
-    envDEGs <- allDEG2 %>%
-      filter(tissue == "pituitary", comparison == "eggs vs. chicks",
-             direction == "chicks") %>%
-      arrange(desc(logpadj))
-    envDEGs
-
-    ## # A tibble: 820 x 8
-    ##    sex    tissue   comparison     direction gene        lfc    padj logpadj
-    ##    <chr>  <fct>    <fct>          <fct>     <chr>     <dbl>   <dbl>   <dbl>
-    ##  1 male   pituita… eggs vs. chic… chicks    FKBP5     0.676 3.59e-4    3.45
-    ##  2 male   pituita… eggs vs. chic… chicks    NEMF      0.241 3.59e-4    3.45
-    ##  3 female pituita… eggs vs. chic… chicks    VTN       1.98  9.75e-4    3.01
-    ##  4 female pituita… eggs vs. chic… chicks    LOC10174… 0.268 9.75e-4    3.01
-    ##  5 female pituita… eggs vs. chic… chicks    NKRF      0.187 1.63e-3    2.79
-    ##  6 female pituita… eggs vs. chic… chicks    ZBTB16    0.777 1.94e-3    2.71
-    ##  7 male   pituita… eggs vs. chic… chicks    TULP1     1.71  2.02e-3    2.69
-    ##  8 female pituita… eggs vs. chic… chicks    CTNND2    0.261 2.48e-3    2.60
-    ##  9 female pituita… eggs vs. chic… chicks    SEBOX     2.54  2.82e-3    2.55
-    ## 10 male   pituita… eggs vs. chic… chicks    INSM1     0.551 3.15e-3    2.50
-    ## # … with 810 more rows
-
-    hilogenes <- PRLDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
-    eggchickgenes <- envDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
-
-    hypothesisDEGs <- c(hilogenes, eggchickgenes, WGCNAgenes) %>% unique()
+    hypothesisDEGs <- c(hypothesisDEGs, WGCNAgenes) %>% unique()
 
     candidatevsd <- getcandidatevsd(hypothesisDEGs, "pituitary", sexlevels) 
 
@@ -386,7 +419,7 @@ Internal versus external hyotheses
 
 ![](../figures/fig3-1.png)
 
-    pdf(file="../figures/fig3.pdf", width=7.25, height=7.25)
+    pdf(file="../figures/fig3-1.pdf", width=7.25, height=7.25)
     plot(fig3)
     dev.off()
 
