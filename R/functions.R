@@ -1000,15 +1000,14 @@ plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
 
 plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-    stat_ellipse(linetype = 1, aes(color = pointcolor)) +
+   # stat_ellipse(linetype = 1, aes(color = pointcolor)) +
     geom_point(size = 0.5, aes(color = pointcolor)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2",
          subtitle = " ") +
     scale_color_manual(values = whichcolors) +
     theme(legend.position = "none",
-          axis.text = element_blank(), axis.ticks = element_blank()) +
-    stat_ellipse(linetype = 1, aes(color = pointcolor)) 
+          axis.text = element_blank(), axis.ticks = element_blank()) 
   return(p)
 }
 
@@ -1246,11 +1245,12 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
     geom_jitter(size = 0.25, aes(color = sex)) +
     theme_B3() +
     theme(legend.position = "none",
-          axis.text.x = element_text(angle = 45, hjust = 1),
+          axis.text.x = element_blank(),
+          axis.title.x = element_blank(),
           strip.text = element_text(face = "italic")) +
     scale_color_manual(values = allcolors) +
     scale_fill_manual(values = allcolors)  +
-    labs(title = whichtissue, subtitle = whichsex ,y = whichgenes)
+    labs(subtitle = paste(whichsex, whichtissue, sep = " "), y = whichgenes)
   
   return(p)
   
@@ -1290,7 +1290,7 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
                 textsize = 3, family = 'Helvetica',
                 vjust = 1.5, size =0)
   
-  p <- plot_grid(p1,p2,p3,p4, nrow = 1, rel_widths = c(1,1))
+  p <- plot_grid(p1,p3,p2,p4, nrow = 2, rel_widths = c(1,1.2))
   
   
   return(p)

@@ -178,26 +178,48 @@ hypothesisDEGStable
 
 ## make figure
 
-```{r fig5, fig.width=7, fig.height=7}
+```{r fig4, fig.width=7.25, fig.height=7.25}
 
 a <- png::readPNG("../figures/images/fig_fig4a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
 
-b <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + labs(subtitle = "pituitary ~ parental stage", x = NULL) + facet_wrap(~sex, scales = "free") 
+b1 <- plotcandidatemanipquad(candidatevsd, "hypothalamus", c("DRD1")) 
+b2 <- plotcandidatemanipquad(candidatevsd2,"pituitary", c("PRL")) 
+b3 <- plotcandidatemanipquad(candidatevsd,"gonad", c("PGR")) 
 
-c <- plottsneelipsev2(pittsne, pittsne$extint, allcolors ) + labs(subtitle = "pituitary ~ external enviornment", x = NULL) + facet_wrap(~sex, scales = "free")   
+b <- plot_grid(b1,b2,b3, ncol = 1)
 
-d <- plottsneelipsev2(pittsne, pittsne$hiloPRL, allcolors ) + labs(subtitle = "pituitary ~ internal physiology", x = NULL) + facet_wrap(~sex, scales = "free")   
+c1 <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
+  labs(subtitle = "Hypothalamus ", x = NULL)  
+c2 <- plottsneelipsev2(hyptsne, hyptsne$extint, allcolors ) + 
+  labs(subtitle = " ", x = NULL) + 
+  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
+c3 <- plottsneelipsev2(hyptsne, hyptsne$hiloPRL, allcolors ) + 
+  labs(subtitle = " ", x = NULL) + 
+  theme(axis.text.y = element_blank(), axis.title.y = element_blank()) 
+c4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
+  labs(subtitle = "Pituitary ", x = NULL) 
+c5 <- plottsneelipsev2(pittsne, pittsne$extint, allcolors ) + 
+  labs(subtitle = " ", x = NULL) + 
+  theme(axis.text.y = element_blank(), axis.title.y = element_blank()) 
+c6 <- plottsneelipsev2(pittsne, pittsne$hiloPRL, allcolors ) + 
+  labs(subtitle = " ", x = NULL) + 
+  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
+c7 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
+  labs(subtitle = "Ggonads ")  
+c8 <- plottsneelipsev2(gontsne, gontsne$extint, allcolors ) + 
+  labs(subtitle = " " )    +
+  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
+c9 <- plottsneelipsev2(gontsne, gontsne$hiloPRL, allcolors ) + 
+  labs(subtitle = " " ) + 
+  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
 
-bcd <- plot_grid(b,c,d, nrow = 1)
+c <- plot_grid(c1,c2,c3,c4,c5,c6,c7,c8,c9, nrow = 3)
 
-
+bc <- plot_grid(b, c, nrow = 1, labels = c("", "C"), label_size = 8)
  
-b <- plotcandidatemanipquad(candidatevsd, "hypothalamus", c("DRD1")) 
-c <- plotcandidatemanipquad(candidatevsd2,"pituitary", c("PRL")) 
-d <- plotcandidatemanipquad(candidatevsd,"gonad", c("PGR")) 
-
-plot_grid(a, b,c,d , ncol = 1, rel_heights = c(1,1,1,1))
+plot_grid(a, bc, ncol = 1, rel_heights  = c(0.25,1),
+          labels = "AUTO", label_size = 8)
 
 
 ```
@@ -205,23 +227,4 @@ plot_grid(a, b,c,d , ncol = 1, rel_heights = c(1,1,1,1))
 
 
 
-## supplementary figs
-
-```{r}
-
-b <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + labs(subtitle = "hypothalamus ~ parental stage", x = NULL)  + facet_wrap(~sex, scales = "free")
-
-d <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + labs(subtitle = "gonads ~ parental stage")  + facet_wrap(~sex, scales = "free")  
-
-e <- plottsneelipsev2(hyptsne, hyptsne$hiloPRL, allcolors ) + labs(subtitle = "hypothalamus ~ internal physiology", x = NULL) + facet_wrap(~sex, scales = "free")  
-
-g <- plottsneelipsev2(gontsne, gontsne$hiloPRL, allcolors ) + labs(subtitle = "gonads ~ internal physiology" ) + facet_wrap(~sex, scales = "free")   
-
-efg <- plot_grid(e,f,g, nrow = 3, labels = c("d"), label_size = 8, rel_heights = c(1,1,1))
-
-h <- plottsneelipsev2(hyptsne, hyptsne$extint, allcolors ) + labs(subtitle = "hypothalamus ~ external enviornment", x = NULL) + facet_wrap(~sex, scales = "free")  
-
-j <- plottsneelipsev2(gontsne, gontsne$extint, allcolors ) + labs(subtitle = "gonads ~ external enviornment" ) + facet_wrap(~sex, scales = "free")   
-
-```
 
