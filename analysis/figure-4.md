@@ -1407,7 +1407,15 @@ make figure
 
     bc <- plot_grid(b, c, nrow = 1, labels = c("", "C"), label_size = 8)
      
-    plot_grid(a, bc, ncol = 1, rel_heights  = c(0.25,1),
+    fig4 <- plot_grid(a, bc, ncol = 1, rel_heights  = c(0.25,1),
               labels = "AUTO", label_size = 8)
+    fig4
 
 ![](../figures/fig4-1.png)
+
+    pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
+    plot(fig4)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2

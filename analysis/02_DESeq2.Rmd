@@ -579,4 +579,152 @@ str(HP)
 ```
  
 
+## FOR DEGs of all TREATMENT comparsions, char y manip
+
+
+```{r}
+countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
+geneinfo <- read.csv("../metadata/00_geneinfo.csv", row.names = 1)
+colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+
+colData$sextissue <- as.factor(paste(colData$sex, colData$tissue, sep = "_"))
+colData$treatment <- factor(colData$treatment, levels = alllevels)
+colData$tissue <- factor(colData$tissue, levels = tissuelevel)
+levels(colData$treatment)
+levels(colData$sex)
+levels(colData$sextissue)
+levels(colData$tissue)
+colData <- colData %>% drop_na()
+# 987 samples, 8 variables
+
+
+createDEGdftreatment <- function(up, down, mytissue){
+  
+  res <- results(dds, contrast = c("treatment", up, down), 
+                 independentFiltering = T, alpha = 0.1)
+  
+  DEGs <- data.frame(gene = row.names(res),
+                        padj = res$padj, 
+                        logpadj = -log10(res$padj),
+                        lfc = res$log2FoldChange,
+                        sextissue = mytissue)
+  DEGs <- na.omit(DEGs)
+  DEGs <- DEGs %>%
+    dplyr::mutate(direction = ifelse(DEGs$lfc > 0 & DEGs$padj < 0.1, 
+                                     yes = up, no = ifelse(DEGs$lfc < 0 & DEGs$padj < 0.1, 
+                                                           yes = down, no = "NS"))) %>% 
+    dplyr::arrange(desc(lfc)) 
+  
+  DEGs$direction <- factor(DEGs$direction, levels = c(down, "NS", up)) 
+  
+  # write DEGsframe of only significant genes
+  DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+  print(str(DEGs))
+  
+  partialfilename = paste("_", down, "_", up, sep = "")
+  myfilename = paste0("../results/DESeq2/treatment/", mytissue, partialfilename, "_DEGs.csv")
+  
+  write.csv(DEGs, myfilename, row.names = F)
+  # return DEGs frome with all data, included NS genes
+  #print(head(DEGs))
+}  
+
+
+for(i in levels(colData$sextissue)){
+  
+  newcolData <- subsetcolData2(colData, i)
+  
+  # save counts that match colData
+  savecols <- as.character(newcolData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  newcountData <- countData %>% dplyr::select(one_of(savecols)) 
+  
+  dds <- DESeqDataSetFromMatrix(countData = newcountData,
+                                colData = newcolData,
+                                design = ~ treatment )
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dds)
+  print(dim(dds))
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  
+  vsd <- as.data.frame(assay(vst(dds, blind=FALSE)))
+  
+  myfilename = paste0("../results/DEseq2/treatment/", i, "_vsd.csv")
+  write.csv(vsd, myfilename)
+  
+  #return(dds)
+  #return(vsd)
+  #print(head(vsd))
+
+  # save differential gene expression results
+  
+  control.bldg <- createDEGdftreatment("bldg", "control", i)
+  bldg.lay <- createDEGdftreatment("lay", "bldg", i)
+  lay.inc.d3 <- createDEGdftreatment("inc.d3", "lay",  i) 
+  inc.d3.inc.d9 <- createDEGdftreatment("inc.d9", "inc.d3", i) 
+  inc.d9.inc.d17 <- createDEGdftreatment("inc.d17", "inc.d9", i)
+  inc.d17.hatch <- createDEGdftreatment( "hatch", "inc.d17", i) 
+  hatch.n5 <- createDEGdftreatment( "n5", "hatch",  i) 
+  n5.n9 <- createDEGdftreatment("n9", "n5",  i) 
+  
+  control.lay <- createDEGdftreatment("lay", "control", i)
+  control.inc.d3 <- createDEGdftreatment("inc.d3", "control",  i) 
+  control.inc.d9 <- createDEGdftreatment("inc.d9", "control", i) 
+  control.inc.d17 <- createDEGdftreatment("inc.d17", "control", i)
+  control.hatch <- createDEGdftreatment( "hatch", "control", i) 
+  control.n5 <- createDEGdftreatment( "n5", "control",  i) 
+  control.n9 <- createDEGdftreatment("n9", "control",  i) 
+  
+  control.extend <- createDEGdftreatment("extend", "control",  i) 
+  control.prolong <- createDEGdftreatment("prolong", "control",  i) 
+  control.early <- createDEGdftreatment("m.inc.d8", "control",  i) 
+
+  control.m.inc.d3 <- createDEGdftreatment("m.inc.d3", "control",  i) 
+  control.m.inc.d9 <- createDEGdftreatment("m.inc.d9", "control",  i) 
+  control.m.inc.d17 <- createDEGdftreatment("m.inc.d17", "control",  i)
+  control.m.n2 <- createDEGdftreatment("m.n2", "control",  i) 
+  
+  bldg.inc.d3 <- createDEGdftreatment("inc.d3", "bldg",  i) 
+  bldg.inc.d9 <- createDEGdftreatment("inc.d9", "bldg", i) 
+  bldg.inc.d17 <- createDEGdftreatment("inc.d17", "bldg", i)
+  bldg.hatch <- createDEGdftreatment( "hatch", "bldg", i) 
+  bldg.n5 <- createDEGdftreatment( "n5", "bldg",  i) 
+  bldg.n9 <- createDEGdftreatment("n9", "bldg",  i) 
+  
+  bldg.extend <- createDEGdftreatment("extend", "bldg",  i) 
+  bldg.prolong <- createDEGdftreatment("prolong", "bldg",  i) 
+  bldg.early <- createDEGdftreatment("m.inc.d8", "bldg",  i) 
+  
+  bldg.m.inc.d3 <- createDEGdftreatment("m.inc.d3", "bldg",  i) 
+  bldg.m.inc.d9 <- createDEGdftreatment("m.inc.d9", "bldg",  i) 
+  bldg.m.inc.d17 <- createDEGdftreatment("m.inc.d17", "bldg",  i)
+  bldg.m.n2 <- createDEGdftreatment("m.n2", "bldg",  i) 
+  
+  hatch.m.n2 <- createDEGdftreatment("m.n2", "hatch",  i) 
+  hatch.prolong <- createDEGdftreatment("prolong", "hatch",  i) 
+  hatch.m.inc.d8 <- createDEGdftreatment("prolong", "hatch",  i) 
+  
+  inc.d17.m.n2 <- createDEGdftreatment("m.n2", "inc.d17",  i) 
+  inc.d17.prolong <- createDEGdftreatment("prolong", "inc.d17",  i) 
+
+  prolong.extend <- createDEGdftreatment("extend", "prolong",  i) 
+  early.extend <- createDEGdftreatment("extend", "m.inc.d8",  i) 
+  early.prolong <- createDEGdftreatment("prolong", "m.inc.d8",  i) 
+  
+  m.inc.d9.m.inc.d3 <- createDEGdftreatment("m.inc.d9", "m.inc.d3",  i) 
+  m.inc.d17.m.inc.d9 <- createDEGdftreatment("m.inc.d17", "m.inc.d9",  i) 
+  m.inc.d17.m.inc.d3 <- createDEGdftreatment("m.inc.d17", "m.inc.d3",  i) 
+  m.n2.m.inc.d17 <- createDEGdftreatment("m.n2", "m.inc.d17",  i) 
+  m.n2.m.inc.d9 <- createDEGdftreatment("m.n2", "m.inc.d9",  i)
+  m.n2.m.inc.d3 <- createDEGdftreatment("m.n2", "m.inc.d3",  i)
+  
+  m.inc.d3.inc.d3 <- createDEGdftreatment("m.inc.d3", "inc.d3",  i) 
+  m.inc.d9.inc.d9 <- createDEGdftreatment("m.inc.d9", "inc.d9",  i) 
+  m.inc.d17.inc.d17 <- createDEGdftreatment("m.inc.d17", "inc.d17",  i) 
+  m.n2.hatch <- createDEGdftreatment("m.n2", "hatch",  i) 
+
+}
+
+```
 

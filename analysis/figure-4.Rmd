@@ -218,10 +218,13 @@ c <- plot_grid(c1,c2,c3,c4,c5,c6,c7,c8,c9, nrow = 3)
 
 bc <- plot_grid(b, c, nrow = 1, labels = c("", "C"), label_size = 8)
  
-plot_grid(a, bc, ncol = 1, rel_heights  = c(0.25,1),
+fig4 <- plot_grid(a, bc, ncol = 1, rel_heights  = c(0.25,1),
           labels = "AUTO", label_size = 8)
+fig4
 
-
+pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
+plot(fig4)
+dev.off()
 ```
 
 
