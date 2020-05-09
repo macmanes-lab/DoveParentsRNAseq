@@ -1,0 +1,3 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"C11H19ORF40",1.08681430731245e-41,40.9638446529686,21.9990717466045,"male_pituitary","inc.d9"
+"PNOC",5.25183563802792e-14,13.2796888740933,20.355802783194,"male_pituitary","inc.d9"

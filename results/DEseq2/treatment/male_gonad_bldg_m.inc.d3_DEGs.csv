@@ -1,0 +1,3 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"BAZ2B",0.0797623833247844,1.09820187764853,0.330093551126728,"male_gonad","m.inc.d3"
+"PRDX6",0.0797623833247844,1.09820187764853,-0.39812788886744,"male_gonad","bldg"

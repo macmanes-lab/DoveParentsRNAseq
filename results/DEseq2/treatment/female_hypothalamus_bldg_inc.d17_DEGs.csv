@@ -1,0 +1,5 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"CIB2",0.0456260958099211,1.3407866918837,1.5356561181114,"female_hypothalamus","inc.d17"
+"HSP90B1",0.042951350696206,1.36702317430805,-0.376677324040549,"female_hypothalamus","bldg"
+"BCL6",0.042951350696206,1.36702317430805,-0.500405781889003,"female_hypothalamus","bldg"
+"SERPINH1",0.0836461130814015,1.07755423529357,-0.657871515344418,"female_hypothalamus","bldg"

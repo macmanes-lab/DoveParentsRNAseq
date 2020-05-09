@@ -1,0 +1,4 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"LOC100857497",0.0852643617452493,1.0692324545479,3.05031035923244,"male_hypothalamus","inc.d9"
+"SLC18A2",0.0877670871346613,1.0566683150231,-1.227251488392,"male_hypothalamus","bldg"
+"TPH2",0.000315459925709978,3.50105580329285,-3.17849519595607,"male_hypothalamus","bldg"
