@@ -79,6 +79,8 @@ pitgon$direction <- factor(pitgon$direction, levels = c( "pituitary", "gonad"))
 
 str(allDEG)
 unique(allDEG$comparison)
+
+
 ```
 
 ## make figure

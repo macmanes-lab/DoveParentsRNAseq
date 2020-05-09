@@ -11,7 +11,7 @@ library(ggsignif)
 
 source("../R/themes.R")
 source("../R/functions.R")
-source("../R/wrangledata.R")
+#source("../R/wrangledata.R")
 
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
 ```
@@ -184,7 +184,7 @@ a <- png::readPNG("../figures/images/fig_fig4a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
 
 b1 <- plotcandidatemanipquad(candidatevsd, "hypothalamus", c("DRD1")) 
-b2 <- plotcandidatemanipquad(candidatevsd2,"pituitary", c("PRL")) 
+b2 <- plotcandidatemanipquad(candidatevsd,"pituitary", c("PRL")) 
 b3 <- plotcandidatemanipquad(candidatevsd,"gonad", c("PGR")) 
 
 b <- plot_grid(b1,b2,b3, ncol = 1)
@@ -225,6 +225,63 @@ fig4
 pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
 plot(fig4)
 dev.off()
+
+
+
+
+
+candidatevsd <- candidatevsd %>%
+  dplyr::mutate(treatment = fct_collapse(treatment,
+                                         "m.n2" = c("m.n2",  "m.hatch" ),
+                                         "prolong" = c("prolong", "inc.prolong") ,
+                                         "extend" = c("extend", "extend.hatch")
+                                         ))  %>%
+  dplyr::mutate(day = fct_collapse(treatment,
+                                    "0" = c("control", "bldg"),
+                                    "1" = c("lay"),
+                                     "3" = c("inc.d3", "m.inc.d3" ),
+                                     "9" = c("inc.d9", "m.inc.d9", "m.inc.d8"  ),
+                                     "17" = c("inc.d17", "m.inc.d17", "prolong"  ),
+                                     "18" = c("hatch", "m.n2" ),
+                                     "22" = c("n5",  "extend" ),
+                                     "26" = c("n9"  )
+                                     )) %>%
+   mutate(treatment = factor(treatment, levels = alllevels)) %>%
+  dplyr::mutate(day = factor(day, levels = c("0", "1", "3", "9", "17", "18", "22", "26")))
+
+candidatevsd %>%
+    filter(tissue == "hypothalamus", sex == "female") %>%
+    filter(gene %in% "DRD1") %>%
+    drop_na()  %>%
+    ggplot(aes(y =  counts, x = day, fill = treatment, color = sex)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
+    theme_B3() +
+    theme(legend.position = "bottom",
+          #axis.text.x = element_blank(),
+          #axis.title.x = element_blank(),
+          strip.text = element_text(face = "italic")) +
+    scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+    labs(subtitle = paste("female", "hypothalamus", sep = " "), y = "DRD1")
+
+
+candidatevsd %>%
+    filter(tissue == "pituitary", sex == "female") %>%
+    filter(gene %in% "PRL") %>%
+    drop_na()  %>%
+    ggplot(aes(y =  counts, x = day, fill = treatment, color = sex)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
+    theme_B3() +
+    theme(legend.position = "bottom",
+          #axis.text.x = element_blank(),
+          #axis.title.x = element_blank(),
+          strip.text = element_text(face = "italic")) +
+    scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+    labs(subtitle = paste("female", "pituitary", sep = " "), y = "PRL")
+
 ```
 
 
