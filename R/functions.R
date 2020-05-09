@@ -1030,7 +1030,7 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
     scale_color_manual(values = allcolors) +
     geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
               position = position_dodge(width = 1),
-              size = 1.75, color = "black")  +
+              size = 3, color = "black")  +
     ylim(lowlim, higherlim)
   return(p)
 }
@@ -1066,7 +1066,7 @@ getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   candidates  <- allvsd %>%
     filter(gene %in% whichgenes) %>%
     dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
-    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/'), "[", 2)) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/treatment/'), "[", 2)) %>%
     dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
                   tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
                   treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%

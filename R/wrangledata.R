@@ -82,10 +82,13 @@ candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
 
 
 #### variance stabilized gene expression  (vsd) for all and candidate genes
-vsd_path <- "../results/DEseq2/"   # path to the data
+vsd_path <- "../results/DEseq2/treatment/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
 vsd_pathfiles <- paste0(vsd_path, vsd_files)
 vsd_files
+
+## before pivoting, check names of df with
+## head(names(allvsd)) and tail(names(allvsd))
 
 allvsd <- vsd_pathfiles %>%
   setNames(nm = .) %>% 
@@ -93,15 +96,35 @@ allvsd <- vsd_pathfiles %>%
   dplyr::rename("gene" = "X1") %>% 
   pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                names_to = "samples", values_to = "counts") 
+head(allvsd)
 
 candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
+
+
+getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
+  candidates  <- allvsd %>%
+    filter(gene %in% whichgenes) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/treatment/'), "[", 2)) %>%
+    dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+                  tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
+                  treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
+    dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
+    dplyr::select(sex, tissue, treatment, gene, samples, counts) %>%
+    filter(tissue == whichtissue, sex %in% whichsex)  %>%
+    drop_na()
+  #candidates$treatment <- factor(candidates$treatment, levels = alllevels)
+  return(candidates)
+}
+
+
 hypvsd <- getcandidatevsd(candidategenes, "hypothalamus", sexlevels)
 pitvsd <- getcandidatevsd(candidategenes, "pituitary", sexlevels)
 gonvsd <- getcandidatevsd(candidategenes, "gonad", sexlevels)
 candidatevsd <- rbind(hypvsd, pitvsd)
 candidatevsd <- rbind(candidatevsd, gonvsd)
 
-
+head(candidatevsd)
 
 ### manip 
 

@@ -12,7 +12,7 @@ library(ggtext) # for italic fonts
 
 source("../R/themes.R")
 source("../R/functions.R")
-source("../R/wrangledata.R")
+#source("../R/wrangledata.R")
 
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
 ```
@@ -37,7 +37,7 @@ mtsne <-  subsetmaketsne(tissuelevels, charlevels, "male")
 ## DEGs
 
 ```{r allDEGs}
-DEG_path <- "../results/DEseq2/"   # path to the data
+DEG_path <- "../results/DEseq2/treatment/"   # path to the data
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
 DEG_pathfiles <- paste0(DEG_path, DEG_files)
 #DEG_files
@@ -45,7 +45,7 @@ DEG_pathfiles <- paste0(DEG_path, DEG_files)
 allDEG <- DEG_pathfiles %>%
   setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name") %>% 
-  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
   mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
   mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
   mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
@@ -56,10 +56,15 @@ allDEG <- DEG_pathfiles %>%
 dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
 head(allDEG)
 
+# select only characterization plots
 allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
-allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
+allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevelschar)
 allDEG$direction <- factor(allDEG$direction, levels = charlevels)
 
+allDEG <- allDEG %>% drop_na()
+
+
+## other DEG stuff
 hypsex <- read_csv("../results/DEseq2/sex/hypothalamus_female_male_DEGs.csv")
 pitsex <- read_csv("../results/DEseq2/sex/pituitary_female_male_DEGs.csv")
 gonsex <- read_csv("../results/DEseq2/sex/gonad_female_male_DEGs.csv")
@@ -71,6 +76,9 @@ pitgon <- read_csv("../results/DEseq2/tissue/pituitary_gonad_DEGs.csv")
 hyppit$direction <- factor(hyppit$direction, levels = c("hypothalamus", "pituitary"))
 hypgon$direction <- factor(hypgon$direction, levels = c("hypothalamus",  "gonad"))
 pitgon$direction <- factor(pitgon$direction, levels = c( "pituitary", "gonad"))
+
+str(allDEG)
+unique(allDEG$comparison)
 ```
 
 ## make figure
@@ -82,6 +90,7 @@ a <- ggdraw() +  draw_image(a, scale = 1)
 
 
 b1 <- plottsneelipse(chartsne, chartsne$tissue, allcolors)  + labs(y = "tSNE 2 ", subtitle = " ")  
+
 b2 <- sexbarplots(hyppit, 0, 8100) + labs(subtitle = " ", y = "DEGs w/ + LFC") +
   theme(axis.text.y = element_blank(), axis.ticks = element_blank()) +
   scale_x_discrete(labels=c("hypothalamus" = "hyp", "pituitary" = "pit" ))
@@ -122,7 +131,15 @@ d5 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) +
   labs(x = "tSNE1 \n \n DEGs = differentially expressed genes \n + LFC = positive log fold change", 
        subtitle = "gonads")
 
-
+theme_B3 <- function () { 
+  theme_classic(base_size = 20,
+                base_family = 'Helvetica') +
+    theme(
+      strip.background  = element_blank(),
+      panel.grid.major  = element_blank(),  # remove major gridlines
+      panel.grid.minor  = element_blank()  # remove minor gridlines
+    )
+}
 # hyp
 d2 <- makebargraph("hypothalamus","DEGs w/ + LFC", 0, 4300) + 
   theme(axis.ticks = element_blank(),
@@ -147,12 +164,13 @@ d6 <- makebargraph("gonad","DEGs w/ + LFC", 0, 4300) +
   labs(subtitle = " ")
 
 
+d6
+
 bc <- plot_grid(b1,b2,b3,b4, c1,c2,c3,c4, nrow = 1, rel_widths = c(1.5,1.1,0.9,0.9,1.5,1.1,0.9,0.9),
                 labels = c("B", "", "", "", "C"), label_size = 8)
 
 d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.3), rel_widths = c(1,2),
                   labels = c("D"), label_size = 8)
-
 
 fig1 <- plot_grid(a,bc, d, nrow = 3, rel_heights = c(0.7,0.7,2),
                   labels = c("A"), label_size = 8)
