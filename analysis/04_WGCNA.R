@@ -197,6 +197,6 @@ PRLmodule <- genes_modules %>%
 
 
 ### save files
-write.csv(candidategeneassociated, "../results/candidategeneassociated.csv", row.names = F)
-write.csv(genes_modules, "../results/08_genes_modules.csv", row.names = F)
-write.csv(PRLmodule, "../results/PRLmodule.csv", row.names = F)
+write.csv(candidategeneassociated, "../results/04_candidategeneassociated.csv", row.names = F)
+write.csv(genes_modules, "../results/04_genes_modules.csv", row.names = F)
+write.csv(PRLmodule, "../results/04_PRLmodule.csv", row.names = F)
