@@ -24,12 +24,9 @@ library(ggimage)
 
 source("../R/themes.R")
 source("../R/functions.R")
-source("../R/wrangledata.R")
 
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 ```
-
-
 
 ## Candidate DEGs
 
@@ -73,6 +70,7 @@ kable(table1)
 
 ```{r}
 # load `candidatevsd` with `source("../R/wrangledata.R")`
+candidatevsd <- read_csv("../results/03_candidatevsd.csv")
 head(candidatevsd)
 
 curleychampagnegenes <- curleychampagnegenes %>% pull(gene)

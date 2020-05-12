@@ -10,6 +10,7 @@ library(Rtsne)
 library(kableExtra) 
 library(ggtext) # for italic fonts
 
+
 source("../R/themes.R")
 source("../R/functions.R")
 
@@ -42,6 +43,8 @@ head(row.names(countData) == row.names(colData))
 
 ```{r tSNE-df}
 
+# uses count data from limma
+
 # prep for tsne
 chartsne <- subsetmaketsne(tissuelevels, charlevels, sexlevels)
 hyptsne <- subsetmaketsne("hypothalamus", charlevels, sexlevels)
@@ -52,34 +55,19 @@ ftsne <-  subsetmaketsne(tissuelevels, charlevels, "female")
 mtsne <-  subsetmaketsne(tissuelevels, charlevels, "male")
 ```
 
-## DEGs
 
-```{r allDEGs}
-DEG_path <- "../results/DEseq2/treatment/"   # path to the data
-DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
-DEG_pathfiles <- paste0(DEG_path, DEG_files)
-#DEG_files
+## Treatment specific DEGs 
 
-allDEG <- DEG_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_csv(.x), .id = "file_name") %>% 
-  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
-  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
-  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
-  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
-  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
-  mutate(comparison = paste(down,up, sep = "_")) %>%
-  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
-  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
-head(allDEG)
+```{r}
+allDEG <- read_csv("../results/03_allDEG.csv")
+str(allDEG)
+unique(allDEG$comparison)
+```
 
-# select only characterization plots
-allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
-allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevelschar)
-allDEG$direction <- factor(allDEG$direction, levels = charlevels)
 
-allDEG <- allDEG %>% drop_na()
+## Sex and Tissue -related DEGs
+
+```{r DEGs}
 
 ## other DEG stuff
 hypsex <- read_csv("../results/DEseq2/sex/hypothalamus_female_male_DEGs.csv")
@@ -94,8 +82,6 @@ hyppit$direction <- factor(hyppit$direction, levels = c("hypothalamus", "pituita
 hypgon$direction <- factor(hypgon$direction, levels = c("hypothalamus",  "gonad"))
 pitgon$direction <- factor(pitgon$direction, levels = c( "pituitary", "gonad"))
 
-str(allDEG)
-unique(allDEG$comparison)
 ```
 
 ## make figure

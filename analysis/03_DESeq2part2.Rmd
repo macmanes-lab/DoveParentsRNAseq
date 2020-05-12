@@ -1,10 +1,18 @@
+---
+title: "03_DESeq2part2"
+output: md_document
+---
+  
+```{r}
 library(tidyverse)
 library(readr)
 
 source("../R/themes.R")
+```
 
 ### candidate gene anlayses
 
+```{r}
 # all genes in this parental care dataset 
 geneids <- read_csv("../metadata/00_geneinfo.csv") %>% select(-X1) 
 
@@ -55,10 +63,12 @@ candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
 
 # note: I can't find these genes in dataset: NOS1 or OXTR or FOX1B or HTR5A
 
+```
+
 
 ### variance stabilized gene expression  (vsd) 
 
-
+```{r}
 vsd_path <- "../results/DEseq2/treatment/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
 vsd_pathfiles <- paste0(vsd_path, vsd_files)
@@ -74,10 +84,16 @@ allvsd <- vsd_pathfiles %>%
   pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                names_to = "samples", values_to = "counts") 
 allvsd %>% select(-file_name) %>% head()
+```
+
+
+
 
 
 ### vsd for all and candidate genes
 
+
+```{r}
 candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
 
 getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
@@ -105,10 +121,42 @@ candidatevsd <- rbind(candidatevsd, gonvsd)
 
 head(candidatevsd)
 
+```
 
-### manip 	
 
+## All DEGs (but currently only char DEGs)
 
+```{r}
+DEG_path <- "../results/DEseq2/treatment/"   # path to the data
+DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
+DEG_pathfiles <- paste0(DEG_path, DEG_files)
+#DEG_files
+
+allDEG <- DEG_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name") %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
+  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
+  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
+  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
+  mutate(comparison = paste(down,up, sep = "_")) %>%
+  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
+  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
+dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
+head(allDEG)
+
+# select only characterization plots
+allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
+allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevelschar)
+allDEG$direction <- factor(allDEG$direction, levels = charlevels)
+
+allDEG <- allDEG %>% drop_na()
+```
+
+### hypothesis testing 	
+
+```{r}
 
 DEG_path <- "../results/DEseq2/hypothesis/"   # path to the data	
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names	
@@ -151,3 +199,18 @@ hilogenes <- PRLDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
 eggchickgenes <- envDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)	
 
 hypothesisDEGs <- c(hilogenes, eggchickgenes) %>% unique()
+```
+
+
+
+## save files
+
+```{r write}
+
+write.csv(allDEG, "../results/03_hypothesisDEGs.csv")
+write.csv(allDEG, "../results/03_allDEGs.csv")
+write.csv(allvsd, "../results/03_allvsd.csv")
+write.csv(candidatevsd, "../results/03_candidatevsd.csv")
+```
+
+
