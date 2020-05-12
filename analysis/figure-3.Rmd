@@ -46,7 +46,8 @@ head(row.names(countData) == row.names(colData))
 ## PCA data
 
 ```{r PCA}
-# pca
+# pca relies on count data from limma
+
 pca1f <- subsetmakepca("pituitary", charlevels, "female")	
 pca2f <- makefvizdf("pituitary", charlevels, "female")	
 
@@ -55,14 +56,13 @@ pca2m <- makefvizdf("pituitary", charlevels, "male")
 
 pca1 <- subsetmakepca("pituitary", charlevels, sexlevels)	
 pca2 <- makefvizdf("pituitary", charlevels, sexlevels)	
-
-
 ```
 
 # Hi Lo PRL and WGCNA PRL
 
 ```{r}
-# `candidatevsd` loaded with `source("../R/wrangledata.R")`
+candidatevsd <- read_csv("../results/03_candidatevsd.csv")
+head(candidatevsd)
 
 PRLpit <- candidatevsd %>% 
   filter(tissue == "pituitary", 
@@ -107,6 +107,7 @@ WGCNAvsd <- getcandidatevsd(WGCNAgenes, "pituitary", sexlevels)
 
 #deg wrangling moved to datawrangling.R
 
+hypothesisDEGs <- read_csv("../results/03_hypothesisDEGs.csv")
 hypothesisDEGs <- c(hypothesisDEGs, WGCNAgenes) %>% unique()
 
 candidatevsd <- getcandidatevsd(hypothesisDEGs, "pituitary", sexlevels) 
