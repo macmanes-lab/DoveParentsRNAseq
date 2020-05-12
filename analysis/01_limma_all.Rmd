@@ -12,22 +12,25 @@ library(edgeR)
 library(kableExtra)
 library(cowplot)
 
-knitr::opts_chunk$set(fig.path = '../figures/01_limma/',cache=TRUE)
+knitr::opts_chunk$set(fig.path = '../figures/01_limma/')
 ```
 
 First, I read in the data I processed in 00_datawrangling.Rmd.
 
 ```{r read}
 # import "colData" which contains sample information and "countData" which contains read counts
-colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
+colData <- read.csv("../metadata/00_colData.csv", header = T, row.names = 1)
 countData <- read.csv("../results/00_counts.csv", header = T, row.names = 1)
-head(colData)
+
+#countData  <- head(countData, 1000) # suset for quick analysis
+
 geneinfo <- row.names(countData)
 ```
 
 Then, I followed the steps from <https://github.com/macmanes-lab/RockDove/blob/master/parental_care/parental_analysis.Rmd>.
 
 ```{r edgeR}
+head(colData$group)
 # create a large DGEList with 3 elements
 parentalobject <- DGEList(counts=countData, genes=geneinfo, group=colData$group)
 
@@ -58,5 +61,6 @@ names(parentalobject)
 #head(parentalobject$counts)
 #head(parentalobject$pseudo.counts)
 
-write.csv(parentalobject$pseudo.counts, "../results/01_pseudo.counts.csv")
+
+write.csv(parentalobject$pseudo.counts, "../results/01_limma.csv")
 ```

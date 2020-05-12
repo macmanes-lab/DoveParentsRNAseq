@@ -16,38 +16,38 @@ source("../R/themes.R")
 
 ## this is for tsne and pca
 
-Note, pseudocounts is too big for storage on github :(
+Note, limmacounts is too big for storage on github :(
 
 ```{r}
-pseudocounts <- read_csv("../results/01_pseudo.counts.csv")
-head(pseudocounts[1:3])
-pseudocounts <- as.data.frame(pseudocounts)
-row.names(pseudocounts) <- pseudocounts$X1
-pseudocounts$X1 <- NULL
+limmacounts <- read_csv("../results/01_limma.csv")
+head(limmacounts[1:3])
+limmacounts <- as.data.frame(limmacounts)
+row.names(limmacounts) <- limmacounts$X1
+limmacounts$X1 <- NULL
 # prep count data for all samples
-pseudocounts <- as.data.frame(t(pseudocounts))
-head(pseudocounts[1:3])
+limmacounts <- as.data.frame(t(limmacounts))
+head(limmacounts[1:3])
 
-pseudocountsLong <- pseudocounts %>%
+limmacountsLong <- limmacounts %>%
   mutate(samples = row.names(.)) %>%
-  pivot_longer(-samples, names_to = "gene", values_to = "pseudocounts")
-#pseudocountsLong$samples <- row.names(pseudocountsLong)
-head(pseudocountsLong)
+  pivot_longer(-samples, names_to = "gene", values_to = "limmacounts")
+#limmacountsLong$samples <- row.names(limmacountsLong)
+head(limmacountsLong)
 ```
 
 
 ### prep col data for all samples
 
 ```{r}
-colData <- read.csv("../metadata/00_samples.csv", header = T, row.names = 1)
-colData$treatment <- factor(colData$treatment, levels = alllevels)
-colData <- colData %>% mutate(tissue = fct_recode(tissue, "gonads" = "gonad"))
-colData$tissue <- factor(colData$tissue, levels = tissuelevels)
+colData <- read.csv("../metadata/00_colData.csv", header = T, row.names = 1) %>%
+  mutate(treatment = factor(treatment, levels = alllevels),
+         tissue = factor(tissue, levels = tissuelevels))
+colData <- as.data.frame(colData)
 row.names(colData) <- colData$V1
 
 # check ready for analysis
 # row.names(countData) == row.names(colData)
-head(row.names(pseudocounts) == row.names(colData))
+head(row.names(limmacounts) == row.names(colData))
 ```
 
 
