@@ -18,10 +18,30 @@ library(ggsignif)
 
 source("../R/themes.R") 
 source("../R/functions.R")
-source("../R/wrangledata.R")
+
+source("../R/datawrangling.R")
 
 knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
 ```
+
+## import limma counts and sample info
+
+```{r data}
+countData <- read_csv("../results/01_limma.csv") %>%
+  column_to_rownames(var = "X1")
+countData <- as.data.frame(t(countData))
+head(countData[1:3])
+
+colData <- read_csv("../metadata/00_colData.csv") %>%
+  mutate(treatment = factor(treatment, levels = alllevels),
+         tissue = factor(tissue, levels = tissuelevels)) %>% 
+  column_to_rownames(var = "X1") 
+head(colData)
+# check ready for analysis
+# row.names(countData) == row.names(colData)
+head(row.names(countData) == row.names(colData))
+```
+
 
 ## PCA data
 

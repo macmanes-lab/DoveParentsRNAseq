@@ -3,14 +3,14 @@ Figure 4: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -69,26 +69,17 @@ Figure 4: All things prolactin
 
     source("../R/themes.R") 
     source("../R/functions.R")
-    source("../R/wrangledata.R")
 
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-
-    ## See spec(...) for full column specifications.
+    source("../R/datawrangling.R")
 
     ## Warning: Missing column names filled in: 'X1' [1]
 
     ## Parsed with column specification:
     ## cols(
     ##   X1 = col_double(),
-    ##   Name = col_character(),
+    ##   gene = col_character(),
     ##   geneid = col_double(),
-    ##   entrezid = col_character()
+    ##   NCBI = col_character()
     ## )
 
     ## Warning: Missing column names filled in: 'X1' [1]
@@ -98,6 +89,7 @@ Figure 4: All things prolactin
     ##   .default = col_double(),
     ##   X1 = col_character()
     ## )
+
     ## See spec(...) for full column specifications.
 
     ## Warning: Missing column names filled in: 'X1' [1]
@@ -260,6 +252,63 @@ Figure 4: All things prolactin
 
     knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
 
+import limma counts and sample info
+-----------------------------------
+
+    countData <- read_csv("../results/01_limma.csv") %>%
+      column_to_rownames(var = "X1")
+    countData <- as.data.frame(t(countData))
+    head(countData[1:3])
+
+    ##                                            A2ML1     A2ML2      A2ML3
+    ## L.Blu13_male_gonad_control.NYNO         42.65677 4.4397552  211.96191
+    ## L.Blu13_male_hypothalamus_control.NYNO 201.26331 4.8633048 6919.87335
+    ## L.Blu13_male_pituitary_control.NYNO    161.22614 0.3158851  212.10845
+    ## L.G107_male_gonad_control               43.22441 2.0404458  203.74048
+    ## L.G107_male_hypothalamus_control       382.33084 4.9190817 9531.52550
+    ## L.G107_male_pituitary_control           85.34910 0.3577761   69.02124
+
+    colData <- read_csv("../metadata/00_colData.csv") %>%
+      mutate(treatment = factor(treatment, levels = alllevels),
+             tissue = factor(tissue, levels = tissuelevels)) %>% 
+      column_to_rownames(var = "X1") 
+    head(colData)
+
+    ##                                                                            V1
+    ## L.Blu13_male_gonad_control.NYNO               L.Blu13_male_gonad_control.NYNO
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
+    ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
+    ## L.G107_male_gonad_control                           L.G107_male_gonad_control
+    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
+    ## L.G107_male_pituitary_control                   L.G107_male_pituitary_control
+    ##                                           bird  sex       tissue treatment
+    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male       gonads   control
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus   control
+    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male    pituitary   control
+    ## L.G107_male_gonad_control               L.G107 male       gonads   control
+    ## L.G107_male_hypothalamus_control        L.G107 male hypothalamus   control
+    ## L.G107_male_pituitary_control           L.G107 male    pituitary   control
+    ##                                                            group
+    ## L.Blu13_male_gonad_control.NYNO              male.gonads.control
+    ## L.Blu13_male_hypothalamus_control.NYNO male.hypothalamus.control
+    ## L.Blu13_male_pituitary_control.NYNO       male.pituitary.control
+    ## L.G107_male_gonad_control                    male.gonads.control
+    ## L.G107_male_hypothalamus_control       male.hypothalamus.control
+    ## L.G107_male_pituitary_control             male.pituitary.control
+    ##                                                  study
+    ## L.Blu13_male_gonad_control.NYNO        charcterization
+    ## L.Blu13_male_hypothalamus_control.NYNO charcterization
+    ## L.Blu13_male_pituitary_control.NYNO    charcterization
+    ## L.G107_male_gonad_control              charcterization
+    ## L.G107_male_hypothalamus_control       charcterization
+    ## L.G107_male_pituitary_control          charcterization
+
+    # check ready for analysis
+    # row.names(countData) == row.names(colData)
+    head(row.names(countData) == row.names(colData))
+
+    ## [1] TRUE TRUE TRUE TRUE TRUE TRUE
+
 PCA data
 --------
 
@@ -290,8 +339,8 @@ Hi Lo PRL and WGCNA PRL
     ## # A tibble: 2 x 2
     ##   sex    median
     ##   <chr>   <dbl>
-    ## 1 female   18.1
-    ## 2 male     17.9
+    ## 1 female   18.9
+    ## 2 male     18.5
 
     PRLpit %>%
       group_by(sex, tissue, hiloPRL) %>%
@@ -301,10 +350,10 @@ Hi Lo PRL and WGCNA PRL
     ## # Groups:   sex, tissue [2]
     ##   sex    tissue    hiloPRL     n
     ##   <chr>  <chr>     <fct>   <int>
-    ## 1 female pituitary lo         47
-    ## 2 female pituitary hi         49
-    ## 3 male   pituitary lo         51
-    ## 4 male   pituitary hi         46
+    ## 1 female pituitary lo         54
+    ## 2 female pituitary hi        111
+    ## 3 male   pituitary lo         70
+    ## 4 male   pituitary hi         95
 
     PRLpitF <- PRLpit %>% filter( sex == "female" )
     PRLpitM <- PRLpit %>% filter( sex == "male")
@@ -333,46 +382,46 @@ Internal versus external hyotheses
     pithilo <- makecorrdf("female", "pituitary", hilogenes)
 
     ## # A tibble: 6 x 17
-    ##   rowname  OLFM1  STT3B    PRL  ARAP2 LOC101749834    MLN LAPTM4B  FGF6
-    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>        <dbl>  <dbl>   <dbl> <dbl>
-    ## 1 OLFM1   NA      0.831  0.839  0.722        0.752  0.782   0.827 0.692
-    ## 2 STT3B    0.831 NA      0.904  0.809        0.752  0.807   0.863 0.749
-    ## 3 PRL      0.839  0.904 NA      0.817        0.756  0.839   0.928 0.720
-    ## 4 ARAP2    0.722  0.809  0.817 NA            0.710  0.741   0.840 0.724
-    ## 5 LOC101…  0.752  0.752  0.756  0.710       NA      0.768   0.798 0.756
-    ## 6 MLN      0.782  0.807  0.839  0.741        0.768 NA       0.868 0.794
-    ## # … with 8 more variables: CENPI <dbl>, CDK1 <dbl>, BUB1 <dbl>,
-    ## #   LOC423793 <dbl>, KPNA2 <dbl>, RACGAP1 <dbl>, CKAP2 <dbl>, RRM2 <dbl>
+    ##   rowname  OLFM1  STT3B  ARAP2    MLN LOC101749834    PRL  FGF6 LAPTM4B
+    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>        <dbl>  <dbl> <dbl>   <dbl>
+    ## 1 OLFM1   NA      0.832  0.737  0.741        0.709  0.858 0.676   0.847
+    ## 2 STT3B    0.832 NA      0.769  0.766        0.741  0.862 0.759   0.865
+    ## 3 ARAP2    0.737  0.769 NA      0.721        0.653  0.815 0.681   0.838
+    ## 4 MLN      0.741  0.766  0.721 NA            0.737  0.759 0.778   0.839
+    ## 5 LOC101…  0.709  0.741  0.653  0.737       NA      0.659 0.755   0.782
+    ## 6 PRL      0.858  0.862  0.815  0.759        0.659 NA     0.683   0.899
+    ## # … with 8 more variables: CENPI <dbl>, CDK1 <dbl>, KPNA2 <dbl>,
+    ## #   BUB1 <dbl>, LOC423793 <dbl>, CKAP2 <dbl>, RRM2 <dbl>, RACGAP1 <dbl>
 
     piteggchick <- makecorrdf("female", "pituitary", eggchickgenes)
 
     ## # A tibble: 6 x 20
-    ##   rowname  SF3A1 LOC101748741 FBXO21  UBAC1   NEMF KIAA1522  NKRF ZC3H18
-    ##   <chr>    <dbl>        <dbl>  <dbl>  <dbl>  <dbl>    <dbl> <dbl>  <dbl>
-    ## 1 SF3A1   NA            0.711  0.556  0.610  0.684    0.725 0.634  0.780
-    ## 2 LOC101…  0.711       NA      0.575  0.589  0.482    0.543 0.524  0.504
-    ## 3 FBXO21   0.556        0.575 NA      0.605  0.467    0.380 0.439  0.313
-    ## 4 UBAC1    0.610        0.589  0.605 NA      0.373    0.497 0.430  0.373
-    ## 5 NEMF     0.684        0.482  0.467  0.373 NA        0.512 0.424  0.547
-    ## 6 KIAA15…  0.725        0.543  0.380  0.497  0.512   NA     0.426  0.708
-    ## # … with 11 more variables: UIMC1 <dbl>, ZBTB16 <dbl>, CTNND2 <dbl>,
-    ## #   TULP1 <dbl>, WIPF3 <dbl>, INSM1 <dbl>, LOC422319 <dbl>, VTN <dbl>,
-    ## #   SEBOX <dbl>, FKBP5 <dbl>, MYBPC3 <dbl>
+    ##   rowname  SF3A1 KIAA1522 ZC3H18  WIPF3 LOC101748741  UBAC1 SEBOX   VTN
+    ##   <chr>    <dbl>    <dbl>  <dbl>  <dbl>        <dbl>  <dbl> <dbl> <dbl>
+    ## 1 SF3A1   NA        0.686  0.764  0.508        0.709  0.572 0.261 0.182
+    ## 2 KIAA15…  0.686   NA      0.668  0.555        0.541  0.498 0.522 0.420
+    ## 3 ZC3H18   0.764    0.668 NA      0.567        0.497  0.405 0.412 0.285
+    ## 4 WIPF3    0.508    0.555  0.567 NA            0.476  0.380 0.557 0.450
+    ## 5 LOC101…  0.709    0.541  0.497  0.476       NA      0.519 0.224 0.209
+    ## 6 UBAC1    0.572    0.498  0.405  0.380        0.519 NA     0.226 0.257
+    ## # … with 11 more variables: CTNND2 <dbl>, FBXO21 <dbl>, NKRF <dbl>,
+    ## #   NEMF <dbl>, UIMC1 <dbl>, LOC422319 <dbl>, TULP1 <dbl>, ZBTB16 <dbl>,
+    ## #   INSM1 <dbl>, FKBP5 <dbl>, MYBPC3 <dbl>
 
     pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
 
     ## # A tibble: 6 x 21
-    ##   rowname ACOT12 C2H8ORF46 CHRNB4  F13A1 COL20A1 FAM83G  CD24 FOSL2  AGR2
-    ##   <chr>    <dbl>     <dbl>  <dbl>  <dbl>   <dbl>  <dbl> <dbl> <dbl> <dbl>
-    ## 1 ACOT12  NA         0.242  0.248  0.299   0.241  0.201 0.133 0.251 0.263
-    ## 2 C2H8OR…  0.242    NA      0.371  0.158   0.388  0.408 0.360 0.370 0.408
-    ## 3 CHRNB4   0.248     0.371 NA      0.336   0.325  0.413 0.618 0.265 0.596
-    ## 4 F13A1    0.299     0.158  0.336 NA       0.361  0.433 0.366 0.484 0.528
-    ## 5 COL20A1  0.241     0.388  0.325  0.361  NA      0.542 0.652 0.413 0.461
-    ## 6 FAM83G   0.201     0.408  0.413  0.433   0.542 NA     0.513 0.588 0.480
-    ## # … with 11 more variables: CALN1 <dbl>, DUSP10 <dbl>, CDT1 <dbl>,
-    ## #   CREM <dbl>, ARAP2 <dbl>, CDKN3 <dbl>, FAM19A1 <dbl>, FKBP11 <dbl>,
-    ## #   FGF6 <dbl>, CRELD2 <dbl>, CREB3L1 <dbl>
+    ##   rowname  ACOT12 C2H8ORF46 CHRNB4  F13A1 FAM83G    CD24  AGR2 FOSL2 DUSP10
+    ##   <chr>     <dbl>     <dbl>  <dbl>  <dbl>  <dbl>   <dbl> <dbl> <dbl>  <dbl>
+    ## 1 ACOT12  NA          0.111  0.156  0.341  0.218  0.0815 0.212 0.238  0.271
+    ## 2 C2H8OR…  0.111     NA      0.370  0.103  0.427  0.405  0.363 0.266  0.276
+    ## 3 CHRNB4   0.156      0.370 NA      0.250  0.422  0.638  0.530 0.351  0.420
+    ## 4 F13A1    0.341      0.103  0.250 NA      0.413  0.286  0.487 0.409  0.434
+    ## 5 FAM83G   0.218      0.427  0.422  0.413 NA      0.522  0.490 0.528  0.521
+    ## 6 CD24     0.0815     0.405  0.638  0.286  0.522 NA      0.440 0.393  0.524
+    ## # … with 11 more variables: COL20A1 <dbl>, CDT1 <dbl>, CREM <dbl>,
+    ## #   CDKN3 <dbl>, CALN1 <dbl>, ARAP2 <dbl>, FAM19A1 <dbl>, FKBP11 <dbl>,
+    ## #   CRELD2 <dbl>, FGF6 <dbl>, CREB3L1 <dbl>
 
     a1 <- plotpc12(pca1, pca2, pca1$treatment, allcolors, "Pituitary gene expression", " ")   
     a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", " ") + theme(axis.text.x = element_text())  +
