@@ -5,6 +5,7 @@ output: md_document
 
 ```{r setup}
 # https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+
 library(tidyverse)
 
 source("../R/themes.R")
@@ -12,38 +13,51 @@ source("../R/themes.R")
 
 # Data Wrangling
 
-## countData and geneinfo
+## import Kallisto transcript data, make gene info file 
 
 ```{r countData}
 # import count data, set rows at entreziz
 kallistodata <- read.table("../results/kallistocounts.txt", 
-                        sep = ",", row.names = NULL)
+                        sep = ",", row.names = NULL) %>%
+  rename("NCBI" = "entrezid",
+         "gene" = "Name")
+head(kallistodata)
 
 ## save gene information
 geneinfo <- kallistodata %>%
-  select(Name, geneid, entrezid)
+  select(gene, geneid, NCBI) 
 head(geneinfo)
+```
 
 
-# check for genes that have multple transcripts expressed
+## # check for genes that have multple transcripts expressed
+
+```{r}
 isoforms <- kallistodata %>%
-  group_by(Name) %>%
+  group_by(gene) %>%
   summarize(n = n()) %>%
   filter(n > 1) %>%
   group_by(n) %>% 
-  summarize(genes = str_c(Name, collapse = ", ")) %>%
+  summarize(genes = str_c(gene, collapse = ", ")) %>%
   arrange(desc(n)) %>%
   rename("n(isoforms)" = "n") %>% 
   mutate("n(counts)" = str_count(genes, ",") + 1)
 head(isoforms)
 
-# for example, this gene has 
-geneinfo %>% filter(Name == "GRIN1")
+# for example, these gene have 2 and 3 isoforms
+geneinfo %>% filter(gene == "GRIN1")
+geneinfo %>% filter(gene == "CACNA1C")
+```
 
+
+## group data by gene
+
+
+```{r}
+head(kallistodata)
 # aggregate transcript counts to gene counts
 countData <- kallistodata %>% 
-  select(-row.names, -geneid, -entrezid) %>% 
-  rename(gene = Name) %>%
+  select(-row.names, -geneid, -NCBI) %>% 
   pivot_longer(-gene, names_to = "samples", values_to = "counts") %>%  
   pivot_wider(
     names_from = samples, 
@@ -51,7 +65,6 @@ countData <- kallistodata %>%
     values_fn = list(counts = sum))  %>% 
   arrange(gene) %>% 
   filter(gene != "")
-
 countData <- as.data.frame(countData)
 row.names(countData) <- countData$gene ## make gene the row name
 countData[1] <- NULL ## make gene the row name
@@ -65,128 +78,72 @@ dim(countData)
 ## wrangle colData 
 
 ```{r colData}
-colData <- read.table(file.path( "../metadata/kallistosamples.txt"), header = F, stringsAsFactors = F)
-
-# use strsplit to cut the filename into meaningful columns
-colData$bird <- sapply(strsplit(as.character(colData$V1),'\\_'), "[", 1)
-colData$sex <- sapply(strsplit(as.character(colData$V1),'\\_'), "[", 2)
-colData$tissue <- sapply(strsplit(as.character(colData$V1),'\\_'), "[", 3)
-
-# to create columns with variable names in the filename 
-colData$temp <- sapply(strsplit(as.character(colData$V1),'\\_'), "[", 4)
-colData$treatmentTemp <- sapply(strsplit(as.character(colData$temp),'\\.'), "[", 1)
-colData$NYNO <- sapply(strsplit(as.character(colData$temp),'\\.'), "[", 2)
-
-# relabel incorrectly named variables 
-colData$treatment <- ifelse(grepl("extend-hatch", colData$treatmentTemp), "extend",
-                            ifelse(grepl("inc-prolong", colData$treatmentTemp), "prolong",
-                                   ifelse(grepl("m.hatch", colData$treatmentTemp), "m.n2",
-                                   colData$treatmentTemp)))
-
-# drop no-longer-needed cols
-colData <- colData %>% dplyr::select(-c(temp, treatmentTemp, NYNO))
-
-# replace dashes with periods and make rowname, (to make deseq happy)
-colData$bird <- gsub("-", ".", colData$bird)
-colData$treatment <- gsub("-", ".", colData$treatment)
-colData$V1 <- gsub("-", ".", colData$V1)
-row.names(colData) <- colData$V1
-
-# make variables factors and specify level
+colData <- read.table(file.path( "../metadata/kallistosamples.txt"),
+                      header = F, stringsAsFactors = F) %>%
+  # use strsplit to cut the filename into meaningful columns
+  mutate(bird = sapply(strsplit(V1,'\\_'), "[", 1),
+         sex = sapply(strsplit(V1,'\\_'), "[", 2),
+         tissue = sapply(strsplit(V1,'\\_'), "[", 3),
+         temp = sapply(strsplit(V1,'\\_'), "[", 4)) %>%
+  mutate(treatmenttemp = sapply(strsplit(temp,'\\.'), "[", 1),
+         NYNO = sapply(strsplit(temp,'\\.'), "[", 2)) %>%
+ 
+  # rename variables
+  mutate(treatment = ifelse(grepl("extend-hatch", treatmenttemp), "extend",
+                            ifelse(grepl("inc-prolong", treatmenttemp), "prolong",
+                                   ifelse(grepl("m.hatch", treatmenttemp), "m.n2",
+                                          ifelse(grepl("m.inc.d8", treatmenttemp), "early",
+                                   treatmenttemp))))) %>%
+   select(-temp, -NYNO, -treatmenttemp ) %>%
+  # replace dashes with periods (to make deseq happy)
+  mutate(bird = gsub("-", ".", bird),
+         treatment = gsub("-", ".", treatment),
+         V1 = gsub("-", ".", V1))
+# specify levels that will be factors
 cols <- c("sex", "treatment", "tissue")
 colData[cols] <- lapply(colData[cols], factor) 
-colData$tissue <- factor(colData$tissue, 
-                         levels = c("hypothalamus", "pituitary", "gonad"))
+colData <- colData %>%
+  mutate(tissue = factor(tissue, levels = c("hypothalamus", "pituitary", "gonad"))) %>% 
+  mutate(tissue = fct_recode(tissue, "gonads" = "gonad")) %>%
+  mutate(group = paste(sex, tissue, treatment, sep = "."),
+         study = ifelse(grepl("m.|extend|prolong", treatment), 
+                        "manipulation", "charcterization")) %>%
+  mutate(study = factor(study, levels = c("charcterization", "manipulation")))
+colData <- as.data.frame(colData)
+row.names(colData) <- colData$V1
+head(colData)
+```
 
-# create a combinatorial variable
-colData$group <- paste(colData$sex, colData$tissue, colData$treatment, sep=".")
+## check that rownames and colnames match for DESeq
 
-# add variable to distinguish characterization study and manipulation
-colData$study <- ifelse(grepl("m.|extend|prolong", colData$treatment), "manipulation", "charcterization")
-
-colData$study <- factor(colData$study, levels = c("charcterization", "manipulation"))
-
-## view colData
+```{r}
 str(colData)
-head(colData, 5)
-
-# check that rownames and colnames match for DESeq
 ncol(countData) == nrow(colData)
 
 colData %>% select(sex, tissue, treatment, study)  %>%  summary()
-
+table(colData$sex, colData$treatment, colData$tissue)
 ```
 
-## save bird and sample and count data 
+## save bird data 
 
 ```{r}
-samples <- colData
-
 birds <- colData %>%
   select(bird, sex, treatment) %>%
   distinct()
 birds
-
 ```
 
-
-
-## subset for manipulation study
-
-```{r manip}
-# create a new dfs for just the manipulation study
-colData_manipluation <- colData %>%
-  dplyr::filter(treatment %in% maniplevels1) %>%
-  droplevels()
-row.names(colData_manipluation) <- colData_manipluation$V1
-
-# print sample sizes
-colData_manipluation %>% select(sex,treatment, tissue)  %>%  summary()
-
-# create list with filenames and select countData columns matching the file names
-savecols <- as.character(colData_manipluation$V1) 
-savecols <- as.vector(savecols) 
-countData_manipluation <- countData %>% dplyr::select(one_of(savecols)) 
-
-# confirm that row and col lenghts are equal
-ncol(countData_manipluation) == nrow(colData_manipluation)
-```
-
-## subset for characterization study
-
-```{r characterization}
-# filter out data related to the manipulation study
-colData_characterization <- colData %>%
-  dplyr::filter(treatment %in% charlevels) %>%
-  droplevels()
-row.names(colData_characterization) <- colData_characterization$V1
-
-# print sample sizes
-colData_characterization %>% select(sex,treatment, tissue)  %>%  summary()
-
-savecols <- as.character(colData_characterization$V1) 
-savecols <- as.vector(savecols) 
-countData_characterization <- countData %>% dplyr::select(one_of(savecols)) 
-
-# check that row and col lenghts are equal
-ncol(countData_characterization) == nrow(colData_characterization)
-```
 
 ## save files for downstream use
 
 ```{r write}
 write.csv(countData, "../results/00_counts.csv")
-write.csv(samples, "../metadata/00_samples.csv")
+write.csv(isoforms, "../results/00_geneswithisoforms.csv", row.names = T)
+
+write.csv(colData, "../metadata/00_colData.csv")
 write.csv(birds, "../metadata/00_birds.csv")
-
-write.csv(colData_manipluation, "../metadata/00_colData_manipluation.csv", row.names = TRUE) 
-write.csv(countData_manipluation, "../results/00_countData_manipluation.csv", row.names = TRUE) 
-write.csv(colData_characterization, "../metadata/00_colData_characterization.csv", row.names = TRUE) 
-write.csv(countData_characterization, "../results/00_countData_characterization.csv", row.names = TRUE) 
-
 write.csv(geneinfo, "../metadata/00_geneinfo.csv", row.names = TRUE)
 
-write.csv(isoforms, "../results/00_geneswithisoformss.csv", row.names = T)
 ```
 
 

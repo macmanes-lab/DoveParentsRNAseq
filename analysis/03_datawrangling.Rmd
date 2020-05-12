@@ -55,10 +55,7 @@ head(row.names(pseudocounts) == row.names(colData))
 
 ```{r}
 # all genes in this parental care dataset 
-geneids <- read_csv("../metadata/00_geneinfo.csv") %>%
-  select(-X1) %>%
-  rename("NCBI" = "entrezid",
-         "gene" = "Name")
+geneids <- read_csv("../metadata/00_geneinfo.csv") %>% select(-X1) 
 
 # genes from Ch 17 Evolution of parental care
 curleychampagnegenes <- c("AVP", "AVPR1A", "ADRA2A",    
