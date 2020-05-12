@@ -138,6 +138,10 @@ bcd <- plot_grid(b,c,d, ncol = 3, rel_widths = c(1,1,1), labels = c("B", "C", "D
 
 fig2 <- plot_grid(a,bcd, ncol = 1, labels = c("A"), label_size = 8, rel_heights = c(0.1,1))
 fig2
+
+pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
+plot(fig2)
+dev.off()
 ```
 
 ```{r fig3, fig.height=3, fig.width=7.25}
