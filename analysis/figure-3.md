@@ -3,14 +3,14 @@ Figure 4: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -327,7 +327,11 @@ Hi Lo PRL and WGCNA PRL
 
     # `candidatevsd` loaded with `source("../R/wrangledata.R")`
 
-    PRLpit <- candidatevsd %>% filter(tissue == "pituitary", gene == "PRL") %>%
+    PRLpit <- candidatevsd %>% 
+      filter(tissue == "pituitary", 
+             gene == "PRL",
+             treatment %in% charlevels) %>%
+      mutate(treatment = factor(treatment, levels = charlevels))  %>%
       mutate(hiloPRL = ifelse(counts >= 18, "hi", "lo"))  %>%
       drop_na()
     PRLpit$hiloPRL <- factor(PRLpit$hiloPRL, levels = c("lo", "hi"))
@@ -339,8 +343,8 @@ Hi Lo PRL and WGCNA PRL
     ## # A tibble: 2 x 2
     ##   sex    median
     ##   <chr>   <dbl>
-    ## 1 female   18.9
-    ## 2 male     18.5
+    ## 1 female   18.4
+    ## 2 male     18.1
 
     PRLpit %>%
       group_by(sex, tissue, hiloPRL) %>%
@@ -350,10 +354,10 @@ Hi Lo PRL and WGCNA PRL
     ## # Groups:   sex, tissue [2]
     ##   sex    tissue    hiloPRL     n
     ##   <chr>  <chr>     <fct>   <int>
-    ## 1 female pituitary lo         54
-    ## 2 female pituitary hi        111
-    ## 3 male   pituitary lo         70
-    ## 4 male   pituitary hi         95
+    ## 1 female pituitary lo         36
+    ## 2 female pituitary hi         60
+    ## 3 male   pituitary lo         43
+    ## 4 male   pituitary hi         54
 
     PRLpitF <- PRLpit %>% filter( sex == "female" )
     PRLpitM <- PRLpit %>% filter( sex == "male")
@@ -377,7 +381,6 @@ Internal versus external hyotheses
 
     #candidateboxplot("pituitary", c("PNOC"), "female") + labs(x = NULL )  + theme( strip.text = element_blank())
     #candidateboxplot("pituitary", c("KPNA2"), "male") + labs(x = NULL )  + theme( strip.text = element_blank())
-
 
     pithilo <- makecorrdf("female", "pituitary", hilogenes)
 
@@ -424,8 +427,10 @@ Internal versus external hyotheses
     ## #   CRELD2 <dbl>, FGF6 <dbl>, CREB3L1 <dbl>
 
     a1 <- plotpc12(pca1, pca2, pca1$treatment, allcolors, "Pituitary gene expression", " ")   
-    a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", " ") + theme(axis.text.x = element_text())  +
-      theme(legend.position = c(0.8,0.2)) + guides(fill = FALSE)
+    a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", " ") + 
+      theme(axis.text.x = element_text())  +
+      theme(legend.position = c(0.8,0.2)) + 
+      guides(fill = FALSE)
 
     a <- plot_grid(a1,a2, labels = c("A"), label_size = 8)
 

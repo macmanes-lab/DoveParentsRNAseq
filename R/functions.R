@@ -869,7 +869,7 @@ plotprolactin <- function(df, myy, myylab, mysubtitle ){
                                    c("hatch", "n5"),
                                    c( "n5", "n9")),  
                 map_signif_level=TRUE,
-                textsize = 1.5, family = 'Helvetica',
+                textsize = 2, family = 'Helvetica',
                 vjust = 1.5, size = 0) 
   return(p)
 }

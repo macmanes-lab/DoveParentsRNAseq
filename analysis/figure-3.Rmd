@@ -64,7 +64,11 @@ pca2 <- makefvizdf("pituitary", charlevels, sexlevels)
 ```{r}
 # `candidatevsd` loaded with `source("../R/wrangledata.R")`
 
-PRLpit <- candidatevsd %>% filter(tissue == "pituitary", gene == "PRL") %>%
+PRLpit <- candidatevsd %>% 
+  filter(tissue == "pituitary", 
+         gene == "PRL",
+         treatment %in% charlevels) %>%
+  mutate(treatment = factor(treatment, levels = charlevels))  %>%
   mutate(hiloPRL = ifelse(counts >= 18, "hi", "lo"))  %>%
   drop_na()
 PRLpit$hiloPRL <- factor(PRLpit$hiloPRL, levels = c("lo", "hi"))
@@ -110,7 +114,6 @@ candidatevsd <- getcandidatevsd(hypothesisDEGs, "pituitary", sexlevels)
 #candidateboxplot("pituitary", c("PNOC"), "female") + labs(x = NULL )  + theme( strip.text = element_blank())
 #candidateboxplot("pituitary", c("KPNA2"), "male") + labs(x = NULL )  + theme( strip.text = element_blank())
 
-
 pithilo <- makecorrdf("female", "pituitary", hilogenes)
 piteggchick <- makecorrdf("female", "pituitary", eggchickgenes)
 pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
@@ -120,8 +123,10 @@ pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
 ```{r fig3, fig.width=7.25, fig.height=7.25}
 
 a1 <- plotpc12(pca1, pca2, pca1$treatment, allcolors, "Pituitary gene expression", " ")   
-a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", " ") + theme(axis.text.x = element_text())  +
-  theme(legend.position = c(0.8,0.2)) + guides(fill = FALSE)
+a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", " ") + 
+  theme(axis.text.x = element_text())  +
+  theme(legend.position = c(0.8,0.2)) + 
+  guides(fill = FALSE)
 
 a <- plot_grid(a1,a2, labels = c("A"), label_size = 8)
 
