@@ -1,21 +1,19 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
     library(readr)
 
     source("../R/themes.R")
-
-    knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE)
 
 ### candidate gene anlayses
 
@@ -55,7 +53,7 @@
     GO_pathfiles <- paste0(GO_path, GO_files)
 
     GOgenesLong <- GO_pathfiles %>%
-      stats::setNames(nm = .) %>% 
+      setNames(nm = .) %>% 
       map_df(~read_table(.x, col_types = cols(), col_names = FALSE), .id = "file_name") %>% 
       mutate(GO = sapply(strsplit(as.character(file_name),'../metadata/goterms/'), "[", 2)) %>% 
       mutate(GO = sapply(strsplit(as.character(GO),'.txt'), "[", 1)) %>% 
@@ -120,7 +118,7 @@
     ## head(names(allvsd)) and tail(names(allvsd))
 
     allvsd <- vsd_pathfiles %>%
-      stats::setNames(nm = .) %>% 
+      setNames(nm = .) %>% 
       map_df(~read_csv(.x), .id = "file_name")  %>% 
       dplyr::rename("gene" = "X1") %>% 
       pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
@@ -241,7 +239,7 @@ All DEGs (but currently only char DEGs)
     #DEG_files
 
     allDEG <- DEG_pathfiles %>%
-      stats::setNames(nm = .) %>% 
+      setNames(nm = .) %>% 
       map_df(~read_csv(.x), .id = "file_name") %>% 
       mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
       mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
@@ -3069,7 +3067,7 @@ All DEGs (but currently only char DEGs)
     #DEG_files  
 
     allDEG2 <- DEG_pathfiles %>%    
-      stats::setNames(nm = .) %>%   
+      setNames(nm = .) %>%  
       map_df(~read_csv(.x), .id = "file_name") %>%  
       mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/hypothesis/'), "[", 2))  %>%   
       mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>%     
@@ -3235,6 +3233,3 @@ save files
     write.csv(hypothesisDEGs, "../results/03_hypothesisDEGs.csv")
     write.csv(allDEG, "../results/03_allDEGs.csv")
     write.csv(candidatevsd, "../results/03_candidatevsd.csv")
-
-    #library(crunch)
-    #write.csv.gz(allvsd, "../results/03_allvsd.csv.gz", na = "")

@@ -3,13 +3,12 @@ title: "03_DESeq2part2"
 output: md_document
 ---
   
+
 ```{r setup}
 library(tidyverse)
 library(readr)
 
 source("../R/themes.R")
-
-knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE)
 ```
 
 ### candidate gene anlayses
@@ -35,7 +34,7 @@ GO_files <- dir(GO_path, pattern = "*.txt") # get file names
 GO_pathfiles <- paste0(GO_path, GO_files)
 
 GOgenesLong <- GO_pathfiles %>%
-  stats::setNames(nm = .) %>% 
+  setNames(nm = .) %>% 
   map_df(~read_table(.x, col_types = cols(), col_names = FALSE), .id = "file_name") %>% 
   mutate(GO = sapply(strsplit(as.character(file_name),'../metadata/goterms/'), "[", 2)) %>% 
   mutate(GO = sapply(strsplit(as.character(GO),'.txt'), "[", 1)) %>% 
@@ -80,7 +79,7 @@ vsd_files
 ## head(names(allvsd)) and tail(names(allvsd))
 
 allvsd <- vsd_pathfiles %>%
-  stats::setNames(nm = .) %>% 
+  setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name")  %>% 
   dplyr::rename("gene" = "X1") %>% 
   pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
@@ -125,7 +124,6 @@ head(candidatevsd)
 
 ```
 
-
 ## All DEGs (but currently only char DEGs)
 
 ```{r allDEG}
@@ -135,7 +133,7 @@ DEG_pathfiles <- paste0(DEG_path, DEG_files)
 #DEG_files
 
 allDEG <- DEG_pathfiles %>%
-  stats::setNames(nm = .) %>% 
+  setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name") %>% 
   mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
   mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
@@ -158,15 +156,15 @@ allDEG <- allDEG %>% drop_na()
 
 ### hypothesis testing 	
 
-```{r hypothesisDEGS}
 
+```{r hypothesisDEGS}
 DEG_path <- "../results/DEseq2/hypothesis/"   # path to the data	
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names	
 DEG_pathfiles <- paste0(DEG_path, DEG_files)	
 #DEG_files	
 
 allDEG2 <- DEG_pathfiles %>%	
-  stats::setNames(nm = .) %>% 	
+  setNames(nm = .) %>% 	
   map_df(~read_csv(.x), .id = "file_name") %>% 	
   mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/hypothesis/'), "[", 2))  %>% 	
   mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 	
@@ -209,9 +207,6 @@ hypothesisDEGs <- c(hilogenes, eggchickgenes) %>% unique()
 write.csv(hypothesisDEGs, "../results/03_hypothesisDEGs.csv")
 write.csv(allDEG, "../results/03_allDEGs.csv")
 write.csv(candidatevsd, "../results/03_candidatevsd.csv")
-
-#library(crunch)
-#write.csv.gz(allvsd, "../results/03_allvsd.csv.gz", na = "")
 ```
 
 
