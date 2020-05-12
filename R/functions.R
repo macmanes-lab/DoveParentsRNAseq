@@ -341,78 +341,6 @@ plotcandidates <- function(vsd.df, colData, mysubtitle){
 
 
 
-###### plot wgcna candidates
-
-plotWGCNAcandidates <- function(vsd, mygenelist, colData, mysubtitle){
-  
-  vsd.df <- as.data.frame(assay(vsd))
-  vsd.df$entrezid <- row.names(vsd.df)
-  
-  candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
-  candidates <- candidates %>%
-    filter(entrezid %in% mygenelist) %>% droplevels()
-  candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -geneid)
-  candidates_long <- candidates %>% gather(-Name, key = "sample", value = "value")
-  candidates_long$V1 <- candidates_long$sample
-  candidatecounts <- left_join(candidates_long, colData, by = "V1")
-  candidatecounts$Name <- as.factor(candidatecounts$Name)
-  candidatecounts$treatment <- factor(candidatecounts$treatment, levels = charlevels)
-  bysextreatment <- group_by(candidatecounts, sex, treatment, Name)
-  bysextreatment
-  candidateST <- summarize(bysextreatment, expression = mean(value))
-
-  
-  p1 <- ggplot(candidateST, aes(x = as.numeric(treatment), y = expression, color = sex)) +
-    geom_point() +
-    geom_smooth(se = FALSE) +
-    facet_wrap(~Name, scales = "free_y") +
-    mytheme() +
-    theme(legend.position = "bottom",
-          axis.text.x = element_text(angle = 60,  hjust=1)) +
-    guides(fill = guide_legend(nrow = 1)) +
-    labs(x = NULL, y = "Gene expression",
-         subtitle = mysubtitle) +
-    scale_x_continuous(breaks=c(1,2,3,4,5,6,7,8,9),
-                       labels=charlevels) +
-    scale_color_manual(values = colorstreatmentsex)
-  return(p1)
-  
-}
-
-plotWGCNAcandidatesManip <- function(vsd, mygenelist, colData, mysubtitle){
-  
-  vsd.df <- as.data.frame(assay(vsd))
-  vsd.df$entrezid <- row.names(vsd.df)
-  
-  candidates <- full_join(geneinfo, vsd.df, by = "entrezid")
-  candidates <- candidates %>%
-    filter(entrezid %in% mygenelist) %>% droplevels()
-  candidates <- candidates %>% dplyr::select(-row.names, -entrezid, -geneid)
-  candidates_long <- candidates %>% gather(-Name, key = "sample", value = "value")
-  candidates_long$V1 <- candidates_long$sample
-  candidatecounts <- left_join(candidates_long, colData, by = "V1")
-  candidatecounts$Name <- as.factor(candidatecounts$Name)
-  candidatecounts$treatment <- factor(candidatecounts$treatment, levels = maniplevels)
-  bysextreatment <- group_by(candidatecounts, sex, treatment, Name)
-  bysextreatment
-  candidateST <- summarize(bysextreatment, expression = mean(value))
-  
-  p1 <- ggplot(candidateST, aes(x = as.numeric(treatment), y = expression)) +
-    geom_point(aes(color = treatment)) +
-    geom_smooth(se = FALSE, aes(color = sex)) +
-    facet_wrap(~Name, scales = "free_y") +
-    mytheme +
-    theme(legend.position = "bottom",
-          axis.text.x = element_text(angle = 60,  hjust=1)) +
-    guides(fill = guide_legend(nrow = 1)) +
-    labs(x = NULL, y = "Gene expression",
-         subtitle = mysubtitle) +
-    scale_x_continuous(breaks=c(1,2,3,4,5,6,7),
-                       labels=maniplevels)
-  return(p1)
-  
-}
-
 ######### makepheatmap ######### 
 
 # makes a candidate heat map!!
@@ -1030,7 +958,7 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
     scale_color_manual(values = allcolors) +
     geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
               position = position_dodge(width = 1),
-              size = 3, color = "black")  +
+              size = 1.75, color = "black")  +
     ylim(lowlim, higherlim)
   return(p)
 }

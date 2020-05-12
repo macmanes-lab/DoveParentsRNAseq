@@ -12,12 +12,30 @@ library(ggtext) # for italic fonts
 
 source("../R/themes.R")
 source("../R/functions.R")
-#source("../R/wrangledata.R")
 
 knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
 ```
 
 #  Experimental design, tSNE analysis, and bar chars
+
+
+## import limma counts and sample info
+
+```{r data}
+countData <- read_csv("../results/01_limma.csv") %>%
+  column_to_rownames(var = "X1")
+countData <- as.data.frame(t(countData))
+head(countData[1:3])
+
+colData <- read_csv("../metadata/00_colData.csv") %>%
+  mutate(treatment = factor(treatment, levels = alllevels),
+         tissue = factor(tissue, levels = tissuelevels)) %>% 
+  column_to_rownames(var = "X1") 
+head(colData)
+# check ready for analysis
+# row.names(countData) == row.names(colData)
+head(row.names(countData) == row.names(colData))
+```
 
 
 ## tsne
@@ -63,7 +81,6 @@ allDEG$direction <- factor(allDEG$direction, levels = charlevels)
 
 allDEG <- allDEG %>% drop_na()
 
-
 ## other DEG stuff
 hypsex <- read_csv("../results/DEseq2/sex/hypothalamus_female_male_DEGs.csv")
 pitsex <- read_csv("../results/DEseq2/sex/pituitary_female_male_DEGs.csv")
@@ -79,8 +96,6 @@ pitgon$direction <- factor(pitgon$direction, levels = c( "pituitary", "gonad"))
 
 str(allDEG)
 unique(allDEG$comparison)
-
-
 ```
 
 ## make figure
@@ -133,15 +148,6 @@ d5 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) +
   labs(x = "tSNE1 \n \n DEGs = differentially expressed genes \n + LFC = positive log fold change", 
        subtitle = "gonads")
 
-theme_B3 <- function () { 
-  theme_classic(base_size = 20,
-                base_family = 'Helvetica') +
-    theme(
-      strip.background  = element_blank(),
-      panel.grid.major  = element_blank(),  # remove major gridlines
-      panel.grid.minor  = element_blank()  # remove minor gridlines
-    )
-}
 # hyp
 d2 <- makebargraph("hypothalamus","DEGs w/ + LFC", 0, 4300) + 
   theme(axis.ticks = element_blank(),
@@ -162,11 +168,8 @@ d6 <- makebargraph("gonad","DEGs w/ + LFC", 0, 4300) +
   theme(axis.ticks = element_blank(),
         axis.text.y = element_blank(),
         strip.text.x = element_blank()) +
-  scale_x_discrete(labels = comparisonlabels)+
+  scale_x_discrete(labels = comparisonlabelschar)+
   labs(subtitle = " ")
-
-
-d6
 
 bc <- plot_grid(b1,b2,b3,b4, c1,c2,c3,c4, nrow = 1, rel_widths = c(1.5,1.1,0.9,0.9,1.5,1.1,0.9,0.9),
                 labels = c("B", "", "", "", "C"), label_size = 8)
