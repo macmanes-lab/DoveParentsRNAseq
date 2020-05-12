@@ -3,16 +3,18 @@ title: "03_DESeq2part2"
 output: md_document
 ---
   
-```{r}
+```{r setup}
 library(tidyverse)
 library(readr)
 
 source("../R/themes.R")
+
+knitr::opts_chunk$set(cache = TRUE, cache.lazy = FALSE)
 ```
 
 ### candidate gene anlayses
 
-```{r}
+```{r candidategenes}
 # all genes in this parental care dataset 
 geneids <- read_csv("../metadata/00_geneinfo.csv") %>% select(-X1) 
 
@@ -33,7 +35,7 @@ GO_files <- dir(GO_path, pattern = "*.txt") # get file names
 GO_pathfiles <- paste0(GO_path, GO_files)
 
 GOgenesLong <- GO_pathfiles %>%
-  setNames(nm = .) %>% 
+  stats::setNames(nm = .) %>% 
   map_df(~read_table(.x, col_types = cols(), col_names = FALSE), .id = "file_name") %>% 
   mutate(GO = sapply(strsplit(as.character(file_name),'../metadata/goterms/'), "[", 2)) %>% 
   mutate(GO = sapply(strsplit(as.character(GO),'.txt'), "[", 1)) %>% 
@@ -68,7 +70,7 @@ candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
 
 ### variance stabilized gene expression  (vsd) 
 
-```{r}
+```{r allvsd}
 vsd_path <- "../results/DEseq2/treatment/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
 vsd_pathfiles <- paste0(vsd_path, vsd_files)
@@ -78,7 +80,7 @@ vsd_files
 ## head(names(allvsd)) and tail(names(allvsd))
 
 allvsd <- vsd_pathfiles %>%
-  setNames(nm = .) %>% 
+  stats::setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name")  %>% 
   dplyr::rename("gene" = "X1") %>% 
   pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
@@ -93,7 +95,7 @@ allvsd %>% select(-file_name) %>% head()
 ### vsd for all and candidate genes
 
 
-```{r}
+```{r candidatevsd}
 candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
 
 getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
@@ -126,14 +128,14 @@ head(candidatevsd)
 
 ## All DEGs (but currently only char DEGs)
 
-```{r}
+```{r allDEG}
 DEG_path <- "../results/DEseq2/treatment/"   # path to the data
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
 DEG_pathfiles <- paste0(DEG_path, DEG_files)
 #DEG_files
 
 allDEG <- DEG_pathfiles %>%
-  setNames(nm = .) %>% 
+  stats::setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name") %>% 
   mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
   mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
@@ -156,7 +158,7 @@ allDEG <- allDEG %>% drop_na()
 
 ### hypothesis testing 	
 
-```{r}
+```{r hypothesisDEGS}
 
 DEG_path <- "../results/DEseq2/hypothesis/"   # path to the data	
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names	
@@ -164,7 +166,7 @@ DEG_pathfiles <- paste0(DEG_path, DEG_files)
 #DEG_files	
 
 allDEG2 <- DEG_pathfiles %>%	
-  setNames(nm = .) %>% 	
+  stats::setNames(nm = .) %>% 	
   map_df(~read_csv(.x), .id = "file_name") %>% 	
   mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/hypothesis/'), "[", 2))  %>% 	
   mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 	
@@ -201,16 +203,15 @@ eggchickgenes <- envDEGs %>% head(20) %>% distinct(gene) %>% pull(gene)
 hypothesisDEGs <- c(hilogenes, eggchickgenes) %>% unique()
 ```
 
-
-
 ## save files
 
 ```{r write}
-
-write.csv(allDEG, "../results/03_hypothesisDEGs.csv")
+write.csv(hypothesisDEGs, "../results/03_hypothesisDEGs.csv")
 write.csv(allDEG, "../results/03_allDEGs.csv")
-write.csv(allvsd, "../results/03_allvsd.csv")
 write.csv(candidatevsd, "../results/03_candidatevsd.csv")
+
+#library(crunch)
+#write.csv.gz(allvsd, "../results/03_allvsd.csv.gz", na = "")
 ```
 
 
