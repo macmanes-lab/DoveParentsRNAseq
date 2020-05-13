@@ -40,8 +40,10 @@ alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,
 # characteriation first, then manip by time
 alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                 "inc.d17", "hatch", "n5", "n9",
-                "m.inc.d3" ,  "early" ,  "m.inc.d9" , 
-                "m.inc.d17" , "m.n2", "prolong" , "extend")
+                "m.inc.d3" ,  
+                "early" ,  "m.inc.d9" , 
+                "prolong" , "m.inc.d17" , 
+                "extend", "m.n2")
 
 hypothesislevels <- c(  "lo" , "hi" ,  "nest",  "eggs", "chicks" )
 

@@ -80,7 +80,7 @@ head(allDEG)
 ## gene lists
 
 
-```{r}
+```{r genelists}
 
 # candidate genes from GO and literature
 parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% pull(gene)
@@ -143,5 +143,7 @@ head(candidatevsd)
 ```{R}
 write.csv(candidatevsd, "../results/06_candidatevsd.csv", row.names = F)
 write.csv(allDEG, "../results/06_allDEG.csv", row.names = F)
+
+candidategenes
 ```
 

@@ -201,23 +201,7 @@ returnPCAs2 <- function(vsd){
   return(pcadata)
 }
 
-######### plotPC12 ######### 
 
-# plot pc 1 and 2 for treatment and sex
-
-plotPC12 <- function(pcadata, mysubtitle){ 
-
-  pca12 <- ggplot(pcadata, aes(PC1, PC2, color = treatment, shape = sex)) + 
-    geom_point() +
-    #stat_ellipse() +
-    #xlab(paste0("PC1")) +
-    #ylab(paste0("PC2")) +
-    labs(subtitle = mysubtitle) +
-    #theme(legend.position = "bottom") +
-    #guides( fill = guide_legend(order = 2, ncol=2)) +
-    theme(legend.text = element_text(size=10)) 
-  return(pca12)
-}  
 
 ######### vsd.dataframe and corresponding col data ######### 
 
@@ -714,7 +698,7 @@ plotpc12 <- function(df1color, df2fviz, whichfactor, whichcolors, mysubtitle, my
     theme(axis.text = element_blank(),
           axis.ticks = element_blank()) 
   
-  p <- plot_grid(pc12color, pc12vector, nrow = 1)
+  p <- plot_grid(pc12color, pc12vector, nrow = 1, rel_widths = c(2,1))
   return(p)
   
 }

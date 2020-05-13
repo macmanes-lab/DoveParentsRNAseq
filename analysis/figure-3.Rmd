@@ -15,6 +15,7 @@ library(corrr)
 library(ggpubr)
 library(ggrepel)
 library(ggsignif)
+library(forcats)
 
 source("../R/themes.R") 
 source("../R/functions.R")
@@ -32,8 +33,9 @@ head(countData[1:3])
 
 colData <- read_csv("../metadata/04_colData.csv") %>%
   mutate(treatment = factor(treatment, levels = alllevels),
-         tissue = factor(tissue, levels = tissuelevels)) %>% 
-  column_to_rownames(var = "X1") 
+         tissue = factor(tissue, levels = tissuelevels),
+         temprowname = V1) %>% 
+  column_to_rownames(var = "temprowname") 
 head(colData)
 # check ready for analysis
 # row.names(countData) == row.names(colData)
@@ -46,28 +48,58 @@ head(row.names(countData) == row.names(colData))
 ```{r PCA}
 # pca relies on count data from limma
 
-pca1f <- subsetmakepca("pituitary", charlevels, "female")	
-pca2f <- makefvizdf("pituitary", charlevels, "female")	
+pca1f <- subsetmakepca("pituitary", alllevels, "female")	
+pca2f <- makefvizdf("pituitary", alllevels, "female")	
 
-pca1m <- subsetmakepca("pituitary", charlevels, "male")	
-pca2m <- makefvizdf("pituitary", charlevels, "male")
+pca1m <- subsetmakepca("pituitary", alllevels, "male")	
+pca2m <- makefvizdf("pituitary", alllevels, "male")
 
-pca1 <- subsetmakepca("pituitary", charlevels, sexlevels)	
-pca2 <- makefvizdf("pituitary", charlevels, sexlevels)	
+pca1 <- subsetmakepca("pituitary", alllevels, sexlevels)	
+pca2 <- makefvizdf("pituitary", alllevels, sexlevels)	
 ```
 
 ## candidate genes, hypotheses genes, and data-driven genes
 
 
 ```{r}
+# candidate counts for boxplots
+candidatevsd <- read_csv("../results/06_candidatevsd.csv") %>%
+  mutate(treatment = factor(treatment)) %>%
+  mutate(tissue = factor(tissue, levels = tissuelevel),
+        treatment = factor(treatment, levels = alllevels)) %>%
+  drop_na()
 
-candidatevsd <- read_csv("../results/06_candidatevsd.csv")
+## prlpit
+PRLpit <- candidatevsd %>% 
+  filter(gene == "PRL", tissue == "pituitary")
 
+# list of pvalue and DEGs
+allDEG <- read_csv("../results/06_allDEG.csv") 
+allDEG2 <- allDEG
+
+# candidate genes from GO and literature
+parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% pull(gene)
+
+## genes WGCNA prl module
+WGCNAgenes <- read_csv("../results/05_PRLmodule.csv") %>% pull(x)
+
+# DEGs infor for PRL and external
+hilodf <- allDEG %>%
+  filter(comparison == "lo_hi")  %>%
+  arrange(padj) 
+
+eggchickdf <- allDEG %>%
+  filter(comparison != "lo_hi")  %>%
+  arrange(padj)  
+  
+eggchickgenes <- eggchickdf %>%  top_n(20) %>% pull(gene)
+hilogenes <- hilodf %>%  top_n(20) %>% pull(gene)
+
+## for correlations
 pithilo <- makecorrdf("female", "pituitary", hilogenes)
 piteggchick <- makecorrdf("female", "pituitary", eggchickgenes)
 pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
 parentalcare <- makecorrdf("female", "pituitary", parentalcaregenes[1:20])
-
 ```
 
 
@@ -78,35 +110,26 @@ parentalcare <- makecorrdf("female", "pituitary", parentalcaregenes[1:20])
 
 a1 <- plotpc12(pca1, pca2, pca1$treatment, allcolors, "Pituitary gene expression", " ")   
 a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", " ") + 
-  theme(axis.text.x = element_text())  +
+  theme(axis.text.x = element_text(angle = 25))  +
   theme(legend.position = c(0.8,0.2)) + 
-  guides(fill = FALSE)
-
-a <- plot_grid(a1,a2, labels = c("A"), label_size = 8)
-
+  guides(fill = FALSE) 
+a <- plot_grid(a1,a2, labels = c("A"), label_size = 8, rel_widths = c(1,1.1))
 
 b1 <- png::readPNG("../figures/images/fig_fig3b.png")
 b1 <- ggdraw() +  draw_image(b1, scale = 1)
-
-
-b2 <- makenewbargraph("pituitary", "female","eggs vs. chicks", 0, 2200) + labs(subtitle = "female")  + labs(title = " ")  
-b3 <- makenewbargraph("pituitary", "male", "eggs vs. chicks", 0, 2200)  + labs(subtitle = "male")  + labs(title = " ") +
+b2 <- makenewbargraph("pituitary", "female","eggs_chicks", 0, 400) + labs(subtitle = "female")  + labs(title = " ")  
+b3 <- makenewbargraph("pituitary", "male", "eggs_chicks", 0, 400)  + labs(subtitle = "male")  + labs(title = " ") +
   theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), 
         axis.text.y = element_blank(), axis.line.y = element_blank())
-
-b4 <- makenewbargraph("pituitary", "male", "lo vs. hi PRL   ", 0, 2200) 
-b5 <- makenewbargraph("pituitary", "female", "lo vs. hi PRL   ", 0, 2200)   + 
+b4 <- makenewbargraph("pituitary", "male", "lo_hi", 0, 4000) 
+b5 <- makenewbargraph("pituitary", "female", "lo_hi", 0, 4000)   + 
   theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), 
         axis.text.y = element_blank(), axis.line.y = element_blank())
-
 b25 <- plot_grid(b2,b3,b4,b5, nrow = 2, rel_widths = c(1.2,1), rel_heights = c(1.2,1))
-
-b6 <-  plottopDEGs(envDEGs, "female", "#3A80B9", "LFC eggs vs. chicks", "Top 10 female DEGs") + labs(title = " ")
-b7 <-  plottopDEGs(PRLDEGs, "male", "#3A80B9", "LFC eggs vs. chicks", "Top 10 male DEGs") + labs(title = " ")
-b8 <-  plottopDEGs(PRLDEGs, "female", "#19757A", "LFC lo vs. hi PRL", NULL)
-b9 <-  plottopDEGs(PRLDEGs, "male", "#19757A", "LFC lo vs. hi PRL", NULL)
-
-
+b6 <-  plottopDEGs(eggchickdf, "female", "#3A80B9", "LFC eggs vs. chicks", "Top 10 female DEGs") + labs(title = " ")
+b7 <-  plottopDEGs(hilodf, "male", "#3A80B9", "LFC eggs vs. chicks", "Top 10 male DEGs") + labs(title = " ")
+b8 <-  plottopDEGs(hilodf, "female", "#19757A", "LFC lo vs. hi PRL", NULL)
+b9 <-  plottopDEGs(hilodf, "male", "#19757A", "LFC lo vs. hi PRL", NULL)
 b15 <- plot_grid(b1,b25,nrow = 1, rel_widths = c(1.2,1))
 b69 <- plot_grid(b6,b7,b8,b9, align = "v" , rel_heights = c(1.2,1))
 b <- plot_grid(b15,b69, labels = c("B"), label_size = 8, rel_widths = c(1.2,1))
@@ -114,7 +137,6 @@ b <- plot_grid(b15,b69, labels = c("B"), label_size = 8, rel_widths = c(1.2,1))
 c1 <- plotcorrplot(piteggchick, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 eggs vs. chicks DEGs")
 c2 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 lo vs. PRL DEGs") 
 d <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes from WGCNA module with PRL") + theme(legend.position = "right")
-
 cd <- plot_grid(c1,c2,d, nrow = 1, align = "h", labels = c("C", "", "D"), label_size = 8, rel_widths = c(1,1,1.3))
 
 
