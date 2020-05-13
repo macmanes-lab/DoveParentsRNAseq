@@ -17,7 +17,7 @@ source("../R/functions.R")
 ```
 
 
-### Hypothesis related data wrangle
+### Hypothesis-related data wrangle
 
 - PRL WGCNA
 - hi v lo PRL
@@ -54,7 +54,7 @@ unique(colData$hiloPRL)
 colData <- colData %>%
   mutate(external = fct_collapse(treatment,
                                  eggs = c("lay", "inc.d3", "inc.d9", "inc.d17", "prolong"),
-                                 chicks = c("hatch", "n5", "n9", "extend" , "m.inc.d8" ),
+                                 chicks = c("hatch", "n5", "n9", "extend" , "early" ),
                                  nest = c("bldg", "m.inc.d3",  "m.inc.d9",  "m.inc.d17",  "m.n2"),
                                  control = c("control"))) %>%
   drop_na()
