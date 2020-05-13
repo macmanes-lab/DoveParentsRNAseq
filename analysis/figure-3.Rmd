@@ -56,65 +56,9 @@ pca1 <- subsetmakepca("pituitary", charlevels, sexlevels)
 pca2 <- makefvizdf("pituitary", charlevels, sexlevels)	
 ```
 
-# Hi Lo PRL and WGCNA PRL
-
-```{r PRLpit}
-candidatevsd <- read_csv("../results/03_candidatevsd.csv")
-head(candidatevsd)
-
-PRLpit <- candidatevsd %>% 
-  filter(tissue == "pituitary", 
-         gene == "PRL",
-         treatment %in% charlevels) %>%
-  mutate(treatment = factor(treatment, levels = charlevels))  %>%
-  mutate(hiloPRL = ifelse(counts >= 18, "hi", "lo"))  %>%
-  drop_na()
-PRLpit$hiloPRL <- factor(PRLpit$hiloPRL, levels = c("lo", "hi"))
-
-PRLpit %>%
-  group_by(sex) %>%
-  summarize(median = median(counts))
-
-PRLpit %>%
-  group_by(sex, tissue, hiloPRL) %>%
-  summarize(n = n())
-
-PRLpitF <- PRLpit %>% filter( sex == "female" )
-PRLpitM <- PRLpit %>% filter( sex == "male")
-
-```
 
 
 
-### WGCNA prolactin module
-
-
-```{r WGCNA}
-## genes WGCNA prl module
-
-WGCNAgenes <- read_csv("../results/04_PRLmodule.csv") %>% pull(x)
-WGCNAvsd <- read_csv("../results/03_WGCNAvsd.csv")
-```
-
-
-## Internal versus external hyotheses
-
-```{r hypothesis}
-
-#deg wrangling moved to datawrangling.R
-
-hypothesisDEGs <- read_csv("../results/03_hypothesisDEGs.csv")
-hypothesisDEGs <- c(hypothesisDEGs, WGCNAgenes) %>% unique()
-
-candidatevsd <-read_csv("../results/03_candidatevsd.csv")
-
-#candidateboxplot("pituitary", c("PNOC"), "female") + labs(x = NULL )  + theme( strip.text = element_blank())
-#candidateboxplot("pituitary", c("KPNA2"), "male") + labs(x = NULL )  + theme( strip.text = element_blank())
-
-pithilo <- makecorrdf("female", "pituitary", hilogenes)
-piteggchick <- makecorrdf("female", "pituitary", eggchickgenes)
-pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
-```
 
 
 ```{r fig3, fig.width=7.25, fig.height=7.25}

@@ -21,10 +21,10 @@ charlevelsnocontrol <- c( "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch",
 
 # manipulation
 maniplevels <- c( "rm inc.d3" ,  "rm inc.d9" ,  "rm inc.d17" , "rm inc.d20" ,  "extend" , "prolong", "early")
-maniplevels1 <- c( "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , "m.inc.d17" , "m.n2", "prolong" , "extend")
+maniplevels1 <- c( "m.inc.d3" ,  "early" ,  "m.inc.d9" , "m.inc.d17" , "m.n2", "prolong" , "extend")
 
 # mix
-levelstiming <- c( "m.inc.d8" , "prolong" , "extend")
+levelstiming <- c( "early" , "prolong" , "extend")
 levelsremoval <- c( "m.inc.d3" ,    "m.inc.d9" , "m.inc.d17" , "m.n2")
 controlstiming <- c( "inc.d9" , "hatch" , "inc.d17")
 controlsremoval <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
@@ -32,7 +32,7 @@ allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay", "bldg")
 
 # mix of characterization and manipulation, ordered by time
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
-               "inc.d9", "m.inc.d9" , "m.inc.d8" ,
+               "inc.d9", "m.inc.d9" , "early" ,
                "inc.d17",  "m.inc.d17","prolong" ,
                "hatch",  "m.n2",   "extend",
                "n5", "n9")
@@ -40,7 +40,7 @@ alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,
 # characteriation first, then manip by time
 alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                 "inc.d17", "hatch", "n5", "n9",
-                "m.inc.d3" ,  "m.inc.d8" ,  "m.inc.d9" , 
+                "m.inc.d3" ,  "early" ,  "m.inc.d9" , 
                 "m.inc.d17" , "m.n2", "prolong" , "extend")
 
 # tissue
@@ -81,7 +81,7 @@ colorsmanip <- c("m.inc.d3" = "#CDCDCD",
                  "m.inc.d9" = "#959595", 
                  "m.inc.d17" = "#626262",
                  "m.n2" = "#262625", 
-                 "m.inc.d8" = "#cbc9e2", 
+                 "early" = "#cbc9e2", 
                  "prolong" = "#9e9ac8" , 
                  "extend" = "#6a51a3" )
 
@@ -108,7 +108,7 @@ sexcolors <- c("female" = "#969696", "male" = "#525252")
 
 colorsvolcano <-  c(colorschar,
                     
-                    "m.inc.d8" = "#cbc9e2", 
+                    "early" = "#cbc9e2", 
                     "prolong" = "#9e9ac8" , 
                      "extend" = "#6a51a3",
                     
