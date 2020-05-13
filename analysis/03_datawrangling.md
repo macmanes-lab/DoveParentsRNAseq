@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -44,7 +44,7 @@
     ## [22] "SLC6A4"
 
     curleychampagnegenes <- as.data.frame(curleychampagnegenes) %>%
-      mutate(GO = "parentalcare", gene = curleychampagnegenes)  %>%
+      mutate(GO = "literature", gene = curleychampagnegenes)  %>%
       select(GO, gene)
 
     # candidate gens from parental care GO terms 
@@ -72,35 +72,33 @@
     ## # A tibble: 6 x 4
     ##   GO               gene   geneid NCBI          
     ##   <chr>            <chr>   <dbl> <chr>         
-    ## 1 parentalcare     ADRA2A 428980 XP_004942333.2
+    ## 1 literature       ADRA2A 428980 XP_004942333.2
     ## 2 parentalbehavior AVP    396101 NP_990516.1   
-    ## 3 parentalcare     AVP    396101 NP_990516.1   
+    ## 3 literature       AVP    396101 NP_990516.1   
     ## 4 parentalbehavior AVPR1A 771773 NP_001103908.1
-    ## 5 parentalcare     AVPR1A 771773 NP_001103908.1
+    ## 5 literature       AVPR1A 771773 NP_001103908.1
     ## 6 parentalbehavior BRINP1 395098 NP_989780.1
 
     parentalcaregenes <- GOgenesLong %>% 
       pivot_wider(
         names_from = GO,
-        values_from = gene) %>%
-      mutate(numGOs = 4 - rowSums(is.na(.))) %>%
-      arrange(desc(numGOs)) %>%
-      select(-numGOs) %>%
-      left_join(geneids, by = c("geneid","NCBI"))
+        values_from = gene,
+        values_fill = list(gene = "")) %>%
+      left_join(geneids, by = c("geneid","NCBI")) %>%
+      dplyr::rename("GO"= "parentalbehavior" )
     head(parentalcaregenes)
 
     ## # A tibble: 6 x 5
-    ##   geneid NCBI           parentalcare parentalbehavior gene  
-    ##    <dbl> <chr>          <chr>        <chr>            <chr> 
-    ## 1 396101 NP_990516.1    AVP          AVP              AVP   
-    ## 2 771773 NP_001103908.1 AVPR1A       AVPR1A           AVPR1A
-    ## 3 427633 NP_001138320.1 DRD1         DRD1             DRD1  
-    ## 4 416343 XP_015149519.1 NR3C1        NR3C1            NR3C1 
-    ## 5 768516 XP_004936337.1 OXT          OXT              OXT   
-    ## 6 396453 NP_990797.2    PRL          PRL              PRL
+    ##   geneid NCBI           literature GO       gene  
+    ##    <dbl> <chr>          <chr>      <chr>    <chr> 
+    ## 1 428980 XP_004942333.2 "ADRA2A"   ""       ADRA2A
+    ## 2 396101 NP_990516.1    "AVP"      "AVP"    AVP   
+    ## 3 771773 NP_001103908.1 "AVPR1A"   "AVPR1A" AVPR1A
+    ## 4 395098 NP_989780.1    ""         "BRINP1" BRINP1
+    ## 5 416783 XP_001233014.1 "COMT"     ""       COMT  
+    ## 6 416206 XP_001231574.1 ""         "CREBRF" CREBRF
 
     candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
-
     # note: I can't find these genes in dataset: NOS1 or OXTR or FOX1B or HTR5A
 
 ### variance stabilized gene expression (vsd)
@@ -3064,3 +3062,4 @@ save files
 
     write.csv(allDEG, "../results/03_allDEGs.csv")
     write.csv(candidatevsd, "../results/03_candidatevsd.csv")
+    write.csv(parentalcaregenes, "../metadata/03_parentalcaregenes.csv")

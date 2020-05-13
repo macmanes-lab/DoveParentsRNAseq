@@ -25,7 +25,7 @@ curleychampagnegenes <- c("AVP", "AVPR1A", "ADRA2A",
                           "OPRM1", "OXT" , "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
 curleychampagnegenes
 curleychampagnegenes <- as.data.frame(curleychampagnegenes) %>%
-  mutate(GO = "parentalcare", gene = curleychampagnegenes)  %>%
+  mutate(GO = "literature", gene = curleychampagnegenes)  %>%
   select(GO, gene)
 
 # candidate gens from parental care GO terms 
@@ -53,17 +53,14 @@ head(GOgenesLong)
 parentalcaregenes <- GOgenesLong %>% 
   pivot_wider(
     names_from = GO,
-    values_from = gene) %>%
-  mutate(numGOs = 4 - rowSums(is.na(.))) %>%
-  arrange(desc(numGOs)) %>%
-  select(-numGOs) %>%
-  left_join(geneids, by = c("geneid","NCBI"))
+    values_from = gene,
+    values_fill = list(gene = "")) %>%
+  left_join(geneids, by = c("geneid","NCBI")) %>%
+  dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
 
 candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
-
 # note: I can't find these genes in dataset: NOS1 or OXTR or FOX1B or HTR5A
-
 ```
 
 
@@ -159,6 +156,7 @@ allDEG <- allDEG %>% drop_na()
 ```{r write}
 write.csv(allDEG, "../results/03_allDEGs.csv")
 write.csv(candidatevsd, "../results/03_candidatevsd.csv")
+write.csv(parentalcaregenes, "../metadata/03_parentalcaregenes.csv")
 ```
 
 

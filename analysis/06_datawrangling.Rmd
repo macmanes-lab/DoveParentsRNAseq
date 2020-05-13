@@ -1,0 +1,46 @@
+---
+title: "05_wrangle"
+output: md_document
+---
+  
+  
+```{r setup}
+library(tidyverse)
+library(readr)
+
+source("../R/themes.R")
+```
+
+## Wrangle data for hyotheses testing
+
+```{r }
+# col data with internal (hiloPRL) and external  hypothesese
+colData <- read_csv("../metadata/04_colData.csv")
+tail(colData)
+
+# candidate genes from GO and literature
+candidategenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% pull(gene)
+candidategenes
+
+## genes WGCNA prl module
+WGCNAgenes <- read_csv("../results/05_PRLmodule.csv") %>% pull(x)
+WGCNAgenes
+```
+
+## candidate genes
+
+```{r}
+
+```
+
+
+```{R}
+pithilo <- makecorrdf("female", "pituitary", hilogenes)
+piteggchick <- makecorrdf("female", "pituitary", eggchickgenes)
+pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
+
+write.csv(WGCNAvsd, "../results/03_WGCNAvsd.csv")
+write.csv(hypothesisDEGs, "../results/03_hypothesisDEGs.csv")
+
+```
+
