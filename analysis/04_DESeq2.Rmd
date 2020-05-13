@@ -59,6 +59,7 @@ colData <- colData %>%
                                  control = c("control"))) %>%
   drop_na()
 
+write.csv(colData, "../metadata/04_colData.csv", row.names = F)
 ```
 
 
@@ -67,7 +68,7 @@ colData <- colData %>%
 
 ## Hypothesis
 
-```{r hypothesis}
+```{r hypothesis, eval = F}
 
 createDEGdfhypothesis <- function(variable, up, down, mytissue){
   
