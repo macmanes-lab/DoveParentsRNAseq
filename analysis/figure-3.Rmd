@@ -19,8 +19,6 @@ library(ggsignif)
 source("../R/themes.R") 
 source("../R/functions.R")
 
-source("../R/datawrangling.R")
-
 knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
 ```
 
@@ -60,7 +58,7 @@ pca2 <- makefvizdf("pituitary", charlevels, sexlevels)
 
 # Hi Lo PRL and WGCNA PRL
 
-```{r}
+```{r PRLpit}
 candidatevsd <- read_csv("../results/03_candidatevsd.csv")
 head(candidatevsd)
 
@@ -91,13 +89,11 @@ PRLpitM <- PRLpit %>% filter( sex == "male")
 ### WGCNA prolactin module
 
 
-```{r}
+```{r WGCNA}
 ## genes WGCNA prl module
 
-WGCNAgenes <- read_csv("../results/PRLmodule.csv") %>% pull(x)
-
-WGCNAvsd <- getcandidatevsd(WGCNAgenes, "pituitary", sexlevels) 
-
+WGCNAgenes <- read_csv("../results/04_PRLmodule.csv") %>% pull(x)
+WGCNAvsd <- read_csv("../results/03_WGCNAvsd.csv")
 ```
 
 
@@ -110,7 +106,7 @@ WGCNAvsd <- getcandidatevsd(WGCNAgenes, "pituitary", sexlevels)
 hypothesisDEGs <- read_csv("../results/03_hypothesisDEGs.csv")
 hypothesisDEGs <- c(hypothesisDEGs, WGCNAgenes) %>% unique()
 
-candidatevsd <- getcandidatevsd(hypothesisDEGs, "pituitary", sexlevels) 
+candidatevsd <-read_csv("../results/03_candidatevsd.csv")
 
 #candidateboxplot("pituitary", c("PNOC"), "female") + labs(x = NULL )  + theme( strip.text = element_blank())
 #candidateboxplot("pituitary", c("KPNA2"), "male") + labs(x = NULL )  + theme( strip.text = element_blank())
