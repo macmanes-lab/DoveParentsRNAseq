@@ -5,7 +5,7 @@ date: "5/12/2020"
 output: md_document
 ---
 
-```{r}
+```{r setup}
 library(tidyverse)
 library(DESeq2)
 
