@@ -59,7 +59,6 @@ parentalcaregenes <- GOgenesLong %>%
   dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
 
-candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
 # note: I can't find these genes in dataset: NOS1 or OXTR or FOX1B or HTR5A
 ```
 

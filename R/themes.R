@@ -43,6 +43,8 @@ alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9",
                 "m.inc.d3" ,  "early" ,  "m.inc.d9" , 
                 "m.inc.d17" , "m.n2", "prolong" , "extend")
 
+hypothesislevels <- c(  "lo" , "hi" ,  "nest",  "eggs", "chicks" )
+
 # tissue
 tissuelevels <- c("hypothalamus", "pituitary", "gonads")
 tissuelevel <- c("hypothalamus", "pituitary", "gonad")

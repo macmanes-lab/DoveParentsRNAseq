@@ -30,7 +30,7 @@ countData <- read_csv("../results/01_limma.csv") %>%
 countData <- as.data.frame(t(countData))
 head(countData[1:3])
 
-colData <- read_csv("../metadata/00_colData.csv") %>%
+colData <- read_csv("../metadata/04_colData.csv") %>%
   mutate(treatment = factor(treatment, levels = alllevels),
          tissue = factor(tissue, levels = tissuelevels)) %>% 
   column_to_rownames(var = "X1") 
@@ -56,6 +56,19 @@ pca1 <- subsetmakepca("pituitary", charlevels, sexlevels)
 pca2 <- makefvizdf("pituitary", charlevels, sexlevels)	
 ```
 
+## candidate genes, hypotheses genes, and data-driven genes
+
+
+```{r}
+
+candidatevsd <- read_csv("../results/06_candidatevsd.csv")
+
+pithilo <- makecorrdf("female", "pituitary", hilogenes)
+piteggchick <- makecorrdf("female", "pituitary", eggchickgenes)
+pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
+parentalcare <- makecorrdf("female", "pituitary", parentalcaregenes[1:20])
+
+```
 
 
 
