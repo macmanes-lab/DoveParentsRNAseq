@@ -59,7 +59,7 @@ mtsne <-  subsetmaketsne(tissuelevels, charlevels, "male")
 ## Treatment specific DEGs 
 
 ```{r}
-allDEG <- read_csv("../results/03_allDEG.csv")
+allDEG <- read_csv("../results/03_allDEGs.csv")
 str(allDEG)
 unique(allDEG$comparison)
 ```
