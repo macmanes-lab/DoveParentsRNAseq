@@ -17,34 +17,35 @@ These repositories is broken down into the following sub-repositories, each with
 
 There are two hidden directories, `kallisto_mappings` and `mapping`, which contain the results of the kallisto and salmon algorithms that transform read counts into gene counts.  
 
+Here's a draft of the hairball of a workflow as of May 13, 2020. 
 
-## Figure 1 
+
+![](./figures/images/fig_workflow.png)
+
+## Figures and Tables
+
+### Figure 1 
 
 ![](./figures/fig1-1.png)
 
 
-## Figure 2 
+### Figure 2 
 
 ![](./figures/fig2-1.png)
 
-## Figure 3 (placeholders) 
+### Figure 3 
 
 ![](./figures/fig3-1.png)
-
-![](./figures/images/fig_thumbnail.png)
 
 
 ## Figure 4
 
 ![](./figures/fig4-1.png)
 
-## Figure 5
+### Other
 
-![](./figures/fig5-1.png)
+![](./figures/images/fig_thumbnail.png)
 
-## Figure 6
-
-![](./figures/fig6-1.png)
 
 
 ## Table 1
