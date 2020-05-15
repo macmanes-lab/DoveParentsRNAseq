@@ -61,11 +61,11 @@ levelsnewgrouping <-  c("control" , "bldg",  "earlyinc",
 levelsextint <- c("eggs" , "chicks" , "loss")
 
 # DESeq
-comparisonlevelschar <- c("control_bldg",  "bldg_lay",  "lay_inc.d3",  
+comparisonlevelschar <- c("bldg_lay",  "lay_inc.d3",  
                           "inc.d3_inc.d9",   "inc.d9_inc.d17",  
                           "inc.d17_hatch", "hatch_n5", "n5_n9")
 
-comparisonlabelschar = c("control vs bldg", "bldg vs lay" ,"lay vs inc.d3", 
+comparisonlabelschar = c("bldg vs lay" ,"lay vs inc.d3", 
                          "inc.d3 vs inc.d9", "inc.d9 vs inc.d17", 
                          "inc.d17 vs hatch" , "hatch vs n5", "n5 vs n9")
 
