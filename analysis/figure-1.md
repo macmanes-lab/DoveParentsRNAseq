@@ -101,14 +101,12 @@ tsne
 Treatment specific DEGs
 -----------------------
 
-    allDEG <- read_csv("../results/03_allDEGs.csv") %>%
-      mutate(comparison = factor(comparison, levels = comparisonlevelschar))
-
-    ## Warning: Missing column names filled in: 'X1' [1]
+    allDEG <- read_csv("../results/03_allDEG.csv") %>%
+      mutate(tissue = factor(tissue, levels = tissuelevel),
+             direction = factor(direction, levels = alllevels))
 
     ## Parsed with column specification:
     ## cols(
-    ##   X1 = col_double(),
     ##   sex = col_character(),
     ##   tissue = col_character(),
     ##   comparison = col_character(),
@@ -119,104 +117,73 @@ Treatment specific DEGs
     ##   logpadj = col_double()
     ## )
 
-    str(allDEG)
+    # for fig 1
+    DEGchar <- allDEG %>% 
+      filter(comparison %in% comparisonlevelschar) %>%
+      mutate(comparison = factor(comparison, levels = comparisonlevelschar))
 
-    ## Classes 'spec_tbl_df', 'tbl_df', 'tbl' and 'data.frame': 52792 obs. of  9 variables:
-    ##  $ X1        : num  1 2 3 4 5 6 7 8 9 10 ...
-    ##  $ sex       : chr  "female" "female" "female" "female" ...
-    ##  $ tissue    : chr  "gonad" "gonad" "gonad" "gonad" ...
-    ##  $ comparison: Factor w/ 7 levels "bldg_lay","lay_inc.d3",..: 1 1 1 1 1 1 1 1 1 1 ...
-    ##  $ direction : chr  "lay" "lay" "lay" "lay" ...
-    ##  $ gene      : chr  "CDK3" "LOC107053414" "MUC" "OVSTL" ...
-    ##  $ lfc       : num  18.63 9.72 5.83 5.45 5.04 ...
-    ##  $ padj      : num  5.14e-18 5.07e-04 2.00e-03 8.53e-12 8.43e-04 ...
-    ##  $ logpadj   : num  17.29 3.29 2.7 11.07 3.07 ...
+    # for supple fig 1
+    DEGcontrol <- allDEG %>% 
+      filter(grepl("control", comparison),
+             !grepl("m.|early|extend|prolong", comparison))  %>%
+      mutate(comparison = factor(comparison, levels = comparisonlevelscontrol))
 
-    unique(allDEG$comparison)
+    DEGbldg <- allDEG %>% 
+      filter(grepl("bldg", comparison),
+             !grepl("m.|early|extend|prolong", comparison))  %>%
+      mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))
 
-    ## [1] bldg_lay       <NA>           hatch_n5       inc.d17_hatch 
-    ## [5] inc.d3_inc.d9  inc.d9_inc.d17 lay_inc.d3     n5_n9         
-    ## 7 Levels: bldg_lay lay_inc.d3 inc.d3_inc.d9 ... n5_n9
+
+    suppltable1 <- DEGchar %>%
+      arrange( tissue, sex, direction, gene)
+    head(suppltable1)
+
+    ## # A tibble: 6 x 8
+    ##   sex    tissue       comparison direction gene     lfc     padj logpadj
+    ##   <chr>  <fct>        <fct>      <fct>     <chr>  <dbl>    <dbl>   <dbl>
+    ## 1 female hypothalamus bldg_lay   bldg      HBG2  -0.846 0.0829      1.08
+    ## 2 female hypothalamus bldg_lay   bldg      HEMGN -1.38  0.000464    3.33
+    ## 3 female hypothalamus lay_inc.d3 lay       BLB1  -1.70  0.0987      1.01
+    ## 4 female hypothalamus lay_inc.d3 lay       C1QA  -1.02  0.0987      1.01
+    ## 5 female hypothalamus lay_inc.d3 lay       CFD   -0.785 0.0537      1.27
+    ## 6 female hypothalamus lay_inc.d3 lay       CLIC2 -0.527 0.0903      1.04
+
+    write_csv(suppltable1, "../results/suppltable1.csv")
+
+    suppltable2 <- rbind(DEGcontrol, DEGbldg)  %>%
+      arrange( tissue, sex, direction, gene)
+    head(suppltable2)
+
+    ## # A tibble: 6 x 8
+    ##   sex    tissue      comparison     direction gene     lfc     padj logpadj
+    ##   <chr>  <fct>       <fct>          <fct>     <chr>  <dbl>    <dbl>   <dbl>
+    ## 1 female hypothalam… control_bldg   control   A2ML1 -0.612  2.93e-2    1.53
+    ## 2 female hypothalam… control_hatch  control   A2ML1 -1.15   1.21e-5    4.92
+    ## 3 female hypothalam… control_inc.d… control   A2ML1 -0.780  2.81e-3    2.55
+    ## 4 female hypothalam… control_inc.d9 control   A2ML1 -0.510  5.42e-2    1.27
+    ## 5 female hypothalam… control_lay    control   A2ML1 -0.674  1.39e-2    1.86
+    ## 6 female hypothalam… control_n5     control   A2ML1 -0.583  3.35e-2    1.47
+
+    write_csv(suppltable2, "../results/suppltable1.csv")
 
 Sex and Tissue -related DEGs
 ----------------------------
 
     ## other DEG stuff
     hypsex <- read_csv("../results/DEseq2/sex/hypothalamus_female_male_DEGs.csv")
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
     pitsex <- read_csv("../results/DEseq2/sex/pituitary_female_male_DEGs.csv")
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
     gonsex <- read_csv("../results/DEseq2/sex/gonad_female_male_DEGs.csv")
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   tissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
     hyppit <- read_csv("../results/DEseq2/tissue/hypothalamus_pituitary_DEGs.csv") 
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   direction = col_character()
-    ## )
-
     hypgon <- read_csv("../results/DEseq2/tissue/hypothalamus_gonad_DEGs.csv")
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   direction = col_character()
-    ## )
-
     pitgon <- read_csv("../results/DEseq2/tissue/pituitary_gonad_DEGs.csv")
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   direction = col_character()
-    ## )
 
     hyppit$direction <- factor(hyppit$direction, levels = c("hypothalamus", "pituitary"))
     hypgon$direction <- factor(hypgon$direction, levels = c("hypothalamus",  "gonad"))
     pitgon$direction <- factor(pitgon$direction, levels = c( "pituitary", "gonad"))
 
-make figure
------------
+Figure 1
+--------
 
     a <- png::readPNG("../figures/images/fig_fig1a.png")
     a <- ggdraw() +  draw_image(a, scale = 1)
@@ -275,17 +242,16 @@ make figure
       theme(strip.text = element_blank()) +
       labs(x = "tSNE1 \n \n DEGs = differentially expressed genes \n + LFC = positive log fold change", 
            subtitle = "gonads")
-    d2 <- makebargraph("hypothalamus","DEGs w/ + LFC", 0, 1800) + 
+    d2 <- makebargraph(DEGchar, "hypothalamus","DEGs w/ + LFC", 0, 1800) + 
       theme(axis.text.x = element_blank(),
             axis.title.x = element_blank())  
-    d4 <- makebargraph("pituitary","DEGs w/ + LFC", 0, 1800)  +  
+    d4 <- makebargraph(DEGchar, "pituitary","DEGs w/ + LFC", 0, 1800)  +  
       theme(axis.text.x = element_blank(), 
             axis.title.x = element_blank(), 
             strip.text.x = element_blank())   
-    d6 <- makebargraph("gonad","DEGs w/ + LFC", 0, 1800) +  
+    d6 <- makebargraph(DEGchar, "gonad","DEGs w/ + LFC", 0, 1800) +  
       theme(strip.text.x = element_blank()) +
-      scale_x_discrete(labels = comparisonlabelschar)+
-      labs(subtitle = " ")
+      scale_x_discrete(labels = comparisonlabelschar)
     d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.3), rel_widths = c(1,2),
                       labels = c("D"), label_size = 8)
 
@@ -302,40 +268,46 @@ make figure
     ## quartz_off_screen 
     ##                 2
 
-supple table 1 of all but control-bldg DEGs
-===========================================
+suppl fig 1 controls versus bldg
+--------------------------------
 
-    suppletable1 <- allDEG %>%
-      #filter(comparison != "control_bldg") %>%
-      group_by(sex, tissue, comparison) %>%
-      arrange( tissue, sex, direction, gene)
+    s1a <- makebargraphsuppl(DEGcontrol, "hypothalamus","DEGs w/ + LFC", 0, 5000) + 
+      theme(axis.text.x = element_blank(),
+            axis.title.x = element_blank()) + 
+      labs(subtitle = "hypothalamus") 
+    s1c <- makebargraphsuppl(DEGcontrol, "pituitary","DEGs w/ + LFC", 0, 5000)  +  
+      theme(axis.text.x = element_blank(), 
+            axis.title.x = element_blank(), 
+            strip.text.x = element_blank())    + 
+      labs(subtitle = "pituitary") 
+    s1e <- makebargraphsuppl(DEGcontrol, "gonad","DEGs w/ + LFC", 0, 5000) +  
+      theme(strip.text.x = element_blank()) +
+      scale_x_discrete(labels = comparisonlevelscontrol) +
+      labs(subtitle = "gonads") 
+      
 
-    ## Warning: Factor `comparison` contains implicit NA, consider using
-    ## `forcats::fct_explicit_na`
+    s1b <- makebargraphsuppl(DEGbldg, "hypothalamus", NULL, 0, 1000) + 
+      theme(axis.text.x = element_blank(),
+            axis.title.x = element_blank())  
+    s1d <- makebargraphsuppl(DEGbldg, "pituitary",NULL, 0, 1000)  +  
+      theme(axis.text.x = element_blank(), 
+            axis.title.x = element_blank(), 
+            strip.text.x = element_blank())   
+    s1f <- makebargraphsuppl(DEGbldg, "gonad",NULL, 0, 1000) +  
+      theme(strip.text.x = element_blank()) +
+      scale_x_discrete(labels = comparisonlevelsbldg) 
 
-    ## Warning: Factor `comparison` contains implicit NA, consider using
-    ## `forcats::fct_explicit_na`
+    s1 <- plot_grid(s1a,s1b,s1c,s1d,s1e,s1f, ncol = 2, rel_heights = c(1,0.9,1.3))
 
-    head(suppletable1)
+    ## Warning: Removed 4 rows containing missing values (geom_bar).
 
-    ## Warning: Factor `comparison` contains implicit NA, consider using
-    ## `forcats::fct_explicit_na`
+    ## Warning: Removed 9 rows containing missing values (geom_bar).
 
-    ## Warning: Factor `comparison` contains implicit NA, consider using
-    ## `forcats::fct_explicit_na`
+    ## Warning: Removed 9 rows containing missing values (geom_bar).
 
-    ## # A tibble: 6 x 9
-    ## # Groups:   sex, tissue, comparison [1]
-    ##      X1 sex    tissue comparison direction gene     lfc      padj logpadj
-    ##   <dbl> <chr>  <chr>  <fct>      <chr>     <chr>  <dbl>     <dbl>   <dbl>
-    ## 1  2816 female gonad  <NA>       bldg      A2ML3  0.679 0.0784       1.11
-    ## 2  1761 female gonad  <NA>       bldg      A4GALT 1.19  0.00315      2.50
-    ## 3  3674 female gonad  <NA>       bldg      AAAS   0.422 0.0740       1.13
-    ## 4  3035 female gonad  <NA>       bldg      AAR2   0.606 0.0000263    4.58
-    ## 5  2191 female gonad  <NA>       bldg      AARSD1 0.941 0.000315     3.50
-    ## 6  3041 female gonad  <NA>       bldg      AASS   0.605 0.00520      2.28
+    plot_grid(a, s1, ncol = 1, rel_heights = c(0.25,1))
 
-    write_csv(suppletable1, "../results/suppletable1.csv")
+![](../figures/supplfig-1-1.png)
 
     # save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
     #write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")

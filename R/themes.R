@@ -69,6 +69,15 @@ comparisonlabelschar = c("bldg vs lay" ,"lay vs inc.d3",
                          "inc.d3 vs inc.d9", "inc.d9 vs inc.d17", 
                          "inc.d17 vs hatch" , "hatch vs n5", "n5 vs n9")
 
+comparisonlevelscontrol <- c("control_bldg", "control_lay",  "control_inc.d3",  
+                          "control_inc.d9",   "control_inc.d17",  
+                          "control_hatch", "control_n5", "control_n9")
+
+comparisonlevelsbldg <- c( "bldg_lay",  "bldg_inc.d3",  
+                             "bldg_inc.d9",   "bldg_inc.d17",  
+                             "bldg_hatch", "bldg_n5", "bldg_n9")
+
+
 # custom colors
 
 colorschar <-  c("control" = "#cc4c02", 

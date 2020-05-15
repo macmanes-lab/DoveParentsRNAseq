@@ -924,10 +924,9 @@ plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
 }
 
 
-makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
-  p <- allDEG %>%
-    filter(tissue == whichtissue,
-           comparison != "control_bldg") %>%
+makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim){
+  p <- df %>%
+    filter(tissue == whichtissue) %>%
     ggplot(aes(x = comparison,  fill = direction)) +
     geom_bar(position = "dodge") +
     facet_wrap(~sex) +
@@ -951,6 +950,27 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
 }
 
 
+makebargraphsuppl <- function(df, whichtissue, myylab, lowlim, higherlim){
+  p <- df %>%
+    filter(tissue == whichtissue) %>%
+    ggplot(aes(x = comparison,  fill = direction)) +
+    geom_bar(position = "dodge") +
+    facet_wrap(~sex) +
+    theme_B3() +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          #axis.text.y = element_blank(),
+          axis.ticks = element_blank())  +
+    labs(x = NULL, 
+         y = myylab,
+         subtitle = " ") +
+    scale_fill_manual(values = allcolors,
+                      name = " ",
+                      drop = FALSE) +
+    scale_color_manual(values = allcolors) +
+    ylim(lowlim, higherlim) 
+  return(p)
+}
 
 
 sexbarplots <- function(df, lowlim, higherlim){

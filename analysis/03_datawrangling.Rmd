@@ -120,7 +120,7 @@ head(candidatevsd)
 
 ```
 
-## All DEGs (but currently only char DEGs)
+## All DEGs 
 
 ```{r allDEG}
 DEG_path <- "../results/DEseq2/treatment/"   # path to the data
@@ -142,18 +142,13 @@ allDEG <- DEG_pathfiles %>%
 dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
 head(allDEG)
 
-# select only characterization plots
-allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
-allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevelschar)
-allDEG$direction <- factor(allDEG$direction, levels = charlevels)
-
-allDEG <- allDEG %>% drop_na()
+unique(allDEG$comparison)
 ```
 
 ## save files
 
 ```{r write}
-write.csv(allDEG, "../results/03_allDEGs.csv")
+write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
 write.csv(candidatevsd, "../results/03_candidatevsd.csv")
 write.csv(parentalcaregenes, "../metadata/03_parentalcaregenes.csv")
 ```

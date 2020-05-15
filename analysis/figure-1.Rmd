@@ -58,17 +58,45 @@ mtsne <-  subsetmaketsne(tissuelevels, charlevels, "male")
 
 ## Treatment specific DEGs 
 
-```{r}
-allDEG <- read_csv("../results/03_allDEGs.csv") %>%
+```{r suppltables}
+allDEG <- read_csv("../results/03_allDEG.csv") %>%
+  mutate(tissue = factor(tissue, levels = tissuelevel),
+         direction = factor(direction, levels = alllevels))
+
+# for fig 1
+DEGchar <- allDEG %>% 
+  filter(comparison %in% comparisonlevelschar) %>%
   mutate(comparison = factor(comparison, levels = comparisonlevelschar))
-str(allDEG)
-unique(allDEG$comparison)
+
+# for supple fig 1
+DEGcontrol <- allDEG %>% 
+  filter(grepl("control", comparison),
+         !grepl("m.|early|extend|prolong", comparison))  %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelscontrol))
+
+DEGbldg <- allDEG %>% 
+  filter(grepl("bldg", comparison),
+         !grepl("m.|early|extend|prolong", comparison))  %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))
+
+
+suppltable1 <- DEGchar %>%
+  arrange( tissue, sex, direction, gene)
+head(suppltable1)
+write_csv(suppltable1, "../results/suppltable1.csv")
+
+suppltable2 <- rbind(DEGcontrol, DEGbldg)  %>%
+  arrange( tissue, sex, direction, gene)
+head(suppltable2)
+write_csv(suppltable2, "../results/suppltable1.csv")
+
 ```
+
 
 
 ## Sex and Tissue -related DEGs
 
-```{r DEGs}
+```{r DEGs, message=F}
 
 ## other DEG stuff
 hypsex <- read_csv("../results/DEseq2/sex/hypothalamus_female_male_DEGs.csv")
@@ -85,7 +113,7 @@ pitgon$direction <- factor(pitgon$direction, levels = c( "pituitary", "gonad"))
 
 ```
 
-## make figure
+## Figure 1
 
 ```{r fig1, fig.width=7.25, fig.height=7.25}
 
@@ -128,17 +156,16 @@ d5 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) +
   theme(strip.text = element_blank()) +
   labs(x = "tSNE1 \n \n DEGs = differentially expressed genes \n + LFC = positive log fold change", 
        subtitle = "gonads")
-d2 <- makebargraph("hypothalamus","DEGs w/ + LFC", 0, 1800) + 
+d2 <- makebargraph(DEGchar, "hypothalamus","DEGs w/ + LFC", 0, 1800) + 
   theme(axis.text.x = element_blank(),
         axis.title.x = element_blank())  
-d4 <- makebargraph("pituitary","DEGs w/ + LFC", 0, 1800)  +  
+d4 <- makebargraph(DEGchar, "pituitary","DEGs w/ + LFC", 0, 1800)  +  
   theme(axis.text.x = element_blank(), 
         axis.title.x = element_blank(), 
         strip.text.x = element_blank())   
-d6 <- makebargraph("gonad","DEGs w/ + LFC", 0, 1800) +  
+d6 <- makebargraph(DEGchar, "gonad","DEGs w/ + LFC", 0, 1800) +  
   theme(strip.text.x = element_blank()) +
-  scale_x_discrete(labels = comparisonlabelschar)+
-  labs(subtitle = " ")
+  scale_x_discrete(labels = comparisonlabelschar)
 d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.3), rel_widths = c(1,2),
                   labels = c("D"), label_size = 8)
 
@@ -151,17 +178,43 @@ plot(fig1)
 dev.off()
 ```
 
-# supple table 1 of all but control-bldg DEGs
+## suppl fig 1 controls versus bldg
 
-```{r}
-suppletable1 <- allDEG %>%
-  #filter(comparison != "control_bldg") %>%
-  group_by(sex, tissue, comparison) %>%
-  arrange( tissue, sex, direction, gene)
-head(suppletable1)
+```{r supplfig-1, fig.width=5, fig.height=5}
+s1a <- makebargraphsuppl(DEGcontrol, "hypothalamus","DEGs w/ + LFC", 0, 5000) + 
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank()) + 
+  labs(subtitle = "hypothalamus") 
+s1c <- makebargraphsuppl(DEGcontrol, "pituitary","DEGs w/ + LFC", 0, 5000)  +  
+  theme(axis.text.x = element_blank(), 
+        axis.title.x = element_blank(), 
+        strip.text.x = element_blank())    + 
+  labs(subtitle = "pituitary") 
+s1e <- makebargraphsuppl(DEGcontrol, "gonad","DEGs w/ + LFC", 0, 5000) +  
+  theme(strip.text.x = element_blank()) +
+  scale_x_discrete(labels = comparisonlevelscontrol) +
+  labs(subtitle = "gonads") 
+  
 
-write_csv(suppletable1, "../results/suppletable1.csv")
+s1b <- makebargraphsuppl(DEGbldg, "hypothalamus", NULL, 0, 1000) + 
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank())  
+s1d <- makebargraphsuppl(DEGbldg, "pituitary",NULL, 0, 1000)  +  
+  theme(axis.text.x = element_blank(), 
+        axis.title.x = element_blank(), 
+        strip.text.x = element_blank())   
+s1f <- makebargraphsuppl(DEGbldg, "gonad",NULL, 0, 1000) +  
+  theme(strip.text.x = element_blank()) +
+  scale_x_discrete(labels = comparisonlevelsbldg) 
 
+s1 <- plot_grid(s1a,s1b,s1c,s1d,s1e,s1f, ncol = 2, rel_heights = c(1,0.9,1.3))
+
+plot_grid(a, s1, ncol = 1, rel_heights = c(0.25,1))
+```
+
+
+
+```{r eval = F}
 # save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
 #write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
 
