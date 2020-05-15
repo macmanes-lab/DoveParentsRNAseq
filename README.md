@@ -46,6 +46,7 @@ Here's a draft of the hairball of a workflow as of May 13, 2020.
 
 ![](./figures/images/fig_thumbnail.png)
 
+![](./figures/supplfig-1-1.png)
 
 
 ## Table 1
