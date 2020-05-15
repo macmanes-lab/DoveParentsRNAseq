@@ -272,9 +272,6 @@ Figure 1
 suppl fig 1 controls versus bldg
 --------------------------------
 
-    sa <- png::readPNG("../figures/images/fig_supplfig-1.png")
-    sa <- ggdraw() +  draw_image(sa, scale = 1)
-
     s1a <- makebargraphsuppl(DEGcontrol, "hypothalamus","DEGs w/ + LFC", 0, 5000) + 
       theme(axis.text.x = element_blank(),
             axis.title.x = element_blank()) + 
@@ -301,19 +298,37 @@ suppl fig 1 controls versus bldg
       theme(strip.text.x = element_blank()) +
       scale_x_discrete(labels = comparisonlevelsbldg) 
 
-    s1 <- plot_grid(s1a,s1b,s1c,s1d,s1e,s1f, ncol = 2, rel_heights = c(1,0.9,1.3),
-                    labels = c("B", "C"), label_size = 8)
+
+    s1g <- makebargraphsuppl(DEGchar, "hypothalamus", NULL, 0, 2000) + 
+      theme(axis.text.x = element_blank(),
+            axis.title.x = element_blank())  
+    s1h <- makebargraphsuppl(DEGchar, "pituitary",NULL, 0, 2000)  +  
+      theme(axis.text.x = element_blank(), 
+            axis.title.x = element_blank(), 
+            strip.text.x = element_blank())   
+    s1i <- makebargraphsuppl(DEGchar, "gonad",NULL, 0, 2000) +  
+      theme(strip.text.x = element_blank()) +
+      scale_x_discrete(labels = comparisonlevelschar) 
+
+    s1 <- plot_grid(s1a, s1b, s1g, 
+              s1c, s1d, s1h, 
+              s1e, s1f, s1i, nrow = 3,
+              rel_heights = c(1,0.9,1.3),
+              labels = c("A", "B", "C"), label_size = 8, rel_widths = c(1.1,1,1))
 
     ## Warning: Removed 5 rows containing missing values (geom_bar).
 
     ## Warning: Removed 5 rows containing missing values (geom_bar).
 
-    supplfig1 <- plot_grid(sa, s1, ncol = 1, rel_heights = c(0.75,2), labels = c("A"), label_size = 8)
+    sa <- png::readPNG("../figures/images/fig_supplfig-1.png")
+    sa <- ggdraw() +  draw_image(sa, scale = 1)
+
+    supplfig1 <- plot_grid(sa, s1, ncol = 1, rel_heights = c(0.7,2))
     supplfig1
 
 ![](../figures/supplfig-1-1.png)
 
-    pdf(file="../figures/supplfig-1-1.pdf", width=5, height=5)
+    pdf(file="../figures/supplfig-1-1.pdf", width=7.25, height=5)
     plot(supplfig1)
     dev.off()
 
