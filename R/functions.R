@@ -948,6 +948,8 @@ makebargraph <- function(whichtissue, myylab, lowlim, higherlim){
 }
 
 
+
+
 sexbarplots <- function(df, lowlim, higherlim){
    
   DEGs <- df %>% dplyr::filter(direction != "NS")

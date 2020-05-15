@@ -59,7 +59,8 @@ mtsne <-  subsetmaketsne(tissuelevels, charlevels, "male")
 ## Treatment specific DEGs 
 
 ```{r}
-allDEG <- read_csv("../results/03_allDEGs.csv")
+allDEG <- read_csv("../results/03_allDEGs.csv") %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelschar))
 str(allDEG)
 unique(allDEG$comparison)
 ```
@@ -135,14 +136,14 @@ d5 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) +
        subtitle = "gonads")
 
 # hyp
-d2 <- makebargraph("hypothalamus","DEGs w/ + LFC", 0, 4300) + 
+d2 <- makebargraph("hypothalamus","DEGs w/ + LFC", 0, 4500) + 
   theme(axis.ticks = element_blank(),
         axis.text.x = element_blank(),
         axis.text.y = element_blank(),
         axis.title.x = element_blank())  +
   labs(subtitle = " ")
 # pit
-d4 <- makebargraph("pituitary","DEGs w/ + LFC", 0, 4300)  +  
+d4 <- makebargraph("pituitary","DEGs w/ + LFC", 0, 4500)  +  
   theme(axis.ticks = element_blank(),
         axis.text.x = element_blank(), 
         axis.text.y = element_blank(),
@@ -150,7 +151,7 @@ d4 <- makebargraph("pituitary","DEGs w/ + LFC", 0, 4300)  +
         strip.text.x = element_blank())  +
   labs(subtitle = " ")
 # gon
-d6 <- makebargraph("gonad","DEGs w/ + LFC", 0, 4300) +  
+d6 <- makebargraph("gonad","DEGs w/ + LFC", 0, 4500) +  
   theme(axis.ticks = element_blank(),
         axis.text.y = element_blank(),
         strip.text.x = element_blank()) +
