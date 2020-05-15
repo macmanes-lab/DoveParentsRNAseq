@@ -131,7 +131,8 @@ Treatment specific DEGs
     DEGbldg <- allDEG %>% 
       filter(grepl("bldg", comparison),
              !grepl("m.|early|extend|prolong", comparison))  %>%
-      mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))
+      mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))  %>%
+      drop_na()
 
 
     suppltable1 <- DEGchar %>%
@@ -271,6 +272,9 @@ Figure 1
 suppl fig 1 controls versus bldg
 --------------------------------
 
+    sa <- png::readPNG("../figures/images/fig_supplfig1.png")
+    sa <- ggdraw() +  draw_image(sa, scale = 1)
+
     s1a <- makebargraphsuppl(DEGcontrol, "hypothalamus","DEGs w/ + LFC", 0, 5000) + 
       theme(axis.text.x = element_blank(),
             axis.title.x = element_blank()) + 
@@ -299,15 +303,21 @@ suppl fig 1 controls versus bldg
 
     s1 <- plot_grid(s1a,s1b,s1c,s1d,s1e,s1f, ncol = 2, rel_heights = c(1,0.9,1.3))
 
-    ## Warning: Removed 4 rows containing missing values (geom_bar).
+    ## Warning: Removed 5 rows containing missing values (geom_bar).
 
-    ## Warning: Removed 9 rows containing missing values (geom_bar).
+    ## Warning: Removed 5 rows containing missing values (geom_bar).
 
-    ## Warning: Removed 9 rows containing missing values (geom_bar).
-
-    plot_grid(a, s1, ncol = 1, rel_heights = c(0.25,1))
+    supplfig1 <- plot_grid(sa, s1, ncol = 1, rel_heights = c(0.75,2))
+    supplfig1
 
 ![](../figures/supplfig-1-1.png)
+
+    pdf(file="../figures/supplfig-1-1.pdf", width=5, height=5)
+    plot(supplfig1)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
 
     # save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
     #write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
