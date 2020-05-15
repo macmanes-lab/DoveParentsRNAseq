@@ -272,7 +272,7 @@ Figure 1
 suppl fig 1 controls versus bldg
 --------------------------------
 
-    sa <- png::readPNG("../figures/images/fig_supplfig1.png")
+    sa <- png::readPNG("../figures/images/fig_supplfig-1.png")
     sa <- ggdraw() +  draw_image(sa, scale = 1)
 
     s1a <- makebargraphsuppl(DEGcontrol, "hypothalamus","DEGs w/ + LFC", 0, 5000) + 
@@ -301,13 +301,14 @@ suppl fig 1 controls versus bldg
       theme(strip.text.x = element_blank()) +
       scale_x_discrete(labels = comparisonlevelsbldg) 
 
-    s1 <- plot_grid(s1a,s1b,s1c,s1d,s1e,s1f, ncol = 2, rel_heights = c(1,0.9,1.3))
+    s1 <- plot_grid(s1a,s1b,s1c,s1d,s1e,s1f, ncol = 2, rel_heights = c(1,0.9,1.3),
+                    labels = c("B", "C"), label_size = 8)
 
     ## Warning: Removed 5 rows containing missing values (geom_bar).
 
     ## Warning: Removed 5 rows containing missing values (geom_bar).
 
-    supplfig1 <- plot_grid(sa, s1, ncol = 1, rel_heights = c(0.75,2))
+    supplfig1 <- plot_grid(sa, s1, ncol = 1, rel_heights = c(0.75,2), labels = c("A"), label_size = 8)
     supplfig1
 
 ![](../figures/supplfig-1-1.png)
