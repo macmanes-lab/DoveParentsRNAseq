@@ -81,94 +81,55 @@ this, but other say that \citep[reviewed in][]{Dulac2014}.
 \hypertarget{results}{%
 \subsection{Results}\label{results}}
 
-\emph{Characterization of parental care}
+\emph{Data-driven characterization of reproductive and parental stage
+groups.}
 
-To characterize transcriptional activity, we first examined broad
-patterns of variation in gene expression in the hypothalamus, pituitary,
-and gonads of male and female rock doves across a series of timepoints
-that encapsulate important transitions in reproduction and and parental
-care (Fig. \ref{figure:fig1}a). t-Distributed Stochastic Neighbor
-Embedding (t-SNE) is a nonlinear, dimension reduction technique is used
-to visualize high-dimensional data by giving each datapoint a location
-in a two-dimensional map (van der Maaten and Hinton 2008). t-SNE is
-widely using in single-cell data process for identify related cell
-types. Here, we use t-SNE to identify variation associated with tissue,
-sex, and treatment (Fig. \ref{figure:fig1}j).
+We first examined broad patterns of variation in gene expression in the
+hypothalamus, pituitary, and gonads of male and female rock doves across
+a series of timepoints that encapsulate important transitions in
+reproduction and and parental care (Fig. 1A). t-Distributed Stochastic
+Neighbor Embedding (t-SNE) is a nonlinear, dimension reduction technique
+is used to visualize high-dimensional data (van der Maaten and Hinton
+2008) and is widely used in in RNA sequencing to identify related and
+distinct cell types (refs). Differential expespression profiling is
+useful for pair-wise comparisons of differentially expressed genes
+(DEGs) with positive log fold change (+LFC) in one group compared to
+another. Combined, the provide stronger support for similarities and
+differences between cell-types and treatment groups in multi-dimential
+datasets. First, the data supports that the hypothalamus, pituitary, and
+gonads have distinct gene expression profiles as evidenced by little
+overlap in t-SNE space and an average of 13,000 DEGs between each tissue
+(Fig. 1B). Second, the data supports that sex-differences are much more
+promient in the gonads than in the brain (13,000 versus 2,000 DEGs)
+(Fig. 1C). Because of these widespread tissue and sex-differences,
+further ananlyses were conducted separately for each tissue and sex
+(Fig. 1D, Suppl. Fig 1). In all the tissues, the control samples are
+quiet different from all the other timepoints samples, and only a
+fraction of the transcriptome is altered during the course of parental
+care at the timepoints sampled. The most notable differences male and
+female hpothalamic control samples are very different from on the rest
+(\textasciitilde{}7000 DEGs, and only the two nestling care stages (n5
+and n9)) show differential expression of more than 1,000 genes. In the
+pituitary, late inubcation and hatch are quite simlilar to each other
+and distinct from the earlier incubation stages stages, and temporal
+changes in gene expression appears to be less variable in males than
+females. In the female gonads there appear to be more changes in gene
+expression early one, between nest building and early incuation, but the
+male gonads show very little variation associated with parental stage.
 
-Our results suggest that tissue is the greatest source of variation in
-the dataset, with hypothalamic, pituitary, and gonadal samples all
-forming distinct clusters, with only a few pituitary and gonad samples
-falling outside the 95\% confidence interval (Fig. \ref{figure:fig1}b).
-Sex-differences are most prounounced in the gonads with male and female
-samples form two discrete clusters (Fig. \ref{figure:fig1}c). Treatment
-accounts for much less of the variation than tissue and sex, and even
-after removing sex as a variatble, treatment effects in all three
-tissues are hard to visualize simultatenously (Fig.
-\ref{figure:fig1}d,e), so we next looked at each tissue and sex
-separately. In the hypothalamus, control samples form tight clusters
-that stands out from all other timepoints that are largely overlapping
-in space (Fig. \ref{figure:fig1}h). The pituitary shows the strongest
-treatment effect with one cluster of the ``earlier'' parental timepoints
-(nest-building, lay, incubation days 3 and 9), a second cluster of
-``later'' parental timpoints (incubation day 17, hatch, and nestling
-care days 5 and 9; Fig. \ref{figure:fig1}i). Like the hypothalamus, in
-the gonads, the control timepoints appear to be much less variable that
-the parental timepoints, but there is no clear separation of gonadal
-samples by parental stage (Fig. \ref{figure:fig1}j). While the tSNE
-analysis reveals broad patterns across all levels of the experiment,
-additional tools are needed it hone in on the specific differences
-associated with parental care in each tissue. Differential gene
-expression analysis can shed insight into specific differences between
-treatment groups and thus deepen our understand of the transitions
-between reproduction and parental care behaviors. We used DESEq2 to
-identify genes whose expression changed significantly between sequential
-timepoints in each tissue and sex separately (Fig. \ref{figure:fig2}a).
+\emph{Hypothesis-driven analysis of candidate parental-care genes.}
 
-In the hypothalamus only two sequential stage comparisons results in a
-sizable change in expression; in females, 1927 genes changes their
-expression betwen hatch to nesting care day 5 (with 1076 decreasing and
-851 increased their expression), and in the male hypothalamus,87 genes
-were diferentially expressed bewteen incubation days 9 and 17 (with 38
-decreasing and 49 increasing their expression (Fig.
-\ref{figure:fig2}b)). In the pituitary, differential gene expression
-differenes are greatest when compariing incubation days 9 and 17, and
-this difference is more pronounced in females (Fig. \ref{figure:fig2}c).
-The next largest difference in the pituitary is between hatch and n5.
-The female putitary shows moderate chagnes from nest-bilding to lay to
-incuabation day 3 (Fig. \ref{figure:fig2}c). The male pituitary changes
-more that the female pitutiary changes between nestling care days 5 and
-9 (Fig. \ref{figure:fig2}c). About 2000 genes also change their
-expression in the female pituitary and about 425 in the male pituitary
-when comparing incubation days 9 and 17 (Fig. \ref{figure:fig2}). In the
-female gonads, 270 genes are decreased while only 56 are increased when
-comparing incubation days 9 and 17(Fig. 2). Many more significant
-changes in gene expression in the female gonad occur between
-nest-building and lay and between lay and clutch completion (incubation
-day 3) than in any other comparison (Fig. \ref{figure:fig2}).
-
-\emph{Internal physiology versus external stimuli hypothesis}
-
-We show that samples from the pituitary on incubation day 17 cluster
-more closely with hatch and nestling care day 5 samples than with
-incubation days 3 and 9. This suggest that, in the pituitary, internal
-mechanisms that prepare for chick arrival have the greatest effect on
-gene expression rather than suggesting that gene expression responds to
-changes in the external enviornament.
-
-Blah, blah, \ref{figure:fig4} blah.
-
-\emph{Potential implications for cancer research}
-
-These results confirmed prolactin (PRL) gene expression fluctuates
-throughout parental care in a manner that is consistent with its role in
-promoting lactation and maintaining parental behaviors. Interestingly,
-we identified about 100 genes whose expression was correlated with PRL,
-including (BRCA1, which is associated with breast cancer). Additionally,
-we identified thousands of genes whose expression changed over the
-course of parental care. Exploring the relationship between PRL and
-other differentially expressed genes could provide important insights
-into the \texttt{symphony} of gene expression that regulates behavior at
-the organismal and cellular level.
+\begin{itemize}
+\tightlist
+\item
+  Champagne Curley Genes (Fig 2)
+\item
+  GO genes (Fig 2 Suppl Fig 1)
+\item
+  Cancer genes (Fig 2 Suppl Fig 2)
+\item
+  Shiny genes (Fig 2 Suppl Fig 3)
+\end{itemize}
 
 \emph{Software for data exploration and hypothesis testing}
 
@@ -315,11 +276,29 @@ edits.
 
 \newpage
 
+\textbackslash{}begin\{figure\}{[}h{]} \centering
+\includegraphics[width=1.0\textwidth]{../../figures/fig1-1}
+\textbackslash{}caption\{Broad patterns of variation in hypothalamic,
+pituitary, and gonadal gene expression in male and female rock doves
+across reproductive and parental transitions.** A) Experimental design.
+B) The t-SNE plot shows all 636 samples as points in space colored by
+tissue with ellipses drawn around show 95\% confidence interval, and the
+bar plots show the total number of differentially expressioned genes
+(DEGs) whose expression was significantly higher in one tissue versus
+the other. C) This t-SNE plot shows the same data points colored by sex
+while the ellipses delinate the source tissue; bar plots show the DEGs
+between the sexes for each tissue. D) These t-SNE and bar plots provide
+insight into the temporal differences in gene expression within each
+tissue for each sex. Here, the bar plots highlight the number of DEGs
+between each sequential time point. For comparisons to controls, see
+fupplemental figure 1.\} \label{figure:fig1}
+\textbackslash{}end\{figure\}
+
 \begin{figure}[h]
   \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/fig1-1}
-  \caption{Broad patterns of variation in hypothalamic, pituitary, and gonadal gene expression in male and female rock doves across reproductive and parental transitions. a) Experimental design. b) t-SNE plot highlighting tissue differences in gene expression. Each dot represents 1 sample and is colored by the source tissue (hypothalamus: orange, pituitary: teal, gonads: purple). c) t-SNE plot highlighting sex differences in tissue and sex, as shown in light grey (females) and dark grey (males). t-SNE plots highlight treatment effects in females (d), males (e), the hypothalamus (h), pituitary (i), and gonads (j), with samples colored by parental stage (control: red or , nest-building: orange, lay: yellow; inc.d3: light green, inc.d9: green, inc.d17: dark green, hatch: dark blue, n5: blue, and n9: light blue.}
-  \label{figure:fig1}
+  \includegraphics[width=1.0\textwidth]{../../figures/supplfig-1-1}
+  \caption{Summary of the total number of differentially expressed genes (DEGs) from pair-wise comparison using DESeq2.** Bar plots showing the total number of differentially expressed genes (p < 0.1) and colored by the direction of increased expression (or positive log fold change (+LFC))  are shown for three different analysis: relative to the control group (A), the nest-building (bldg) group (B), and the previous sampling timepoint (C).}
+  \label{figure:supplfig1}
 \end{figure}
 
 \newpage
@@ -335,26 +314,21 @@ edits.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/fig4-1}
+  \includegraphics[width=1.0\textwidth]{../../figures/fig3-1}
   \caption{Another another figure}
-  \label{figure:fig4}
+  \label{figure:fig3}
 \end{figure}
 
 \newpage
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/fig5-1}
-  \caption{Hypothesis-driven data exploration and software development.}
-  \label{figure:fig5}
+  \includegraphics[width=1.0\textwidth]{../../figures/fig4-1}
+  \caption{Another another figure}
+  \label{figure:fig4}
 \end{figure}
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/supplfig1}
-  \caption{R shiny, image 1}
-  \label{figure:supplfig3}
-\end{figure}
+\newpage
 
 \newpage
 
