@@ -3,12 +3,14 @@ title: "00_datawrangling.Rmd"
 output: md_document
 ---
 
-```{r setup}
+```{r setup, message=F}
 # https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
 library(tidyverse)
 
 source("../R/themes.R")
+
+knitr::opts_chunk$set(message=F, warning=F)
 ```
 
 # Data Wrangling
@@ -21,7 +23,7 @@ kallistodata <- read.table("../results/kallistocounts.txt",
                         sep = ",", row.names = NULL) %>%
   rename("NCBI" = "entrezid",
          "gene" = "Name")
-head(kallistodata)
+#head(kallistodata)
 
 ## save gene information
 geneinfo <- kallistodata %>%
@@ -54,7 +56,7 @@ geneinfo %>% filter(gene == "CACNA1C")
 
 
 ```{r}
-head(kallistodata)
+#head(kallistodata)
 # aggregate transcript counts to gene counts
 countData <- kallistodata %>% 
   select(-row.names, -geneid, -NCBI) %>% 
@@ -111,17 +113,21 @@ colData <- colData %>%
   mutate(study = factor(study, levels = c("charcterization", "manipulation")))
 colData <- as.data.frame(colData)
 row.names(colData) <- colData$V1
-head(colData)
-```
+str(colData)
 
 ## check that rownames and colnames match for DESeq
+ncol(countData) == nrow(colData)
+```
+
+## summarize data
 
 ```{r}
-str(colData)
-ncol(countData) == nrow(colData)
 
 colData %>% select(sex, tissue, treatment, study)  %>%  summary()
 table(colData$sex, colData$treatment, colData$tissue)
+
+length(unique(colData$bird))
+table(colData$sex, colData$tissue)
 ```
 
 ## save bird data 
@@ -130,7 +136,7 @@ table(colData$sex, colData$treatment, colData$tissue)
 birds <- colData %>%
   select(bird, sex, treatment) %>%
   distinct()
-birds
+head(birds)
 ```
 
 
