@@ -28,9 +28,15 @@ Here's a draft of the hairball of a workflow as of May 13, 2020.
 
 ![](./figures/fig1-1.png)
 
+**Figure 1. Broad patterns of variation in hypothalamic, pituitary, and gonadal gene expression in male and female rock doves across reproductive and parental transitions.** A) Experimental design. B) The t-SNE plot shows all 636 samples as points in space colored by tissue with ellipses drawn around show 95% confidence interval, and the bar plots show the total number of differentially expressioned genes (DEGs) whose expression was significantly higher in one tissue versus the other. C) This t-SNE plot shows the same data points colored by sex while the ellipses delinate the source tissue; bar plots show the DEGs between the sexes for each tissue. D) These t-SNE and bar plots provide insight into the temporal differences in gene expression within each tissue for each sex. Here, the bar plots highlight the number of DEGs between each sequential time point. For comparisons to controls, see fupplemental figure 1. 
+
 ### Supplement to Figure 1 
 
 ![](./figures/supplfig-1-1.png)
+
+**Figure 1 - Figure Supplement 1. Summary of the total number of differentially expressed genes (DEGs) from pair-wise comparison using DESeq2.** Bar plots showing the total number of differentially expressed genes (p < 0.1) and colored by the direction of increased expression (or positive log fold change (+LFC))  are shown for three different analysis: relative to the control group (A), the nest-building (bldg) group (B), and the previous sampling timepoint (C).
+
+
 
 
 ### Figure 2 
