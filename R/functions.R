@@ -913,7 +913,7 @@ plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
 plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
    # stat_ellipse(linetype = 1, aes(color = pointcolor)) +
-    geom_point(size = 0.5, aes(color = pointcolor)) +
+    geom_point(size = 1, aes(color = pointcolor)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2",
          subtitle = " ") +
