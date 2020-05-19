@@ -37,11 +37,11 @@ Here's a draft of the hairball of a workflow as of May 13, 2020.
 **Figure 1 - Figure Supplement 1. Summary of the total number of differentially expressed genes (DEGs) from pair-wise comparison using DESeq2.** Bar plots showing the total number of differentially expressed genes (p < 0.1) and colored by the direction of increased expression (or positive log fold change (+LFC))  are shown for three different analysis: relative to the control group (A), the nest-building (bldg) group (B), and the previous sampling timepoint (C).
 
 
-
-
 ### Figure 2 
 
 ![](./figures/fig2-1.png)
+
+**Figure 2. Correlated changes in in candidate gene expression.** A) Correlation matrices show positive and negative correlations for the candidate parental care genes from Curley and Champagne 2012. Positive and negative correlations are shown in red and blue, respectively. B) Top two correlations for each tissue visulized in each sex, colored by parental stage. The linear model and standard error are shown in grey. C) Box-and-whisker plots highlight the individual variation in gene expression across time for each sex and tissue. **, p <0.01; *, p <0.05; NS, p > 0.05.
 
 ### Figure 3 
 
