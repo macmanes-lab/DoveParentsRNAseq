@@ -34,7 +34,7 @@ Here's a draft of the hairball of a workflow as of May 13, 2020.
 
 ![](./figures/supplfig-1-1.png)
 
-**Figure 1 - Figure Supplement 1. Summary of the total number of differentially expressed genes (DEGs) from pair-wise comparison using DESeq2.** Bar plots showing the total number of differentially expressed genes (p < 0.1) and colored by the direction of increased expression (or positive log fold change (+LFC))  are shown for three different analysis: relative to the control group (A), the nest-building (bldg) group (B), and the previous sampling timepoint (C).
+**Figure 1 - Figure Supplement 1. Summary of the total number of differentially expressed genes (DEGs) from pair-wise comparison using DESeq2.** Bar plots showing the total number of differentially expressed genes (p < 0.1) and colored by the direction of increased expression (or positive log fold change (+LFC))  are shown for three different analysis: relative to the control group (A) and the nest-building (bldg) group (B).
 
 
 ### Figure 2 
