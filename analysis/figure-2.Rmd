@@ -32,8 +32,10 @@ knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 
 
 ```{r DEGs}
+
+
 # summary DEG results from DESeq2
-candidateDEGS <- read_csv("../results/suppletable1.csv") %>%
+candidateDEGS <- read_csv("../results/suppltable1.csv") %>%
   filter(gene %in% candidategenes) %>%
   mutate(posneg = ifelse(lfc >= 0, "+", "-"),
          sex = recode(sex, "female" = "F", "male" = "M" ),
@@ -132,9 +134,9 @@ b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
 c <- plot_grid(c1,c2,c3,c4,c5,c6, ncol = 2, rel_heights = c(1.1,1,1), rel_widths = c(1.1,1))
 d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
 
-bcd <- plot_grid(b,c,d, ncol = 3, rel_widths = c(1,1,1), labels = c("B", "C", "D"), label_size = 8)
+bcd <- plot_grid(b,c,d, ncol = 3, rel_widths = c(1,1,1), labels = c("A", "B", "C"), label_size = 8)
 
-fig2 <- plot_grid(a,bcd, ncol = 1, labels = c("A"), label_size = 8, rel_heights = c(0.1,1))
+fig2 <- plot_grid(bcd, a, ncol = 1, rel_heights = c(1,0.1))
 fig2
 
 pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
