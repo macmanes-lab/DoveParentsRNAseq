@@ -340,8 +340,7 @@ Figure
               axis.line.x = element_blank()) +
         labs(y = whichgenes,
              x = NULL) +
-        geom_signif(comparisons = list(c( "control", "bldg"),
-                                       c( "bldg", "lay"),
+        geom_signif(comparisons = list( c( "bldg", "lay"),
                                        c( "lay", "inc.d3"),
                                        c("inc.d3", "inc.d9"),
                                        c( "inc.d9", "inc.d17"),
@@ -350,90 +349,63 @@ Figure
                                        c( "n5", "n9")),  
                     map_signif_level=TRUE,
                     textsize = 1.5, family = 'Helvetica',
-                    vjust = 1.5, size = 0) 
+                    vjust = 1.5, size = 0.2) 
       
       return(p)
     }
 
 
-    c1 <- scattercorrelations(FH, FH$CRHR2, "CRHR2", FH$HTR2C, "HTR2C", "#969696" ) +  labs( title =  "Hypothlamic expression", subtitle = "females")  
-    c3 <- scattercorrelations(FP, FP$AVPR1A, "AVPR1A", FP$CRHR1,  "CRHR1", "#969696")  + labs(title = "Pituitary expression", subtitle = "females") 
-    c5 <- scattercorrelations(FG, FG$CRHBP, "CRHBP",  FG$ESR2,  "ESR2", "#969696")   + labs(title = "Gonadal expression", subtitle = "females") 
-
-    c2 <- scattercorrelations(MH, MH$DRD1, "DRD1", MH$HTR2C, "HTR2C", "#525252")  + labs(title = " ", subtitle = "males" )  
-    c4 <- scattercorrelations(MP, MP$AVPR1A,  "AVPR1A",  MP$CRHR1, "CRHR1", "#525252")  + labs(title = " ", subtitle = "males" ) 
-    c6 <- scattercorrelations(MG, MG$PGR, "PGR", MG$PRLR, "PRLR", "#525252")   + labs(title = " ", subtitle = "males" ) 
 
 
+    c1 <- scattercorrelations(FH, FH$CRHR2, "CRHR2", FH$HTR2C, "HTR2C", "#969696" ) +  labs(title = " ", subtitle = " " )  
+    c3 <- scattercorrelations(FP, FP$AVPR1A, "AVPR1A", FP$CRHR1,  "CRHR1", "#969696")  + labs(title = " ", subtitle = " ") 
+    c5 <- scattercorrelations(FG, FG$CRHBP, "CRHBP",  FG$ESR2,  "ESR2", "#969696")   + labs(title = " ", subtitle = " ") 
 
-    d1 <- candidateboxplot("hypothalamus", c("CRHR2"), "female") + labs(x = NULL, title = " ", subtitle = " " )  
+    c2 <- scattercorrelations(MH, MH$DRD1, "DRD1", MH$HTR2C, "HTR2C", "#525252")  + labs(title = " ", subtitle = " " )  
+    c4 <- scattercorrelations(MP, MP$AVPR1A,  "AVPR1A",  MP$CRHR1, "CRHR1", "#525252")  + labs(title = " ", subtitle = " " ) 
+    c6 <- scattercorrelations(MG, MG$PGR, "PGR", MG$PRLR, "PRLR", "#525252")   + labs(title = " ", subtitle = " " ) 
+
+
+
+    d1 <- candidateboxplot("hypothalamus", c("CRHR2"), "female") + labs(x = NULL, title =  "Hypothlamic expression", subtitle = "females" )  
     d2 <- candidateboxplot("hypothalamus", c("HTR2C"), "female") + labs(x = NULL )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-    d3 <- candidateboxplot("pituitary", c("AVPR1A"), "female") + labs(x = NULL , subtitle = " " ) 
+    d3 <- candidateboxplot("pituitary", c("AVPR1A"), "female") + labs(x = NULL , title = "Pituitary expression", subtitle = "females") 
     d4 <- candidateboxplot("pituitary", c("CRHR1"), "female") + labs(x = NULL  )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-    d5 <- candidateboxplot("gonad", c("CRHBP"), "female") + labs(x = NULL, subtitle = " " )
+    d5 <- candidateboxplot("gonad", c("CRHBP"), "female") + labs(x = NULL, title = "Gonadal expression", subtitle = "females")
     d6 <- candidateboxplot("gonad", c("ESR2"), "female") + labs(x = NULL ) + theme(axis.text.x = element_text(angle = 45, vjust = 1))
 
 
 
-    e1 <- candidateboxplot("hypothalamus", c("DRD1"), "male") + labs(x = NULL, title = " " , subtitle = " " )  
+    e1 <- candidateboxplot("hypothalamus", c("DRD1"), "male") + labs(x = NULL, title = " " , subtitle = "males" )  
     e2 <- candidateboxplot("hypothalamus", c("HTR2C"), "male") + labs(x = NULL )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-    e3 <- candidateboxplot("pituitary", c("AVPR1A"), "male") + labs(x = NULL , subtitle = " " ) 
+    e3 <- candidateboxplot("pituitary", c("AVPR1A"), "male") + labs(x = NULL , subtitle = "males" ) 
     e4 <- candidateboxplot("pituitary", c("CRHR1"), "male") + labs(x = NULL  )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-    e5 <- candidateboxplot("gonad", c("PGR"), "male") + labs(x = NULL, subtitle = " " ) 
+    e5 <- candidateboxplot("gonad", c("PGR"), "male") + labs(x = NULL, subtitle = "males" ) 
     e6 <- candidateboxplot("gonad", c("PRLR"), "male") + labs(x = NULL )   + theme(axis.text.x = element_text(angle = 45, vjust = 1)) 
 
 
     #b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
-    c123 <- plot_grid(c1,c3,c5, ncol = 1, rel_heights = c(1.1,1,1), labels = c("A", "B", "C"), label_size = 8)
+    c123 <- plot_grid(c1,c3,c5, ncol = 1, rel_heights = c(1.1,1,1))
     c456 <- plot_grid(c2,c4,c6, ncol = 1, rel_heights = c(1.1,1,1))
-    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
+    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1), labels = c("A", " ",  "B", " ", "C"), label_size = 8)
 
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
+    ## Warning in wilcox.test.default(c(6.67595664589207, 4.69054216536479,
+    ## 6.20887219471942, : cannot compute exact p-value with ties
 
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
+    e <- plot_grid(e1,e2,e3,e4,e5,e6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
 
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
 
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    e <- plot_grid(e1,e2,d3,e4,e5,e6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
-
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    ## Warning: Computation failed in `stat_signif()`:
-    ## missing value where TRUE/FALSE needed
-
-    fig2 <- plot_grid(c123,d,c456,e, nrow  = 1)
+    fig2 <- plot_grid(d, c123,e,c456,nrow  = 1)
     fig2
 
 ![](../figures/fig2-1.png)
 
-    #pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
-    #plot(fig2)
-    #dev.off()
+    pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
+    plot(fig2)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
 
     #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
     #write.csv(candidatevsd, "../results/candidatecounts.csv")
