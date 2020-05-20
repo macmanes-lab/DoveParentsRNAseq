@@ -1061,17 +1061,6 @@ rplot2 <- function(rdf,
 
 ##### 3 funcitons  for correlation plots
 
-makecorrdf <- function(whichsex, whichtissue, whichgenes){
-  corrrdf <- candidatevsd %>%
-    filter(sex == whichsex, tissue == whichtissue,
-           gene %in% whichgenes) %>%
-    drop_na() %>%
-    pivot_wider(names_from = gene, values_from = counts) %>%
-    select(-sex, -tissue, -treatment, -samples) %>%
-    correlate() 
-  print(head(corrrdf))
-  return(corrrdf)
-}
 
 subsetcandidatevsdwide <- function(whichsex, whichtissue){
   df <- candidatevsdwide %>%
@@ -1152,9 +1141,9 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
 
 ## Fig 2
 
-scattercorrelations <- function(df, gene1, gene2, mylinecolor, myxlab, myylab){
-  p <- ggplot(df, aes(x = gene1, y = gene2)) +
-    labs(subtitle = " ", x = myxlab, y = myylab) + 
+scattercorrelations <- function(df, gene1, myylab, gene2, myxlab,  mylinecolor){
+  p <- ggplot(df, aes(x = gene2, y = gene1)) +
+    labs(x = myxlab, y = myylab) + 
     scale_color_manual(values = allcolors) +
     geom_smooth(method = "glm",  color = mylinecolor) +
     geom_point(aes(color = treatment))  +

@@ -67,9 +67,7 @@ table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
   select(gene, bldg_lay:n5_n9, literature, GO, NCBI) %>%
   mutate(literature = if_else(is.na(literature), " ", "X"),
          GO = if_else(is.na(GO), " ", "X"))
-table1[is.na(table1)] <- " " # replace NA with blank space so it's pretty
 head(table1)
-
 ```
 
 ## Candidate VSDs
@@ -79,7 +77,8 @@ head(table1)
 # load `candidatevsd` with `source("../R/wrangledata.R")`
 candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
   select(-X1) %>%
-  filter(treatment %in% charlevels)
+  filter(treatment %in% charlevelsnocontrol) %>%
+  drop_na()
 tail(candidatevsd)
 
 candidatevsdwide <- candidatevsd  %>%
@@ -96,6 +95,31 @@ MG <- subsetcandidatevsdwide("male", "gonad")
 
 
 ```{r correlations}
+
+makecorrdf <- function(whichsex, whichtissue, whichgenes){
+  corrrdf <- candidatevsd %>%
+    filter(sex == whichsex, tissue == whichtissue,
+           gene %in% whichgenes) %>%
+    drop_na() %>%
+    pivot_wider(names_from = gene, values_from = counts) %>%
+    select(-sex, -tissue, -treatment, -samples) %>%
+    correlate() 
+  # print(head(corrrdf))
+  
+  corrrdflong <- corrrdf %>%
+    pivot_longer(-rowname, names_to = "gene2", values_to = "corr") %>%
+    rename("gene1" = "rowname") %>%
+    arrange(desc(corr)) %>%
+    mutate(tissue = whichtissue,
+           sex = whichsex) %>%
+    select(tissue, sex, gene1, gene2, corr)
+  print("The top two correlations in this tissue and sex are:")
+  print(corrrdflong[c(1,3),]) 
+  
+  return(corrrdf)
+}
+
+
 hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
 pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
 gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
@@ -143,7 +167,7 @@ b11 <- plotcorrplot(pit4, NULL)    +
   theme(axis.text.x = element_blank() , axis.text.y = element_blank())
 b12 <- plotcorrplot(gon4, NULL)   + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
 
-forlegend <- plotcorrplot(gon4, NULL) + theme(legend.position = "bottom") 
+forlegend <- plotcorrplot(gon4, NULL) + theme(legend.position = "bottom") + labs(color = "Correlation")
 mylegend <- get_legend(forlegend)
 
 allcorplots <- plot_grid(b1,b4,b7,b10,
@@ -164,40 +188,85 @@ dev.off()
 
 ```{r fig2, fig.width = 7.25, fig.height = 7.25}
 
-a <- png::readPNG("../figures/images/fig_fig2a.png")
-a <- ggdraw() +  draw_image(a, scale = 1)
+
+
+candidateboxplot <- function(whichtissue, whichgenes, whichsex){
+  
+  p <- candidatevsd %>%
+    filter(tissue %in% whichtissue,
+           gene %in% whichgenes,
+           sex %in% whichsex) %>%
+    mutate(treatment = factor(treatment, levels = charlevels)) %>%
+    ggplot(aes(x = treatment, y = counts)) +
+    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
+    #facet_wrap(~sex,  nrow = 1) +
+    scale_fill_manual(values = allcolors) +
+    scale_color_manual(values = allcolors) +
+    theme_B3() + 
+    theme(legend.position = "none",
+          axis.title.y = element_text(face = "italic"),
+          axis.text.x = element_blank(),
+          axis.ticks = element_blank(),
+          axis.line.x = element_blank()) +
+    labs(y = whichgenes,
+         x = NULL) +
+    geom_signif(comparisons = list(c( "control", "bldg"),
+                                   c( "bldg", "lay"),
+                                   c( "lay", "inc.d3"),
+                                   c("inc.d3", "inc.d9"),
+                                   c( "inc.d9", "inc.d17"),
+                                   c( "inc.d17", "hatch"),
+                                   c("hatch", "n5"),
+                                   c( "n5", "n9")),  
+                map_signif_level=TRUE,
+                textsize = 1.5, family = 'Helvetica',
+                vjust = 1.5, size = 0) 
+  
+  return(p)
+}
+
+
+c1 <- scattercorrelations(FH, FH$CRHR2, "CRHR2", FH$HTR2C, "HTR2C", "#969696" ) +  labs( title =  "Hypothlamic expression", subtitle = "females")  
+c3 <- scattercorrelations(FP, FP$AVPR1A, "AVPR1A", FP$CRHR1,  "CRHR1", "#969696")  + labs(title = "Pituitary expression", subtitle = "females") 
+c5 <- scattercorrelations(FG, FG$CRHBP, "CRHBP",  FG$ESR2,  "ESR2", "#969696")   + labs(title = "Gonadal expression", subtitle = "females") 
+
+c2 <- scattercorrelations(MH, MH$DRD1, "DRD1", MH$HTR2C, "HTR2C", "#525252")  + labs(title = " ", subtitle = "males" )  
+c4 <- scattercorrelations(MP, MP$AVPR1A,  "AVPR1A",  MP$CRHR1, "CRHR1", "#525252")  + labs(title = " ", subtitle = "males" ) 
+c6 <- scattercorrelations(MG, MG$PGR, "PGR", MG$PRLR, "PRLR", "#525252")   + labs(title = " ", subtitle = "males" ) 
 
 
 
-
-c1 <- scattercorrelations(FH, FH$DRD4, FH$HTR2C, "#969696", "DRD4", "HTR2C") + labs(subtitle = "female", title =  "Top correlation")  
-c3 <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = NULL) 
-c5 <- scattercorrelations(FG, FG$ESR1, FG$PGR, "#969696", "ESR1", "PGR")   + labs(subtitle = NULL) 
-
-c2 <- scattercorrelations(MH, MH$DRD4, MH$HTR2C, "#525252", "DRD4", "HTR2C")  + labs(subtitle = "male", title = "", y = NULL)  
-c4 <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1")  + labs(subtitle = NULL, y = NULL)  
-c6 <- scattercorrelations(MG, MG$ESR1, MG$PGR, "#525252", "ESR1", "PGR")  + labs(subtitle = NULL, y = NULL)  
+d1 <- candidateboxplot("hypothalamus", c("CRHR2"), "female") + labs(x = NULL, title = " ", subtitle = " " )  
+d2 <- candidateboxplot("hypothalamus", c("HTR2C"), "female") + labs(x = NULL )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
+d3 <- candidateboxplot("pituitary", c("AVPR1A"), "female") + labs(x = NULL , subtitle = " " ) 
+d4 <- candidateboxplot("pituitary", c("CRHR1"), "female") + labs(x = NULL  )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
+d5 <- candidateboxplot("gonad", c("CRHBP"), "female") + labs(x = NULL, subtitle = " " )
+d6 <- candidateboxplot("gonad", c("ESR2"), "female") + labs(x = NULL ) + theme(axis.text.x = element_text(angle = 45, vjust = 1))
 
 
-d1 <- candidateboxplot("hypothalamus", c("DRD4"), sexlevels) + labs(x = NULL, title = "Temporal expression pattern" )  
-d2 <- candidateboxplot("hypothalamus", c("HTR2C"), sexlevels) + labs(x = NULL ) + theme(strip.text = element_blank())
-d3 <- candidateboxplot("pituitary", c("AVPR1A"), sexlevels) + labs(x = NULL )  + theme( strip.text = element_blank())
-d4 <- candidateboxplot("pituitary", c("CRHR1"), sexlevels) + labs(x = NULL  )  + theme(strip.text = element_blank())
-d5 <- candidateboxplot("gonad", c("ESR1"), sexlevels) + labs(x = NULL) + theme(strip.text = element_blank())
-d6 <- candidateboxplot("gonad", c("PGR"), sexlevels) + labs(x = NULL ) + theme(strip.text = element_blank())
+
+e1 <- candidateboxplot("hypothalamus", c("DRD1"), "male") + labs(x = NULL, title = " " , subtitle = " " )  
+e2 <- candidateboxplot("hypothalamus", c("HTR2C"), "male") + labs(x = NULL )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
+e3 <- candidateboxplot("pituitary", c("AVPR1A"), "male") + labs(x = NULL , subtitle = " " ) 
+e4 <- candidateboxplot("pituitary", c("CRHR1"), "male") + labs(x = NULL  )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
+e5 <- candidateboxplot("gonad", c("PGR"), "male") + labs(x = NULL, subtitle = " " ) 
+e6 <- candidateboxplot("gonad", c("PRLR"), "male") + labs(x = NULL )   + theme(axis.text.x = element_text(angle = 45, vjust = 1)) 
+
 
 #b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
-c <- plot_grid(c1,c2,c3,c4,c5,c6, ncol = 2, rel_heights = c(1.1,1,1), rel_widths = c(1.1,1))
+c123 <- plot_grid(c1,c3,c5, ncol = 1, rel_heights = c(1.1,1,1), labels = c("A", "B", "C"), label_size = 8)
+c456 <- plot_grid(c2,c4,c6, ncol = 1, rel_heights = c(1.1,1,1))
 d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
+e <- plot_grid(e1,e2,d3,e4,e5,e6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
 
-bcd <- plot_grid(c,d, ncol = 2, rel_widths = c(1,1), labels = c("A", "B"), label_size = 8)
 
-fig2 <- plot_grid(bcd, a, ncol = 1, rel_heights = c(1,0.1))
+fig2 <- plot_grid(c123,d,c456,e, nrow  = 1)
 fig2
 
-pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
-plot(fig2)
-dev.off()
+#pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
+#plot(fig2)
+#dev.off()
 ```
 
 
