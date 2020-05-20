@@ -1062,14 +1062,13 @@ rplot2 <- function(rdf,
 ##### 3 funcitons  for correlation plots
 
 makecorrdf <- function(whichsex, whichtissue, whichgenes){
-  
   corrrdf <- candidatevsd %>%
     filter(sex == whichsex, tissue == whichtissue,
            gene %in% whichgenes) %>%
+    drop_na() %>%
     pivot_wider(names_from = gene, values_from = counts) %>%
-    select(-sex,-tissue, -treatment, -samples) %>%
-    correlate() %>%
-    rearrange()
+    select(-sex, -tissue, -treatment, -samples) %>%
+    correlate() 
   print(head(corrrdf))
   return(corrrdf)
 }
@@ -1086,8 +1085,11 @@ plotcorrplot <- function(df, mysubtitle){
     rplot2() +
     theme_B3() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1),
-          axis.text = element_text(face = "italic")) +
-    labs(subtitle = mysubtitle)
+           axis.text = element_text(face = "italic"),
+          axis.ticks = element_blank(),
+          axis.line = element_blank()) +
+    labs(subtitle = mysubtitle, y = NULL) + 
+    theme(legend.position = "none")
   
   return(p)
 }

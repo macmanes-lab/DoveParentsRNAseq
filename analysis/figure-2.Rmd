@@ -28,11 +28,23 @@ source("../R/functions.R")
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 ```
 
+## Candidate genes
+
+```{r candidategenes}
+parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% select(-X1)
+head(parentalcaregenes)
+
+curleychampagnegenes <- parentalcaregenes %>% distinct(literature) %>% drop_na() %>% pull(literature)
+GOgenes <- parentalcaregenes %>% distinct(GO)  %>% drop_na() %>% pull(GO)
+candidategenes <- parentalcaregenes %>% pull(gene) 
+candidategenes
+```
+
+
 ## Candidate DEGs
 
 
 ```{r DEGs}
-
 
 # summary DEG results from DESeq2
 candidateDEGS <- read_csv("../results/suppltable1.csv") %>%
@@ -47,48 +59,28 @@ candidateDEGS <- read_csv("../results/suppltable1.csv") %>%
   group_by(gene,  comparison) %>%
   summarize(res = str_c(res, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = res) %>%
-  select(gene, control_bldg, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
+  select(gene, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
 candidateDEGS
 
 ## table 1 summary candidate genes
 table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
-  select(gene, control_bldg:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
-  mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
-         parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
-  rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
-table1$numDEGs <- rowSums(is.na(table1)) # count NAs to know how many are NS
-
-table1 <- table1 %>% 
-  mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
-  arrange(gene)  %>%  select(-sig, -numDEGs)
+  select(gene, bldg_lay:n5_n9, literature, GO, NCBI) %>%
+  mutate(literature = if_else(is.na(literature), " ", "X"),
+         GO = if_else(is.na(GO), " ", "X"))
 table1[is.na(table1)] <- " " # replace NA with blank space so it's pretty
 head(table1)
 
-kable(table1)
 ```
 
-## Candidate Correlations
+## Candidate VSDs
 
 
-```{r}
+```{r candidatevsds}
 # load `candidatevsd` with `source("../R/wrangledata.R")`
-candidatevsd <- read_csv("../results/03_candidatevsd.csv")
-head(candidatevsd)
-
-curleychampagnegenes <- curleychampagnegenes %>% pull(gene)
-
-hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
-pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
-gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
-
-hyp2 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)  
-pit2 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
-gon2 <- makecorrdf("male", "gonad", curleychampagnegenes)  
-
-hyp3 <- makecorrdf(sexlevels, "hypothalamus", curleychampagnegenes)  
-pit3 <- makecorrdf(sexlevels, "pituitary", curleychampagnegenes)  
-gon3 <- makecorrdf(sexlevels, "gonad", curleychampagnegenes)  
-
+candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
+  select(-X1) %>%
+  filter(treatment %in% charlevels)
+tail(candidatevsd)
 
 candidatevsdwide <- candidatevsd  %>%
     pivot_wider(names_from = gene, values_from = counts) 
@@ -98,7 +90,73 @@ FG <- subsetcandidatevsdwide("female", "gonad")
 MH <- subsetcandidatevsdwide("male", "hypothalamus")
 MP <- subsetcandidatevsdwide("male", "pituitary")
 MG <- subsetcandidatevsdwide("male", "gonad") 
+```
 
+## Candidate Correlations - SUppl fig 1
+
+
+```{r correlations}
+hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
+pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
+gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
+
+hyp2 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)  
+pit2 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
+gon2 <- makecorrdf("male", "gonad", curleychampagnegenes) 
+
+
+hyp3 <- makecorrdf("female", "hypothalamus", GOgenes)  
+pit3 <- makecorrdf("female", "pituitary", GOgenes)  
+gon3 <- makecorrdf("female", "gonad", GOgenes)  
+
+hyp4 <- makecorrdf("male", "hypothalamus", GOgenes)  
+pit4 <- makecorrdf("male", "pituitary", GOgenes)  
+gon4 <- makecorrdf("male", "gonad", GOgenes)  
+```
+
+
+```{r supplfig-2, fig.width=7.25, fig.height=7.25}
+
+b1 <- plotcorrplot(hyp1, "females") + labs(y = "Hypothalamus", title = "Parental Care Literature")  + 
+  scale_x_discrete(position = "top")   + theme(axis.text.x = element_text(vjust = -0.25))
+b2 <- plotcorrplot(pit1, NULL)  + labs(y = "Pituitary") + 
+  theme(axis.text.x = element_blank())
+b3 <- plotcorrplot(gon1, NULL)  + labs(y = "Gonad") + theme(axis.text.x = element_text(vjust = 0.25))
+ 
+b4 <- plotcorrplot(hyp2, "males") + labs( title =  " ") + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = -0.25)) +
+  scale_x_discrete(position = "top") 
+b5 <- plotcorrplot(pit2, NULL)    + 
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank())
+b6 <- plotcorrplot(gon2, NULL)  + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
+
+
+b7 <- plotcorrplot(hyp3, "females") + labs( title = "Parental Care GO") + 
+   scale_x_discrete(position = "top") + theme(axis.text.x = element_text(vjust = -0.25))
+b8 <- plotcorrplot(pit3, NULL)   + 
+  theme(axis.text.x = element_blank())
+b9 <- plotcorrplot(gon3, NULL)  + theme(axis.text.x = element_text(vjust = 0.25))
+
+b10 <- plotcorrplot(hyp4, "males") + labs( title =  " ") + 
+  theme(axis.text.y = element_blank(),
+        axis.text.x = element_text(vjust = -0.25)) + scale_x_discrete(position = "top") 
+b11 <- plotcorrplot(pit4, NULL)    + 
+  theme(axis.text.x = element_blank() , axis.text.y = element_blank())
+b12 <- plotcorrplot(gon4, NULL)   + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
+
+forlegend <- plotcorrplot(gon4, NULL) + theme(legend.position = "bottom") 
+mylegend <- get_legend(forlegend)
+
+allcorplots <- plot_grid(b1,b4,b7,b10,
+          b2,b5,b8,b11,
+          b3,b6,b9,b12, rel_heights = c(1.4,1,1.2),
+          labels = c("A", " ", "B"), label_size = 8, rel_widths = c(1.4,1.2,1.2,1))
+
+supplfig2 <- plot_grid(allcorplots, mylegend, ncol = 1, rel_heights = c(1,0.1))
+supplfig2
+
+pdf(file="../figures/supplfig-2.pdf", width=7.25, height=7.25)
+plot(supplfig2)
+dev.off()
 ```
 
 
@@ -110,31 +168,29 @@ a <- png::readPNG("../figures/images/fig_fig2a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
 
 
-b1 <- plotcorrplot(hyp3, "females and males") + theme(legend.position = "none")  + labs(y = "Hypothalamus", title = "Candidate gene correlations")
-b2 <- plotcorrplot(pit3, NULL) + theme(legend.position = "none") + labs(y = "Pituitary")
-b3 <- plotcorrplot(gon3, NULL) + theme(legend.position = "none")  + labs(y = "Gonad")
 
-c1 <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female", title =  "Top correlation")  
+
+c1 <- scattercorrelations(FH, FH$DRD4, FH$HTR2C, "#969696", "DRD4", "HTR2C") + labs(subtitle = "female", title =  "Top correlation")  
 c3 <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = NULL) 
 c5 <- scattercorrelations(FG, FG$ESR1, FG$PGR, "#969696", "ESR1", "PGR")   + labs(subtitle = NULL) 
 
-c2 <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C")  + labs(subtitle = "male", title = "", y = NULL)  
+c2 <- scattercorrelations(MH, MH$DRD4, MH$HTR2C, "#525252", "DRD4", "HTR2C")  + labs(subtitle = "male", title = "", y = NULL)  
 c4 <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1")  + labs(subtitle = NULL, y = NULL)  
 c6 <- scattercorrelations(MG, MG$ESR1, MG$PGR, "#525252", "ESR1", "PGR")  + labs(subtitle = NULL, y = NULL)  
 
 
-d1 <- candidateboxplot("hypothalamus", c("DRD1"), sexlevels) + labs(x = NULL, title = "Temporal expression pattern" )  
+d1 <- candidateboxplot("hypothalamus", c("DRD4"), sexlevels) + labs(x = NULL, title = "Temporal expression pattern" )  
 d2 <- candidateboxplot("hypothalamus", c("HTR2C"), sexlevels) + labs(x = NULL ) + theme(strip.text = element_blank())
 d3 <- candidateboxplot("pituitary", c("AVPR1A"), sexlevels) + labs(x = NULL )  + theme( strip.text = element_blank())
 d4 <- candidateboxplot("pituitary", c("CRHR1"), sexlevels) + labs(x = NULL  )  + theme(strip.text = element_blank())
 d5 <- candidateboxplot("gonad", c("ESR1"), sexlevels) + labs(x = NULL) + theme(strip.text = element_blank())
 d6 <- candidateboxplot("gonad", c("PGR"), sexlevels) + labs(x = NULL ) + theme(strip.text = element_blank())
 
-b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
+#b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
 c <- plot_grid(c1,c2,c3,c4,c5,c6, ncol = 2, rel_heights = c(1.1,1,1), rel_widths = c(1.1,1))
 d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
 
-bcd <- plot_grid(b,c,d, ncol = 3, rel_widths = c(1,1,1), labels = c("A", "B", "C"), label_size = 8)
+bcd <- plot_grid(c,d, ncol = 2, rel_widths = c(1,1), labels = c("A", "B"), label_size = 8)
 
 fig2 <- plot_grid(bcd, a, ncol = 1, rel_heights = c(1,0.1))
 fig2
@@ -144,63 +200,10 @@ plot(fig2)
 dev.off()
 ```
 
-```{r fig3, fig.height=3, fig.width=7.25}
-
-musicplot <- function(whichgene, whichtissue){
-    
-    p <- candidatevsd %>%
-      group_by(treatment, tissue, gene, sex)  %>% 
-      summarize(median = median(counts, na.rm = T), 
-                se = sd(counts,  na.rm = T)/sqrt(length(counts))) %>%
-      dplyr::mutate(scaled = rescale(median, to = c(0, 7))) %>%
-      dplyr::mutate(image = "../figures/images/musicnote.png")   %>%
-      filter(
-        gene %in% whichgene,
-        tissue %in% whichtissue      ) %>% 
-      collect() %>%
-      drop_na() %>%
-      ggplot( aes(x = treatment, y = median)) +
-      geom_errorbar(aes(ymin = median - se, 
-                        ymax = median + se, color = "white"),  width=0) +
-      geom_image(aes(image=image), size = 0.1)+
-      theme_B3() +
-      theme(legend.position = "none",
-            title = element_text(face = "italic"),
-            strip.text = element_text(color = "white"),
-            axis.text.x = element_text(angle = 45, hjust = 1),
-            axis.text.y = element_blank(),
-            axis.line = element_blank(), axis.ticks = element_blank()) +
-      scale_color_manual(values = allcolors) +
-      labs(y = " ",x = NULL ) +
-      facet_wrap(~sex, nrow = 2, scales = "free_y")
-      return(p)
-}
-
-music <- png::readPNG("../figures/images/fig_music.png")
-music <- ggdraw() +  draw_image(music, scale = 1)
-
-musicalgenes <- png::readPNG("../figures/images/fig_musicalgenes.png")
-musicalgenes <- ggdraw() +  draw_image(musicalgenes, scale = 1)
-
-
-p1 <- musicplot(c("AVP", "OXT"), "hypothalamus") + labs(subtitle = "Hypothalamic AVP & OXT" ) + theme(axis.text.x = element_blank())
-p2 <- musicplot(c("AVP", "OXT"), "pituitary") + labs(subtitle = "Pituitary AVP & OXT " ) + theme(axis.text.x = element_blank())
-p3 <- musicplot(c("AVP", "OXT"), "gonad") + labs(subtitle = "Gonadal  AVP & OXT"  )
-
-p123 <- plot_grid(music, p1, music, p3, ncol = 2, rel_widths = c(0.125,1))
-
-plot_grid(musicalgenes, p123, nrow = 1, rel_widths = c(1.5,1))
-
-```
-
-
-
-
 
 
 ```{r writefiles}
 #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
 #write.csv(candidatevsd, "../results/candidatecounts.csv")
 write.csv(table1, "../results/table1.csv")
-write.csv(candidategenes, "../results/candidategenes.csv")
 ```

@@ -16,31 +16,44 @@ Candidate gene analysis
 
     source("../R/themes.R")
     source("../R/functions.R")
-    source("../R/wrangledata.R")
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Warning: Missing column names filled in: 'X1' [1]
 
     knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
+
+Candidate genes
+---------------
+
+    parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% select(-X1)
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    head(parentalcaregenes)
+
+    ## # A tibble: 6 x 5
+    ##   geneid NCBI           literature GO     gene  
+    ##    <dbl> <chr>          <chr>      <chr>  <chr> 
+    ## 1 428980 XP_004942333.2 ADRA2A     <NA>   ADRA2A
+    ## 2 396101 NP_990516.1    AVP        AVP    AVP   
+    ## 3 771773 NP_001103908.1 AVPR1A     AVPR1A AVPR1A
+    ## 4 395098 NP_989780.1    <NA>       BRINP1 BRINP1
+    ## 5 416783 XP_001233014.1 COMT       <NA>   COMT  
+    ## 6 416206 XP_001231574.1 <NA>       CREBRF CREBRF
+
+    curleychampagnegenes <- parentalcaregenes %>% distinct(literature) %>% drop_na() %>% pull(literature)
+    GOgenes <- parentalcaregenes %>% distinct(GO)  %>% drop_na() %>% pull(GO)
+    candidategenes <- parentalcaregenes %>% pull(gene) 
+    candidategenes
+
+    ##  [1] "ADRA2A" "AVP"    "AVPR1A" "BRINP1" "COMT"   "CREBRF" "CRH"   
+    ##  [8] "CRHBP"  "CRHR1"  "CRHR2"  "DBH"    "DRD1"   "DRD4"   "ESR1"  
+    ## [15] "ESR2"   "FOS"    "GNAQ"   "HTR2C"  "KALRN"  "MBD2"   "MEST"  
+    ## [22] "NPAS3"  "NPAS3"  "NR3C1"  "OPRK1"  "OPRM1"  "OXT"    "PGR"   
+    ## [29] "PRL"    "PRLR"   "PTEN"   "SLC6A4" "ZFX"
 
 Candidate DEGs
 --------------
 
     # summary DEG results from DESeq2
-    candidateDEGS <- read_csv("../results/suppletable1.csv") %>%
+    candidateDEGS <- read_csv("../results/suppltable1.csv") %>%
       filter(gene %in% candidategenes) %>%
       mutate(posneg = ifelse(lfc >= 0, "+", "-"),
              sex = recode(sex, "female" = "F", "male" = "M" ),
@@ -52,1211 +65,66 @@ Candidate DEGs
       group_by(gene,  comparison) %>%
       summarize(res = str_c(res, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = res) %>%
-      select(gene, control_bldg, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
+      select(gene, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
     candidateDEGS
 
-    ## # A tibble: 32 x 8
-    ## # Groups:   gene [32]
-    ##    gene  control_bldg bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
-    ##    <chr> <chr>        <chr>    <chr>      <chr>         <chr>         
-    ##  1 ADRA… FH+ FP+      <NA>     <NA>       <NA>          <NA>          
-    ##  2 AVP   FP- MP-      <NA>     <NA>       <NA>          <NA>          
-    ##  3 AVPR… FG+          <NA>     FG+        FG-           <NA>          
-    ##  4 BRIN… FH- MP- FG-  <NA>     <NA>       <NA>          <NA>          
-    ##  5 COMT  FH- MH- MP-  <NA>     <NA>       <NA>          <NA>          
-    ##  6 CREB… MG-          FG+      FG-        <NA>          <NA>          
-    ##  7 CRH   MH+          <NA>     <NA>       <NA>          <NA>          
-    ##  8 CRHBP FH+ FG-      <NA>     <NA>       <NA>          <NA>          
-    ##  9 CRHR1 FG-          <NA>     <NA>       <NA>          <NA>          
-    ## 10 CRHR2 FG- MG-      <NA>     <NA>       <NA>          <NA>          
-    ## # … with 22 more rows, and 2 more variables: hatch_n5 <chr>, n5_n9 <chr>
+    ## # A tibble: 23 x 7
+    ## # Groups:   gene [23]
+    ##    gene   bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
+    ##    <chr>  <chr>    <chr>      <chr>         <chr>          <chr>    <chr>
+    ##  1 ADRA2A <NA>     <NA>       <NA>          MH+            <NA>     <NA> 
+    ##  2 AVP    <NA>     <NA>       <NA>          MH+            <NA>     FG+  
+    ##  3 AVPR1A <NA>     FG+        FG-           <NA>           <NA>     <NA> 
+    ##  4 BRINP1 <NA>     <NA>       <NA>          FG+            <NA>     <NA> 
+    ##  5 COMT   <NA>     <NA>       <NA>          <NA>           FH-      <NA> 
+    ##  6 CREBRF FG+      FG-        <NA>          <NA>           FP+      <NA> 
+    ##  7 CRHBP  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
+    ##  8 CRHR2  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
+    ##  9 DRD1   <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
+    ## 10 DRD4   <NA>     FP-        <NA>          <NA>           FH+      <NA> 
+    ## # … with 13 more rows
 
     ## table 1 summary candidate genes
     table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
-      select(gene, control_bldg:n5_n9, parentalcare, parentalbehavior, NCBI) %>%
-      mutate(parentalcare = if_else(is.na(parentalcare), " ", "X"),
-             parentalbehavior = if_else(is.na(parentalbehavior), " ", "X")) %>%
-      rename("Literature" = "parentalcare", "GO" =  "parentalbehavior")
-    table1$numDEGs <- rowSums(is.na(table1)) # count NAs to know how many are NS
-
-    table1 <- table1 %>% 
-      mutate(sig = ifelse(numDEGs == 6, "NS", "DEG")) %>% 
-      arrange(gene)  %>%  select(-sig, -numDEGs)
+      select(gene, bldg_lay:n5_n9, literature, GO, NCBI) %>%
+      mutate(literature = if_else(is.na(literature), " ", "X"),
+             GO = if_else(is.na(GO), " ", "X"))
     table1[is.na(table1)] <- " " # replace NA with blank space so it's pretty
     head(table1)
 
-    ## # A tibble: 6 x 11
+    ## # A tibble: 6 x 10
     ## # Groups:   gene [6]
-    ##   gene  control_bldg bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
-    ##   <chr> <chr>        <chr>    <chr>      <chr>         <chr>         
-    ## 1 ADRA… FH+ FP+      " "      " "        " "           " "           
-    ## 2 AVP   FP- MP-      " "      " "        " "           " "           
-    ## 3 AVPR… FG+          " "      "FG+"      "FG-"         " "           
-    ## 4 BRIN… FH- MP- FG-  " "      " "        " "           " "           
-    ## 5 COMT  FH- MH- MP-  " "      " "        " "           " "           
-    ## 6 CREB… MG-          "FG+"    "FG-"      " "           " "           
-    ## # … with 5 more variables: hatch_n5 <chr>, n5_n9 <chr>, Literature <chr>,
-    ## #   GO <chr>, NCBI <chr>
+    ##   gene  bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
+    ##   <chr> <chr>    <chr>      <chr>         <chr>          <chr>    <chr>
+    ## 1 ADRA… " "      " "        " "           "MH+"          " "      " "  
+    ## 2 AVP   " "      " "        " "           "MH+"          " "      "FG+"
+    ## 3 AVPR… " "      "FG+"      "FG-"         " "            " "      " "  
+    ## 4 BRIN… " "      " "        " "           "FG+"          " "      " "  
+    ## 5 COMT  " "      " "        " "           " "            "FH-"    " "  
+    ## 6 CREB… "FG+"    "FG-"      " "           " "            "FP+"    " "  
+    ## # … with 3 more variables: literature <chr>, GO <chr>, NCBI <chr>
 
-    kable(table1)
-
-<table>
-<thead>
-<tr>
-<th style="text-align:left;">
-gene
-</th>
-<th style="text-align:left;">
-control\_bldg
-</th>
-<th style="text-align:left;">
-bldg\_lay
-</th>
-<th style="text-align:left;">
-lay\_inc.d3
-</th>
-<th style="text-align:left;">
-inc.d3\_inc.d9
-</th>
-<th style="text-align:left;">
-inc.d9\_inc.d17
-</th>
-<th style="text-align:left;">
-hatch\_n5
-</th>
-<th style="text-align:left;">
-n5\_n9
-</th>
-<th style="text-align:left;">
-Literature
-</th>
-<th style="text-align:left;">
-GO
-</th>
-<th style="text-align:left;">
-NCBI
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-ADRA2A
-</td>
-<td style="text-align:left;">
-FH+ FP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_004942333.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AVP
-</td>
-<td style="text-align:left;">
-FP- MP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-NP\_990516.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-AVPR1A
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-NP\_001103908.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-BRINP1
-</td>
-<td style="text-align:left;">
-FH- MP- FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-NP\_989780.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-COMT
-</td>
-<td style="text-align:left;">
-FH- MH- MP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_001233014.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CREBRF
-</td>
-<td style="text-align:left;">
-MG-
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_001231574.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CRH
-</td>
-<td style="text-align:left;">
-MH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-NP\_001116503.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CRHBP
-</td>
-<td style="text-align:left;">
-FH+ FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_003643006.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CRHR1
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-NP\_989652.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-CRHR2
-</td>
-<td style="text-align:left;">
-FG- MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-NP\_989785.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-DBH
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_415429.5
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-DRD1
-</td>
-<td style="text-align:left;">
-FH+ FP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-NP\_001138320.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-DRD4
-</td>
-<td style="text-align:left;">
-FH- FP- MP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-NP\_001136321.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ESR1
-</td>
-<td style="text-align:left;">
-FH+ MH+ FG+ MG+
-</td>
-<td style="text-align:left;">
-FP+
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_015139536.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ESR2
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-NP\_990125.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-FOS
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-NP\_990839.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-GNAQ
-</td>
-<td style="text-align:left;">
-FH+ MH+ FP+ MP+ FG+ MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-NP\_001026598.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-HTR2C
-</td>
-<td style="text-align:left;">
-FH+ FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_004940707.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-KALRN
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_015145468.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MBD2
-</td>
-<td style="text-align:left;">
-FP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-NP\_001012403.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-MEST
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_015142671.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NPAS3
-</td>
-<td style="text-align:left;">
-FH- MP- FG- MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_015143131.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NPAS3
-</td>
-<td style="text-align:left;">
-FH- MP- FG- MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_015143132.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-NR3C1
-</td>
-<td style="text-align:left;">
-FH+ MH+ FP+ MP+ FG+ MG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_015149519.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-OPRK1
-</td>
-<td style="text-align:left;">
-FH+ FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_426087.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-OPRM1
-</td>
-<td style="text-align:left;">
-FH+ MH+ MP+ FG+
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_003641008.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-OXT
-</td>
-<td style="text-align:left;">
-FP- MP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_004936337.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PGR
-</td>
-<td style="text-align:left;">
-FG+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FH+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-NP\_990593.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PRL
-</td>
-<td style="text-align:left;">
-FH- MH- FP- MP- MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP+ MP+
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-NP\_990797.2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PRLR
-</td>
-<td style="text-align:left;">
-FH- FP- MP- MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_015132722.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-PTEN
-</td>
-<td style="text-align:left;">
-FH+ FP+ MP+ FG+ MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-FP-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_015134187.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-SLC6A4
-</td>
-<td style="text-align:left;">
-FP+
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-XP\_015151186.1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ZFX
-</td>
-<td style="text-align:left;">
-FP- MP- MG-
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-</td>
-<td style="text-align:left;">
-X
-</td>
-<td style="text-align:left;">
-XP\_015127980.1
-</td>
-</tr>
-</tbody>
-</table>
-
-Candidate Correlations
-----------------------
+Candidate VSDs
+--------------
 
     # load `candidatevsd` with `source("../R/wrangledata.R")`
-    head(candidatevsd)
+    candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
+      select(-X1) %>%
+      filter(treatment %in% charlevels)
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    tail(candidatevsd)
 
     ## # A tibble: 6 x 6
-    ##   sex    tissue      treatment gene  samples                         counts
-    ##   <chr>  <chr>       <fct>     <chr> <chr>                            <dbl>
-    ## 1 female hypothalam… control   ADRA… L.G118_female_hypothalamus_con…   8.87
-    ## 2 female hypothalam… control   ADRA… R.G106_female_hypothalamus_con…   8.73
-    ## 3 female hypothalam… control   ADRA… R.R20_female_hypothalamus_cont…   9.11
-    ## 4 female hypothalam… control   ADRA… R.R9_female_hypothalamus_contr…   8.63
-    ## 5 female hypothalam… control   ADRA… R.W44_female_hypothalamus_cont…   9.17
-    ## 6 female hypothalam… inc.d9    ADRA… blk.s061.pu.y_female_hypothala…   9.04
-
-    curleychampagnegenes <- curleychampagnegenes %>% pull(gene)
-
-    hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
-
-    ## # A tibble: 6 x 23
-    ##   rowname  HTR2C   DRD1  CRHBP  CRHR2   MEST ADRA2A AVPR1A CRHR1   CRH
-    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl>
-    ## 1 HTR2C   NA      0.851  0.795  0.835  0.492  0.411  0.400 0.551 0.346
-    ## 2 DRD1     0.851 NA      0.778  0.730  0.521  0.401  0.439 0.353 0.356
-    ## 3 CRHBP    0.795  0.778 NA      0.756  0.583  0.470  0.464 0.362 0.266
-    ## 4 CRHR2    0.835  0.730  0.756 NA      0.589  0.344  0.401 0.539 0.499
-    ## 5 MEST     0.492  0.521  0.583  0.589 NA      0.376  0.361 0.356 0.335
-    ## 6 ADRA2A   0.411  0.401  0.470  0.344  0.376 NA      0.338 0.257 0.183
-    ## # … with 13 more variables: OPRM1 <dbl>, ESR1 <dbl>, PGR <dbl>, AVP <dbl>,
-    ## #   FOS <dbl>, OXT <dbl>, NR3C1 <dbl>, ESR2 <dbl>, DRD4 <dbl>,
-    ## #   SLC6A4 <dbl>, PRLR <dbl>, PRL <dbl>, COMT <dbl>
-
-    pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
-
-    ## # A tibble: 6 x 22
-    ##   rowname   NR3C1   ADRA2A   AVPR1A    ESR1    ESR2   CRHR1   DRD1  SLC6A4
-    ##   <chr>     <dbl>    <dbl>    <dbl>   <dbl>   <dbl>   <dbl>  <dbl>   <dbl>
-    ## 1 NR3C1   NA       0.398    0.110    0.159   0.340   0.0968 0.324   0.294 
-    ## 2 ADRA2A   0.398  NA        0.00466  0.0909  0.153  -0.163  0.204   0.227 
-    ## 3 AVPR1A   0.110   0.00466 NA        0.355  -0.0372  0.735  0.0625 -0.0823
-    ## 4 ESR1     0.159   0.0909   0.355   NA      -0.0485  0.0993 0.0927  0.0187
-    ## 5 ESR2     0.340   0.153   -0.0372  -0.0485 NA       0.0363 0.0739  0.0248
-    ## 6 CRHR1    0.0968 -0.163    0.735    0.0993  0.0363 NA      0.0734  0.0147
-    ## # … with 13 more variables: MEST <dbl>, FOS <dbl>, PRL <dbl>, CRHR2 <dbl>,
-    ## #   OPRM1 <dbl>, PGR <dbl>, DRD4 <dbl>, HTR2C <dbl>, PRLR <dbl>,
-    ## #   COMT <dbl>, CRHBP <dbl>, AVP <dbl>, OXT <dbl>
-
-    gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
-
-    ## # A tibble: 6 x 23
-    ##   rowname    PGR    ESR1  OPRM1   COMT   MEST     AVP   PRLR    PRL  ADRA2A
-    ##   <chr>    <dbl>   <dbl>  <dbl>  <dbl>  <dbl>   <dbl>  <dbl>  <dbl>   <dbl>
-    ## 1 PGR     NA      0.866   0.369  0.307  0.323  0.163  0.455  0.220   0.535 
-    ## 2 ESR1     0.866 NA       0.269  0.213  0.210  0.0618 0.429  0.187   0.587 
-    ## 3 OPRM1    0.369  0.269  NA      0.312  0.330  0.379  0.0995 0.204  -0.0102
-    ## 4 COMT     0.307  0.213   0.312 NA      0.216  0.308  0.304  0.0823  0.0887
-    ## 5 MEST     0.323  0.210   0.330  0.216 NA      0.279  0.0254 0.169  -0.173 
-    ## 6 AVP      0.163  0.0618  0.379  0.308  0.279 NA      0.158  0.219  -0.152 
-    ## # … with 13 more variables: NR3C1 <dbl>, OXT <dbl>, CRH <dbl>,
-    ## #   AVPR1A <dbl>, SLC6A4 <dbl>, DRD4 <dbl>, FOS <dbl>, CRHR2 <dbl>,
-    ## #   HTR2C <dbl>, DRD1 <dbl>, CRHR1 <dbl>, CRHBP <dbl>, ESR2 <dbl>
-
-    hyp2 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)  
-
-    ## # A tibble: 6 x 23
-    ##   rowname  HTR2C   DRD1  CRHR2  CRHBP    CRH  CRHR1  DRD4  MEST  ESR1   FOS
-    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl>
-    ## 1 HTR2C   NA      0.831  0.777  0.759  0.578  0.513 0.479 0.351 0.236 0.106
-    ## 2 DRD1     0.831 NA      0.724  0.668  0.475  0.461 0.575 0.351 0.140 0.162
-    ## 3 CRHR2    0.777  0.724 NA      0.742  0.336  0.441 0.352 0.329 0.171 0.206
-    ## 4 CRHBP    0.759  0.668  0.742 NA      0.425  0.376 0.385 0.426 0.264 0.143
-    ## 5 CRH      0.578  0.475  0.336  0.425 NA      0.601 0.198 0.175 0.488 0.195
-    ## 6 CRHR1    0.513  0.461  0.441  0.376  0.601 NA     0.346 0.187 0.270 0.366
-    ## # … with 12 more variables: NR3C1 <dbl>, OPRM1 <dbl>, ADRA2A <dbl>,
-    ## #   AVPR1A <dbl>, PGR <dbl>, PRLR <dbl>, SLC6A4 <dbl>, AVP <dbl>,
-    ## #   ESR2 <dbl>, OXT <dbl>, PRL <dbl>, COMT <dbl>
-
-    pit2 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
-
-    ## # A tibble: 6 x 22
-    ##   rowname  ADRA2A     OXT    PRLR    COMT    OPRM1      AVP    DRD4    ESR2
-    ##   <chr>     <dbl>   <dbl>   <dbl>   <dbl>    <dbl>    <dbl>   <dbl>   <dbl>
-    ## 1 ADRA2A  NA       0.172  -0.0533 -0.0310  0.411    0.0213  -0.198   0.0827
-    ## 2 OXT      0.172  NA       0.100   0.154   0.0562   0.618    0.0378 -0.127 
-    ## 3 PRLR    -0.0533  0.100  NA       0.431   0.0204   0.0125   0.516   0.0330
-    ## 4 COMT    -0.0310  0.154   0.431  NA       0.0848   0.0128   0.0659  0.147 
-    ## 5 OPRM1    0.411   0.0562  0.0204  0.0848 NA        0.00625 -0.281   0.0835
-    ## 6 AVP      0.0213  0.618   0.0125  0.0128  0.00625 NA        0.0832 -0.258 
-    ## # … with 13 more variables: ESR1 <dbl>, CRHR2 <dbl>, SLC6A4 <dbl>,
-    ## #   PGR <dbl>, CRHBP <dbl>, MEST <dbl>, DRD1 <dbl>, PRL <dbl>,
-    ## #   NR3C1 <dbl>, HTR2C <dbl>, FOS <dbl>, CRHR1 <dbl>, AVPR1A <dbl>
-
-    gon2 <- makecorrdf("male", "gonad", curleychampagnegenes)  
-
-    ## # A tibble: 6 x 23
-    ##   rowname     ESR1    FOS  ADRA2A    DRD1   HTR2C   SLC6A4    DRD4   MEST
-    ##   <chr>      <dbl>  <dbl>   <dbl>   <dbl>   <dbl>    <dbl>   <dbl>  <dbl>
-    ## 1 ESR1    NA        0.427  0.264   0.257   0.135  -0.00566  0.127  0.0499
-    ## 2 FOS      0.427   NA      0.377   0.161   0.216   0.193    0.0816 0.0519
-    ## 3 ADRA2A   0.264    0.377 NA       0.0863 -0.119   0.0421   0.0870 0.140 
-    ## 4 DRD1     0.257    0.161  0.0863 NA       0.0688 -0.0200   0.103  0.0404
-    ## 5 HTR2C    0.135    0.216 -0.119   0.0688 NA       0.0991  -0.140  0.154 
-    ## 6 SLC6A4  -0.00566  0.193  0.0421 -0.0200  0.0991 NA        0.0757 0.117 
-    ## # … with 14 more variables: OXT <dbl>, PGR <dbl>, ESR2 <dbl>, COMT <dbl>,
-    ## #   NR3C1 <dbl>, CRH <dbl>, AVPR1A <dbl>, CRHBP <dbl>, PRL <dbl>,
-    ## #   AVP <dbl>, OPRM1 <dbl>, PRLR <dbl>, CRHR1 <dbl>, CRHR2 <dbl>
-
-    hyp3 <- makecorrdf(sexlevels, "hypothalamus", curleychampagnegenes)  
-
-    ## Warning in sex == whichsex: longer object length is not a multiple of
-    ## shorter object length
-
-    ## # A tibble: 6 x 23
-    ##   rowname  HTR2C   DRD1  CRHR2  CRHBP  CRHR1    CRH  DRD4  ESR1  MEST
-    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl>
-    ## 1 HTR2C   NA      0.854  0.851  0.731  0.526  0.460 0.480 0.385 0.179
-    ## 2 DRD1     0.854 NA      0.740  0.718  0.571  0.356 0.533 0.244 0.238
-    ## 3 CRHR2    0.851  0.740 NA      0.658  0.357  0.171 0.365 0.217 0.210
-    ## 4 CRHBP    0.731  0.718  0.658 NA      0.403  0.350 0.362 0.228 0.430
-    ## 5 CRHR1    0.526  0.571  0.357  0.403 NA      0.717 0.441 0.202 0.581
-    ## 6 CRH      0.460  0.356  0.171  0.350  0.717 NA     0.355 0.556 0.504
-    ## # … with 13 more variables: FOS <dbl>, SLC6A4 <dbl>, ADRA2A <dbl>,
-    ## #   NR3C1 <dbl>, PGR <dbl>, AVPR1A <dbl>, AVP <dbl>, PRLR <dbl>,
-    ## #   ESR2 <dbl>, OPRM1 <dbl>, OXT <dbl>, PRL <dbl>, COMT <dbl>
-
-    pit3 <- makecorrdf(sexlevels, "pituitary", curleychampagnegenes)  
-
-    ## Warning in sex == whichsex: longer object length is not a multiple of
-    ## shorter object length
-
-    ## # A tibble: 6 x 22
-    ##   rowname   DRD1    OXT  CRHBP  CRHR2   HTR2C  ADRA2A      PGR AVPR1A
-    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>   <dbl>   <dbl>    <dbl>  <dbl>
-    ## 1 DRD1    NA      0.586  0.541  0.315  0.606   0.251  -0.0661  0.457 
-    ## 2 OXT      0.586 NA      0.701  0.457  0.728   0.247   0.277   0.368 
-    ## 3 CRHBP    0.541  0.701 NA      0.444  0.667   0.237   0.269   0.317 
-    ## 4 CRHR2    0.315  0.457  0.444 NA      0.350   0.276   0.00797 0.224 
-    ## 5 HTR2C    0.606  0.728  0.667  0.350 NA       0.0835  0.0408  0.523 
-    ## 6 ADRA2A   0.251  0.247  0.237  0.276  0.0835 NA      -0.363   0.0530
-    ## # … with 13 more variables: ESR1 <dbl>, NR3C1 <dbl>, COMT <dbl>,
-    ## #   OPRM1 <dbl>, FOS <dbl>, MEST <dbl>, CRHR1 <dbl>, PRL <dbl>,
-    ## #   SLC6A4 <dbl>, ESR2 <dbl>, AVP <dbl>, DRD4 <dbl>, PRLR <dbl>
-
-    gon3 <- makecorrdf(sexlevels, "gonad", curleychampagnegenes)  
-
-    ## Warning in sex == whichsex: longer object length is not a multiple of
-    ## shorter object length
-
-    ## # A tibble: 6 x 23
-    ##   rowname    FOS ADRA2A   DRD4  HTR2C   ESR2  CRHR1 CRHBP  ESR1   PGR NR3C1
-    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl>
-    ## 1 FOS     NA      0.931  0.885  0.886  0.893  0.873 0.888 0.836 0.777 0.725
-    ## 2 ADRA2A   0.931 NA      0.875  0.847  0.851  0.828 0.832 0.912 0.860 0.703
-    ## 3 DRD4     0.885  0.875 NA      0.849  0.835  0.865 0.829 0.819 0.767 0.689
-    ## 4 HTR2C    0.886  0.847  0.849 NA      0.905  0.919 0.919 0.723 0.669 0.640
-    ## 5 ESR2     0.893  0.851  0.835  0.905 NA      0.907 0.958 0.701 0.628 0.624
-    ## 6 CRHR1    0.873  0.828  0.865  0.919  0.907 NA     0.923 0.677 0.639 0.629
-    ## # … with 12 more variables: AVPR1A <dbl>, COMT <dbl>, MEST <dbl>,
-    ## #   SLC6A4 <dbl>, DRD1 <dbl>, AVP <dbl>, OXT <dbl>, CRH <dbl>, PRL <dbl>,
-    ## #   CRHR2 <dbl>, PRLR <dbl>, OPRM1 <dbl>
+    ##   sex   tissue treatment gene  samples                         counts
+    ##   <chr> <chr>  <chr>     <chr> <chr>                            <dbl>
+    ## 1 male  gonad  n9        ZFX   y129.x_male_gonad_n9              10.3
+    ## 2 male  gonad  n9        ZFX   y131.w185.x_male_gonad_n9         10.4
+    ## 3 male  gonad  inc.d17   ZFX   y133.w77.r58_male_gonad_inc.d17   10.3
+    ## 4 male  gonad  inc.d3    ZFX   y149.r52.x_male_gonad_inc.d3      10.5
+    ## 5 male  gonad  inc.d9    ZFX   y95.g131.x_male_gonad_inc.d9      10.5
+    ## 6 male  gonad  inc.d3    ZFX   y98.o50.x_male_gonad_inc.d3       10.2
 
     candidatevsdwide <- candidatevsd  %>%
         pivot_wider(names_from = gene, values_from = counts) 
@@ -1267,139 +135,273 @@ Candidate Correlations
     MP <- subsetcandidatevsdwide("male", "pituitary")
     MG <- subsetcandidatevsdwide("male", "gonad") 
 
-### Candidate gene functions
+Candidate Correlations - SUppl fig 1
+------------------------------------
 
-    candidateboxplot <- function(whichtissue, whichgenes, whichsex){
-      
-      p <- candidatevsd %>%
-        filter(tissue %in% whichtissue,
-              gene %in% whichgenes,
-              sex %in% whichsex) %>%
-        mutate(treatment = factor(treatment, levels = charlevels)) %>%
-        ggplot(aes(x = treatment, y = counts)) +
-        geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
-        geom_jitter(size = 0.25, aes(color = sex)) +
-        facet_wrap(~sex,  nrow = 1) +
-        scale_fill_manual(values = allcolors) +
-        scale_color_manual(values = allcolors) +
-        theme_B3() + 
-        theme(legend.position = "none",
-              axis.title.y = element_text(face = "italic"),
-              axis.text.x = element_blank(),
-              axis.ticks = element_blank()) +
-        labs(y = whichgenes,
-             x = NULL) +
-        geom_signif(comparisons = list(c( "control", "bldg"),
-                                     c( "bldg", "lay"),
-                                     c( "lay", "inc.d3"),
-                                     c("inc.d3", "inc.d9"),
-                                     c( "inc.d9", "inc.d17"),
-                                     c( "inc.d17", "hatch"),
-                                     c("hatch", "n5"),
-                                     c( "n5", "n9")),  
-                    map_signif_level=TRUE,
-                    textsize = 1.5, family = 'Helvetica',
-                    vjust = 1.5, size = 0) 
-                    
-      return(p)
-    }
+    hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
 
-    scattercorrelations <- function(df, gene1, gene2, mylinecolor, myxlab, myylab){
-      p <- ggplot(df, aes(x = gene1, y = gene2)) +
-        labs(subtitle = " ", x = myxlab, y = myylab) + 
-        scale_color_manual(values = allcolors) +
-        geom_smooth(method = "glm",  color = mylinecolor) +
-        geom_point(aes(color = treatment))  +
-        theme_B3() +  
-        theme(axis.title = element_text(face = "italic"), 
-                legend.position = "none") +
-        stat_cor( size = 2)
-      return(p)
-    }
+    ## # A tibble: 6 x 23
+    ##   rowname ADRA2A    AVP AVPR1A   COMT    CRH  CRHBP   CRHR1  CRHR2   DRD1
+    ##   <chr>    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>   <dbl>  <dbl>  <dbl>
+    ## 1 ADRA2A  NA      0.413  0.334 -0.452  0.184  0.464  0.257   0.339  0.396
+    ## 2 AVP      0.413 NA      0.300 -0.110  0.353  0.144  0.0892  0.151  0.158
+    ## 3 AVPR1A   0.334  0.300 NA     -0.356  0.292  0.460  0.251   0.398  0.436
+    ## 4 COMT    -0.452 -0.110 -0.356 NA     -0.336 -0.732 -0.373  -0.640 -0.855
+    ## 5 CRH      0.184  0.353  0.292 -0.336 NA      0.262  0.387   0.498  0.352
+    ## 6 CRHBP    0.464  0.144  0.460 -0.732  0.262 NA      0.358   0.755  0.776
+    ## # … with 13 more variables: DRD4 <dbl>, ESR1 <dbl>, ESR2 <dbl>, FOS <dbl>,
+    ## #   HTR2C <dbl>, MEST <dbl>, NR3C1 <dbl>, OPRM1 <dbl>, OXT <dbl>,
+    ## #   PGR <dbl>, PRL <dbl>, PRLR <dbl>, SLC6A4 <dbl>
+
+    pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
+
+    ## # A tibble: 6 x 22
+    ##   rowname   ADRA2A    AVP   AVPR1A   COMT  CRHBP  CRHR1   CRHR2    DRD1
+    ##   <chr>      <dbl>  <dbl>    <dbl>  <dbl>  <dbl>  <dbl>   <dbl>   <dbl>
+    ## 1 ADRA2A  NA       -0.267  0.00324 -0.110 -0.154 -0.163 0.00357  0.203 
+    ## 2 AVP     -0.267   NA     -0.202    0.484  0.543 -0.165 0.0195  -0.109 
+    ## 3 AVPR1A   0.00324 -0.202 NA       -0.120 -0.200  0.739 0.0330   0.0636
+    ## 4 COMT    -0.110    0.484 -0.120   NA      0.401 -0.241 0.108   -0.0232
+    ## 5 CRHBP   -0.154    0.543 -0.200    0.401 NA     -0.177 0.101   -0.0707
+    ## 6 CRHR1   -0.163   -0.165  0.739   -0.241 -0.177 NA     0.0809   0.0738
+    ## # … with 13 more variables: DRD4 <dbl>, ESR1 <dbl>, ESR2 <dbl>, FOS <dbl>,
+    ## #   HTR2C <dbl>, MEST <dbl>, NR3C1 <dbl>, OPRM1 <dbl>, OXT <dbl>,
+    ## #   PGR <dbl>, PRL <dbl>, PRLR <dbl>, SLC6A4 <dbl>
+
+    gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
+
+    ## # A tibble: 6 x 23
+    ##   rowname  ADRA2A     AVP  AVPR1A    COMT     CRH   CRHBP   CRHR1    CRHR2
+    ##   <chr>     <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>    <dbl>
+    ## 1 ADRA2A  NA      -0.152  -0.102   0.0897 -0.0290 -0.172  -0.316   2.28e-5
+    ## 2 AVP     -0.152  NA      -0.111   0.308  -0.0685 -0.373  -0.287  -3.43e-1
+    ## 3 AVPR1A  -0.102  -0.111  NA       0.0102  0.116   0.0483 -0.0593  1.36e-1
+    ## 4 COMT     0.0897  0.308   0.0102 NA       0.0224 -0.369  -0.331  -2.00e-1
+    ## 5 CRH     -0.0290 -0.0685  0.116   0.0224 NA      -0.0264 -0.0286 -1.32e-1
+    ## 6 CRHBP   -0.172  -0.373   0.0483 -0.369  -0.0264 NA       0.755   7.28e-1
+    ## # … with 14 more variables: DRD1 <dbl>, DRD4 <dbl>, ESR1 <dbl>,
+    ## #   ESR2 <dbl>, FOS <dbl>, HTR2C <dbl>, MEST <dbl>, NR3C1 <dbl>,
+    ## #   OPRM1 <dbl>, OXT <dbl>, PGR <dbl>, PRL <dbl>, PRLR <dbl>, SLC6A4 <dbl>
+
+    hyp2 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)  
+
+    ## # A tibble: 6 x 23
+    ##   rowname ADRA2A     AVP AVPR1A   COMT    CRH   CRHBP   CRHR1   CRHR2
+    ##   <chr>    <dbl>   <dbl>  <dbl>  <dbl>  <dbl>   <dbl>   <dbl>   <dbl>
+    ## 1 ADRA2A  NA      0.369   0.328 -0.313  0.306  0.169   0.261   0.133 
+    ## 2 AVP      0.369 NA       0.344 -0.214  0.252 -0.0639  0.145  -0.112 
+    ## 3 AVPR1A   0.328  0.344  NA     -0.219  0.211  0.271   0.0491  0.0158
+    ## 4 COMT    -0.313 -0.214  -0.219 NA     -0.663 -0.407  -0.639  -0.466 
+    ## 5 CRH      0.306  0.252   0.211 -0.663 NA      0.430   0.600   0.342 
+    ## 6 CRHBP    0.169 -0.0639  0.271 -0.407  0.430 NA       0.381   0.743 
+    ## # … with 14 more variables: DRD1 <dbl>, DRD4 <dbl>, ESR1 <dbl>,
+    ## #   ESR2 <dbl>, FOS <dbl>, HTR2C <dbl>, MEST <dbl>, NR3C1 <dbl>,
+    ## #   OPRM1 <dbl>, OXT <dbl>, PGR <dbl>, PRL <dbl>, PRLR <dbl>, SLC6A4 <dbl>
+
+    pit2 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
+
+    ## # A tibble: 6 x 23
+    ##   rowname   ADRA2A     AVP  AVPR1A    COMT      CRH   CRHBP    CRHR1
+    ##   <chr>      <dbl>   <dbl>   <dbl>   <dbl>    <dbl>   <dbl>    <dbl>
+    ## 1 ADRA2A  NA        0.0226 -0.252  -0.0329  0.00379 -0.0130 -0.345  
+    ## 2 AVP      0.0226  NA      -0.100   0.0156  0.173    0.0232 -0.0955 
+    ## 3 AVPR1A  -0.252   -0.100  NA      -0.120  -0.0780   0.104   0.765  
+    ## 4 COMT    -0.0329   0.0156 -0.120  NA      -0.0466   0.0426 -0.137  
+    ## 5 CRH      0.00379  0.173  -0.0780 -0.0466 NA        0.289  -0.00907
+    ## 6 CRHBP   -0.0130   0.0232  0.104   0.0426  0.289   NA       0.0998 
+    ## # … with 15 more variables: CRHR2 <dbl>, DRD1 <dbl>, DRD4 <dbl>,
+    ## #   ESR1 <dbl>, ESR2 <dbl>, FOS <dbl>, HTR2C <dbl>, MEST <dbl>,
+    ## #   NR3C1 <dbl>, OPRM1 <dbl>, OXT <dbl>, PGR <dbl>, PRL <dbl>, PRLR <dbl>,
+    ## #   SLC6A4 <dbl>
+
+    gon2 <- makecorrdf("male", "gonad", curleychampagnegenes) 
+
+    ## # A tibble: 6 x 23
+    ##   rowname  ADRA2A     AVP  AVPR1A    COMT     CRH   CRHBP   CRHR1   CRHR2
+    ##   <chr>     <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
+    ## 1 ADRA2A  NA      -0.165  -0.0284  0.104  -0.0520 -0.182  -0.0646 -0.116 
+    ## 2 AVP     -0.165  NA      -0.0463  0.121   0.108   0.105   0.119   0.162 
+    ## 3 AVPR1A  -0.0284 -0.0463 NA      -0.104  -0.0361  0.0318  0.0645  0.184 
+    ## 4 COMT     0.104   0.121  -0.104  NA       0.116   0.0501  0.193   0.0447
+    ## 5 CRH     -0.0520  0.108  -0.0361  0.116  NA       0.175   0.0575  0.368 
+    ## 6 CRHBP   -0.182   0.105   0.0318  0.0501  0.175  NA       0.0388  0.337 
+    ## # … with 14 more variables: DRD1 <dbl>, DRD4 <dbl>, ESR1 <dbl>,
+    ## #   ESR2 <dbl>, FOS <dbl>, HTR2C <dbl>, MEST <dbl>, NR3C1 <dbl>,
+    ## #   OPRM1 <dbl>, OXT <dbl>, PGR <dbl>, PRL <dbl>, PRLR <dbl>, SLC6A4 <dbl>
+
+    hyp3 <- makecorrdf("female", "hypothalamus", GOgenes)  
+
+    ## # A tibble: 6 x 17
+    ##   rowname     AVP  AVPR1A  BRINP1  CREBRF     DBH    DRD1    GNAQ   KALRN
+    ##   <chr>     <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>
+    ## 1 AVP     NA       0.300   0.0751 -0.138  -0.0363  0.158  -0.0370 -0.0529
+    ## 2 AVPR1A   0.300  NA       0.193   0.0303  0.0341  0.436   0.263   0.220 
+    ## 3 BRINP1   0.0751  0.193  NA       0.0123 -0.0441  0.144  -0.235   0.0666
+    ## 4 CREBRF  -0.138   0.0303  0.0123 NA      -0.123   0.0291 -0.0655  0.531 
+    ## 5 DBH     -0.0363  0.0341 -0.0441 -0.123  NA      -0.0363  0.0105 -0.0238
+    ## 6 DRD1     0.158   0.436   0.144   0.0291 -0.0363 NA       0.570   0.548 
+    ## # … with 8 more variables: MBD2 <dbl>, NPAS3 <dbl>, NR3C1 <dbl>,
+    ## #   OPRK1 <dbl>, OXT <dbl>, PRL <dbl>, PTEN <dbl>, ZFX <dbl>
+
+    pit3 <- makecorrdf("female", "pituitary", GOgenes)  
+
+    ## # A tibble: 6 x 17
+    ##   rowname     AVP  AVPR1A  BRINP1 CREBRF     DBH    DRD1   GNAQ   KALRN
+    ##   <chr>     <dbl>   <dbl>   <dbl>  <dbl>   <dbl>   <dbl>  <dbl>   <dbl>
+    ## 1 AVP     NA      -0.202   0.271   0.136 -0.0172 -0.109  0.0581  0.0494
+    ## 2 AVPR1A  -0.202  NA       0.158  -0.218  0.0422  0.0636 0.0611  0.0223
+    ## 3 BRINP1   0.271   0.158  NA       0.102  0.0636  0.292  0.109  -0.0817
+    ## 4 CREBRF   0.136  -0.218   0.102  NA     -0.109   0.221  0.0461  0.0633
+    ## 5 DBH     -0.0172  0.0422  0.0636 -0.109 NA       0.0598 0.0465  0.159 
+    ## 6 DRD1    -0.109   0.0636  0.292   0.221  0.0598 NA      0.169  -0.104 
+    ## # … with 8 more variables: MBD2 <dbl>, NPAS3 <dbl>, NR3C1 <dbl>,
+    ## #   OPRK1 <dbl>, OXT <dbl>, PRL <dbl>, PTEN <dbl>, ZFX <dbl>
+
+    gon3 <- makecorrdf("female", "gonad", GOgenes)  
+
+    ## # A tibble: 6 x 17
+    ##   rowname    AVP   AVPR1A   BRINP1   CREBRF     DBH    DRD1    GNAQ
+    ##   <chr>    <dbl>    <dbl>    <dbl>    <dbl>   <dbl>   <dbl>   <dbl>
+    ## 1 AVP     NA     -0.111   -0.341   -0.141    0.107  -0.415   0.216 
+    ## 2 AVPR1A  -0.111 NA       -0.00646  0.0406  -0.0923  0.109  -0.0345
+    ## 3 BRINP1  -0.341 -0.00646 NA       -0.00823 -0.0136  0.673  -0.665 
+    ## 4 CREBRF  -0.141  0.0406  -0.00823 NA        0.123   0.203   0.267 
+    ## 5 DBH      0.107 -0.0923  -0.0136   0.123   NA      -0.0631  0.139 
+    ## 6 DRD1    -0.415  0.109    0.673    0.203   -0.0631 NA      -0.574 
+    ## # … with 9 more variables: KALRN <dbl>, MBD2 <dbl>, NPAS3 <dbl>,
+    ## #   NR3C1 <dbl>, OPRK1 <dbl>, OXT <dbl>, PRL <dbl>, PTEN <dbl>, ZFX <dbl>
+
+    hyp4 <- makecorrdf("male", "hypothalamus", GOgenes)  
+
+    ## # A tibble: 6 x 17
+    ##   rowname      AVP  AVPR1A  BRINP1  CREBRF     DBH     DRD1     GNAQ  KALRN
+    ##   <chr>      <dbl>   <dbl>   <dbl>   <dbl>   <dbl>    <dbl>    <dbl>  <dbl>
+    ## 1 AVP     NA        0.344   0.165   0.191  -0.0205  0.00251 -0.103   0.0633
+    ## 2 AVPR1A   0.344   NA       0.0754  0.161   0.121   0.230    0.220   0.118 
+    ## 3 BRINP1   0.165    0.0754 NA       0.157   0.0512  0.486    0.116   0.211 
+    ## 4 CREBRF   0.191    0.161   0.157  NA      -0.0682  0.349    0.00434 0.659 
+    ## 5 DBH     -0.0205   0.121   0.0512 -0.0682 NA       0.204    0.165   0.163 
+    ## 6 DRD1     0.00251  0.230   0.486   0.349   0.204  NA        0.538   0.652 
+    ## # … with 8 more variables: MBD2 <dbl>, NPAS3 <dbl>, NR3C1 <dbl>,
+    ## #   OPRK1 <dbl>, OXT <dbl>, PRL <dbl>, PTEN <dbl>, ZFX <dbl>
+
+    pit4 <- makecorrdf("male", "pituitary", GOgenes)  
+
+    ## # A tibble: 6 x 17
+    ##   rowname     AVP  AVPR1A  BRINP1  CREBRF     DBH    DRD1    GNAQ    KALRN
+    ##   <chr>     <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>    <dbl>
+    ## 1 AVP     NA      -0.100   0.267  -0.0207  0.330  -0.0301 -0.231   0.0183 
+    ## 2 AVPR1A  -0.100  NA       0.120  -0.0383 -0.216   0.0697 -0.0175 -0.0286 
+    ## 3 BRINP1   0.267   0.120  NA       0.170   0.237   0.0928 -0.159  -0.261  
+    ## 4 CREBRF  -0.0207 -0.0383  0.170  NA       0.181   0.115  -0.106   0.204  
+    ## 5 DBH      0.330  -0.216   0.237   0.181  NA      -0.0880 -0.221  -0.00964
+    ## 6 DRD1    -0.0301  0.0697  0.0928  0.115  -0.0880 NA       0.0782  0.213  
+    ## # … with 8 more variables: MBD2 <dbl>, NPAS3 <dbl>, NR3C1 <dbl>,
+    ## #   OPRK1 <dbl>, OXT <dbl>, PRL <dbl>, PTEN <dbl>, ZFX <dbl>
+
+    gon4 <- makecorrdf("male", "gonad", GOgenes)  
+
+    ## # A tibble: 6 x 17
+    ##   rowname     AVP  AVPR1A  BRINP1  CREBRF     DBH    DRD1     GNAQ   KALRN
+    ##   <chr>     <dbl>   <dbl>   <dbl>   <dbl>   <dbl>   <dbl>    <dbl>   <dbl>
+    ## 1 AVP     NA      -0.0463 -0.203   0.252  -0.0800 -0.0761  0.280   -0.0528
+    ## 2 AVPR1A  -0.0463 NA       0.0153  0.125   0.353  -0.0576  0.127    0.153 
+    ## 3 BRINP1  -0.203   0.0153 NA      -0.0125  0.188   0.128  -0.119   -0.0148
+    ## 4 CREBRF   0.252   0.125  -0.0125 NA       0.126   0.151   0.255    0.107 
+    ## 5 DBH     -0.0800  0.353   0.188   0.126  NA       0.216   0.140    0.137 
+    ## 6 DRD1    -0.0761 -0.0576  0.128   0.151   0.216  NA      -0.00687  0.118 
+    ## # … with 8 more variables: MBD2 <dbl>, NPAS3 <dbl>, NR3C1 <dbl>,
+    ## #   OPRK1 <dbl>, OXT <dbl>, PRL <dbl>, PTEN <dbl>, ZFX <dbl>
+
+    b1 <- plotcorrplot(hyp1, "females") + labs(y = "Hypothalamus", title = "Parental Care Literature")  + 
+      scale_x_discrete(position = "top")   + theme(axis.text.x = element_text(vjust = -0.25))
+    b2 <- plotcorrplot(pit1, NULL)  + labs(y = "Pituitary") + 
+      theme(axis.text.x = element_blank())
+    b3 <- plotcorrplot(gon1, NULL)  + labs(y = "Gonad") + theme(axis.text.x = element_text(vjust = 0.25))
+     
+    b4 <- plotcorrplot(hyp2, "males") + labs( title =  " ") + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = -0.25)) +
+      scale_x_discrete(position = "top") 
+    b5 <- plotcorrplot(pit2, NULL)    + 
+      theme(axis.text.x = element_blank(), axis.text.y = element_blank())
+    b6 <- plotcorrplot(gon2, NULL)  + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
+
+
+    b7 <- plotcorrplot(hyp3, "females") + labs( title = "Parental Care GO") + 
+       scale_x_discrete(position = "top") + theme(axis.text.x = element_text(vjust = -0.25))
+    b8 <- plotcorrplot(pit3, NULL)   + 
+      theme(axis.text.x = element_blank())
+    b9 <- plotcorrplot(gon3, NULL)  + theme(axis.text.x = element_text(vjust = 0.25))
+
+    b10 <- plotcorrplot(hyp4, "males") + labs( title =  " ") + 
+      theme(axis.text.y = element_blank(),
+            axis.text.x = element_text(vjust = -0.25)) + scale_x_discrete(position = "top") 
+    b11 <- plotcorrplot(pit4, NULL)    + 
+      theme(axis.text.x = element_blank() , axis.text.y = element_blank())
+    b12 <- plotcorrplot(gon4, NULL)   + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
+
+    forlegend <- plotcorrplot(gon4, NULL) + theme(legend.position = "bottom") 
+    mylegend <- get_legend(forlegend)
+
+    allcorplots <- plot_grid(b1,b4,b7,b10,
+              b2,b5,b8,b11,
+              b3,b6,b9,b12, rel_heights = c(1.4,1,1.2),
+              labels = c("A", " ", "B"), label_size = 8, rel_widths = c(1.4,1.2,1.2,1))
+
+    supplfig2 <- plot_grid(allcorplots, mylegend, ncol = 1, rel_heights = c(1,0.1))
+    supplfig2
+
+![](../figures/supplfig-2-1.png)
+
+    pdf(file="../figures/supplfig-2.pdf", width=7.25, height=7.25)
+    plot(supplfig2)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+Figure
+------
 
     a <- png::readPNG("../figures/images/fig_fig2a.png")
     a <- ggdraw() +  draw_image(a, scale = 1)
 
 
-    b1 <- plotcorrplot(hyp3, "females and males") + theme(legend.position = "none")  + labs(y = "Hypothalamus", title = "Candidate gene correlations")
-    b2 <- plotcorrplot(pit3, NULL) + theme(legend.position = "none") + labs(y = "Pituitary")
-    b3 <- plotcorrplot(gon3, NULL) + theme(legend.position = "none")  + labs(y = "Gonad")
 
-    c1 <- scattercorrelations(FH, FH$DRD1, FH$HTR2C, "#969696", "DRD1", "HTR2C") + labs(subtitle = "female", title =  "Top correlation")  
+
+    c1 <- scattercorrelations(FH, FH$DRD4, FH$HTR2C, "#969696", "DRD4", "HTR2C") + labs(subtitle = "female", title =  "Top correlation")  
     c3 <- scattercorrelations(FP, FP$AVPR1A, FP$CRHR1, "#969696", "AVPR1A", "CRHR1")  + labs(subtitle = NULL) 
     c5 <- scattercorrelations(FG, FG$ESR1, FG$PGR, "#969696", "ESR1", "PGR")   + labs(subtitle = NULL) 
 
-    c2 <- scattercorrelations(MH, MH$DRD1, MH$HTR2C, "#525252", "DRD1", "HTR2C")  + labs(subtitle = "male", title = "", y = NULL)  
+    c2 <- scattercorrelations(MH, MH$DRD4, MH$HTR2C, "#525252", "DRD4", "HTR2C")  + labs(subtitle = "male", title = "", y = NULL)  
     c4 <- scattercorrelations(MP, MP$AVPR1A, MP$CRHR1, "#525252", "AVPR1A", "CRHR1")  + labs(subtitle = NULL, y = NULL)  
     c6 <- scattercorrelations(MG, MG$ESR1, MG$PGR, "#525252", "ESR1", "PGR")  + labs(subtitle = NULL, y = NULL)  
 
 
-    d1 <- candidateboxplot("hypothalamus", c("DRD1"), sexlevels) + labs(x = NULL, title = "Temporal expression pattern" )  
+    d1 <- candidateboxplot("hypothalamus", c("DRD4"), sexlevels) + labs(x = NULL, title = "Temporal expression pattern" )  
     d2 <- candidateboxplot("hypothalamus", c("HTR2C"), sexlevels) + labs(x = NULL ) + theme(strip.text = element_blank())
     d3 <- candidateboxplot("pituitary", c("AVPR1A"), sexlevels) + labs(x = NULL )  + theme( strip.text = element_blank())
     d4 <- candidateboxplot("pituitary", c("CRHR1"), sexlevels) + labs(x = NULL  )  + theme(strip.text = element_blank())
     d5 <- candidateboxplot("gonad", c("ESR1"), sexlevels) + labs(x = NULL) + theme(strip.text = element_blank())
     d6 <- candidateboxplot("gonad", c("PGR"), sexlevels) + labs(x = NULL ) + theme(strip.text = element_blank())
 
-    b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
+    #b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
     c <- plot_grid(c1,c2,c3,c4,c5,c6, ncol = 2, rel_heights = c(1.1,1,1), rel_widths = c(1.1,1))
-    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.1,1.1, 1,1, 1,1))
+    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
 
-    bcd <- plot_grid(b,c,d, ncol = 3, rel_widths = c(1,1,1), labels = c("B", "C", "D"), label_size = 8)
+    bcd <- plot_grid(c,d, ncol = 2, rel_widths = c(1,1), labels = c("A", "B"), label_size = 8)
 
-    fig2 <- plot_grid(a,bcd, ncol = 1, labels = c("A"), label_size = 8, rel_heights = c(0.1,1))
+    fig2 <- plot_grid(bcd, a, ncol = 1, rel_heights = c(1,0.1))
     fig2
 
 ![](../figures/fig2-1.png)
 
-    musicplot <- function(whichgene, whichtissue){
-        
-        p <- candidatevsd %>%
-          group_by(treatment, tissue, gene, sex)  %>% 
-          summarize(median = median(counts, na.rm = T), 
-                    se = sd(counts,  na.rm = T)/sqrt(length(counts))) %>%
-          dplyr::mutate(scaled = rescale(median, to = c(0, 7))) %>%
-          dplyr::mutate(image = "../figures/images/musicnote.png")   %>%
-          filter(
-            gene %in% whichgene,
-            tissue %in% whichtissue      ) %>% 
-          collect() %>%
-          drop_na() %>%
-          ggplot( aes(x = treatment, y = median)) +
-          geom_errorbar(aes(ymin = median - se, 
-                            ymax = median + se, color = "white"),  width=0) +
-          geom_image(aes(image=image), size = 0.1)+
-          theme_B3() +
-          theme(legend.position = "none",
-                title = element_text(face = "italic"),
-                strip.text = element_text(color = "white"),
-                axis.text.x = element_text(angle = 45, hjust = 1),
-                axis.text.y = element_blank(),
-                axis.line = element_blank(), axis.ticks = element_blank()) +
-          scale_color_manual(values = allcolors) +
-          labs(y = " ",x = NULL ) +
-          facet_wrap(~sex, nrow = 2, scales = "free_y")
-          return(p)
-    }
+    pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
+    plot(fig2)
+    dev.off()
 
-    music <- png::readPNG("../figures/images/fig_music.png")
-    music <- ggdraw() +  draw_image(music, scale = 1)
-
-    musicalgenes <- png::readPNG("../figures/images/fig_musicalgenes.png")
-    musicalgenes <- ggdraw() +  draw_image(musicalgenes, scale = 1)
-
-
-    p1 <- musicplot(c("AVP", "OXT"), "hypothalamus") + labs(subtitle = "Hypothalamic AVP & OXT" ) + theme(axis.text.x = element_blank())
-    p2 <- musicplot(c("AVP", "OXT"), "pituitary") + labs(subtitle = "Pituitary AVP & OXT " ) + theme(axis.text.x = element_blank())
-    p3 <- musicplot(c("AVP", "OXT"), "gonad") + labs(subtitle = "Gonadal  AVP & OXT"  )
-
-    p123 <- plot_grid(music, p1, music, p3, ncol = 2, rel_widths = c(0.125,1))
-
-    plot_grid(musicalgenes, p123, nrow = 1, rel_widths = c(1.5,1))
-
-![](../figures/fig3-1.png)
+    ## quartz_off_screen 
+    ##                 2
 
     #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
     #write.csv(candidatevsd, "../results/candidatecounts.csv")
     write.csv(table1, "../results/table1.csv")
-    write.csv(candidategenes, "../results/candidategenes.csv")

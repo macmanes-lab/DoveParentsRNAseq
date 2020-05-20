@@ -89,7 +89,7 @@ write_csv(suppltable1, "../results/suppltable1.csv")
 suppltable2 <- rbind(DEGcontrol, DEGbldg)  %>%
   arrange( tissue, sex, direction, gene)
 head(suppltable2)
-write_csv(suppltable2, "../results/suppltable1.csv")
+write_csv(suppltable2, "../results/suppltable2.csv")
 
 ```
 
