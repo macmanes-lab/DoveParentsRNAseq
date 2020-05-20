@@ -43,6 +43,12 @@ Here's a draft of the hairball of a workflow as of May 13, 2020.
 
 **Figure 2. Correlated changes in in candidate gene expression.** A) Correlation matrices show positive and negative correlations for the candidate parental care genes from Curley and Champagne 2012. Positive and negative correlations are shown in red and blue, respectively. B) Top two correlations for each tissue visulized in each sex, colored by parental stage. The linear model and standard error are shown in grey. C) Box-and-whisker plots highlight the individual variation in gene expression across time for each sex and tissue. **, p <0.01; *, p <0.05; NS, p > 0.05.
 
+### Supplement to Figure 2 
+
+![](./figures/supplfig-2-1.png)
+
+
+
 ### Figure 3 
 
 ![](./figures/fig3-1.png)
