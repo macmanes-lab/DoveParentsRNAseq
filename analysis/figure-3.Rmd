@@ -157,9 +157,6 @@ c <- plot_grid(c1,c2,c34, nrow = 1, labels = c("D", "", "E"), label_size = 8, re
 fig3 <- plot_grid(a, b, c, nrow = 3, rel_heights = c(1.2,2,1.8))
 fig3
 
-
- 
-
 pdf(file="../figures/fig3-1.pdf", width=7.25, height=7.25)
 plot(fig3)
 dev.off()

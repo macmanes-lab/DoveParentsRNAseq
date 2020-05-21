@@ -1158,7 +1158,7 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
                                    c( "n5", "n9")),  
                 map_signif_level=TRUE,
                 textsize = 1.5, family = 'Helvetica',
-                vjust = 1.5, size = 0.1) 
+                vjust = 1.5, size = 0) 
   
   return(p)
 }
