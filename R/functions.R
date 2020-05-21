@@ -831,7 +831,7 @@ createDEGdfsavestissue <- function(up, down){
 plotprolactin <- function(df, myy, myylab, mysubtitle ){
   
   p <-  ggplot(df, aes(x = treatment, y = myy)) +
-    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
+    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA,  size = 0.25) +
     geom_jitter(size = 0.25, aes(color = sex)) +
     theme_B3() +
     scale_fill_manual(values = allcolors) +
@@ -1137,7 +1137,7 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
            sex %in% whichsex) %>%
     mutate(treatment = factor(treatment, levels = charlevels)) %>%
     ggplot(aes(x = treatment, y = counts)) +
-    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
+    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA, size = 0.25) +
     geom_jitter(size = 0.25, aes(color = sex)) +
     facet_wrap(~sex,  nrow = 1) +
     scale_fill_manual(values = allcolors) +
