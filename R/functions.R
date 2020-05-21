@@ -1149,8 +1149,7 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
           axis.ticks = element_blank()) +
     labs(y = whichgenes,
          x = NULL) +
-    geom_signif(comparisons = list(c( "control", "bldg"),
-                                   c( "bldg", "lay"),
+    geom_signif(comparisons = list(c( "bldg", "lay"),
                                    c( "lay", "inc.d3"),
                                    c("inc.d3", "inc.d9"),
                                    c( "inc.d9", "inc.d17"),
@@ -1159,7 +1158,7 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
                                    c( "n5", "n9")),  
                 map_signif_level=TRUE,
                 textsize = 1.5, family = 'Helvetica',
-                vjust = 1.5, size = 0) 
+                vjust = 1.5, size = 0.1) 
   
   return(p)
 }
