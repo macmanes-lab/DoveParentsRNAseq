@@ -143,7 +143,7 @@ c4 <- sexbarplots(gonsex, 0, 8100) + labs(subtitle = "gonads" ) +
   theme(axis.text.y = element_blank(), axis.line.y = element_blank(),  
         axis.ticks = element_blank(), axis.title.y = element_blank())
 bc <- plot_grid(b1,b2,b3,b4, c1,c2,c3,c4, nrow = 1, rel_widths = c(1.5,1.1,0.9,0.9,1.5,1.1,0.9,0.9),
-                labels = c("B", "", "", "", "C"), label_size = 8)
+                labels = c("A", "", "", "", "B"), label_size = 8)
 
 d1 <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
   labs(x = NULL, subtitle = "hypothalamus")  + 
@@ -166,12 +166,13 @@ d4 <- makebargraph(DEGchar, "pituitary","DEGs w/ + LFC", 0, 1800)  +
         strip.text.x = element_blank())   
 d6 <- makebargraph(DEGchar, "gonad","DEGs w/ + LFC", 0, 1800) +  
   theme(strip.text.x = element_blank()) +
-  scale_x_discrete(labels = comparisonlabelschar)
-d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.3), rel_widths = c(1,2),
-                  labels = c("D"), label_size = 8)
+  scale_x_discrete(labels = comparisonlabelschar) +
+  labs(x = "Sequential comparisons of differential gene expression")
 
-fig1 <- plot_grid(a,bc, d, nrow = 3, rel_heights = c(0.7,0.7,2),
-                  labels = c("A"), label_size = 8)
+d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.4), rel_widths = c(1,2),
+                  labels = c("C"), label_size = 8)
+
+fig1 <- plot_grid(bc, a, d, nrow = 3, rel_heights = c(0.7,0.7,2))
 fig1
 
 pdf(file="../figures/fig1-1.pdf", width=7.25, height=7.25)
@@ -227,14 +228,16 @@ plot(supplfig1)
 dev.off()
 ```
 
+## Save files
 
-
-```{r eval = F}
+```{r write}
 # save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
 #write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
 
 # tsne files too big to save
 #write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
+
+
 ```
 
 
