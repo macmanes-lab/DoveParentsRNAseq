@@ -96,29 +96,6 @@ MG <- subsetcandidatevsdwide("male", "gonad")
 
 ```{r correlations}
 
-makecorrdf <- function(whichsex, whichtissue, whichgenes){
-  corrrdf <- candidatevsd %>%
-    filter(sex == whichsex, tissue == whichtissue,
-           gene %in% whichgenes) %>%
-    drop_na() %>%
-    pivot_wider(names_from = gene, values_from = counts) %>%
-    select(-sex, -tissue, -treatment, -samples) %>%
-    correlate() 
-  # print(head(corrrdf))
-  
-  corrrdflong <- corrrdf %>%
-    pivot_longer(-rowname, names_to = "gene2", values_to = "corr") %>%
-    rename("gene1" = "rowname") %>%
-    arrange(desc(corr)) %>%
-    mutate(tissue = whichtissue,
-           sex = whichsex) %>%
-    select(tissue, sex, gene1, gene2, corr)
-  print("The top two correlations in this tissue and sex are:")
-  print(corrrdflong[c(1,3),]) 
-  
-  return(corrrdf)
-}
-
 
 hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
 pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  

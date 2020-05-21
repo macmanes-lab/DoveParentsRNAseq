@@ -691,8 +691,8 @@ plotpc12 <- function(df1color, df2fviz, whichfactor, whichcolors, mysubtitle, my
   pc12vector <- fviz_pca_var(df2fviz,  
                              axes.linetype = "blank", 
                              repel = T , 
-                             select.var= list(contrib = 2),
-                             labelsize = 2)  + 
+                             select.var= list(contrib = 3),
+                             labelsize = 3)  + 
     labs(title = mytitle, subtitle = " ") + 
     theme_B3() +
     theme(axis.text = element_blank(),
@@ -707,7 +707,7 @@ plotpc12 <- function(df1color, df2fviz, whichfactor, whichcolors, mysubtitle, my
 ## bar graphs for PRL fig 4
 
 makenewbargraph <- function(whichtissue, whichsex,  whichcomparison, lowlim, higherlim){
-  p <- allDEG2 %>%
+  p <- allDEG %>%
     filter(tissue == whichtissue,
            comparison == whichcomparison,
            sex == whichsex) %>%
@@ -844,8 +844,7 @@ plotprolactin <- function(df, myy, myylab, mysubtitle ){
           axis.title.y = element_text(face = "italic")) +
     labs(subtitle = mysubtitle, y= myylab) +
     guides(fill = guide_legend(nrow = 1)) +
-    geom_signif(comparisons = list(c( "control", "bldg"),
-                                   c( "bldg", "lay"),
+    geom_signif(comparisons = list(c( "bldg", "lay"),
                                    c( "lay", "inc.d3"),
                                    c("inc.d3", "inc.d9"),
                                    c( "inc.d9", "inc.d17"),
@@ -854,7 +853,7 @@ plotprolactin <- function(df, myy, myylab, mysubtitle ){
                                    c( "n5", "n9")),  
                 map_signif_level=TRUE,
                 textsize = 2, family = 'Helvetica',
-                vjust = 1.5, size = 0) 
+                vjust = 1.5, size = 0.2) 
   return(p)
 }
 
@@ -1060,6 +1059,29 @@ rplot2 <- function(rdf,
 
 
 ##### 3 funcitons  for correlation plots
+makecorrdf <- function(whichsex, whichtissue, whichgenes){
+  corrrdf <- candidatevsd %>%
+    filter(sex == whichsex, tissue == whichtissue,
+           gene %in% whichgenes) %>%
+    drop_na() %>%
+    pivot_wider(names_from = gene, values_from = counts) %>%
+    select(-sex, -tissue, -treatment, -samples) %>%
+    correlate() 
+  # print(head(corrrdf))
+  
+  corrrdflong <- corrrdf %>%
+    pivot_longer(-rowname, names_to = "gene2", values_to = "corr") %>%
+    rename("gene1" = "rowname") %>%
+    arrange(desc(corr)) %>%
+    mutate(tissue = whichtissue,
+           sex = whichsex) %>%
+    select(tissue, sex, gene1, gene2, corr)
+  print("The top two correlations in this tissue and sex are:")
+  print(corrrdflong[c(1,3),]) 
+  
+  return(corrrdf)
+}
+
 
 
 subsetcandidatevsdwide <- function(whichsex, whichtissue){
@@ -1086,18 +1108,21 @@ plotcorrplot <- function(df, mysubtitle){
 
 ## fig 3 top degs
 
-plottopDEGs <- function(df, whichsex, whichcolor, myylab, mysubtitle){
+plottopDEGs <- function(df, whichsex, myylab, mysubtitle){
   
   p <- df %>%
     arrange(desc(logpadj)) %>%
     filter(sex == whichsex) %>% head(10) %>% 
     ggplot(aes(x = reorder(gene, lfc), y = lfc)) + 
-    geom_bar(stat = "identity",  fill = whichcolor) +
+    geom_bar(stat = "identity",  aes(fill = direction)) +
     theme_B3() +
-    theme(axis.text.y = element_text(face = "italic")) +
+    theme(axis.text.y = element_text(face = "italic"),
+          legend.position = "none") +
     labs(x = " ", y = myylab, subtitle = mysubtitle) +
     coord_flip() +
-    scale_y_continuous(expand = c(0, 0))
+    scale_y_continuous(expand = c(0, 0)) +
+    scale_fill_manual(values = colorhypothesis) 
+    
   return(p)
 }
 
@@ -1145,7 +1170,7 @@ scattercorrelations <- function(df, gene1, myylab, gene2, myxlab,  mylinecolor){
   p <- ggplot(df, aes(x = gene2, y = gene1)) +
     labs(x = myxlab, y = myylab) + 
     scale_color_manual(values = allcolors) +
-    geom_smooth(method = "glm",  color = mylinecolor) +
+    geom_smooth(method = "glm",  aes(color = sex)) +
     geom_point(aes(color = treatment))  +
     theme_B3() +  
     theme(axis.title = element_text(face = "italic"), 
