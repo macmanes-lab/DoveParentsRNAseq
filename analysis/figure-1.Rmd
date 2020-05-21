@@ -81,16 +81,6 @@ DEGbldg <- allDEG %>%
   drop_na()
 
 
-suppltable1 <- DEGchar %>%
-  arrange( tissue, sex, direction, gene)
-head(suppltable1)
-write_csv(suppltable1, "../results/suppltable1.csv")
-
-suppltable2 <- rbind(DEGcontrol, DEGbldg)  %>%
-  arrange( tissue, sex, direction, gene)
-head(suppltable2)
-write_csv(suppltable2, "../results/suppltable2.csv")
-
 ```
 
 
@@ -237,6 +227,16 @@ dev.off()
 # tsne files too big to save
 #write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
 
+
+suppltable1 <- DEGchar %>%
+  arrange( tissue, sex, direction, gene)
+head(suppltable1)
+write_csv(suppltable1, "../results/suppltable1.csv")
+
+suppltable2 <- rbind(DEGcontrol, DEGbldg)  %>%
+  arrange( tissue, sex, direction, gene)
+head(suppltable2)
+write_csv(suppltable2, "../results/suppltable2.csv")
 
 ```
 

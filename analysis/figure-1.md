@@ -165,7 +165,7 @@ Treatment specific DEGs
     ## 5 female hypothalam… control_lay    control   A2ML1 -0.674  1.39e-2    1.86
     ## 6 female hypothalam… control_n5     control   A2ML1 -0.583  3.35e-2    1.47
 
-    write_csv(suppltable2, "../results/suppltable1.csv")
+    write_csv(suppltable2, "../results/suppltable2.csv")
 
 Sex and Tissue -related DEGs
 ----------------------------
@@ -229,7 +229,7 @@ Figure 1
     ## [1] 12972
 
     bc <- plot_grid(b1,b2,b3,b4, c1,c2,c3,c4, nrow = 1, rel_widths = c(1.5,1.1,0.9,0.9,1.5,1.1,0.9,0.9),
-                    labels = c("B", "", "", "", "C"), label_size = 8)
+                    labels = c("A", "", "", "", "B"), label_size = 8)
 
     d1 <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
       labs(x = NULL, subtitle = "hypothalamus")  + 
@@ -252,12 +252,13 @@ Figure 1
             strip.text.x = element_blank())   
     d6 <- makebargraph(DEGchar, "gonad","DEGs w/ + LFC", 0, 1800) +  
       theme(strip.text.x = element_blank()) +
-      scale_x_discrete(labels = comparisonlabelschar)
-    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.3), rel_widths = c(1,2),
-                      labels = c("D"), label_size = 8)
+      scale_x_discrete(labels = comparisonlabelschar) +
+      labs(x = "Sequential comparisons of differential gene expression")
 
-    fig1 <- plot_grid(a,bc, d, nrow = 3, rel_heights = c(0.7,0.7,2),
-                      labels = c("A"), label_size = 8)
+    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 2, rel_heights = c(1,0.9,1.4), rel_widths = c(1,2),
+                      labels = c("C"), label_size = 8)
+
+    fig1 <- plot_grid(bc, a, d, nrow = 3, rel_heights = c(0.7,0.7,2))
     fig1
 
 ![](../figures/fig1-1.png)
@@ -322,6 +323,9 @@ suppl fig 1 controls versus bldg
 
     ## quartz_off_screen 
     ##                 2
+
+Save files
+----------
 
     # save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
     #write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
