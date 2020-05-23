@@ -86,6 +86,8 @@ allvsd <- vsd_pathfiles %>%
   pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                names_to = "samples", values_to = "counts") 
 allvsd %>% select(-file_name) %>% head()
+
+
 ```
 
 

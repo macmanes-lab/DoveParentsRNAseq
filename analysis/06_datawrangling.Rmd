@@ -1,5 +1,5 @@
 ---
-title: "05_wrangle"
+title: "06_wrangle"
 output: md_document
 ---
   
@@ -44,6 +44,11 @@ allvsd <- vsd_pathfiles %>%
 allvsd %>% select(-file_name) %>% head()
 
 head(allvsd)
+
+library(stringr)
+allvsd %>%
+  filter(str_detect(samples, "Merc"))
+
 ```
 
 
