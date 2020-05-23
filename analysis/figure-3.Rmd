@@ -3,7 +3,7 @@ title: "Fig3"
 output: md_document
 ---
 
-# Figure 4: All things prolactin
+# Figure 3: All things prolactin
 
 ```{r setup}
 library(tidyverse)

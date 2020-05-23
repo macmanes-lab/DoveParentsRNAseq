@@ -47,7 +47,7 @@ head(allvsd)
 
 library(stringr)
 allvsd %>%
-  filter(str_detect(samples, "Merc"))
+  filter(str_detect(samples, "gonad_bldg"))
 
 ```
 

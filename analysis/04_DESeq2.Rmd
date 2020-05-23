@@ -69,7 +69,7 @@ colD
 
 ## Hypothesis
 
-```{r hypothesis, eval = F}
+```{r hypothesis, eval = F, message = F, warning = F}
 
 createDEGdfhypothesis <- function(variable, up, down, mytissue){
   
