@@ -1068,17 +1068,6 @@ makecorrdf <- function(whichsex, whichtissue, whichgenes){
     select(-sex, -tissue, -treatment, -samples) %>%
     correlate() 
   # print(head(corrrdf))
-  
-  corrrdflong <- corrrdf %>%
-    pivot_longer(-rowname, names_to = "gene2", values_to = "corr") %>%
-    rename("gene1" = "rowname") %>%
-    arrange(desc(corr)) %>%
-    mutate(tissue = whichtissue,
-           sex = whichsex) %>%
-    select(tissue, sex, gene1, gene2, corr)
-  print("The top two correlations in this tissue and sex are:")
-  print(corrrdflong[c(1,3),]) 
-  
   return(corrrdf)
 }
 

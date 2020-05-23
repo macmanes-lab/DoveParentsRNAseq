@@ -1,16 +1,16 @@
-Figure 4: All things prolactin
+Figure 3: All things prolactin
 ==============================
 
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -166,8 +166,19 @@ candidate genes, hypotheses genes, and data-driven genes
     candidatevsd <- read_csv("../results/06_candidatevsd.csv") %>%
       mutate(treatment = factor(treatment)) %>%
       mutate(tissue = factor(tissue, levels = tissuelevel),
-            treatment = factor(treatment, levels = charlevelsnocontrol)) %>%
+            treatment = factor(treatment, levels = alllevels)) %>%
       drop_na()
+    head(candidatevsd)
+
+    ## # A tibble: 6 x 6
+    ##   sex    tissue      treatment gene  samples                         counts
+    ##   <chr>  <fct>       <fct>     <chr> <chr>                            <dbl>
+    ## 1 female hypothalam… control   ABCA4 L.G118_female_hypothalamus_con…   5.91
+    ## 2 female hypothalam… control   ABCA4 R.G106_female_hypothalamus_con…   5.88
+    ## 3 female hypothalam… control   ABCA4 R.R20_female_hypothalamus_cont…   5.68
+    ## 4 female hypothalam… control   ABCA4 R.R9_female_hypothalamus_contr…   5.66
+    ## 5 female hypothalam… control   ABCA4 R.W44_female_hypothalamus_cont…   5.67
+    ## 6 female hypothalam… prolong   ABCA4 blk.s031.pu.d_female_hypothala…   5.74
 
     ## prlpit
     PRLpit <- candidatevsd %>% 
@@ -198,22 +209,8 @@ candidate genes, hypotheses genes, and data-driven genes
 
     ## for correlations
     pithilo <- makecorrdf("female", "pituitary", hilogenes)
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue    sex    gene1 gene2  corr
-    ##   <chr>     <chr>  <chr> <chr> <dbl>
-    ## 1 pituitary female CKAP2 KPNA2 0.975
-    ## 2 pituitary female CDK1  KPNA2 0.971
-
     pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
 
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue    sex    gene1   gene2   corr
-    ##   <chr>     <chr>  <chr>   <chr>  <dbl>
-    ## 1 pituitary female CRELD2  FKBP11 0.912
-    ## 2 pituitary female CREB3L1 FKBP11 0.910
 
     ## for scatter correlation
 
@@ -273,3 +270,16 @@ candidate genes, hypotheses genes, and data-driven genes
     ##                 2
 
     write.csv(PRLpit,"../results/PRLvsd.csv", row.names = F)
+
+PRL and PRLR in three tissues
+-----------------------------
+
+    p1 <- candidateboxplot("hypothalamus", c("PRL"), sexlevels) + labs(subtitle = "hypothalamus", title = "PRL")
+    p2 <- candidateboxplot("pituitary", c("PRL"), sexlevels) + labs(subtitle = "pituitary")
+    p3 <- candidateboxplot("gonad", c("PRL"), sexlevels) + labs(subtitle = "gonads") + theme(axis.text.x = element_text(angle = 45))
+
+    p4 <- candidateboxplot("hypothalamus", c("PRLR"), sexlevels) + labs(subtitle = " ", title = " ") 
+    p5 <- candidateboxplot("pituitary", c("PRLR"), sexlevels) + labs(subtitle = " ")
+    p6 <- candidateboxplot("gonad", c("PRLR"), sexlevels) + theme(axis.text.x = element_text(angle = 45))+ labs(subtitle = " ")
+
+    plot_grid(p1,p4,p2,p5,p3,p6, ncol = 2, rel_heights = c(1.2,1,1.2))

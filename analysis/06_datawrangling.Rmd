@@ -24,7 +24,7 @@ tail(colData)
 
 ### variance stabilized gene expression  (vsd) 
 
-```{r allvsd}
+```{r allvsd, message = F, warning  = F}
 vsd_path <- "../results/DEseq2/hypothesis/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
 vsd_pathfiles <- paste0(vsd_path, vsd_files)
@@ -42,9 +42,6 @@ allvsd <- vsd_pathfiles %>%
 allvsd %>% select(-file_name) %>% head()
 
 head(allvsd)
-
-fgon <- read_csv("../results/DEseq2/hypothesis/female_gonad_vsd.csv")
-names(fgon)
 ```
 
 
@@ -141,10 +138,9 @@ head(candidatevsd)
 ```
 
 
-```{R}
+```{r write files}
 write.csv(candidatevsd, "../results/06_candidatevsd.csv", row.names = F)
 write.csv(allDEG, "../results/06_allDEG.csv", row.names = F)
 
-candidategenes
 ```
 

@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -98,80 +98,6 @@ Wrangle data for hyotheses testing
       dplyr::rename("gene" = "X1") %>% 
       pivot_longer(cols = blk.s061.pu.y_female_gonad_inc.d9:y98.o50.x_male_pituitary_inc.d3, 
                    names_to = "samples", values_to = "counts") 
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
     allvsd %>% select(-file_name) %>% head()
 
     ## # A tibble: 6 x 3
@@ -597,12 +523,12 @@ gene lists
     ## # A tibble: 6 x 6
     ##   sex    tissue      treatment gene  samples                         counts
     ##   <chr>  <chr>       <chr>     <chr> <chr>                            <dbl>
-    ## 1 female hypothalam… control   ABCA4 L.G118_female_hypothalamus_con…   5.92
-    ## 2 female hypothalam… control   ABCA4 R.G106_female_hypothalamus_con…   5.89
-    ## 3 female hypothalam… control   ABCA4 R.R20_female_hypothalamus_cont…   5.69
-    ## 4 female hypothalam… control   ABCA4 R.R9_female_hypothalamus_contr…   5.67
-    ## 5 female hypothalam… control   ABCA4 R.W44_female_hypothalamus_cont…   5.68
-    ## 6 female hypothalam… prolong   ABCA4 blk.s031.pu.d_female_hypothala…   5.75
+    ## 1 female hypothalam… control   ABCA4 L.G118_female_hypothalamus_con…   5.91
+    ## 2 female hypothalam… control   ABCA4 R.G106_female_hypothalamus_con…   5.88
+    ## 3 female hypothalam… control   ABCA4 R.R20_female_hypothalamus_cont…   5.68
+    ## 4 female hypothalam… control   ABCA4 R.R9_female_hypothalamus_contr…   5.66
+    ## 5 female hypothalam… control   ABCA4 R.W44_female_hypothalamus_cont…   5.67
+    ## 6 female hypothalam… prolong   ABCA4 blk.s031.pu.d_female_hypothala…   5.74
 
     write.csv(candidatevsd, "../results/06_candidatevsd.csv", row.names = F)
     write.csv(allDEG, "../results/06_allDEG.csv", row.names = F)

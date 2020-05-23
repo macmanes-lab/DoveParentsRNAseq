@@ -66,8 +66,9 @@ pca2 <- makefvizdf("pituitary", charlevelsnocontrol, sexlevels)
 candidatevsd <- read_csv("../results/06_candidatevsd.csv") %>%
   mutate(treatment = factor(treatment)) %>%
   mutate(tissue = factor(tissue, levels = tissuelevel),
-        treatment = factor(treatment, levels = charlevelsnocontrol)) %>%
+        treatment = factor(treatment, levels = alllevels)) %>%
   drop_na()
+head(candidatevsd)
 
 ## prlpit
 PRLpit <- candidatevsd %>% 
@@ -169,14 +170,14 @@ write.csv(PRLpit,"../results/PRLvsd.csv", row.names = F)
 
 ## PRL and PRLR in three tissues 
 
-```{r}
+```{r eval = F}
 p1 <- candidateboxplot("hypothalamus", c("PRL"), sexlevels) + labs(subtitle = "hypothalamus", title = "PRL")
 p2 <- candidateboxplot("pituitary", c("PRL"), sexlevels) + labs(subtitle = "pituitary")
 p3 <- candidateboxplot("gonad", c("PRL"), sexlevels) + labs(subtitle = "gonads") + theme(axis.text.x = element_text(angle = 45))
 
-p4 <- candidateboxplot("hypothalamus", c("PRLR"), sexlevels) + labs(subtitle = "blood", title = " ") 
-p5 <- candidateboxplot("pituitary", c("PRLR"), sexlevels) + labs(subtitle = "cropmilk")
-p6 <- candidateboxplot("gonad", c("PRLR"), sexlevels) + theme(axis.text.x = element_text(angle = 45))+ labs(subtitle = "spleen")
+p4 <- candidateboxplot("hypothalamus", c("PRLR"), sexlevels) + labs(subtitle = " ", title = " ") 
+p5 <- candidateboxplot("pituitary", c("PRLR"), sexlevels) + labs(subtitle = " ")
+p6 <- candidateboxplot("gonad", c("PRLR"), sexlevels) + theme(axis.text.x = element_text(angle = 45))+ labs(subtitle = " ")
 
 plot_grid(p1,p4,p2,p5,p3,p6, ncol = 2, rel_heights = c(1.2,1,1.2))
 
