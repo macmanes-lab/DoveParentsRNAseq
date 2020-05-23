@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -230,8 +230,6 @@
                                      control = c("control"))) %>%
       drop_na()
 
-    write.csv(colData, "../metadata/04_colData.csv", row.names = F)
-
 Hypothesis
 ----------
 
@@ -256,7 +254,7 @@ Hypothesis
       
       # write DEGsframe of only significant genes
       DEGs <- DEGs %>% dplyr::filter(direction != "NS")
-      print(str(DEGs))
+      #print(str(DEGs))
       
       partialfilename = paste("_", down, "_", up, sep = "")
       myfilename = paste0("../results/DESeq2/hypothesis/", mytissue, partialfilename, "_DEGs.csv")
@@ -265,9 +263,6 @@ Hypothesis
       # return DEGs frome with all data, included NS genes
       #print(head(DEGs))
     }  
-
-
-
 
     for(i in levels(colData$sextissue)){
       
@@ -292,9 +287,79 @@ Hypothesis
       myfilename = paste0("../results/DEseq2/hypothesis/", i, "_vsd.csv")
       write.csv(vsd, myfilename)
       
-      createDEGdfhypothesis("hiloPRL", "hi", "lo", i)
-      createDEGdfhypothesis("external", "chicks", "eggs", i)
-      createDEGdfhypothesis("external", "chicks", "nest", i)
-      createDEGdfhypothesis("external", "eggs", "nest", i)
+      #createDEGdfhypothesis("hiloPRL", "hi", "lo", i)
+      #createDEGdfhypothesis("external", "chicks", "eggs", i)
+      #createDEGdfhypothesis("external", "chicks", "nest", i)
+      #createDEGdfhypothesis("external", "eggs", "nest", i)
 
     }
+
+    ## class: DESeqDataSet 
+    ## dim: 13801 166 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(13801): A2ML1 A2ML2 ... ZYX ZZZ3
+    ## rowData names(0):
+    ## colnames(166): L.G118_female_gonad_control
+    ##   R.G106_female_gonad_control ... y97.x_female_gonad_n9
+    ##   y98.g54_female_gonad_m.hatch
+    ## colData names(11): V1 bird ... hiloPRL external
+    ## [1] 13801   166
+    ## class: DESeqDataSet 
+    ## dim: 13631 165 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(13631): A2ML1 A2ML2 ... ZYX ZZZ3
+    ## rowData names(0):
+    ## colnames(165): L.G118_female_hypothalamus_control.NYNO
+    ##   R.G106_female_hypothalamus_control ...
+    ##   y97.x_female_hypothalamus_n9 y98.g54_female_hypothalamus_m.hatch
+    ## colData names(11): V1 bird ... hiloPRL external
+    ## [1] 13631   165
+    ## class: DESeqDataSet 
+    ## dim: 13554 165 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(13554): A2ML1 A2ML2 ... ZYX ZZZ3
+    ## rowData names(0):
+    ## colnames(165): L.G118_female_pituitary_control.NYNO
+    ##   R.G106_female_pituitary_control ... y97.x_female_pituitary_n9
+    ##   y98.g54_female_pituitary_m.hatch
+    ## colData names(11): V1 bird ... hiloPRL external
+    ## [1] 13554   165
+    ## class: DESeqDataSet 
+    ## dim: 13825 163 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(13825): A2ML1 A2ML2 ... ZYX ZZZ3
+    ## rowData names(0):
+    ## colnames(163): L.Blu13_male_gonad_control.NYNO
+    ##   L.G107_male_gonad_control ... y95.g131.x_male_gonad_inc.d9
+    ##   y98.o50.x_male_gonad_inc.d3
+    ## colData names(11): V1 bird ... hiloPRL external
+    ## [1] 13825   163
+    ## class: DESeqDataSet 
+    ## dim: 13595 161 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(13595): A2ML1 A2ML2 ... ZYX ZZZ3
+    ## rowData names(0):
+    ## colnames(161): L.Blu13_male_hypothalamus_control.NYNO
+    ##   L.G107_male_hypothalamus_control ...
+    ##   y95.g131.x_male_hypothalamus_inc.d9
+    ##   y98.o50.x_male_hypothalamus_inc.d3
+    ## colData names(11): V1 bird ... hiloPRL external
+    ## [1] 13595   161
+    ## class: DESeqDataSet 
+    ## dim: 13541 165 
+    ## metadata(1): version
+    ## assays(1): counts
+    ## rownames(13541): A2ML1 A2ML2 ... ZYX ZZZ3
+    ## rowData names(0):
+    ## colnames(165): L.Blu13_male_pituitary_control.NYNO
+    ##   L.G107_male_pituitary_control ...
+    ##   y95.g131.x_male_pituitary_inc.d9 y98.o50.x_male_pituitary_inc.d3
+    ## colData names(11): V1 bird ... hiloPRL external
+    ## [1] 13541   165
+
+    write.csv(colData, "../metadata/04_colData.csv", row.names = F)

@@ -58,9 +58,6 @@ colData <- colData %>%
                                  nest = c("bldg", "m.inc.d3",  "m.inc.d9",  "m.inc.d17",  "m.n2"),
                                  control = c("control"))) %>%
   drop_na()
-
-
-colD
 ```
 
 
@@ -69,7 +66,7 @@ colD
 
 ## Hypothesis
 
-```{r hypothesis, eval = F, message = F, warning = F}
+```{r hypothesis,  message = F, warning = F}
 
 createDEGdfhypothesis <- function(variable, up, down, mytissue){
   
@@ -125,10 +122,10 @@ for(i in levels(colData$sextissue)){
   myfilename = paste0("../results/DEseq2/hypothesis/", i, "_vsd.csv")
   write.csv(vsd, myfilename)
   
-  createDEGdfhypothesis("hiloPRL", "hi", "lo", i)
-  createDEGdfhypothesis("external", "chicks", "eggs", i)
-  createDEGdfhypothesis("external", "chicks", "nest", i)
-  createDEGdfhypothesis("external", "eggs", "nest", i)
+  #createDEGdfhypothesis("hiloPRL", "hi", "lo", i)
+  #createDEGdfhypothesis("external", "chicks", "eggs", i)
+  #createDEGdfhypothesis("external", "chicks", "nest", i)
+  #createDEGdfhypothesis("external", "eggs", "nest", i)
 
 }
 

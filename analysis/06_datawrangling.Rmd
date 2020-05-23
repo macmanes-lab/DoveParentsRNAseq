@@ -22,8 +22,6 @@ colData <- read_csv("../metadata/04_colData.csv") %>%
 tail(colData)
 ```
 
-
-
 ### variance stabilized gene expression  (vsd) 
 
 ```{r allvsd}
@@ -45,10 +43,8 @@ allvsd %>% select(-file_name) %>% head()
 
 head(allvsd)
 
-library(stringr)
-allvsd %>%
-  filter(str_detect(samples, "gonad_bldg"))
-
+fgon <- read_csv("../results/DEseq2/hypothesis/female_gonad_vsd.csv")
+names(fgon)
 ```
 
 
