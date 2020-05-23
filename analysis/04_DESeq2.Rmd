@@ -59,7 +59,8 @@ colData <- colData %>%
                                  control = c("control"))) %>%
   drop_na()
 
-write.csv(colData, "../metadata/04_colData.csv", row.names = F)
+
+colD
 ```
 
 
@@ -91,7 +92,7 @@ createDEGdfhypothesis <- function(variable, up, down, mytissue){
   
   # write DEGsframe of only significant genes
   DEGs <- DEGs %>% dplyr::filter(direction != "NS")
-  print(str(DEGs))
+  #print(str(DEGs))
   
   partialfilename = paste("_", down, "_", up, sep = "")
   myfilename = paste0("../results/DESeq2/hypothesis/", mytissue, partialfilename, "_DEGs.csv")
@@ -100,9 +101,6 @@ createDEGdfhypothesis <- function(variable, up, down, mytissue){
   # return DEGs frome with all data, included NS genes
   #print(head(DEGs))
 }  
-
-
-
 
 for(i in levels(colData$sextissue)){
   
@@ -133,9 +131,13 @@ for(i in levels(colData$sextissue)){
   createDEGdfhypothesis("external", "eggs", "nest", i)
 
 }
+
 ```
 
 
+```{r}
+write.csv(colData, "../metadata/04_colData.csv", row.names = F)
+```
 
 
 
