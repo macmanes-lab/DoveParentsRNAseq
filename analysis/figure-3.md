@@ -3,14 +3,14 @@ Figure 3: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -70,6 +70,24 @@ Figure 3: All things prolactin
 
     source("../R/themes.R") 
     source("../R/functions.R")
+    source("../R/genelists.R")
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   geneid = col_double(),
+    ##   NCBI = col_character(),
+    ##   literature = col_character(),
+    ##   GO = col_character(),
+    ##   gene = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   x = col_character()
+    ## )
 
     knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
 
@@ -90,8 +108,9 @@ import limma counts and sample info
     ## L.G107_male_pituitary_control           85.34910 0.3577761   69.02124
 
     colData <- read_csv("../metadata/04_colData.csv") %>%
-      mutate(treatment = factor(treatment, levels = alllevels),
-             tissue = factor(tissue, levels = tissuelevels),
+      filter(treatment %in% charlevels) %>%
+      mutate(tissue = factor(tissue, levels = tissuelevels),
+             treatment = factor(treatment, levels = charlevels),
              temprowname = V1) %>% 
       column_to_rownames(var = "temprowname") 
     head(colData)
@@ -149,24 +168,26 @@ PCA data
 --------
 
     # pca relies on count data from limma
+    pca1f <- subsetmakepca("pituitary", charlevels, "female")   
+    pca2f <- makefvizdf("pituitary", charlevels, "female")  
 
-    pca1f <- subsetmakepca("pituitary", charlevelsnocontrol, "female")  
-    pca2f <- makefvizdf("pituitary", charlevelsnocontrol, "female") 
+    pca1m <- subsetmakepca("pituitary", charlevels, "male") 
+    pca2m <- makefvizdf("pituitary", charlevels, "male")
 
-    pca1m <- subsetmakepca("pituitary", charlevelsnocontrol, "male")    
-    pca2m <- makefvizdf("pituitary", charlevelsnocontrol, "male")
-
-    pca1 <- subsetmakepca("pituitary", charlevelsnocontrol, sexlevels)  
-    pca2 <- makefvizdf("pituitary", charlevelsnocontrol, sexlevels) 
+    pca1 <- subsetmakepca("pituitary", charlevels, sexlevels)   
+    pca2 <- makefvizdf("pituitary", charlevels, sexlevels)  
 
 candidate genes, hypotheses genes, and data-driven genes
 --------------------------------------------------------
 
+    # all genes lists in "./R/genelists.R"
+
     # candidate counts for boxplots
     candidatevsd <- read_csv("../results/06_candidatevsd.csv") %>%
+      filter(treatment %in% charlevels) %>%
       mutate(treatment = factor(treatment)) %>%
       mutate(tissue = factor(tissue, levels = tissuelevel),
-            treatment = factor(treatment, levels = alllevels)) %>%
+            treatment = factor(treatment, levels = charlevels)) %>%
       drop_na()
     head(candidatevsd)
 
@@ -178,7 +199,7 @@ candidate genes, hypotheses genes, and data-driven genes
     ## 3 female hypothalam… control   ABCA4 R.R20_female_hypothalamus_cont…   6.31
     ## 4 female hypothalam… control   ABCA4 R.R9_female_hypothalamus_contr…   6.30
     ## 5 female hypothalam… control   ABCA4 R.W44_female_hypothalamus_cont…   6.31
-    ## 6 female hypothalam… prolong   ABCA4 blk.s031.pu.d_female_hypothala…   6.36
+    ## 6 female hypothalam… inc.d9    ABCA4 blk.s061.pu.y_female_hypothala…   6.49
 
     ## prlpit
     PRLpit <- candidatevsd %>% 
@@ -188,32 +209,28 @@ candidate genes, hypotheses genes, and data-driven genes
     allDEG <- read_csv("../results/06_allDEG.csv")  %>%
       mutate(direction = factor(direction, levels = hypothesislevels))
 
-    # candidate genes from GO and literature
-    parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% 
-      distinct(literature)  %>% drop_na() %>% pull(literature)
-
-    ## genes WGCNA prl module
-    WGCNAgenes <- read_csv("../results/05_PRLmodule.csv") %>% pull(x)
-
     # DEGs infor for PRL and external
     hilodf <- allDEG %>%
       filter(comparison == "lo_hi")  %>%
       arrange(padj) 
+    hilogenes <- hilodf %>%  top_n(20) %>% pull(gene)
 
     eggchickdf <- allDEG %>%
       filter(!comparison %in% c("lo_hi", "nest_eggs", "nest_chicks"))  %>%
       arrange(padj)  
-      
     eggchickgenes <- eggchickdf %>%  top_n(20) %>% pull(gene)
-    hilogenes <- hilodf %>%  top_n(20) %>% pull(gene)
 
-    ## for correlations
+
+    ## data-driven PRL genes
     pithilo <- makecorrdf("female", "pituitary", hilogenes)
-    pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
+    pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[32:52])
 
 
-    ## for scatter correlation
+    ## https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
+    cancergenes <- makecorrdf("female", "pituitary", c(shaidgenes,suszynskaagenes, "PRL"))
 
+
+    ## for scatter correlation (not currently usesed)
     candidatevsdwide <- candidatevsd  %>%
         pivot_wider(names_from = gene, values_from = counts) 
     pitwide <- subsetcandidatevsdwide(sexlevels, "pituitary")
@@ -248,19 +265,17 @@ candidate genes, hypotheses genes, and data-driven genes
     b69 <- plot_grid(b6,b7,b8,b9, align = "v" , rel_heights = c(1.2,1))
     b <- plot_grid(b15,b69, labels = c("C"), label_size = 8, rel_widths = c(1.2,1))
 
-    c1 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 lo vs. hi PRL DEGs") 
-    c2 <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes from WGCNA module with PRL") + theme(legend.position = "right")
-    c3 <- candidateboxplot("pituitary", c("KPNA2"), sexlevels)
-    c4 <- candidateboxplot("pituitary", c("CDK1"), sexlevels) + 
-      theme(axis.text.x = element_text(angle = 45, hjust =1), strip.text = element_blank())  + labs(x = " ")
-    c34 <- plot_grid(c3,c4, nrow = 2, rel_heights = c(1,1.2))
-
-    c <- plot_grid(c1,c2,c34, nrow = 1, labels = c("D", "", "E"), label_size = 8, rel_widths = c(1.1,1.4,1))
+    c1 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 DEGs, low vs. high PRL") 
+    c2 <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes in WGCNA module with PRL") 
+    c3 <- plotcorrplot(cancergenes, NULL) + theme(legend.position = "right") + labs(subtitle = "Breast, ovary, & piuitary cancer genes") 
+    c <- plot_grid(c1,c2,c3, nrow = 1, labels = c("D", "E", "F"), label_size = 8, rel_widths = c(1,1,1.3))
 
     fig3 <- plot_grid(a, b, c, nrow = 3, rel_heights = c(1.2,2,1.8))
     fig3
 
 ![](../figures/fig3-1.png)
+
+    write.csv(PRLpit,"../results/PRLvsd.csv", row.names = F)
 
     pdf(file="../figures/fig3-1.pdf", width=7.25, height=7.25)
     plot(fig3)
@@ -269,10 +284,7 @@ candidate genes, hypotheses genes, and data-driven genes
     ## quartz_off_screen 
     ##                 2
 
-    write.csv(PRLpit,"../results/PRLvsd.csv", row.names = F)
-
-PRL and PRLR in three tissues
------------------------------
+    ## PRL and PRLR in three tissues 
 
     candidatevsd <- candidatevsd %>%
       filter(treatment %in%  c("early", "extend", charlevels))
@@ -286,5 +298,3 @@ PRL and PRLR in three tissues
     p6 <- candidateboxplot("gonad", c("PRLR"), sexlevels) + theme(axis.text.x = element_text(angle = 45))+ labs(subtitle = " ")
 
     plot_grid(p1,p4,p2,p5,p3,p6, ncol = 2, rel_heights = c(1.2,1,1.2))
-
-![](../figures/forvictoria-1.png)
