@@ -1124,7 +1124,6 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
     filter(tissue %in% whichtissue,
            gene %in% whichgenes,
            sex %in% whichsex) %>%
-    mutate(treatment = factor(treatment, levels = charlevels)) %>%
     ggplot(aes(x = treatment, y = counts)) +
     geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA, size = 0.25) +
     geom_jitter(size = 0.25, aes(color = sex)) +

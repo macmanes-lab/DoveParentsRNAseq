@@ -3,14 +3,14 @@ Figure 3: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -173,12 +173,12 @@ candidate genes, hypotheses genes, and data-driven genes
     ## # A tibble: 6 x 6
     ##   sex    tissue      treatment gene  samples                         counts
     ##   <chr>  <fct>       <fct>     <chr> <chr>                            <dbl>
-    ## 1 female hypothalam… control   ABCA4 L.G118_female_hypothalamus_con…   5.91
-    ## 2 female hypothalam… control   ABCA4 R.G106_female_hypothalamus_con…   5.88
-    ## 3 female hypothalam… control   ABCA4 R.R20_female_hypothalamus_cont…   5.68
-    ## 4 female hypothalam… control   ABCA4 R.R9_female_hypothalamus_contr…   5.66
-    ## 5 female hypothalam… control   ABCA4 R.W44_female_hypothalamus_cont…   5.67
-    ## 6 female hypothalam… prolong   ABCA4 blk.s031.pu.d_female_hypothala…   5.74
+    ## 1 female hypothalam… control   ABCA4 L.G118_female_hypothalamus_con…   6.49
+    ## 2 female hypothalam… control   ABCA4 R.G106_female_hypothalamus_con…   6.47
+    ## 3 female hypothalam… control   ABCA4 R.R20_female_hypothalamus_cont…   6.31
+    ## 4 female hypothalam… control   ABCA4 R.R9_female_hypothalamus_contr…   6.30
+    ## 5 female hypothalam… control   ABCA4 R.W44_female_hypothalamus_cont…   6.31
+    ## 6 female hypothalam… prolong   ABCA4 blk.s031.pu.d_female_hypothala…   6.36
 
     ## prlpit
     PRLpit <- candidatevsd %>% 
@@ -274,6 +274,9 @@ candidate genes, hypotheses genes, and data-driven genes
 PRL and PRLR in three tissues
 -----------------------------
 
+    candidatevsd <- candidatevsd %>%
+      filter(treatment %in%  c("early", "extend", charlevels))
+
     p1 <- candidateboxplot("hypothalamus", c("PRL"), sexlevels) + labs(subtitle = "hypothalamus", title = "PRL")
     p2 <- candidateboxplot("pituitary", c("PRL"), sexlevels) + labs(subtitle = "pituitary")
     p3 <- candidateboxplot("gonad", c("PRL"), sexlevels) + labs(subtitle = "gonads") + theme(axis.text.x = element_text(angle = 45))
@@ -283,3 +286,5 @@ PRL and PRLR in three tissues
     p6 <- candidateboxplot("gonad", c("PRLR"), sexlevels) + theme(axis.text.x = element_text(angle = 45))+ labs(subtitle = " ")
 
     plot_grid(p1,p4,p2,p5,p3,p6, ncol = 2, rel_heights = c(1.2,1,1.2))
+
+![](../figures/forvictoria-1.png)

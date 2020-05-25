@@ -19,6 +19,8 @@ library(forcats)
 
 source("../R/themes.R") 
 source("../R/functions.R")
+source("../R/genelists.R")
+
 
 knitr::opts_chunk$set(fig.path = '../figures/',message=F, warning=FALSE)
 ```
@@ -48,14 +50,14 @@ head(row.names(countData) == row.names(colData))
 ```{r PCA}
 # pca relies on count data from limma
 
-pca1f <- subsetmakepca("pituitary", charlevelsnocontrol, "female")	
-pca2f <- makefvizdf("pituitary", charlevelsnocontrol, "female")	
+pca1f <- subsetmakepca("pituitary", charlevels, "female")	
+pca2f <- makefvizdf("pituitary", charlevels, "female")	
 
-pca1m <- subsetmakepca("pituitary", charlevelsnocontrol, "male")	
-pca2m <- makefvizdf("pituitary", charlevelsnocontrol, "male")
+pca1m <- subsetmakepca("pituitary", charlevels, "male")	
+pca2m <- makefvizdf("pituitary", charlevels, "male")
 
-pca1 <- subsetmakepca("pituitary", charlevelsnocontrol, sexlevels)	
-pca2 <- makefvizdf("pituitary", charlevelsnocontrol, sexlevels)	
+pca1 <- subsetmakepca("pituitary", charlevels, sexlevels)	
+pca2 <- makefvizdf("pituitary", charlevels, sexlevels)	
 ```
 
 ## candidate genes, hypotheses genes, and data-driven genes
@@ -65,8 +67,8 @@ pca2 <- makefvizdf("pituitary", charlevelsnocontrol, sexlevels)
 # candidate counts for boxplots
 candidatevsd <- read_csv("../results/06_candidatevsd.csv") %>%
   mutate(treatment = factor(treatment)) %>%
-  mutate(tissue = factor(tissue, levels = tissuelevel),
-        treatment = factor(treatment, levels = alllevels)) %>%
+  mutate(tissue = factor(tissue, levels = charlevels),
+        treatment = factor(treatment, levels = charlevels)) %>%
   drop_na()
 head(candidatevsd)
 
@@ -89,21 +91,24 @@ WGCNAgenes <- read_csv("../results/05_PRLmodule.csv") %>% pull(x)
 hilodf <- allDEG %>%
   filter(comparison == "lo_hi")  %>%
   arrange(padj) 
+hilogenes <- hilodf %>%  top_n(20) %>% pull(gene)
 
 eggchickdf <- allDEG %>%
   filter(!comparison %in% c("lo_hi", "nest_eggs", "nest_chicks"))  %>%
   arrange(padj)  
-  
 eggchickgenes <- eggchickdf %>%  top_n(20) %>% pull(gene)
-hilogenes <- hilodf %>%  top_n(20) %>% pull(gene)
 
-## for correlations
+
+## data-driven PRL genes
 pithilo <- makecorrdf("female", "pituitary", hilogenes)
 pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[1:20])
 
 
-## for scatter correlation
+## https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
+cancergenes <- makecorrdf("female", "pituitary", c(shaidgenes,suszynskaagenes))
 
+
+## for scatter correlation (not currently usesed)
 candidatevsdwide <- candidatevsd  %>%
     pivot_wider(names_from = gene, values_from = counts) 
 pitwide <- subsetcandidatevsdwide(sexlevels, "pituitary")
@@ -147,30 +152,35 @@ b69 <- plot_grid(b6,b7,b8,b9, align = "v" , rel_heights = c(1.2,1))
 b <- plot_grid(b15,b69, labels = c("C"), label_size = 8, rel_widths = c(1.2,1))
 
 c1 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 lo vs. hi PRL DEGs") 
-c2 <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes from WGCNA module with PRL") + theme(legend.position = "right")
-c3 <- candidateboxplot("pituitary", c("KPNA2"), sexlevels)
-c4 <- candidateboxplot("pituitary", c("CDK1"), sexlevels) + 
-  theme(axis.text.x = element_text(angle = 45, hjust =1), strip.text = element_blank())  + labs(x = " ")
-c34 <- plot_grid(c3,c4, nrow = 2, rel_heights = c(1,1.2))
+c2 <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes from WGCNA module with PRL") 
+c3 <- plotcorrplot(cancergenes, NULL) + theme(legend.position = "right") + labs(subtitle = "Breast, ovary, piuitary cancer genes") 
+c <- plot_grid(c1,c2,c3, nrow = 1, labels = c("D", "E", "F"), label_size = 8, rel_widths = c(1,1,1.4))
+c
 
-c <- plot_grid(c1,c2,c34, nrow = 1, labels = c("D", "", "E"), label_size = 8, rel_widths = c(1.1,1.4,1))
 
 fig3 <- plot_grid(a, b, c, nrow = 3, rel_heights = c(1.2,2,1.8))
 fig3
 
-pdf(file="../figures/fig3-1.pdf", width=7.25, height=7.25)
-plot(fig3)
-dev.off()
+
 ```
  
 ```{r savefiles}
-write.csv(PRLpit,"../results/PRLvsd.csv", row.names = F)
+#write.csv(PRLpit,"../results/PRLvsd.csv", row.names = F)
+
+#pdf(file="../figures/fig3-1.pdf", width=7.25, height=7.25)
+#plot(fig3)
+#dev.off()
 ```
 
 
+
+
+```{r forvictoria, eval = F}
 ## PRL and PRLR in three tissues 
 
-```{r eval = F}
+candidatevsd <- candidatevsd %>%
+  filter(treatment %in%  c("early", "extend", charlevels))
+
 p1 <- candidateboxplot("hypothalamus", c("PRL"), sexlevels) + labs(subtitle = "hypothalamus", title = "PRL")
 p2 <- candidateboxplot("pituitary", c("PRL"), sexlevels) + labs(subtitle = "pituitary")
 p3 <- candidateboxplot("gonad", c("PRL"), sexlevels) + labs(subtitle = "gonads") + theme(axis.text.x = element_text(angle = 45))
@@ -180,7 +190,7 @@ p5 <- candidateboxplot("pituitary", c("PRLR"), sexlevels) + labs(subtitle = " ")
 p6 <- candidateboxplot("gonad", c("PRLR"), sexlevels) + theme(axis.text.x = element_text(angle = 45))+ labs(subtitle = " ")
 
 plot_grid(p1,p4,p2,p5,p3,p6, ncol = 2, rel_heights = c(1.2,1,1.2))
-
 ```
+
 
 

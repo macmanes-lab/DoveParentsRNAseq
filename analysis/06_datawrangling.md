@@ -1,21 +1,40 @@
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
     library(readr)
     library(corrr)
+    library(forcats)
 
     source("../R/themes.R")
     source("../R/functions.R")
+    source("../R/genelists.R")
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   geneid = col_double(),
+    ##   NCBI = col_character(),
+    ##   literature = col_character(),
+    ##   GO = col_character(),
+    ##   gene = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   x = col_character()
+    ## )
 
 Wrangle data for hyotheses testing
 ----------------------------------
@@ -79,15 +98,14 @@ Wrangle data for hyotheses testing
 
 ### variance stabilized gene expression (vsd)
 
-    vsd_path <- "../results/DEseq2/hypothesis/"   # path to the data
+    vsd_path <- "../results/DEseq2/treatment/"   # path to the data
     vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
     vsd_pathfiles <- paste0(vsd_path, vsd_files)
     vsd_files
 
-    ## [1] "female_gonad_vsd.csv"        "female_gonads_vsd.csv"      
-    ## [3] "female_hypothalamus_vsd.csv" "female_pituitary_vsd.csv"   
-    ## [5] "male_gonad_vsd.csv"          "male_gonads_vsd.csv"        
-    ## [7] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
+    ## [1] "female_gonad_vsd.csv"        "female_hypothalamus_vsd.csv"
+    ## [3] "female_pituitary_vsd.csv"    "male_gonad_vsd.csv"         
+    ## [5] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
 
     ## before pivoting, check names of df with
     ## head(names(allvsd)) and tail(names(allvsd))
@@ -96,31 +114,103 @@ Wrangle data for hyotheses testing
       setNames(nm = .) %>% 
       map_df(~read_csv(.x), .id = "file_name")  %>% 
       dplyr::rename("gene" = "X1") %>% 
-      pivot_longer(cols = blk.s061.pu.y_female_gonad_inc.d9:y98.o50.x_male_pituitary_inc.d3, 
+      pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                    names_to = "samples", values_to = "counts") 
-    allvsd %>% select(-file_name) %>% head()
+
+    allvsd %>%  select(-file_name) %>% head()
 
     ## # A tibble: 6 x 3
-    ##   gene  samples                           counts
-    ##   <chr> <chr>                              <dbl>
-    ## 1 A2ML1 blk.s061.pu.y_female_gonad_inc.d9   6.66
-    ## 2 A2ML1 blk21.x_female_gonad_hatch          7.97
-    ## 3 A2ML1 blk4.x_female_gonad_n9              7.37
-    ## 4 A2ML1 blu103.x_female_gonad_hatch.NYNO    6.53
-    ## 5 A2ML1 blu124.w180.x_female_gonad_hatch    7.21
-    ## 6 A2ML1 blu36.w16_female_gonad_n9           7.34
+    ##   gene  samples                            counts
+    ##   <chr> <chr>                               <dbl>
+    ## 1 A2ML1 L.G118_female_gonad_control         14.7 
+    ## 2 A2ML1 R.G106_female_gonad_control          7.79
+    ## 3 A2ML1 R.R20_female_gonad_control          14.9 
+    ## 4 A2ML1 R.R9_female_gonad_control           11.7 
+    ## 5 A2ML1 R.W44_female_gonad_control          13.2 
+    ## 6 A2ML1 blk.s031.pu.d_female_gonad_prolong   7.42
 
-    head(allvsd)
+    colData %>% filter(tissue == "gonads", treatment == "bldg")  
 
-    ## # A tibble: 6 x 4
-    ##   file_name                            gene  samples                 counts
-    ##   <chr>                                <chr> <chr>                    <dbl>
-    ## 1 ../results/DEseq2/hypothesis/female… A2ML1 blk.s061.pu.y_female_g…   6.66
-    ## 2 ../results/DEseq2/hypothesis/female… A2ML1 blk21.x_female_gonad_h…   7.97
-    ## 3 ../results/DEseq2/hypothesis/female… A2ML1 blk4.x_female_gonad_n9    7.37
-    ## 4 ../results/DEseq2/hypothesis/female… A2ML1 blu103.x_female_gonad_…   6.53
-    ## 5 ../results/DEseq2/hypothesis/female… A2ML1 blu124.w180.x_female_g…   7.21
-    ## 6 ../results/DEseq2/hypothesis/female… A2ML1 blu36.w16_female_gonad…   7.34
+    ##               bird    sex tissue treatment              group
+    ## 1          blk11.x female gonads      bldg female.gonads.bldg
+    ## 2  blu114.r38.w198   male gonads      bldg   male.gonads.bldg
+    ## 3      blu33.y88.x   male gonads      bldg   male.gonads.bldg
+    ## 4     blu38.g135.x female gonads      bldg female.gonads.bldg
+    ## 5       g104.w82.x   male gonads      bldg   male.gonads.bldg
+    ## 6     g141.blu27.x female gonads      bldg female.gonads.bldg
+    ## 7        g52.blu58   male gonads      bldg   male.gonads.bldg
+    ## 8     l.s120.y.blk female gonads      bldg female.gonads.bldg
+    ## 9      o38.blu29.x female gonads      bldg female.gonads.bldg
+    ## 10      r.s056.g.o female gonads      bldg female.gonads.bldg
+    ## 11      r.s059.d.o   male gonads      bldg   male.gonads.bldg
+    ## 12         r83.g45 female gonads      bldg female.gonads.bldg
+    ## 13   s.pu148.blk.r   male gonads      bldg   male.gonads.bldg
+    ## 14    s063.d.blk.l female gonads      bldg female.gonads.bldg
+    ## 15      s065.l.d.o   male gonads      bldg   male.gonads.bldg
+    ## 16      s066.l.d.r   male gonads      bldg   male.gonads.bldg
+    ## 17    s092.blk.r.o female gonads      bldg female.gonads.bldg
+    ## 18      x.o30.g134   male gonads      bldg   male.gonads.bldg
+    ## 19       x.r39.g10 female gonads      bldg female.gonads.bldg
+    ## 20     x.r67.blu35   male gonads      bldg   male.gonads.bldg
+    ##              study     sextissue                         samples hiloPRL
+    ## 1  charcterization female_gonads       blk11.x_female_gonad_bldg      lo
+    ## 2  charcterization   male_gonads blu114.r38.w198_male_gonad_bldg      lo
+    ## 3  charcterization   male_gonads     blu33.y88.x_male_gonad_bldg      lo
+    ## 4  charcterization female_gonads  blu38.g135.x_female_gonad_bldg      lo
+    ## 5  charcterization   male_gonads      g104.w82.x_male_gonad_bldg      lo
+    ## 6  charcterization female_gonads  g141.blu27.x_female_gonad_bldg      lo
+    ## 7  charcterization   male_gonads       g52.blu58_male_gonad_bldg      lo
+    ## 8  charcterization female_gonads  l.s120.y.blk_female_gonad_bldg      lo
+    ## 9  charcterization female_gonads   o38.blu29.x_female_gonad_bldg      lo
+    ## 10 charcterization female_gonads    r.s056.g.o_female_gonad_bldg      lo
+    ## 11 charcterization   male_gonads      r.s059.d.o_male_gonad_bldg      lo
+    ## 12 charcterization female_gonads       r83.g45_female_gonad_bldg      lo
+    ## 13 charcterization   male_gonads   s.pu148.blk.r_male_gonad_bldg      lo
+    ## 14 charcterization female_gonads  s063.d.blk.l_female_gonad_bldg      lo
+    ## 15 charcterization   male_gonads      s065.l.d.o_male_gonad_bldg      lo
+    ## 16 charcterization   male_gonads      s066.l.d.r_male_gonad_bldg      lo
+    ## 17 charcterization female_gonads  s092.blk.r.o_female_gonad_bldg      lo
+    ## 18 charcterization   male_gonads      x.o30.g134_male_gonad_bldg      lo
+    ## 19 charcterization female_gonads     x.r39.g10_female_gonad_bldg      lo
+    ## 20 charcterization   male_gonads     x.r67.blu35_male_gonad_bldg      lo
+    ##    external
+    ## 1      nest
+    ## 2      nest
+    ## 3      nest
+    ## 4      nest
+    ## 5      nest
+    ## 6      nest
+    ## 7      nest
+    ## 8      nest
+    ## 9      nest
+    ## 10     nest
+    ## 11     nest
+    ## 12     nest
+    ## 13     nest
+    ## 14     nest
+    ## 15     nest
+    ## 16     nest
+    ## 17     nest
+    ## 18     nest
+    ## 19     nest
+    ## 20     nest
+
+    allvsd %>% filter(samples == "blk11.x_female_gonad_bldg")
+
+    ## # A tibble: 81,947 x 4
+    ##    file_name                             gene    samples             counts
+    ##    <chr>                                 <chr>   <chr>                <dbl>
+    ##  1 ../results/DEseq2/treatment/female_g… A2ML1   blk11.x_female_gon…   7.60
+    ##  2 ../results/DEseq2/treatment/female_g… A2ML2   blk11.x_female_gon…   5.33
+    ##  3 ../results/DEseq2/treatment/female_g… A2ML3   blk11.x_female_gon…  10.2 
+    ##  4 ../results/DEseq2/treatment/female_g… A2ML4   blk11.x_female_gon…   4.69
+    ##  5 ../results/DEseq2/treatment/female_g… A4GALT  blk11.x_female_gon…   6.37
+    ##  6 ../results/DEseq2/treatment/female_g… A4GNT   blk11.x_female_gon…   5.59
+    ##  7 ../results/DEseq2/treatment/female_g… AAAS    blk11.x_female_gon…   8.55
+    ##  8 ../results/DEseq2/treatment/female_g… AACS    blk11.x_female_gon…  10.4 
+    ##  9 ../results/DEseq2/treatment/female_g… AADACL4 blk11.x_female_gon…   5.69
+    ## 10 ../results/DEseq2/treatment/female_g… AADAT   blk11.x_female_gon…   7.52
+    ## # … with 81,937 more rows
 
 All DEGs (but currently only char DEGs)
 ---------------------------------------
@@ -421,60 +511,7 @@ All DEGs (but currently only char DEGs)
 gene lists
 ----------
 
-    # candidate genes from GO and literature
-    parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% pull(gene)
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   X1 = col_double(),
-    ##   geneid = col_double(),
-    ##   NCBI = col_character(),
-    ##   literature = col_character(),
-    ##   GO = col_character(),
-    ##   gene = col_character()
-    ## )
-
-    parentalcaregenes
-
-    ##  [1] "ADRA2A" "AVP"    "AVPR1A" "BRINP1" "COMT"   "CREBRF" "CRH"   
-    ##  [8] "CRHBP"  "CRHR1"  "CRHR2"  "DBH"    "DRD1"   "DRD4"   "ESR1"  
-    ## [15] "ESR2"   "FOS"    "GNAQ"   "HTR2C"  "KALRN"  "MBD2"   "MEST"  
-    ## [22] "NPAS3"  "NPAS3"  "NR3C1"  "OPRK1"  "OPRM1"  "OXT"    "PGR"   
-    ## [29] "PRL"    "PRLR"   "PTEN"   "SLC6A4" "ZFX"
-
-    ## genes WGCNA prl module
-    WGCNAgenes <- read_csv("../results/05_PRLmodule.csv") %>% pull(x)
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   x = col_character()
-    ## )
-
-    WGCNAgenes
-
-    ##  [1] "ACOT12"       "AGR2"         "ARAP2"        "C2H8ORF46"   
-    ##  [5] "CALN1"        "CD24"         "CDKN3"        "CDT1"        
-    ##  [9] "CHRNB4"       "COL20A1"      "CREB3L1"      "CRELD2"      
-    ## [13] "CREM"         "DUSP10"       "F13A1"        "FAM19A1"     
-    ## [17] "FAM83G"       "FGF6"         "FKBP11"       "FOSL2"       
-    ## [21] "FXYD2"        "GABRE"        "GRXCR1"       "LAMC2"       
-    ## [25] "LAPTM4B"      "LBH"          "LOC101750767" "LOC107053040"
-    ## [29] "LOC107054798" "LOC422224"    "LOC428479"    "LPPR5"       
-    ## [33] "MFSD2A"       "MFSD4"        "MLN"          "MYC"         
-    ## [37] "NPM3"         "NR4A3"        "NTN1"         "OMP"         
-    ## [41] "PAX7"         "PDE11A"       "PDE8B"        "POU3F3"      
-    ## [45] "PRL"          "PROCR"        "PYCR2"        "RASSF5"      
-    ## [49] "SDF2L1"       "SLC16A1"      "SLC5A10"      "SLC7A5"      
-    ## [53] "SOST"         "STC1"         "TFAP2B"       "TFPI2"       
-    ## [57] "USP35"        "VEPH1"
-
-    unique(allDEG$comparison)
-
-    ## [1] "eggs_chicks" "lo_hi"       "nest_chicks" "nest_eggs"
-
-    ## hilogenes
+    ## "internal clock" PRL genes
 
     hilogenes <- allDEG %>%
       filter(comparison == "lo_hi")  %>%
@@ -484,6 +521,7 @@ gene lists
 
     ## Selecting by logpadj
 
+    ## external environment gens 
     eggchickgenes <- allDEG %>%
       filter(comparison != "lo_hi")  %>%
       drop_na() %>%
@@ -494,13 +532,16 @@ gene lists
 
 ### vsd for all and candidate, hypothesis, and data-driven genes
 
-    candidategenes <- c(parentalcaregenes, WGCNAgenes, hilogenes, eggchickgenes)
+    # all list of candidate gens accumlated here
+
+    candidategenes <- c(parentalcaregenes, WGCNAgenes, hilogenes, eggchickgenes, 
+                        suszynskaagenes, shaidgenes)
 
     getcandidatevsd2 <- function(whichgenes, whichtissue, whichsex){
       candidates  <- allvsd %>%
         filter(gene %in% whichgenes) %>%
         dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
-        dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/hypothesis/'), "[", 2)) %>%
+        dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/treatment/'), "[", 2)) %>%
         dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
                       tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
                       treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
@@ -515,20 +556,24 @@ gene lists
     hypvsd <- getcandidatevsd2(candidategenes, "hypothalamus", sexlevels)
     pitvsd <- getcandidatevsd2(candidategenes, "pituitary", sexlevels)
     gonvsd <- getcandidatevsd2(candidategenes, "gonad", sexlevels)
-    candidatevsd <- rbind(hypvsd, pitvsd)
-    candidatevsd <- rbind(candidatevsd, gonvsd)
 
-    head(candidatevsd)
+    candidatevsd <- rbind(hypvsd, pitvsd)
+    candidatevsd <- rbind(candidatevsd, gonvsd) 
+    candidatevsd <- candidatevsd %>%
+      mutate(treatment = factor(treatment)) %>%
+      mutate(treatment = fct_recode(treatment, "early" = "m.inc.d8" )) %>%
+      mutate(treatment = factor(treatment, alllevels))
+    tail(candidatevsd)
 
     ## # A tibble: 6 x 6
-    ##   sex    tissue      treatment gene  samples                         counts
-    ##   <chr>  <chr>       <chr>     <chr> <chr>                            <dbl>
-    ## 1 female hypothalam… control   ABCA4 L.G118_female_hypothalamus_con…   5.91
-    ## 2 female hypothalam… control   ABCA4 R.G106_female_hypothalamus_con…   5.88
-    ## 3 female hypothalam… control   ABCA4 R.R20_female_hypothalamus_cont…   5.68
-    ## 4 female hypothalam… control   ABCA4 R.R9_female_hypothalamus_contr…   5.66
-    ## 5 female hypothalam… control   ABCA4 R.W44_female_hypothalamus_cont…   5.67
-    ## 6 female hypothalam… prolong   ABCA4 blk.s031.pu.d_female_hypothala…   5.74
+    ##   sex   tissue treatment gene  samples                      counts
+    ##   <chr> <chr>  <fct>     <chr> <chr>                         <dbl>
+    ## 1 male  gonad  m.inc.d3  ZFX   y18.x_male_gonad_m.inc.d3      10.5
+    ## 2 male  gonad  m.inc.d17 ZFX   y4.x_male_gonad_m.inc.d17      10.5
+    ## 3 male  gonad  early     ZFX   y55.x_male_gonad_m.inc.d8      10.3
+    ## 4 male  gonad  m.inc.d9  ZFX   y63.x_male_gonad_m.inc.d9      10.3
+    ## 5 male  gonad  inc.d9    ZFX   y95.g131.x_male_gonad_inc.d9   10.5
+    ## 6 male  gonad  inc.d3    ZFX   y98.o50.x_male_gonad_inc.d3    10.2
 
     write.csv(candidatevsd, "../results/06_candidatevsd.csv", row.names = F)
     write.csv(allDEG, "../results/06_allDEG.csv", row.names = F)
