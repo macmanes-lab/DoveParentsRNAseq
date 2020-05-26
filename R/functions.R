@@ -23,6 +23,8 @@ subsetcolData2 <- function(colData, eachgroup){
 }
 
 
+
+
 subsetcolData3 <- function(colData, eachgroup){
   
   colData <- colData %>%
