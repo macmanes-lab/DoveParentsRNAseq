@@ -1,33 +1,105 @@
-Figure 1. Experimental design, tSNE analysis, PCA, and prolactin
-================================================================
+Figure 4. What is the effect of removal?
+========================================
+
+import limma counts and sample info
+-----------------------------------
+
+    countData <- read_csv("../results/01_limma.csv") %>%
+      column_to_rownames(var = "X1")
+    countData <- as.data.frame(t(countData))
+    head(countData[1:3])
+
+    ##                                            A2ML1     A2ML2      A2ML3
+    ## L.Blu13_male_gonad_control.NYNO         42.65677 4.4397552  211.96191
+    ## L.Blu13_male_hypothalamus_control.NYNO 201.26331 4.8633048 6919.87335
+    ## L.Blu13_male_pituitary_control.NYNO    161.22614 0.3158851  212.10845
+    ## L.G107_male_gonad_control               43.22441 2.0404458  203.74048
+    ## L.G107_male_hypothalamus_control       382.33084 4.9190817 9531.52550
+    ## L.G107_male_pituitary_control           85.34910 0.3577761   69.02124
+
+    colData <- read_csv("../metadata/00_colData.csv") %>%
+      mutate(treatment = factor(treatment, levels = alllevels),
+             tissue = factor(tissue, levels = tissuelevels)) %>% 
+      column_to_rownames(var = "X1") 
+    head(colData)
+
+    ##                                                                            V1
+    ## L.Blu13_male_gonad_control.NYNO               L.Blu13_male_gonad_control.NYNO
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13_male_hypothalamus_control.NYNO
+    ## L.Blu13_male_pituitary_control.NYNO       L.Blu13_male_pituitary_control.NYNO
+    ## L.G107_male_gonad_control                           L.G107_male_gonad_control
+    ## L.G107_male_hypothalamus_control             L.G107_male_hypothalamus_control
+    ## L.G107_male_pituitary_control                   L.G107_male_pituitary_control
+    ##                                           bird  sex       tissue treatment
+    ## L.Blu13_male_gonad_control.NYNO        L.Blu13 male       gonads   control
+    ## L.Blu13_male_hypothalamus_control.NYNO L.Blu13 male hypothalamus   control
+    ## L.Blu13_male_pituitary_control.NYNO    L.Blu13 male    pituitary   control
+    ## L.G107_male_gonad_control               L.G107 male       gonads   control
+    ## L.G107_male_hypothalamus_control        L.G107 male hypothalamus   control
+    ## L.G107_male_pituitary_control           L.G107 male    pituitary   control
+    ##                                                            group
+    ## L.Blu13_male_gonad_control.NYNO              male.gonads.control
+    ## L.Blu13_male_hypothalamus_control.NYNO male.hypothalamus.control
+    ## L.Blu13_male_pituitary_control.NYNO       male.pituitary.control
+    ## L.G107_male_gonad_control                    male.gonads.control
+    ## L.G107_male_hypothalamus_control       male.hypothalamus.control
+    ## L.G107_male_pituitary_control             male.pituitary.control
+    ##                                                  study
+    ## L.Blu13_male_gonad_control.NYNO        charcterization
+    ## L.Blu13_male_hypothalamus_control.NYNO charcterization
+    ## L.Blu13_male_pituitary_control.NYNO    charcterization
+    ## L.G107_male_gonad_control              charcterization
+    ## L.G107_male_hypothalamus_control       charcterization
+    ## L.G107_male_pituitary_control          charcterization
+
+    # check ready for analysis
+    # row.names(countData) == row.names(colData)
+    head(row.names(countData) == row.names(colData))
+
+    ## [1] TRUE TRUE TRUE TRUE TRUE TRUE
+
+tsne
+----
 
     # prep for tsne
-
-    hyptsne <- subsetmaketsne("hypothalamus", allmaniplevels, sexlevels)
-    pittsne <- subsetmaketsne("pituitary", allmaniplevels, sexlevels)
-    gontsne <- subsetmaketsne("gonads", allmaniplevels, sexlevels)
+    hyptsne <- subsetmaketsne("hypothalamus", removallevels, sexlevels)
+    pittsne <- subsetmaketsne("pituitary", removallevels, sexlevels)
+    gontsne <- subsetmaketsne("gonads", removallevels, sexlevels)
 
     addgroupings <- function(df){
       
-      df <- df %>% mutate(hiloPRL = fct_collapse(treatment, 
-                                      lo = c("m.inc.d8", "m.inc.d3", "m.inc.d9", "inc.d3", "inc.d9", "lay", "bldg"),
-                                      hi = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" ,  "m.n2", "extend", "n5")),
+      df <- df %>% mutate(earlylate = fct_collapse(treatment, 
+                                      early = c("early", "m.inc.d3", "m.inc.d9", "inc.d3", 
+                                             "inc.d9",  "bldg"),
+                                      late = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" , 
+                                             "m.n2", "extend", "n5"),
+                                      reference = "control"),
                     extint = fct_collapse(treatment, 
-                                      eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong", "lay"),
-                                      chicks = c( "m.inc.d8", "hatch", "extend", "n5"),
-                                      loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg")))
-      df$extint <- factor(df$extint, levels = levelsextint)
+                                      nest = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg"),
+                                      eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong"),
+                                      chicks = c("early", "hatch", "extend", "n5"),
+                                      reference = "control")) 
       return(df)
     }
       
-    hyptsne <- addgroupings(hyptsne)
+
     pittsne <- addgroupings(pittsne)
-    gontsne <- addgroupings(gontsne)
+
+    t4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors) +  labs(title = "pituitary ", subtitle = "parental stage and manipulations") +
+      facet_wrap(~sex) 
+    t5 <- plottsneelipsev2(pittsne, pittsne$extint, colorhypothesis) +  labs(title = "  ", subtitle = "external enviornment")   +
+      facet_wrap(~sex) + theme(axis.title.y = element_blank())
+    t6 <- plottsneelipsev2(pittsne, pittsne$earlylate, colorhypothesis) +  labs(title = "  ", subtitle = "internal clock")   +
+      facet_wrap(~sex) + theme(axis.title.y = element_blank())
+    t456 <- plot_grid(t4, t5, t6, nrow = 1, rel_widths = c(1.1,1,1))
+    t456
+
+![](../figures/tSNE-df-1.png)
 
 variance stabilized gene expression (vsd)
 -----------------------------------------
 
-    vsd_path <- "../results/DEseq2/manip/"   # path to the data
+    vsd_path <- "../results/DEseq2/treatment/"   # path to the data
     vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
     vsd_pathfiles <- paste0(vsd_path, vsd_files)
     vsd_files
@@ -39,168 +111,151 @@ variance stabilized gene expression (vsd)
     allvsd <- vsd_pathfiles %>%
       setNames(nm = .) %>% 
       map_df(~read_csv(.x), .id = "file_name")  %>% 
-      dplyr::rename("gene" = "X1") %>% 
-      pivot_longer(cols = blk.s031.pu.d_female_gonad_prolong:y98.o50.x_male_pituitary_inc.d3, 
+      dplyr::rename("gene" = "X1") 
+    ## before pivoting, check names of df with
+    ## head(names(allvsd)) and tail(names(allvsd))
+    allvsd <- allvsd %>% 
+      pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                    names_to = "samples", values_to = "counts") 
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   .default = col_double(),
-    ##   X1 = col_character()
-    ## )
-    ## See spec(...) for full column specifications.
-
     allvsd <- as_tibble(allvsd)
-
     head(allvsd)
 
     ## # A tibble: 6 x 4
-    ##   file_name                         gene  samples                    counts
-    ##   <chr>                             <chr> <chr>                       <dbl>
-    ## 1 ../results/DEseq2/manip/female_g… A2ML1 blk.s031.pu.d_female_gona…   7.60
-    ## 2 ../results/DEseq2/manip/female_g… A2ML1 blk.s032.g.w_female_gonad…   7.49
-    ## 3 ../results/DEseq2/manip/female_g… A2ML1 blk.s049.y.g_female_gonad…   7.81
-    ## 4 ../results/DEseq2/manip/female_g… A2ML1 blk.s060.pu.w_female_gona…   7.16
-    ## 5 ../results/DEseq2/manip/female_g… A2ML1 blk.s061.pu.y_female_gona…   7.19
-    ## 6 ../results/DEseq2/manip/female_g… A2ML1 blk.y.l.s109_female_gonad…   7.50
+    ##   file_name                           gene  samples                  counts
+    ##   <chr>                               <chr> <chr>                     <dbl>
+    ## 1 ../results/DEseq2/treatment/female… A2ML1 L.G118_female_gonad_con…  14.7 
+    ## 2 ../results/DEseq2/treatment/female… A2ML1 R.G106_female_gonad_con…   7.79
+    ## 3 ../results/DEseq2/treatment/female… A2ML1 R.R20_female_gonad_cont…  14.9 
+    ## 4 ../results/DEseq2/treatment/female… A2ML1 R.R9_female_gonad_contr…  11.7 
+    ## 5 ../results/DEseq2/treatment/female… A2ML1 R.W44_female_gonad_cont…  13.2 
+    ## 6 ../results/DEseq2/treatment/female… A2ML1 blk.s031.pu.d_female_go…   7.42
+
+    tail(allvsd)
+
+    ## # A tibble: 6 x 4
+    ##   file_name                            gene  samples                 counts
+    ##   <chr>                                <chr> <chr>                    <dbl>
+    ## 1 ../results/DEseq2/treatment/male_pi… ZZZ3  y18.x_male_pituitary_m…  10.0 
+    ## 2 ../results/DEseq2/treatment/male_pi… ZZZ3  y4.x_male_pituitary_m.…   9.88
+    ## 3 ../results/DEseq2/treatment/male_pi… ZZZ3  y55.x_male_pituitary_m…   9.91
+    ## 4 ../results/DEseq2/treatment/male_pi… ZZZ3  y63.x_male_pituitary_m…   9.92
+    ## 5 ../results/DEseq2/treatment/male_pi… ZZZ3  y95.g131.x_male_pituit…   9.79
+    ## 6 ../results/DEseq2/treatment/male_pi… ZZZ3  y98.o50.x_male_pituita…   9.89
 
     # for plotting gene expression over time
-    getcandidatevsdmanip <- function(whichgenes, whichtissue, whichsex){
+    getcandidatevsdmanip <- function(whichgenes, whichtissue){
+      
       candidates  <- allvsd %>%
         filter(gene %in% whichgenes) %>%
-        dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1)) %>%
-        dplyr::mutate(sextissue = sapply(strsplit(sextissue, '../results/DEseq2/manip/'), "[", 2)) %>%
-        dplyr::mutate(sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+        dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1),
+                      sextissue = sapply(strsplit(sextissue, '../results/DEseq2/treatment/'), "[", 2),
+                      sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
                     tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
-                    treatment = sapply(strsplit(samples, '\\_'), "[", 4)) %>%
-        dplyr::mutate(treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1)) %>%
-         dplyr::mutate(treatment = recode(treatment, "m.hatch" = "m.n2",
-                                                      "extend.hatch" = "m.n2",
-                                          "inc.prolong" = "prolong")) %>%
-        
-        dplyr::mutate(day = fct_collapse(treatment,
-                                         "1" = c("inc.d3", "m.inc.d3" ),
-                                         "2" = c("inc.d9", "m.inc.d9", "m.inc.d8"  ),
-                                         "2" = c("inc.d17", "m.inc.d17", "prolong"  ),
-                                         "4" = c("hatch", "m.n2", "extend"  )
-                                         )) %>%
-        dplyr::mutate(day = as.numeric(day)) %>%
-        dplyr::mutate(manip = fct_collapse(treatment,
-                                           "reference" = charlevels,
-                                           "removal" = c("m.inc.d3", "m.inc.d9", "m.inc.d17","m.n2"),
-                                           "replacement" = c("m.inc.d8", "prolong", "extend"))) %>%
-        dplyr::mutate(manip = factor(manip, levels = c("reference", "removal", "replacement"))) %>%
-        dplyr::select(sex, tissue, treatment, day,  manip, gene, samples, counts) %>%
-        filter(tissue == whichtissue, sex %in% whichsex)  %>%
-        drop_na()
-      candidates$treatment <- factor(candidates$treatment, levels = alllevels)
+                    treatment = sapply(strsplit(samples, '\\_'), "[", 4),
+                    treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1),
+                    treatment = recode(treatment, "m.hatch" = "m.n2", "extend.hatch" = "m.n2",
+                                                       "inc.prolong" = "prolong", "m.inc.d8" = "early"),
+                    treatment =  factor(treatment, levels = alllevels),
+                    earlylate = fct_collapse(treatment, 
+                                      early = c("early", "m.inc.d3", "m.inc.d9", "inc.d3", 
+                                             "inc.d9",  "bldg"),
+                                      late = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" , 
+                                             "m.n2", "extend", "n5"),
+                                      reference = "control"),
+                    extint = fct_collapse(treatment, 
+                                      nest = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg"),
+                                      eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong"),
+                                      chicks = c("early", "hatch", "extend", "n5"),
+                                      reference = "control"))  %>%
+        dplyr::select(gene, counts, sex, tissue, treatment, earlylate, extint, samples)  
       return(candidates)
     }
 
-    hypvsd <- getcandidatevsdmanip(candidategenes, "hypothalamus", sexlevels)
+    candidatevsd <- getcandidatevsdmanip(candidategenes)
+    hypvsd <- candidatevsd %>% filter(tissue %in% "hypothalamus")  
+    pitvsd <- candidatevsd %>% filter(tissue %in% "pituitary") 
+    gonvsd <- candidatevsd %>% filter(tissue %in% "gonad") 
 
-    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
-
-    pitvsd <- getcandidatevsdmanip(candidategenes, "pituitary", sexlevels)
-
-    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
-
-    gonvsd <- getcandidatevsdmanip(candidategenes, "gonad", sexlevels)
-
-    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
-
-    candidatevsd <- rbind(hypvsd, pitvsd)
-    candidatevsd <- rbind(candidatevsd, gonvsd)
-    head(candidatevsd)
+    # not all genes appear to be expressed in the gonads... these are
+    filter(gonvsd, treatment == "control") %>% head()
 
     ## # A tibble: 6 x 8
-    ##   sex    tissue    treatment   day manip   gene  samples             counts
-    ##   <chr>  <chr>     <fct>     <dbl> <fct>   <chr> <chr>                <dbl>
-    ## 1 female hypothal… prolong       2 replac… ADRA… blk.s031.pu.d_fema…   9.20
-    ## 2 female hypothal… m.n2          1 removal ADRA… blk.s032.g.w_femal…   9.07
-    ## 3 female hypothal… m.inc.d3      3 removal ADRA… blk.s049.y.g_femal…   9.21
-    ## 4 female hypothal… m.inc.d3      3 removal ADRA… blk.s060.pu.w_fema…   9.13
-    ## 5 female hypothal… inc.d9        2 refere… ADRA… blk.s061.pu.y_fema…   9.19
-    ## 6 female hypothal… m.inc.d8      2 replac… ADRA… blk.y.l.s109_femal…   9.31
+    ##   gene   counts sex    tissue treatment earlylate extint  samples          
+    ##   <chr>   <dbl> <chr>  <chr>  <fct>     <fct>     <fct>   <chr>            
+    ## 1 ACOT12   4.69 female gonad  control   reference refere… L.G118_female_go…
+    ## 2 ACOT12   5.28 female gonad  control   reference refere… R.G106_female_go…
+    ## 3 ACOT12   5.39 female gonad  control   reference refere… R.R20_female_gon…
+    ## 4 ACOT12   5.66 female gonad  control   reference refere… R.R9_female_gona…
+    ## 5 ACOT12   5.20 female gonad  control   reference refere… R.W44_female_gon…
+    ## 6 ACOT12   5.65 female gonad  control   reference refere… blu.o.x.ATLAS_fe…
 
-    hypvsd2 <- getcandidatevsdmanip(hypothesisDEGs, "hypothalamus", sexlevels)
+    plotcandidateremoval <- function(df, whichgene, whichtissue){
+      
+      p <- df %>%
+        dplyr::filter(gene  == whichgene, 
+                      treatment %in% removallevels)  %>%
+        ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
+        geom_boxplot(outlier.shape = NA) +
+        geom_jitter(size = 0.25, aes(color = sex)) +
+        theme_B3() +
+        theme(legend.position = "none",
+              axis.title.x = element_blank(),
+              plot.subtitle = element_text(face = "italic")) +
+        scale_color_manual(values = allcolors) +
+        scale_fill_manual(values = allcolors)  +
+        labs(title = paste(whichtissue, sep = " "), subtitle = whichgene, y = "gene expression") +
+        geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
+                                       c( "inc.d9", "m.inc.d9"),
+                                       c( "inc.d17", "m.inc.d17"),
+                                       c( "hatch", "m.n2")),
+                    map_signif_level=TRUE,
+                    textsize = 3, family = 'Helvetica',
+                    vjust = 1.5, size = 0.5) 
+      return(p)
+      
+    }
 
-    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
+    a <- plotcandidateremoval(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank(), axis.text.x = element_blank())
+    b <- plotcandidateremoval(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank(), axis.text.x = element_blank())
+    c <- plotcandidateremoval(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank())
+    boxplots1 <- plot_grid(a,b,c, nrow = 3)
 
-    pitvsd2 <- getcandidatevsdmanip(hypothesisDEGs, "pituitary", sexlevels)
 
-    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
+    plotcandidatetiming <- function(df, whichgene, whichtissue){
+      
+      p <- df %>%
+        dplyr::filter(gene  == whichgene, 
+                      treatment %in% timinglevels,
+                      !treatment %in%  c("control", "bldg", "inc.d3"))  %>%
+        ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
+        geom_boxplot(outlier.shape = NA) +
+        geom_jitter(size = 0.25, aes(color = sex)) +
+        theme_B3() +
+        theme(legend.position = "none",
+              axis.title.x = element_blank(),
+              plot.subtitle = element_text(face = "italic")) +
+        scale_color_manual(values = allcolors) +
+        scale_fill_manual(values = allcolors)  +
+        labs(title = paste(whichtissue, sep = " "), subtitle = whichgene, y = "gene expression") +
+        geom_signif(comparisons = list(c("inc.d9", "early"), 
+                                      c( "inc.d17", "prolong"), c( "prolong", "hatch"),
+                                      c( "hatch", "extend"), c( "n5", "extend")),
+                    map_signif_level=TRUE,
+                    textsize = 3, family = 'Helvetica',
+                    vjust = 1.5, size = 0.5) 
+      return(p)
+      
+    }
 
-    gonvsd2 <- getcandidatevsdmanip(hypothesisDEGs, "gonad", sexlevels)
-
-    ## Warning: Unknown levels in `f`: control, bldg, lay, n5, n9
-
-    candidatevsd2 <- rbind(hypvsd2, pitvsd2)
-    candidatevsd2 <- rbind(candidatevsd2, gonvsd2)
-    head(candidatevsd2) 
-
-    ## # A tibble: 6 x 8
-    ##   sex    tissue   treatment   day manip   gene  samples              counts
-    ##   <chr>  <chr>    <fct>     <dbl> <fct>   <chr> <chr>                 <dbl>
-    ## 1 female hypotha… prolong       2 replac… ARAP2 blk.s031.pu.d_femal…   8.64
-    ## 2 female hypotha… m.n2          1 removal ARAP2 blk.s032.g.w_female…   8.92
-    ## 3 female hypotha… m.inc.d3      3 removal ARAP2 blk.s049.y.g_female…   8.76
-    ## 4 female hypotha… m.inc.d3      3 removal ARAP2 blk.s060.pu.w_femal…   8.86
-    ## 5 female hypotha… inc.d9        2 refere… ARAP2 blk.s061.pu.y_femal…   8.98
-    ## 6 female hypotha… m.inc.d8      2 replac… ARAP2 blk.y.l.s109_female…   8.98
+    e <- plotcandidatetiming(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank(), axis.text.x = element_blank()) 
+    f <- plotcandidatetiming(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank(), axis.text.x = element_blank())
+    g <- plotcandidatetiming(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank())
+    boxplots2 <- plot_grid(e,f,g, nrow = 3)
 
 DEGs
 ----
 
-    DEG_path <- "../results/DEseq2/manip/"   # path to the data
+    DEG_path <- "../results/DEseq2/treatment/"   # path to the data
     DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
     DEG_pathfiles <- paste0(DEG_path, DEG_files)
     #DEG_files
@@ -208,7 +263,7 @@ DEGs
     allDEG <- DEG_pathfiles %>%
       setNames(nm = .) %>% 
       map_df(~read_csv(.x), .id = "file_name") %>% 
-      mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/manip/'), "[", 2))  %>% 
+      mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
       mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
       mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
       mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
@@ -216,1199 +271,67 @@ DEGs
       mutate(comparison = paste(down,up, sep = "_")) %>%
       mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
       mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-    dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
+      dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) # %>%
+     # mutate(tissue = factor(tissue, levels = tissuelevel),
+      #       comparison = factor(comparison , levels = comparisonlevelsremoval),
+      #       direction = factor(direction, levels = alllevels))
     head(allDEG)
 
     ## # A tibble: 6 x 8
-    ##   sex    tissue comparison   direction gene           lfc     padj logpadj
-    ##   <chr>  <chr>  <chr>        <chr>     <chr>        <dbl>    <dbl>   <dbl>
-    ## 1 female gonad  hatch_extend extend    LOC107053414 19.2  5.48e-13   12.3 
-    ## 2 female gonad  hatch_extend extend    COL10A1       5.68 6.14e- 4    3.21
-    ## 3 female gonad  hatch_extend extend    LOC107049904  5.30 6.20e- 2    1.21
-    ## 4 female gonad  hatch_extend extend    SULT1C3       5.22 1.91e- 3    2.72
-    ## 5 female gonad  hatch_extend extend    KRT20         4.87 1.46e- 2    1.84
-    ## 6 female gonad  hatch_extend extend    LOC107057630  4.14 8.24e- 2    1.08
-
-    allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
-    allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevels)
-    allDEG$direction <- factor(allDEG$direction, levels = alllevels)
-    head(allDEG)
-
-    ## # A tibble: 6 x 8
-    ##   sex    tissue comparison   direction gene           lfc     padj logpadj
-    ##   <chr>  <fct>  <fct>        <fct>     <chr>        <dbl>    <dbl>   <dbl>
-    ## 1 female gonad  hatch_extend extend    LOC107053414 19.2  5.48e-13   12.3 
-    ## 2 female gonad  hatch_extend extend    COL10A1       5.68 6.14e- 4    3.21
-    ## 3 female gonad  hatch_extend extend    LOC107049904  5.30 6.20e- 2    1.21
-    ## 4 female gonad  hatch_extend extend    SULT1C3       5.22 1.91e- 3    2.72
-    ## 5 female gonad  hatch_extend extend    KRT20         4.87 1.46e- 2    1.84
-    ## 6 female gonad  hatch_extend extend    LOC107057630  4.14 8.24e- 2    1.08
+    ##   sex    tissue comparison  direction gene           lfc     padj logpadj
+    ##   <chr>  <chr>  <chr>       <chr>     <chr>        <dbl>    <dbl>   <dbl>
+    ## 1 female gonad  bldg_extend extend    CDK3         19.5  2.69e-20   19.6 
+    ## 2 female gonad  bldg_extend extend    CRISP2        6.52 3.48e- 3    2.46
+    ## 3 female gonad  bldg_extend extend    KRT20         5.47 3.67e- 4    3.44
+    ## 4 female gonad  bldg_extend extend    CLDN34        5.01 5.14e- 3    2.29
+    ## 5 female gonad  bldg_extend extend    LOC107049005  4.89 7.51e- 2    1.12
+    ## 6 female gonad  bldg_extend extend    OMD           3.53 5.38e- 4    3.27
 
     candidateDEGS <- allDEG %>%
-      filter(gene %in% candidategenes) %>%
+      filter(gene %in% parentalcaregenes) %>%
       mutate(posneg = ifelse(lfc >= 0, "+", "-"),
              sex = recode(sex, "female" = "F", "male" = "M" ),
              tissue = recode(tissue, 
                              "hypothalamus" = "H",
-                             "pituitary" = "P", "gonad" = "G")) %>%
+                             "pituitary" = "P", 
+                             "gonad" = "G", "gonads" = "G")) %>%
       mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
       select(gene, res, comparison)  %>%
       group_by(gene,  comparison) %>%
       summarize(res = str_c(res, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = res) %>%
-      select(gene, contains("m.")) 
+      select(gene, inc.d3_m.inc.d3, inc.d9_m.inc.d9, inc.d17_m.inc.d17, hatch_m.n2,
+              inc.d17_prolong, hatch_prolong)
     candidateDEGS
 
-    ## # A tibble: 32 x 16
+    ## # A tibble: 32 x 7
     ## # Groups:   gene [32]
-    ##    gene  m.inc.d17_prolo… inc.d17_m.inc.d… inc.d9_m.inc.d8 hatch_m.n2
-    ##    <chr> <chr>            <chr>            <chr>           <chr>     
-    ##  1 ADRA… MG+              <NA>             <NA>            <NA>      
-    ##  2 AVP   <NA>             FH- MH-          MP+             <NA>      
-    ##  3 AVPR… <NA>             <NA>             <NA>            FH+ MP+   
-    ##  4 BRIN… <NA>             FG- FH+          <NA>            MH+       
-    ##  5 COMT  <NA>             FH- MH-          MH-             FH- MH-   
-    ##  6 CREB… <NA>             FP+ MP+          MP+             FH+ FP+ M…
-    ##  7 CRH   <NA>             <NA>             <NA>            <NA>      
-    ##  8 CRHBP <NA>             FH+ MH+          MH+             FH+ MH+   
-    ##  9 CRHR1 <NA>             <NA>             MH+             FH+ FP+ M…
-    ## 10 CRHR2 <NA>             FH+ MH+          MH+             FH+ MH+   
-    ## # … with 22 more rows, and 11 more variables: m.inc.d3_m.inc.d17 <chr>,
-    ## #   m.inc.d3_m.n2 <chr>, inc.d3_m.inc.d3 <chr>, m.inc.d3_m.inc.d9 <chr>,
-    ## #   m.inc.d8_extend <chr>, m.inc.d8_prolong <chr>,
-    ## #   m.inc.d9_m.inc.d8 <chr>, m.inc.d9_m.n2 <chr>, inc.d9_m.inc.d9 <chr>,
-    ## #   m.n2_extend <chr>, m.inc.d9_m.inc.d17 <chr>
-
-    hypothesisDEGStable <- allDEG %>%
-      filter(gene %in% hypothesisDEGs) %>%
-      mutate(posneg = ifelse(lfc >= 0, "+", "-"),
-             sex = recode(sex, "female" = "F", "male" = "M" ),
-             tissue = recode(tissue, 
-                             "hypothalamus" = "H",
-                             "pituitary" = "P", "gonad" = "G")) %>%
-      mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
-      select(gene, res, comparison)  %>%
-      group_by(gene,  comparison) %>%
-      summarize(res = str_c(res, collapse = " ")) %>%
-      pivot_wider(names_from = comparison, values_from = res) %>%
-      select(gene, contains("m.")) 
-    hypothesisDEGStable
-
-    ## # A tibble: 35 x 16
-    ## # Groups:   gene [35]
-    ##    gene  hatch_m.n2 inc.d17_m.inc.d… inc.d9_m.inc.d9 m.inc.d17_prolo…
-    ##    <chr> <chr>      <chr>            <chr>           <chr>           
-    ##  1 ARAP2 FP- MP-    FP-              FG-             FP+             
-    ##  2 BUB1  <NA>       FP-              <NA>            <NA>            
-    ##  3 CDK1  FP- MH+ M… FP-              MG-             FP+             
-    ##  4 CENPI <NA>       FP-              <NA>            <NA>            
-    ##  5 CKAP2 FH+ MH+    FH+ FP- MH+      <NA>            <NA>            
-    ##  6 CTNN… FH- MH-    FG+ FP+          <NA>            <NA>            
-    ##  7 FBXO… FH-        FH- FP+          <NA>            <NA>            
-    ##  8 FGF6  FP- MP-    FP-              <NA>            FP+             
-    ##  9 FKBP5 FH- FP- M… MH+ MP+          <NA>            <NA>            
-    ## 10 INSM1 FH+ MH+    FH+ MH+ MP+      <NA>            <NA>            
-    ## # … with 25 more rows, and 11 more variables: m.inc.d3_m.inc.d17 <chr>,
-    ## #   m.inc.d3_m.n2 <chr>, m.inc.d8_extend <chr>, m.inc.d8_prolong <chr>,
-    ## #   m.inc.d9_m.inc.d17 <chr>, m.inc.d9_m.n2 <chr>, inc.d9_m.inc.d8 <chr>,
-    ## #   m.inc.d3_m.inc.d9 <chr>, m.inc.d9_m.inc.d8 <chr>,
-    ## #   inc.d3_m.inc.d3 <chr>, m.n2_extend <chr>
+    ##    gene  inc.d3_m.inc.d3 inc.d9_m.inc.d9 inc.d17_m.inc.d… hatch_m.n2
+    ##    <chr> <chr>           <chr>           <chr>            <chr>     
+    ##  1 ADRA… <NA>            <NA>            <NA>             <NA>      
+    ##  2 AVP   <NA>            <NA>            FH-              <NA>      
+    ##  3 AVPR… <NA>            <NA>            <NA>             FH+ MP+   
+    ##  4 BRIN… <NA>            <NA>            FG- FH+          <NA>      
+    ##  5 COMT  FH-             <NA>            FH-              FH- MH-   
+    ##  6 CREB… <NA>            <NA>            FP+ MP+          FP+ MP+   
+    ##  7 CRH   FH+             <NA>            <NA>             <NA>      
+    ##  8 CRHBP <NA>            <NA>            FH+ MH+          FH+ MH+   
+    ##  9 CRHR1 <NA>            <NA>            <NA>             FH+ FP+   
+    ## 10 CRHR2 FH+             <NA>            FH+ MH+          FH+ MH+   
+    ## # … with 22 more rows, and 2 more variables: inc.d17_prolong <chr>,
+    ## #   hatch_prolong <chr>
 
 make figure
 -----------
 
-    a <- png::readPNG("../figures/images/fig_fig4a.png")
-    a <- ggdraw() +  draw_image(a, scale = 1)
+    design <- png::readPNG("../figures/images/fig_fig4a.png")
+    design <- ggdraw() +  draw_image(design, scale = 1)
 
-    b1 <- plotcandidatemanipquad(candidatevsd, "hypothalamus", c("DRD1")) 
-    b2 <- plotcandidatemanipquad(candidatevsd2,"pituitary", c("PRL")) 
-    b3 <- plotcandidatemanipquad(candidatevsd,"gonad", c("PGR")) 
 
-    b <- plot_grid(b1,b2,b3, ncol = 1)
-
-    c1 <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
-      labs(subtitle = "Hypothalamus ", x = NULL)  
-    c2 <- plottsneelipsev2(hyptsne, hyptsne$extint, allcolors ) + 
-      labs(subtitle = " ", x = NULL) + 
-      theme(axis.text.y = element_blank(), axis.title.y = element_blank())
-    c3 <- plottsneelipsev2(hyptsne, hyptsne$hiloPRL, allcolors ) + 
-      labs(subtitle = " ", x = NULL) + 
-      theme(axis.text.y = element_blank(), axis.title.y = element_blank()) 
-    c4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
-      labs(subtitle = "Pituitary ", x = NULL) 
-    c5 <- plottsneelipsev2(pittsne, pittsne$extint, allcolors ) + 
-      labs(subtitle = " ", x = NULL) + 
-      theme(axis.text.y = element_blank(), axis.title.y = element_blank()) 
-    c6 <- plottsneelipsev2(pittsne, pittsne$hiloPRL, allcolors ) + 
-      labs(subtitle = " ", x = NULL) + 
-      theme(axis.text.y = element_blank(), axis.title.y = element_blank())
-    c7 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
-      labs(subtitle = "Ggonads ")  
-    c8 <- plottsneelipsev2(gontsne, gontsne$extint, allcolors ) + 
-      labs(subtitle = " " )    +
-      theme(axis.text.y = element_blank(), axis.title.y = element_blank())
-    c9 <- plottsneelipsev2(gontsne, gontsne$hiloPRL, allcolors ) + 
-      labs(subtitle = " " ) + 
-      theme(axis.text.y = element_blank(), axis.title.y = element_blank())
-
-    c <- plot_grid(c1,c2,c3,c4,c5,c6,c7,c8,c9, nrow = 3)
-
-    bc <- plot_grid(b, c, nrow = 1, labels = c("", "C"), label_size = 8)
-     
-    fig4 <- plot_grid(a, bc, ncol = 1, rel_heights  = c(0.25,1),
-              labels = "AUTO", label_size = 8)
+    boxplots <- plot_grid(boxplots1, boxplots2, nrow = 1, rel_widths = c(1.5,1),
+                          labels = "AUTO", label_size = 8)
+    fig4 <- plot_grid(boxplots, design, t456, ncol = 1, rel_heights = c(2.75,1,1),
+                          labels = c(" ", " " , "C"), label_size = 8)
     fig4
 
 ![](../figures/fig4-1.png)
@@ -1419,3 +342,8 @@ make figure
 
     ## quartz_off_screen 
     ##                 2
+
+write files
+-----------
+
+    write.csv(candidateDEGS, "../results/table2.csv", row.names = F)

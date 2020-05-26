@@ -68,14 +68,13 @@ addgroupings <- function(df){
 
 pittsne <- addgroupings(pittsne)
 
-t4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors) +  labs(title = "Pituitary ", subtitle = "parental stage") +
+t4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors) +  labs(title = "pituitary ", subtitle = "parental stage and manipulations") +
   facet_wrap(~sex) 
 t5 <- plottsneelipsev2(pittsne, pittsne$extint, colorhypothesis) +  labs(title = "  ", subtitle = "external enviornment")   +
   facet_wrap(~sex) + theme(axis.title.y = element_blank())
-t6 <- plottsneelipsev2(pittsne, pittsne$earlylate, colorhypothesis) +  labs(title = "  ", subtitle = "internal timing")   +
+t6 <- plottsneelipsev2(pittsne, pittsne$earlylate, colorhypothesis) +  labs(title = "  ", subtitle = "internal clock")   +
   facet_wrap(~sex) + theme(axis.title.y = element_blank())
 t456 <- plot_grid(t4, t5, t6, nrow = 1, rel_widths = c(1.1,1,1))
-t456
 
 ```
 
@@ -144,7 +143,7 @@ filter(gonvsd, treatment == "control") %>% head()
 ```
 
 
-```{r timingfigure, fig.height= 7.25in}
+```{r boxplots}
 
 plotcandidateremoval <- function(df, whichgene, whichtissue){
   
@@ -172,11 +171,11 @@ plotcandidateremoval <- function(df, whichgene, whichtissue){
   
 }
 
-a <- plotcandidateremoval(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank())
-b <- plotcandidateremoval(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank())
+a <- plotcandidateremoval(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank(), axis.text.x = element_blank())
+b <- plotcandidateremoval(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank(), axis.text.x = element_blank())
 c <- plotcandidateremoval(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank())
 boxplots1 <- plot_grid(a,b,c, nrow = 3)
-boxplots1
+
 
 plotcandidatetiming <- function(df, whichgene, whichtissue){
   
@@ -204,11 +203,10 @@ plotcandidatetiming <- function(df, whichgene, whichtissue){
   
 }
 
-e <- plotcandidatetiming(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank())
-f <- plotcandidatetiming(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank())
+e <- plotcandidatetiming(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank(), axis.text.x = element_blank()) 
+f <- plotcandidatetiming(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank(), axis.text.x = element_blank())
 g <- plotcandidatetiming(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank())
 boxplots2 <- plot_grid(e,f,g, nrow = 3)
-boxplots2
 ```
 
 
@@ -264,50 +262,27 @@ candidateDEGS
 
 ```{r fig4, fig.width=7.25, fig.height=7.25}
 
-a <- png::readPNG("../figures/images/fig_fig4a.png")
-a <- ggdraw() +  draw_image(a, scale = 1)
+design <- png::readPNG("../figures/images/fig_fig4a.png")
+design <- ggdraw() +  draw_image(design, scale = 1)
 
 
-boxplots <- plot_grid(boxplots1, boxplots2, nrow = 1, rel_widths = c(1.5,1))
-plot_grid(boxplots, t456, a, ncol = 1, rel_heights = c(3,1,1))
+boxplots <- plot_grid(boxplots1, boxplots2, nrow = 1, rel_widths = c(1.5,1),
+                      labels = "AUTO", label_size = 8)
+fig4 <- plot_grid(boxplots, design, t456, ncol = 1, rel_heights = c(2.75,1,1),
+                      labels = c(" ", " " , "C"), label_size = 8)
+fig4
 
-
-#pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
-#plot(fig4)
-#dev.off()
-
+pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
+plot(fig4)
+dev.off()
 
 ```
 
-
-## supplementary
-
-```{r}
-
-hyptsne <- addgroupings(hyptsne)
-gontsne <- addgroupings(gontsne)
-
-t1 <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) +  labs(subtitle = "Hypothalamus ") +
-  facet_wrap(~sex) + theme(axis.title.x = element_blank())
-t2 <- plottsneelipsev2(hyptsne, hyptsne$extint, colorhypothesis) +  labs(subtitle = "  ")   +
-  facet_wrap(~sex) + theme(axis.title = element_blank())
-t3 <- plottsneelipsev2(hyptsne, hyptsne$earlylate, colorhypothesis) +  labs(subtitle = "  ")   +
-  facet_wrap(~sex) + theme(axis.title = element_blank())
-t123 <- plot_grid(t1, t2, t3, nrow = 1, rel_widths = c(1.1,1,1))
-
-t7 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors) +  labs(subtitle = "Gonads ") +
-  facet_wrap(~sex) + theme(strip.text = element_blank())
-t8 <- plottsneelipsev2(gontsne, gontsne$extint, colorhypothesis) +  labs(subtitle = "  ")   +
-  facet_wrap(~sex) + theme(axis.title.y = element_blank(), strip.text = element_blank())
-t9 <- plottsneelipsev2(gontsne, gontsne$earlylate, colorhypothesis) +  labs(subtitle = "  ")   +
-  facet_wrap(~sex) + theme(axis.title.y = element_blank(), strip.text = element_blank())
-t789 <- plot_grid(t7, t8, t9, nrow = 1)
-```
 
 ## write files
 
 ```{r write}
-#write.csv(candidateDEGS, "../results/table2.csv", row.names = F)
+write.csv(candidateDEGS, "../results/table2.csv", row.names = F)
 ```
 
 
