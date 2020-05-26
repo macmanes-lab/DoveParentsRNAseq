@@ -17,11 +17,13 @@ theme_B3 <- function () {
 # characterization
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
 charlevelsnocontrol <- c( "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
+maniplevels <- c("m.inc.d3" ,  "early" ,  "m.inc.d9" , "prolong" , "m.inc.d17" , "extend", "m.n2")
 
 # manipulation
 timinglevels <- c("control", "bldg", "inc.d9", "early" , "inc.d17", "prolong" , "hatch", "extend", "n5")
 removallevels <- c("control", "bldg","inc.d3",  "m.inc.d3" , "inc.d9", "m.inc.d9" ,
              "inc.d17", "m.inc.d17" , "hatch", "m.n2")
+
 
 # mix of characterization and manipulation, ordered by time
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  

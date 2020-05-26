@@ -1047,7 +1047,6 @@ rplot2 <- function(rdf,
     theme_classic(),
     labs(x = "", y =""),
     guides(size = "none", alpha = "none"),
-    if (legend)  labs(colour = NULL),
     if (!legend) theme(legend.position = "none")
   )
   
@@ -1196,7 +1195,7 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
   
   }  
   
-  p1 <- plotcandidatemanip("female", c(levelstiming, controlstiming))  +
+  p1 <- plotcandidatemanip("female", c(timinglevels, removallevels))  +
     geom_signif(comparisons = list(c( "inc.d9", "early"),
                                    c( "inc.d17", "prolong"),
                                    c( "hatch", "prolong"),
@@ -1204,7 +1203,7 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
                 map_signif_level=TRUE,
                 textsize = 3, family = 'Helvetica',
                 vjust = 1.5, size = 0)
-  p2 <- plotcandidatemanip("male", c(levelstiming, controlstiming)) +
+  p2 <- plotcandidatemanip("male", c(timinglevels, removallevels)) +
     geom_signif(comparisons = list(c( "inc.d9", "early"),
                                    c( "inc.d17", "prolong"),
                                    c( "hatch", "prolong"),
@@ -1213,7 +1212,7 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
                 textsize = 3, family = 'Helvetica',
                 vjust = 1.5, size = 0)
   
-  p3 <- plotcandidatemanip("female", c(levelsremoval, controlsremoval))  +
+  p3 <- plotcandidatemanip("female", c(timinglevels, removallevels))  +
     geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
                                    c( "inc.d9", "m.inc.d9"),
                                    c( "inc.d17", "m.inc.d17"),
@@ -1221,7 +1220,7 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
                 map_signif_level=TRUE,
                 textsize = 3, family = 'Helvetica',
                 vjust = 1.5, size = 0)
-  p4 <- plotcandidatemanip("male", c(levelsremoval, controlsremoval))  +
+  p4 <- plotcandidatemanip("male", c(timinglevels, removallevels))  +
     geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
                                    c( "inc.d9", "m.inc.d9"),
                                    c( "inc.d17", "m.inc.d17"),

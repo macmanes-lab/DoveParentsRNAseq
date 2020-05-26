@@ -8,6 +8,7 @@ library(tidyverse)
 library(cowplot)
 library(Rtsne)
 library(ggsignif)
+library(corrr)
 
 source("../R/themes.R")
 source("../R/functions.R")
@@ -239,7 +240,7 @@ head(allDEG)
 
 
 candidateDEGS <- allDEG %>%
-  filter(gene %in% candidategenes) %>%
+  filter(gene %in% parentalcaregenes) %>%
   mutate(posneg = ifelse(lfc >= 0, "+", "-"),
          sex = recode(sex, "female" = "F", "male" = "M" ),
          tissue = recode(tissue, 
@@ -266,105 +267,63 @@ candidateDEGS
 a <- png::readPNG("../figures/images/fig_fig4a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
 
-b1 <- plotcandidatemanipquad(candidatevsd, "hypothalamus", c("DRD1")) 
-b2 <- plotcandidatemanipquad(candidatevsd,"pituitary", c("PRL")) 
-b3 <- plotcandidatemanipquad(candidatevsd,"gonad", c("PGR")) 
 
-b <- plot_grid(b1,b2,b3, ncol = 1)
+boxplots <- plot_grid(boxplots1, boxplots2, nrow = 1, rel_widths = c(1.5,1))
+plot_grid(boxplots, t456, a, ncol = 1, rel_heights = c(3,1,1))
 
-c1 <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) + 
-  labs(subtitle = "Hypothalamus ", x = NULL)  
-c2 <- plottsneelipsev2(hyptsne, hyptsne$extint, allcolors ) + 
-  labs(subtitle = " ", x = NULL) + 
-  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
-c3 <- plottsneelipsev2(hyptsne, hyptsne$earlylate, allcolors ) + 
-  labs(subtitle = " ", x = NULL) + 
-  theme(axis.text.y = element_blank(), axis.title.y = element_blank()) 
-c4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors ) + 
-  labs(subtitle = "Pituitary ", x = NULL) 
-c5 <- plottsneelipsev2(pittsne, pittsne$extint, allcolors ) + 
-  labs(subtitle = " ", x = NULL) + 
-  theme(axis.text.y = element_blank(), axis.title.y = element_blank()) 
-c6 <- plottsneelipsev2(pittsne, pittsne$earlylate, allcolors ) + 
-  labs(subtitle = " ", x = NULL) + 
-  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
-c7 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors ) + 
-  labs(subtitle = "Ggonads ")  
-c8 <- plottsneelipsev2(gontsne, gontsne$extint, allcolors ) + 
-  labs(subtitle = " " )    +
-  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
-c9 <- plottsneelipsev2(gontsne, gontsne$earlylate, allcolors ) + 
-  labs(subtitle = " " ) + 
-  theme(axis.text.y = element_blank(), axis.title.y = element_blank())
 
-c <- plot_grid(c1,c2,c3,c4,c5,c6,c7,c8,c9, nrow = 3)
+#pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
+#plot(fig4)
+#dev.off()
 
-bc <- plot_grid(b, c, nrow = 1, labels = c("", "C"), label_size = 8)
+makecorrdf <- function(whichsex, whichtissue, whichgenes){
+  corrrdf <- candidatevsd %>% 
+    filter(sex == whichsex, tissue == whichtissue,
+           gene %in% whichgenes) %>%
+    drop_na() %>%
+    pivot_wider(names_from = gene, values_from = counts) %>%
+    select(-sex, -tissue, -treatment, -samples, -earlylate, -extint) %>%
+    correlate() 
+  print(head(corrrdf))
+  return(corrrdf)
+}
+
+candidatevsd <- candidatevsd %>% filter(treatment %in% maniplevels)
+
+hyp1 <- makecorrdf(sexlevels, "hypothalamus", curleychampagnegenes)  
+pit1 <- makecorrdf(sexlevels, "pituitary", curleychampagnegenes)  
+gon1 <- makecorrdf(sexlevels, "gonad", curleychampagnegenes)  
+
+hyp2 <- makecorrdf(sexlevels, "hypothalamus", GOgenes)  
+pit2 <- makecorrdf(sexlevels, "pituitary", GOgenes)  
+gon2 <- makecorrdf(sexlevels, "gonad", GOgenes) 
+
+hyp3 <- makecorrdf(sexlevels, "hypothalamus", cancergenes)  
+pit3 <- makecorrdf(sexlevels, "pituitary", GOgecancergenesnes)  
+gon3 <- makecorrdf(sexlevels, "gonad", cancergenes)  
  
-fig4 <- plot_grid(a, bc, ncol = 1, rel_heights  = c(0.25,1),
-          labels = "AUTO", label_size = 8)
-fig4
 
-pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
-plot(fig4)
-dev.off()
+b1 <- plotcorrplot(hyp1, "Literature") + labs(title = "hyp")
+b2 <- plotcorrplot(pit1, NULL)  + labs(title = "pit")
+b3 <- plotcorrplot(gon1, NULL)  + labs(title = "gon")
 
+b4 <- plotcorrplot(hyp2, "GO")  + labs(title = " ")
+b5 <- plotcorrplot(pit2, NULL)   + labs(title = " ")
+b6 <- plotcorrplot(gon2, NULL)  + labs(title = " ")
 
+b7 <- plotcorrplot(hyp3, "Caner") + labs(title = " ")
+b8 <- plotcorrplot(pit3, NULL)   + labs(title = " ")
+b9 <- plotcorrplot(gon3, NULL)  + labs(title = " ")
 
+forlegend <- plotcorrplot(gon3, NULL) + theme(legend.position = "bottom") + labs(color = "Correlation")
+mylegend <- get_legend(forlegend)
 
+allcorplots <- plot_grid(b1,b4,b7,
+          b2,b5,b8,
+          b3,b6,b9)
 
-candidatevsd <- candidatevsd %>%
-  dplyr::mutate(treatment = fct_collapse(treatment,
-                                         "m.n2" = c("m.n2",  "m.hatch" ),
-                                         "prolong" = c("prolong", "inc.prolong") ,
-                                         "extend" = c("extend", "extend.hatch")
-                                         ))  %>%
-  dplyr::mutate(day = fct_collapse(treatment,
-                                    "0" = c("control", "bldg"),
-                                    "1" = c("lay"),
-                                     "3" = c("inc.d3", "m.inc.d3" ),
-                                     "9" = c("inc.d9", "m.inc.d9", "early"  ),
-                                     "17" = c("inc.d17", "m.inc.d17", "prolong"  ),
-                                     "18" = c("hatch", "m.n2" ),
-                                     "22" = c("n5",  "extend" ),
-                                     "26" = c("n9"  )
-                                     )) %>%
-   mutate(treatment = factor(treatment, levels = alllevels)) %>%
-  dplyr::mutate(day = factor(day, levels = c("0", "1", "3", "9", "17", "18", "22", "26")))
-
-candidatevsd %>%
-    filter(tissue == "hypothalamus", sex == "female") %>%
-    filter(gene %in% "DRD1") %>%
-    drop_na()  %>%
-    ggplot(aes(y =  counts, x = day, fill = treatment, color = sex)) +
-    geom_boxplot(outlier.shape = NA) +
-    geom_jitter(size = 0.25, aes(color = sex)) +
-    theme_B3() +
-    theme(legend.position = "bottom",
-          #axis.text.x = element_blank(),
-          #axis.title.x = element_blank(),
-          strip.text = element_text(face = "italic")) +
-    scale_color_manual(values = allcolors) +
-    scale_fill_manual(values = allcolors)  +
-    labs(subtitle = paste("female", "hypothalamus", sep = " "), y = "DRD1")
-
-
-candidatevsd %>%
-    filter(tissue == "pituitary", sex == "female") %>%
-    filter(gene %in% "PRL") %>%
-    drop_na()  %>%
-    ggplot(aes(y =  counts, x = day, fill = treatment, color = sex)) +
-    geom_boxplot(outlier.shape = NA) +
-    geom_jitter(size = 0.25, aes(color = sex)) +
-    theme_B3() +
-    theme(legend.position = "bottom",
-          #axis.text.x = element_blank(),
-          #axis.title.x = element_blank(),
-          strip.text = element_text(face = "italic")) +
-    scale_color_manual(values = allcolors) +
-    scale_fill_manual(values = allcolors)  +
-    labs(subtitle = paste("female", "pituitary", sep = " "), y = "PRL")
-
+supplfigX <- plot_grid(allcorplots, mylegend, ncol = 1, rel_heights = c(1,0.1))
+supplfigX
 ```
 
 
@@ -390,9 +349,12 @@ t8 <- plottsneelipsev2(gontsne, gontsne$extint, colorhypothesis) +  labs(subtitl
 t9 <- plottsneelipsev2(gontsne, gontsne$earlylate, colorhypothesis) +  labs(subtitle = "  ")   +
   facet_wrap(~sex) + theme(axis.title.y = element_blank(), strip.text = element_blank())
 t789 <- plot_grid(t7, t8, t9, nrow = 1)
-
-
 ```
 
+## write files
+
+```{r write}
+#write.csv(candidateDEGS, "../results/table2.csv", row.names = F)
+```
 
 

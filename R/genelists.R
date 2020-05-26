@@ -1,7 +1,10 @@
 # genelists
 
 ## candidate genes from GO and literature
-parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% pull(gene)
+LitGOdf <- read_csv("../metadata/03_parentalcaregenes.csv") 
+curleychampagnegenes <- LitGOdf %>% filter(literature != "NA" ) %>% pull(gene)
+GOgenes <- LitGOdf %>% filter(GO != "NA") %>% pull(gene)
+parentalcaregenes <- LitGOdf %>% pull(gene)
 
 ## genes WGCNA prl module
 WGCNAgenes <- read_csv("../results/05_PRLmodule.csv") %>% pull(x)
@@ -15,4 +18,6 @@ suszynskaagenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1",
 shaidgenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", "DICER1", 
                 "PRKAR1A", "PRKACA","SDH", "GPR101")
 
-candidategenes <- c(parentalcaregenes)
+cancergenes <- c(suszynskaagenes, shaidgenes)
+
+candidategenes <- c(parentalcaregenes, WGCNAgenes, cancergenes)
