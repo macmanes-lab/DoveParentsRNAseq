@@ -26,16 +26,20 @@ maniplevels1 <- c( "m.inc.d3" ,  "early" ,  "m.inc.d9" , "m.inc.d17" , "m.n2", "
 # mix
 levelstiming <- c( "early" , "prolong" , "extend")
 levelsremoval <- c( "m.inc.d3" ,    "m.inc.d9" , "m.inc.d17" , "m.n2")
-controlstiming <- c( "inc.d9" , "hatch" , "inc.d17")
+controlstiming <- c( "inc.d9" , "hatch" , "inc.d17", "n5")
 controlsremoval <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
 allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay", "bldg")
+
+timing <- c(levelstiming, controlstiming)
+removal <- c(levelsremoval, controlsremoval)
 
 # mix of characterization and manipulation, ordered by time
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
                "inc.d9", "m.inc.d9" , "early" ,
-               "inc.d17",  "m.inc.d17","prolong" ,
-               "hatch",  "m.n2",   "extend",
-               "n5", "n9")
+               "inc.d17",  "m.inc.d17",
+               "hatch",  "m.n2",  "prolong" , 
+               "n5",  "extend",
+               "n9")
 
 # characteriation first, then manip by time
 alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 

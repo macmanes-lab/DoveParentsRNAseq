@@ -14,3 +14,5 @@ suszynskaagenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1",
 
 shaidgenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", "DICER1", 
                 "PRKAR1A", "PRKACA","SDH", "GPR101")
+
+candidategenes <- c(parentalcaregenes)

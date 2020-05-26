@@ -1197,7 +1197,7 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
   }  
   
   p1 <- plotcandidatemanip("female", c(levelstiming, controlstiming))  +
-    geom_signif(comparisons = list(c( "inc.d9", "m.inc.d8"),
+    geom_signif(comparisons = list(c( "inc.d9", "early"),
                                    c( "inc.d17", "prolong"),
                                    c( "hatch", "prolong"),
                                    c( "hatch", "extend")),
@@ -1205,7 +1205,7 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
                 textsize = 3, family = 'Helvetica',
                 vjust = 1.5, size = 0)
   p2 <- plotcandidatemanip("male", c(levelstiming, controlstiming)) +
-    geom_signif(comparisons = list(c( "inc.d9", "m.inc.d8"),
+    geom_signif(comparisons = list(c( "inc.d9", "early"),
                                    c( "inc.d17", "prolong"),
                                    c( "hatch", "prolong"),
                                    c( "hatch", "extend")),
