@@ -26,9 +26,9 @@ removallevels <- c("control", "bldg","inc.d3",  "m.inc.d3" , "inc.d9", "m.inc.d9
 # mix of characterization and manipulation, ordered by time
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
                "inc.d9", "m.inc.d9" , "early" ,
-               "inc.d17",  "m.inc.d17",
-               "hatch",  "m.n2",  "prolong" , 
-               "n5",  "extend",
+               "inc.d17",  "m.inc.d17", "prolong" , 
+               "hatch",  "m.n2", "extend",
+               "n5",  
                "n9")
 
 # characteriation first, then manip by time
@@ -80,6 +80,7 @@ comparisonlabelsbldg <- c("bldg vs lay", "bldg vs inc.d3",
                                 "bldg vs hatch" , "bldg vs n5", "bldg vs n9")
 
 
+comparisonlevelsremoval <- c("ind.d3_m.inc.d3", "ind.d9_m.inc.d9", "ind.d19_m.inc.d17", "hatch.m.n2")
 
 # custom colors
 
