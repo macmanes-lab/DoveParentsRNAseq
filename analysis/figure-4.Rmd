@@ -93,8 +93,6 @@ allvsd <- vsd_pathfiles %>%
 allvsd <- as_tibble(allvsd)
 
 head(allvsd)
-
-allvsd$samples
 ```
 
 ```{r candidatevsd}
@@ -112,8 +110,8 @@ getcandidatevsdmanip <- function(whichgenes, whichtissue){
                 treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1),
                 treatment = recode(treatment, "m.hatch" = "m.n2", "extend.hatch" = "m.n2",
                                                    "inc.prolong" = "prolong", "m.inc.d8" = "early"),
-                treatment =  factor(candidates$treatment, levels = alllevels),
-                  earlylate = fct_collapse(treatment, 
+                treatment =  factor(treatment, levels = alllevels),
+                earlylate = fct_collapse(treatment, 
                                   early = c("early", "m.inc.d3", "m.inc.d9", "inc.d3", 
                                          "inc.d9", "lay", "bldg"),
                                   late = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" , 
@@ -121,19 +119,13 @@ getcandidatevsdmanip <- function(whichgenes, whichtissue){
                 extint = fct_collapse(treatment, 
                                   eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong", "lay"),
                                   chicks = c( "early", "hatch", "extend", "n5"),
-                                  loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg")),
-                manip = factor(manip, levels = c("reference", "removal", "replacement")))
-  return(candidates)
-} 
-  %>%
-    dplyr::select(gene, counts, sex, tissue, treatment, day, manip, earlylate, extint, samples)  %>%
+                                  loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg"))) %>%
+    dplyr::select(gene, counts, sex, tissue, treatment, earlylate, extint, samples)  %>%
     dplyr::filter(tissue == whichtissue) 
   return(candidates)
+}
 
-
-
-
-hypvsd <- getcandidatevsdmanip(c("PRL", "DRD1"), "hypothalamus")
+hypvsd <- getcandidatevsdmanip(candidategenes, "hypothalamus")
 pitvsd <- getcandidatevsdmanip(candidategenes, "pituitary")
 gonvsd <- getcandidatevsdmanip(candidategenes, "gonad")
 candidatevsd <- rbind(hypvsd, pitvsd)
