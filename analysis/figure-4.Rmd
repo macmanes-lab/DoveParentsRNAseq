@@ -1,5 +1,5 @@
 ---
-title: "Fig 4 and Supple figs"
+title: "Removal only"
 output: md_document
 ---
 
@@ -13,10 +13,11 @@ source("../R/themes.R")
 source("../R/functions.R")
 source("../R/genelists.R")
 
-knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F,
+                      fig.path = '../figures/', fig.width = 7.25, fig.height = 7.25)
 ```
 
-# Figure 1. Experimental design, tSNE analysis, PCA, and prolactin
+# Figure 4. What is the effect of removal
 
 
 ## import limma counts and sample info
@@ -42,33 +43,60 @@ head(row.names(countData) == row.names(colData))
 
 ```{r tSNE-df}
 
-
-
 # prep for tsne
-
-hyptsne <- subsetmaketsne("hypothalamus", allmaniplevels, sexlevels)
-pittsne <- subsetmaketsne("pituitary", allmaniplevels, sexlevels)
-gontsne <- subsetmaketsne("gonads", allmaniplevels, sexlevels)
+hyptsne <- subsetmaketsne("hypothalamus", removallevels, sexlevels)
+pittsne <- subsetmaketsne("pituitary", removallevels, sexlevels)
+gontsne <- subsetmaketsne("gonads", removallevels, sexlevels)
 
 addgroupings <- function(df){
   
   df <- df %>% mutate(earlylate = fct_collapse(treatment, 
                                   early = c("early", "m.inc.d3", "m.inc.d9", "inc.d3", 
-                                         "inc.d9", "lay", "bldg"),
+                                         "inc.d9",  "bldg"),
                                   late = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" , 
-                                         "m.n2", "extend", "n5")),
+                                         "m.n2", "extend", "n5"),
+                                  reference = "control"),
                 extint = fct_collapse(treatment, 
-                                  eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong", "lay"),
-                                  chicks = c( "early", "hatch", "extend", "n5"),
-                                  loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg")))
-  df$extint <- factor(df$extint, levels = levelsextint)
+                                  nest = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg"),
+                                  eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong"),
+                                  chicks = c("early", "hatch", "extend", "n5"),
+                                  reference = "control")) 
   return(df)
 }
   
 hyptsne <- addgroupings(hyptsne)
 pittsne <- addgroupings(pittsne)
 gontsne <- addgroupings(gontsne)
+head(gontsne)
 
+
+t1 <- plottsneelipsev2(hyptsne, hyptsne$treatment, allcolors) +  labs(subtitle = "Hypothalamus ") +
+  facet_wrap(~sex) + theme(axis.title.x = element_blank())
+t2 <- plottsneelipsev2(hyptsne, hyptsne$extint, colorhypothesis) +  labs(subtitle = "  ")   +
+  facet_wrap(~sex) + theme(axis.title = element_blank())
+t3 <- plottsneelipsev2(hyptsne, hyptsne$earlylate, colorhypothesis) +  labs(subtitle = "  ")   +
+  facet_wrap(~sex) + theme(axis.title = element_blank())
+t123 <- plot_grid(t1, t2, t3, nrow = 1, rel_widths = c(1.1,1,1))
+
+
+t4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors) +  labs(subtitle = "Pituitary ") +
+  facet_wrap(~sex) + theme(axis.title.x = element_blank(), strip.text = element_blank())
+t5 <- plottsneelipsev2(pittsne, pittsne$extint, colorhypothesis) +  labs(subtitle = "  ")   +
+  facet_wrap(~sex) + theme(axis.title = element_blank(), strip.text = element_blank())
+t6 <- plottsneelipsev2(pittsne, pittsne$earlylate, colorhypothesis) +  labs(subtitle = "  ")   +
+  facet_wrap(~sex) + theme(axis.title = element_blank(), strip.text = element_blank())
+t456 <- plot_grid(t4, t5, t6, nrow = 1, rel_widths = c(1.1,1,1))
+
+t7 <- plottsneelipsev2(gontsne, gontsne$treatment, allcolors) +  labs(subtitle = "Gonads ") +
+  facet_wrap(~sex) + theme(strip.text = element_blank())
+t8 <- plottsneelipsev2(gontsne, gontsne$extint, colorhypothesis) +  labs(subtitle = "  ")   +
+  facet_wrap(~sex) + theme(axis.title.y = element_blank(), strip.text = element_blank())
+t9 <- plottsneelipsev2(gontsne, gontsne$earlylate, colorhypothesis) +  labs(subtitle = "  ")   +
+  facet_wrap(~sex) + theme(axis.title.y = element_blank(), strip.text = element_blank())
+t789 <- plot_grid(t7, t8, t9, nrow = 1)
+
+tsneplots <- plot_grid(t123, t456,t789, ncol = 1, rel_widths = c(1.1,1,1))
+tsneplots
 ```
 
 
@@ -113,63 +141,58 @@ getcandidatevsdmanip <- function(whichgenes, whichtissue){
                 treatment =  factor(treatment, levels = alllevels),
                 earlylate = fct_collapse(treatment, 
                                   early = c("early", "m.inc.d3", "m.inc.d9", "inc.d3", 
-                                         "inc.d9", "lay", "bldg"),
+                                         "inc.d9",  "bldg"),
                                   late = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" , 
-                                         "m.n2", "extend", "n5")),
+                                         "m.n2", "extend", "n5"),
+                                  reference = "control"),
                 extint = fct_collapse(treatment, 
-                                  eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong", "lay"),
-                                  chicks = c( "early", "hatch", "extend", "n5"),
-                                  loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg"))) %>%
-    dplyr::select(gene, counts, sex, tissue, treatment, earlylate, extint, samples)  %>%
-    dplyr::filter(tissue == whichtissue) 
+                                  nest = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg"),
+                                  eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong"),
+                                  chicks = c("early", "hatch", "extend", "n5"),
+                                  reference = "control"))  %>%
+    dplyr::select(gene, counts, sex, tissue, treatment, earlylate, extint, samples)  
   return(candidates)
 }
 
-hypvsd <- getcandidatevsdmanip(candidategenes, "hypothalamus")
-pitvsd <- getcandidatevsdmanip(candidategenes, "pituitary")
-gonvsd <- getcandidatevsdmanip(candidategenes, "gonad")
-candidatevsd <- rbind(hypvsd, pitvsd)
-candidatevsd <- rbind(candidatevsd, gonvsd)
-head(candidatevsd)
+candidatevsd <- getcandidatevsdmanip(candidategenes)
+hypvsd <- candidatevsd %>% filter(tissue %in% "hypothalamus") %>% drop_na()
+pitvsd <- candidatevsd %>% filter(tissue %in% "pituitary")%>% drop_na()
+gonvsd <- candidatevsd %>% filter(tissue %in% "gonad")%>% drop_na()
 
 ```
 
 
 ```{r timingfigure, fig.height= 7.25in}
 
-plotcandidatetiming <- function(df, whichgene, whichtissue){
+plotcandidateremoval <- function(df, whichgene, whichtissue){
   
-  dfslim <- df %>%
-    dplyr::filter(gene  == whichgene, treatment %in% timing) 
-  print(head(dfslim))
-  
-  p <- dfslim %>%
+  p <- df %>%
+    dplyr::filter(gene  == whichgene, treatment %in% removallevels)  %>%
     ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
     geom_boxplot(outlier.shape = NA) +
     geom_jitter(size = 0.25, aes(color = sex)) +
     theme_B3() +
     theme(legend.position = "none",
-          #axis.text.x = element_blank(),
           axis.title.x = element_blank(),
           plot.subtitle = element_text(face = "italic")) +
     scale_color_manual(values = allcolors) +
     scale_fill_manual(values = allcolors)  +
     labs(title = paste(whichtissue, sep = " "), subtitle = whichgene, y = "gene expression") +
-    facet_wrap(~sex)  +
-    geom_signif(comparisons = list(c( "inc.d9", "early"),
-                                   c( "inc.d17", "prolong"),
-                                   c( "hatch", "prolong"),
-                                   c( "hatch", "extend")),
+    #facet_wrap(~sex)  +
+    geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
+                                   c( "inc.d9", "m.inc.d9"),
+                                   c( "inc.d17", "m.inc.d17"),
+                                   c( "hatch", "m.n2")),
                 map_signif_level=TRUE,
                 textsize = 3, family = 'Helvetica',
-                vjust = 1.5, size = 0)
+                vjust = 1.5, size = 0.5)
   return(p)
   
 }
 
-a <- plotcandidatetiming(hypvsd, "DRD1", "hypothalamus")
-b <- plotcandidatetiming(pitvsd, "PRL", "pituitary")
-c <- plotcandidatetiming(gonvsd, "CRHBP", "gonads")
+a <- plotcandidateremoval(hypvsd, "DRD1", "hypothalamus") + theme(axis.title.x = element_blank())
+b <- plotcandidateremoval(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank())
+c <- plotcandidateremoval(gonvsd, "CRHBP", "gonads")
 
 plot_grid(a,b,c, nrow = 3)
 

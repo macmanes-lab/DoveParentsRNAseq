@@ -16,22 +16,12 @@ theme_B3 <- function () {
 
 # characterization
 charlevels <- c("control", "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
-
 charlevelsnocontrol <- c( "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch", "n5", "n9")
 
 # manipulation
-maniplevels <- c( "rm inc.d3" ,  "rm inc.d9" ,  "rm inc.d17" , "rm inc.d20" ,  "extend" , "prolong", "early")
-maniplevels1 <- c( "m.inc.d3" ,  "early" ,  "m.inc.d9" , "m.inc.d17" , "m.n2", "prolong" , "extend")
-
-# mix
-levelstiming <- c( "early" , "prolong" , "extend")
-levelsremoval <- c( "m.inc.d3" ,    "m.inc.d9" , "m.inc.d17" , "m.n2")
-controlstiming <- c( "inc.d9" , "hatch" , "inc.d17", "n5")
-controlsremoval <- c( "inc.d3" ,    "inc.d9" , "inc.d17" , "hatch")
-allmaniplevels <- c(maniplevels1, controlsremoval, "n5", "lay", "bldg")
-
-timing <- c(levelstiming, controlstiming)
-removal <- c(levelsremoval, controlsremoval)
+timinglevels <- c("control", "bldg", "inc.d9", "early" , "inc.d17", "prolong" , "hatch", "extend", "n5")
+removallevels <- c("control", "bldg","inc.d3",  "m.inc.d3" , "inc.d9", "m.inc.d9" ,
+             "inc.d17", "m.inc.d17" , "hatch", "m.n2")
 
 # mix of characterization and manipulation, ordered by time
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
@@ -49,7 +39,7 @@ alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9",
                 "prolong" , "m.inc.d17" , 
                 "extend", "m.n2")
 
-hypothesislevels <- c(  "lo" , "hi" ,  "nest",  "eggs", "chicks" )
+hypothesislevels <- c(  "nest",  "eggs", "chicks" ,  "lo" , "hi" , "early", "late")
 
 # tissue
 tissuelevels <- c("hypothalamus", "pituitary", "gonads")
@@ -62,7 +52,7 @@ sexlevels <- c("female", "male")
 levelsnewgrouping <-  c("control" , "bldg",  "earlyinc", 
                         "nearhatch",  "chickcare", "manip")
 
-levelsextint <- c("eggs" , "chicks" , "loss")
+levelsextint <- c("nest", "eggs" , "chicks" )
 
 # DESeq
 comparisonlevelschar <- c("bldg_lay",  "lay_inc.d3",  
@@ -120,11 +110,13 @@ colorsnewgrouping <-  c("control" = "#F8766D",
                  "chickcare"= "#FF61C3",
                  "manip" = "#959595")
 
-colorhypothesis <- c("eggs" = "#7FA163",
+colorhypothesis <- c("nest" = "#8B4513",
+                     "eggs" = "#7FA163",
                      "chicks" = "#3A80B9",
                      "lo" = "#B5C4B2",
                      "hi" = "#19757A",
-                     "loss" = "#8B4513")
+                     "early" = "#B5C4B2",
+                     "late" = "#19757A")
 
 colorstissue <- c("hypothalamus" = "#d95f02",
                   "pituitary" = "#1b9e77",
