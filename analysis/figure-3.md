@@ -3,14 +3,14 @@ Figure 3: All things prolactin
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -235,6 +235,20 @@ candidate genes, hypotheses genes, and data-driven genes
         pivot_wider(names_from = gene, values_from = counts) 
     pitwide <- subsetcandidatevsdwide(sexlevels, "pituitary")
 
+    ## number of genes total vs plotted
+
+    eggchickdf %>% filter(tissue == "pituitary") %>% nrow()
+
+    ## [1] 508
+
+    hilodf %>% filter(tissue == "pituitary") %>% nrow()
+
+    ## [1] 10684
+
+    length(WGCNAgenes)
+
+    ## [1] 58
+
     a1 <- plotpc12(pca1, pca2, pca1$treatment, allcolors, "Pituitary gene expression", NULL)   
     a2 <- plotprolactin(PRLpit, PRLpit$counts, "PRL", NULL) + 
       theme(axis.text.x = element_text(angle = 25))  +
@@ -268,7 +282,7 @@ candidate genes, hypotheses genes, and data-driven genes
     c1 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 DEGs, low vs. high PRL") 
     c2 <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes in WGCNA module with PRL") 
     c3 <- plotcorrplot(cancergenes, NULL) + theme(legend.position = "right") + labs(subtitle = "Breast, ovary, & piuitary cancer genes") 
-    c <- plot_grid(c1,c2,c3, nrow = 1, labels = c("D", "E", "F"), label_size = 8, rel_widths = c(1,1,1.3))
+    c <- plot_grid(c1,c2,c3, nrow = 1, labels = c("D"), label_size = 8, rel_widths = c(1,1,1.3))
 
     fig3 <- plot_grid(a, b, c, nrow = 3, rel_heights = c(1.2,2,1.8))
     fig3
