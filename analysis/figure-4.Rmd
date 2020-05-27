@@ -237,6 +237,7 @@ allDEG <- DEG_pathfiles %>%
 head(allDEG)
 
 
+
 candidateDEGS <- allDEG %>%
   filter(gene %in% parentalcaregenes) %>%
   mutate(posneg = ifelse(lfc >= 0, "+", "-"),
@@ -251,9 +252,9 @@ candidateDEGS <- allDEG %>%
   summarize(res = str_c(res, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = res) %>%
   select(gene, inc.d3_m.inc.d3, inc.d9_m.inc.d9, inc.d17_m.inc.d17, hatch_m.n2,
-          inc.d17_prolong, hatch_prolong)
-candidateDEGS
-
+         inc.d17_prolong, hatch_prolong,extend_hatch, n5_extend, 
+         early_inc.d9 ,hatch_early)
+head(candidateDEGS[1:5])
 ```
 
 
@@ -278,10 +279,54 @@ dev.off()
 
 ```
 
+## suppl fig 1
+
+```{r supplfig-4}
+
+comparisonlevelsmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2",
+         "early_inc.d9" ,"hatch_early", "inc.d17_prolong", "hatch_prolong","extend_hatch", "n5_extend")
+
+# for fig 1
+DEGmanip <- allDEG %>% 
+  filter(comparison %in% comparisonlevelsmanip) %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelsmanip))
+
+DEGmanip %>% 
+  group_by(comparison, sex, tissue) %>%
+  summarize(totalDEGs = n())  %>%
+  arrange(desc(totalDEGs))
+
+s1a <- makebargraphsuppl(DEGmanip, "hypothalamus","DEGs w/ + LFC", 0, 3200) + 
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank()) + 
+  labs(subtitle = "hypothalamus") + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") 
+
+s1b <- makebargraphsuppl(DEGmanip, "pituitary","DEGs w/ + LFC", 0, 3200) + 
+  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), strip.text = element_blank()) + 
+  labs(subtitle = "pituitary")  + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") 
+
+
+s1c <- makebargraphsuppl(DEGmanip, "gonad","DEGs w/ + LFC", 0, 3200) + 
+  theme(strip.text = element_blank()) + 
+  labs(subtitle = "gonad", x = "Comparison of parental stage and manipulation groups") + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") + 
+  scale_x_discrete(breaks= comparisonlevelsmanip,
+                      labels= comparisonlevelsmanip,
+                   drop=FALSE)
+
+supplfig4 <- plot_grid(s1a, s1b, s1c, ncol = 1, rel_heights = c(1,1,1.5))
+supplfig4
+
+```
+
 
 ## write files
 
 ```{r write}
+
+pdf(file="../figures/supplfig-4-1.pdf", width=5, height=5)
+plot(supplfig4)
+dev.off()
+
 write.csv(candidateDEGS, "../results/table2.csv", row.names = F)
 ```
 

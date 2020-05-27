@@ -956,7 +956,7 @@ makebargraphsuppl <- function(df, whichtissue, myylab, lowlim, higherlim){
     filter(tissue == whichtissue) %>%
     ggplot(aes(x = comparison,  fill = direction)) +
     geom_bar(position = "dodge") +
-    facet_wrap(~sex) +
+    facet_wrap(~sex, scales = "fixed") +
     theme_B3() +
     theme(legend.position = "none",
           axis.text.x = element_text(angle = 45, hjust = 1),

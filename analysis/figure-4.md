@@ -92,9 +92,6 @@ tsne
     t6 <- plottsneelipsev2(pittsne, pittsne$earlylate, colorhypothesis) +  labs(title = "  ", subtitle = "internal clock")   +
       facet_wrap(~sex) + theme(axis.title.y = element_blank())
     t456 <- plot_grid(t4, t5, t6, nrow = 1, rel_widths = c(1.1,1,1))
-    t456
-
-![](../figures/tSNE-df-1.png)
 
 variance stabilized gene expression (vsd)
 -----------------------------------------
@@ -104,9 +101,10 @@ variance stabilized gene expression (vsd)
     vsd_pathfiles <- paste0(vsd_path, vsd_files)
     vsd_files
 
-    ## [1] "female_gonad_vsd.csv"        "female_hypothalamus_vsd.csv"
-    ## [3] "female_pituitary_vsd.csv"    "male_gonad_vsd.csv"         
-    ## [5] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
+    ## [1] "female_gonad_vsd.csv"        "female_gonads_vsd.csv"      
+    ## [3] "female_hypothalamus_vsd.csv" "female_pituitary_vsd.csv"   
+    ## [5] "male_gonad_vsd.csv"          "male_gonads_vsd.csv"        
+    ## [7] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
 
     allvsd <- vsd_pathfiles %>%
       setNames(nm = .) %>% 
@@ -301,25 +299,20 @@ DEGs
       summarize(res = str_c(res, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = res) %>%
       select(gene, inc.d3_m.inc.d3, inc.d9_m.inc.d9, inc.d17_m.inc.d17, hatch_m.n2,
-              inc.d17_prolong, hatch_prolong)
-    candidateDEGS
+             inc.d17_prolong, hatch_prolong,extend_hatch, n5_extend, 
+             early_inc.d9 ,hatch_early)
+    head(candidateDEGS[1:5])
 
-    ## # A tibble: 32 x 7
-    ## # Groups:   gene [32]
-    ##    gene  inc.d3_m.inc.d3 inc.d9_m.inc.d9 inc.d17_m.inc.d… hatch_m.n2
-    ##    <chr> <chr>           <chr>           <chr>            <chr>     
-    ##  1 ADRA… <NA>            <NA>            <NA>             <NA>      
-    ##  2 AVP   <NA>            <NA>            FH-              <NA>      
-    ##  3 AVPR… <NA>            <NA>            <NA>             FH+ MP+   
-    ##  4 BRIN… <NA>            <NA>            FG- FH+          <NA>      
-    ##  5 COMT  FH-             <NA>            FH-              FH- MH-   
-    ##  6 CREB… <NA>            <NA>            FP+ MP+          FP+ MP+   
-    ##  7 CRH   FH+             <NA>            <NA>             <NA>      
-    ##  8 CRHBP <NA>            <NA>            FH+ MH+          FH+ MH+   
-    ##  9 CRHR1 <NA>            <NA>            <NA>             FH+ FP+   
-    ## 10 CRHR2 FH+             <NA>            FH+ MH+          FH+ MH+   
-    ## # … with 22 more rows, and 2 more variables: inc.d17_prolong <chr>,
-    ## #   hatch_prolong <chr>
+    ## # A tibble: 6 x 5
+    ## # Groups:   gene [6]
+    ##   gene   inc.d3_m.inc.d3 inc.d9_m.inc.d9 inc.d17_m.inc.d17 hatch_m.n2
+    ##   <chr>  <chr>           <chr>           <chr>             <chr>     
+    ## 1 ADRA2A <NA>            <NA>            <NA>              <NA>      
+    ## 2 AVP    <NA>            <NA>            FH-               <NA>      
+    ## 3 AVPR1A <NA>            <NA>            <NA>              FH+ MP+   
+    ## 4 BRINP1 <NA>            <NA>            FG- FH+           <NA>      
+    ## 5 COMT   FH-             <NA>            FH-               FH- MH-   
+    ## 6 CREBRF <NA>            <NA>            FP+ MP+           FP+ MP+
 
 make figure
 -----------
@@ -343,7 +336,68 @@ make figure
     ## quartz_off_screen 
     ##                 2
 
+suppl fig 1
+-----------
+
+    comparisonlevelsmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2",
+             "early_inc.d9" ,"hatch_early", "inc.d17_prolong", "hatch_prolong","extend_hatch", "n5_extend")
+
+    # for fig 1
+    DEGmanip <- allDEG %>% 
+      filter(comparison %in% comparisonlevelsmanip) %>%
+      mutate(comparison = factor(comparison, levels = comparisonlevelsmanip))
+
+    DEGmanip %>% 
+      group_by(comparison, sex, tissue) %>%
+      summarize(totalDEGs = n())  %>%
+      arrange(desc(totalDEGs))
+
+    ## # A tibble: 59 x 4
+    ## # Groups:   comparison, sex [20]
+    ##    comparison        sex    tissue       totalDEGs
+    ##    <fct>             <chr>  <chr>            <int>
+    ##  1 extend_hatch      female hypothalamus      5499
+    ##  2 hatch_m.n2        female hypothalamus      5154
+    ##  3 hatch_prolong     female hypothalamus      4979
+    ##  4 hatch_early       female hypothalamus      4911
+    ##  5 hatch_early       male   hypothalamus      4768
+    ##  6 hatch_early       male   pituitary         4579
+    ##  7 hatch_early       female pituitary         4198
+    ##  8 inc.d17_m.inc.d17 female pituitary         3933
+    ##  9 hatch_m.n2        female pituitary         3289
+    ## 10 inc.d17_m.inc.d17 female hypothalamus      3149
+    ## # … with 49 more rows
+
+    s1a <- makebargraphsuppl(DEGmanip, "hypothalamus","DEGs w/ + LFC", 0, 3200) + 
+      theme(axis.text.x = element_blank(),
+            axis.title.x = element_blank()) + 
+      labs(subtitle = "hypothalamus") + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") 
+
+    s1b <- makebargraphsuppl(DEGmanip, "pituitary","DEGs w/ + LFC", 0, 3200) + 
+      theme(axis.text.x = element_blank(), axis.title.x = element_blank(), strip.text = element_blank()) + 
+      labs(subtitle = "pituitary")  + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") 
+
+
+    s1c <- makebargraphsuppl(DEGmanip, "gonad","DEGs w/ + LFC", 0, 3200) + 
+      theme(strip.text = element_blank()) + 
+      labs(subtitle = "gonad", x = "Comparison of parental stage and manipulation groups") + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") + 
+      scale_x_discrete(breaks= comparisonlevelsmanip,
+                          labels= comparisonlevelsmanip,
+                       drop=FALSE)
+
+    supplfig4 <- plot_grid(s1a, s1b, s1c, ncol = 1, rel_heights = c(1,1,1.5))
+    supplfig4
+
+![](../figures/supplfig-4-1.png)
+
 write files
 -----------
+
+    pdf(file="../figures/supplfig-4-1.pdf", width=5, height=5)
+    plot(supplfig4)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
 
     write.csv(candidateDEGS, "../results/table2.csv", row.names = F)
