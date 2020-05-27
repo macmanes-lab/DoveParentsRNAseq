@@ -134,39 +134,6 @@ Treatment specific DEGs
       mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))  %>%
       drop_na()
 
-
-    suppltable1 <- DEGchar %>%
-      arrange( tissue, sex, direction, gene)
-    head(suppltable1)
-
-    ## # A tibble: 6 x 8
-    ##   sex    tissue       comparison direction gene     lfc     padj logpadj
-    ##   <chr>  <fct>        <fct>      <fct>     <chr>  <dbl>    <dbl>   <dbl>
-    ## 1 female hypothalamus bldg_lay   bldg      HBG2  -0.846 0.0829      1.08
-    ## 2 female hypothalamus bldg_lay   bldg      HEMGN -1.38  0.000464    3.33
-    ## 3 female hypothalamus lay_inc.d3 lay       BLB1  -1.70  0.0987      1.01
-    ## 4 female hypothalamus lay_inc.d3 lay       C1QA  -1.02  0.0987      1.01
-    ## 5 female hypothalamus lay_inc.d3 lay       CFD   -0.785 0.0537      1.27
-    ## 6 female hypothalamus lay_inc.d3 lay       CLIC2 -0.527 0.0903      1.04
-
-    write_csv(suppltable1, "../results/suppltable1.csv")
-
-    suppltable2 <- rbind(DEGcontrol, DEGbldg)  %>%
-      arrange( tissue, sex, direction, gene)
-    head(suppltable2)
-
-    ## # A tibble: 6 x 8
-    ##   sex    tissue      comparison     direction gene     lfc     padj logpadj
-    ##   <chr>  <fct>       <fct>          <fct>     <chr>  <dbl>    <dbl>   <dbl>
-    ## 1 female hypothalam… control_bldg   control   A2ML1 -0.612  2.93e-2    1.53
-    ## 2 female hypothalam… control_hatch  control   A2ML1 -1.15   1.21e-5    4.92
-    ## 3 female hypothalam… control_inc.d… control   A2ML1 -0.780  2.81e-3    2.55
-    ## 4 female hypothalam… control_inc.d9 control   A2ML1 -0.510  5.42e-2    1.27
-    ## 5 female hypothalam… control_lay    control   A2ML1 -0.674  1.39e-2    1.86
-    ## 6 female hypothalam… control_n5     control   A2ML1 -0.583  3.35e-2    1.47
-
-    write_csv(suppltable2, "../results/suppltable2.csv")
-
 Sex and Tissue -related DEGs
 ----------------------------
 
@@ -317,12 +284,35 @@ suppl fig 1 controls versus bldg
 
 ![](../figures/supplfig-1-1.png)
 
-    pdf(file="../figures/supplfig-1-1.pdf", width=5, height=5)
-    plot(supplfig1)
-    dev.off()
+    # for volcano plots
+    hyphatch <- DEGchar %>% filter(tissue == "hypothalamus", comparison == "hatch_n5") 
+    pitinc <- DEGchar %>% filter(tissue == "pituitary", comparison == "inc.d9_inc.d17") 
+    goninc <- DEGchar %>% filter(tissue == "gonad", comparison == "lay_inc.d3") 
 
-    ## quartz_off_screen 
-    ##                 2
+    s2a <- plot.volcano("hypothalamus", sexlevels,  "hatch_n5") + facet_wrap(~sex) + 
+      labs(subtitle = "hypothalamus", title = "Volcano plots") 
+    s2c <- plot.volcano("pituitary", sexlevels,  "inc.d9_inc.d17") + 
+      facet_wrap(~sex) + 
+      labs(subtitle = "pitutiary") + 
+      theme(legend.title = element_blank(), strip.text = element_blank())
+    s2e <- plot.volcano("gonad", sexlevels,  "lay_inc.d3") + facet_wrap(~sex) + 
+      labs( x = "Log-fold change (LFC)", subtitle = "gonads") + 
+      theme(legend.title = element_blank(), strip.text = element_blank())
+
+    s2b <- makebargraph(hyphatch, "hypothalamus","Total DEGs with +LFC", 0, 1800)  + 
+      labs(subtitle = " ", title = "Bar graphs") + scale_x_discrete(labels = "hatch\nvs n5")
+    s2d <- makebargraph(pitinc, "pituitary","Total DEGs with +LFC", 0, 1800) + 
+      labs(subtitle = " ") + scale_x_discrete(labels = "inc.d9 vs\ninc.d17") + 
+      theme(strip.text = element_blank())
+    s2f <- makebargraph(goninc, "gonad","Total DEGs with +LFC", 0, 1800) + 
+      labs(subtitle = " ", x = "stages compared") + scale_x_discrete(labels = "lay vs\ninc.d3") + 
+      theme(strip.text = element_blank())
+    supplfig2 <- plot_grid(s2a, s2b, s2c, s2d, s2e, s2f,
+              rel_widths = c(2,1), rel_heights = c(1.1,1,1.1), ncol = 2,
+              labels = c("A", "B"), label_size = 8)
+    supplfig2
+
+![](../figures/supplfig-1-2.png)
 
 Save files
 ----------
@@ -332,3 +322,50 @@ Save files
 
     # tsne files too big to save
     #write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
+
+
+    suppltable1 <- DEGchar %>%
+      arrange( tissue, sex, direction, gene)
+    head(suppltable1)
+
+    ## # A tibble: 6 x 8
+    ##   sex    tissue       comparison direction gene     lfc     padj logpadj
+    ##   <chr>  <fct>        <fct>      <fct>     <chr>  <dbl>    <dbl>   <dbl>
+    ## 1 female hypothalamus bldg_lay   bldg      HBG2  -0.846 0.0829      1.08
+    ## 2 female hypothalamus bldg_lay   bldg      HEMGN -1.38  0.000464    3.33
+    ## 3 female hypothalamus lay_inc.d3 lay       BLB1  -1.70  0.0987      1.01
+    ## 4 female hypothalamus lay_inc.d3 lay       C1QA  -1.02  0.0987      1.01
+    ## 5 female hypothalamus lay_inc.d3 lay       CFD   -0.785 0.0537      1.27
+    ## 6 female hypothalamus lay_inc.d3 lay       CLIC2 -0.527 0.0903      1.04
+
+    write_csv(suppltable1, "../results/suppltable1.csv")
+
+    suppltable2 <- rbind(DEGcontrol, DEGbldg)  %>%
+      arrange( tissue, sex, direction, gene)
+    head(suppltable2)
+
+    ## # A tibble: 6 x 8
+    ##   sex    tissue      comparison     direction gene     lfc     padj logpadj
+    ##   <chr>  <fct>       <fct>          <fct>     <chr>  <dbl>    <dbl>   <dbl>
+    ## 1 female hypothalam… control_bldg   control   A2ML1 -0.612  2.93e-2    1.53
+    ## 2 female hypothalam… control_hatch  control   A2ML1 -1.15   1.21e-5    4.92
+    ## 3 female hypothalam… control_inc.d… control   A2ML1 -0.780  2.81e-3    2.55
+    ## 4 female hypothalam… control_inc.d9 control   A2ML1 -0.510  5.42e-2    1.27
+    ## 5 female hypothalam… control_lay    control   A2ML1 -0.674  1.39e-2    1.86
+    ## 6 female hypothalam… control_n5     control   A2ML1 -0.583  3.35e-2    1.47
+
+    write_csv(suppltable2, "../results/suppltable2.csv")
+
+    pdf(file="../figures/supplfig-1-1.pdf", width=5, height=5)
+    plot(supplfig1)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    pdf(file="../figures/supplfig-1-2.pdf", height=5, width=5)
+    plot(supplfig2)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2

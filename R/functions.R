@@ -431,34 +431,20 @@ LDAplot.treatment <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
 
 ## volcano plots
 
-plot.volcano <- function(data, whichfactor, up, down, mycolors){
+plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
   
-  numbersup <- data %>% dplyr::filter(direction == up) %>%  
-    group_by(direction) %>% summarize(n = n()) %>% pull(n)
-  numbersdown <- data %>% dplyr::filter(direction == down) %>%  
-    group_by(direction) %>% summarize(n = n()) %>% pull(n)
-  
-  volcano <- data %>%
+  volcano <- allDEG %>%
+    filter(tissue == whichtissue,
+           comparison == whichcomparison,
+           sex == whichsex) %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
-    geom_point(aes(color = direction, shape = tissue), size = 1, 
+    geom_point(aes(color = direction), size = 1, 
                alpha = 0.75, na.rm = T) + 
     theme_B3() +
-    scale_color_manual(values = mycolors,
-                       name = " ",
-                       drop = FALSE,
-                       breaks=c(down, "NS", up)) +
-    ylim(c(0,25)) +  
-    xlim(c(-8,8)) +
-    labs(y = "-log10(p)", x = " ")  +
-    theme(legend.position = "none",
-          legend.direction = "horizontal",
-          legend.spacing.x = unit(-0.1, 'cm'),
-          legend.margin=margin(t=-0, r=0, b=0, l=0, unit="cm"),
-          panel.grid = element_blank()) +
-    scale_shape_manual(values = myshapes) +
-    guides(shape = F) +
-    annotate("text", label = numbersdown, x = -4, y = 25, size = 2) +
-    annotate("text", label = numbersup, x = 4, y = 25, size = 2) 
+    scale_color_manual(values = allcolors, 
+                       name = "stage with\nincreased\nexpression\n(+LFC)") +
+    xlim(-10,5) +
+    labs(y = "-log10(adj. p-value)", x = NULL)
   return(volcano)
 }
 

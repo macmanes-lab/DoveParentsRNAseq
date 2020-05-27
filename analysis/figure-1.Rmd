@@ -213,10 +213,40 @@ sa <- ggdraw() +  draw_image(sa, scale = 1)
 supplfig1 <- plot_grid(s1, sa, ncol = 1, rel_heights = c(2,0.7))
 supplfig1
 
-pdf(file="../figures/supplfig-1-1.pdf", width=5, height=5)
-plot(supplfig1)
-dev.off()
+
+
+# for volcano plots
+hyphatch <- DEGchar %>% filter(tissue == "hypothalamus", comparison == "hatch_n5") 
+pitinc <- DEGchar %>% filter(tissue == "pituitary", comparison == "inc.d9_inc.d17") 
+goninc <- DEGchar %>% filter(tissue == "gonad", comparison == "lay_inc.d3") 
+
+s2a <- plot.volcano("hypothalamus", sexlevels,  "hatch_n5") + facet_wrap(~sex) + 
+  labs(subtitle = "hypothalamus", title = "Volcano plots") 
+s2c <- plot.volcano("pituitary", sexlevels,  "inc.d9_inc.d17") + 
+  facet_wrap(~sex) + 
+  labs(subtitle = "pitutiary") + 
+  theme(legend.title = element_blank(), strip.text = element_blank())
+s2e <- plot.volcano("gonad", sexlevels,  "lay_inc.d3") + facet_wrap(~sex) + 
+  labs( x = "Log-fold change (LFC)", subtitle = "gonads") + 
+  theme(legend.title = element_blank(), strip.text = element_blank())
+
+s2b <- makebargraph(hyphatch, "hypothalamus","Total DEGs with +LFC", 0, 1800)  + 
+  labs(subtitle = " ", title = "Bar graphs") + scale_x_discrete(labels = "hatch\nvs n5")
+s2d <- makebargraph(pitinc, "pituitary","Total DEGs with +LFC", 0, 1800) + 
+  labs(subtitle = " ") + scale_x_discrete(labels = "inc.d9 vs\ninc.d17") + 
+  theme(strip.text = element_blank())
+s2f <- makebargraph(goninc, "gonad","Total DEGs with +LFC", 0, 1800) + 
+  labs(subtitle = " ", x = "stages compared") + scale_x_discrete(labels = "lay vs\ninc.d3") + 
+  theme(strip.text = element_blank())
+supplfig2 <- plot_grid(s2a, s2b, s2c, s2d, s2e, s2f,
+          rel_widths = c(2,1), rel_heights = c(1.1,1,1.1), ncol = 2,
+          labels = c("A", "B"), label_size = 8)
+supplfig2
 ```
+
+
+
+
 
 ## Save files
 
@@ -238,6 +268,13 @@ suppltable2 <- rbind(DEGcontrol, DEGbldg)  %>%
 head(suppltable2)
 write_csv(suppltable2, "../results/suppltable2.csv")
 
+pdf(file="../figures/supplfig-1-1.pdf", width=5, height=5)
+plot(supplfig1)
+dev.off()
+
+pdf(file="../figures/supplfig-1-2.pdf", height=5, width=5)
+plot(supplfig2)
+dev.off()
 ```
 
 
