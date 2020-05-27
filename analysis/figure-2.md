@@ -138,137 +138,22 @@ Candidate VSDs
 Candidate Correlations - SUppl fig 1
 ------------------------------------
 
-    makecorrdf <- function(whichsex, whichtissue, whichgenes){
-      corrrdf <- candidatevsd %>%
-        filter(sex == whichsex, tissue == whichtissue,
-               gene %in% whichgenes) %>%
-        drop_na() %>%
-        pivot_wider(names_from = gene, values_from = counts) %>%
-        select(-sex, -tissue, -treatment, -samples) %>%
-        correlate() 
-      # print(head(corrrdf))
-      
-      corrrdflong <- corrrdf %>%
-        pivot_longer(-rowname, names_to = "gene2", values_to = "corr") %>%
-        rename("gene1" = "rowname") %>%
-        arrange(desc(corr)) %>%
-        mutate(tissue = whichtissue,
-               sex = whichsex) %>%
-        select(tissue, sex, gene1, gene2, corr)
-      print("The top two correlations in this tissue and sex are:")
-      print(corrrdflong[c(1,3),]) 
-      
-      return(corrrdf)
-    }
-
-
     hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue       sex    gene1 gene2  corr
-    ##   <chr>        <chr>  <chr> <chr> <dbl>
-    ## 1 hypothalamus female CRHR2 HTR2C 0.904
-    ## 2 hypothalamus female CRHBP CRHR2 0.811
-
     pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue    sex    gene1  gene2  corr
-    ##   <chr>     <chr>  <chr>  <chr> <dbl>
-    ## 1 pituitary female AVPR1A CRHR1 0.753
-    ## 2 pituitary female AVPR1A FOS   0.597
-
     gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
 
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue sex    gene1 gene2  corr
-    ##   <chr>  <chr>  <chr> <chr> <dbl>
-    ## 1 gonad  female CRHBP ESR2  0.912
-    ## 2 gonad  female DRD1  ESR2  0.862
-
     hyp2 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue       sex   gene1 gene2  corr
-    ##   <chr>        <chr> <chr> <chr> <dbl>
-    ## 1 hypothalamus male  DRD1  HTR2C 0.888
-    ## 2 hypothalamus male  CRHR2 HTR2C 0.878
-
     pit2 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue    sex   gene1  gene2  corr
-    ##   <chr>     <chr> <chr>  <chr> <dbl>
-    ## 1 pituitary male  AVPR1A CRHR1 0.771
-    ## 2 pituitary male  AVPR1A FOS   0.685
-
     gon2 <- makecorrdf("male", "gonad", curleychampagnegenes) 
 
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue sex   gene1 gene2  corr
-    ##   <chr>  <chr> <chr> <chr> <dbl>
-    ## 1 gonad  male  PGR   PRLR  0.496
-    ## 2 gonad  male  ESR1  FOS   0.407
 
     hyp3 <- makecorrdf("female", "hypothalamus", GOgenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue       sex    gene1 gene2  corr
-    ##   <chr>        <chr>  <chr> <chr> <dbl>
-    ## 1 hypothalamus female NPAS3 NR3C1 0.782
-    ## 2 hypothalamus female AVP   OXT   0.771
-
     pit3 <- makecorrdf("female", "pituitary", GOgenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue    sex    gene1  gene2  corr
-    ##   <chr>     <chr>  <chr>  <chr> <dbl>
-    ## 1 pituitary female CREBRF NR3C1 0.719
-    ## 2 pituitary female CREBRF NPAS3 0.616
-
     gon3 <- makecorrdf("female", "gonad", GOgenes)  
 
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue sex    gene1 gene2  corr
-    ##   <chr>  <chr>  <chr> <chr> <dbl>
-    ## 1 gonad  female GNAQ  ZFX   0.779
-    ## 2 gonad  female PTEN  ZFX   0.768
-
     hyp4 <- makecorrdf("male", "hypothalamus", GOgenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue       sex   gene1 gene2  corr
-    ##   <chr>        <chr> <chr> <chr> <dbl>
-    ## 1 hypothalamus male  AVP   OXT   0.705
-    ## 2 hypothalamus male  DRD1  OPRK1 0.702
-
     pit4 <- makecorrdf("male", "pituitary", GOgenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue    sex   gene1  gene2  corr
-    ##   <chr>     <chr> <chr>  <chr> <dbl>
-    ## 1 pituitary male  CREBRF NR3C1 0.533
-    ## 2 pituitary male  GNAQ   PTEN  0.512
-
     gon4 <- makecorrdf("male", "gonad", GOgenes)  
-
-    ## [1] "The top two correlations in this tissue and sex are:"
-    ## # A tibble: 2 x 5
-    ##   tissue sex   gene1  gene2  corr
-    ##   <chr>  <chr> <chr>  <chr> <dbl>
-    ## 1 gonad  male  CREBRF ZFX   0.407
-    ## 2 gonad  male  AVPR1A DBH   0.404
 
     b1 <- plotcorrplot(hyp1, "females") + labs(y = "Hypothalamus", title = "Parental Care Literature")  + 
       scale_x_discrete(position = "top")   + theme(axis.text.x = element_text(vjust = -0.25))
