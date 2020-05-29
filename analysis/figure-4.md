@@ -332,13 +332,6 @@ make figure
 
 ![](../figures/fig4-1.png)
 
-    pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
-    plot(fig4)
-    dev.off()
-
-    ## quartz_off_screen 
-    ##                 2
-
 suppl fig 1
 -----------
 
@@ -388,13 +381,24 @@ suppl fig 1
                           labels= comparisonlevelsmanip,
                        drop=FALSE)
 
-    supplfig4 <- plot_grid(s1a, s1b, s1c, ncol = 1, rel_heights = c(1,1,1.5))
+    contrasts <- png::readPNG("../figures/images/fig_fig4sup1.png")
+    contrasts <- ggdraw() +  draw_image(contrasts, scale = 1)
+
+
+    supplfig4 <- plot_grid(contrasts, s1a, s1b, s1c, ncol = 1, rel_heights = c(0.5, 1,1,1.5))
     supplfig4
 
 ![](../figures/supplfig-4-1.png)
 
 write files
 -----------
+
+    pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
+    plot(fig4)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
 
     pdf(file="../figures/supplfig-4-1.pdf", width=5, height=5)
     plot(supplfig4)

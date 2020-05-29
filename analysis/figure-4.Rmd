@@ -274,9 +274,6 @@ fig4 <- plot_grid(boxplots, design, t456, ncol = 1, rel_heights = c(2.75,1.3,1),
                       labels = c(" ", " " , "C"), label_size = 8)
 fig4
 
-pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
-plot(fig4)
-dev.off()
 
 ```
 
@@ -314,8 +311,14 @@ s1c <- makebargraphsuppl(DEGmanip, "gonad","DEGs w/ + LFC", 0, 3200) +
                       labels= comparisonlevelsmanip,
                    drop=FALSE)
 
-supplfig4 <- plot_grid(s1a, s1b, s1c, ncol = 1, rel_heights = c(1,1,1.5))
+contrasts <- png::readPNG("../figures/images/fig_fig4sup1.png")
+contrasts <- ggdraw() +  draw_image(contrasts, scale = 1)
+
+
+supplfig4 <- plot_grid(contrasts, s1a, s1b, s1c, ncol = 1, rel_heights = c(0.5, 1,1,1.5))
 supplfig4
+
+
 
 ```
 
@@ -323,6 +326,10 @@ supplfig4
 ## write files
 
 ```{r write}
+
+pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
+plot(fig4)
+dev.off()
 
 pdf(file="../figures/supplfig-4-1.pdf", width=5, height=5)
 plot(supplfig4)
