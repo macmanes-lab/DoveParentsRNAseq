@@ -193,7 +193,7 @@ variance stabilized gene expression (vsd)
         dplyr::filter(gene  == whichgene, 
                       treatment %in% removallevels)  %>%
         ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
-        geom_boxplot(outlier.shape = NA) +
+        geom_boxplot(outlier.shape = NA, lwd=0.5) +
         geom_jitter(size = 0.25, aes(color = sex)) +
         theme_B3() +
         theme(legend.position = "none",
@@ -207,14 +207,14 @@ variance stabilized gene expression (vsd)
                                        c( "inc.d17", "m.inc.d17"),
                                        c( "hatch", "m.n2")),
                     map_signif_level=TRUE,
-                    textsize = 3, family = 'Helvetica',
+                    textsize = 1.5, family = 'Helvetica',
                     vjust = 1.5, size = 0.5) 
       return(p)
       
     }
 
-    a <- plotcandidateremoval(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank(), axis.text.x = element_blank())
-    b <- plotcandidateremoval(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank(), axis.text.x = element_blank())
+    a <- plotcandidateremoval(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank())
+    b <- plotcandidateremoval(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank())
     c <- plotcandidateremoval(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank())
     boxplots1 <- plot_grid(a,b,c, nrow = 3)
 
@@ -226,7 +226,7 @@ variance stabilized gene expression (vsd)
                       treatment %in% timinglevels,
                       !treatment %in%  c("control", "bldg", "inc.d3"))  %>%
         ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
-        geom_boxplot(outlier.shape = NA) +
+        geom_boxplot(outlier.shape = NA, lwd=0.5) +
         geom_jitter(size = 0.25, aes(color = sex)) +
         theme_B3() +
         theme(legend.position = "none",
@@ -245,10 +245,13 @@ variance stabilized gene expression (vsd)
       
     }
 
-    e <- plotcandidatetiming(hypvsd, "HTR2C", "hypothalamus") + theme(axis.title.x = element_blank(), axis.text.x = element_blank()) 
-    f <- plotcandidatetiming(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank(), axis.text.x = element_blank())
-    g <- plotcandidatetiming(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank())
+    e <- plotcandidatetiming(hypvsd, "HTR2C", " ") + theme(axis.title.x = element_blank()) + labs(y = NULL, subtitle = " ", title = " ") 
+    f <- plotcandidatetiming(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank()) + labs(y = NULL, subtitle = " ", title = " ") 
+    g <- plotcandidatetiming(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank()) + labs(y = NULL, subtitle = " ", title = " ") 
     boxplots2 <- plot_grid(e,f,g, nrow = 3)
+    boxplots2
+
+![](../figures/boxplots-1.png)
 
 DEGs
 ----
@@ -323,7 +326,7 @@ make figure
 
     boxplots <- plot_grid(boxplots1, boxplots2, nrow = 1, rel_widths = c(1.5,1),
                           labels = "AUTO", label_size = 8)
-    fig4 <- plot_grid(boxplots, design, t456, ncol = 1, rel_heights = c(2.75,1,1),
+    fig4 <- plot_grid(boxplots, design, t456, ncol = 1, rel_heights = c(2.75,1.3,1),
                           labels = c(" ", " " , "C"), label_size = 8)
     fig4
 
