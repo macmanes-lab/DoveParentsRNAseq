@@ -239,7 +239,7 @@ variance stabilized gene expression (vsd)
                                       c( "inc.d17", "prolong"), c( "prolong", "hatch"),
                                       c( "hatch", "extend"), c( "n5", "extend")),
                     map_signif_level=TRUE,
-                    textsize = 3, family = 'Helvetica',
+                    textsize = 1.5, family = 'Helvetica',
                     vjust = 1.5, size = 0.5) 
       return(p)
       
