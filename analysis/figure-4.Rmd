@@ -207,7 +207,6 @@ e <- plotcandidatetiming(hypvsd, "HTR2C", " ") + theme(axis.title.x = element_bl
 f <- plotcandidatetiming(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank()) + labs(y = NULL, subtitle = " ", title = " ") 
 g <- plotcandidatetiming(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank()) + labs(y = NULL, subtitle = " ", title = " ") 
 boxplots2 <- plot_grid(e,f,g, nrow = 3)
-boxplots2
 ```
 
 
