@@ -92,9 +92,9 @@ colorschar <-  c("control" = "#cc4c02",
                  "inc.d3"= "#78c679", 
                  "inc.d9"= "#31a354", 
                  "inc.d17"= "#006837", 
-                 "hatch"= "#08519c",
+                 "hatch"= "#6baed6",
                  "n5"= "#3182bd", 
-                 "n9"= "#6baed6")
+                 "n9"= "#08519c" )
 
 colorsmanip <- c("m.inc.d3" = "#CDCDCD", 
                  "m.inc.d9" = "#959595", 
