@@ -249,9 +249,6 @@ variance stabilized gene expression (vsd)
     f <- plotcandidatetiming(pitvsd, "PRL", "pituitary")+ theme(axis.title.x = element_blank(), strip.text = element_blank()) + labs(y = NULL, subtitle = " ", title = " ") 
     g <- plotcandidatetiming(gonvsd, "ESR2", "gonads") + theme(strip.text = element_blank()) + labs(y = NULL, subtitle = " ", title = " ") 
     boxplots2 <- plot_grid(e,f,g, nrow = 3)
-    boxplots2
-
-![](../figures/boxplots-1.png)
 
 DEGs
 ----
