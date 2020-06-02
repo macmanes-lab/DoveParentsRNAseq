@@ -150,7 +150,7 @@ b <- plot_grid(b15,b69, labels = c("C"), label_size = 8, rel_widths = c(1.2,1))
 
 c1 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 DEGs, low vs. high PRL") 
 c2 <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes in WGCNA module with PRL") 
-c3 <- plotcorrplot(cancergenes, NULL) + theme(legend.position = "right") + labs(subtitle = "Breast, ovary, & piuitary cancer genes") 
+c3 <- plotcorrplot(cancergenes, NULL) + theme(legend.position = "right") + labs(subtitle = "Breast, ovary, & piuitary cancer genes", color = "Correlation")
 c <- plot_grid(c1,c2,c3, nrow = 1, labels = c("D"), label_size = 8, rel_widths = c(1,1,1.3))
 
 fig3 <- plot_grid(a, b, c, nrow = 3, rel_heights = c(1.2,2,1.8))
