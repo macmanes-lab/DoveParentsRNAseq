@@ -23,9 +23,15 @@ curleychampagnegenes <- c("AVP", "AVPR1A", "ADRA2A",
                           "DRD1", "DRD4","ESR1", "ESR2", #ERa ERbeta
                           "FOS", "HTR2C", "MEST", "NR3C1", #GR
                           "OPRM1", "OXT" , "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
-curleychampagnegenes
-curleychampagnegenes <- as.data.frame(curleychampagnegenes) %>%
-  mutate(GO = "literature", gene = curleychampagnegenes)  %>%
+
+
+literaturegenes <- c(curleychampagnegenes, 
+                     "VIP", "GNIH", "GAL", "TH", "THRB",
+                     "GNRHR", "GNRH1", "CGNRH-R", "FSHB", "FSHR")
+literaturegenes
+
+literaturegenes <- as.data.frame(literaturegenes) %>%
+  mutate(GO = "literature", gene = literaturegenes)  %>%
   select(GO, gene)
 
 # candidate gens from parental care GO terms 
@@ -43,7 +49,7 @@ GOgenesLong <- GO_pathfiles %>%
   filter(gene != "Symbol") %>%
   distinct(GO,gene)  %>%
   mutate(gene = toupper(gene)) %>%
-  rbind(., curleychampagnegenes) %>%
+  rbind(., literaturegenes) %>%
   arrange(gene) %>%
   left_join(., geneids, by = "gene") %>%
   arrange(gene) %>%
@@ -59,12 +65,6 @@ parentalcaregenes <- GOgenesLong %>%
   dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
 
-# note: I can't find these genes in dataset: NOS1 or OXTR or FOX1B or HTR5A
-
-GOgeneonly <- parentalcaregenes %>%
-  filter(GO != "") %>%
-  pull(GO)
-GOgeneonly
 ```
 
 
@@ -150,6 +150,54 @@ dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj)
 head(allDEG)
 
 unique(allDEG$comparison)
+
+tempDEGs <- DEG_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name") %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
+  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
+  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
+  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
+  mutate(comparison = paste(down,up, sep = "_")) %>%
+  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
+  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2))
+head(tempDEGs)
+
+wideDEGs <- tempDEGs %>%
+  mutate(lfc = round(lfc, 2),
+         padj =  round(padj,2)) %>%
+  mutate(sextissue = paste(sex, tissue, sep = "_"),
+         lfcpadj = paste(lfc, padj, sep = ", "))  %>%
+  dplyr::select(sextissue,comparison, gene, lfcpadj) %>%
+  pivot_wider(names_from = comparison, values_from = lfcpadj) 
+
+wideDEGscandidates <- wideDEGs %>%
+  filter(gene %in% GOgenesLong$gene)
+wideDEGscandidates
+
+wideDEGsBldg <- wideDEGscandidates %>%
+  select(sextissue,gene, contains("bldg"))
+wideDEGsBldg
+
+wideDEGsControl <- wideDEGscandidates %>%
+  select(sextissue,gene, contains("control"))
+wideDEGsControl
+
+
+# sequential in 2 or more comparisons
+wideDEGsSequential <- wideDEGscandidates %>%
+  select(sextissue,gene, "control_bldg", "bldg_lay", "lay_inc.d3", "inc.d3_inc.d9",
+         "inc.d9_inc.d17", "inc.d17_hatch", "hatch_n5", "n5_n9") %>%
+  mutate(totalNA = rowSums(is.na(.))) %>%
+  filter(totalNA < 8) %>%
+  arrange(gene, sextissue) %>%
+  select(-totalNA) %>% 
+  replace(., is.na(.), "")
+wideDEGsSequential
+
+
+
 ```
 
 ## save files
@@ -158,6 +206,7 @@ unique(allDEG$comparison)
 write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
 write.csv(candidatevsd, "../results/03_candidatevsd.csv")
 write.csv(parentalcaregenes, "../metadata/03_parentalcaregenes.csv")
+write.csv(wideDEGsSequential, "../results/03_wideDEGsSequential.csv")
 ```
 
 

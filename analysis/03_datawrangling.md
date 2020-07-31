@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -36,15 +36,21 @@
                               "DRD1", "DRD4","ESR1", "ESR2", #ERa ERbeta
                               "FOS", "HTR2C", "MEST", "NR3C1", #GR
                               "OPRM1", "OXT" , "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
-    curleychampagnegenes
 
-    ##  [1] "AVP"    "AVPR1A" "ADRA2A" "COMT"   "CRH"    "CRHBP"  "CRHR1" 
-    ##  [8] "CRHR2"  "DRD1"   "DRD4"   "ESR1"   "ESR2"   "FOS"    "HTR2C" 
-    ## [15] "MEST"   "NR3C1"  "OPRM1"  "OXT"    "PGR"    "PRL"    "PRLR"  
-    ## [22] "SLC6A4"
 
-    curleychampagnegenes <- as.data.frame(curleychampagnegenes) %>%
-      mutate(GO = "literature", gene = curleychampagnegenes)  %>%
+    literaturegenes <- c(curleychampagnegenes, 
+                         "VIP", "GNIH", "GAL", "TH", "THRB",
+                         "GNRHR", "GNRH1", "CGNRH-R", "FSHB", "FSHR")
+    literaturegenes
+
+    ##  [1] "AVP"     "AVPR1A"  "ADRA2A"  "COMT"    "CRH"     "CRHBP"   "CRHR1"  
+    ##  [8] "CRHR2"   "DRD1"    "DRD4"    "ESR1"    "ESR2"    "FOS"     "HTR2C"  
+    ## [15] "MEST"    "NR3C1"   "OPRM1"   "OXT"     "PGR"     "PRL"     "PRLR"   
+    ## [22] "SLC6A4"  "VIP"     "GNIH"    "GAL"     "TH"      "THRB"    "GNRHR"  
+    ## [29] "GNRH1"   "CGNRH-R" "FSHB"    "FSHR"
+
+    literaturegenes <- as.data.frame(literaturegenes) %>%
+      mutate(GO = "literature", gene = literaturegenes)  %>%
       select(GO, gene)
 
     # candidate gens from parental care GO terms 
@@ -62,7 +68,7 @@
       filter(gene != "Symbol") %>%
       distinct(GO,gene)  %>%
       mutate(gene = toupper(gene)) %>%
-      rbind(., curleychampagnegenes) %>%
+      rbind(., literaturegenes) %>%
       arrange(gene) %>%
       left_join(., geneids, by = "gene") %>%
       arrange(gene) %>%
@@ -89,17 +95,14 @@
     head(parentalcaregenes)
 
     ## # A tibble: 6 x 5
-    ##   geneid NCBI           literature GO       gene  
-    ##    <dbl> <chr>          <chr>      <chr>    <chr> 
-    ## 1 428980 XP_004942333.2 "ADRA2A"   ""       ADRA2A
-    ## 2 396101 NP_990516.1    "AVP"      "AVP"    AVP   
-    ## 3 771773 NP_001103908.1 "AVPR1A"   "AVPR1A" AVPR1A
-    ## 4 395098 NP_989780.1    ""         "BRINP1" BRINP1
-    ## 5 416783 XP_001233014.1 "COMT"     ""       COMT  
-    ## 6 416206 XP_001231574.1 ""         "CREBRF" CREBRF
-
-    candidategenes <- parentalcaregenes %>% distinct(gene) %>% pull(gene)
-    # note: I can't find these genes in dataset: NOS1 or OXTR or FOX1B or HTR5A
+    ##   geneid NCBI           literature GO       gene   
+    ##    <dbl> <chr>          <chr>      <chr>    <chr>  
+    ## 1 428980 XP_004942333.2 "ADRA2A"   ""       ADRA2A 
+    ## 2 396101 NP_990516.1    "AVP"      "AVP"    AVP    
+    ## 3 771773 NP_001103908.1 "AVPR1A"   "AVPR1A" AVPR1A 
+    ## 4 395098 NP_989780.1    ""         "BRINP1" BRINP1 
+    ## 5 395368 NP_989984.1    "CGNRH-R"  ""       CGNRH-R
+    ## 6 416783 XP_001233014.1 "COMT"     ""       COMT
 
 ### variance stabilized gene expression (vsd)
 
@@ -108,9 +111,10 @@
     vsd_pathfiles <- paste0(vsd_path, vsd_files)
     vsd_files
 
-    ## [1] "female_gonad_vsd.csv"        "female_hypothalamus_vsd.csv"
-    ## [3] "female_pituitary_vsd.csv"    "male_gonad_vsd.csv"         
-    ## [5] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
+    ## [1] "female_gonad_vsd.csv"        "female_gonads_vsd.csv"      
+    ## [3] "female_hypothalamus_vsd.csv" "female_pituitary_vsd.csv"   
+    ## [5] "male_gonad_vsd.csv"          "male_gonads_vsd.csv"        
+    ## [7] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
 
     ## before pivoting, check names of df with
     ## head(names(allvsd)) and tail(names(allvsd))
@@ -130,6 +134,24 @@
     ##   X1 = col_character()
     ## )
 
+    ## See spec(...) for full column specifications.
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   X1 = col_character()
+    ## )
+    ## See spec(...) for full column specifications.
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_double(),
+    ##   X1 = col_character()
+    ## )
     ## See spec(...) for full column specifications.
 
     ## Warning: Missing column names filled in: 'X1' [1]
@@ -219,17 +241,17 @@
     head(candidatevsd)
 
     ## # A tibble: 6 x 6
-    ##   sex    tissue      treatment gene  samples                         counts
-    ##   <chr>  <chr>       <chr>     <chr> <chr>                            <dbl>
-    ## 1 female hypothalam… control   ADRA… L.G118_female_hypothalamus_con…   8.95
-    ## 2 female hypothalam… control   ADRA… R.G106_female_hypothalamus_con…   8.81
-    ## 3 female hypothalam… control   ADRA… R.R20_female_hypothalamus_cont…   9.18
-    ## 4 female hypothalam… control   ADRA… R.R9_female_hypothalamus_contr…   8.72
-    ## 5 female hypothalam… control   ADRA… R.W44_female_hypothalamus_cont…   9.23
-    ## 6 female hypothalam… prolong   ADRA… blk.s031.pu.d_female_hypothala…   9.13
+    ##   sex    tissue      treatment gene   samples                             counts
+    ##   <chr>  <chr>       <chr>     <chr>  <chr>                                <dbl>
+    ## 1 female hypothalam… control   ADRA2A L.G118_female_hypothalamus_control…   8.95
+    ## 2 female hypothalam… control   ADRA2A R.G106_female_hypothalamus_control    8.81
+    ## 3 female hypothalam… control   ADRA2A R.R20_female_hypothalamus_control.…   9.18
+    ## 4 female hypothalam… control   ADRA2A R.R9_female_hypothalamus_control      8.72
+    ## 5 female hypothalam… control   ADRA2A R.W44_female_hypothalamus_control     9.23
+    ## 6 female hypothalam… prolong   ADRA2A blk.s031.pu.d_female_hypothalamus_…   9.13
 
-All DEGs (but currently only char DEGs)
----------------------------------------
+All DEGs
+--------
 
     DEG_path <- "../results/DEseq2/treatment/"   # path to the data
     DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
@@ -1117,451 +1139,6 @@ All DEGs (but currently only char DEGs)
     ##   sextissue = col_character(),
     ##   direction = col_character()
     ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
     ## Parsed with column specification:
     ## cols(
     ##   gene = col_character(),
@@ -1644,396 +1221,6 @@ All DEGs (but currently only char DEGs)
     ##   direction = col_character()
     ## )
 
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_double(),
-    ##   logpadj = col_double(),
-    ##   lfc = col_double(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
-    ## Parsed with column specification:
-    ## cols(
-    ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
-    ##   sextissue = col_character(),
-    ##   direction = col_character()
-    ## )
     ## Parsed with column specification:
     ## cols(
     ##   gene = col_character(),
@@ -2208,17 +1395,204 @@ All DEGs (but currently only char DEGs)
     ##   sextissue = col_character(),
     ##   direction = col_character()
     ## )
-
     ## Parsed with column specification:
     ## cols(
     ##   gene = col_character(),
-    ##   padj = col_character(),
-    ##   logpadj = col_character(),
-    ##   lfc = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
     ##   sextissue = col_character(),
     ##   direction = col_character()
     ## )
-
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
     ## Parsed with column specification:
     ## cols(
     ##   gene = col_character(),
@@ -2445,6 +1819,881 @@ All DEGs (but currently only char DEGs)
     ##   sextissue = col_character(),
     ##   direction = col_character()
     ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
 
     ## Parsed with column specification:
     ## cols(
@@ -2567,6 +2816,15 @@ All DEGs (but currently only char DEGs)
     ##   sextissue = col_character(),
     ##   direction = col_character()
     ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
 
     ## Parsed with column specification:
     ## cols(
@@ -2578,6 +2836,60 @@ All DEGs (but currently only char DEGs)
     ##   direction = col_character()
     ## )
 
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
     ## Parsed with column specification:
     ## cols(
     ##   gene = col_character(),
@@ -3050,16 +3362,3251 @@ All DEGs (but currently only char DEGs)
     ## 5 female gonad  bldg_extend extend    LOC107049005  4.89 7.51e- 2    1.12
     ## 6 female gonad  bldg_extend extend    OMD           3.53 5.38e- 4    3.27
 
-    # select only characterization plots
-    allDEG$tissue <- factor(allDEG$tissue , levels = tissuelevel)
-    allDEG$comparison <- factor(allDEG$comparison , levels = comparisonlevelschar)
-    allDEG$direction <- factor(allDEG$direction, levels = charlevels)
+    unique(allDEG$comparison)
 
-    allDEG <- allDEG %>% drop_na()
+    ##  [1] "bldg_extend"        "bldg_hatch"         "bldg_inc.d17"      
+    ##  [4] "bldg_inc.d3"        "bldg_inc.d9"        "bldg_lay"          
+    ##  [7] "bldg_m.inc.d17"     "bldg_m.inc.d3"      "bldg_m.inc.d8"     
+    ## [10] "bldg_m.inc.d9"      "bldg_m.n2"          "bldg_n5"           
+    ## [13] "bldg_n9"            "bldg_prolong"       "control_bldg"      
+    ## [16] "control_extend"     "control_hatch"      "control_inc.d17"   
+    ## [19] "control_inc.d3"     "control_inc.d9"     "control_lay"       
+    ## [22] "control_m.inc.d17"  "control_m.inc.d3"   "control_m.inc.d8"  
+    ## [25] "control_m.inc.d9"   "control_m.n2"       "control_n5"        
+    ## [28] "control_n9"         "control_prolong"    "hatch_m.n2"        
+    ## [31] "hatch_n5"           "hatch_prolong"      "inc.d17_hatch"     
+    ## [34] "inc.d17_m.inc.d17"  "inc.d17_m.n2"       "inc.d17_prolong"   
+    ## [37] "inc.d3_inc.d9"      "inc.d3_m.inc.d3"    "inc.d9_inc.d17"    
+    ## [40] "inc.d9_m.inc.d9"    "lay_inc.d3"         "m.inc.d3_m.inc.d17"
+    ## [43] "m.inc.d3_m.inc.d9"  "m.inc.d3_m.n2"      "m.inc.d8_extend"   
+    ## [46] "m.inc.d8_prolong"   "n5_n9"              "prolong_extend"    
+    ## [49] "early_inc.d9"       "extend_hatch"       "hatch_early"       
+    ## [52] "n5_extend"          "prolong_inc.d17"    "m.inc.d17_m.n2"    
+    ## [55] "m.inc.d9_m.inc.d17" "m.inc.d9_m.n2"
+
+    tempDEGs <- DEG_pathfiles %>%
+      setNames(nm = .) %>% 
+      map_df(~read_csv(.x), .id = "file_name") %>% 
+      mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
+      mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
+      mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
+      mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
+      mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
+      mutate(comparison = paste(down,up, sep = "_")) %>%
+      mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
+      mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2))
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_character(),
+    ##   logpadj = col_character(),
+    ##   lfc = col_character(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+    ## Parsed with column specification:
+    ## cols(
+    ##   gene = col_character(),
+    ##   padj = col_double(),
+    ##   logpadj = col_double(),
+    ##   lfc = col_double(),
+    ##   sextissue = col_character(),
+    ##   direction = col_character()
+    ## )
+
+    head(tempDEGs)
+
+    ## # A tibble: 6 x 13
+    ##   file_name gene      padj logpadj   lfc sextissue direction DEG   tissue down 
+    ##   <chr>     <chr>    <dbl>   <dbl> <dbl> <chr>     <chr>     <chr> <chr>  <chr>
+    ## 1 ../resul… CDK3  2.69e-20   19.6  19.5  female_g… extend    fema… gonad  bldg 
+    ## 2 ../resul… CRIS… 3.48e- 3    2.46  6.52 female_g… extend    fema… gonad  bldg 
+    ## 3 ../resul… KRT20 3.67e- 4    3.44  5.47 female_g… extend    fema… gonad  bldg 
+    ## 4 ../resul… CLDN… 5.14e- 3    2.29  5.01 female_g… extend    fema… gonad  bldg 
+    ## 5 ../resul… LOC1… 7.51e- 2    1.12  4.89 female_g… extend    fema… gonad  bldg 
+    ## 6 ../resul… OMD   5.38e- 4    3.27  3.53 female_g… extend    fema… gonad  bldg 
+    ## # … with 3 more variables: up <chr>, comparison <chr>, sex <chr>
+
+    wideDEGs <- tempDEGs %>%
+      mutate(lfc = round(lfc, 2),
+             padj =  round(padj,2)) %>%
+      mutate(sextissue = paste(sex, tissue, sep = "_"),
+             lfcpadj = paste(lfc, padj, sep = ", "))  %>%
+      dplyr::select(sextissue,comparison, gene, lfcpadj) %>%
+      pivot_wider(names_from = comparison, values_from = lfcpadj) 
+
+    wideDEGscandidates <- wideDEGs %>%
+      filter(gene %in% GOgenesLong$gene)
+    wideDEGscandidates
+
+    ## # A tibble: 238 x 58
+    ##    sextissue gene  bldg_extend bldg_hatch bldg_inc.d17 bldg_inc.d3 bldg_inc.d9
+    ##    <chr>     <chr> <chr>       <chr>      <chr>        <chr>       <chr>      
+    ##  1 female_g… CRHBP 1.18, 0.05  <NA>       1.34, 0.01   <NA>        <NA>       
+    ##  2 female_g… FSHR  1.17, 0.01  <NA>       1.02, 0.01   <NA>        <NA>       
+    ##  3 female_g… PRL   0.66, 0.05  <NA>       <NA>         <NA>        <NA>       
+    ##  4 female_g… CREB… 0.65, 0.03  <NA>       <NA>         <NA>        <NA>       
+    ##  5 female_g… ESR1  -0.66, 0.09 -0.67, 0.1 -0.73, 0.03  -0.78, 0.04 -0.67, 0.09
+    ##  6 female_g… DBH   -2.11, 0.07 <NA>       -4.01, 0     -2.97, 0.02 -2.54, 0.04
+    ##  7 female_g… HTR2C <NA>        0.91, 0.05 0.9, 0.02    <NA>        <NA>       
+    ##  8 female_g… FOS   <NA>        0.43, 0.09 0.63, 0      0.63, 0.01  <NA>       
+    ##  9 female_g… GNAQ  <NA>        -0.51, 0.… -0.57, 0.01  <NA>        <NA>       
+    ## 10 female_g… PRLR  <NA>        -1.42, 0.… -1.05, 0.05  -1.3, 0.04  <NA>       
+    ## # … with 228 more rows, and 51 more variables: bldg_lay <chr>,
+    ## #   bldg_m.inc.d17 <chr>, bldg_m.inc.d3 <chr>, bldg_m.inc.d8 <chr>,
+    ## #   bldg_m.inc.d9 <chr>, bldg_m.n2 <chr>, bldg_n5 <chr>, bldg_n9 <chr>,
+    ## #   bldg_prolong <chr>, control_bldg <chr>, control_extend <chr>,
+    ## #   control_hatch <chr>, control_inc.d17 <chr>, control_inc.d3 <chr>,
+    ## #   control_inc.d9 <chr>, control_lay <chr>, control_m.inc.d17 <chr>,
+    ## #   control_m.inc.d3 <chr>, control_m.inc.d8 <chr>, control_m.inc.d9 <chr>,
+    ## #   control_m.n2 <chr>, control_n5 <chr>, control_n9 <chr>,
+    ## #   control_prolong <chr>, hatch_m.n2 <chr>, hatch_n5 <chr>,
+    ## #   hatch_prolong <chr>, inc.d17_hatch <chr>, inc.d17_m.inc.d17 <chr>,
+    ## #   inc.d17_m.n2 <chr>, inc.d17_prolong <chr>, inc.d3_inc.d9 <chr>,
+    ## #   inc.d3_m.inc.d3 <chr>, inc.d9_inc.d17 <chr>, inc.d9_m.inc.d9 <chr>,
+    ## #   lay_inc.d3 <chr>, m.inc.d3_m.inc.d17 <chr>, m.inc.d3_m.inc.d9 <chr>,
+    ## #   m.inc.d3_m.n2 <chr>, m.inc.d8_extend <chr>, m.inc.d8_prolong <chr>,
+    ## #   n5_n9 <chr>, prolong_extend <chr>, early_inc.d9 <chr>, extend_hatch <chr>,
+    ## #   hatch_early <chr>, n5_extend <chr>, prolong_inc.d17 <chr>,
+    ## #   m.inc.d17_m.n2 <chr>, m.inc.d9_m.inc.d17 <chr>, m.inc.d9_m.n2 <chr>
+
+    wideDEGsBldg <- wideDEGscandidates %>%
+      select(sextissue,gene, contains("bldg"))
+    wideDEGsBldg
+
+    ## # A tibble: 238 x 17
+    ##    sextissue gene  bldg_extend bldg_hatch bldg_inc.d17 bldg_inc.d3 bldg_inc.d9
+    ##    <chr>     <chr> <chr>       <chr>      <chr>        <chr>       <chr>      
+    ##  1 female_g… CRHBP 1.18, 0.05  <NA>       1.34, 0.01   <NA>        <NA>       
+    ##  2 female_g… FSHR  1.17, 0.01  <NA>       1.02, 0.01   <NA>        <NA>       
+    ##  3 female_g… PRL   0.66, 0.05  <NA>       <NA>         <NA>        <NA>       
+    ##  4 female_g… CREB… 0.65, 0.03  <NA>       <NA>         <NA>        <NA>       
+    ##  5 female_g… ESR1  -0.66, 0.09 -0.67, 0.1 -0.73, 0.03  -0.78, 0.04 -0.67, 0.09
+    ##  6 female_g… DBH   -2.11, 0.07 <NA>       -4.01, 0     -2.97, 0.02 -2.54, 0.04
+    ##  7 female_g… HTR2C <NA>        0.91, 0.05 0.9, 0.02    <NA>        <NA>       
+    ##  8 female_g… FOS   <NA>        0.43, 0.09 0.63, 0      0.63, 0.01  <NA>       
+    ##  9 female_g… GNAQ  <NA>        -0.51, 0.… -0.57, 0.01  <NA>        <NA>       
+    ## 10 female_g… PRLR  <NA>        -1.42, 0.… -1.05, 0.05  -1.3, 0.04  <NA>       
+    ## # … with 228 more rows, and 10 more variables: bldg_lay <chr>,
+    ## #   bldg_m.inc.d17 <chr>, bldg_m.inc.d3 <chr>, bldg_m.inc.d8 <chr>,
+    ## #   bldg_m.inc.d9 <chr>, bldg_m.n2 <chr>, bldg_n5 <chr>, bldg_n9 <chr>,
+    ## #   bldg_prolong <chr>, control_bldg <chr>
+
+    wideDEGsControl <- wideDEGscandidates %>%
+      select(sextissue,gene, contains("control"))
+    wideDEGsControl
+
+    ## # A tibble: 238 x 17
+    ##    sextissue gene  control_bldg control_extend control_hatch control_inc.d17
+    ##    <chr>     <chr> <chr>        <chr>          <chr>         <chr>          
+    ##  1 female_g… CRHBP -1.5, 0      <NA>           <NA>          <NA>           
+    ##  2 female_g… FSHR  -1.91, 0     -0.75, 0.05    -1.15, 0      -0.9, 0.03     
+    ##  3 female_g… PRL   <NA>         0.73, 0.01     <NA>          <NA>           
+    ##  4 female_g… CREB… <NA>         0.6, 0.01      <NA>          <NA>           
+    ##  5 female_g… ESR1  1.39, 0      0.73, 0.02     0.72, 0.03    0.65, 0.06     
+    ##  6 female_g… DBH   2.37, 0.01   <NA>           <NA>          <NA>           
+    ##  7 female_g… HTR2C -1.09, 0     <NA>           <NA>          <NA>           
+    ##  8 female_g… FOS   <NA>         <NA>           <NA>          0.37, 0.09     
+    ##  9 female_g… GNAQ  0.71, 0      0.61, 0        <NA>          <NA>           
+    ## 10 female_g… PRLR  <NA>         <NA>           <NA>          <NA>           
+    ## # … with 228 more rows, and 11 more variables: control_inc.d3 <chr>,
+    ## #   control_inc.d9 <chr>, control_lay <chr>, control_m.inc.d17 <chr>,
+    ## #   control_m.inc.d3 <chr>, control_m.inc.d8 <chr>, control_m.inc.d9 <chr>,
+    ## #   control_m.n2 <chr>, control_n5 <chr>, control_n9 <chr>,
+    ## #   control_prolong <chr>
+
+    # sequential in 2 or more comparisons
+    wideDEGsSequential <- wideDEGscandidates %>%
+      select(sextissue,gene, "control_bldg", "bldg_lay", "lay_inc.d3", "inc.d3_inc.d9",
+             "inc.d9_inc.d17", "inc.d17_hatch", "hatch_n5", "n5_n9") %>%
+      mutate(totalNA = rowSums(is.na(.))) %>%
+      filter(totalNA < 8) %>%
+      arrange(gene, sextissue) %>%
+      select(-totalNA) %>% 
+      replace(., is.na(.), "")
+    wideDEGsSequential
+
+    ## # A tibble: 119 x 10
+    ##    sextissue gene  control_bldg bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
+    ##    <chr>     <chr> <chr>        <chr>    <chr>      <chr>         <chr>         
+    ##  1 female_h… ADRA… "0.26, 0.02" ""       ""         ""            ""            
+    ##  2 female_p… ADRA… "0.9, 0"     ""       ""         ""            ""            
+    ##  3 male_hyp… ADRA… ""           ""       ""         ""            "0.26, 0.1"   
+    ##  4 female_g… AVP   ""           ""       ""         ""            ""            
+    ##  5 female_p… AVP   "-6, 0"      ""       ""         ""            ""            
+    ##  6 male_hyp… AVP   ""           ""       ""         ""            "1.29, 0.04"  
+    ##  7 male_pit… AVP   "-3, 0.01"   ""       ""         ""            ""            
+    ##  8 female_g… AVPR… "0.93, 0.09" ""       "1.49, 0.… "-2.16, 0.01" ""            
+    ##  9 female_g… BRIN… "-1.2, 0"    ""       ""         ""            "1.02, 0.09"  
+    ## 10 female_h… BRIN… "-0.4, 0"    ""       ""         ""            ""            
+    ## # … with 109 more rows, and 3 more variables: inc.d17_hatch <chr>,
+    ## #   hatch_n5 <chr>, n5_n9 <chr>
 
 save files
 ----------
 
-    write.csv(allDEG, "../results/03_allDEGs.csv")
+    write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
     write.csv(candidatevsd, "../results/03_candidatevsd.csv")
     write.csv(parentalcaregenes, "../metadata/03_parentalcaregenes.csv")
+    write.csv(wideDEGsSequential, "../results/03_wideDEGsSequential.csv")
