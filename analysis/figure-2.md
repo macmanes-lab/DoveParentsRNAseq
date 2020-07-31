@@ -252,50 +252,50 @@ Figure
 
 ![](../figures/fig2-1.png)
 
-    a <- candidateboxplot("gonad", c("COMT"), "female") + 
-      labs(title =  "Females", 
-           subtitle = "Hypothlamic expression" ) 
+    a <- candidateboxplot("hypothalamus", c("COMT"), "female") + 
+      labs(title =  "Sequential", 
+           subtitle = "Female hypothalamus" ) 
 
-    b <- externalboxplots("gonad", c("COMT"), "female") + 
-      labs(title =  "Females", 
-           subtitle = "Hypothlamic expression" ) 
+    b <- externalboxplots("hypothalamus", c("COMT"), "female") + 
+      labs(title =  "External", 
+           subtitle = " " ) 
 
     c <- candidateboxplot("pituitary", c("PRL"), "female") + 
-      labs(subtitle = "Pituitary expression" ) 
+      labs(subtitle = "Female pituitary" ) 
 
     d <- externalboxplots("pituitary", c("PRL"), "female") + 
-       labs(subtitle = "Pituitary expression" ) 
+       labs(subtitle = " " ) 
 
     e <- candidateboxplot("gonad", c("AVPR1A"), "female") + 
-      labs( subtitle = "Gonad expression" ) + 
+      labs( subtitle = "Female gonads" ) + 
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
     f <- externalboxplots("pituitary", c("AVPR1A"), "female") + 
-       labs( subtitle = "Gonad expression" ) + 
+       labs( subtitle = " " ) + 
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
     females <- plot_grid(a,b,c,d,e,f, ncol = 2, rel_widths = c(2,1))
 
-    a2 <- candidateboxplot("gonad", c("COMT"), "male") + 
-      labs(title =  "Males", 
-           subtitle = "Hypothlamic expression" ) 
+    a2 <- candidateboxplot("hypothalamus", c("COMT"), "male") + 
+      labs(title =  "Sequential", 
+           subtitle = "Male hypothalamus" ) 
 
-    b2 <- externalboxplots("gonad", c("COMT"), "male") + 
-      labs(title =  "Males", 
-           subtitle = "Hypothlamic expression" ) 
+    b2 <- externalboxplots("hypothalamus", c("COMT"), "male") + 
+      labs(title =  "External", 
+           subtitle = "  " ) 
 
     c2 <- candidateboxplot("pituitary", c("PRL"), "male") + 
-      labs(subtitle = "Pituitary expression" ) 
+      labs(subtitle = "Male pituitary" ) 
 
     d2 <- externalboxplots("pituitary", c("PRL"), "male") + 
-       labs(subtitle = "Pituitary expression" ) 
+       labs(subtitle = " " ) 
 
     e2 <- candidateboxplot("gonad", c("AVPR1A"), "male") + 
-      labs( subtitle = "Gonad expression" ) + 
+      labs( subtitle = "Male gonads" ) + 
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
     f2 <- externalboxplots("pituitary", c("AVPR1A"), "male") + 
-       labs( subtitle = "Gonad expression" )  + 
+       labs( subtitle = " " )  + 
       theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
     males <- plot_grid(a2,b2,c2,d2,e2,f2, ncol = 2, rel_widths = c(2,1))
@@ -318,10 +318,11 @@ Figure
     ## Warning in wilcox.test.default(c(5.54670900060151, 5.68124741136788,
     ## 5.90118219899707, : cannot compute exact p-value with ties
 
-    newfig2 <- plot_grid(females, males)
+    newfig2 <- plot_grid(females, males, labels = c("A", "B"),
+                         label_size  = 8)
     newfig2
 
-![](../figures/newHPGfig-1.png)
+![](../figures/fig2-2.png)
 
     #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
     #write.csv(candidatevsd, "../results/candidatecounts.csv")
