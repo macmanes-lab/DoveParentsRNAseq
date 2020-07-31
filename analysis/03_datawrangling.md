@@ -6608,5 +6608,4 @@ save files
 
     write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
     write.csv(candidatevsd, "../results/03_candidatevsd.csv")
-    write.csv(parentalcaregenes, "../metadata/03_parentalcaregenes.csv")
-    write.csv(wideDEGsSequential, "../results/03_wideDEGsSequential.csv")
+    write.csv(table1, "../results/03_wideDEGsSequential.csv", row.names = F)
