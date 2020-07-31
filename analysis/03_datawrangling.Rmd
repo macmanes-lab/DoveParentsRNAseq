@@ -191,7 +191,8 @@ wideDEGsSequential <- wideDEGscandidates %>%
          "inc.d9_inc.d17", "inc.d17_hatch", "hatch_n5", "n5_n9") %>%
   mutate(totalNA = rowSums(is.na(.))) %>%
   filter(totalNA < 8) %>%
-  arrange(gene, sextissue) %>%
+  arrange(totalNA, gene, sextissue) %>%
+  #arrange( gene, sextissue) %>%
   select(-totalNA) %>% 
   replace(., is.na(.), "")
 wideDEGsSequential

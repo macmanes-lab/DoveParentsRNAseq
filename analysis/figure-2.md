@@ -6,6 +6,9 @@ Candidate gene analysis
     library(cowplot)
     library(ggpubr)
     library(knitr)
+
+    ## Warning: package 'knitr' was built under R version 3.6.2
+
     library(kableExtra)
     library(corrr)
     library(ggsignif)
@@ -26,28 +29,42 @@ Candidate genes
 
     ## Warning: Missing column names filled in: 'X1' [1]
 
-    head(parentalcaregenes)
-
-    ## # A tibble: 6 x 5
-    ##   geneid NCBI           literature GO     gene  
-    ##    <dbl> <chr>          <chr>      <chr>  <chr> 
-    ## 1 428980 XP_004942333.2 ADRA2A     <NA>   ADRA2A
-    ## 2 396101 NP_990516.1    AVP        AVP    AVP   
-    ## 3 771773 NP_001103908.1 AVPR1A     AVPR1A AVPR1A
-    ## 4 395098 NP_989780.1    <NA>       BRINP1 BRINP1
-    ## 5 416783 XP_001233014.1 COMT       <NA>   COMT  
-    ## 6 416206 XP_001231574.1 <NA>       CREBRF CREBRF
-
-    curleychampagnegenes <- parentalcaregenes %>% distinct(literature) %>% drop_na() %>% pull(literature)
-    GOgenes <- parentalcaregenes %>% distinct(GO)  %>% drop_na() %>% pull(GO)
     candidategenes <- parentalcaregenes %>% pull(gene) 
     candidategenes
 
-    ##  [1] "ADRA2A" "AVP"    "AVPR1A" "BRINP1" "COMT"   "CREBRF" "CRH"   
-    ##  [8] "CRHBP"  "CRHR1"  "CRHR2"  "DBH"    "DRD1"   "DRD4"   "ESR1"  
-    ## [15] "ESR2"   "FOS"    "GNAQ"   "HTR2C"  "KALRN"  "MBD2"   "MEST"  
-    ## [22] "NPAS3"  "NPAS3"  "NR3C1"  "OPRK1"  "OPRM1"  "OXT"    "PGR"   
-    ## [29] "PRL"    "PRLR"   "PTEN"   "SLC6A4" "ZFX"
+    ##  [1] "ADRA2A"  "AVP"     "AVPR1A"  "BRINP1"  "CGNRH-R" "COMT"    "CREBRF" 
+    ##  [8] "CRH"     "CRHBP"   "CRHR1"   "CRHR2"   "DBH"     "DRD1"    "DRD4"   
+    ## [15] "ESR1"    "ESR2"    "FOS"     "FSHB"    "FSHR"    "GAL"     "GNAQ"   
+    ## [22] "GNRH1"   "GNRHR"   "HTR2C"   "KALRN"   "MBD2"    "MEST"    "NPAS3"  
+    ## [29] "NPAS3"   "NR3C1"   "OPRK1"   "OPRM1"   "OXT"     "PGR"     "PRL"    
+    ## [36] "PRLR"    "PTEN"    "SLC6A4"  "TH"      "THRB"    "VIP"     "ZFX"
+
+    GOgenes <- parentalcaregenes %>% distinct(GO)  %>% drop_na() %>% pull(GO)
+    GOgenes
+
+    ##  [1] "AVP"    "AVPR1A" "BRINP1" "CREBRF" "DBH"    "DRD1"   "GNAQ"   "KALRN" 
+    ##  [9] "MBD2"   "NPAS3"  "NR3C1"  "OPRK1"  "OXT"    "PRL"    "PTEN"   "ZFX"
+
+    literaturegenes <- parentalcaregenes %>% 
+      distinct(literature) %>% 
+      drop_na() %>% 
+      pull(literature)
+    literaturegenes
+
+    ##  [1] "ADRA2A"  "AVP"     "AVPR1A"  "CGNRH-R" "COMT"    "CRH"     "CRHBP"  
+    ##  [8] "CRHR1"   "CRHR2"   "DRD1"    "DRD4"    "ESR1"    "ESR2"    "FOS"    
+    ## [15] "FSHB"    "FSHR"    "GAL"     "GNRH1"   "GNRHR"   "HTR2C"   "MEST"   
+    ## [22] "NR3C1"   "OPRM1"   "OXT"     "PGR"     "PRL"     "PRLR"    "SLC6A4" 
+    ## [29] "TH"      "THRB"    "VIP"
+
+    litNotGO <-  literaturegenes[!literaturegenes %in% GOgenes]
+    litNotGOknown <- litNotGO[!litNotGO %in% c("ADRA2A", "MEST", "SLC6A4")]
+    litNotGOknown
+
+    ##  [1] "CGNRH-R" "COMT"    "CRH"     "CRHBP"   "CRHR1"   "CRHR2"   "DRD4"   
+    ##  [8] "ESR1"    "ESR2"    "FOS"     "FSHB"    "FSHR"    "GAL"     "GNRH1"  
+    ## [15] "GNRHR"   "HTR2C"   "OPRM1"   "PGR"     "PRLR"    "TH"      "THRB"   
+    ## [22] "VIP"
 
 Candidate DEGs
 --------------
@@ -65,43 +82,47 @@ Candidate DEGs
       group_by(gene,  comparison) %>%
       summarize(res = str_c(res, collapse = " ")) %>%
       pivot_wider(names_from = comparison, values_from = res) %>%
-      select(gene, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
+      select(gene, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
     candidateDEGS
 
-    ## # A tibble: 23 x 7
-    ## # Groups:   gene [23]
-    ##    gene   bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
-    ##    <chr>  <chr>    <chr>      <chr>         <chr>          <chr>    <chr>
-    ##  1 ADRA2A <NA>     <NA>       <NA>          MH+            <NA>     <NA> 
-    ##  2 AVP    <NA>     <NA>       <NA>          MH+            <NA>     FG+  
-    ##  3 AVPR1A <NA>     FG+        FG-           <NA>           <NA>     <NA> 
-    ##  4 BRINP1 <NA>     <NA>       <NA>          FG+            <NA>     <NA> 
-    ##  5 COMT   <NA>     <NA>       <NA>          <NA>           FH-      <NA> 
-    ##  6 CREBRF FG+      FG-        <NA>          <NA>           FP+      <NA> 
-    ##  7 CRHBP  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ##  8 CRHR2  <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ##  9 DRD1   <NA>     <NA>       <NA>          <NA>           FH+      <NA> 
-    ## 10 DRD4   <NA>     FP-        <NA>          <NA>           FH+      <NA> 
-    ## # … with 13 more rows
+    ## # A tibble: 28 x 6
+    ## # Groups:   gene [28]
+    ##    gene   lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
+    ##    <chr>  <chr>      <chr>         <chr>          <chr>    <chr>
+    ##  1 ADRA2A <NA>       <NA>          MH+            <NA>     <NA> 
+    ##  2 AVP    <NA>       <NA>          MH+            <NA>     FG+  
+    ##  3 AVPR1A FG+        FG-           <NA>           <NA>     <NA> 
+    ##  4 BRINP1 <NA>       <NA>          FG+            <NA>     <NA> 
+    ##  5 COMT   <NA>       <NA>          <NA>           FH-      <NA> 
+    ##  6 CREBRF FG-        <NA>          <NA>           FP+      <NA> 
+    ##  7 CRHBP  <NA>       <NA>          <NA>           FH+      <NA> 
+    ##  8 CRHR2  <NA>       <NA>          <NA>           FH+      <NA> 
+    ##  9 DRD1   <NA>       <NA>          <NA>           FH+      <NA> 
+    ## 10 DRD4   FP-        <NA>          <NA>           FH+      <NA> 
+    ## # … with 18 more rows
 
     ## table 1 summary candidate genes
     table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
-      select(gene, bldg_lay:n5_n9, literature, GO, NCBI) %>%
+      select(gene, lay_inc.d3:n5_n9, literature, GO, NCBI) %>%
       mutate(literature = if_else(is.na(literature), " ", "X"),
              GO = if_else(is.na(GO), " ", "X"))
-    head(table1)
+    (table1)
 
-    ## # A tibble: 6 x 10
-    ## # Groups:   gene [6]
-    ##   gene  bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
-    ##   <chr> <chr>    <chr>      <chr>         <chr>          <chr>    <chr>
-    ## 1 ADRA… <NA>     <NA>       <NA>          MH+            <NA>     <NA> 
-    ## 2 AVP   <NA>     <NA>       <NA>          MH+            <NA>     FG+  
-    ## 3 AVPR… <NA>     FG+        FG-           <NA>           <NA>     <NA> 
-    ## 4 BRIN… <NA>     <NA>       <NA>          FG+            <NA>     <NA> 
-    ## 5 COMT  <NA>     <NA>       <NA>          <NA>           FH-      <NA> 
-    ## 6 CREB… FG+      FG-        <NA>          <NA>           FP+      <NA> 
-    ## # … with 3 more variables: literature <chr>, GO <chr>, NCBI <chr>
+    ## # A tibble: 28 x 9
+    ## # Groups:   gene [28]
+    ##    gene  lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9 literature GO   
+    ##    <chr> <chr>      <chr>         <chr>          <chr>    <chr> <chr>      <chr>
+    ##  1 ADRA… <NA>       <NA>          MH+            <NA>     <NA>  "X"        " "  
+    ##  2 AVP   <NA>       <NA>          MH+            <NA>     FG+   "X"        "X"  
+    ##  3 AVPR… FG+        FG-           <NA>           <NA>     <NA>  "X"        "X"  
+    ##  4 BRIN… <NA>       <NA>          FG+            <NA>     <NA>  " "        "X"  
+    ##  5 COMT  <NA>       <NA>          <NA>           FH-      <NA>  "X"        " "  
+    ##  6 CREB… FG-        <NA>          <NA>           FP+      <NA>  " "        "X"  
+    ##  7 CRHBP <NA>       <NA>          <NA>           FH+      <NA>  "X"        " "  
+    ##  8 CRHR2 <NA>       <NA>          <NA>           FH+      <NA>  "X"        " "  
+    ##  9 DRD1  <NA>       <NA>          <NA>           FH+      <NA>  "X"        "X"  
+    ## 10 DRD4  FP-        <NA>          <NA>           FH+      <NA>  "X"        " "  
+    ## # … with 18 more rows, and 1 more variable: NCBI <chr>
 
 Candidate VSDs
 --------------
@@ -110,6 +131,7 @@ Candidate VSDs
     candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
       select(-X1) %>%
       filter(treatment %in% charlevels) %>%
+      mutate(treatment = factor(treatment, levels = charlevels)) %>%
       drop_na()
 
     ## Warning: Missing column names filled in: 'X1' [1]
@@ -117,14 +139,14 @@ Candidate VSDs
     head(candidatevsd)
 
     ## # A tibble: 6 x 6
-    ##   sex    tissue      treatment gene  samples                         counts
-    ##   <chr>  <chr>       <chr>     <chr> <chr>                            <dbl>
-    ## 1 female hypothalam… control   ADRA… L.G118_female_hypothalamus_con…   8.95
-    ## 2 female hypothalam… control   ADRA… R.G106_female_hypothalamus_con…   8.81
-    ## 3 female hypothalam… control   ADRA… R.R20_female_hypothalamus_cont…   9.18
-    ## 4 female hypothalam… control   ADRA… R.R9_female_hypothalamus_contr…   8.72
-    ## 5 female hypothalam… control   ADRA… R.W44_female_hypothalamus_cont…   9.23
-    ## 6 female hypothalam… inc.d9    ADRA… blk.s061.pu.y_female_hypothala…   9.11
+    ##   sex    tissue       treatment gene  samples                             counts
+    ##   <chr>  <chr>        <fct>     <chr> <chr>                                <dbl>
+    ## 1 female hypothalamus control   ADRA… L.G118_female_hypothalamus_control…   8.95
+    ## 2 female hypothalamus control   ADRA… R.G106_female_hypothalamus_control    8.81
+    ## 3 female hypothalamus control   ADRA… R.R20_female_hypothalamus_control.…   9.18
+    ## 4 female hypothalamus control   ADRA… R.R9_female_hypothalamus_control      8.72
+    ## 5 female hypothalamus control   ADRA… R.W44_female_hypothalamus_control     9.23
+    ## 6 female hypothalamus inc.d9    ADRA… blk.s061.pu.y_female_hypothalamus_…   9.11
 
     candidatevsdwide <- candidatevsd  %>%
         pivot_wider(names_from = gene, values_from = counts) 
@@ -138,13 +160,13 @@ Candidate VSDs
 Candidate Correlations - SUppl fig 1
 ------------------------------------
 
-    hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
-    pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
-    gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
+    hyp1 <- makecorrdf("female", "hypothalamus", litNotGOknown)  
+    pit1 <- makecorrdf("female", "pituitary", litNotGOknown)  
+    gon1 <- makecorrdf("female", "gonad", litNotGOknown)  
 
-    hyp2 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)  
-    pit2 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
-    gon2 <- makecorrdf("male", "gonad", curleychampagnegenes) 
+    hyp2 <- makecorrdf("male", "hypothalamus", litNotGOknown)  
+    pit2 <- makecorrdf("male", "pituitary", litNotGOknown)  
+    gon2 <- makecorrdf("male", "gonad", litNotGOknown) 
 
 
     hyp3 <- makecorrdf("female", "hypothalamus", GOgenes)  
@@ -197,42 +219,6 @@ Candidate Correlations - SUppl fig 1
 Figure
 ------
 
-    candidateboxplot <- function(whichtissue, whichgenes, whichsex){
-      
-      p <- candidatevsd %>%
-        filter(tissue %in% whichtissue,
-               gene %in% whichgenes,
-               sex %in% whichsex) %>%
-        mutate(treatment = factor(treatment, levels = charlevels)) %>%
-        ggplot(aes(x = treatment, y = counts)) +
-        geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
-        geom_jitter(size = 0.25, aes(color = sex)) +
-        #facet_wrap(~sex,  nrow = 1) +
-        scale_fill_manual(values = allcolors) +
-        scale_color_manual(values = allcolors) +
-        theme_B3() + 
-        theme(legend.position = "none",
-              axis.title.y = element_text(face = "italic"),
-              axis.text.x = element_blank(),
-              axis.ticks = element_blank(),
-              axis.line.x = element_blank()) +
-        labs(y = whichgenes,
-             x = NULL) +
-        geom_signif(comparisons = list( c( "control", "bldg"),
-                                        c( "bldg", "lay"),
-                                       c( "lay", "inc.d3"),
-                                       c("inc.d3", "inc.d9"),
-                                       c( "inc.d9", "inc.d17"),
-                                       c( "inc.d17", "hatch"),
-                                       c("hatch", "n5"),
-                                       c( "n5", "n9")),  
-                    map_signif_level=TRUE,
-                    textsize = 1.5, family = 'Helvetica',
-                    vjust = 1.5, size = 0.2) 
-      
-      return(p)
-    }
-
     c1 <- scattercorrelations(FH, FH$DRD1, "DRD1", FH$HTR2C, "HTR2C", "#969696" ) +  labs(title = " ", subtitle = " " )  
     c3 <- scattercorrelations(FP, FP$AVPR1A, "AVPR1A", FP$CRHR1,  "CRHR1", "#969696")  + labs(title = " ", subtitle = " ") 
     c5 <- scattercorrelations(FG, FG$PGR, "PGR",  FG$ESR1,  "ESR1", "#969696")   + labs(title = " ", subtitle = " ") 
@@ -266,9 +252,80 @@ Figure
 
 ![](../figures/fig2-1.png)
 
+    a <- candidateboxplot("gonad", c("COMT"), "female") + 
+      labs(title =  "Females", 
+           subtitle = "Hypothlamic expression" ) 
+
+    b <- externalboxplots("gonad", c("COMT"), "female") + 
+      labs(title =  "Females", 
+           subtitle = "Hypothlamic expression" ) 
+
+    c <- candidateboxplot("pituitary", c("PRL"), "female") + 
+      labs(subtitle = "Pituitary expression" ) 
+
+    d <- externalboxplots("pituitary", c("PRL"), "female") + 
+       labs(subtitle = "Pituitary expression" ) 
+
+    e <- candidateboxplot("gonad", c("AVPR1A"), "female") + 
+      labs( subtitle = "Gonad expression" ) + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+    f <- externalboxplots("pituitary", c("AVPR1A"), "female") + 
+       labs( subtitle = "Gonad expression" ) + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+    females <- plot_grid(a,b,c,d,e,f, ncol = 2, rel_widths = c(2,1))
+
+    a2 <- candidateboxplot("gonad", c("COMT"), "male") + 
+      labs(title =  "Males", 
+           subtitle = "Hypothlamic expression" ) 
+
+    b2 <- externalboxplots("gonad", c("COMT"), "male") + 
+      labs(title =  "Males", 
+           subtitle = "Hypothlamic expression" ) 
+
+    c2 <- candidateboxplot("pituitary", c("PRL"), "male") + 
+      labs(subtitle = "Pituitary expression" ) 
+
+    d2 <- externalboxplots("pituitary", c("PRL"), "male") + 
+       labs(subtitle = "Pituitary expression" ) 
+
+    e2 <- candidateboxplot("gonad", c("AVPR1A"), "male") + 
+      labs( subtitle = "Gonad expression" ) + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+    f2 <- externalboxplots("pituitary", c("AVPR1A"), "male") + 
+       labs( subtitle = "Gonad expression" )  + 
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+    males <- plot_grid(a2,b2,c2,d2,e2,f2, ncol = 2, rel_widths = c(2,1))
+
+    ## Warning in wilcox.test.default(c(5.74459037236268, 5.69190747435115,
+    ## 5.57627376474667, : cannot compute exact p-value with ties
+
+    ## Warning in wilcox.test.default(c(5.71639281686726, 5.45090433098895,
+    ## 5.72401881911303, : cannot compute exact p-value with ties
+
+    ## Warning in wilcox.test.default(c(5.64556372505326, 5.05272358504361,
+    ## 5.53492367908641, : cannot compute exact p-value with ties
+
+    ## Warning in wilcox.test.default(c(5.05272358504361, 5.72204002358928,
+    ## 5.58427891014697, : cannot compute exact p-value with ties
+
+    ## Warning in wilcox.test.default(c(5.63670921041675, 5.57616171696985,
+    ## 5.05272358504361, : cannot compute exact p-value with ties
+
+    ## Warning in wilcox.test.default(c(5.54670900060151, 5.68124741136788,
+    ## 5.90118219899707, : cannot compute exact p-value with ties
+
+    newfig2 <- plot_grid(females, males)
+    newfig2
+
+![](../figures/newHPGfig-1.png)
+
     #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
     #write.csv(candidatevsd, "../results/candidatecounts.csv")
-    write.csv(table1, "../results/table1.csv")
+    write.csv(table1, "../results/table1-v2.csv")
 
 
     pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
@@ -280,6 +337,13 @@ Figure
 
     pdf(file="../figures/supplfig-2.pdf", width=7.25, height=7.25)
     plot(supplfig2)
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
+
+    pdf(file="../figures/fig2-2.pdf", width=7.25, height=7.25)
+    plot(newfig2)
     dev.off()
 
     ## quartz_off_screen 

@@ -30,12 +30,21 @@ knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 
 ```{r candidategenes}
 parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% select(-X1)
-head(parentalcaregenes)
-
-curleychampagnegenes <- parentalcaregenes %>% distinct(literature) %>% drop_na() %>% pull(literature)
-GOgenes <- parentalcaregenes %>% distinct(GO)  %>% drop_na() %>% pull(GO)
 candidategenes <- parentalcaregenes %>% pull(gene) 
 candidategenes
+
+GOgenes <- parentalcaregenes %>% distinct(GO)  %>% drop_na() %>% pull(GO)
+GOgenes
+
+literaturegenes <- parentalcaregenes %>% 
+  distinct(literature) %>% 
+  drop_na() %>% 
+  pull(literature)
+literaturegenes
+
+litNotGO <-  literaturegenes[!literaturegenes %in% GOgenes]
+litNotGOknown <- litNotGO[!litNotGO %in% c("ADRA2A", "MEST", "SLC6A4")]
+litNotGOknown
 ```
 
 
@@ -57,15 +66,15 @@ candidateDEGS <- read_csv("../results/suppltable1.csv") %>%
   group_by(gene,  comparison) %>%
   summarize(res = str_c(res, collapse = " ")) %>%
   pivot_wider(names_from = comparison, values_from = res) %>%
-  select(gene, bldg_lay, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
+  select(gene, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
 candidateDEGS
 
 ## table 1 summary candidate genes
 table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
-  select(gene, bldg_lay:n5_n9, literature, GO, NCBI) %>%
+  select(gene, lay_inc.d3:n5_n9, literature, GO, NCBI) %>%
   mutate(literature = if_else(is.na(literature), " ", "X"),
          GO = if_else(is.na(GO), " ", "X"))
-head(table1)
+(table1)
 ```
 
 ## Candidate VSDs
@@ -76,6 +85,7 @@ head(table1)
 candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
   select(-X1) %>%
   filter(treatment %in% charlevels) %>%
+  mutate(treatment = factor(treatment, levels = charlevels)) %>%
   drop_na()
 head(candidatevsd)
 
@@ -93,15 +103,13 @@ MG <- subsetcandidatevsdwide("male", "gonad")
 
 
 ```{r correlations}
+hyp1 <- makecorrdf("female", "hypothalamus", litNotGOknown)  
+pit1 <- makecorrdf("female", "pituitary", litNotGOknown)  
+gon1 <- makecorrdf("female", "gonad", litNotGOknown)  
 
-
-hyp1 <- makecorrdf("female", "hypothalamus", curleychampagnegenes)  
-pit1 <- makecorrdf("female", "pituitary", curleychampagnegenes)  
-gon1 <- makecorrdf("female", "gonad", curleychampagnegenes)  
-
-hyp2 <- makecorrdf("male", "hypothalamus", curleychampagnegenes)  
-pit2 <- makecorrdf("male", "pituitary", curleychampagnegenes)  
-gon2 <- makecorrdf("male", "gonad", curleychampagnegenes) 
+hyp2 <- makecorrdf("male", "hypothalamus", litNotGOknown)  
+pit2 <- makecorrdf("male", "pituitary", litNotGOknown)  
+gon2 <- makecorrdf("male", "gonad", litNotGOknown) 
 
 
 hyp3 <- makecorrdf("female", "hypothalamus", GOgenes)  
@@ -161,41 +169,7 @@ supplfig2
 
 ```{r fig2, fig.width = 7.25, fig.height = 7.25}
 
-candidateboxplot <- function(whichtissue, whichgenes, whichsex){
-  
-  p <- candidatevsd %>%
-    filter(tissue %in% whichtissue,
-           gene %in% whichgenes,
-           sex %in% whichsex) %>%
-    mutate(treatment = factor(treatment, levels = charlevels)) %>%
-    ggplot(aes(x = treatment, y = counts)) +
-    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
-    geom_jitter(size = 0.25, aes(color = sex)) +
-    #facet_wrap(~sex,  nrow = 1) +
-    scale_fill_manual(values = allcolors) +
-    scale_color_manual(values = allcolors) +
-    theme_B3() + 
-    theme(legend.position = "none",
-          axis.title.y = element_text(face = "italic"),
-          axis.text.x = element_blank(),
-          axis.ticks = element_blank(),
-          axis.line.x = element_blank()) +
-    labs(y = whichgenes,
-         x = NULL) +
-    geom_signif(comparisons = list( c( "control", "bldg"),
-                                    c( "bldg", "lay"),
-                                   c( "lay", "inc.d3"),
-                                   c("inc.d3", "inc.d9"),
-                                   c( "inc.d9", "inc.d17"),
-                                   c( "inc.d17", "hatch"),
-                                   c("hatch", "n5"),
-                                   c( "n5", "n9")),  
-                map_signif_level=TRUE,
-                textsize = 1.5, family = 'Helvetica',
-                vjust = 1.5, size = 0.2) 
-  
-  return(p)
-}
+
 
 c1 <- scattercorrelations(FH, FH$DRD1, "DRD1", FH$HTR2C, "HTR2C", "#969696" ) +  labs(title = " ", subtitle = " " )  
 c3 <- scattercorrelations(FP, FP$AVPR1A, "AVPR1A", FP$CRHR1,  "CRHR1", "#969696")  + labs(title = " ", subtitle = " ") 
@@ -231,11 +205,65 @@ fig2
 ```
 
 
+```{r newHPGfig}
+
+a <- candidateboxplot("gonad", c("COMT"), "female") + 
+  labs(title =  "Females", 
+       subtitle = "Hypothlamic expression" ) 
+
+b <- externalboxplots("gonad", c("COMT"), "female") + 
+  labs(title =  "Females", 
+       subtitle = "Hypothlamic expression" ) 
+
+c <- candidateboxplot("pituitary", c("PRL"), "female") + 
+  labs(subtitle = "Pituitary expression" ) 
+
+d <- externalboxplots("pituitary", c("PRL"), "female") + 
+   labs(subtitle = "Pituitary expression" ) 
+
+e <- candidateboxplot("gonad", c("AVPR1A"), "female") + 
+  labs( subtitle = "Gonad expression" ) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+f <- externalboxplots("pituitary", c("AVPR1A"), "female") + 
+   labs( subtitle = "Gonad expression" ) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+females <- plot_grid(a,b,c,d,e,f, ncol = 2, rel_widths = c(2,1))
+
+a2 <- candidateboxplot("gonad", c("COMT"), "male") + 
+  labs(title =  "Males", 
+       subtitle = "Hypothlamic expression" ) 
+
+b2 <- externalboxplots("gonad", c("COMT"), "male") + 
+  labs(title =  "Males", 
+       subtitle = "Hypothlamic expression" ) 
+
+c2 <- candidateboxplot("pituitary", c("PRL"), "male") + 
+  labs(subtitle = "Pituitary expression" ) 
+
+d2 <- externalboxplots("pituitary", c("PRL"), "male") + 
+   labs(subtitle = "Pituitary expression" ) 
+
+e2 <- candidateboxplot("gonad", c("AVPR1A"), "male") + 
+  labs( subtitle = "Gonad expression" ) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+f2 <- externalboxplots("pituitary", c("AVPR1A"), "male") + 
+   labs( subtitle = "Gonad expression" )  + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+males <- plot_grid(a2,b2,c2,d2,e2,f2, ncol = 2, rel_widths = c(2,1))
+
+newfig2 <- plot_grid(females, males)
+newfig2
+```
+
 
 ```{r writefiles}
 #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
 #write.csv(candidatevsd, "../results/candidatecounts.csv")
-write.csv(table1, "../results/table1.csv")
+write.csv(table1, "../results/table1-v2.csv")
 
 
 pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
@@ -244,5 +272,9 @@ dev.off()
 
 pdf(file="../figures/supplfig-2.pdf", width=7.25, height=7.25)
 plot(supplfig2)
+dev.off()
+
+pdf(file="../figures/fig2-2.pdf", width=7.25, height=7.25)
+plot(newfig2)
 dev.off()
 ```

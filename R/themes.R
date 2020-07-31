@@ -113,7 +113,8 @@ colorsnewgrouping <-  c("control" = "#F8766D",
                  "chickcare"= "#FF61C3",
                  "manip" = "#959595")
 
-colorhypothesis <- c("nest" = "#8B4513",
+colorhypothesis <- c("none" = "#cc5500",
+                     "nest" = "#8B4513",
                      "eggs" = "#7FA163",
                      "chicks" = "#3A80B9",
                      "lo" = "#B5C4B2",
@@ -123,7 +124,8 @@ colorhypothesis <- c("nest" = "#8B4513",
 
 colorstissue <- c("hypothalamus" = "#d95f02",
                   "pituitary" = "#1b9e77",
-                  "gonads" =  "#7570b3")
+                  "gonads" =  "#7570b3",
+                  "gonad" =  "#7570b3")
 
 sexcolors <- c("female" = "#969696", "male" = "#525252")
 
@@ -139,7 +141,8 @@ colorsvolcano <-  c(colorschar,
                     "NS" = "#bdbdbd")
 
  
-allcolors <- c(colorscharmaip, sexcolors, colorstissue, colorhypothesis,  "gonad" =  "#7570b3")
+allcolors <- c(colorscharmaip, sexcolors, 
+               colorstissue, colorhypothesis)
  
 colorsvolcanochar <-  c(colorschar,
                     "NS" = "#bdbdbd")

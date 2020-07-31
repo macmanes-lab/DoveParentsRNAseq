@@ -1224,3 +1224,78 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
 }
 
 
+## candidate gene box plot 
+
+candidateboxplot <- function(whichtissue, whichgenes, whichsex){
+  
+  p <- candidatevsd %>%
+    filter(tissue %in% whichtissue,
+           gene %in% whichgenes,
+           sex %in% whichsex) %>%
+    mutate(treatment = factor(treatment, levels = charlevels)) %>%
+    ggplot(aes(x = treatment, y = counts)) +
+    geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
+    #facet_wrap(~sex,  nrow = 1) +
+    scale_fill_manual(values = allcolors) +
+    scale_color_manual(values = allcolors) +
+    theme_B3() + 
+    theme(legend.position = "none",
+          axis.title.y = element_text(face = "italic"),
+          axis.text.x = element_blank(),
+          axis.ticks = element_blank(),
+          axis.line.x = element_blank()) +
+    labs(y = whichgenes,
+         x = NULL) +
+    geom_signif(comparisons = list( c( "control", "bldg"),
+                                    c( "bldg", "lay"),
+                                    c( "lay", "inc.d3"),
+                                    c("inc.d3", "inc.d9"),
+                                    c( "inc.d9", "inc.d17"),
+                                    c( "inc.d17", "hatch"),
+                                    c("hatch", "n5"),
+                                    c( "n5", "n9")),  
+                map_signif_level=TRUE,
+                textsize = 1.5, family = 'Helvetica',
+                vjust = 1.5, size = 0.2) 
+  
+  return(p)
+}
+
+
+## candidate gene box plot 
+
+externalboxplots <- function(whichtissue, whichgenes, whichsex){
+  
+  p <- candidatevsd %>%
+    filter(tissue %in% whichtissue,
+           gene %in% whichgenes,
+           sex %in% whichsex) %>%
+    mutate(treatment = factor(treatment, levels = charlevels)) %>%
+    mutate(external = fct_collapse(treatment, 
+                                   "none" = c("control", "bldg"),
+                                   "eggs" = c("lay" , "inc.d3", 
+                                              "inc.d9", "inc.d17"),
+                                   "chicks" = c("hatch", "n5", "n9"))) %>%
+    ggplot(aes(x = external, y = counts)) +
+    geom_boxplot(aes(fill = external, color = sex), outlier.shape = NA) +
+    geom_jitter(size = 0.25, aes(color = treatment)) +
+    #facet_wrap(~sex,  nrow = 1) +
+    scale_fill_manual(values = allcolors) +
+    scale_color_manual(values = allcolors) +
+    theme_B3() + 
+    theme(legend.position = "none",
+          axis.title.y = element_text(face = "italic"),
+          axis.text.x = element_blank(),
+          axis.ticks = element_blank(),
+          axis.line.x = element_blank()) +
+    labs(y = whichgenes,
+         x = NULL) +
+    geom_signif(comparisons = list( c( "none", "eggs"),
+                                    c( "eggs", "chicks")),  
+                map_signif_level=TRUE,
+                textsize = 1.5, family = 'Helvetica',
+                vjust = 1.5, size = 0.2) 
+  
+  return(p)
+}
