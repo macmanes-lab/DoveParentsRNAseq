@@ -179,85 +179,58 @@ c2 <- scattercorrelations(MH, MH$DRD1, "DRD1", MH$HTR2C, "HTR2C", "#525252")  + 
 c4 <- scattercorrelations(MP, MP$AVPR1A,  "AVPR1A",  MP$CRHR1, "CRHR1", "#525252")  + labs(title = " ", subtitle = " " ) 
 c6 <- scattercorrelations(MG, MG$PGR, "PGR", MG$ESR1, "ESR1", "#525252")   + labs(title = " ", subtitle = " " ) 
 
-d1 <- candidateboxplot("hypothalamus", c("DRD1"), "female") + labs(x = NULL, title =  "Hypothlamic expression", subtitle = "females" )  
-d2 <- candidateboxplot("hypothalamus", c("HTR2C"), "female") + labs(x = NULL )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-d3 <- candidateboxplot("pituitary", c("AVPR1A"), "female") + labs(x = NULL , title = "Pituitary expression", subtitle = "females") 
-d4 <- candidateboxplot("pituitary", c("CRHR1"), "female") + labs(x = NULL  )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-d5 <- candidateboxplot("gonad", c("PGR"), "female") + labs(x = NULL, title = "Gonadal expression", subtitle = "females")
-d6 <- candidateboxplot("gonad", c("ESR1"), "female") + labs(x = NULL ) + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-
-e1 <- candidateboxplot("hypothalamus", c("DRD1"), "male") + labs(x = NULL, title = " " , subtitle = "males" )  
-e2 <- candidateboxplot("hypothalamus", c("HTR2C"), "male") + labs(x = NULL, title = " " )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-e3 <- candidateboxplot("pituitary", c("AVPR1A"), "male") + labs(x = NULL , subtitle = "males", title = " " ) 
-e4 <- candidateboxplot("pituitary", c("CRHR1"), "male") + labs(x = NULL, title = " "  )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-e5 <- candidateboxplot("gonad", c("PGR"), "male") + labs(x = NULL, subtitle = "males", title = " " ) 
-e6 <- candidateboxplot("gonad", c("ESR1"), "male") + labs(x = NULL , title = " ")   + theme(axis.text.x = element_text(angle = 45, vjust = 1)) 
-
-#b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
-c123 <- plot_grid(c1,c3,c5, ncol = 1, rel_heights = c(1.1,1,1))
-c456 <- plot_grid(c2,c4,c6, ncol = 1, rel_heights = c(1.1,1,1))
-d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1), labels = c("A", " ",  "B", " ", "C"), label_size = 8)
-e <- plot_grid(e1,e2,e3,e4,e5,e6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
-
-fig2 <- plot_grid(d, c123,e,c456,nrow  = 1)
-fig2
 
 
 
 
 
+plot3candidates <- function(hypgene, pitgene, gongene){
+  
+  df <- candidatevsd %>%
+    filter(gene %in% c(hypgene, pitgene, gongene)) %>%
+    mutate(treatment = factor(treatment, levels = charlevels)) %>%
+    mutate(external = fct_collapse(treatment, 
+                                   "none" = c("control", "bldg"),
+                                   "eggs" = c("lay" , "inc.d3", 
+                                              "inc.d9", "inc.d17"),
+                                   "chicks" = c("hatch", "n5", "n9")))
 
-a <- candidateboxplot("hypothalamus", c("COMT"), "female") + 
-  labs(title =  "Sequential", 
-       subtitle = "Female hypothalamus" ) 
+  a1 <- newcandidateboxplot("hypothalamus", hypgene, "female", "female hypothalamus", "sequential") 
+  a2 <- externalboxplots("hypothalamus", hypgene, "female", " ", "external") 
+  a3 <- newcandidateboxplot("hypothalamus", hypgene, "male", "male hypothalamus", "sequential")
+  a4 <- externalboxplots( "hypothalamus", hypgene, "female", " ", "external")
+  
+  hypplots <- plot_grid(a1,a2, a3, a4, rel_widths = c(2,1,2,1), nrow = 1)
+  
+  b1 <- newcandidateboxplot("pituitary", pitgene, "female", "female pituitary", "sequential")
+  b2 <- externalboxplots("pituitary", pitgene, "female", " ", "external") 
+  b3 <- newcandidateboxplot("pituitary", pitgene, "male", "male pituitary", "sequential")
+  b4 <- externalboxplots( "pituitary", pitgene, "female", " ", "external")
+  
+  pitplots <- plot_grid(b1,b2, b3, b4, rel_widths = c(2,1,2,1), nrow = 1)
+  
+  c1 <- newcandidateboxplot("gonad", gongene, "female", "female gonad", "sequential") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  c2 <- externalboxplots("gonad", gongene, "female", " ", "external") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  c3 <- newcandidateboxplot("gonad", gongene, "male", "male gonad", "sequential") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  c4 <- externalboxplots( "gonad", gongene, "female", " ", "external") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  gonplots <- plot_grid(c1,c2, c3, c4, rel_widths = c(2,1,2,1), nrow = 1)
+  
+  fig2alt <- plot_grid(hypplots, pitplots, gonplots, nrow = 3,
+                       labels = "AUTO", label_size = 8,
+                       rel_heights = c(1,1,1.2))
+  print(fig2alt)
+  
+    
+}
 
-b <- externalboxplots("hypothalamus", c("COMT"), "female") + 
-  labs(title =  "External", 
-       subtitle = " " ) 
-
-c <- candidateboxplot("pituitary", c("PRL"), "female") + 
-  labs(subtitle = "Female pituitary" ) 
-
-d <- externalboxplots("pituitary", c("PRL"), "female") + 
-   labs(subtitle = " " ) 
-
-e <- candidateboxplot("gonad", c("AVPR1A"), "female") + 
-  labs( subtitle = "Female gonads" ) + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-f <- externalboxplots("pituitary", c("AVPR1A"), "female") + 
-   labs( subtitle = " " ) + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-females <- plot_grid(a,b,c,d,e,f, ncol = 2, rel_widths = c(2,1))
-
-a2 <- candidateboxplot("hypothalamus", c("COMT"), "male") + 
-  labs(title =  "Sequential", 
-       subtitle = "Male hypothalamus" ) 
-
-b2 <- externalboxplots("hypothalamus", c("COMT"), "male") + 
-  labs(title =  "External", 
-       subtitle = "  " ) 
-
-c2 <- candidateboxplot("pituitary", c("PRL"), "male") + 
-  labs(subtitle = "Male pituitary" ) 
-
-d2 <- externalboxplots("pituitary", c("PRL"), "male") + 
-   labs(subtitle = " " ) 
-
-e2 <- candidateboxplot("gonad", c("AVPR1A"), "male") + 
-  labs( subtitle = "Male gonads" ) + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-f2 <- externalboxplots("pituitary", c("AVPR1A"), "male") + 
-   labs( subtitle = " " )  + 
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-males <- plot_grid(a2,b2,c2,d2,e2,f2, ncol = 2, rel_widths = c(2,1))
-
-newfig2 <- plot_grid(females, males, labels = c("A", "B"),
-                     label_size  = 8)
-newfig2
+plot3candidates("COMT","PRL", "AVPR1A")
+plot3candidates("PRL","PRL", "PRL")
+plot3candidates("PRL","FSH", "ESR1")
 ```
 
 

@@ -1226,13 +1226,10 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
 
 ## candidate gene box plot 
 
-candidateboxplot <- function(whichtissue, whichgenes, whichsex){
+newcandidateboxplot <- function(whichtissue, whichgenes, whichsex, mytitle, mysubtitle){
   
-  p <- candidatevsd %>%
-    filter(tissue %in% whichtissue,
-           gene %in% whichgenes,
-           sex %in% whichsex) %>%
-    mutate(treatment = factor(treatment, levels = charlevels)) %>%
+  p <- df  %>%
+    filter(sex %in% whichsex, gene %in% whichgenes, tissue %in% whichtissue) %>%
     ggplot(aes(x = treatment, y = counts)) +
     geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
     geom_jitter(size = 0.25, aes(color = sex)) +
@@ -1246,7 +1243,9 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
           axis.ticks = element_blank(),
           axis.line.x = element_blank()) +
     labs(y = whichgenes,
-         x = NULL) +
+         x = NULL,
+         title = mytitle, 
+         subtitle = mysubtitle) +
     geom_signif(comparisons = list( c( "control", "bldg"),
                                     c( "bldg", "lay"),
                                     c( "lay", "inc.d3"),
@@ -1265,18 +1264,10 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
 
 ## candidate gene box plot 
 
-externalboxplots <- function(whichtissue, whichgenes, whichsex){
+externalboxplots <- function(whichtissue, whichgenes, whichsex, mytitle, mysubtitle){
   
-  p <- candidatevsd %>%
-    filter(tissue %in% whichtissue,
-           gene %in% whichgenes,
-           sex %in% whichsex) %>%
-    mutate(treatment = factor(treatment, levels = charlevels)) %>%
-    mutate(external = fct_collapse(treatment, 
-                                   "none" = c("control", "bldg"),
-                                   "eggs" = c("lay" , "inc.d3", 
-                                              "inc.d9", "inc.d17"),
-                                   "chicks" = c("hatch", "n5", "n9"))) %>%
+  p <- df %>%
+    filter(sex %in% whichsex, gene %in% whichgenes, tissue %in% whichtissue) %>%
     ggplot(aes(x = external, y = counts)) +
     geom_boxplot(aes(fill = external, color = sex), outlier.shape = NA) +
     geom_jitter(size = 0.25, aes(color = treatment)) +
@@ -1285,12 +1276,15 @@ externalboxplots <- function(whichtissue, whichgenes, whichsex){
     scale_color_manual(values = allcolors) +
     theme_B3() + 
     theme(legend.position = "none",
-          axis.title.y = element_text(face = "italic"),
+          axis.title.y = element_blank(),
+          axis.text.y = element_blank(),
           axis.text.x = element_blank(),
           axis.ticks = element_blank(),
           axis.line.x = element_blank()) +
     labs(y = whichgenes,
-         x = NULL) +
+         x = NULL,
+         title = mytitle, 
+         subtitle = mysubtitle) +
     geom_signif(comparisons = list( c( "none", "eggs"),
                                     c( "eggs", "chicks")),  
                 map_signif_level=TRUE,
