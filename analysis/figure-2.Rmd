@@ -86,11 +86,18 @@ candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>%
   select(-X1) %>%
   filter(treatment %in% charlevels) %>%
   mutate(treatment = factor(treatment, levels = charlevels)) %>%
-  drop_na()
+  drop_na() %>%
+    mutate(external = fct_collapse(treatment, 
+                                   "none" = c("control", "bldg"),
+                                   "eggs" = c("lay" , "inc.d3", 
+                                              "inc.d9", "inc.d17"),
+                                   "chicks" = c("hatch", "n5", "n9")))
 head(candidatevsd)
 
+
 candidatevsdwide <- candidatevsd  %>%
-    pivot_wider(names_from = gene, values_from = counts) 
+  select(-external) %>%
+  pivot_wider(names_from = gene, values_from = counts) 
 FH <- subsetcandidatevsdwide("female", "hypothalamus")
 FP <- subsetcandidatevsdwide("female", "pituitary")
 FG <- subsetcandidatevsdwide("female", "gonad")
@@ -178,23 +185,12 @@ c5 <- scattercorrelations(FG, FG$PGR, "PGR",  FG$ESR1,  "ESR1", "#969696")   + l
 c2 <- scattercorrelations(MH, MH$DRD1, "DRD1", MH$HTR2C, "HTR2C", "#525252")  + labs(title = " ", subtitle = " " )  
 c4 <- scattercorrelations(MP, MP$AVPR1A,  "AVPR1A",  MP$CRHR1, "CRHR1", "#525252")  + labs(title = " ", subtitle = " " ) 
 c6 <- scattercorrelations(MG, MG$PGR, "PGR", MG$ESR1, "ESR1", "#525252")   + labs(title = " ", subtitle = " " ) 
+```
 
-
-
-
-
+```{r newfig}
 
 plot3candidates <- function(hypgene, pitgene, gongene){
   
-  df <- candidatevsd %>%
-    filter(gene %in% c(hypgene, pitgene, gongene)) %>%
-    mutate(treatment = factor(treatment, levels = charlevels)) %>%
-    mutate(external = fct_collapse(treatment, 
-                                   "none" = c("control", "bldg"),
-                                   "eggs" = c("lay" , "inc.d3", 
-                                              "inc.d9", "inc.d17"),
-                                   "chicks" = c("hatch", "n5", "n9")))
-
   a1 <- newcandidateboxplot("hypothalamus", hypgene, "female", "female hypothalamus", "sequential") 
   a2 <- externalboxplots("hypothalamus", hypgene, "female", " ", "external") 
   a3 <- newcandidateboxplot("hypothalamus", hypgene, "male", "male hypothalamus", "sequential")
@@ -228,7 +224,7 @@ plot3candidates <- function(hypgene, pitgene, gongene){
     
 }
 
-plot3candidates("COMT","PRL", "AVPR1A")
+plot3candidates("COMT","PRL","AVPR1A")
 plot3candidates("PRL","PRL", "PRL")
 plot3candidates("PRL","FSH", "ESR1")
 ```

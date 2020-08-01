@@ -1228,8 +1228,11 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
 
 newcandidateboxplot <- function(whichtissue, whichgenes, whichsex, mytitle, mysubtitle){
   
-  p <- df  %>%
-    filter(sex %in% whichsex, gene %in% whichgenes, tissue %in% whichtissue) %>%
+  p <- candidatevsd  %>%
+    dplyr::filter(sex %in% whichsex, 
+                  gene %in% whichgenes, 
+                  tissue %in% whichtissue) %>%
+    DT::datatable() %>%
     ggplot(aes(x = treatment, y = counts)) +
     geom_boxplot(aes(fill = treatment, color = sex), outlier.shape = NA) +
     geom_jitter(size = 0.25, aes(color = sex)) +
@@ -1266,8 +1269,9 @@ newcandidateboxplot <- function(whichtissue, whichgenes, whichsex, mytitle, mysu
 
 externalboxplots <- function(whichtissue, whichgenes, whichsex, mytitle, mysubtitle){
   
-  p <- df %>%
-    filter(sex %in% whichsex, gene %in% whichgenes, tissue %in% whichtissue) %>%
+  p <- candidatevsd %>%
+    dplyr::filter(sex %in% whichsex, gene %in% whichgenes, tissue %in% whichtissue) %>%
+    DT::datatable() %>%
     ggplot(aes(x = external, y = counts)) +
     geom_boxplot(aes(fill = external, color = sex), outlier.shape = NA) +
     geom_jitter(size = 0.25, aes(color = treatment)) +
