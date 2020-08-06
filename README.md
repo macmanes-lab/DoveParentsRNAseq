@@ -30,7 +30,7 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 - [All differentially expressed genes](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/03_allDEG.csv)
 
 
-_[High quality pdfs available here](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/figures)_
+**_[High quality PDFs of all figures are available here](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/figures_**
 
 
 ### Figure 1 
