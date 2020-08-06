@@ -112,11 +112,11 @@ Figure 1
     ##  - attr(*, "validate")= logi TRUE
 
     e3 <- plottsneelipsev3(gontsne, gontsne$treatment, allcolors ) + 
-      labs(subtitle = "gonads", caption = "Perplexity = 50") 
+      labs(subtitle = "gonads") 
 
-    e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("E"), label_size = 8)
+    e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D"), label_size = 8)
 
-    fig1 <- plot_grid(a, e, nrow = 2, rel_heights = c(2.5,2))
+    fig1 <- plot_grid(a, e, nrow = 2, rel_heights = c(2.4,1.6))
     fig1
 
 ![](../figures/fig1-1.png)
@@ -124,13 +124,7 @@ Figure 1
 Save files
 ----------
 
-    # save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
-    #write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
-
-    # tsne files too big to save
-    #write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
-
-    pdf(file="../figures/fig1-1.pdf", width=7.25, height=7.25)
+    pdf(file="../figures/fig1-1.pdf", width=7, height=4.5)
     plot(fig1)
     dev.off()
 

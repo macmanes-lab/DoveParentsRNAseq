@@ -874,10 +874,10 @@ plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
 plottsneelipsev3 <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
     # stat_ellipse(linetype = 1, aes(color = pointcolor)) +
-    geom_point(size = 1.5, aes(color = pointcolor, shape = sex)) +
+    geom_point(size = 1.25, aes(color = pointcolor, shape = sex)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2", 
-         title = " ", caption = " ") +
+         title = " ") +
     scale_color_manual(values = whichcolors) +
     theme(legend.position = "none",
           axis.text = element_blank(), axis.ticks = element_blank()) 

@@ -42,7 +42,7 @@ head(row.names(countData) == row.names(colData))
 
 ## tsne
 
-```{r tSNE-df, fig.width=7, fig.height=5.25}
+```{r tSNE-df}
 # prep for tsne useing count data from limma and the custom `subsetmaketsne` function
 hyptsne <- subsetmaketsne("hypothalamus", alllevels, sexlevels)
 pittsne <- subsetmaketsne("pituitary", alllevels, sexlevels)
@@ -51,7 +51,7 @@ gontsne <- subsetmaketsne("gonads", alllevels, sexlevels)
 
 ## Figure 1
 
-```{r fig1, fig.width=7, fig.height=5.5}
+```{r fig1, fig.width=7, fig.height=4.5}
 
 a <- png::readPNG("../figures/images/fig_fig1a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
@@ -62,32 +62,19 @@ e2 <- plottsneelipsev3(pittsne, pittsne$treatment, allcolors ) +
   labs(subtitle = "pituitary") 
   theme(strip.text = element_blank())
 e3 <- plottsneelipsev3(gontsne, gontsne$treatment, allcolors ) + 
-  labs(subtitle = "gonads", caption = "Perplexity = 50") 
+  labs(subtitle = "gonads") 
 
-e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("E"), label_size = 8)
+e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D"), label_size = 8)
 
-fig1 <- plot_grid(a, e, nrow = 2, rel_heights = c(2.5,2))
+fig1 <- plot_grid(a, e, nrow = 2, rel_heights = c(2.4,1.6))
 fig1
 ```
-
-
-
 
 
 ## Save files
 
 ```{r write}
-# save file for musical genes https://raynamharris.shinyapps.io/musicalgenes/
-#write.csv(allDEG, "../../musicalgenes/data/allDEG.csv")
-
-# tsne files too big to save
-#write.csv(chartsne, "../../musicalgenes/data/tsne.csv")
-
-pdf(file="../figures/fig1-1.pdf", width=7.25, height=7.25)
+pdf(file="../figures/fig1-1.pdf", width=7, height=4.5)
 plot(fig1)
 dev.off()
 ```
-
-
-
-
