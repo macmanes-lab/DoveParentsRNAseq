@@ -130,3 +130,11 @@ Save files
 
     ## quartz_off_screen 
     ##                 2
+
+    png("../figures/fig1-1.png", width = 7, height = 4.5, 
+        units = 'in', res = 300)
+    plot(fig1) # Make plot
+    dev.off()
+
+    ## quartz_off_screen 
+    ##                 2
