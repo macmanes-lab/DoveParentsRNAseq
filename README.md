@@ -1,4 +1,6 @@
+<!---
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/macmanes-lab/DoveParentsRNAseq/master?urlpath=rstudio)
+--->
 
 # Characterizing the neurogenomics of parental care in the rock dove
 
@@ -18,17 +20,15 @@ These repositories is broken down into the following sub-repositories, each with
 There are two hidden directories, `kallisto_mappings` and `mapping`, which contain the results of the kallisto and salmon algorithms that transform read counts into gene counts.  
 
 
-## Tables
+## Results
 
 
 - [Table 1](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/table1.csv)
 - [Table 2](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/table2.csv)
-
 - [Suppl Table 1](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/suppltable1.csv)
 - [Suppl Table 2](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/suppltable2.csv)
+- [All differentially expressed genes](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/03_allDEG.csv)
 
-
-## Figures 
 
 _[High quality pdfs available here](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/figures)_
 
@@ -48,11 +48,9 @@ _[High quality pdfs available here](https://github.com/macmanes-lab/DoveParentsR
 ![](./figures/fig2-1.png)
 
 
-
 ### Supplement to Figure 2 
 
 ![](./figures/supplfig-2-1.png)
-
 
 
 ### Figure 3 
@@ -64,21 +62,10 @@ _[High quality pdfs available here](https://github.com/macmanes-lab/DoveParentsR
 
 ![](./figures/fig4-1.png)
 
-### Other
-
-![](./figures/images/fig_thumbnail.png)
-
-
-
-## Table 1
-
 
 ## Related documentation 
 
-Another website <http://www.dovelovegenomics.org/>.
-
-Another GitHub repository <https://github.com/macmanes-lab/RockDove>. 
-
-A talk from 2020 <https://speakerdeck.com/raynamharris/peaks-and-valleys-of-prolactin-driven-gene-expression-during-parental-care>.
-
-See also <https://macmanes-lab.github.io/DoveParentsRNAseq/> for a more user-friendly way to read the information on the poster. The bulk of the analysis for the SBN poster were created using the script [analysis/04_DESeq2_sexes.Rmd](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/analysis/04_DESeq2_sexes.Rmd), which really needs a different name. 
+- Dove Genomics Project website <http://www.dovelovegenomics.org/>
+- Shiny app for Data exploration <https://raynamharris.shinyapps.io/musicalgenes/>
+- A talk from the Society for Integrative and Comparative Biology 2020 
+<https://speakerdeck.com/raynamharris/peaks-and-valleys-of-prolactin-driven-gene-expression-during-parental-care>.
