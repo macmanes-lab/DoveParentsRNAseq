@@ -20,10 +20,11 @@ knitr::opts_chunk$set(message=F, warning=F)
 ```{r countData}
 # import count data, set rows at entreziz
 kallistodata <- read.table("../results/kallistocounts.txt", 
-                        sep = ",", row.names = NULL) %>%
-  rename("NCBI" = "entrezid",
+                        sep = ",", row.names = NULL) 
+kallistodata <- kallistodata %>%
+  dplyr::rename("NCBI" = "entrezid",
          "gene" = "Name")
-#head(kallistodata)
+head(kallistodata)
 
 ## save gene information
 geneinfo <- kallistodata %>%
