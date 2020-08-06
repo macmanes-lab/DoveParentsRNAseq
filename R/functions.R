@@ -22,9 +22,6 @@ subsetcolData2 <- function(colData, eachgroup){
   return(colData)
 }
 
-
-
-
 subsetcolData3 <- function(colData, eachgroup){
   
   colData <- colData %>%
@@ -45,12 +42,6 @@ subsetcolData4 <- function(colData, eachgroup){
   return(colData)
 }
 
-
-
-
-
-
-
 subsetcountData3 <- function(df){
   savecols <- as.character(df$sample) 
   savecols <- as.vector(savecols)  
@@ -67,8 +58,6 @@ numDEGs <- function(dds, group1, group2){
   sumpadj <- sum(res$padj < 0.01, na.rm = TRUE)
   return(sumpadj)
 }
-
-
 
 ############ returnpadj #########
 
@@ -203,8 +192,6 @@ returnPCAs2 <- function(vsd){
   return(pcadata)
 }
 
-
-
 ######### vsd.dataframe and corresponding col data ######### 
 
 vsd.dataframe <- function(vsd){
@@ -256,7 +243,6 @@ selectcandidatevsds <- function(listofgenes, vsd, colData){
   candidateentrezids <- geneinfo %>% 
     filter(Name %in% listofgenes) %>%  dplyr::select(entrezid) 
 
-  
   print(candidateentrezids$entrezid)
   
   rowstofilter <- as.list(candidateentrezids$entrezid)
@@ -322,9 +308,6 @@ plotcandidates <- function(vsd.df, colData, mysubtitle){
   return(p1)
   
 }
-
-######### plotcandidates ######### 
-
 
 
 ######### makepheatmap ######### 
@@ -412,10 +395,6 @@ plotcorrelationheatmaps <- function(vsd, mycoldata, mysubtitle){
   )
 }
 
-######### LDAdata.treatment ######### 
-
-
-
 ######### LDAplot.treatment ######### 
 
 LDAplot.treatment <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
@@ -483,8 +462,6 @@ subsetDESeq3 <- function(colData, countData, eachgroup, eachtreatment){
 }
 
 
-
-
 selectcBRCA1vsds <- function(listofgenes, vsd, colData){
   
   print(listofgenes)
@@ -513,9 +490,6 @@ selectcBRCA1vsds <- function(listofgenes, vsd, colData){
   
   return(candidatevsd)
 }
-
-
-
 
 
 ### modified corrr function
@@ -641,8 +615,6 @@ subsetmakepca <- function(whichtissue, whichtreatment, whichsex){
 }	
 
 
-
-
 makefvizdf <-  function(whichtissue, whichtreatment, whichsex){	
   colData <- colData %>%	
     dplyr::filter(tissue %in% whichtissue,	
@@ -747,10 +719,6 @@ createDEGdfsave <- function(up, down, mytissue){
 }  
 
 
-
-
-
-
 createDEGdfsavesex <- function(up, down, mytissue){
   
   res <- results(dds, contrast = c("sex", up, down), independentFiltering = T, alpha = 0.1)
@@ -844,14 +812,6 @@ plotprolactin <- function(df, myy, myylab, mysubtitle ){
                 vjust = 1.5, size = 0.2) 
   return(p)
 }
-
-
-
-
-
-
-
-
 
 ## tsne  figure 1 and 5
 
@@ -1044,7 +1004,6 @@ rplot2 <- function(rdf,
     plot_
 }
 
-
 ##### 3 funcitons  for correlation plots
 makecorrdf <- function(whichsex, whichtissue, whichgenes){
   corrrdf <- candidatevsd %>%
@@ -1057,8 +1016,6 @@ makecorrdf <- function(whichsex, whichtissue, whichgenes){
   # print(head(corrrdf))
   return(corrrdf)
 }
-
-
 
 subsetcandidatevsdwide <- function(whichsex, whichtissue){
   df <- candidatevsdwide %>%
@@ -1101,7 +1058,6 @@ plottopDEGs <- function(df, whichsex, myylab, mysubtitle){
     
   return(p)
 }
-
 
 ## fig 2 and 3 candidate genes 
 
@@ -1153,10 +1109,7 @@ scattercorrelations <- function(df, gene1, myylab, gene2, myxlab,  mylinecolor){
   return(p)
 }
 
-
-## FIg 4 
-
-
+## Fig 4 
 
 plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
   
@@ -1222,7 +1175,6 @@ plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
   
   return(p)
 }
-
 
 ## candidate gene box plot 
 
