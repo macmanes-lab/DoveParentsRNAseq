@@ -1,0 +1,97 @@
+---
+title: "Hypothalamus"
+output: md_document
+---
+
+# Hypothalamus
+
+```{r setup, include=T}
+library(tidyverse)
+library(cowplot)
+library(ggsignif)
+
+source("../R/themes.R")
+source("../R/functions.R")
+
+knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
+```
+
+## Treatment specific DEGs in the Hypothalamsu
+
+```{r suppltables}
+allDEG <- read_csv("../results/03_allDEG.csv") %>%
+  mutate(tissue = factor(tissue, levels = tissuelevel),
+         direction = factor(direction, levels = alllevels),
+         label = gsub("_","\nvs. ", comparison)) %>%
+  filter(tissue == "hypothalamus")
+allDEG
+
+
+# for suppl figures
+DEGcontrol <- allDEG %>% 
+  filter(grepl("control", comparison),
+         !grepl("m.|early|extend|prolong", comparison))  %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelscontrol))
+
+
+DEGbldg <- allDEG %>% 
+  filter(grepl("bldg", comparison),
+         !grepl("m.|early|extend|prolong", comparison))  %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))  %>%
+  drop_na()
+
+DEGchar <- allDEG %>% 
+  filter(comparison %in% comparisonlevelschar,
+         !grepl("control|bldg", comparison)) %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelschar))
+
+
+candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
+  select(-X1) %>%
+  filter(treatment %in% charlevels) %>%
+  mutate(treatment = factor(treatment, levels = charlevels)) %>%
+  drop_na() %>%
+    mutate(external = fct_collapse(treatment, 
+                                   "none" = c("control", "bldg"),
+                                   "eggs" = c("lay" , "inc.d3", 
+                                              "inc.d9", "inc.d17"),
+                                   "chicks" = c("hatch", "n5", "n9")))
+head(candidatevsd)
+```
+
+
+```{r hypothalamus, fig.width=7, fig.height=7}
+
+a <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
+  facet_wrap(~sex) +  labs(title = "Hypothalamus") 
+b <- makebargraph(DEGcontrol, "hypothalamus","DEGs w/ + LFC", 0, 4800, comparisonlabelscontrol) 
+  labs(title = " ") 
+  
+c <- makebargraph(DEGbldg, "hypothalamus", "DEGs w/ + LFC", 0, 480, comparisonlabelsbldg) 
+d <- makebargraph(DEGchar, "hypothalamus","DEGs w/ + LFC", 0, 1700, comparisonlabelscharnobldg) 
+
+e <- candidateboxplot("hypothalamus",  c("DRD1"), sexlevels)
+f <- candidateboxplot("hypothalamus",  c("COMT"), sexlevels)
+
+ab <- plot_grid(a,b,rel_widths = c(1,3), labels = c("A", "B"), label_size = 8)
+cd <- plot_grid(c,d,rel_widths = c(1,1), labels = c("C", "D"), label_size = 8)
+ef <- plot_grid(e,f,rel_widths = c(1,1), labels = c("E", "F"), label_size = 8)
+
+hypcharfig <- plot_grid(ab,cd,ef, ncol = 1)
+hypcharfig
+```
+
+## Save files
+
+```{r write}
+pdf(file="../figures/hypcharfig.pdf", width=7, height=7)
+plot(hypcharfig)
+dev.off()
+
+png("../figures/hypcharfig.png", width = 7, height = 7, 
+    units = 'in', res = 300)
+plot(hypcharfig) # Make plot
+dev.off()
+
+sessionInfo()
+```

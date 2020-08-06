@@ -421,11 +421,32 @@ plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
                alpha = 0.75, na.rm = T) + 
     theme_B3() +
     scale_color_manual(values = allcolors, 
-                       name = "stage with\nincreased\nexpression\n(+LFC)") +
-    xlim(-10,5) +
-    labs(y = "-log10(adj. p-value)", x = NULL)
+                       name = "increased expression in:") +
+    labs(y = "-log10(adj. p-value)", 
+         x = "Log-fold change (LFC)") +
+    theme(legend.position = "bottom",
+          legend.box = "vertical", 
+          legend.direction = "vertical",
+          legend.key.height=unit(0, "cm"),      
+          plot.margin = unit(c(1,0.5,0,0.5), "lines")) +
+    guides(color = guide_legend(nrow = 1))
   return(volcano)
 }
+
+plot.volcano.sex <- function(df){
+  
+  volcano <- df %>%
+    ggplot(aes(x = lfc, y = logpadj)) + 
+    geom_point(aes(color = direction), size = 1, 
+               alpha = 0.75, na.rm = T) + 
+    theme_B3() +
+    scale_color_manual(values = allcolors, 
+                       name = NULL) +
+    labs(y = "-log10(adj. p-value)", x = "Log-fold change (LFC)") +
+    theme(legend.position = "top") 
+  return(volcano)
+}
+
 
 
 # made for beta testing
@@ -883,7 +904,7 @@ plottsneelipsev3 <- function(tsnedf, pointcolor, whichcolors){
   return(p)
 }
 
-makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim){
+makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim, mylabels){
   p <- df %>%
     filter(tissue == whichtissue) %>%
     ggplot(aes(x = comparison,  fill = direction)) +
@@ -891,12 +912,8 @@ makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim){
     facet_wrap(~sex) +
     theme_B3() +
     theme(legend.position = "none",
-          axis.text.x = element_text(angle = 45, hjust = 1),
-          axis.text.y = element_blank(),
-          axis.ticks = element_blank())  +
-    labs(x = NULL, 
-         y = myylab,
-         subtitle = " ") +
+          axis.text.x = element_text(angle = 45, hjust = 1))  +
+    labs(x = NULL, y = myylab) +
     scale_fill_manual(values = allcolors,
                       name = " ",
                       drop = FALSE) +
@@ -904,32 +921,11 @@ makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim){
     geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
               position = position_dodge(width = 1),
               size = 1.75, color = "black")  +
-    ylim(lowlim, higherlim) 
+    ylim(lowlim, higherlim) +
+    scale_x_discrete(labels = mylabels)
   return(p)
 }
 
-
-makebargraphsuppl <- function(df, whichtissue, myylab, lowlim, higherlim){
-  p <- df %>%
-    filter(tissue == whichtissue) %>%
-    ggplot(aes(x = comparison,  fill = direction)) +
-    geom_bar(position = "dodge") +
-    facet_wrap(~sex, scales = "fixed") +
-    theme_B3() +
-    theme(legend.position = "none",
-          axis.text.x = element_text(angle = 45, hjust = 1),
-          #axis.text.y = element_blank(),
-          axis.ticks = element_blank())  +
-    labs(x = NULL, 
-         y = myylab,
-         subtitle = " ") +
-    scale_fill_manual(values = allcolors,
-                      name = " ",
-                      drop = FALSE) +
-    scale_color_manual(values = allcolors) +
-    ylim(lowlim, higherlim) 
-  return(p)
-}
 
 
 sexbarplots <- function(df, lowlim, higherlim){
@@ -941,7 +937,6 @@ sexbarplots <- function(df, lowlim, higherlim){
     ggplot(aes(x = direction,  fill = direction)) +
     geom_bar(position = "dodge") +
     theme_B3() +
-    labs(x = NULL, y = NULL) +
     scale_fill_manual(values = allcolors,
                       name = " ",
                       drop = FALSE) +
@@ -950,7 +945,8 @@ sexbarplots <- function(df, lowlim, higherlim){
               position = position_dodge(width = 1),
               size = 1.75, color = "black")  +
     ylim(lowlim, higherlim) +
-    theme(legend.position  = "none" )  
+    theme(legend.position  = "none" )  +
+    labs(y = "DEGs w/ + LFC", x = "Sex", title = " ", subtitle = "") 
    
   return(p)
  }
@@ -1071,8 +1067,6 @@ plottopDEGs <- function(df, whichsex, myylab, mysubtitle){
   return(p)
 }
 
-## fig 2 and 3 candidate genes 
-
 candidateboxplot <- function(whichtissue, whichgenes, whichsex){
   
   p <- candidatevsd %>%
@@ -1087,12 +1081,13 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
     scale_color_manual(values = allcolors) +
     theme_B3() + 
     theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic"),
-          axis.text.x = element_blank(),
           axis.ticks = element_blank()) +
     labs(y = whichgenes,
          x = NULL) +
-    geom_signif(comparisons = list(c( "bldg", "lay"),
+    geom_signif(comparisons = list(c( "control", "bldg"),
+                                   c( "bldg", "lay"),
                                    c( "lay", "inc.d3"),
                                    c("inc.d3", "inc.d9"),
                                    c( "inc.d9", "inc.d17"),
@@ -1105,8 +1100,6 @@ candidateboxplot <- function(whichtissue, whichgenes, whichsex){
   
   return(p)
 }
-
-## Fig 2
 
 scattercorrelations <- function(df, gene1, myylab, gene2, myxlab,  mylinecolor){
   p <- ggplot(df, aes(x = gene2, y = gene1)) +
@@ -1121,7 +1114,7 @@ scattercorrelations <- function(df, gene1, myylab, gene2, myxlab,  mylinecolor){
   return(p)
 }
 
-## Fig 4 
+
 
 plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
   

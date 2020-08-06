@@ -3,7 +3,7 @@ title: "Fig1"
 output: md_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, include=T}
 library(tidyverse)
 library(cowplot)
 library(Rtsne)

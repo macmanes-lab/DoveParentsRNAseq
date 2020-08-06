@@ -69,17 +69,21 @@ comparisonlevelsbldg <- c( "bldg_lay",  "bldg_inc.d3",
                              "bldg_inc.d9",   "bldg_inc.d17",  
                              "bldg_hatch", "bldg_n5", "bldg_n9")
 
-comparisonlabelschar <- c("bldg vs lay" ,"lay vs inc.d3", 
-                           "inc.d3 vs inc.d9", "inc.d9 vs inc.d17", 
-                           "inc.d17 vs hatch" , "hatch vs n5", "n5 vs n9")
+comparisonlabelschar <- c("bldg vs.\nlay" ,"lay vs.\ninc.d3", 
+                           "inc.d3 vs.\ninc.d9", "inc.d9 vs.\ninc.d17", 
+                           "inc.d17 vs.\nhatch" , "hatch vs.\nn5", "n5 vs.\nn9")
 
-comparisonlabelscontrol <- c("control vs bldg" ,"control vs lay", "control vs inc.d3", 
-                                "control vs inc.d9", "control vs inc.d17", 
-                                "control vs hatch" , "control vs n5", "control vs n9")
+comparisonlabelscharnobldg <- c("lay vs.\ninc.d3", 
+                          "inc.d3 vs.\ninc.d9", "inc.d9 vs.\ninc.d17", 
+                          "inc.d17 vs.\nhatch" , "hatch vs.\nn5", "n5 vs.\nn9")
 
-comparisonlabelsbldg <- c("bldg vs lay", "bldg vs inc.d3", 
-                                "bldg vs inc.d9", "bldg vs inc.d17", 
-                                "bldg vs hatch" , "bldg vs n5", "bldg vs n9")
+comparisonlabelscontrol <- c("control\nvs. bldg" ,"control\nvs. lay", "control\nvs. inc.d3", 
+                                "control\nvs. inc.d9", "control\nvs. inc.d17", 
+                                "control\nvs. hatch" , "control\nvs. n5", "control\nvs. n9")
+
+comparisonlabelsbldg <- c("bldg vs.\nlay", "bldg vs.\ninc.d3", 
+                                "bldg vs.\ninc.d9", "bldg vs.\ninc.d17", 
+                                "bldg vs.\nhatch" , "bldg vs.\nn5", "bldg vs.\nn9")
 
 
 comparisonlevelsremoval <- c("ind.d3_m.inc.d3", "ind.d9_m.inc.d9", "ind.d19_m.inc.d17", "hatch.m.n2")
