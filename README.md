@@ -17,31 +17,37 @@ These repositories is broken down into the following sub-repositories, each with
 
 There are two hidden directories, `kallisto_mappings` and `mapping`, which contain the results of the kallisto and salmon algorithms that transform read counts into gene counts.  
 
-Here's a draft of the hairball of a workflow as of May 13, 2020. 
+
+## Tables
 
 
-![](./figures/images/fig_workflow.png)
+- [Table 1](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/table1.csv)
+- [Table 2](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/table2.csv)
 
-## Figures and Tables
+- [Suppl Table 1](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/suppltable1.csv)
+- [Suppl Table 2](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/suppltable2.csv)
+
+
+## Figures 
+
+_[High quality pdfs available here](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/figures)_
+
 
 ### Figure 1 
 
 ![](./figures/fig1-1.png)
 
-**Figure 1. Broad patterns of variation in hypothalamic, pituitary, and gonadal gene expression in male and female rock doves across reproductive and parental transitions.** A) Experimental design. B) The t-SNE plot shows all 636 samples as points in space colored by tissue with ellipses drawn around show 95% confidence interval, and the bar plots show the total number of differentially expressioned genes (DEGs) whose expression was significantly higher in one tissue versus the other. C) This t-SNE plot shows the same data points colored by sex while the ellipses delinate the source tissue; bar plots show the DEGs between the sexes for each tissue. D) These t-SNE and bar plots provide insight into the temporal differences in gene expression within each tissue for each sex. Here, the bar plots highlight the number of DEGs between each sequential time point. For comparisons to controls, see fupplemental figure 1. 
 
 ### Supplement to Figure 1 
 
 ![](./figures/supplfig-1-1.png)
-
-**Figure 1 - Figure Supplement 1. Summary of the total number of differentially expressed genes (DEGs) from pair-wise comparison using DESeq2.** Bar plots showing the total number of differentially expressed genes (p < 0.1) and colored by the direction of increased expression (or positive log fold change (+LFC))  are shown for three different analysis: relative to the control group (A) and the nest-building (bldg) group (B).
 
 
 ### Figure 2 
 
 ![](./figures/fig2-1.png)
 
-**Figure 2. Correlated changes in in candidate gene expression.** A) Correlation matrices show positive and negative correlations for the candidate parental care genes from Curley and Champagne 2012. Positive and negative correlations are shown in red and blue, respectively. B) Top two correlations for each tissue visulized in each sex, colored by parental stage. The linear model and standard error are shown in grey. C) Box-and-whisker plots highlight the individual variation in gene expression across time for each sex and tissue. **, p <0.01; *, p <0.05; NS, p > 0.05.
+
 
 ### Supplement to Figure 2 
 
@@ -66,41 +72,6 @@ Here's a draft of the hairball of a workflow as of May 13, 2020.
 
 ## Table 1
 
-|  | gene | control_bldg | bldg_lay | lay_inc.d3 | inc.d3_inc.d9 | inc.d9_inc.d17 | hatch_n5 | n5_n9 | Literature | GO | NCBI |
-|----|--------|-------------------------|----------|------------|---------------|----------------|----------|-------|------------|----|----------------|
-| 1 | AVPR1A | FG+ |  | FG+ | FG- |  |  |  | X | X | NP_001103908.1 |
-| 2 | CREBRF | MG- | FG+ | FG- |  |  |  |  |  | X | XP_001231574.1 |
-| 3 | CRHBP | FH+ FG- |  |  |  |  | FH+ |  | X |  | XP_003643006.2 |
-| 4 | CRHR2 | FG- MG- |  |  |  |  | FH+ |  | X |  | NP_989785.1 |
-| 5 | DRD1 | FH+ FP+ |  |  |  |  | FH+ |  | X | X | NP_001138320.1 |
-| 6 | ESR1 | FH+ MH+ FG+ MG+ | FP+ | FP- |  |  |  |  | X |  | XP_015139536.1 |
-| 7 | FOS | FP- |  | FG+ |  |  |  |  | X |  | NP_990839.1 |
-| 8 | GNAQ | FH+ MH+ FP+ MP+ FG+ MG- |  | FG- |  |  | FH+ |  |  | X | NP_001026598.1 |
-| 9 | HTR2C | FH+ FG- |  |  |  |  | FH+ |  | X |  | XP_004940707.1 |
-| 10 | MEST | FG+ |  |  |  | FP+ | FP- |  | X |  | XP_015142671.1 |
-| 11 | NR3C1 | FH+ MH+ FP+ MP+ FG+ MG+ |  | FG- |  |  |  |  | X | X | XP_015149519.1 |
-| 12 | OPRK1 | FH+ FG- |  |  |  |  | FH+ |  |  | X | XP_426087.2 |
-| 13 | OPRM1 | FH+ MH+ MP+ FG+ | FG- |  |  |  |  | FG+ | X |  | XP_003641008.2 |
-| 14 | PGR | FG+ |  |  |  |  | FH+ |  | X |  | NP_990593.1 |
-| 15 | PRL | FH- MH- FP- MP- MG- |  |  |  | FP+ MP+ | FP- |  | X | X | NP_990797.2 |
-| 16 | PRLR | FH- FP- MP- MG- |  | FG- |  |  |  |  | X |  | XP_015132722.1 |
-| 17 | PTEN | FH+ FP+ MP+ FG+ MG- |  | FP- |  |  |  |  |  | X | XP_015134187.1 |
-| 18 | ADRA2A | FH+ FP+ |  |  |  |  |  |  | X |  | XP_004942333.2 |
-| 19 | AVP | FP- MP- |  |  |  |  |  |  | X | X | NP_990516.1 |
-| 20 | BRINP1 | FH- MP- FG- |  |  |  |  |  |  |  | X | NP_989780.1 |
-| 21 | COMT | FH- MH- MP- |  |  |  |  |  |  | X |  | XP_001233014.1 |
-| 22 | CRH | MH+ |  |  |  |  |  |  | X |  | NP_001116503.1 |
-| 23 | CRHR1 | FG- |  |  |  |  |  |  | X |  | NP_989652.1 |
-| 24 | DBH | FG+ |  |  |  |  |  |  |  | X | XP_415429.5 |
-| 25 | DRD4 | FH- FP- MP- |  |  |  |  |  |  | X |  | NP_001136321.1 |
-| 26 | ESR2 | FG- |  |  |  |  |  |  | X |  | NP_990125.1 |
-| 27 | KALRN | FH+ |  |  |  |  |  |  |  | X | XP_015145468.1 |
-| 28 | MBD2 | FP+ |  |  |  |  |  |  |  | X | NP_001012403.1 |
-| 29 | NPAS3 | FH- MP- FG- MG- |  |  |  |  |  |  |  | X | XP_015143131.1 |
-| 30 | NPAS3 | FH- MP- FG- MG- |  |  |  |  |  |  |  | X | XP_015143132.1 |
-| 31 | OXT | FP- MP- |  |  |  |  |  |  | X | X | XP_004936337.1 |
-| 32 | SLC6A4 | FP+ |  |  |  |  |  |  | X |  | XP_015151186.1 |
-| 33 | ZFX | FP- MP- MG- |  |  |  |  |  |  |  | X | XP_015127980.1 |
 
 ## Related documentation 
 
