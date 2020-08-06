@@ -813,7 +813,7 @@ plotprolactin <- function(df, myy, myylab, mysubtitle ){
   return(p)
 }
 
-## tsne  figure 1 and 5
+## subsetmaketsne 
 
 subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
   
@@ -833,7 +833,8 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
   
   euclidist <- dist(countData) # euclidean distances between the rows
   
-  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE, pca=TRUE, perplexity=10, theta=0.5, dims=2)
+  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE,
+                      perplexity = 50)
   tsne_df = as.data.frame(tsne_model$Y) 
   
   # prep for adding columns
@@ -870,6 +871,18 @@ plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
   return(p)
 }
 
+plottsneelipsev3 <- function(tsnedf, pointcolor, whichcolors){
+  p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
+    # stat_ellipse(linetype = 1, aes(color = pointcolor)) +
+    geom_point(size = 1.5, aes(color = pointcolor, shape = sex)) +
+    theme_B3() +
+    labs(x = "tSNE 1", y = "tSNE 2", 
+         title = " ", caption = " ") +
+    scale_color_manual(values = whichcolors) +
+    theme(legend.position = "none",
+          axis.text = element_blank(), axis.ticks = element_blank()) 
+  return(p)
+}
 
 makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim){
   p <- df %>%
