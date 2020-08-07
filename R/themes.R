@@ -1,5 +1,8 @@
 # custom themes
 
+## hex colors chosen using https://colorbrewer2.org/ 
+## hex colors blended using from https://meyerweb.com/eric/tools/color-blend/#F8766D:D39200::hex 
+
 theme_B3 <- function () { 
   theme_classic(base_size = 7,
                 base_family = 'Helvetica') +
@@ -118,13 +121,16 @@ colorsnewgrouping <-  c("control" = "#F8766D",
                  "manip" = "#959595")
 
 colorhypothesis <- c("none" = "#cc5500",
-                     "nest" = "#8B4513",
+                     "loss" = "#8B4513",
                      "eggs" = "#7FA163",
                      "chicks" = "#3A80B9",
                      "lo" = "#B5C4B2",
                      "hi" = "#19757A",
                      "early" = "#B5C4B2",
-                     "late" = "#19757A")
+                     "late" = "#19757A",
+                     "reference" = "#F8766D" )
+
+levelhypothesis <- c("reference", "eggs", "chicks", "loss", "early", "late")
 
 colorstissue <- c("hypothalamus" = "#d95f02",
                   "pituitary" = "#1b9e77",

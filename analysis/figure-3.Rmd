@@ -1,5 +1,5 @@
 ---
-title: "Replacement only"
+title: "Removal and Replacement only"
 output: md_document
 ---
 
@@ -39,44 +39,7 @@ head(colData)
 head(row.names(countData) == row.names(colData))
 ```
 
-## tsne
 
-
-```{r tSNE}
-
-# removal
-hyptsne <- subsetmaketsne("hypothalamus", removallevels, sexlevels)
-pittsne <- subsetmaketsne("pituitary", removallevels, sexlevels)
-gontsne <- subsetmaketsne("gonads", removallevels, sexlevels)
-
-pittsne <- addgroupings(pittsne)
-
-t4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors) +  labs(title = "pituitary ", subtitle = "parental stage and manipulations") +
-  facet_wrap(~sex) 
-t5 <- plottsneelipsev2(pittsne, pittsne$extint, colorhypothesis) +  labs(title = "  ", subtitle = "external enviornment")   +
-  facet_wrap(~sex) + theme(axis.title.y = element_blank())
-t6 <- plottsneelipsev2(pittsne, pittsne$earlylate, colorhypothesis) +  labs(title = "  ", subtitle = "internal clock")   +
-  facet_wrap(~sex) + theme(axis.title.y = element_blank())
-t456 <- plot_grid(t4, t5, t6, nrow = 1, rel_widths = c(1.1,1,1))
-t456
-
-# replacement
-hyptsne <- subsetmaketsne("hypothalamus", timinglevels, sexlevels)
-pittsne <- subsetmaketsne("pituitary", timinglevels, sexlevels)
-gontsne <- subsetmaketsne("gonads", timinglevels, sexlevels)
-
-pittsne <- addgroupings(pittsne)
-
-t4 <- plottsneelipsev2(pittsne, pittsne$treatment, allcolors) +  labs(title = "pituitary ", subtitle = "parental stage and manipulations") +
-  facet_wrap(~sex) 
-t5 <- plottsneelipsev2(pittsne, pittsne$extint, colorhypothesis) +  labs(title = "  ", subtitle = "external enviornment")   +
-  facet_wrap(~sex) + theme(axis.title.y = element_blank())
-t6 <- plottsneelipsev2(pittsne, pittsne$earlylate, colorhypothesis) +  labs(title = "  ", subtitle = "internal clock")   +
-  facet_wrap(~sex) + theme(axis.title.y = element_blank())
-t456 <- plot_grid(t4, t5, t6, nrow = 1, rel_widths = c(1.1,1,1))
-t456
-
-```
 
 
 ## variance stabilized gene expression  (vsd)
@@ -119,16 +82,17 @@ getcandidatevsdmanip <- function(whichgenes, whichtissue){
                                                    "inc.prolong" = "prolong", "m.inc.d8" = "early"),
                 treatment =  factor(treatment, levels = alllevels),
                 earlylate = fct_collapse(treatment, 
-                                  early = c("early", "m.inc.d3", "m.inc.d9", "inc.d3", 
-                                         "inc.d9",  "bldg"),
-                                  late = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" , 
-                                         "m.n2", "extend", "n5"),
-                                  reference = "control"),
+                                  early = c("early", "m.inc.d3", "m.inc.d9",
+                                           "lay", "inc.d3", "inc.d9" ),
+                                  
+                                  late = c("inc.d17", "m.inc.d17", "prolong" ,  "hatch" , 
+                                         "m.n2", "extend", "n5", "n9"),
+                                  reference = c("control", "bldg")),
                 extint = fct_collapse(treatment, 
-                                  nest = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg"),
-                                  eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong"),
-                                  chicks = c("early", "hatch", "extend", "n5"),
-                                  reference = "control"))  %>%
+                                  loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17"),
+                                  eggs = c("lay","inc.d3", "inc.d9", "inc.d17", "prolong"),
+                                  chicks = c("early", "hatch", "extend", "n5", "n9"),
+                                  reference = c("control", "bldg")))  %>%
     dplyr::select(gene, counts, sex, tissue, treatment, earlylate, extint, samples)  
   return(candidates)
 }
@@ -141,15 +105,15 @@ pitvsd <- candidatevsd %>% filter(tissue %in% "pituitary")
 gonvsd <- candidatevsd %>% filter(tissue %in% "gonad") 
 
 
-hypvsdf <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "female")  
-pitvsdf <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "female") 
-gonvsdf <- candidatevsd %>% filter(tissue %in% "gonad", sex == "female") 
+hypvsdf <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "female")  %>% drop_na()
+pitvsdf <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "female") %>% drop_na() 
+gonvsdf <- candidatevsd %>% filter(tissue %in% "gonad", sex == "female")  %>% drop_na()
 
-hypvsdm <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "male")  
-pitvsdm <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "male") 
-gonvsdm <- candidatevsd %>% filter(tissue %in% "gonad", sex == "male") 
+hypvsdm <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "male")  %>% drop_na()
+pitvsdm <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "male") %>% drop_na()
+gonvsdm <- candidatevsd %>% filter(tissue %in% "gonad", sex == "male") %>% drop_na()
 
-# not all genes appear to be expressed in the gonads... these are
+# not all genes appear to be expressed in all tissues. added drop_na()
 filter(gonvsd, treatment == "control") %>% head()
 ```
 
@@ -157,23 +121,25 @@ filter(gonvsd, treatment == "control") %>% head()
 ## candidate gene box plots
 
 
-```{r}
+```{r fig3, fig.height=7.25, fig.width=7.25}
 plotcandidatemanp <- function(df, whichgene, whichtissue){
   
   p <- df %>%
     dplyr::filter(gene  == whichgene)  %>%
     ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
     geom_boxplot(outlier.shape = NA, lwd=0.5) +
-    facet_wrap(~sex) +
+    #facet_wrap(~sex) +
     geom_jitter(size = 0.25, aes(color = sex)) +
     theme_B3() +
     theme(legend.position = "none",
-          axis.title.x = element_blank(),
+        
           axis.text.x = element_text(angle = 45, hjust = 1),
           plot.subtitle = element_text(face = "italic")) +
     scale_color_manual(values = allcolors) +
     scale_fill_manual(values = allcolors)  +
-    labs(title = paste(whichtissue, sep = " "), subtitle = whichgene, y = "gene expression") +
+    labs(title = whichtissue, 
+         subtitle = whichgene, 
+         y = "gene expression", x = "Semi-sequential stages") +
     geom_signif(comparisons = list(c("inc.d9", "early"), 
                                   c( "inc.d17", "prolong"), 
                                   c( "prolong", "hatch")),
@@ -200,145 +166,99 @@ plotcandidatemanp <- function(df, whichgene, whichtissue){
   
 }
 
-a <- plotcandidatemanp(hypvsdf, "HTR2C", "hypothalamus") 
-c <- plotcandidatemanp(pitvsdf, "PRL", "pituitary")
-e <- plotcandidatemanp(gonvsdf, "ESR2", "gonads") 
-b <- plotcandidatemanp(hypvsdm, "HTR2C", "hypothalamus") 
-d <- plotcandidatemanp(pitvsdm, "PRL", "pituitary")
-f <- plotcandidatemanp(gonvsdm, "ESR2", "gonads") 
-boxplots3 <- plot_grid(a,b,c,d,e,f, nrow = 3, 
-                       labels = c("A", "", "B", " ", "C"),
-                       hjust = 0, label_size = 8)
-boxplots3
 
+
+boxplotextint <- function(df, whichgene, whichtissue){
+  
+  p1 <- df %>%
+    dplyr::filter(gene  == whichgene)  %>%
+    mutate(earlylate = factor(earlylate, levels = levelhypothesis)) %>%
+    ggplot(aes(y =  counts, x = earlylate, fill = earlylate, color = sex)) +
+    geom_boxplot(outlier.shape = NA, lwd=0.5) +
+    #facet_wrap(~sex) +
+    geom_jitter(size = 0.25, aes(color = treatment)) +
+    theme_B3() +
+  scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+  geom_signif(comparisons = list(c( "reference", "early"), 
+                                  c( "early", "late"),
+                                 c( "reference", "late")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075) +
+  labs(title = paste(whichtissue, sep = " "), subtitle = " ", y = NULL) +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+p2 <- df %>%
+    dplyr::filter(gene  == whichgene)  %>%
+      mutate(extint = factor(extint, levels = levelhypothesis)) %>%
+    ggplot(aes(y =  counts, x = extint, fill = extint, color = sex)) +
+    geom_boxplot(outlier.shape = NA, lwd=0.5) +
+    #facet_wrap(~sex) +
+    geom_jitter(size = 0.25, aes(color = treatment)) +
+    theme_B3() +
+  scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+  geom_signif(comparisons = list(c( "reference", "eggs"), 
+                                  c( "eggs", "chicks"),
+                                 c( "chicks", "loss"),
+                                 c( "reference", "chicks"),
+                                 c( "eggs", "loss"),
+                                 c( "reference", "loss")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075) +
+  labs(title = " ", subtitle = " " , y = NULL) +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+p <- plot_grid(p1,p2)
+return(p)
+}
+
+a <- plotcandidatemanp(hypvsdf, "HTR2C", "female hypothalamus") 
+b <- boxplotextint(hypvsdf, "HTR2C", " ") 
+c <- plotcandidatemanp(hypvsdm, "HTR2C", "male hypothalamus") 
+d <- boxplotextint(hypvsdm, "HTR2C", " ") 
+
+e <- plotcandidatemanp(pitvsdf, "PRL", "female pituitary")
+f <- boxplotextint(pitvsdf, "PRL", " ")
+
+g <- plotcandidatemanp(pitvsdm, "PRL", "male pituitary")
+h <- boxplotextint(pitvsdm, "PRL", " ")
+
+i <- plotcandidatemanp(gonvsdf, "ESR2", "female gonads") 
+j <- boxplotextint(gonvsdf, "ESR2", " ") 
+
+k <- plotcandidatemanp(gonvsdm, "ESR2", "male gonads") 
+l <- boxplotextint(gonvsdm, "ESR2", " ") 
+
+fig3 <- plot_grid(a,b,c,d,e,f, 
+                       g,h,i,j,k,l, rel_widths = c(1.75,1,1.75,1),
+                       labels = c("A", "", "", "", 
+                                  "B", "", "", "", 
+                                  "C", "", "", ""),
+                       label_size = 8, hjust = 0)
+fig3
 ```
 
 
 
-## DEGs
-
-```{r allDEGs}
-DEG_path <- "../results/DEseq2/treatment/"   # path to the data
-DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
-DEG_pathfiles <- paste0(DEG_path, DEG_files)
-#DEG_files
-
-allDEG <- DEG_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_csv(.x), .id = "file_name") %>% 
-  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
-  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
-  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
-  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
-  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
-  mutate(comparison = paste(down,up, sep = "_")) %>%
-  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
-  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-  dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) # %>%
- # mutate(tissue = factor(tissue, levels = tissuelevel),
-  #       comparison = factor(comparison , levels = comparisonlevelsremoval),
-  #       direction = factor(direction, levels = alllevels))
-head(allDEG)
-
-
-
-candidateDEGS <- allDEG %>%
-  filter(gene %in% parentalcaregenes) %>%
-  mutate(posneg = ifelse(lfc >= 0, "+", "-"),
-         sex = recode(sex, "female" = "F", "male" = "M" ),
-         tissue = recode(tissue, 
-                         "hypothalamus" = "H",
-                         "pituitary" = "P", 
-                         "gonad" = "G", "gonads" = "G")) %>%
-  mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
-  select(gene, res, comparison)  %>%
-  group_by(gene,  comparison) %>%
-  summarize(res = str_c(res, collapse = " ")) %>%
-  pivot_wider(names_from = comparison, values_from = res) %>%
-  select(gene, inc.d3_m.inc.d3, inc.d9_m.inc.d9, inc.d17_m.inc.d17, hatch_m.n2,
-         inc.d17_prolong, hatch_prolong,extend_hatch, n5_extend, 
-         early_inc.d9 ,hatch_early)
-head(candidateDEGS[1:5])
-```
-
-
-
-## make figure
-
-```{r fig4, fig.width=7.25, fig.height=7.25}
-
-design <- png::readPNG("../figures/images/fig_fig4a.png")
-design <- ggdraw() +  draw_image(design, scale = 1)
-
-
-boxplots <- plot_grid(boxplots1, boxplots2, nrow = 1, rel_widths = c(1.5,1),
-                      labels = "AUTO", label_size = 8)
-fig4 <- plot_grid(boxplots, design, t456, ncol = 1, rel_heights = c(2.75,1.3,1),
-                      labels = c(" ", " " , "C"), label_size = 8)
-fig4
-
-
-```
-
-## suppl fig 1
-
-```{r supplfig-4}
-
-comparisonlevelsmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2",
-         "early_inc.d9" ,"hatch_early", "inc.d17_prolong", "hatch_prolong","extend_hatch", "n5_extend")
-
-# for fig 1
-DEGmanip <- allDEG %>% 
-  filter(comparison %in% comparisonlevelsmanip) %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelsmanip))
-
-DEGmanip %>% 
-  group_by(comparison, sex, tissue) %>%
-  summarize(totalDEGs = n())  %>%
-  arrange(desc(totalDEGs))
-
-s1a <- makebargraph(DEGmanip, "hypothalamus","DEGs w/ + LFC", 0, 3200, DEGmanip$comparison) + 
-  theme(axis.text.x = element_blank(),
-        axis.title.x = element_blank()) + 
-  labs(subtitle = "hypothalamus") + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") 
-
-s1b <- makebargraph(DEGmanip, "pituitary","DEGs w/ + LFC", 0, 3200, DEGmanip$comparison) + 
-  theme(axis.text.x = element_blank(), axis.title.x = element_blank(), strip.text = element_blank()) + 
-  labs(subtitle = "pituitary")  + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") 
-
-
-s1c <- makebargraph(DEGmanip, "gonad","DEGs w/ + LFC", 0, 3200, DEGmanip$comparison) + 
-  theme(strip.text = element_blank()) + 
-  labs(subtitle = "gonad", x = "Comparison of parental stage and manipulation groups") + geom_vline(xintercept = 4.5, linetype = "dashed", color = "grey") + 
-  scale_x_discrete(breaks= comparisonlevelsmanip,
-                      labels= comparisonlevelsmanip,
-                   drop=FALSE)
-
-contrasts <- png::readPNG("../figures/images/fig_fig4sup1.png")
-contrasts <- ggdraw() +  draw_image(contrasts, scale = 1)
-
-
-supplfig4 <- plot_grid(contrasts, s1a, s1b, s1c, ncol = 1, rel_heights = c(0.5, 1,1,1.5))
-supplfig4
-
-
-
-```
 
 
 ## write files
 
 ```{r write}
 
-pdf(file="../figures/fig4-1.pdf", width=7.25, height=7.25)
-plot(fig4)
+pdf(file="../figures/fig3-1.pdf", width=7.25, height=7.25)
+plot(fig3)
 dev.off()
 
-pdf(file="../figures/supplfig-4-1.pdf", width=5, height=5)
-plot(supplfig4)
-dev.off()
 
-write.csv(candidateDEGS, "../results/table2.csv", row.names = F)
+write.csv(candidatevsd, "../results/fig3-suppltable.csv")
+
 ```
 
 
