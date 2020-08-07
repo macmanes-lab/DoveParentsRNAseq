@@ -53,9 +53,6 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 
 ### Figure 3 supplement 1
 
-
-### Figure 3 
-
 ![](./figures/supplfig-3-1.png)
 
 
