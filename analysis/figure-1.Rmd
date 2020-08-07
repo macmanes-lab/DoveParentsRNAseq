@@ -7,6 +7,8 @@ output: md_document
 library(tidyverse)
 library(cowplot)
 library(Rtsne)
+library(factoextra)
+library(ggsignif)
 
 source("../R/themes.R")
 source("../R/functions.R")
@@ -72,7 +74,7 @@ fig1
 ## Supplemental PCA data
 
 
-```{r}
+```{r pca}
 # pca relies on count data from limma
 pca_h1 <- subsetmakepca("hypothalamus", alllevels, sexlevels)	
 pca_h2 <- makefvizdf("hypothalamus", alllevels, sexlevels)	
@@ -100,7 +102,7 @@ head(candidatevsd)
 
 ## Fig 3
 
-```{r supplfig, fig.height=7.25, fig.width=7.25}
+```{r supplfig-1, fig.height=7.25, fig.width=7.25}
 
 a <- plotpc12(pca_h1, pca_h2, pca_h1$treatment, allcolors, "Hypothalamus", NULL) 
 c <- plotpc12(pca_p1, pca_p2, pca_p1$treatment, allcolors, "Pituitary", NULL) 
@@ -132,11 +134,11 @@ png("../figures/fig1-1.png", width = 7, height = 4.5,
 plot(fig1) 
 dev.off()
 
-pdf(file="../figures/supplfig-1.pdf", width=7.5, height=7.5)
+pdf(file="../figures/supplfig-1-1.pdf", width=7.5, height=7.5)
 plot(supplfig)
 dev.off()
 
-png("../figures/supplfig-1.png", width = 7.5, height = 7.5, 
+png("../figures/supplfig-1-1.png", width = 7.5, height = 7.5, 
     units = 'in', res = 300)
 plot(supplfig)  
 dev.off()
