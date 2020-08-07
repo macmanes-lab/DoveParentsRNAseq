@@ -698,7 +698,8 @@ makenewbargraph <- function(whichtissue, whichsex,  whichcomparison, lowlim, hig
     theme(legend.position = "none")  +
     guides(fill = guide_legend(nrow = 1)) +
     labs( y = "DEGs w/ + LFC", x = NULL) +
-    geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
+    geom_text(stat='count', aes(label=..count..), 
+              vjust =-0.5, na.rm = F,
               position = position_dodge(width = 1),
               size = 2, color = "black")  + 
     ylim(lowlim, higherlim) +

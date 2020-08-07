@@ -3,14 +3,14 @@ Fig 2
 
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ─────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -85,35 +85,35 @@ Treatment specific DEGs
              !grepl("control|bldg", comparison)) %>%
       mutate(comparison = factor(comparison, levels = comparisonlevelschar))
 
-    b <- makebargraph(DEGcontrol, "hypothalamus","DEGs w/ + LFC", 0, 4800, comparisonlabelscontrol) +
-      labs(subtitle = "Control versus all other reproductive and parental stages")
-
-    c <- makebargraph(DEGbldg, "hypothalamus", "DEGs w/ + LFC", 0, 480, comparisonlabelsbldg) +
-      labs(subtitle = "Nest-building versus all other parental stages")
-    d <- makebargraph(DEGchar, "hypothalamus","DEGs w/ + LFC", 0, 1700, comparisonlabelscharnobldg) +
-      labs(subtitle = "Comparison of sequential parental stages")
-
-    e <- makebargraph(DEGbldg, "pituitary", "DEGs w/ + LFC", 0, 2200, comparisonlabelsbldg)  
-
-    f <- makebargraph(DEGchar, "pituitary","DEGs w/ + LFC", 0, 1500, comparisonlabelscharnobldg) 
-
-    g <- makebargraph(DEGbldg, "gonad", "DEGs w/ + LFC", 0, 2800, comparisonlabelsbldg) 
-    h <- makebargraph(DEGchar, "gonad","DEGs w/ + LFC", 0, 1200, comparisonlabelscharnobldg) 
-    cd <- plot_grid(c,d,rel_widths = c(1,1))
-    ef <- plot_grid(e,f,rel_widths = c(1,1),
-                    labels = c("B Pitutary"), label_size = 8 ,hjust = 0)
-    gh <- plot_grid(g,h,rel_widths = c(1,1), 
-                    labels = c("C Gonads"), label_size = 8, hjust = 0)
-
-
     a <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
       facet_wrap(~sex) + labs(subtitle = " ")
 
     ## Warning in sex == whichsex: longer object length is not a multiple of shorter
     ## object length
 
+    b <- makebargraph(DEGcontrol, "hypothalamus","DEGs w/ + LFC", 0, 5000, comparisonlabelscontrol) +
+      labs(title = " ",
+           subtitle = "Control versus all other reproductive and parental stages")
+
+    c <- makebargraph(DEGbldg, "hypothalamus", "DEGs w/ + LFC", 0, 490, comparisonlabelsbldg) +
+      labs(subtitle = "Nest-building versus all other parental stages")
+    d <- makebargraph(DEGchar, "hypothalamus", NULL, 0, 1800, comparisonlabelscharnobldg) +
+      labs(subtitle = "Comparison of sequential parental stages")
+
+    e <- makebargraph(DEGbldg, "pituitary", "DEGs w/ + LFC", 0, 2300, comparisonlabelsbldg)  
+
+    f <- makebargraph(DEGchar, "pituitary",NULL, 0, 1600, comparisonlabelscharnobldg) 
+
+    g <- makebargraph(DEGbldg, "gonad", "DEGs w/ + LFC", 0, 2900, comparisonlabelsbldg) 
+    h <- makebargraph(DEGchar, "gonad", NULL, 0, 1200, comparisonlabelscharnobldg) 
+
     ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
                     labels = c("A Hypothalamus"), label_size = 8, hjust = 0)
+    cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h")
+    ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
+                    labels = c("B Pitutary"), label_size = 8 ,hjust = 0)
+    gh <- plot_grid(g,h,rel_widths = c(1.1,1), align = "h",
+                    labels = c("C Gonads"), label_size = 8, hjust = 0)
 
     fig <- plot_grid(ab,cd,ef, gh, ncol = 1)
     fig
@@ -132,7 +132,7 @@ Save files
 
     png("../figures/fig2-new-1.png", width = 7, height = 7, 
         units = 'in', res = 300)
-    plot(fig) # Make plot
+    plot(fig) 
     dev.off()
 
     ## quartz_off_screen 
