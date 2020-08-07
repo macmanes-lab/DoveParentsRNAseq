@@ -39,7 +39,7 @@ There are two hidden directories, `kallisto_mappings` and `mapping`, which conta
 
 ### Figure 1 Supplement 1
 
-![](./figures/supplfig1-1.png)
+![](./figures/supplfig-1-1.png)
 
 
 ### Figure 2 
