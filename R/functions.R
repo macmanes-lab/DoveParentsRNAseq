@@ -1255,3 +1255,22 @@ externalboxplots <- function(whichtissue, whichgenes, whichsex, mytitle, mysubti
   
   return(p)
 }
+
+
+# for manipulation tsne 
+
+addgroupings <- function(df){
+  
+  df <- df %>% mutate(earlylate = fct_collapse(treatment, 
+                                               early = c("early", "m.inc.d3", "m.inc.d9", "inc.d3", 
+                                                         "inc.d9",  "bldg"),
+                                               late = c("inc.d17",   "m.inc.d17", "prolong" ,  "hatch" , 
+                                                        "m.n2", "extend", "n5"),
+                                               reference = "control"),
+                      extint = fct_collapse(treatment, 
+                                            nest = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17", "bldg"),
+                                            eggs = c("inc.d3", "inc.d9", "inc.d17", "prolong"),
+                                            chicks = c("early", "hatch", "extend", "n5"),
+                                            reference = "control")) 
+  return(df)
+}
