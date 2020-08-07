@@ -150,3 +150,19 @@ head(suppltable2)
 write_csv(suppltable2, "../results/suppltable2.csv")
 
 ```
+
+
+
+```{r}
+candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
+  select(-X1) %>%
+  filter(treatment %in% charlevels) %>%
+  mutate(treatment = factor(treatment, levels = charlevels)) %>%
+  drop_na() %>%
+    mutate(external = fct_collapse(treatment, 
+                                   "none" = c("control", "bldg"),
+                                   "eggs" = c("lay" , "inc.d3", 
+                                              "inc.d9", "inc.d17"),
+                                   "chicks" = c("hatch", "n5", "n9")))
+head(candidatevsd)
+```

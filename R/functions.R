@@ -424,11 +424,11 @@ plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
                        name = "increased expression in:") +
     labs(y = "-log10(adj. p-value)", 
          x = "Log-fold change (LFC)") +
-    theme(legend.position = "bottom",
-          legend.box = "vertical", 
+    theme(legend.position = "top",
           legend.direction = "vertical",
-          legend.key.height=unit(0, "cm"),      
-          plot.margin = unit(c(1,0.5,0,0.5), "lines")) +
+          legend.key.height = unit(0, "cm"),      
+          plot.margin = unit(c(0,0,0,0), "lines"),
+          legend.spacing.y = unit(0, "cm")) +
     guides(color = guide_legend(nrow = 1))
   return(volcano)
 }
