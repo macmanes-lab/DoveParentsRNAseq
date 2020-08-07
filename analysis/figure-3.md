@@ -384,7 +384,7 @@ fig
 
     i <- makebargraph(DEGmanipf, "gonad","DEGs w/ + LFC", 0, 3200, DEGmanipf$comparison) + 
       theme(strip.text = element_blank()) + 
-      labs(title = "female hypothalamus",x = "Comparison of manipulated group to parental controls") + 
+      labs(title = "female gonads",x = "Comparison of manipulated group to parental controls") + 
       scale_x_discrete(breaks= comparisonlevelsmanip,
                           labels= comparisonlabelssmanip,
                        drop=FALSE)
