@@ -24,8 +24,10 @@ curleychampagnegenes <- c("AVP", "AVPR1A", "ADRA2A",
                           "FOS", "HTR2C", "MEST", "NR3C1", #GR
                           "OPRM1", "OXT" , "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
 
+datadrivengenes <- c("COX1", "COX2", "CYTB", "ATP2B4", "LOC107055658", 
+                     "CHGA", "TF", "OVALY", "ANXA5")
 
-literaturegenes <- c(curleychampagnegenes, 
+literaturegenes <- c(curleychampagnegenes, datadrivengenes,
                      "VIP", "GNIH", "GAL", "TH", "THRB",
                      "GNRHR", "GNRH1", "CGNRH-R", "FSHB", "FSHR")
 literaturegenes
@@ -196,8 +198,6 @@ wideDEGsSequential <- wideDEGscandidates %>%
   select(-totalNA) %>% 
   replace(., is.na(.), "")
 wideDEGsSequential
-
-
 
 ```
 

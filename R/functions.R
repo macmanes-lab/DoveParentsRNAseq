@@ -672,14 +672,14 @@ plotpc12 <- function(df1color, df2fviz, whichfactor, whichcolors, mysubtitle, my
   pc12vector <- fviz_pca_var(df2fviz,  
                              axes.linetype = "blank", 
                              repel = T , 
-                             select.var= list(contrib = 3),
+                             select.var= list(contrib = 5),
                              labelsize = 3)  + 
     labs(title = mytitle, subtitle = " ") + 
     theme_B3() +
     theme(axis.text = element_blank(),
           axis.ticks = element_blank()) 
   
-  p <- plot_grid(pc12color, pc12vector, nrow = 1, rel_widths = c(2,1))
+  p <- plot_grid(pc12color, pc12vector, nrow = 1, rel_widths = c(1,1))
   return(p)
   
 }

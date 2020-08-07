@@ -152,17 +152,79 @@ write_csv(suppltable2, "../results/suppltable2.csv")
 ```
 
 
-
 ```{r}
-candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
-  select(-X1) %>%
-  filter(treatment %in% charlevels) %>%
-  mutate(treatment = factor(treatment, levels = charlevels)) %>%
-  drop_na() %>%
-    mutate(external = fct_collapse(treatment, 
-                                   "none" = c("control", "bldg"),
-                                   "eggs" = c("lay" , "inc.d3", 
-                                              "inc.d9", "inc.d17"),
-                                   "chicks" = c("hatch", "n5", "n9")))
-head(candidatevsd)
+## prlpit
+PRLpit <- candidatevsd %>% 
+  filter(gene == "PRL", tissue == "pituitary")
+
+# list of pvalue and DEGs
+allDEG <- read_csv("../results/06_allDEG.csv")  %>%
+  mutate(direction = factor(direction, levels = hypothesislevels))
+
+# DEGs infor for PRL and external
+hilodf <- allDEG %>%
+  filter(comparison == "lo_hi")  %>%
+  arrange(padj) 
+hilogenes <- hilodf %>%  top_n(20) %>% pull(gene)
+
+eggchickdf <- allDEG %>%
+  filter(!comparison %in% c("lo_hi", "nest_eggs", "nest_chicks"))  %>%
+  arrange(padj)  
+eggchickgenes <- eggchickdf %>%  top_n(20) %>% pull(gene)
+
+
+## data-driven PRL genes
+pithilo <- makecorrdf("female", "pituitary", hilogenes)
+pitWGCNA <- makecorrdf("female", "pituitary", WGCNAgenes[32:52])
+
+
+## https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
+cancergenes <- makecorrdf("female", "pituitary", c(shaidgenes,suszynskaagenes, "PRL"))
+
+
+## for scatter correlation (not currently usesed)
+candidatevsdwide <- candidatevsd  %>%
+    pivot_wider(names_from = gene, values_from = counts) 
+pitwide <- subsetcandidatevsdwide(sexlevels, "pituitary")
+
+## number of genes total vs plotted
+
+eggchickdf %>% filter(tissue == "pituitary") %>% nrow()
+hilodf %>% filter(tissue == "pituitary") %>% nrow()
+length(WGCNAgenes)
+
+
+b1 <- png::readPNG("../figures/images/fig_fig3b.png")
+b1 <- ggdraw() +  draw_image(b1, scale = 1)
+
+b2 <- makenewbargraph("pituitary", "female","eggs_chicks", 0, 4000) + labs(subtitle = "female")  + labs(title = " ") +
+  scale_x_discrete(labels = "eggs vs. chicks")
+b3 <- makenewbargraph("pituitary", "male", "eggs_chicks", 0, 4000)  + labs(subtitle = "male")  + labs(title = " ") +
+  theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), 
+        axis.text.y = element_blank(), axis.line.y = element_blank()) +
+  scale_x_discrete(labels = "eggs vs. chicks")
+b4 <- makenewbargraph("pituitary", "male", "lo_hi", 0, 4000)  +
+  scale_x_discrete(labels = "lo vs. hi PRL")
+b5 <- makenewbargraph("pituitary", "female", "lo_hi", 0, 4000)   + 
+  theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), 
+        axis.text.y = element_blank(), axis.line.y = element_blank()) +
+  scale_x_discrete(labels = "lo vs. hi PRL")
+b25 <- plot_grid(b2,b3,b4,b5, nrow = 2, rel_widths = c(1.2,1), rel_heights = c(1.2,1))
+
+b6 <-  plottopDEGs(eggchickdf, "female",  "LFC eggs vs. chicks", "Top 10 female DEGs") + labs(title = " ")
+b7 <-  plottopDEGs(eggchickdf, "male",  "LFC eggs vs. chicks", "Top 10 male DEGs") + labs(title = " ")
+b8 <-  plottopDEGs(hilodf, "female",  "LFC lo vs. hi PRL", NULL)
+b9 <-  plottopDEGs(hilodf, "male",  "LFC lo vs. hi PRL", NULL)
+b15 <- plot_grid(b1,b25,nrow = 1, rel_widths = c(1.2,1))
+b69 <- plot_grid(b6,b7,b8,b9, align = "v" , rel_heights = c(1.2,1))
+b <- plot_grid(b15,b69, labels = c("C"), label_size = 8, rel_widths = c(1.2,1))
+
+c1 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 DEGs, low vs. high PRL") 
+c2 <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes in WGCNA module with PRL") 
+c3 <- plotcorrplot(cancergenes, NULL) + theme(legend.position = "right") + labs(subtitle = "Breast, ovary, & piuitary cancer genes", color = "Correlation")
+c <- plot_grid(c1,c2,c3, nrow = 1, labels = c("D"), label_size = 8, rel_widths = c(1,1,1.3))
+
+fig3 <- plot_grid(a, b, c, nrow = 3, rel_heights = c(1.2,2,1.8))
+fig3
 ```
+

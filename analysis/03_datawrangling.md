@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ───────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ───────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -37,17 +37,23 @@
                               "FOS", "HTR2C", "MEST", "NR3C1", #GR
                               "OPRM1", "OXT" , "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
 
+    datadrivengenes <- c("COX1", "COX2", "CYTB", "ATP2B4", "LOC107055658", 
+                         "CHGA", "TF", "OVALY", "ANXA5")
 
-    literaturegenes <- c(curleychampagnegenes, 
+    literaturegenes <- c(curleychampagnegenes, datadrivengenes,
                          "VIP", "GNIH", "GAL", "TH", "THRB",
                          "GNRHR", "GNRH1", "CGNRH-R", "FSHB", "FSHR")
     literaturegenes
 
-    ##  [1] "AVP"     "AVPR1A"  "ADRA2A"  "COMT"    "CRH"     "CRHBP"   "CRHR1"  
-    ##  [8] "CRHR2"   "DRD1"    "DRD4"    "ESR1"    "ESR2"    "FOS"     "HTR2C"  
-    ## [15] "MEST"    "NR3C1"   "OPRM1"   "OXT"     "PGR"     "PRL"     "PRLR"   
-    ## [22] "SLC6A4"  "VIP"     "GNIH"    "GAL"     "TH"      "THRB"    "GNRHR"  
-    ## [29] "GNRH1"   "CGNRH-R" "FSHB"    "FSHR"
+    ##  [1] "AVP"          "AVPR1A"       "ADRA2A"       "COMT"         "CRH"         
+    ##  [6] "CRHBP"        "CRHR1"        "CRHR2"        "DRD1"         "DRD4"        
+    ## [11] "ESR1"         "ESR2"         "FOS"          "HTR2C"        "MEST"        
+    ## [16] "NR3C1"        "OPRM1"        "OXT"          "PGR"          "PRL"         
+    ## [21] "PRLR"         "SLC6A4"       "COX1"         "COX2"         "CYTB"        
+    ## [26] "ATP2B4"       "LOC107055658" "CHGA"         "TF"           "OVALY"       
+    ## [31] "ANXA5"        "VIP"          "GNIH"         "GAL"          "TH"          
+    ## [36] "THRB"         "GNRHR"        "GNRH1"        "CGNRH-R"      "FSHB"        
+    ## [41] "FSHR"
 
     literaturegenes <- as.data.frame(literaturegenes) %>%
       mutate(GO = "literature", gene = literaturegenes)  %>%
@@ -79,11 +85,11 @@
     ##   GO               gene   geneid NCBI          
     ##   <chr>            <chr>   <dbl> <chr>         
     ## 1 literature       ADRA2A 428980 XP_004942333.2
-    ## 2 parentalbehavior AVP    396101 NP_990516.1   
-    ## 3 literature       AVP    396101 NP_990516.1   
-    ## 4 parentalbehavior AVPR1A 771773 NP_001103908.1
-    ## 5 literature       AVPR1A 771773 NP_001103908.1
-    ## 6 parentalbehavior BRINP1 395098 NP_989780.1
+    ## 2 literature       ANXA5  428767 NP_001026709.1
+    ## 3 literature       ATP2B4 419934 XP_015154447.1
+    ## 4 literature       ATP2B4 419934 XP_015154449.1
+    ## 5 parentalbehavior AVP    396101 NP_990516.1   
+    ## 6 literature       AVP    396101 NP_990516.1
 
     parentalcaregenes <- GOgenesLong %>% 
       pivot_wider(
@@ -95,14 +101,14 @@
     head(parentalcaregenes)
 
     ## # A tibble: 6 x 5
-    ##   geneid NCBI           literature GO       gene   
-    ##    <dbl> <chr>          <chr>      <chr>    <chr>  
-    ## 1 428980 XP_004942333.2 "ADRA2A"   ""       ADRA2A 
-    ## 2 396101 NP_990516.1    "AVP"      "AVP"    AVP    
-    ## 3 771773 NP_001103908.1 "AVPR1A"   "AVPR1A" AVPR1A 
-    ## 4 395098 NP_989780.1    ""         "BRINP1" BRINP1 
-    ## 5 395368 NP_989984.1    "CGNRH-R"  ""       CGNRH-R
-    ## 6 416783 XP_001233014.1 "COMT"     ""       COMT
+    ##   geneid NCBI           literature GO       gene  
+    ##    <dbl> <chr>          <chr>      <chr>    <chr> 
+    ## 1 428980 XP_004942333.2 ADRA2A     ""       ADRA2A
+    ## 2 428767 NP_001026709.1 ANXA5      ""       ANXA5 
+    ## 3 419934 XP_015154447.1 ATP2B4     ""       ATP2B4
+    ## 4 419934 XP_015154449.1 ATP2B4     ""       ATP2B4
+    ## 5 396101 NP_990516.1    AVP        "AVP"    AVP   
+    ## 6 771773 NP_001103908.1 AVPR1A     "AVPR1A" AVPR1A
 
 ### variance stabilized gene expression (vsd)
 
@@ -6500,20 +6506,20 @@ All DEGs
       filter(gene %in% GOgenesLong$gene)
     wideDEGscandidates
 
-    ## # A tibble: 238 x 58
+    ## # A tibble: 299 x 58
     ##    sextissue gene  bldg_extend bldg_hatch bldg_inc.d17 bldg_inc.d3 bldg_inc.d9
     ##    <chr>     <chr> <chr>       <chr>      <chr>        <chr>       <chr>      
     ##  1 female_g… CRHBP 1.18, 0.05  <NA>       1.34, 0.01   <NA>        <NA>       
     ##  2 female_g… FSHR  1.17, 0.01  <NA>       1.02, 0.01   <NA>        <NA>       
     ##  3 female_g… PRL   0.66, 0.05  <NA>       <NA>         <NA>        <NA>       
     ##  4 female_g… CREB… 0.65, 0.03  <NA>       <NA>         <NA>        <NA>       
-    ##  5 female_g… ESR1  -0.66, 0.09 -0.67, 0.1 -0.73, 0.03  -0.78, 0.04 -0.67, 0.09
-    ##  6 female_g… DBH   -2.11, 0.07 <NA>       -4.01, 0     -2.97, 0.02 -2.54, 0.04
-    ##  7 female_g… HTR2C <NA>        0.91, 0.05 0.9, 0.02    <NA>        <NA>       
-    ##  8 female_g… FOS   <NA>        0.43, 0.09 0.63, 0      0.63, 0.01  <NA>       
-    ##  9 female_g… GNAQ  <NA>        -0.51, 0.… -0.57, 0.01  <NA>        <NA>       
-    ## 10 female_g… PRLR  <NA>        -1.42, 0.… -1.05, 0.05  -1.3, 0.04  <NA>       
-    ## # … with 228 more rows, and 51 more variables: bldg_lay <chr>,
+    ##  5 female_g… COX1  -0.52, 0.06 -0.62, 0.… -0.67, 0.01  -0.56, 0.05 -0.62, 0.02
+    ##  6 female_g… ESR1  -0.66, 0.09 -0.67, 0.1 -0.73, 0.03  -0.78, 0.04 -0.67, 0.09
+    ##  7 female_g… COX2  -0.69, 0.06 <NA>       <NA>         <NA>        <NA>       
+    ##  8 female_g… CYTB  -0.78, 0.01 -0.66, 0.… -0.75, 0.01  -0.56, 0.09 <NA>       
+    ##  9 female_g… LOC1… -1.49, 0.07 <NA>       -1.22, 0.09  <NA>        <NA>       
+    ## 10 female_g… ATP2… -1.55, 0.05 <NA>       -1.36, 0.05  <NA>        <NA>       
+    ## # … with 289 more rows, and 51 more variables: bldg_lay <chr>,
     ## #   bldg_m.inc.d17 <chr>, bldg_m.inc.d3 <chr>, bldg_m.inc.d8 <chr>,
     ## #   bldg_m.inc.d9 <chr>, bldg_m.n2 <chr>, bldg_n5 <chr>, bldg_n9 <chr>,
     ## #   bldg_prolong <chr>, control_bldg <chr>, control_extend <chr>,
@@ -6535,20 +6541,20 @@ All DEGs
       select(sextissue,gene, contains("bldg"))
     wideDEGsBldg
 
-    ## # A tibble: 238 x 17
+    ## # A tibble: 299 x 17
     ##    sextissue gene  bldg_extend bldg_hatch bldg_inc.d17 bldg_inc.d3 bldg_inc.d9
     ##    <chr>     <chr> <chr>       <chr>      <chr>        <chr>       <chr>      
     ##  1 female_g… CRHBP 1.18, 0.05  <NA>       1.34, 0.01   <NA>        <NA>       
     ##  2 female_g… FSHR  1.17, 0.01  <NA>       1.02, 0.01   <NA>        <NA>       
     ##  3 female_g… PRL   0.66, 0.05  <NA>       <NA>         <NA>        <NA>       
     ##  4 female_g… CREB… 0.65, 0.03  <NA>       <NA>         <NA>        <NA>       
-    ##  5 female_g… ESR1  -0.66, 0.09 -0.67, 0.1 -0.73, 0.03  -0.78, 0.04 -0.67, 0.09
-    ##  6 female_g… DBH   -2.11, 0.07 <NA>       -4.01, 0     -2.97, 0.02 -2.54, 0.04
-    ##  7 female_g… HTR2C <NA>        0.91, 0.05 0.9, 0.02    <NA>        <NA>       
-    ##  8 female_g… FOS   <NA>        0.43, 0.09 0.63, 0      0.63, 0.01  <NA>       
-    ##  9 female_g… GNAQ  <NA>        -0.51, 0.… -0.57, 0.01  <NA>        <NA>       
-    ## 10 female_g… PRLR  <NA>        -1.42, 0.… -1.05, 0.05  -1.3, 0.04  <NA>       
-    ## # … with 228 more rows, and 10 more variables: bldg_lay <chr>,
+    ##  5 female_g… COX1  -0.52, 0.06 -0.62, 0.… -0.67, 0.01  -0.56, 0.05 -0.62, 0.02
+    ##  6 female_g… ESR1  -0.66, 0.09 -0.67, 0.1 -0.73, 0.03  -0.78, 0.04 -0.67, 0.09
+    ##  7 female_g… COX2  -0.69, 0.06 <NA>       <NA>         <NA>        <NA>       
+    ##  8 female_g… CYTB  -0.78, 0.01 -0.66, 0.… -0.75, 0.01  -0.56, 0.09 <NA>       
+    ##  9 female_g… LOC1… -1.49, 0.07 <NA>       -1.22, 0.09  <NA>        <NA>       
+    ## 10 female_g… ATP2… -1.55, 0.05 <NA>       -1.36, 0.05  <NA>        <NA>       
+    ## # … with 289 more rows, and 10 more variables: bldg_lay <chr>,
     ## #   bldg_m.inc.d17 <chr>, bldg_m.inc.d3 <chr>, bldg_m.inc.d8 <chr>,
     ## #   bldg_m.inc.d9 <chr>, bldg_m.n2 <chr>, bldg_n5 <chr>, bldg_n9 <chr>,
     ## #   bldg_prolong <chr>, control_bldg <chr>
@@ -6557,20 +6563,20 @@ All DEGs
       select(sextissue,gene, contains("control"))
     wideDEGsControl
 
-    ## # A tibble: 238 x 17
+    ## # A tibble: 299 x 17
     ##    sextissue gene  control_bldg control_extend control_hatch control_inc.d17
     ##    <chr>     <chr> <chr>        <chr>          <chr>         <chr>          
     ##  1 female_g… CRHBP -1.5, 0      <NA>           <NA>          <NA>           
     ##  2 female_g… FSHR  -1.91, 0     -0.75, 0.05    -1.15, 0      -0.9, 0.03     
     ##  3 female_g… PRL   <NA>         0.73, 0.01     <NA>          <NA>           
     ##  4 female_g… CREB… <NA>         0.6, 0.01      <NA>          <NA>           
-    ##  5 female_g… ESR1  1.39, 0      0.73, 0.02     0.72, 0.03    0.65, 0.06     
-    ##  6 female_g… DBH   2.37, 0.01   <NA>           <NA>          <NA>           
-    ##  7 female_g… HTR2C -1.09, 0     <NA>           <NA>          <NA>           
-    ##  8 female_g… FOS   <NA>         <NA>           <NA>          0.37, 0.09     
-    ##  9 female_g… GNAQ  0.71, 0      0.61, 0        <NA>          <NA>           
-    ## 10 female_g… PRLR  <NA>         <NA>           <NA>          <NA>           
-    ## # … with 228 more rows, and 11 more variables: control_inc.d3 <chr>,
+    ##  5 female_g… COX1  <NA>         -0.7, 0        -0.8, 0       -0.84, 0       
+    ##  6 female_g… ESR1  1.39, 0      0.73, 0.02     0.72, 0.03    0.65, 0.06     
+    ##  7 female_g… COX2  <NA>         -1.08, 0       -0.78, 0.01   -0.85, 0.01    
+    ##  8 female_g… CYTB  <NA>         -0.56, 0.03    <NA>          -0.52, 0.08    
+    ##  9 female_g… LOC1… 3.25, 0      1.76, 0.01     3.04, 0       2.04, 0        
+    ## 10 female_g… ATP2… 3.91, 0      2.36, 0        3.46, 0       2.55, 0        
+    ## # … with 289 more rows, and 11 more variables: control_inc.d3 <chr>,
     ## #   control_inc.d9 <chr>, control_lay <chr>, control_m.inc.d17 <chr>,
     ## #   control_m.inc.d3 <chr>, control_m.inc.d8 <chr>, control_m.inc.d9 <chr>,
     ## #   control_m.n2 <chr>, control_n5 <chr>, control_n9 <chr>,
@@ -6582,25 +6588,26 @@ All DEGs
              "inc.d9_inc.d17", "inc.d17_hatch", "hatch_n5", "n5_n9") %>%
       mutate(totalNA = rowSums(is.na(.))) %>%
       filter(totalNA < 8) %>%
-      arrange(gene, sextissue) %>%
+      arrange(totalNA, gene, sextissue) %>%
+      #arrange( gene, sextissue) %>%
       select(-totalNA) %>% 
       replace(., is.na(.), "")
     wideDEGsSequential
 
-    ## # A tibble: 119 x 10
+    ## # A tibble: 159 x 10
     ##    sextissue gene  control_bldg bldg_lay lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17
     ##    <chr>     <chr> <chr>        <chr>    <chr>      <chr>         <chr>         
-    ##  1 female_h… ADRA… "0.26, 0.02" ""       ""         ""            ""            
-    ##  2 female_p… ADRA… "0.9, 0"     ""       ""         ""            ""            
-    ##  3 male_hyp… ADRA… ""           ""       ""         ""            "0.26, 0.1"   
-    ##  4 female_g… AVP   ""           ""       ""         ""            ""            
-    ##  5 female_p… AVP   "-6, 0"      ""       ""         ""            ""            
-    ##  6 male_hyp… AVP   ""           ""       ""         ""            "1.29, 0.04"  
-    ##  7 male_pit… AVP   "-3, 0.01"   ""       ""         ""            ""            
-    ##  8 female_g… AVPR… "0.93, 0.09" ""       "1.49, 0.… "-2.16, 0.01" ""            
-    ##  9 female_g… BRIN… "-1.2, 0"    ""       ""         ""            "1.02, 0.09"  
-    ## 10 female_h… BRIN… "-0.4, 0"    ""       ""         ""            ""            
-    ## # … with 109 more rows, and 3 more variables: inc.d17_hatch <chr>,
+    ##  1 female_g… ANXA5 2.51, 0      "-1.56,… "1.53, 0.… ""            "-1.46, 0.06" 
+    ##  2 male_gon… ANXA5 1.08, 0.05   "-1.51,… "1.9, 0.0… ""            ""            
+    ##  3 female_g… AVPR… 0.93, 0.09   ""       "1.49, 0.… "-2.16, 0.01" ""            
+    ##  4 female_p… NR3C1 0.86, 0      ""       ""         ""            "-0.3, 0.05"  
+    ##  5 female_g… OPRM1 2.33, 0      "-2.08,… ""         ""            ""            
+    ##  6 female_p… PRL   -1.97, 0     ""       ""         ""            "2.52, 0"     
+    ##  7 female_g… ATP2… 3.91, 0      ""       "1.39, 0.… ""            ""            
+    ##  8 male_gon… ATP2… 2.07, 0      ""       "1.7, 0.0… ""            ""            
+    ##  9 female_g… BRIN… -1.2, 0      ""       ""         ""            "1.02, 0.09"  
+    ## 10 female_h… CHGA  -0.89, 0     ""       ""         ""            ""            
+    ## # … with 149 more rows, and 3 more variables: inc.d17_hatch <chr>,
     ## #   hatch_n5 <chr>, n5_n9 <chr>
 
 save files
@@ -6608,4 +6615,4 @@ save files
 
     write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
     write.csv(candidatevsd, "../results/03_candidatevsd.csv")
-    write.csv(table1, "../results/03_wideDEGsSequential.csv", row.names = F)
+    write.csv(wideDEGsSequential, "../results/table1.csv", row.names = F)
