@@ -121,7 +121,7 @@ filter(gonvsd, treatment == "control") %>% head()
 ## candidate gene box plots
 
 
-```{r fig3, fig.height=7.25, fig.width=7.25}
+```{r }
 plotcandidatemanp <- function(df, whichgene, whichtissue){
   
   p <- df %>%
@@ -132,13 +132,11 @@ plotcandidatemanp <- function(df, whichgene, whichtissue){
     geom_jitter(size = 0.25, aes(color = sex)) +
     theme_B3() +
     theme(legend.position = "none",
-        
           axis.text.x = element_text(angle = 45, hjust = 1),
           plot.subtitle = element_text(face = "italic")) +
     scale_color_manual(values = allcolors) +
     scale_fill_manual(values = allcolors)  +
-    labs(title = whichtissue, 
-         subtitle = whichgene, 
+    labs( subtitle = whichgene, 
          y = "gene expression", x = "Semi-sequential stages") +
     geom_signif(comparisons = list(c("inc.d9", "early"), 
                                   c( "inc.d17", "prolong"), 
@@ -186,7 +184,7 @@ boxplotextint <- function(df, whichgene, whichtissue){
                 map_signif_level=TRUE,
                 textsize = 2, family = 'Helvetica',
                 vjust = 0, size = 0.5, step_increase = 0.075) +
-  labs(title = paste(whichtissue, sep = " "), subtitle = " ", y = NULL) +
+  labs(subtitle = " ", y = NULL) +
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -209,45 +207,173 @@ p2 <- df %>%
                 map_signif_level=TRUE,
                 textsize = 2, family = 'Helvetica',
                 vjust = 0, size = 0.5, step_increase = 0.075) +
-  labs(title = " ", subtitle = " " , y = NULL) +
+  labs(subtitle = " " , y = NULL) +
   theme(legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 1))
 
 
-p <- plot_grid(p1,p2)
+p <- plot_grid(p1,p2, rel_widths = c(3.5,4))
 return(p)
 }
 
-a <- plotcandidatemanp(hypvsdf, "HTR2C", "female hypothalamus") 
-b <- boxplotextint(hypvsdf, "HTR2C", " ") 
-c <- plotcandidatemanp(hypvsdm, "HTR2C", "male hypothalamus") 
-d <- boxplotextint(hypvsdm, "HTR2C", " ") 
 
-e <- plotcandidatemanp(pitvsdf, "PRL", "female pituitary")
-f <- boxplotextint(pitvsdf, "PRL", " ")
-
-g <- plotcandidatemanp(pitvsdm, "PRL", "male pituitary")
-h <- boxplotextint(pitvsdm, "PRL", " ")
-
-i <- plotcandidatemanp(gonvsdf, "ESR2", "female gonads") 
-j <- boxplotextint(gonvsdf, "ESR2", " ") 
-
-k <- plotcandidatemanp(gonvsdm, "ESR2", "male gonads") 
-l <- boxplotextint(gonvsdm, "ESR2", " ") 
-
-fig3 <- plot_grid(a,b,c,d,e,f, 
-                       g,h,i,j,k,l, rel_widths = c(1.75,1,1.75,1),
-                       labels = c("A", "", "", "", 
-                                  "B", "", "", "", 
-                                  "C", "", "", ""),
-                       label_size = 8, hjust = 0)
-fig3
 ```
 
 
 
 
 
+
+
+
+
+## DEGs
+
+```{r allDEGs}
+DEG_path <- "../results/DEseq2/treatment/"   # path to the data
+DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
+DEG_pathfiles <- paste0(DEG_path, DEG_files)
+#DEG_files
+
+allDEG <- DEG_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name") %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
+  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
+  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
+  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
+  mutate(comparison = paste(down,up, sep = "_")) %>%
+  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
+  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
+  dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) # %>%
+ # mutate(tissue = factor(tissue, levels = tissuelevel),
+  #       comparison = factor(comparison , levels = comparisonlevelsremoval),
+  #       direction = factor(direction, levels = alllevels))
+head(allDEG)
+
+
+candidateDEGS <- allDEG %>%
+  filter(gene %in% parentalcaregenes) %>%
+  mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+         sex = recode(sex, "female" = "F", "male" = "M" ),
+         tissue = recode(tissue, 
+                         "hypothalamus" = "H",
+                         "pituitary" = "P", 
+                         "gonad" = "G", "gonads" = "G")) %>%
+  mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
+  select(gene, res, comparison)  %>%
+  group_by(gene,  comparison) %>%
+  summarize(res = str_c(res, collapse = " ")) %>%
+  pivot_wider(names_from = comparison, values_from = res) %>%
+  select(gene, inc.d3_m.inc.d3, inc.d9_m.inc.d9, inc.d17_m.inc.d17, hatch_m.n2,
+         inc.d17_prolong, hatch_prolong,extend_hatch, n5_extend, 
+         early_inc.d9 ,hatch_early) %>%
+  arrange(gene)
+head(candidateDEGS[1:5])
+
+DEGmanip <- allDEG %>% 
+  filter(comparison %in% comparisonlevelsmanip) %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelsmanip))
+
+DEGmanipf <- DEGmanip %>% filter(sex == "female")
+DEGmanipm <- DEGmanip %>% filter(sex == "male")
+
+DEGmanip %>% 
+  group_by(comparison, sex, tissue) %>%
+  summarize(totalDEGs = n())  %>%
+  arrange(desc(totalDEGs))
+```
+
+
+## fig
+
+```{r fig3, fig.height=7.25, fig.width=7.25}
+a <- plotcandidatemanp(hypvsdf, "HTR2C", "female hypothalamus") 
+b <- boxplotextint(hypvsdf, "HTR2C", " ") 
+
+
+d <- plotcandidatemanp(pitvsdf, "PRL", "female pituitary")
+e <- boxplotextint(pitvsdf, "PRL", " ")
+
+g <- plotcandidatemanp(gonvsdf, "ESR2", "female gonads") 
+h <- boxplotextint(gonvsdf, "ESR2", " ") 
+
+
+c <- makebargraph(DEGmanipf, "hypothalamus","DEGs w/ + LFC", 0, 3200, DEGmanipf$comparison) + 
+  labs(title = "female hypothalamus", x = "Comparison of manipulated group to parental controls") + 
+  theme(strip.text = element_blank()) + 
+  scale_x_discrete(breaks= comparisonlevelsmanip,
+                      labels= comparisonlabelssmanip,
+                   drop=FALSE)
+
+f <- makebargraph(DEGmanipf, "pituitary","DEGs w/ + LFC", 0, 3200, DEGmanipf$comparison) + 
+  labs(title = "female pituitary",x = "Comparison of manipulated group to parental controls")  + 
+  theme(strip.text = element_blank()) + 
+  scale_x_discrete(breaks= comparisonlevelsmanip,
+                      labels= comparisonlabelssmanip,
+                   drop=FALSE)
+
+i <- makebargraph(DEGmanipf, "gonad","DEGs w/ + LFC", 0, 3200, DEGmanipf$comparison) + 
+  theme(strip.text = element_blank()) + 
+  labs(title = "female hypothalamus",x = "Comparison of manipulated group to parental controls") + 
+  scale_x_discrete(breaks= comparisonlevelsmanip,
+                      labels= comparisonlabelssmanip,
+                   drop=FALSE)
+fig3 <- plot_grid(c, a,b,f,d,e,i,g,h, ncol = 3, rel_widths = c(2,1.8,1), 
+                  labels = c("A", "", "",
+                             "B", "", "",
+                             "C", "", ""), label_size = 8, hjust = 0)
+fig3
+
+```
+
+
+
+
+## suppl fig 
+
+```{r supplfig-3}
+
+
+a <- plotcandidatemanp(hypvsdm, "HTR2C", "male hypothalamus") 
+b <- boxplotextint(hypvsdm, "HTR2C", " ") 
+
+d <- plotcandidatemanp(pitvsdm, "PRL", "male pituitary")
+e <- boxplotextint(pitvsdm, "PRL", " ")
+
+g <- plotcandidatemanp(gonvsdm, "ESR2", "male gonads") 
+h <- boxplotextint(gonvsdm, "ESR2", " ") 
+
+
+c <- makebargraph(DEGmanipm, "hypothalamus","DEGs w/ + LFC", 0, 3200, DEGmanipm$comparison) + 
+  labs(subtitle = "male hypothalamus", x = "Comparison of manipulated group to parental controls") 
+  scale_x_discrete(breaks= comparisonlevelsmanip,
+                      labels= comparisonlevelsmanip,
+                   drop=FALSE)
+
+
+f <- makebargraph(DEGmanipm, "pituitary","DEGs w/ + LFC", 0, 3200, DEGmanipm$comparison) + 
+  labs(subtitle = "male pituitary", x = "Comparison of manipulated group to parental controls") 
+  scale_x_discrete(breaks= comparisonlevelsmanip,
+                      labels= comparisonlevelsmanip,
+                   drop=FALSE)
+
+
+i <- makebargraph(DEGmanipm, "gonad","DEGs w/ + LFC", 0, 3200, DEGmanipm$comparison) + 
+  theme(strip.text = element_blank()) + 
+  labs(subtitle = "male gonad", x = "Comparison of manipulated group to parental controls")  + 
+  scale_x_discrete(breaks= comparisonlevelsmanip,
+                      labels= comparisonlevelsmanip,
+                   drop=FALSE)
+
+supplfig3 <- plot_grid(c, a,b,f,d,e,i,g,h, ncol = 3, rel_widths = c(2,1.8,1), 
+                  labels = c("A", "", "",
+                             "B", "", "",
+                             "C", "", ""), label_size = 8, hjust = 0)
+supplfig3
+
+```
 ## write files
 
 ```{r write}
@@ -256,9 +382,12 @@ pdf(file="../figures/fig3-1.pdf", width=7.25, height=7.25)
 plot(fig3)
 dev.off()
 
+pdf(file="../figures/supplfig-3-1.pdf", width=5, height=5)
+plot(supplfig3)
+dev.off()
+
+write.csv(candidateDEGS, "../results/table2.csv", row.names = F)
 
 write.csv(candidatevsd, "../results/fig3-suppltable.csv")
 
 ```
-
-
