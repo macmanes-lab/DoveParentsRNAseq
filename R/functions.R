@@ -427,8 +427,8 @@ plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
     theme(legend.position = "top",
           legend.direction = "vertical",
           legend.key.height = unit(0, "cm"),      
-          plot.margin = unit(c(0,0,0,0), "lines"),
-          legend.spacing.y = unit(0, "cm")) +
+          legend.spacing.y = unit(0, "cm"),
+          legend.margin=margin(0,0, -5, 0)) +
     guides(color = guide_legend(nrow = 1))
   return(volcano)
 }
