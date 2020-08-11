@@ -1,41 +1,25 @@
----
-title: "00_datawrangling.Rmd"
-output: md_document
----
-
-```{r setup, message=F}
-# https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
+# Data wrangling
 
 library(tidyverse)
 
-source("../R/themes.R")
-
-knitr::opts_chunk$set(message=F, warning=F)
-```
-
-# Data Wrangling
-
 ## import Kallisto transcript data, make gene info file 
 
-```{r countData}
 # import count data, set rows at entreziz
-kallistodata <- read.table("../results/kallistocounts.txt", 
-                        sep = ",", row.names = NULL) 
+print("reading kallisto data")
+kallistodata <- read.table("results/kallistocounts.txt", 
+                           sep = ",", row.names = NULL) 
 kallistodata <- kallistodata %>%
   dplyr::rename("NCBI" = "entrezid",
-         "gene" = "Name")
-head(kallistodata)
+                "gene" = "Name")
+head(kallistodata[1:3])
 
 ## save gene information
 geneinfo <- kallistodata %>%
   select(gene, geneid, NCBI) 
 head(geneinfo)
-```
 
+## check for genes that have multple transcripts expressed
 
-## # check for genes that have multple transcripts expressed
-
-```{r}
 isoforms <- kallistodata %>%
   group_by(gene) %>%
   summarize(n = n()) %>%
@@ -50,14 +34,9 @@ head(isoforms)
 # for example, these gene have 2 and 3 isoforms
 geneinfo %>% filter(gene == "GRIN1")
 geneinfo %>% filter(gene == "CACNA1C")
-```
-
 
 ## group data by gene
 
-
-```{r}
-#head(kallistodata)
 # aggregate transcript counts to gene counts
 countData <- kallistodata %>% 
   select(-row.names, -geneid, -NCBI) %>% 
@@ -76,12 +55,10 @@ head(countData[13:15])
 
 # print tolal num of genes and samples
 dim(countData)
-```
 
 ## wrangle colData 
 
-```{r colData}
-colData <- read.table(file.path( "../metadata/kallistosamples.txt"),
+colData <- read.table(file.path( "metadata/kallistosamples.txt"),
                       header = F, stringsAsFactors = F) %>%
   # use strsplit to cut the filename into meaningful columns
   mutate(bird = sapply(strsplit(V1,'\\_'), "[", 1),
@@ -90,14 +67,14 @@ colData <- read.table(file.path( "../metadata/kallistosamples.txt"),
          temp = sapply(strsplit(V1,'\\_'), "[", 4)) %>%
   mutate(treatmenttemp = sapply(strsplit(temp,'\\.'), "[", 1),
          NYNO = sapply(strsplit(temp,'\\.'), "[", 2)) %>%
- 
+  
   # rename variables
   mutate(treatment = ifelse(grepl("extend-hatch", treatmenttemp), "extend",
                             ifelse(grepl("inc-prolong", treatmenttemp), "prolong",
                                    ifelse(grepl("m.hatch", treatmenttemp), "m.n2",
                                           ifelse(grepl("m.inc.d8", treatmenttemp), "early",
-                                   treatmenttemp))))) %>%
-   select(-temp, -NYNO, -treatmenttemp ) %>%
+                                                 treatmenttemp))))) %>%
+  select(-temp, -NYNO, -treatmenttemp ) %>%
   # replace dashes with periods (to make deseq happy)
   mutate(bird = gsub("-", ".", bird),
          treatment = gsub("-", ".", treatment),
@@ -118,39 +95,26 @@ str(colData)
 
 ## check that rownames and colnames match for DESeq
 ncol(countData) == nrow(colData)
-```
 
 ## summarize data
-
-```{r}
 
 colData %>% select(sex, tissue, treatment, study)  %>%  summary()
 table(colData$sex, colData$treatment, colData$tissue)
 
 length(unique(colData$bird))
 table(colData$sex, colData$tissue)
-```
 
 ## save bird data 
 
-```{r}
 birds <- colData %>%
   select(bird, sex, treatment) %>%
   distinct()
 head(birds)
-```
-
 
 ## save files for downstream use
 
-```{r write}
-write.csv(countData, "../results/00_counts.csv")
-write.csv(isoforms, "../results/00_geneswithisoforms.csv", row.names = T)
-
-write.csv(colData, "../metadata/00_colData.csv")
-write.csv(birds, "../metadata/00_birds.csv")
-write.csv(geneinfo, "../metadata/00_geneinfo.csv", row.names = TRUE)
-
-```
-
-
+write.csv(countData, "results/00_counts.csv")
+write.csv(isoforms, "results/00_geneswithisoforms.csv", row.names = T)
+write.csv(colData, "metadata/00_colData.csv")
+write.csv(birds, "metadata/00_birds.csv")
+write.csv(geneinfo, "metadata/00_geneinfo.csv", row.names = TRUE)

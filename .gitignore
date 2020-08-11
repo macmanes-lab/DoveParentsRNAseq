@@ -10,3 +10,4 @@ results/*.RData
 analysis/*files
 docs/SICB2020_files/*
 db-export/musicalgenes.sql
+.snakemake
