@@ -1,5 +1,4 @@
 # Data wrangling
-
 library(tidyverse)
 
 ## import Kallisto transcript data, make gene info file 
@@ -85,6 +84,18 @@ colData[cols] <- lapply(colData[cols], factor)
 colData <- colData %>%
   mutate(tissue = factor(tissue, levels = c("hypothalamus", "pituitary", "gonad"))) %>% 
   mutate(tissue = fct_recode(tissue, "gonads" = "gonad")) %>%
+  ## add external and internalhypothesis
+  mutate(external = fct_collapse(treatment,
+                                 eggs = c("lay", "inc.d3", "inc.d9", "inc.d17", "prolong"),
+                                 chicks = c("hatch", "n5", "n9", "extend" , "early" ),
+                                 nest = c("bldg", "m.inc.d3",  "m.inc.d9",  "m.inc.d17",  "m.n2"),
+                                 control = c("control")),
+         internal = fct_collapse(treatment,
+                                 early = c("lay", "inc.d3", "bldg", "m.inc.d3",  "m.inc.d9",
+                                           "inc.d9",  "early"),
+                                 late = c("hatch", "n5", "n9", "extend" ,  "prolong", "inc.d17",
+                                          "m.inc.d17",  "m.n2"),
+                                 control = c("control"))) %>%
   mutate(group = paste(sex, tissue, treatment, sep = "."),
          study = ifelse(grepl("m.|extend|prolong", treatment), 
                         "manipulation", "charcterization")) %>%
@@ -92,6 +103,7 @@ colData <- colData %>%
 colData <- as.data.frame(colData)
 row.names(colData) <- colData$V1
 str(colData)
+head(colData)
 
 ## check that rownames and colnames match for DESeq
 ncol(countData) == nrow(colData)
