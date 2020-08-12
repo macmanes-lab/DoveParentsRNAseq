@@ -17,10 +17,8 @@ source("R/themes.R")  # load custom themes and color palletes
 countData <- read.csv("results/00_counts.csv", header = T, row.names = 1)
 
 print("subset for quick run")
-countData  <- head(countData, 1000) # suset for quick analysis
+countData  <- head(countData, 1500) # suset for quick analysis
 
-# gene information
-geneinfo <- read.csv("metadata/00_geneinfo.csv", row.names = 1)
 
 # col data or variable informaiton
 colData <- read.csv("metadata/00_colData.csv", header = T, row.names = 1) %>%
@@ -32,44 +30,15 @@ colData <- colData %>% drop_na()
 
 print(ncol(countData) == nrow(colData))
 
-
 # differential gene expression
 
 
-createDEGdftreatment <- function(up, down, mytissue){
+returndds <- function(whichgroup){
   
-  res <- results(dds, contrast = c("treatment", up, down), 
-                 independentFiltering = T, alpha = 0.1)
-  
-  DEGs <- data.frame(gene = row.names(res),
-                        padj = res$padj, 
-                        logpadj = -log10(res$padj),
-                        lfc = res$log2FoldChange,
-                        sextissue = mytissue)
-  DEGs <- na.omit(DEGs)
-  DEGs <- DEGs %>%
-    dplyr::mutate(direction = ifelse(DEGs$lfc > 0 & DEGs$padj < 0.1, 
-                                     yes = up, no = ifelse(DEGs$lfc < 0 & DEGs$padj < 0.1, 
-                                                           yes = down, no = "NS"))) %>% 
-    dplyr::arrange(desc(lfc)) %>%
-    dplyr::mutate(direction = factor(DEGs$direction, levels = c(down, "NS", up)))
-  
-  # write DEGsframe of only significant genes
-  DEGs <- DEGs %>% dplyr::filter(direction != "NS")
-  print(str(DEGs))
-  
-  partialfilename = paste("_", down, "_", up, sep = "")
-  myfilename = paste0("results/DESeq2/", mytissue, partialfilename, "_DEGs.csv")
-  
-  write.csv(DEGs, myfilename, row.names = F)
-  # return DEGs frome with all data, included NS genes
-  # print(head(DEGs))
-}  
-
-
-for(i in levels(colData$sextissue)){
-  
-  newcolData <- subsetcolData2(colData, i)
+  newcolData <- colData %>%
+    dplyr::filter(sextissue %in% whichgroup) %>%      
+    droplevels()
+  row.names(newcolData) <- newcolData$V1
   
   # save counts that match colData
   savecols <- as.character(newcolData$V1) 
@@ -84,19 +53,79 @@ for(i in levels(colData$sextissue)){
   print(dds)
   print(dim(dds))
   dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
-  
-  vsd <- as.data.frame(assay(vst(dds, blind=FALSE)))
-  
-  myfilename = paste0("results/DEseq2/", i, "_vsd.csv")
-  write.csv(vsd, myfilename)
-  
-  #return(dds)
-  #return(vsd)
-  #print(head(vsd))
+  return(dds)
+}
 
-  # save differential gene expression results
-  
-  control.bldg <- createDEGdftreatment("bldg", "control", i)
+
+returnvsd <- function(whichdds, whichgroup){
+
+  vsd <- as.data.frame(assay(vst(whichdds, blind=FALSE)))
+  myfilename = paste0("results/DEseq2/treatment/", whichgroup, "_vsd.csv")
+  write.csv(vsd, myfilename)
+  return(vsd)
+  print(head(vsd))
   
 }
 
+downs <- c("control","control","control","control","control","control","control","control",
+           "bldg"   ,"bldg"   ,"bldg"   ,"bldg"   ,"bldg"   ,"bldg"   , "bldg"   , 
+           "lay",     "inc.d3", "inc.d9", "inc.d17", "hatch", "n5")
+
+ups   <- c("bldg",    "lay",  "inc.d3",  "inc.d9", "inc.d17", "hatch",    "n5",   "n9",
+           "lay",  "inc.d3",  "inc.d9", "inc.d17", "hatch",    "n5",   "n9",
+           "inc.d3",  "inc.d9", "inc.d17", "hatch",    "n5",   "n9")
+
+
+createDEGdftreatment <- function(whichdds, whichgroup){
+  
+  for(down in downs){
+    for(up in ups){
+      
+      print(down)
+      print(up)
+    
+  res <- results(whichdds, contrast = c("treatment", up, down), 
+                 independentFiltering = T, alpha = 0.1)
+  
+  DEGs <- data.frame(gene = row.names(res),
+                     padj = res$padj, 
+                     logpadj = -log10(res$padj),
+                     lfc = res$log2FoldChange,
+                     sextissue = whichgroup)
+  DEGs <- na.omit(DEGs)
+
+  DEGs <- DEGs %>%
+    dplyr::mutate(direction = ifelse(lfc > 0 & padj < 0.1, yes = up, 
+                                     ifelse(lfc < 0 & padj < 0.1, yes = down, 
+                                            no = "NS"))) %>% 
+    dplyr::arrange(desc(lfc)) %>%
+    dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)))
+  
+  # write DEGsframe of only significant genes
+  DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+  print(str(DEGs))
+  
+  partialfilename = paste("_", down, "_", up, sep = "")
+  myfilename = paste0("results/DESeq2/treatment/", 
+                      whichgroup, partialfilename, "_DEGs.csv")
+  
+  write.csv(DEGs, myfilename, row.names = F)
+  # return DEGs frome with all data, included NS genes
+  # print(head(DEGs))
+  
+  return(head(DEGs))
+    }  
+  }
+}
+
+
+ddsMG <- returndds("male_hypothalamus")
+#ddsFG <- returndds("female_hypothalamus")
+#ddsMG <- returndds("male_gonads")
+#ddsFH <- returndds("female_gonads")
+#ddsMP <- returndds("male_pituitary")
+#ddsFP <- returndds("female_pituitary")
+
+vsdMG <- returnvsd(ddsMG, "male_hypothalamus")
+
+createDEGdftreatment(ddsMG, "male_hypothalamus")
