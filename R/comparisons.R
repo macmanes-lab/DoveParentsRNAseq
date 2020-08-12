@@ -1,4 +1,3 @@
-control.bldg <- createDEGdftreatment("bldg", "control", i)
 bldg.lay <- createDEGdftreatment("lay", "bldg", i)
 lay.inc.d3 <- createDEGdftreatment("inc.d3", "lay",  i) 
 inc.d3.inc.d9 <- createDEGdftreatment("inc.d9", "inc.d3", i) 
@@ -47,14 +46,24 @@ inc.d17.prolong <- createDEGdftreatment("prolong", "inc.d17",  i)
 
 prolong.extend <- createDEGdftreatment("extend", "prolong",  i) 
 
-m.inc.d9.m.inc.d3 <- createDEGdftreatment("m.inc.d9", "m.inc.d3",  i) 
-m.inc.d17.m.inc.d9 <- createDEGdftreatment("m.inc.d17", "m.inc.d9",  i) 
-m.inc.d17.m.inc.d3 <- createDEGdftreatment("m.inc.d17", "m.inc.d3",  i) 
-m.n2.m.inc.d17 <- createDEGdftreatment("m.n2", "m.inc.d17",  i) 
-m.n2.m.inc.d9 <- createDEGdftreatment("m.n2", "m.inc.d9",  i)
-m.n2.m.inc.d3 <- createDEGdftreatment("m.n2", "m.inc.d3",  i)
+m.inc.d3.m.inc.d9 <- createDEGdftreatment("m.inc.d9", "m.inc.d3",  i) 
+m.inc.d9.m.inc.d17 <- createDEGdftreatment("m.inc.d17", "m.inc.d9",  i) 
+m.inc.d3.m.inc.d17 <- createDEGdftreatment("m.inc.d17", "m.inc.d3",  i) 
+m.inc.d17.m.n2 <- createDEGdftreatment("m.n2", "m.inc.d17",  i) 
+m.inc.d9.m.n2 <- createDEGdftreatment("m.n2", "m.inc.d9",  i)
+m.inc.d3.m.n2 <- createDEGdftreatment("m.n2", "m.inc.d3",  i)
 
-m.inc.d3.inc.d3 <- createDEGdftreatment("m.inc.d3", "inc.d3",  i) 
-m.inc.d9.inc.d9 <- createDEGdftreatment("m.inc.d9", "inc.d9",  i) 
-m.inc.d17.inc.d17 <- createDEGdftreatment("m.inc.d17", "inc.d17",  i) 
-m.n2.hatch <- createDEGdftreatment("m.n2", "hatch",  i) 
+inc.d3.m.inc.d3 <- createDEGdftreatment("m.inc.d3", "inc.d3",  i) 
+inc.d9.m.inc.d9 <- createDEGdftreatment("m.inc.d9", "inc.d9",  i) 
+inc.d17.m.inc.d17 <- createDEGdftreatment("m.inc.d17", "inc.d17",  i) 
+hatch.m.n2 <- createDEGdftreatment("m.n2", "hatch",  i) 
+
+early.inc.d9 <- createDEGdftreatment("inc.d9", "early",  i) 
+hatch.early <- createDEGdftreatment("early", "hatch",  i) 
+
+prolong.inc.d17 <- createDEGdftreatment("inc.d17", "prolong",  i) 
+hatch.prolong <- createDEGdftreatment("prolong", "hatch",  i) 
+
+extend.hatch <- createDEGdftreatment("hatch", "extend",  i) 
+n5.extend <- createDEGdftreatment("extend", "n5",  i) 
+
