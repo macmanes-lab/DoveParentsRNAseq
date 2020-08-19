@@ -2,6 +2,8 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/macmanes-lab/DoveParentsRNAseq/master?urlpath=rstudio)
 --->
 
+[![Shiny](https://img.shields.io/badge/Explore%20data-Open%20R%20Shiny-blue)](https://raynamharris.shinyapps.io/musicalgenes/)
+
 # Characterizing the neurogenomics of parental care in the rock dove
 
 ## Overview
