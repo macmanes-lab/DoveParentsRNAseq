@@ -269,4 +269,127 @@ t456
 ```
 
 
+## Candidate Correlations - SUppl fig 1
+
+
+```{r correlations}
+hyp1 <- makecorrdf("female", "hypothalamus", litNotGOknown)  
+pit1 <- makecorrdf("female", "pituitary", litNotGOknown)  
+gon1 <- makecorrdf("female", "gonad", litNotGOknown)  
+
+hyp2 <- makecorrdf("male", "hypothalamus", litNotGOknown)  
+pit2 <- makecorrdf("male", "pituitary", litNotGOknown)  
+gon2 <- makecorrdf("male", "gonad", litNotGOknown) 
+
+
+hyp3 <- makecorrdf("female", "hypothalamus", GOgenes)  
+pit3 <- makecorrdf("female", "pituitary", GOgenes)  
+gon3 <- makecorrdf("female", "gonad", GOgenes)  
+
+hyp4 <- makecorrdf("male", "hypothalamus", GOgenes)  
+pit4 <- makecorrdf("male", "pituitary", GOgenes)  
+gon4 <- makecorrdf("male", "gonad", GOgenes)  
+```
+
+
+```{r supplfig-2, fig.width=7.25, fig.height=7.25}
+
+b1 <- plotcorrplot(hyp1, "females") + labs(y = "Hypothalamus", title = "Parental Care Literature")  + 
+  scale_x_discrete(position = "top")   + theme(axis.text.x = element_text(vjust = -0.25))
+b2 <- plotcorrplot(pit1, NULL)  + labs(y = "Pituitary") + 
+  theme(axis.text.x = element_blank())
+b3 <- plotcorrplot(gon1, NULL)  + labs(y = "Gonad") + theme(axis.text.x = element_text(vjust = 0.25))
+ 
+b4 <- plotcorrplot(hyp2, "males") + labs( title =  " ") + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = -0.25)) +
+  scale_x_discrete(position = "top") 
+b5 <- plotcorrplot(pit2, NULL)    + 
+  theme(axis.text.x = element_blank(), axis.text.y = element_blank())
+b6 <- plotcorrplot(gon2, NULL)  + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
+
+
+b7 <- plotcorrplot(hyp3, "females") + labs( title = "Parental Care GO") + 
+   scale_x_discrete(position = "top") + theme(axis.text.x = element_text(vjust = -0.25))
+b8 <- plotcorrplot(pit3, NULL)   + 
+  theme(axis.text.x = element_blank())
+b9 <- plotcorrplot(gon3, NULL)  + theme(axis.text.x = element_text(vjust = 0.25))
+
+b10 <- plotcorrplot(hyp4, "males") + labs( title =  " ") + 
+  theme(axis.text.y = element_blank(),
+        axis.text.x = element_text(vjust = -0.25)) + scale_x_discrete(position = "top") 
+b11 <- plotcorrplot(pit4, NULL)    + 
+  theme(axis.text.x = element_blank() , axis.text.y = element_blank())
+b12 <- plotcorrplot(gon4, NULL)   + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
+
+forlegend <- plotcorrplot(gon4, NULL) + theme(legend.position = "bottom") + labs(color = "Correlation")
+mylegend <- get_legend(forlegend)
+
+allcorplots <- plot_grid(b1,b4,b7,b10,
+          b2,b5,b8,b11,
+          b3,b6,b9,b12, rel_heights = c(1.4,1,1.2),
+          labels = c("A", " ", "B"), label_size = 8, rel_widths = c(1.4,1.2,1.2,1))
+
+supplfig2 <- plot_grid(allcorplots, mylegend, ncol = 1, rel_heights = c(1,0.1))
+supplfig2
+
+
+```
+
+
+## Figure
+
+```{r fig2, fig.width = 7.25, fig.height = 7.25}
+
+
+
+c1 <- scattercorrelations(FH, FH$DRD1, "DRD1", FH$HTR2C, "HTR2C", "#969696" ) +  labs(title = " ", subtitle = " " )  
+c3 <- scattercorrelations(FP, FP$AVPR1A, "AVPR1A", FP$CRHR1,  "CRHR1", "#969696")  + labs(title = " ", subtitle = " ") 
+c5 <- scattercorrelations(FG, FG$PGR, "PGR",  FG$ESR1,  "ESR1", "#969696")   + labs(title = " ", subtitle = " ") 
+
+c2 <- scattercorrelations(MH, MH$DRD1, "DRD1", MH$HTR2C, "HTR2C", "#525252")  + labs(title = " ", subtitle = " " )  
+c4 <- scattercorrelations(MP, MP$AVPR1A,  "AVPR1A",  MP$CRHR1, "CRHR1", "#525252")  + labs(title = " ", subtitle = " " ) 
+c6 <- scattercorrelations(MG, MG$PGR, "PGR", MG$ESR1, "ESR1", "#525252")   + labs(title = " ", subtitle = " " ) 
+```
+
+
+```{r newfig}
+
+plot3candidates <- function(hypgene, pitgene, gongene){
+  
+  a1 <- newcandidateboxplot("hypothalamus", hypgene, "female", "female hypothalamus", "sequential") 
+  a2 <- externalboxplots("hypothalamus", hypgene, "female", " ", "external") 
+  a3 <- newcandidateboxplot("hypothalamus", hypgene, "male", "male hypothalamus", "sequential")
+  a4 <- externalboxplots( "hypothalamus", hypgene, "female", " ", "external")
+  
+  hypplots <- plot_grid(a1,a2, a3, a4, rel_widths = c(2,1,2,1), nrow = 1)
+  
+  b1 <- newcandidateboxplot("pituitary", pitgene, "female", "female pituitary", "sequential")
+  b2 <- externalboxplots("pituitary", pitgene, "female", " ", "external") 
+  b3 <- newcandidateboxplot("pituitary", pitgene, "male", "male pituitary", "sequential")
+  b4 <- externalboxplots( "pituitary", pitgene, "female", " ", "external")
+  
+  pitplots <- plot_grid(b1,b2, b3, b4, rel_widths = c(2,1,2,1), nrow = 1)
+  
+  c1 <- newcandidateboxplot("gonad", gongene, "female", "female gonad", "sequential") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  c2 <- externalboxplots("gonad", gongene, "female", " ", "external") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  c3 <- newcandidateboxplot("gonad", gongene, "male", "male gonad", "sequential") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  c4 <- externalboxplots( "gonad", gongene, "female", " ", "external") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  gonplots <- plot_grid(c1,c2, c3, c4, rel_widths = c(2,1,2,1), nrow = 1)
+  
+  fig2alt <- plot_grid(hypplots, pitplots, gonplots, nrow = 3,
+                       labels = "AUTO", label_size = 8,
+                       rel_heights = c(1,1,1.2))
+  print(fig2alt)
+  
+    
+}
+
+plot3candidates("COMT","PRL","AVPR1A")
+plot3candidates("PRL","PRL", "PRL")
+plot3candidates("PRL","FSH", "ESR1")
+```
 

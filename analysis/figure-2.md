@@ -1,5 +1,5 @@
-Candidate gene analysis
-=======================
+Table 1. Candidate genes and differentially expressed genes
+===========================================================
 
     library(tidyverse)
     library(ggtext)
@@ -15,7 +15,6 @@ Candidate gene analysis
     library(magick)
     library(scales)
     library(ggimage)
-
 
     source("../R/themes.R")
     source("../R/functions.R")
@@ -66,286 +65,200 @@ Candidate genes
     ## [15] "GNRHR"   "HTR2C"   "OPRM1"   "PGR"     "PRLR"    "TH"      "THRB"   
     ## [22] "VIP"
 
-Candidate DEGs
---------------
+Differentially expressed genes (DEGs)
+-------------------------------------
 
     # summary DEG results from DESeq2
-    candidateDEGS <- read_csv("../results/suppltable1.csv") %>%
-      filter(gene %in% candidategenes) %>%
-      mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+    allDEGS <- read_csv("../results/suppltable1.csv") %>%
+       mutate(posneg = ifelse(lfc >= 0, "+", "-"),
              sex = recode(sex, "female" = "F", "male" = "M" ),
              tissue = recode(tissue, 
                              "hypothalamus" = "H",
-                             "pituitary" = "P", "gonad" = "G")) %>%
-      mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
-      select(gene, res, comparison)  %>%
-      group_by(gene,  comparison) %>%
-      summarize(res = str_c(res, collapse = " ")) %>%
-      pivot_wider(names_from = comparison, values_from = res) %>%
-      select(gene, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
-    candidateDEGS
+                             "pituitary" = "P", "gonad" = "G"),
+             comparison = recode(comparison, 
+                             "bldg_lay" = "Bldg2Lay",
+                             "lay_inc.d3" = "Lay2Inc3", 
+                             "inc.d3_inc.d9" = "Inc3toInc9",
+                             "inc.d9_inc.d17" = "Inc9toInc17",
+                             "inc.d17_hatch" = "In17toHatch",
+                             "hatch_n5" = "Hatch2N5",
+                             "n5_n9" = "N5toN9"),
+             group = paste(sex, tissue, sep = "")) %>%
+      mutate(res = paste("(", posneg, ")", sep = "")) %>%
+      mutate(compres = paste(comparison, res, sep = "")) %>%
+      select(gene, group, compres) 
+    allDEGS
 
-    ## # A tibble: 28 x 6
-    ## # Groups:   gene [28]
-    ##    gene   lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9
-    ##    <chr>  <chr>      <chr>         <chr>          <chr>    <chr>
-    ##  1 ADRA2A <NA>       <NA>          MH+            <NA>     <NA> 
-    ##  2 AVP    <NA>       <NA>          MH+            <NA>     FG+  
-    ##  3 AVPR1A FG+        FG-           <NA>           <NA>     <NA> 
-    ##  4 BRINP1 <NA>       <NA>          FG+            <NA>     <NA> 
-    ##  5 COMT   <NA>       <NA>          <NA>           FH-      <NA> 
-    ##  6 CREBRF FG-        <NA>          <NA>           FP+      <NA> 
-    ##  7 CRHBP  <NA>       <NA>          <NA>           FH+      <NA> 
-    ##  8 CRHR2  <NA>       <NA>          <NA>           FH+      <NA> 
-    ##  9 DRD1   <NA>       <NA>          <NA>           FH+      <NA> 
-    ## 10 DRD4   FP-        <NA>          <NA>           FH+      <NA> 
-    ## # … with 18 more rows
+    ## # A tibble: 14,795 x 3
+    ##    gene    group compres    
+    ##    <chr>   <chr> <chr>      
+    ##  1 HBG2    FH    Bldg2Lay(-)
+    ##  2 HEMGN   FH    Bldg2Lay(-)
+    ##  3 BLB1    FH    Lay2Inc3(-)
+    ##  4 C1QA    FH    Lay2Inc3(-)
+    ##  5 CFD     FH    Lay2Inc3(-)
+    ##  6 CLIC2   FH    Lay2Inc3(-)
+    ##  7 HLA-DRA FH    Lay2Inc3(-)
+    ##  8 IRF1    FH    Lay2Inc3(-)
+    ##  9 SCIN    FH    Lay2Inc3(-)
+    ## 10 SLC35B2 FH    Lay2Inc3(-)
+    ## # … with 14,785 more rows
 
-    ## table 1 summary candidate genes
-    table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
-      select(gene, lay_inc.d3:n5_n9, literature, GO, NCBI) %>%
-      mutate(literature = if_else(is.na(literature), " ", "X"),
-             GO = if_else(is.na(GO), " ", "X"))
-    (table1)
+    DEGsbytissue <- function(whichtissueshorthand, whichsex){
+      
+      df <- allDEGS %>%
+      filter(grepl(whichtissueshorthand, group),
+             grepl(whichsex,group)) %>%
+      group_by(group,gene) %>%
+      summarize(results = str_c(compres, collapse = "; ")) %>%
+      mutate(n = (str_count(results, pattern = ";"))+1) %>%
+      arrange(desc(n))  %>%
+      filter(n>1)
+      #group_by(comparisons) %>%
+      #summarize(genes = str_c(gene, collapse = "; "))  
 
-    ## # A tibble: 28 x 9
-    ## # Groups:   gene [28]
-    ##    gene  lay_inc.d3 inc.d3_inc.d9 inc.d9_inc.d17 hatch_n5 n5_n9 literature GO   
-    ##    <chr> <chr>      <chr>         <chr>          <chr>    <chr> <chr>      <chr>
-    ##  1 ADRA… <NA>       <NA>          MH+            <NA>     <NA>  "X"        " "  
-    ##  2 AVP   <NA>       <NA>          MH+            <NA>     FG+   "X"        "X"  
-    ##  3 AVPR… FG+        FG-           <NA>           <NA>     <NA>  "X"        "X"  
-    ##  4 BRIN… <NA>       <NA>          FG+            <NA>     <NA>  " "        "X"  
-    ##  5 COMT  <NA>       <NA>          <NA>           FH-      <NA>  "X"        " "  
-    ##  6 CREB… FG-        <NA>          <NA>           FP+      <NA>  " "        "X"  
-    ##  7 CRHBP <NA>       <NA>          <NA>           FH+      <NA>  "X"        " "  
-    ##  8 CRHR2 <NA>       <NA>          <NA>           FH+      <NA>  "X"        " "  
-    ##  9 DRD1  <NA>       <NA>          <NA>           FH+      <NA>  "X"        "X"  
-    ## 10 DRD4  FP-        <NA>          <NA>           FH+      <NA>  "X"        " "  
-    ## # … with 18 more rows, and 1 more variable: NCBI <chr>
+      print(head(df))
+      return(df)
+      
+    }
 
-Candidate VSDs
---------------
+    hmDEGs <- DEGsbytissue("H", "M")
 
-    # load `candidatevsd` with `source("../R/wrangledata.R")`
-    candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
-      select(-X1) %>%
-      filter(treatment %in% charlevels) %>%
-      mutate(treatment = factor(treatment, levels = charlevels)) %>%
-      drop_na()
+    ## # A tibble: 6 x 4
+    ## # Groups:   group [1]
+    ##   group gene   results                                 n
+    ##   <chr> <chr>  <chr>                               <dbl>
+    ## 1 MH    TPH2   Bldg2Lay(-); Hatch2N5(+); N5toN9(-)     3
+    ## 2 MH    ALPK2  Lay2Inc3(+); Inc9toInc17(-)             2
+    ## 3 MH    ATP2A1 Hatch2N5(-); In17toHatch(+)             2
+    ## 4 MH    CERKL  Inc9toInc17(-); In17toHatch(+)          2
+    ## 5 MH    COX14  Bldg2Lay(+); Lay2Inc3(-)                2
+    ## 6 MH    CSF3R  In17toHatch(-); Inc9toInc17(+)          2
 
-    ## Warning: Missing column names filled in: 'X1' [1]
+    pmDEGs <- DEGsbytissue("P", "M")
 
-    head(candidatevsd)
+    ## # A tibble: 6 x 4
+    ## # Groups:   group [1]
+    ##   group gene        results                                         n
+    ##   <chr> <chr>       <chr>                                       <dbl>
+    ## 1 MP    C11H19ORF40 Lay2Inc3(-); Inc3toInc9(+); Inc9toInc17(-)      3
+    ## 2 MP    CREM        Inc9toInc17(+); Hatch2N5(-); N5toN9(-)          3
+    ## 3 MP    ERLEC1      Inc9toInc17(+); Hatch2N5(-); In17toHatch(+)     3
+    ## 4 MP    FTL         Inc9toInc17(+); Hatch2N5(-); In17toHatch(+)     3
+    ## 5 MP    OLFM1       Inc9toInc17(+); In17toHatch(+); N5toN9(-)       3
+    ## 6 MP    ADARB1      Inc9toInc17(+); Hatch2N5(-)                     2
 
-    ## # A tibble: 6 x 6
-    ##   sex    tissue       treatment gene  samples                             counts
-    ##   <chr>  <chr>        <fct>     <chr> <chr>                                <dbl>
-    ## 1 female hypothalamus control   ADRA… L.G118_female_hypothalamus_control…   8.95
-    ## 2 female hypothalamus control   ADRA… R.G106_female_hypothalamus_control    8.81
-    ## 3 female hypothalamus control   ADRA… R.R20_female_hypothalamus_control.…   9.18
-    ## 4 female hypothalamus control   ADRA… R.R9_female_hypothalamus_control      8.72
-    ## 5 female hypothalamus control   ADRA… R.W44_female_hypothalamus_control     9.23
-    ## 6 female hypothalamus inc.d9    ADRA… blk.s061.pu.y_female_hypothalamus_…   9.11
+    gmDEGs <- DEGsbytissue("G", "M")
 
-    candidatevsdwide <- candidatevsd  %>%
-        pivot_wider(names_from = gene, values_from = counts) 
-    FH <- subsetcandidatevsdwide("female", "hypothalamus")
-    FP <- subsetcandidatevsdwide("female", "pituitary")
-    FG <- subsetcandidatevsdwide("female", "gonad")
-    MH <- subsetcandidatevsdwide("male", "hypothalamus")
-    MP <- subsetcandidatevsdwide("male", "pituitary")
-    MG <- subsetcandidatevsdwide("male", "gonad") 
+    ## # A tibble: 6 x 4
+    ## # Groups:   group [1]
+    ##   group gene        results                      n
+    ##   <chr> <chr>       <chr>                    <dbl>
+    ## 1 MG    ANXA5       Bldg2Lay(-); Lay2Inc3(+)     2
+    ## 2 MG    C28H19ORF10 Bldg2Lay(-); Lay2Inc3(+)     2
+    ## 3 MG    CHD9        Bldg2Lay(+); Lay2Inc3(-)     2
+    ## 4 MG    EIF3H       Bldg2Lay(-); Lay2Inc3(+)     2
+    ## 5 MG    EIF3I       Bldg2Lay(-); Lay2Inc3(+)     2
+    ## 6 MG    GLYR1       Bldg2Lay(-); Lay2Inc3(+)     2
 
-Candidate Correlations - SUppl fig 1
-------------------------------------
+    hfDEGs <- DEGsbytissue("H", "F")
 
-    hyp1 <- makecorrdf("female", "hypothalamus", litNotGOknown)  
-    pit1 <- makecorrdf("female", "pituitary", litNotGOknown)  
-    gon1 <- makecorrdf("female", "gonad", litNotGOknown)  
+    ## # A tibble: 6 x 4
+    ## # Groups:   group [1]
+    ##   group gene    results                                         n
+    ##   <chr> <chr>   <chr>                                       <dbl>
+    ## 1 FH    IGJ     In17toHatch(-); Inc9toInc17(+); Hatch2N5(+)     3
+    ## 2 FH    ABCB5   Hatch2N5(-); In17toHatch(+)                     2
+    ## 3 FH    ABHD16A Inc9toInc17(+); Hatch2N5(-)                     2
+    ## 4 FH    ADAM9   Inc9toInc17(+); Hatch2N5(-)                     2
+    ## 5 FH    ADGRV1  Inc9toInc17(-); Hatch2N5(+)                     2
+    ## 6 FH    AGGF1   Inc9toInc17(-); Hatch2N5(+)                     2
 
-    hyp2 <- makecorrdf("male", "hypothalamus", litNotGOknown)  
-    pit2 <- makecorrdf("male", "pituitary", litNotGOknown)  
-    gon2 <- makecorrdf("male", "gonad", litNotGOknown) 
+    pfDEGs <- DEGsbytissue("P", "F")
 
+    ## # A tibble: 6 x 4
+    ## # Groups:   group [1]
+    ##   group gene        results                                                   n
+    ##   <chr> <chr>       <chr>                                                 <dbl>
+    ## 1 FP    ADARB1      Bldg2Lay(-); Lay2Inc3(+); Inc9toInc17(+); Hatch2N5(-)     4
+    ## 2 FP    ALG2        Bldg2Lay(-); Lay2Inc3(+); Inc9toInc17(+); Hatch2N5(-)     4
+    ## 3 FP    ARF1        Bldg2Lay(-); Lay2Inc3(+); Inc9toInc17(+); Hatch2N5(-)     4
+    ## 4 FP    ARF4        Bldg2Lay(-); Lay2Inc3(+); Inc9toInc17(+); Hatch2N5(-)     4
+    ## 5 FP    C28H19ORF10 Bldg2Lay(-); Lay2Inc3(+); Inc9toInc17(+); Hatch2N5(-)     4
+    ## 6 FP    CRELD2      Bldg2Lay(-); Lay2Inc3(+); Inc9toInc17(+); Hatch2N5(-)     4
 
-    hyp3 <- makecorrdf("female", "hypothalamus", GOgenes)  
-    pit3 <- makecorrdf("female", "pituitary", GOgenes)  
-    gon3 <- makecorrdf("female", "gonad", GOgenes)  
+    gfDEGs <- DEGsbytissue("G", "F")
 
-    hyp4 <- makecorrdf("male", "hypothalamus", GOgenes)  
-    pit4 <- makecorrdf("male", "pituitary", GOgenes)  
-    gon4 <- makecorrdf("male", "gonad", GOgenes)  
+    ## # A tibble: 6 x 4
+    ## # Groups:   group [1]
+    ##   group gene        results                                                    n
+    ##   <chr> <chr>       <chr>                                                  <dbl>
+    ## 1 FG    LOC1070534… Bldg2Lay(+); Lay2Inc3(-); In17toHatch(-); Inc9toInc17…     5
+    ## 2 FG    COL10A1     Bldg2Lay(+); Lay2Inc3(-); Inc3toInc9(-); N5toN9(+)         4
+    ## 3 FG    ANP32A      Bldg2Lay(-); Lay2Inc3(+); Inc9toInc17(-)                   3
+    ## 4 FG    ANXA5       Bldg2Lay(-); Lay2Inc3(+); Inc9toInc17(-)                   3
+    ## 5 FG    CA8         Bldg2Lay(-); Lay2Inc3(-); N5toN9(+)                        3
+    ## 6 FG    CALB1       Bldg2Lay(+); Lay2Inc3(-); N5toN9(+)                        3
 
-    b1 <- plotcorrplot(hyp1, "females") + labs(y = "Hypothalamus", title = "Parental Care Literature")  + 
-      scale_x_discrete(position = "top")   + theme(axis.text.x = element_text(vjust = -0.25))
-    b2 <- plotcorrplot(pit1, NULL)  + labs(y = "Pituitary") + 
-      theme(axis.text.x = element_blank())
-    b3 <- plotcorrplot(gon1, NULL)  + labs(y = "Gonad") + theme(axis.text.x = element_text(vjust = 0.25))
-     
-    b4 <- plotcorrplot(hyp2, "males") + labs( title =  " ") + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = -0.25)) +
-      scale_x_discrete(position = "top") 
-    b5 <- plotcorrplot(pit2, NULL)    + 
-      theme(axis.text.x = element_blank(), axis.text.y = element_blank())
-    b6 <- plotcorrplot(gon2, NULL)  + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
+    maleDEGs <- rbind(hmDEGs, pmDEGs) %>%
+      rbind(., gmDEGs)
+    maleDEGs
 
+    ## # A tibble: 168 x 4
+    ## # Groups:   group [3]
+    ##    group gene         results                                 n
+    ##    <chr> <chr>        <chr>                               <dbl>
+    ##  1 MH    TPH2         Bldg2Lay(-); Hatch2N5(+); N5toN9(-)     3
+    ##  2 MH    ALPK2        Lay2Inc3(+); Inc9toInc17(-)             2
+    ##  3 MH    ATP2A1       Hatch2N5(-); In17toHatch(+)             2
+    ##  4 MH    CERKL        Inc9toInc17(-); In17toHatch(+)          2
+    ##  5 MH    COX14        Bldg2Lay(+); Lay2Inc3(-)                2
+    ##  6 MH    CSF3R        In17toHatch(-); Inc9toInc17(+)          2
+    ##  7 MH    HAX1         Bldg2Lay(+); Lay2Inc3(-)                2
+    ##  8 MH    LOC100858707 In17toHatch(-); Inc9toInc17(+)          2
+    ##  9 MH    LOC101748402 Hatch2N5(-); In17toHatch(+)             2
+    ## 10 MH    NEB          Hatch2N5(-); In17toHatch(+)             2
+    ## # … with 158 more rows
 
-    b7 <- plotcorrplot(hyp3, "females") + labs( title = "Parental Care GO") + 
-       scale_x_discrete(position = "top") + theme(axis.text.x = element_text(vjust = -0.25))
-    b8 <- plotcorrplot(pit3, NULL)   + 
-      theme(axis.text.x = element_blank())
-    b9 <- plotcorrplot(gon3, NULL)  + theme(axis.text.x = element_text(vjust = 0.25))
+    femaleDEGs <- rbind(hfDEGs, pfDEGs) %>%
+      rbind(., gfDEGs)
+    femaleDEGs
 
-    b10 <- plotcorrplot(hyp4, "males") + labs( title =  " ") + 
-      theme(axis.text.y = element_blank(),
-            axis.text.x = element_text(vjust = -0.25)) + scale_x_discrete(position = "top") 
-    b11 <- plotcorrplot(pit4, NULL)    + 
-      theme(axis.text.x = element_blank() , axis.text.y = element_blank())
-    b12 <- plotcorrplot(gon4, NULL)   + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
+    ## # A tibble: 1,924 x 4
+    ## # Groups:   group [3]
+    ##    group gene    results                                         n
+    ##    <chr> <chr>   <chr>                                       <dbl>
+    ##  1 FH    IGJ     In17toHatch(-); Inc9toInc17(+); Hatch2N5(+)     3
+    ##  2 FH    ABCB5   Hatch2N5(-); In17toHatch(+)                     2
+    ##  3 FH    ABHD16A Inc9toInc17(+); Hatch2N5(-)                     2
+    ##  4 FH    ADAM9   Inc9toInc17(+); Hatch2N5(-)                     2
+    ##  5 FH    ADGRV1  Inc9toInc17(-); Hatch2N5(+)                     2
+    ##  6 FH    AGGF1   Inc9toInc17(-); Hatch2N5(+)                     2
+    ##  7 FH    ALDH1A2 Inc9toInc17(-); Hatch2N5(+)                     2
+    ##  8 FH    ANKRD24 Inc9toInc17(+); Hatch2N5(-)                     2
+    ##  9 FH    APBB1   Inc9toInc17(+); Hatch2N5(-)                     2
+    ## 10 FH    ARHGEF3 Inc9toInc17(+); Hatch2N5(-)                     2
+    ## # … with 1,914 more rows
 
-    forlegend <- plotcorrplot(gon4, NULL) + theme(legend.position = "bottom") + labs(color = "Correlation")
-    mylegend <- get_legend(forlegend)
+    summarizedDEGs <- rbind(femaleDEGs,maleDEGs) %>%
+      group_by(group, results) %>%
+      summarize(genes = str_c(gene, collapse = "; ")) 
+    summarizedDEGs 
 
-    allcorplots <- plot_grid(b1,b4,b7,b10,
-              b2,b5,b8,b11,
-              b3,b6,b9,b12, rel_heights = c(1.4,1,1.2),
-              labels = c("A", " ", "B"), label_size = 8, rel_widths = c(1.4,1.2,1.2,1))
+    ## # A tibble: 109 x 3
+    ## # Groups:   group [6]
+    ##    group results                    genes                                       
+    ##    <chr> <chr>                      <chr>                                       
+    ##  1 FG    Bldg2Lay(-); In17toHatch(… LOC101749216                                
+    ##  2 FG    Bldg2Lay(-); Inc3toInc9(+) PI15                                        
+    ##  3 FG    Bldg2Lay(-); Inc9toInc17(… DMA                                         
+    ##  4 FG    Bldg2Lay(-); Inc9toInc17(… LOC107049309; PRPS2                         
+    ##  5 FG    Bldg2Lay(-); Lay2Inc3(-)   IL13RA2; SLC31A1                            
+    ##  6 FG    Bldg2Lay(-); Lay2Inc3(-);… CA8; NRG2                                   
+    ##  7 FG    Bldg2Lay(-); Lay2Inc3(+)   ADH5; ALDH7A1; ALKBH1; ANAPC15; ANOS1; AP00…
+    ##  8 FG    Bldg2Lay(-); Lay2Inc3(+);… ANP32A; ANXA5; RGS7                         
+    ##  9 FG    Bldg2Lay(-); Lay2Inc3(+);… FDX1L                                       
+    ## 10 FG    Bldg2Lay(-); N5toN9(-)     AQP8; CHGB; CHRNA3                          
+    ## # … with 99 more rows
 
-    supplfig2 <- plot_grid(allcorplots, mylegend, ncol = 1, rel_heights = c(1,0.1))
-    supplfig2
-
-![](../figures/supplfig-2-1.png)
-
-Figure
-------
-
-    c1 <- scattercorrelations(FH, FH$DRD1, "DRD1", FH$HTR2C, "HTR2C", "#969696" ) +  labs(title = " ", subtitle = " " )  
-    c3 <- scattercorrelations(FP, FP$AVPR1A, "AVPR1A", FP$CRHR1,  "CRHR1", "#969696")  + labs(title = " ", subtitle = " ") 
-    c5 <- scattercorrelations(FG, FG$PGR, "PGR",  FG$ESR1,  "ESR1", "#969696")   + labs(title = " ", subtitle = " ") 
-
-    c2 <- scattercorrelations(MH, MH$DRD1, "DRD1", MH$HTR2C, "HTR2C", "#525252")  + labs(title = " ", subtitle = " " )  
-    c4 <- scattercorrelations(MP, MP$AVPR1A,  "AVPR1A",  MP$CRHR1, "CRHR1", "#525252")  + labs(title = " ", subtitle = " " ) 
-    c6 <- scattercorrelations(MG, MG$PGR, "PGR", MG$ESR1, "ESR1", "#525252")   + labs(title = " ", subtitle = " " ) 
-
-    d1 <- candidateboxplot("hypothalamus", c("DRD1"), "female") + labs(x = NULL, title =  "Hypothlamic expression", subtitle = "females" )  
-    d2 <- candidateboxplot("hypothalamus", c("HTR2C"), "female") + labs(x = NULL )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-    d3 <- candidateboxplot("pituitary", c("AVPR1A"), "female") + labs(x = NULL , title = "Pituitary expression", subtitle = "females") 
-    d4 <- candidateboxplot("pituitary", c("CRHR1"), "female") + labs(x = NULL  )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-    d5 <- candidateboxplot("gonad", c("PGR"), "female") + labs(x = NULL, title = "Gonadal expression", subtitle = "females")
-    d6 <- candidateboxplot("gonad", c("ESR1"), "female") + labs(x = NULL ) + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-
-    e1 <- candidateboxplot("hypothalamus", c("DRD1"), "male") + labs(x = NULL, title = " " , subtitle = "males" )  
-    e2 <- candidateboxplot("hypothalamus", c("HTR2C"), "male") + labs(x = NULL, title = " " )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-    e3 <- candidateboxplot("pituitary", c("AVPR1A"), "male") + labs(x = NULL , subtitle = "males", title = " " ) 
-    e4 <- candidateboxplot("pituitary", c("CRHR1"), "male") + labs(x = NULL, title = " "  )  + theme(axis.text.x = element_text(angle = 45, vjust = 1))
-    e5 <- candidateboxplot("gonad", c("PGR"), "male") + labs(x = NULL, subtitle = "males", title = " " ) 
-    e6 <- candidateboxplot("gonad", c("ESR1"), "male") + labs(x = NULL , title = " ")   + theme(axis.text.x = element_text(angle = 45, vjust = 1)) 
-
-    #b <- plot_grid(b1,b2,b3, ncol = 1, rel_heights = c(1.1,1,1))
-    c123 <- plot_grid(c1,c3,c5, ncol = 1, rel_heights = c(1.1,1,1))
-    c456 <- plot_grid(c2,c4,c6, ncol = 1, rel_heights = c(1.1,1,1))
-    d <- plot_grid(d1,d2,d3,d4,d5,d6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1), labels = c("A", " ",  "B", " ", "C"), label_size = 8)
-    e <- plot_grid(e1,e2,e3,e4,e5,e6, ncol = 1, rel_heights = c(1.2,1, 1,1, 1,1))
-
-    fig2 <- plot_grid(d, c123,e,c456,nrow  = 1)
-    fig2
-
-![](../figures/fig2-1.png)
-
-    a <- candidateboxplot("hypothalamus", c("COMT"), "female") + 
-      labs(title =  "Sequential", 
-           subtitle = "Female hypothalamus" ) 
-
-    b <- externalboxplots("hypothalamus", c("COMT"), "female") + 
-      labs(title =  "External", 
-           subtitle = " " ) 
-
-    c <- candidateboxplot("pituitary", c("PRL"), "female") + 
-      labs(subtitle = "Female pituitary" ) 
-
-    d <- externalboxplots("pituitary", c("PRL"), "female") + 
-       labs(subtitle = " " ) 
-
-    e <- candidateboxplot("gonad", c("AVPR1A"), "female") + 
-      labs( subtitle = "Female gonads" ) + 
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-    f <- externalboxplots("pituitary", c("AVPR1A"), "female") + 
-       labs( subtitle = " " ) + 
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-    females <- plot_grid(a,b,c,d,e,f, ncol = 2, rel_widths = c(2,1))
-
-    a2 <- candidateboxplot("hypothalamus", c("COMT"), "male") + 
-      labs(title =  "Sequential", 
-           subtitle = "Male hypothalamus" ) 
-
-    b2 <- externalboxplots("hypothalamus", c("COMT"), "male") + 
-      labs(title =  "External", 
-           subtitle = "  " ) 
-
-    c2 <- candidateboxplot("pituitary", c("PRL"), "male") + 
-      labs(subtitle = "Male pituitary" ) 
-
-    d2 <- externalboxplots("pituitary", c("PRL"), "male") + 
-       labs(subtitle = " " ) 
-
-    e2 <- candidateboxplot("gonad", c("AVPR1A"), "male") + 
-      labs( subtitle = "Male gonads" ) + 
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-    f2 <- externalboxplots("pituitary", c("AVPR1A"), "male") + 
-       labs( subtitle = " " )  + 
-      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-    males <- plot_grid(a2,b2,c2,d2,e2,f2, ncol = 2, rel_widths = c(2,1))
-
-    ## Warning in wilcox.test.default(c(5.74459037236268, 5.69190747435115,
-    ## 5.57627376474667, : cannot compute exact p-value with ties
-
-    ## Warning in wilcox.test.default(c(5.71639281686726, 5.45090433098895,
-    ## 5.72401881911303, : cannot compute exact p-value with ties
-
-    ## Warning in wilcox.test.default(c(5.64556372505326, 5.05272358504361,
-    ## 5.53492367908641, : cannot compute exact p-value with ties
-
-    ## Warning in wilcox.test.default(c(5.05272358504361, 5.72204002358928,
-    ## 5.58427891014697, : cannot compute exact p-value with ties
-
-    ## Warning in wilcox.test.default(c(5.63670921041675, 5.57616171696985,
-    ## 5.05272358504361, : cannot compute exact p-value with ties
-
-    ## Warning in wilcox.test.default(c(5.54670900060151, 5.68124741136788,
-    ## 5.90118219899707, : cannot compute exact p-value with ties
-
-    newfig2 <- plot_grid(females, males, labels = c("A", "B"),
-                         label_size  = 8)
-    newfig2
-
-![](../figures/fig2-2.png)
-
-    #write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
-    #write.csv(candidatevsd, "../results/candidatecounts.csv")
-    write.csv(table1, "../results/table1-v2.csv")
-
-
-    pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
-    plot(fig2)
-    dev.off()
-
-    ## quartz_off_screen 
-    ##                 2
-
-    pdf(file="../figures/supplfig-2.pdf", width=7.25, height=7.25)
-    plot(supplfig2)
-    dev.off()
-
-    ## quartz_off_screen 
-    ##                 2
-
-    pdf(file="../figures/fig2-2.pdf", width=7.25, height=7.25)
-    plot(newfig2)
-    dev.off()
-
-    ## quartz_off_screen 
-    ##                 2
+    write.csv(summarizedDEGs,"../results/summarizedDEGsv2.csv")

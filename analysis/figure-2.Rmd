@@ -1,10 +1,9 @@
 ---
-title: "Fig2: Candidate genes"
+title: "Table 1. Candidate genes and differentially expressed genes"
 output: md_document
 ---
 
-
-# Candidate gene analysis 
+# Table 1. Candidate genes and differentially expressed genes
 
 ```{r setup, message=F}
 library(tidyverse)
@@ -18,7 +17,6 @@ library(ggsignif)
 library(magick)
 library(scales)
 library(ggimage)
-
 
 source("../R/themes.R")
 source("../R/functions.R")
@@ -48,203 +46,77 @@ litNotGOknown
 ```
 
 
-## Candidate DEGs
+## Differentially expressed genes (DEGs)
 
-
-```{r DEGs}
-
+```{r}
 # summary DEG results from DESeq2
-candidateDEGS <- read_csv("../results/suppltable1.csv") %>%
-  filter(gene %in% candidategenes) %>%
-  mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+allDEGS <- read_csv("../results/suppltable1.csv") %>%
+   mutate(posneg = ifelse(lfc >= 0, "+", "-"),
          sex = recode(sex, "female" = "F", "male" = "M" ),
          tissue = recode(tissue, 
                          "hypothalamus" = "H",
-                         "pituitary" = "P", "gonad" = "G")) %>%
-  mutate(res = paste(sex, tissue, posneg, sep = "")) %>%
-  select(gene, res, comparison)  %>%
-  group_by(gene,  comparison) %>%
-  summarize(res = str_c(res, collapse = " ")) %>%
-  pivot_wider(names_from = comparison, values_from = res) %>%
-  select(gene, lay_inc.d3, inc.d3_inc.d9, inc.d9_inc.d17, hatch_n5, n5_n9)
-candidateDEGS
-
-## table 1 summary candidate genes
-table1 <- left_join(candidateDEGS, parentalcaregenes) %>%
-  select(gene, lay_inc.d3:n5_n9, literature, GO, NCBI) %>%
-  mutate(literature = if_else(is.na(literature), " ", "X"),
-         GO = if_else(is.na(GO), " ", "X"))
-(table1)
-```
-
-## Candidate VSDs
-
-
-```{r candidatevsds}
-# load `candidatevsd` with `source("../R/wrangledata.R")`
-candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
-  select(-X1) %>%
-  filter(treatment %in% charlevels) %>%
-  mutate(treatment = factor(treatment, levels = charlevels)) %>%
-  drop_na() %>%
-    mutate(external = fct_collapse(treatment, 
-                                   "none" = c("control", "bldg"),
-                                   "eggs" = c("lay" , "inc.d3", 
-                                              "inc.d9", "inc.d17"),
-                                   "chicks" = c("hatch", "n5", "n9")))
-head(candidatevsd)
-
-
-candidatevsdwide <- candidatevsd  %>%
-  select(-external) %>%
-  pivot_wider(names_from = gene, values_from = counts) 
-FH <- subsetcandidatevsdwide("female", "hypothalamus")
-FP <- subsetcandidatevsdwide("female", "pituitary")
-FG <- subsetcandidatevsdwide("female", "gonad")
-MH <- subsetcandidatevsdwide("male", "hypothalamus")
-MP <- subsetcandidatevsdwide("male", "pituitary")
-MG <- subsetcandidatevsdwide("male", "gonad") 
-```
-
-## Candidate Correlations - SUppl fig 1
-
-
-```{r correlations}
-hyp1 <- makecorrdf("female", "hypothalamus", litNotGOknown)  
-pit1 <- makecorrdf("female", "pituitary", litNotGOknown)  
-gon1 <- makecorrdf("female", "gonad", litNotGOknown)  
-
-hyp2 <- makecorrdf("male", "hypothalamus", litNotGOknown)  
-pit2 <- makecorrdf("male", "pituitary", litNotGOknown)  
-gon2 <- makecorrdf("male", "gonad", litNotGOknown) 
-
-
-hyp3 <- makecorrdf("female", "hypothalamus", GOgenes)  
-pit3 <- makecorrdf("female", "pituitary", GOgenes)  
-gon3 <- makecorrdf("female", "gonad", GOgenes)  
-
-hyp4 <- makecorrdf("male", "hypothalamus", GOgenes)  
-pit4 <- makecorrdf("male", "pituitary", GOgenes)  
-gon4 <- makecorrdf("male", "gonad", GOgenes)  
-```
-
-
-```{r supplfig-2, fig.width=7.25, fig.height=7.25}
-
-b1 <- plotcorrplot(hyp1, "females") + labs(y = "Hypothalamus", title = "Parental Care Literature")  + 
-  scale_x_discrete(position = "top")   + theme(axis.text.x = element_text(vjust = -0.25))
-b2 <- plotcorrplot(pit1, NULL)  + labs(y = "Pituitary") + 
-  theme(axis.text.x = element_blank())
-b3 <- plotcorrplot(gon1, NULL)  + labs(y = "Gonad") + theme(axis.text.x = element_text(vjust = 0.25))
- 
-b4 <- plotcorrplot(hyp2, "males") + labs( title =  " ") + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = -0.25)) +
-  scale_x_discrete(position = "top") 
-b5 <- plotcorrplot(pit2, NULL)    + 
-  theme(axis.text.x = element_blank(), axis.text.y = element_blank())
-b6 <- plotcorrplot(gon2, NULL)  + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
-
-
-b7 <- plotcorrplot(hyp3, "females") + labs( title = "Parental Care GO") + 
-   scale_x_discrete(position = "top") + theme(axis.text.x = element_text(vjust = -0.25))
-b8 <- plotcorrplot(pit3, NULL)   + 
-  theme(axis.text.x = element_blank())
-b9 <- plotcorrplot(gon3, NULL)  + theme(axis.text.x = element_text(vjust = 0.25))
-
-b10 <- plotcorrplot(hyp4, "males") + labs( title =  " ") + 
-  theme(axis.text.y = element_blank(),
-        axis.text.x = element_text(vjust = -0.25)) + scale_x_discrete(position = "top") 
-b11 <- plotcorrplot(pit4, NULL)    + 
-  theme(axis.text.x = element_blank() , axis.text.y = element_blank())
-b12 <- plotcorrplot(gon4, NULL)   + theme( axis.text.y = element_blank(), axis.text.x = element_text(vjust = 0.25))
-
-forlegend <- plotcorrplot(gon4, NULL) + theme(legend.position = "bottom") + labs(color = "Correlation")
-mylegend <- get_legend(forlegend)
-
-allcorplots <- plot_grid(b1,b4,b7,b10,
-          b2,b5,b8,b11,
-          b3,b6,b9,b12, rel_heights = c(1.4,1,1.2),
-          labels = c("A", " ", "B"), label_size = 8, rel_widths = c(1.4,1.2,1.2,1))
-
-supplfig2 <- plot_grid(allcorplots, mylegend, ncol = 1, rel_heights = c(1,0.1))
-supplfig2
-
-
-```
-
-
-## Figure
-
-```{r fig2, fig.width = 7.25, fig.height = 7.25}
+                         "pituitary" = "P", "gonad" = "G"),
+         comparison = recode(comparison, 
+                         "bldg_lay" = "Bldg2Lay",
+                         "lay_inc.d3" = "Lay2Inc3", 
+                         "inc.d3_inc.d9" = "Inc3toInc9",
+                         "inc.d9_inc.d17" = "Inc9toInc17",
+                         "inc.d17_hatch" = "In17toHatch",
+                         "hatch_n5" = "Hatch2N5",
+                         "n5_n9" = "N5toN9"),
+         group = paste(sex, tissue, sep = "")) %>%
+  mutate(res = paste("(", posneg, ")", sep = "")) %>%
+  mutate(compres = paste(comparison, res, sep = "")) %>%
+  select(gene, group, compres) 
+allDEGS
 
 
 
-c1 <- scattercorrelations(FH, FH$DRD1, "DRD1", FH$HTR2C, "HTR2C", "#969696" ) +  labs(title = " ", subtitle = " " )  
-c3 <- scattercorrelations(FP, FP$AVPR1A, "AVPR1A", FP$CRHR1,  "CRHR1", "#969696")  + labs(title = " ", subtitle = " ") 
-c5 <- scattercorrelations(FG, FG$PGR, "PGR",  FG$ESR1,  "ESR1", "#969696")   + labs(title = " ", subtitle = " ") 
-
-c2 <- scattercorrelations(MH, MH$DRD1, "DRD1", MH$HTR2C, "HTR2C", "#525252")  + labs(title = " ", subtitle = " " )  
-c4 <- scattercorrelations(MP, MP$AVPR1A,  "AVPR1A",  MP$CRHR1, "CRHR1", "#525252")  + labs(title = " ", subtitle = " " ) 
-c6 <- scattercorrelations(MG, MG$PGR, "PGR", MG$ESR1, "ESR1", "#525252")   + labs(title = " ", subtitle = " " ) 
-```
-
-```{r newfig}
-
-plot3candidates <- function(hypgene, pitgene, gongene){
+DEGsbytissue <- function(whichtissueshorthand, whichsex){
   
-  a1 <- newcandidateboxplot("hypothalamus", hypgene, "female", "female hypothalamus", "sequential") 
-  a2 <- externalboxplots("hypothalamus", hypgene, "female", " ", "external") 
-  a3 <- newcandidateboxplot("hypothalamus", hypgene, "male", "male hypothalamus", "sequential")
-  a4 <- externalboxplots( "hypothalamus", hypgene, "female", " ", "external")
+  df <- allDEGS %>%
+  filter(grepl(whichtissueshorthand, group),
+         grepl(whichsex,group)) %>%
+  group_by(group,gene) %>%
+  summarize(results = str_c(compres, collapse = "; ")) %>%
+  mutate(n = (str_count(results, pattern = ";"))+1) %>%
+  arrange(desc(n))  %>%
+  filter(n>1)
+  #group_by(comparisons) %>%
+  #summarize(genes = str_c(gene, collapse = "; "))  
+
+  print(head(df))
+  return(df)
   
-  hypplots <- plot_grid(a1,a2, a3, a4, rel_widths = c(2,1,2,1), nrow = 1)
-  
-  b1 <- newcandidateboxplot("pituitary", pitgene, "female", "female pituitary", "sequential")
-  b2 <- externalboxplots("pituitary", pitgene, "female", " ", "external") 
-  b3 <- newcandidateboxplot("pituitary", pitgene, "male", "male pituitary", "sequential")
-  b4 <- externalboxplots( "pituitary", pitgene, "female", " ", "external")
-  
-  pitplots <- plot_grid(b1,b2, b3, b4, rel_widths = c(2,1,2,1), nrow = 1)
-  
-  c1 <- newcandidateboxplot("gonad", gongene, "female", "female gonad", "sequential") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  c2 <- externalboxplots("gonad", gongene, "female", " ", "external") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  c3 <- newcandidateboxplot("gonad", gongene, "male", "male gonad", "sequential") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  c4 <- externalboxplots( "gonad", gongene, "female", " ", "external") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
-  
-  gonplots <- plot_grid(c1,c2, c3, c4, rel_widths = c(2,1,2,1), nrow = 1)
-  
-  fig2alt <- plot_grid(hypplots, pitplots, gonplots, nrow = 3,
-                       labels = "AUTO", label_size = 8,
-                       rel_heights = c(1,1,1.2))
-  print(fig2alt)
-  
-    
 }
 
-plot3candidates("COMT","PRL","AVPR1A")
-plot3candidates("PRL","PRL", "PRL")
-plot3candidates("PRL","FSH", "ESR1")
+hmDEGs <- DEGsbytissue("H", "M")
+pmDEGs <- DEGsbytissue("P", "M")
+gmDEGs <- DEGsbytissue("G", "M")
+
+hfDEGs <- DEGsbytissue("H", "F")
+pfDEGs <- DEGsbytissue("P", "F")
+gfDEGs <- DEGsbytissue("G", "F")
+
+maleDEGs <- rbind(hmDEGs, pmDEGs) %>%
+  rbind(., gmDEGs)
+maleDEGs
+
+femaleDEGs <- rbind(hfDEGs, pfDEGs) %>%
+  rbind(., gfDEGs)
+femaleDEGs
+
+summarizedDEGs <- rbind(femaleDEGs,maleDEGs) %>%
+  group_by(group, results) %>%
+  summarize(genes = str_c(gene, collapse = "; ")) 
+summarizedDEGs 
+
 ```
+
+
 
 
 ```{r writefiles}
-#write.csv(candidatevsd, "../../musicalgenes/data/candidatecounts.csv")
-#write.csv(candidatevsd, "../results/candidatecounts.csv")
-write.csv(table1, "../results/table1-v2.csv")
+write.csv(summarizedDEGs,"../results/summarizedDEGsv2.csv")
 
-
-pdf(file="../figures/fig2-1.pdf", width=7.25, height=7.25)
-plot(fig2)
-dev.off()
-
-pdf(file="../figures/supplfig-2.pdf", width=7.25, height=7.25)
-plot(supplfig2)
-dev.off()
-
-pdf(file="../figures/fig2-2.pdf", width=7.25, height=7.25)
-plot(newfig2)
-dev.off()
 ```
