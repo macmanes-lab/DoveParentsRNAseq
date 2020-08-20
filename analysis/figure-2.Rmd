@@ -24,7 +24,7 @@ source("../R/functions.R")
 knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = "../figures/")
 ```
 
-## Candidate genes
+## Genes of interest
 
 ```{r candidategenes}
 parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% select(-X1)
@@ -69,8 +69,6 @@ allDEGS <- read_csv("../results/suppltable1.csv") %>%
   mutate(compres = paste(comparison, res, sep = "")) %>%
   select(gene, group, compres) 
 allDEGS
-
-
 
 DEGsbytissue <- function(whichtissueshorthand, whichsex){
   

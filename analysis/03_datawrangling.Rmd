@@ -201,6 +201,60 @@ wideDEGsSequential
 
 ```
 
+### manipuluation
+
+```{r}
+head(allDEG)
+
+
+
+
+makemanipulationDEGtables <- function(whichcomparisons){
+  df <- allDEG %>%
+    filter(comparison %in% whichcomparisons) %>%
+     mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+         sex = recode(sex, "female" = "F", "male" = "M" ),
+         tissue = recode(tissue, 
+                         "hypothalamus" = "H",
+                         "pituitary" = "P", "gonad" = "G"),
+         group = paste(sex, tissue, sep = "")) %>%
+  mutate(res = paste("(", posneg, ")", sep = "")) %>%
+  mutate(compres = paste(comparison, res, sep = "")) %>%
+  select(gene, group, compres) %>%
+  group_by(group,gene) %>%
+  summarize(results = str_c(compres, collapse = "; ")) %>%
+  mutate(n = (str_count(results, pattern = ";"))+1) %>%
+  arrange(desc(n))  %>%
+  filter(n>1) %>%
+  group_by(group,results) %>%
+  summarize(genes = str_c(gene, collapse = "; "))  %>%
+  arrange(group, results)
+  print(head(df))
+return(df) 
+}
+
+allDEG %>%
+  group_by(comparison) %>%
+  summarize(n = n())
+
+removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
+early <- c("early_inc.d9", "hatch_early")
+late <- c("hatch_prolong", "inc.d17_prolong")
+
+
+removalDEGs <- makemanipulationDEGtables(removalcomps)
+hatchDEGs <- makemanipulationDEGtables(early)
+prolongDEGs <- makemanipulationDEGtables(late)
+
+
+write.csv(removalDEGs, "../results/removalDEGs.csv")
+write.csv(hatchDEGs, "../results/hatchDEGs.csv")
+write.csv(prolongDEGs, "../results/prolongDEGs.csv")
+
+```
+
+
+
 ## save files
 
 ```{r write}
