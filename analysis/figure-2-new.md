@@ -3,14 +3,14 @@ Fig 2
 
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ───────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ──────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -100,25 +100,25 @@ Treatment specific DEGs
     a <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
       facet_wrap(~sex) 
 
-    b <- makebargraphv3(DEGcontrol, "hypothalamus","No. of DEGs\n (-) decreased, incrased (+)", comparisonlabelscontrol) +
+    b <- makebargraphv3(DEGcontrol, "hypothalamus","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
       labs(title = "Control versus all other reproductive and parental stages",
            subtitle = "hypothalamus") +
       geom_rect(mapping=aes(xmin=0.5, xmax=1.5, ymin=-1000, ymax = 350, fill = F), color="black", alpha=0.5) +
       annotate("text", x = 1, y = -1075, label = "B", size = 2.5)   
 
-    c <- makebargraphv3(DEGbldg, "hypothalamus", "No. of DEGs\n (-) decreased, incrased (+)", comparisonlabelsbldg) +
+    c <- makebargraphv3(DEGbldg, "hypothalamus", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
       labs(title = "Nest-building versus all other parental stages",
            subtitle = "hypothalamus")
     d <- makebargraphv3(DEGchar, "hypothalamus", NULL,  comparisonlabelscharnobldg) +
       labs(title = "Comparison of sequential parental stages",
            subtitle = "hypothalamus")
 
-    e <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-) decreased, incrased (+)", comparisonlabelsbldg) +
+    e <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
       labs(subtitle = "pituitary")
     f <- makebargraphv3(DEGchar, "pituitary", NULL,comparisonlabelscharnobldg) +
       labs(subtitle = "pituitary")
 
-    g <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-) decreased, incrased (+)", comparisonlabelsbldg) +
+    g <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
       labs(subtitle = "gonads")
     h <- makebargraphv3(DEGchar, "gonad", NULL, comparisonlabelscharnobldg) +
       labs(subtitle = "gonads")

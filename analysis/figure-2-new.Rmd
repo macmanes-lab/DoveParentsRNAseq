@@ -62,25 +62,25 @@ DEGchar <- allDEG %>%
 a <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
   facet_wrap(~sex) 
 
-b <- makebargraphv3(DEGcontrol, "hypothalamus","No. of DEGs\n (-) decreased, incrased (+)", comparisonlabelscontrol) +
+b <- makebargraphv3(DEGcontrol, "hypothalamus","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
   labs(title = "Control versus all other reproductive and parental stages",
        subtitle = "hypothalamus") +
   geom_rect(mapping=aes(xmin=0.5, xmax=1.5, ymin=-1000, ymax = 350, fill = F), color="black", alpha=0.5) +
   annotate("text", x = 1, y = -1075, label = "B", size = 2.5)   
 
-c <- makebargraphv3(DEGbldg, "hypothalamus", "No. of DEGs\n (-) decreased, incrased (+)", comparisonlabelsbldg) +
+c <- makebargraphv3(DEGbldg, "hypothalamus", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
   labs(title = "Nest-building versus all other parental stages",
        subtitle = "hypothalamus")
 d <- makebargraphv3(DEGchar, "hypothalamus", NULL,  comparisonlabelscharnobldg) +
   labs(title = "Comparison of sequential parental stages",
        subtitle = "hypothalamus")
 
-e <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-) decreased, incrased (+)", comparisonlabelsbldg) +
+e <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
   labs(subtitle = "pituitary")
 f <- makebargraphv3(DEGchar, "pituitary", NULL,comparisonlabelscharnobldg) +
   labs(subtitle = "pituitary")
 
-g <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-) decreased, incrased (+)", comparisonlabelsbldg) +
+g <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
   labs(subtitle = "gonads")
 h <- makebargraphv3(DEGchar, "gonad", NULL, comparisonlabelscharnobldg) +
   labs(subtitle = "gonads")
@@ -94,7 +94,6 @@ gh <- plot_grid(g,h,rel_widths = c(1.1,1), align = "h")
 
 fig <- plot_grid(ab,cd,ef, gh, ncol = 1)
 fig
-
 
 ```
 
