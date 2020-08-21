@@ -483,7 +483,8 @@ femaleDEGs
 summarizedDEGs <- rbind(femaleDEGs,maleDEGs) %>%
   group_by(group, results) %>%
   summarize(genes = str_c(gene, collapse = "; ")) 
-summarizedDEGs 
+summarizedDEGs
+
 
 ```
 
@@ -494,3 +495,27 @@ summarizedDEGs
 write.csv(summarizedDEGs,"../results/summarizedDEGsv2.csv")
 
 ```
+
+
+```{r}
+e <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
+  labs(subtitle = "pituitary")
+f <- makebargraphv3(DEGchar, "pituitary", NULL,comparisonlabelscharnobldg) +
+  labs(subtitle = "pituitary")
+
+g <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
+  labs(subtitle = "gonads")
+h <- makebargraphv3(DEGchar, "gonad", NULL, comparisonlabelscharnobldg) +
+  labs(subtitle = "gonads")
+
+ab <- plot_grid(b,a,rel_widths = c(2.5,1), 
+                labels = c("A", "B"), label_size = 8, hjust = 0)
+cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                labels = c("C", "D"), label_size = 8, hjust = 0)
+ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h")
+gh <- plot_grid(g,h,rel_widths = c(1.1,1), align = "h")
+
+fig <- plot_grid(ab,cd,ef, gh, ncol = 1)
+fig
+```
+

@@ -952,31 +952,6 @@ makebargraphv3 <- function(df, whichtissue, myylab, mylabels){
 
 
 
-sexbarplots <- function(df, lowlim, higherlim){
-   
-  DEGs <- df %>% dplyr::filter(direction != "NS")
-  print(nrow(DEGs))
-  
-  p <- df %>%
-    ggplot(aes(x = direction,  fill = direction)) +
-    geom_bar(position = "dodge") +
-    theme_B3() +
-    scale_fill_manual(values = allcolors,
-                      name = " ",
-                      drop = FALSE) +
-    scale_color_manual(values = allcolors) +
-    geom_text(stat='count', aes(label=..count..), vjust =-0.5, 
-              position = position_dodge(width = 1),
-              size = 1.75, color = "black")  +
-    ylim(lowlim, higherlim) +
-    theme(legend.position  = "none" )  +
-    labs(y = "DEGs w/ + LFC", x = "Sex", title = " ", subtitle = "") 
-   
-  return(p)
- }
-
-
-
 
 getcandidatevsd <- function(whichgenes, whichtissue, whichsex){
   candidates  <- allvsd %>%
@@ -1296,4 +1271,162 @@ addgroupings <- function(df){
                                             chicks = c("early", "hatch", "extend", "n5"),
                                             reference = "control")) 
   return(df)
+}
+
+
+## box plots 
+
+plotcandidatechar <- function(df, whichgene){
+  
+  p <- df %>%
+    dplyr::filter(gene  == whichgene,
+                  treatment %in% charlevels)  %>%
+    ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
+    geom_boxplot(outlier.shape = NA, lwd=0.5) +
+    facet_wrap(~sex) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
+    theme_B3() +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          axis.title.y = element_text(face = "italic")) +
+    scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+    labs(y = whichgene, x = "Sequential stages") +
+    geom_signif(comparisons = list(c("control", "bldg"), 
+                                   c( "bldg", "lay"), 
+                                   c( "lay", "inc.d3")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075) +
+    geom_signif(comparisons = list(c( "inc.d3", "inc.d9"),
+                                   c( "inc.d9", "inc.d17"),
+                                   c( "inc.d17", "hatch")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0,  size = 0.5, step_increase = 0.075) +
+    geom_signif(comparisons = list(c( "hatch", "n5"), 
+                                   c( "n5", "n9")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075)
+  
+  return(p)
+  
+}
+
+plotremoval <- function(df, whichgene){
+  
+  p <- df %>%
+    dplyr::filter(gene  == whichgene,
+                  treatment %in% removallevels)  %>%
+    ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
+    geom_boxplot(outlier.shape = NA, lwd=0.5) +
+    facet_wrap(~sex) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
+    theme_B3() +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          axis.title.y = element_text(face = "italic")) +
+    scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+    labs( y = whichgene,  x = "Offspring removal") +
+    
+    geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
+                                   c( "inc.d9", "m.inc.d9"),
+                                   c( "inc.d17", "m.inc.d17"),
+                                   c( "hatch", "m.n2")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0,  size = 0.5, step_increase = 0.075) 
+  return(p)
+  
+}
+
+
+plotreplacement <- function(df, whichgene){
+  
+  p <- df %>%
+    dplyr::filter(gene  == whichgene,
+                  treatment %in% timinglevels)  %>%
+    ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
+    geom_boxplot(outlier.shape = NA, lwd=0.5) +
+    facet_wrap(~sex) +
+    geom_jitter(size = 0.25, aes(color = sex)) +
+    theme_B3() +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1),
+          axis.title.y = element_text(face = "italic")) +
+    scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+    labs(y = whichgene,  x = "Offspring replacement") +
+    geom_signif(comparisons = list(c("inc.d9", "early"), 
+                                   c( "early", "hatch")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075) +
+    geom_signif(comparisons = list(c( "hatch", "extend"), 
+                                   c( "n5", "extend")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075) +
+    geom_signif(comparisons = list(c(  "inc.d17", "prolong"), 
+                                   c("prolong", "hatch")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075)
+  
+  return(p)
+  
+}
+
+
+
+boxplotextint <- function(df, whichgene, whichtissue){
+  
+  p1 <- df %>%
+    dplyr::filter(gene  == whichgene)  %>%
+    mutate(earlylate = factor(earlylate, levels = levelhypothesis)) %>%
+    ggplot(aes(y =  counts, x = earlylate, fill = earlylate, color = sex)) +
+    geom_boxplot(outlier.shape = NA, lwd=0.5) +
+    #facet_wrap(~sex) +
+    geom_jitter(size = 0.25, aes(color = treatment)) +
+    theme_B3() +
+    scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+    geom_signif(comparisons = list(c( "reference", "early"), 
+                                   c( "early", "late"),
+                                   c( "reference", "late")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075) +
+    labs(subtitle = " ", y = NULL) +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  p2 <- df %>%
+    dplyr::filter(gene  == whichgene)  %>%
+    mutate(extint = factor(extint, levels = levelhypothesis)) %>%
+    ggplot(aes(y =  counts, x = extint, fill = extint, color = sex)) +
+    geom_boxplot(outlier.shape = NA, lwd=0.5) +
+    #facet_wrap(~sex) +
+    geom_jitter(size = 0.25, aes(color = treatment)) +
+    theme_B3() +
+    scale_color_manual(values = allcolors) +
+    scale_fill_manual(values = allcolors)  +
+    geom_signif(comparisons = list(c( "reference", "eggs"), 
+                                   c( "eggs", "chicks"),
+                                   c( "chicks", "loss"),
+                                   c( "reference", "chicks"),
+                                   c( "eggs", "loss"),
+                                   c( "reference", "loss")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075) +
+    labs(subtitle = " " , y = NULL) +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1))
+  
+  
+  p <- plot_grid(p1,p2, rel_widths = c(3.5,4))
+  return(p)
 }

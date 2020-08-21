@@ -13,8 +13,6 @@ theme_B3 <- function () {
     )
 }
 
-
-
 # custom levels
 
 # characterization
@@ -23,10 +21,9 @@ charlevelsnocontrol <- c( "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch",
 maniplevels <- c("m.inc.d3" ,  "early" ,  "m.inc.d9" , "prolong" , "m.inc.d17" , "extend", "m.n2")
 
 # manipulation
-timinglevels <- c("control", "bldg", "inc.d9", "early" , "inc.d17", "prolong" , "hatch", "extend", "n5")
-removallevels <- c("control", "bldg","inc.d3",  "m.inc.d3" , "inc.d9", "m.inc.d9" ,
+timinglevels <- c("inc.d9", "early" , "inc.d17", "prolong" , "hatch", "extend", "n5")
+removallevels <- c("inc.d3",  "m.inc.d3" , "inc.d9", "m.inc.d9" ,
              "inc.d17", "m.inc.d17" , "hatch", "m.n2")
-
 
 # mix of characterization and manipulation, ordered by time
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
@@ -88,29 +85,20 @@ comparisonlabelsbldg <- c("lay\nbldg", "inc3\nbldg",
                                 "inc9\nbldg", "inc17\nbldg", 
                                 "hatch\nbldg" , "n5\nbldg", "n9\nbldg")
 
+comparisonlevelsremoval <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
 
-
-
-
-comparisonlevelsremoval <- c("ind.d3_m.inc.d3", "ind.d9_m.inc.d9", "ind.d19_m.inc.d17", "hatch.m.n2")
-
+comparisonlevelsreplace <- c("hatch_early", "inc.d17_prolong",  "hatch_prolong", 
+                             "extend_hatch", "n5_extend")
 
 comparisonlevelsmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
-                           "hatch_early", 
-                           
-                           "inc.d17_m.inc.d17", "inc.d17_prolong", 
-                           
+                           "hatch_early",  "inc.d17_m.inc.d17", 
                            "hatch_prolong", "hatch_m.n2",
-                          
                             "extend_hatch", "n5_extend")
-
 
 comparisonlabelssmanip <- c("inc.d3vs.\nm.inc.d3", "inc.d9vs.\nm.inc.d9", "earlyvs.\ninc.d9" ,
                             "hatchvs.\nearly", 
-                           
                             "inc.d17vs.\nm.inc.d17", "inc.d17vs.\nprolong",
                             "hatchvs.\nprolong", "hatchvs.\nm.n2",
-                            
                              "extendvs.\nhatch", "n5vs.\nextend")
 
 # custom colors

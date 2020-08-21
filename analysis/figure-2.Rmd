@@ -1,0 +1,325 @@
+---
+title: "Fig 2"
+output: md_document
+---
+
+# Fig 2
+
+```{r setup, include=T}
+library(tidyverse)
+library(cowplot)
+library(ggsignif)
+
+source("../R/themes.R")
+source("../R/functions.R")
+source("../R/genelists.R")
+
+knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
+```
+
+## Treatment specific DEGs 
+
+```{r suppltables}
+allDEG <- read_csv("../results/03_allDEG.csv") %>%
+  mutate(tissue = factor(tissue, levels = tissuelevel),
+         direction = factor(direction, levels = alllevels),
+         label = gsub("_","\nvs. ", comparison)) %>%
+  filter(lfc > 1.1 | lfc < -1.1 )
+head(allDEG)
+
+# for suppl figures
+DEGcontrol <- allDEG %>% 
+  filter(grepl("control", comparison),
+         !grepl("m.|early|extend|prolong", comparison))  %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelscontrol)) %>%
+  group_by(sex, tissue, comparison, direction, label) %>%
+    summarise(n = n()) %>%
+    mutate(n = ifelse(direction == "control", n*-1, n*1 ))
+
+
+DEGbldg <- allDEG %>% 
+  filter(grepl("bldg", comparison),
+         !grepl("m.|early|extend|prolong|control", comparison))  %>%
+  drop_na() %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))  %>%
+  group_by(sex, tissue, comparison, direction, label) %>%
+    summarise(n = n()) %>%
+    mutate(n = ifelse(direction == "bldg", n*-1, n*1 ))
+
+DEGchar <- allDEG %>% 
+  filter(comparison %in% comparisonlevelschar,
+         !grepl("control|bldg", comparison)) %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelschar)) %>%
+  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
+  group_by(sex, tissue, comparison, direction, label, updown) %>%
+  summarise(n = n()) %>%
+  mutate(n = n*updown ) %>%
+  select(-updown)
+
+DEGremove <- allDEG %>% 
+  filter(comparison %in% comparisonlevelsremoval) %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelsremoval)) %>%
+  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
+  group_by(sex, tissue, comparison, direction, label, updown) %>%
+  summarise(n = n()) %>%
+  mutate(n = n*updown ) %>%
+  select(-updown)
+DEGremove
+
+DEGreplace <- allDEG %>% 
+  filter(comparison %in% comparisonlevelsreplace) %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelsreplace)) %>%
+  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
+  group_by(sex, tissue, comparison, direction, label, updown) %>%
+  summarise(n = n()) %>%
+  mutate(n = n*updown ) %>%
+  select(-updown)
+DEGreplace
+```
+
+## Variance stabilized data
+
+```{r data}
+countData <- read_csv("../results/01_limma.csv") %>%
+  column_to_rownames(var = "X1")
+countData <- as.data.frame(t(countData))
+head(countData[1:3])
+
+colData <- read_csv("../metadata/00_colData.csv") %>%
+  mutate(treatment = factor(treatment, levels = alllevels),
+         tissue = factor(tissue, levels = tissuelevels)) %>% 
+  column_to_rownames(var = "X1") 
+head(colData)
+# check ready for analysis
+# row.names(countData) == row.names(colData)
+head(row.names(countData) == row.names(colData))
+
+vsd_path <- "../results/DEseq2/treatment/"   # path to the data
+vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
+vsd_pathfiles <- paste0(vsd_path, vsd_files)
+vsd_files
+
+allvsd <- vsd_pathfiles %>%
+  setNames(nm = .) %>% 
+  map_df(~read_csv(.x), .id = "file_name")  %>% 
+  dplyr::rename("gene" = "X1") 
+## before pivoting, check names of df with
+## head(names(allvsd)) and tail(names(allvsd))
+allvsd <- allvsd %>% 
+  pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
+               names_to = "samples", values_to = "counts")  %>% 
+    drop_na() 
+allvsd <- as_tibble(allvsd)
+head(allvsd[2:4])
+tail(allvsd[2:4])
+
+# for plotting gene expression over time
+getcandidatevsdmanip <- function(whichgenes, whichtissue){
+  
+  candidates  <- allvsd %>%
+    filter(gene %in% whichgenes) %>%
+    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1),
+                  sextissue = sapply(strsplit(sextissue, '../results/DEseq2/treatment/'), "[", 2),
+                  sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
+                sex = factor(sex),
+                  tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
+                treatment = sapply(strsplit(samples, '\\_'), "[", 4),
+                treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1),
+                treatment = recode(treatment, "m.hatch" = "m.n2", "extend.hatch" = "m.n2",
+                                                   "inc.prolong" = "prolong", "m.inc.d8" = "early"),
+                treatment =  factor(treatment, levels = alllevels),
+                earlylate = fct_collapse(treatment, 
+                                  early = c("early", "m.inc.d3", "m.inc.d9",
+                                           "lay", "inc.d3", "inc.d9" ),
+                                  
+                                  late = c("inc.d17", "m.inc.d17", "prolong" ,  "hatch" , 
+                                         "m.n2", "extend", "n5", "n9"),
+                                  reference = c("control", "bldg")),
+                extint = fct_collapse(treatment, 
+                                  loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17"),
+                                  eggs = c("lay","inc.d3", "inc.d9", "inc.d17", "prolong"),
+                                  chicks = c("early", "hatch", "extend", "n5", "n9"),
+                                  reference = c("control", "bldg")))  %>%
+    dplyr::select(gene, counts, sex, tissue, treatment, earlylate, extint, samples) 
+  return(candidates)
+}
+
+candidatevsd <- getcandidatevsdmanip(candidategenes)
+
+hypvsd <- candidatevsd %>% filter(tissue %in% "hypothalamus")  
+pitvsd <- candidatevsd %>% filter(tissue %in% "pituitary") 
+gonvsd <- candidatevsd %>% filter(tissue %in% "gonad") 
+
+hypvsdf <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "female")  
+pitvsdf <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "female")
+gonvsdf <- candidatevsd %>% filter(tissue %in% "gonad", sex == "female")  
+hypvsdm <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "male")  
+pitvsdm <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "male") 
+gonvsdm <- candidatevsd %>% filter(tissue %in% "gonad", sex == "male") 
+
+summary(hypvsd)
+summary(pitvsd)
+```
+
+
+```{r fig2, fig.width=7.5, fig.height=7.25}
+a <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
+  facet_wrap(~sex) 
+
+b <- makebargraphv3(DEGcontrol, "hypothalamus","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
+  labs(x = "Control versus all other reproductive and parental stages",
+       title = "Hypothalamus") +
+  geom_rect(mapping=aes(xmin=0.5, xmax=1.5, ymin=-1000, ymax = 350, fill = F), color="black", alpha=0.5) +
+  annotate("text", x = 1, y = -1075, label = "D", size = 2.5)   
+
+c <- makebargraphv3(DEGbldg, "hypothalamus", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
+  labs(x = "Nest-building versus all other parental stages")
+d <- makebargraphv3(DEGchar, "hypothalamus", NULL,  comparisonlabelscharnobldg) +
+  labs(x = "Comparison of sequential parental stages")
+
+e <- makebargraphv3(DEGremove, "hypothalamus", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval) +
+  labs(x = "Offspring removal versus temporal control")
+f <- makebargraphv3(DEGreplace, "hypothalamus", NULL,  comparisonlevelsreplace) +
+  labs(x = "Offspring removal versus temporal or external control")
+
+g <- plotcandidatechar(hypvsdf, "AVP") + labs(subtitle = "Hypothalamus")
+h <- plotcandidatechar(hypvsdm, "AVP") + labs(y = NULL, x = "") + labs(subtitle = " ")
+i <- plotremoval(hypvsdf, "AVP")+ labs(y = NULL) + labs(subtitle = " ")
+j <- plotremoval(hypvsdm, "AVP") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+k <- plotreplacement(hypvsdf, "AVP") + labs(y = NULL)+ labs(subtitle = " ")
+l <- plotreplacement(hypvsdm, "AVP") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+
+ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
+                labels = c("D", "E"), label_size = 8, hjust = 0)
+cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                labels = c("F", "G"), label_size = 8, hjust = 0)
+ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
+                labels = c("H", "I"), label_size = 8, hjust = 0)
+
+#h <- boxplotextint(hypvsdf, "HTR2C", " ") 
+
+ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
+                labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
+                rel_widths = c(9,9,8,8,6,6))
+
+fig2 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
+fig2
+```
+
+
+```{r fig3, fig.width=7.5, fig.height=7.25}
+a <- plot.volcano("pituitary", sexlevels,  "control_bldg") + 
+  facet_wrap(~sex) 
+
+b <- makebargraphv3(DEGcontrol, "pituitary","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
+  labs(x = "Control versus all other reproductive and parental stages",
+       title = "Pituitary") 
+
+c <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
+  labs(x = "Nest-building versus all other parental stages")
+d <- makebargraphv3(DEGchar, "pituitary", NULL,  comparisonlabelscharnobldg) +
+  labs(x = "Comparison of sequential parental stages")
+
+e <- makebargraphv3(DEGremove, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval) +
+  labs(x = "Offspring removal versus temporal control")
+f <- makebargraphv3(DEGreplace, "pituitary", NULL,  comparisonlevelsreplace) +
+  labs(x = "Offspring removal versus temporal or external control")
+
+g <- plotcandidatechar(pitvsdf, "PRL") + labs(subtitle = "Pituitary")
+h <- plotcandidatechar(pitvsdm, "PRL") + labs(y = NULL, x = "") + labs(subtitle = " ")
+i <- plotremoval(pitvsdf, "PRL")+ labs(y = NULL) + labs(subtitle = " ")
+j <- plotremoval(pitvsdm, "PRL") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+k <- plotreplacement(pitvsdf, "PRL") + labs(y = NULL)+ labs(subtitle = " ")
+l <- plotreplacement(pitvsdm, "PRL") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+
+ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
+                labels = c("D", "E"), label_size = 8, hjust = 0)
+cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                labels = c("F", "G"), label_size = 8, hjust = 0)
+ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
+                labels = c("H", "I"), label_size = 8, hjust = 0)
+
+ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
+                labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
+                rel_widths = c(9,9,8,8,6,6))
+
+fig3 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
+fig3
+```
+
+
+
+```{r fig4, fig.width=7.5, fig.height=7.25}
+a <- plot.volcano("gonad", sexlevels,  "control_bldg") + 
+  facet_wrap(~sex) 
+
+b <- makebargraphv3(DEGcontrol, "gonad","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
+  labs(x = "Control versus all other reproductive and parental stages",
+       title = "Pituitary") 
+
+c <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
+  labs(x = "Nest-building versus all other parental stages")
+d <- makebargraphv3(DEGchar, "gonad", NULL,  comparisonlabelscharnobldg) +
+  labs(x = "Comparison of sequential parental stages")
+
+e <- makebargraphv3(DEGremove, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval) +
+  labs(x = "Offspring removal versus temporal control")
+f <- makebargraphv3(DEGreplace, "gonad", NULL,  comparisonlevelsreplace) +
+  labs(x = "Offspring removal versus temporal or external control")
+
+g <- plotcandidatechar(pitvsdf, "ESR1") + labs(subtitle = "Gonads")
+h <- plotcandidatechar(pitvsdm, "ESR1") + labs(y = NULL, x = "") + labs(subtitle = " ")
+i <- plotremoval(pitvsdf, "ESR1")+ labs(y = NULL) + labs(subtitle = " ")
+j <- plotremoval(pitvsdm, "ESR1") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+k <- plotreplacement(pitvsdf, "ESR1") + labs(y = NULL)+ labs(subtitle = " ")
+l <- plotreplacement(pitvsdm, "ESR1") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+
+ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
+                labels = c("D", "E"), label_size = 8, hjust = 0)
+cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                labels = c("F", "G"), label_size = 8, hjust = 0)
+ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
+                labels = c("H", "I"), label_size = 8, hjust = 0)
+
+ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
+                labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
+                rel_widths = c(9,9,8,8,6,6))
+
+fig4 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
+fig4
+```
+
+## Save files
+
+```{r write}
+pdf(file="../figures/fig2-1.pdf", width=7, height=7)
+plot(fig2)
+dev.off()
+
+png("../figures/fig2-1.png", width = 7, height = 7, 
+    units = 'in', res = 300)
+plot(fig2) 
+dev.off()
+
+
+pdf(file="../figures/fig3-1.pdf", width=7, height=7)
+plot(fig3)
+dev.off()
+
+png("../figures/fig3-1.png", width = 7, height = 7, 
+    units = 'in', res = 300)
+plot(fig3) 
+dev.off()
+
+pdf(file="../figures/fig4-1.pdf", width=7, height=7)
+plot(fig4)
+dev.off()
+
+png("../figures/fig4-1.png", width = 7, height = 7, 
+    units = 'in', res = 300)
+plot(fig4) 
+dev.off()
+
+
+sessionInfo()
+```
