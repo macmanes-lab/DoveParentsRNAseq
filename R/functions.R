@@ -929,6 +929,29 @@ makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim, mylabels){
 
 
 
+makebargraphv3 <- function(df, whichtissue, myylab, mylabels){
+  
+  p <- df %>%
+    filter(tissue == whichtissue) %>%
+    ggplot(aes(x = comparison, y = n, fill = direction)) +
+    geom_bar(stat="identity") +
+    facet_wrap(~sex) +
+    theme_B3() +
+    theme(legend.position = "none")  +
+    scale_fill_manual(values = allcolors,
+                      name = " ",
+                      drop = FALSE) +
+    scale_color_manual(values = allcolors) +
+    geom_text(stat='identity', aes(label= n), vjust =-0.5, 
+              position = position_dodge(width = 1),
+              size = 1.75, color = "black") +
+    labs(x = NULL, y = myylab)  +
+    scale_x_discrete(labels = mylabels)
+  return(p)
+}
+
+
+
 sexbarplots <- function(df, lowlim, higherlim){
    
   DEGs <- df %>% dplyr::filter(direction != "NS")
