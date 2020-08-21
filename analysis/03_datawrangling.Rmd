@@ -206,11 +206,14 @@ wideDEGsSequential
 ```{r}
 head(allDEG)
 
-
+filteredDEGs <- allDEG %>%
+  filter(lfc > 1.1 | lfc < -1.1 )
+dim(allDEG)
+dim(filteredDEGs)
 
 
 makemanipulationDEGtables <- function(whichcomparisons){
-  df <- allDEG %>%
+  df <- filteredDEGs %>%
     filter(comparison %in% whichcomparisons) %>%
      mutate(posneg = ifelse(lfc >= 0, "+", "-"),
          sex = recode(sex, "female" = "F", "male" = "M" ),
@@ -228,14 +231,12 @@ makemanipulationDEGtables <- function(whichcomparisons){
   filter(n>1) %>%
   group_by(group,results) %>%
   summarize(genes = str_c(gene, collapse = "; "))  %>%
-  arrange(group, results)
+  #arrange(group, results) %>%
+  mutate(n = (str_count(genes, pattern = ";"))+1) %>%
+  arrange(desc(n))
   print(head(df))
 return(df) 
 }
-
-allDEG %>%
-  group_by(comparison) %>%
-  summarize(n = n())
 
 removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
 early <- c("early_inc.d9", "hatch_early")
@@ -246,11 +247,10 @@ removalDEGs <- makemanipulationDEGtables(removalcomps)
 hatchDEGs <- makemanipulationDEGtables(early)
 prolongDEGs <- makemanipulationDEGtables(late)
 
-
-write.csv(removalDEGs, "../results/removalDEGs.csv")
-write.csv(hatchDEGs, "../results/hatchDEGs.csv")
-write.csv(prolongDEGs, "../results/prolongDEGs.csv")
-
+manipDEGs <- rbind(removalDEGs, hatchDEGs) %>%
+  rbind(., prolongDEGs) %>%
+  arrange(desc(n))
+head(manipDEGs)
 ```
 
 
@@ -261,6 +261,13 @@ write.csv(prolongDEGs, "../results/prolongDEGs.csv")
 write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
 write.csv(candidatevsd, "../results/03_candidatevsd.csv")
 write.csv(wideDEGsSequential, "../results/table1.csv", row.names = F)
+
+write.csv(removalDEGs, "../results/removalDEGs.csv")
+write.csv(hatchDEGs, "../results/hatchDEGs.csv")
+write.csv(prolongDEGs, "../results/prolongDEGs.csv")
+
+write.csv(manipDEGs, "../results/manipDEGs.csv")
+
 ```
 
 
