@@ -470,8 +470,7 @@ Variance stabilized data
       facet_wrap(~sex) 
 
     b <- makebargraphv3(DEGcontrol, "hypothalamus","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
-      labs(x = "Control versus all other reproductive and parental stages",
-           title = "Hypothalamus") +
+      labs(x = "Control versus all other reproductive and parental stages") +
       geom_rect(mapping=aes(xmin=0.5, xmax=1.5, ymin=-1000, ymax = 350, fill = F), color="black", alpha=0.5) +
       annotate("text", x = 1, y = -1075, label = "D", size = 2.5)   
 
@@ -514,8 +513,7 @@ Variance stabilized data
       facet_wrap(~sex) 
 
     b <- makebargraphv3(DEGcontrol, "pituitary","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
-      labs(x = "Control versus all other reproductive and parental stages",
-           title = "Pituitary") 
+      labs(x = "Control versus all other reproductive and parental stages") 
 
     c <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
       labs(x = "Nest-building versus all other parental stages")
@@ -554,8 +552,7 @@ Variance stabilized data
       facet_wrap(~sex) 
 
     b <- makebargraphv3(DEGcontrol, "gonad","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
-      labs(x = "Control versus all other reproductive and parental stages",
-           title = "Pituitary") 
+      labs(x = "Control versus all other reproductive and parental stages") 
 
     c <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
       labs(x = "Nest-building versus all other parental stages")
