@@ -393,3 +393,104 @@ plot3candidates("PRL","PRL", "PRL")
 plot3candidates("PRL","FSH", "ESR1")
 ```
 
+
+
+
+# Table 1. Candidate genes and differentially expressed genes
+
+
+
+## Genes of interest
+
+```{r candidategenes}
+parentalcaregenes <- read_csv("../metadata/03_parentalcaregenes.csv") %>% select(-X1)
+candidategenes <- parentalcaregenes %>% pull(gene) 
+candidategenes
+
+GOgenes <- parentalcaregenes %>% distinct(GO)  %>% drop_na() %>% pull(GO)
+GOgenes
+
+literaturegenes <- parentalcaregenes %>% 
+  distinct(literature) %>% 
+  drop_na() %>% 
+  pull(literature)
+literaturegenes
+
+litNotGO <-  literaturegenes[!literaturegenes %in% GOgenes]
+litNotGOknown <- litNotGO[!litNotGO %in% c("ADRA2A", "MEST", "SLC6A4")]
+litNotGOknown
+```
+
+
+## Differentially expressed genes (DEGs)
+
+```{r}
+# summary DEG results from DESeq2
+allDEGS <- read_csv("../results/suppltable1.csv") %>%
+   mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+         sex = recode(sex, "female" = "F", "male" = "M" ),
+         tissue = recode(tissue, 
+                         "hypothalamus" = "H",
+                         "pituitary" = "P", "gonad" = "G"),
+         comparison = recode(comparison, 
+                         "bldg_lay" = "Bldg2Lay",
+                         "lay_inc.d3" = "Lay2Inc3", 
+                         "inc.d3_inc.d9" = "Inc3toInc9",
+                         "inc.d9_inc.d17" = "Inc9toInc17",
+                         "inc.d17_hatch" = "In17toHatch",
+                         "hatch_n5" = "Hatch2N5",
+                         "n5_n9" = "N5toN9"),
+         group = paste(sex, tissue, sep = "")) %>%
+  mutate(res = paste("(", posneg, ")", sep = "")) %>%
+  mutate(compres = paste(comparison, res, sep = "")) %>%
+  select(gene, group, compres) 
+allDEGS
+
+DEGsbytissue <- function(whichtissueshorthand, whichsex){
+  
+  df <- allDEGS %>%
+  filter(grepl(whichtissueshorthand, group),
+         grepl(whichsex,group)) %>%
+  group_by(group,gene) %>%
+  summarize(results = str_c(compres, collapse = "; ")) %>%
+  mutate(n = (str_count(results, pattern = ";"))+1) %>%
+  arrange(desc(n))  %>%
+  filter(n>1)
+  #group_by(comparisons) %>%
+  #summarize(genes = str_c(gene, collapse = "; "))  
+
+  print(head(df))
+  return(df)
+  
+}
+
+hmDEGs <- DEGsbytissue("H", "M")
+pmDEGs <- DEGsbytissue("P", "M")
+gmDEGs <- DEGsbytissue("G", "M")
+
+hfDEGs <- DEGsbytissue("H", "F")
+pfDEGs <- DEGsbytissue("P", "F")
+gfDEGs <- DEGsbytissue("G", "F")
+
+maleDEGs <- rbind(hmDEGs, pmDEGs) %>%
+  rbind(., gmDEGs)
+maleDEGs
+
+femaleDEGs <- rbind(hfDEGs, pfDEGs) %>%
+  rbind(., gfDEGs)
+femaleDEGs
+
+summarizedDEGs <- rbind(femaleDEGs,maleDEGs) %>%
+  group_by(group, results) %>%
+  summarize(genes = str_c(gene, collapse = "; ")) 
+summarizedDEGs 
+
+```
+
+
+
+
+```{r writefiles}
+write.csv(summarizedDEGs,"../results/summarizedDEGsv2.csv")
+
+```

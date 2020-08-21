@@ -138,14 +138,14 @@ Treatment specific DEGs
 Save files
 ----------
 
-    pdf(file="../figures/fig2-new-1.pdf", width=7, height=7)
+    pdf(file="../figures/fig2-1.pdf", width=7, height=7)
     plot(fig)
     dev.off()
 
     ## quartz_off_screen 
     ##                 2
 
-    png("../figures/fig2-new-1.png", width = 7, height = 7, 
+    png("../figures/fig2-1.png", width = 7, height = 7, 
         units = 'in', res = 300)
     plot(fig) 
     dev.off()
