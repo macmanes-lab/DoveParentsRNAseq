@@ -181,12 +181,12 @@ e <- makebargraphv3(DEGremove, "hypothalamus", "No. of DEGs\n (-)decreased  incr
 f <- makebargraphv3(DEGreplace, "hypothalamus", NULL,  comparisonlevelsreplace) +
   labs(x = "Offspring removal versus temporal or external control")
 
-g <- plotcandidatechar(hypvsdf, "AVP") + labs(subtitle = "Hypothalamus")
-h <- plotcandidatechar(hypvsdm, "AVP") + labs(y = NULL, x = "") + labs(subtitle = " ")
-i <- plotremoval(hypvsdf, "AVP")+ labs(y = NULL) + labs(subtitle = " ")
-j <- plotremoval(hypvsdm, "AVP") + labs(y = NULL, x = "")+ labs(subtitle = " ")
-k <- plotreplacement(hypvsdf, "AVP") + labs(y = NULL)+ labs(subtitle = " ")
-l <- plotreplacement(hypvsdm, "AVP") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+g <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
+h <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
+i <- plotremoval(hypvsdf, "HTR2C")+ labs(y = NULL) + labs(subtitle = " ")
+j <- plotremoval(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+k <- plotreplacement(hypvsdf, "HTR2C") + labs(y = NULL)+ labs(subtitle = " ")
+l <- plotreplacement(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 
 ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
                 labels = c("D", "E"), label_size = 8, hjust = 0)
@@ -194,8 +194,6 @@ cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
                 labels = c("F", "G"), label_size = 8, hjust = 0)
 ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
                 labels = c("H", "I"), label_size = 8, hjust = 0)
-
-#h <- boxplotextint(hypvsdf, "HTR2C", " ") 
 
 ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
                 labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
