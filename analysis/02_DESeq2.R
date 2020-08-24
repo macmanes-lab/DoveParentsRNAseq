@@ -18,9 +18,8 @@ countData <- read.csv("results/00_counts.csv", header = T, row.names = 1)
 
 
 #### comment this out to run the whole thing
-
-print("subset for quick run")
-countData  <- head(countData, 1500) # suset for quick analysis
+#print("subset for quick run")
+#countData  <- head(countData, 1500) # suset for quick analysis
 
 # col data or variable informaiton
 colData <- read.csv("metadata/00_colData.csv", header = T, row.names = 1) %>%
