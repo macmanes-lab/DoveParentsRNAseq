@@ -3,14 +3,14 @@ Fig 2
 
     library(tidyverse)
 
-    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -431,21 +431,21 @@ Variance stabilized data
     summary(hypvsd)
 
     ##      gene               counts           sex           tissue         
-    ##  Length:21573       Min.   : 5.404   female:19305   Length:21573      
-    ##  Class :character   1st Qu.: 6.678   male  : 2268   Class :character  
-    ##  Mode  :character   Median : 8.050                  Mode  :character  
-    ##                     Mean   : 8.137                                    
-    ##                     3rd Qu.: 9.304                                    
+    ##  Length:38259       Min.   : 5.547   female:19305   Length:38259      
+    ##  Class :character   1st Qu.: 6.526   male  :18954   Class :character  
+    ##  Mode  :character   Median : 7.929                  Mode  :character  
+    ##                     Mean   : 8.036                                    
+    ##                     3rd Qu.: 9.246                                    
     ##                     Max.   :16.112                                    
     ##                                                                       
-    ##      treatment         earlylate           extint       samples         
-    ##  inc.d9   : 1558   reference: 2751   reference:2751   Length:21573      
-    ##  control  : 1441   early    : 7963   eggs     :6929   Class :character  
-    ##  inc.d17  : 1441   late     :10859   loss     :5343   Mode  :character  
-    ##  m.n2     : 1441                     chicks   :6550                     
-    ##  n9       : 1441                                                        
-    ##  m.inc.d17: 1427                                                        
-    ##  (Other)  :12824
+    ##      treatment         earlylate           extint        samples         
+    ##  inc.d9   : 2691   reference: 4914   reference: 4914   Length:38259      
+    ##  control  : 2574   early    :14040   eggs     :12285   Class :character  
+    ##  inc.d17  : 2574   late     :19305   loss     : 9360   Mode  :character  
+    ##  m.n2     : 2574                     chicks   :11700                     
+    ##  n9       : 2574                                                         
+    ##  m.inc.d17: 2457                                                         
+    ##  (Other)  :22815
 
     summary(pitvsd)
 
@@ -484,12 +484,12 @@ Variance stabilized data
     f <- makebargraphv3(DEGreplace, "hypothalamus", NULL,  comparisonlevelsreplace) +
       labs(x = "Offspring removal versus temporal or external control")
 
-    g <- plotcandidatechar(hypvsdf, "AVP") + labs(subtitle = "Hypothalamus")
-    h <- plotcandidatechar(hypvsdm, "AVP") + labs(y = NULL, x = "") + labs(subtitle = " ")
-    i <- plotremoval(hypvsdf, "AVP")+ labs(y = NULL) + labs(subtitle = " ")
-    j <- plotremoval(hypvsdm, "AVP") + labs(y = NULL, x = "")+ labs(subtitle = " ")
-    k <- plotreplacement(hypvsdf, "AVP") + labs(y = NULL)+ labs(subtitle = " ")
-    l <- plotreplacement(hypvsdm, "AVP") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+    g <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
+    h <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
+    i <- plotremoval(hypvsdf, "HTR2C")+ labs(y = NULL) + labs(subtitle = " ")
+    j <- plotremoval(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+    k <- plotreplacement(hypvsdf, "HTR2C") + labs(y = NULL)+ labs(subtitle = " ")
+    l <- plotreplacement(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 
     ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
                     labels = c("D", "E"), label_size = 8, hjust = 0)
@@ -497,8 +497,6 @@ Variance stabilized data
                     labels = c("F", "G"), label_size = 8, hjust = 0)
     ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
                     labels = c("H", "I"), label_size = 8, hjust = 0)
-
-    #h <- boxplotextint(hypvsdf, "HTR2C", " ") 
 
     ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
                     labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
