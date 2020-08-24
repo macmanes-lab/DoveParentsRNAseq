@@ -16,8 +16,11 @@ source("R/themes.R")  # load custom themes and color palletes
 # count data
 countData <- read.csv("results/00_counts.csv", header = T, row.names = 1)
 
+
+#### comment this out to run the whole thing
+
 print("subset for quick run")
-#countData  <- head(countData, 1500) # suset for quick analysis
+countData  <- head(countData, 1500) # suset for quick analysis
 
 # col data or variable informaiton
 colData <- read.csv("metadata/00_colData.csv", header = T, row.names = 1) %>%
@@ -66,58 +69,6 @@ returnvsd <- function(whichdds, whichgroup){
   
 }
 
-downs <- c("control","control","control","control","control","control","control","control",
-           "bldg"   ,"bldg"   ,"bldg"   ,"bldg"   ,"bldg"   ,"bldg"   , "bldg"   , 
-           "lay",     "inc.d3", "inc.d9", "inc.d17", "hatch", "n5")
-
-ups   <- c("bldg",    "lay",  "inc.d3",  "inc.d9", "inc.d17", "hatch",    "n5",   "n9",
-           "lay",  "inc.d3",  "inc.d9", "inc.d17", "hatch",    "n5",   "n9",
-           "inc.d3",  "inc.d9", "inc.d17", "hatch",    "n5",   "n9")
-
-
-createDEGdftreatment <- function(whichdds, whichgroup){
-  
-  for(down in downs){
-    for(up in ups){
-      
-      print(down)
-      print(up)
-    
-  res <- results(whichdds, contrast = c("treatment", up, down), 
-                 independentFiltering = T, alpha = 0.1)
-  
-  DEGs <- data.frame(gene = row.names(res),
-                     padj = res$padj, 
-                     logpadj = -log10(res$padj),
-                     lfc = res$log2FoldChange,
-                     sextissue = whichgroup)
-  DEGs <- na.omit(DEGs)
-
-  DEGs <- DEGs %>%
-    dplyr::mutate(direction = ifelse(lfc > 0 & padj < 0.1, yes = up, 
-                                     ifelse(lfc < 0 & padj < 0.1, yes = down, 
-                                            no = "NS"))) %>% 
-    dplyr::arrange(desc(lfc)) %>%
-    dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)))
-  
-  # write DEGsframe of only significant genes
-  DEGs <- DEGs %>% dplyr::filter(direction != "NS")
-  print(str(DEGs))
-  
-  partialfilename = paste("_", down, "_", up, sep = "")
-  myfilename = paste0("results/DESeq2/treatment/", 
-                      whichgroup, partialfilename, "_DEGs.csv")
-  
-  write.csv(DEGs, myfilename, row.names = F)
-  # return DEGs frome with all data, included NS genes
-  # print(head(DEGs))
-  
-  return(head(DEGs))
-    }  
-  }
-}
-
-
 ddsMG <- returndds("male_hypothalamus")
 #ddsFG <- returndds("female_hypothalamus")
 #ddsMG <- returndds("male_gonads")
@@ -126,4 +77,61 @@ ddsMG <- returndds("male_hypothalamus")
 #ddsFP <- returndds("female_pituitary")
 
 vsdMG <- returnvsd(ddsMG, "male_hypothalamus")
-createDEGdftreatment(ddsMG, "male_hypothalamus")
+
+
+# DEGs
+
+downs <- c("control", "bldg")
+ups   <- c(charlevelsnocontrol, maniplevels)
+
+createDEGdftreatmentvcontrols <- function(whichdds, whichgroup){
+  
+  for(down in downs){
+    for(up in ups){
+      if (up != down) {
+        
+        k <- paste(down, up, sep = " vs. ") #assigns usique rownames
+        print(k)
+  
+        res <- results(whichdds, contrast = c("treatment", up, down), 
+                       independentFiltering = T, alpha = 0.1)
+        
+        DEGs <- data.frame(gene = row.names(res),
+                           padj = res$padj, 
+                           logpadj = -log10(res$padj),
+                           lfc = res$log2FoldChange,
+                           sextissue = whichgroup)
+        DEGs <- na.omit(DEGs)
+        
+        DEGs <- DEGs %>%
+          dplyr::mutate(direction = ifelse(lfc > 0 & padj < 0.1, yes = up, 
+                                           ifelse(lfc < 0 & padj < 0.1, yes = down, 
+                                                  no = "NS"))) %>% 
+          dplyr::arrange(desc(lfc)) %>%
+          dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)))
+        
+        # write DEGsframe of only significant genes
+        DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+        print(str(DEGs))
+        
+        partialfilename = paste("_", down, "_", up, sep = "")
+        myfilename = paste0("results/DESeq2/treatment/", 
+                            whichgroup, partialfilename, "_DEGs.csv")
+        
+        write.csv(DEGs, myfilename, row.names = F)
+        # return DEGs frome with all data, included NS genes
+        # print(head(DEGs))
+        
+        print(head(DEGs))
+      
+      }
+    }  
+  }
+  
+  up <- up[-1] 
+  down <- down[-1] 
+}
+
+createDEGdftreatmentvcontrols(ddsMG, "male_hypothalamus")
+
+
