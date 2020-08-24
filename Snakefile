@@ -1,7 +1,7 @@
 rule all:
   input:
     "results/01_limma.csv",
-    "results/DESeq2/treatment/female_gonad_control_bldg_DEGs.csv"
+    "results/DESeq2/treatment/male_hypothalamus_vsd.csv"
 
 rule wrangledata:
   input:
