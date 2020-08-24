@@ -314,7 +314,26 @@ png("../figures/fig4-1.png", width = 7, height = 7,
     units = 'in', res = 300)
 plot(fig4) 
 dev.off()
+```
 
-
+```{r refs}
 sessionInfo()
 ```
+
+```{r}
+head(allDEG)
+
+library(UpSetR)
+head(allDEG)
+
+MG <- allDEG %>%
+  filter(sex == "male", tissue == "hypothalamus", 
+         comparison %in% comparisonlevelsreplace) %>%
+  select(sex, tissue, comparison, gene) %>%
+  mutate(seen = 1) %>%
+  pivot_wider(names_from = comparison, values_from = seen)
+MG
+
+upset(MG) 
+```
+
