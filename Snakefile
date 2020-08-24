@@ -30,6 +30,6 @@ rule deseq2first:
     "metadata/00_colData.csv",
     "results/00_counts.csv",
   output:
-    "results/DESeq2/treatment/female_gonad_control_bldg_DEGs.csv"
+    "results/DESeq2/treatment/male_hypothalamus_vsd.csv"
   shell:
     "Rscript analysis/02_DESeq2.R"
