@@ -68,20 +68,7 @@ returnvsd <- function(whichdds, whichgroup){
   
 }
 
-ddsMG <- returndds("male_hypothalamus")
-#ddsFG <- returndds("female_hypothalamus")
-#ddsMG <- returndds("male_gonads")
-#ddsFH <- returndds("female_gonads")
-#ddsMP <- returndds("male_pituitary")
-#ddsFP <- returndds("female_pituitary")
 
-vsdMG <- returnvsd(ddsMG, "male_hypothalamus")
-
-
-# DEGs
-
-downs <- c("control", "bldg")
-ups   <- c(charlevelsnocontrol, maniplevels)
 
 createDEGdftreatmentvcontrols <- function(whichdds, whichgroup){
   
@@ -131,6 +118,21 @@ createDEGdftreatmentvcontrols <- function(whichdds, whichgroup){
   down <- down[-1] 
 }
 
+ddsMG <- returndds("male_hypothalamus")
+ddsFG <- returndds("female_hypothalamus")
+#ddsMG <- returndds("male_gonads")
+#ddsFH <- returndds("female_gonads")
+#ddsMP <- returndds("male_pituitary")
+#ddsFP <- returndds("female_pituitary")
+
+vsdMG <- returnvsd(ddsMG, "male_hypothalamus")
+vsdFG <- returnvsd(ddsMG, "female_hypothalamus")
+
+# DEGs
+downs <- c("control", "bldg")
+ups   <- c(charlevelsnocontrol, maniplevels)
+
 createDEGdftreatmentvcontrols(ddsMG, "male_hypothalamus")
+createDEGdftreatmentvcontrols(ddsFG, "female_hypothalamus")
 
 

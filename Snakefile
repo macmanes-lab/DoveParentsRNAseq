@@ -2,6 +2,7 @@ rule all:
   input:
     "results/01_limma.csv",
     "results/DESeq2/treatment/male_hypothalamus_vsd.csv",
+    "results/DESeq2/treatment/female_hypothalamus_vsd.csv"
 
 rule wrangledata:
   input:
@@ -31,6 +32,7 @@ rule deseq2first:
     "results/00_counts.csv",
   output:
     "results/DESeq2/treatment/male_hypothalamus_vsd.csv",
+    "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
     "results/DESeq2/treatment/male_hypothalamus_control_bldg_DEGs.csv"
   shell:
     "Rscript analysis/02_DESeq2.R"
