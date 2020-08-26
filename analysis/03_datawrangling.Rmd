@@ -261,26 +261,29 @@ head(manipDEGs)
 ## save files
 
 ```{r write}
-write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
-write.csv(candidatevsd, "../results/03_candidatevsd.csv")
-write.csv(wideDEGsSequential, "../results/table1.csv", row.names = F)
+#write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
+#write.csv(candidatevsd, "../results/03_candidatevsd.csv")
+#write.csv(wideDEGsSequential, "../results/table1.csv", row.names = F)
 
-write.csv(removalDEGs, "../results/removalDEGs.csv")
-write.csv(hatchDEGs, "../results/hatchDEGs.csv")
-write.csv(prolongDEGs, "../results/prolongDEGs.csv")
+#write.csv(removalDEGs, "../results/removalDEGs.csv")
+#write.csv(hatchDEGs, "../results/hatchDEGs.csv")
+#write.csv(prolongDEGs, "../results/prolongDEGs.csv")
 
-write.csv(manipDEGs, "../results/manipDEGs.csv")
+#write.csv(manipDEGs, "../results/manipDEGs.csv")
 
 ```
 
 
-### overlapp
+### overlap
 
 ```{r}
 removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
 early <- c("early_inc.d9", "hatch_early")
 late <- c("hatch_prolong", "inc.d17_prolong")
 
+filteredDEGs <- allDEG %>%
+  filter(lfc > 1.1 | lfc < -1.1 ) %>%
+  filter(tissue == "gonad")
 
 filteredDEGs %>%
   filter(comparison %in% removalcomps)  %>%
@@ -307,8 +310,6 @@ inc.d9_m.inc.d9DEGs <- filteredDEGs %>%
   drop_na() %>%
   pull(gene)
   
-
-
  
 # Generate 3 sets of 200 words
 # Chart
@@ -317,12 +318,20 @@ venn.diagram(
   x = list(hatch_m.n2DEGs, inc.d17_m.inc.d17DEGs, 
            inc.d3_m.inc.d3DEGs, inc.d9_m.inc.d9DEGs),
   category.names = c("Inc 3" , "Hatch" , "Inc 9", " Inc 17"),
-  filename = '../figures/venn.png',
+  filename = '../figures/venn-gonad.png',
   output=FALSE,
+  print.mode = "raw",
   col=c("#CDCDCD", '#262625', '#959595','#959595'),
   fill = c("#CDCDCD", "#262625", "#959595", "#959595"),
-  main = "No. of genes that respond to offspring removal",
-  sub = "9 shared genes: \nPHGDH, NRG2, LHX9, SSTR3, VTN, SARM1, ALK, LPAR1, and APOH" )
+  main = "Gonads",
+  sub = "zero genes respond to all four offspring removal manipulations"
+  #main = "Pituitary",
+  #sub = "Six genes respond to all four offspring removal manipulations\n SSTR3, VTN, SARM1, ALK, LPAR1, and PHGDH"
+  #main = "Hypothalamus",
+  #sub = "Zero genes respond to all four offspring removal manipulations"
+  #main = "No. of genes that respond to offspring removal",
+  #sub = "9 shared genes: \nPHGDH, NRG2, LHX9, SSTR3, VTN, SARM1, ALK, LPAR1, and APOH"
+  )
 
 
 intersect(hatch_m.n2DEGs, inc.d17_m.inc.d17DEGs) %>%
