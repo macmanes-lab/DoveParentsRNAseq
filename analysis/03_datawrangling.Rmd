@@ -7,8 +7,11 @@ output: md_document
 ```{r setup}
 library(tidyverse)
 library(readr)
+library(VennDiagram)
 
 source("../R/themes.R")
+
+knitr::opts_chunk$set(echo = TRUE, message = F, fig.path = '../figures/')
 ```
 
 ### candidate gene anlayses
@@ -131,7 +134,7 @@ head(candidatevsd)
 
 ## All DEGs 
 
-```{r allDEG}
+```{r allDEG, results=F}
 DEG_path <- "../results/DEseq2/treatment/"   # path to the data
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
 DEG_pathfiles <- paste0(DEG_path, DEG_files)
@@ -271,3 +274,58 @@ write.csv(manipDEGs, "../results/manipDEGs.csv")
 ```
 
 
+### overlapp
+
+```{r}
+removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
+early <- c("early_inc.d9", "hatch_early")
+late <- c("hatch_prolong", "inc.d17_prolong")
+
+
+filteredDEGs %>%
+  filter(comparison %in% removalcomps)  %>%
+  select(sex:gene) %>%
+  pivot_wider(names_from = comparison, values_from = direction)
+
+hatch_m.n2DEGs <- filteredDEGs %>%
+  filter(comparison == "hatch_m.n2") %>%
+  drop_na() %>%
+  pull(gene)
+
+inc.d17_m.inc.d17DEGs <- filteredDEGs %>%
+  filter(comparison == "inc.d17_m.inc.d17") %>%
+  drop_na() %>%
+  pull(gene)
+
+inc.d3_m.inc.d3DEGs <- filteredDEGs %>%
+  filter(comparison == "inc.d3_m.inc.d3") %>%
+  drop_na() %>%
+  pull(gene)
+
+inc.d9_m.inc.d9DEGs <- filteredDEGs %>%
+  filter(comparison == "inc.d9_m.inc.d9") %>%
+  drop_na() %>%
+  pull(gene)
+  
+
+
+ 
+# Generate 3 sets of 200 words
+# Chart
+
+venn.diagram(
+  x = list(hatch_m.n2DEGs, inc.d17_m.inc.d17DEGs, 
+           inc.d3_m.inc.d3DEGs, inc.d9_m.inc.d9DEGs),
+  category.names = c("Inc 3" , "Hatch" , "Inc 9", " Inc 17"),
+  filename = '../figures/venn.png',
+  output=FALSE,
+  col=c("#CDCDCD", '#262625', '#959595','#959595'),
+  fill = c("#CDCDCD", "#262625", "#959595", "#959595"),
+  main = "No. of genes that respond to offspring removal",
+  sub = "9 shared genes: \nPHGDH, NRG2, LHX9, SSTR3, VTN, SARM1, ALK, LPAR1, and APOH" )
+
+
+intersect(hatch_m.n2DEGs, inc.d17_m.inc.d17DEGs) %>%
+  intersect(.,inc.d3_m.inc.d3DEGs) %>%
+  intersect(.,inc.d9_m.inc.d9DEGs)
+```
