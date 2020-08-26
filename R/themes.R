@@ -73,6 +73,10 @@ comparisonlabelschar <- c("bldg\nlay" ,"lay\ninc.d3",
                            "inc.d3\ninc.d9", "inc.d9\ninc.d17", 
                            "inc.d17\nhatch" , "hatch\nn5", "n5\nn9")
 
+comparisonlevelscharnobldg <- c("lay_inc.d3",  
+                          "inc.d3_inc.d9",   "inc.d9_inc.d17",  
+                          "inc.d17_hatch", "hatch_n5", "n5_n9")
+
 comparisonlabelscharnobldg <- c("lay\ninc3", 
                           "inc3\ninc9", "inc.d9\ninc17", 
                           "inc17\nhatch" , "hatch\nn5", "n5\nn9")
