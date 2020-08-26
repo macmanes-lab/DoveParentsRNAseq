@@ -929,7 +929,7 @@ makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim, mylabels){
 
 
 
-makebargraphv3 <- function(df, whichtissue, myylab, mylabels){
+makebargraphv3 <- function(df, whichtissue, myylab, mybreaks, mylabels){
   
   p <- df %>%
     filter(tissue == whichtissue) %>%
@@ -946,7 +946,8 @@ makebargraphv3 <- function(df, whichtissue, myylab, mylabels){
               position = position_dodge(width = 1),
               size = 1.75, color = "black") +
     labs(x = NULL, y = myylab)  +
-    scale_x_discrete(labels = mylabels)
+    scale_x_discrete(breaks = mybreaks,
+                     labels = mylabels)
   return(p)
 }
 

@@ -75,6 +75,17 @@ DEGreplace <- allDEG %>%
   mutate(n = n*updown ) %>%
   select(-updown)
 DEGreplace
+
+
+DEGcontrolreplace <- allDEG %>% 
+  filter(comparison %in% comparisonlevelscontrolreplace)  %>%
+  mutate(comparison = factor(comparison, levels = comparisonlevelscontrolreplace)) %>%
+  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
+  group_by(sex, tissue, comparison, direction, label, updown) %>%
+  summarise(n = n()) %>%
+  mutate(n = n*updown ) %>%
+  select(-updown)
+
 ```
 
 ## Variance stabilized data
@@ -173,7 +184,7 @@ l <- plotreplacement(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle =
 a <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
   facet_wrap(~sex) 
 
-b <- makebargraphv3(DEGcontrol, "hypothalamus","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
+b <- makebargraphv3(DEGcontrolreplace, "hypothalamus","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrolreaplce) +
   labs(x = "Control versus all other reproductive and parental stages") +
   geom_rect(mapping=aes(xmin=0.5, xmax=1.5, ymin=-1000, ymax = 350, fill = F), color="black", alpha=0.5) +
   annotate("text", x = 1, y = -1075, label = "D", size = 2.5)   
@@ -199,7 +210,7 @@ ghi <- plot_grid(g,h,k,l,nrow = 1,
                 labels = c("A", "", "B"), label_size = 8, hjust = 0,
                 rel_widths = c(9,9,6,6))
 
-ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
+ab <- plot_grid(a,b,rel_widths = c(1,3), 
                 labels = c("C", "D"), label_size = 8, hjust = 0)
 
 cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
@@ -219,7 +230,7 @@ fig2
 a <- plot.volcano("pituitary", sexlevels,  "control_bldg") + 
   facet_wrap(~sex) 
 
-b <- makebargraphv3(DEGcontrol, "pituitary","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
+b <- makebargraphv3(DEGcontrolreplace, "pituitary","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrolreaplce) +
   labs(x = "Control versus all other reproductive and parental stages") 
 
 c <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
@@ -269,17 +280,17 @@ fig3
 a <- plot.volcano("gonad", sexlevels,  "control_bldg") + 
   facet_wrap(~sex) 
 
-b <- makebargraphv3(DEGcontrol, "gonad","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrol) +
+b <- makebargraphv3(DEGcontrolreplace, "gonad","No. of DEGs\n(-) decreased  increased (+)", comparisonlevelscontrolreplace, comparisonlevelscontrolreplace) +
   labs(x = "Control versus all other reproductive and parental stages") 
 
-c <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg) +
+c <- makebargraphv3(DEGbldg, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsbldg, comparisonlabelsbldg) +
   labs(x = "Nest-building versus all other parental stages")
-d <- makebargraphv3(DEGchar, "gonad", NULL,  comparisonlabelscharnobldg) +
+d <- makebargraphv3(DEGchar, "gonad", NULL,  comparisonlevelscharnobldg, comparisonlabelscharnobldg) +
   labs(x = "Comparison of sequential parental stages")
 
-e <- makebargraphv3(DEGremove, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval) +
+e <- makebargraphv3(DEGremove, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval, comparisonlevelsremoval) +
   labs(x = "Offspring removal versus temporal control")
-f <- makebargraphv3(DEGreplace, "gonad", NULL,  comparisonlablelssreplace) +
+f <- makebargraphv3(DEGreplace, "gonad", NULL,  comparisonlevelsreplace, comparisonlablelssreplace) +
   labs(x = "Offspring removal versus temporal or external control")
 
 g <- plotcandidatechar(pitvsdf, "ESR1") + labs(subtitle = "Gonads")

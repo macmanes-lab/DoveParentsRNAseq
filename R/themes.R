@@ -106,6 +106,16 @@ comparisonlabelssmanip <- c("inc.d3vs.\nm.inc.d3", "inc.d9vs.\nm.inc.d9", "early
                             "hatchvs.\nprolong", "hatchvs.\nm.n2",
                              "extendvs.\nhatch", "n5vs.\nextend")
 
+comparisonlevelscontrolreplace <- c("control_bldg", "control_lay",  "control_inc.d3",  
+                             "control_inc.d9",   "control_inc.d17",  
+                             "control_hatch", "control_n5", "control_n9",
+                             "control_early", "control_prolong", "control_extend")
+comparisonlabelscontrolreaplce  <- c("bldg\ncontrol" ,"lay\ncontrol", "inc3\ncontrol", 
+                             "inc9\ncontrol", "inc17\ncontrol", 
+                             "hatch\ncontrol" , "n5\ncontrol", "n9\ncontrol",
+                             "early\ncontrol" , "prolong\ncontrol", "extend\ncontrol")
+
+
 # custom colors
 
 colorschar <-  c("control" = "#cc4c02", 
