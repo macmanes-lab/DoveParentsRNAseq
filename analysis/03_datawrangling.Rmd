@@ -332,7 +332,7 @@ venn.diagram(
 
 filteredDEGs <- allDEG %>%
   filter(lfc > 1.1 | lfc < -1.1 ) %>%
-  filter(tissue == "hypothalamus")
+  filter(tissue == "pituitary")
 
 chicks <- c("bldg_hatch", "bldg_n5", "bldg_n9",
             "bldg_extend", "bldg_early")
@@ -367,14 +367,17 @@ venn.diagram(
   x = list(bldg_n5DEGs, bldg_hatchDEGs, 
            bldg_earlyDEGs,bldg_extendDEGs,  bldg_n9DEGs),
   category.names = c( "N5" ,"Hatch" , "Early", " Extend", "N9"),
-  filename = '../figures/venn-chicks-hyp.png',
+  filename = '../figures/venn-chicks-pit.png',
   output=FALSE,
   print.mode = "raw",
   imagetype = "png",
+  height = 1500,
+	width = 1750,
+  resolution = 500,
+  cex = 0.75,
+  cat.cex = 0.75,
   col=c('#3182bd', "#6baed6",  '#cbc9e2', '#6a51a3', '#08519c'),
-  fill = c("#3182bd", "#6baed6", "#cbc9e2", '#6a51a3', "#08519c" ),
-  main = "Hypothalamus - Nestling Care",
-  sub = "Differentially expressesed genes relative to nest building controls"
+  fill = c("#3182bd", "#6baed6", "#cbc9e2", '#6a51a3', "#08519c" )
   )
 
 ```
@@ -386,7 +389,7 @@ venn.diagram(
 
 filteredDEGs <- allDEG %>%
   filter(lfc > 1.1 | lfc < -1.1 ) %>%
-  filter(tissue == "hypothalamus") 
+  filter(tissue == "pituitary") 
 
 eggs <- c("bldg_lay", 
          "bldg_inc.d3", "bldg_inc.d9", "bldg_inc.d17",
@@ -422,24 +425,19 @@ venn.diagram(
   x = list(bldg_inc.d3DEGs, bldg_layDEGs,  bldg_prolongDEGs,
            bldg_inc.d17DEGs, bldg_inc.d9DEGs),
   category.names = c("Inc3" , "Lay" , "Prolong", " Inc17", "Inc9"),
-  filename = '../figures/venn-eggs-hyp.png',
+  filename = '../figures/venn-eggs-pit.png',
   output=FALSE,
   print.mode = "raw",
   imagetype = "png",
   height = 1500,
-	width = 1500,
+	width = 1750,
+  resolution = 500,
+  cex = 0.75,
+  cat.cex = 0.75,
   col=c( '#78c679', "#fed98e",  '#9e9ac8','#006837', '#31a354'),
-  fill = c("#78c679", "#fed98e",  "#9e9ac8",'#006837', "#31a354"),
-  main = "Hypothalamus - Incubation",
-  sub = "Differentially expressesed genes relative to nest building controls"
+  fill = c("#78c679", "#fed98e",  "#9e9ac8",'#006837', "#31a354")
   )
 
 ```
-```{r}
-library(cowplot)
-eggshyp <- png::readPNG("../figures/venn-eggs-hyp.png")
-eggshyp <- ggdraw() +  draw_image(eggshyp, scale = 1)
 
-plot_grid(eggshyp,eggshyp, eggshyp, nrow = 1)
-```
 

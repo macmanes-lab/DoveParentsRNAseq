@@ -3,14 +3,14 @@ Fig 2
 
     library(tidyverse)
 
-    ## ── Attaching packages ─────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -431,21 +431,21 @@ Variance stabilized data
     summary(hypvsd)
 
     ##      gene               counts           sex           tissue         
-    ##  Length:38259       Min.   : 5.547   female:19305   Length:38259      
-    ##  Class :character   1st Qu.: 6.526   male  :18954   Class :character  
-    ##  Mode  :character   Median : 7.929                  Mode  :character  
-    ##                     Mean   : 8.036                                    
-    ##                     3rd Qu.: 9.246                                    
-    ##                     Max.   :16.112                                    
+    ##  Length:37908       Min.   : 5.547   female:18954   Length:37908      
+    ##  Class :character   1st Qu.: 6.408   male  :18954   Class :character  
+    ##  Mode  :character   Median : 7.861                  Mode  :character  
+    ##                     Mean   : 7.957                                    
+    ##                     3rd Qu.: 9.187                                    
+    ##                     Max.   :15.891                                    
     ##                                                                       
-    ##      treatment         earlylate           extint        samples         
-    ##  inc.d9   : 2691   reference: 4914   reference: 4914   Length:38259      
-    ##  control  : 2574   early    :14040   eggs     :12285   Class :character  
-    ##  inc.d17  : 2574   late     :19305   loss     : 9360   Mode  :character  
-    ##  m.n2     : 2574                     chicks   :11700                     
-    ##  n9       : 2574                                                         
-    ##  m.inc.d17: 2457                                                         
-    ##  (Other)  :22815
+    ##    treatment         earlylate           extint        samples         
+    ##  control: 2574   reference: 4914   reference: 4914   Length:37908      
+    ##  inc.d9 : 2574   early    :13806   eggs     :12168   Class :character  
+    ##  inc.d17: 2574   late     :19188   loss     : 9126   Mode  :character  
+    ##  m.n2   : 2574                     chicks   :11700                     
+    ##  n9     : 2574                                                         
+    ##  bldg   : 2340                                                         
+    ##  (Other):22698
 
     summary(pitvsd)
 
@@ -466,6 +466,13 @@ Variance stabilized data
     ##  m.inc.d17: 2435                                                         
     ##  (Other)  :22504
 
+    g <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
+    h <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
+    i <- plotremoval(hypvsdf, "HTR2C")+ labs(y = NULL) + labs(subtitle = " ")
+    j <- plotremoval(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+    k <- plotreplacement(hypvsdf, "HTR2C") + labs(y = NULL)+ labs(subtitle = " ")
+    l <- plotreplacement(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+
     a <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
       facet_wrap(~sex) 
 
@@ -484,23 +491,26 @@ Variance stabilized data
     f <- makebargraphv3(DEGreplace, "hypothalamus", NULL,  comparisonlevelsreplace) +
       labs(x = "Offspring removal versus temporal or external control")
 
-    g <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
-    h <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
-    i <- plotremoval(hypvsdf, "HTR2C")+ labs(y = NULL) + labs(subtitle = " ")
-    j <- plotremoval(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
-    k <- plotreplacement(hypvsdf, "HTR2C") + labs(y = NULL)+ labs(subtitle = " ")
-    l <- plotreplacement(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+
+    m <- png::readPNG("../figures/venn-eggs-hyp.png")
+    m <- ggdraw() +  draw_image(m, scale = 1)
+
+    n <- png::readPNG("../figures/venn-chicks-hyp.png")
+    n <- ggdraw() +  draw_image(n, scale = 1)
+
+    ghi <- plot_grid(g,h,k,l,nrow = 1,
+                    labels = c("A", "", "B"), label_size = 8, hjust = 0,
+                    rel_widths = c(9,9,6,6))
 
     ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
-                    labels = c("D", "E"), label_size = 8, hjust = 0)
-    cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
-                    labels = c("F", "G"), label_size = 8, hjust = 0)
-    ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
-                    labels = c("H", "I"), label_size = 8, hjust = 0)
+                    labels = c("C", "D"), label_size = 8, hjust = 0)
 
-    ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
-                    labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
-                    rel_widths = c(9,9,8,8,6,6))
+    cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                    labels = c("E", "F"), label_size = 8, hjust = 0)
+
+    ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
+                    labels = c("G", "H", "I"), label_size = 8, hjust = 0)
+
 
     fig2 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
     fig2
@@ -520,7 +530,7 @@ Variance stabilized data
 
     e <- makebargraphv3(DEGremove, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval) +
       labs(x = "Offspring removal versus temporal control")
-    f <- makebargraphv3(DEGreplace, "pituitary", NULL,  comparisonlevelsreplace) +
+    f <- makebargraphv3(DEGreplace, "pituitary", NULL,  comparisonlablelssreplace) +
       labs(x = "Offspring removal versus temporal or external control")
 
     g <- plotcandidatechar(pitvsdf, "PRL") + labs(subtitle = "Pituitary")
@@ -530,16 +540,25 @@ Variance stabilized data
     k <- plotreplacement(pitvsdf, "PRL") + labs(y = NULL)+ labs(subtitle = " ")
     l <- plotreplacement(pitvsdm, "PRL") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 
-    ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
-                    labels = c("D", "E"), label_size = 8, hjust = 0)
-    cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
-                    labels = c("F", "G"), label_size = 8, hjust = 0)
-    ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
-                    labels = c("H", "I"), label_size = 8, hjust = 0)
+    m <- png::readPNG("../figures/venn-eggs-pit.png")
+    m <- ggdraw() +  draw_image(m, scale = 1)
 
-    ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
-                    labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
-                    rel_widths = c(9,9,8,8,6,6))
+    n <- png::readPNG("../figures/venn-chicks-pit.png")
+    n <- ggdraw() +  draw_image(n, scale = 1)
+
+    ghi <- plot_grid(g,h,k,l,nrow = 1,
+                    labels = c("A", "", "B"), label_size = 8, hjust = 0,
+                    rel_widths = c(9,9,6,6))
+
+    ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
+                    labels = c("C", "D"), label_size = 8, hjust = 0)
+
+    cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                    labels = c("E", "F"), label_size = 8, hjust = 0)
+
+    ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
+                    labels = c("G", "H", "I"), label_size = 8, hjust = 0)
+
 
     fig3 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
     fig3
@@ -559,7 +578,7 @@ Variance stabilized data
 
     e <- makebargraphv3(DEGremove, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval) +
       labs(x = "Offspring removal versus temporal control")
-    f <- makebargraphv3(DEGreplace, "gonad", NULL,  comparisonlevelsreplace) +
+    f <- makebargraphv3(DEGreplace, "gonad", NULL,  comparisonlablelssreplace) +
       labs(x = "Offspring removal versus temporal or external control")
 
     g <- plotcandidatechar(pitvsdf, "ESR1") + labs(subtitle = "Gonads")
@@ -569,16 +588,25 @@ Variance stabilized data
     k <- plotreplacement(pitvsdf, "ESR1") + labs(y = NULL)+ labs(subtitle = " ")
     l <- plotreplacement(pitvsdm, "ESR1") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 
-    ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
-                    labels = c("D", "E"), label_size = 8, hjust = 0)
-    cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
-                    labels = c("F", "G"), label_size = 8, hjust = 0)
-    ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
-                    labels = c("H", "I"), label_size = 8, hjust = 0)
+    m <- png::readPNG("../figures/venn-eggs-gon.png")
+    m <- ggdraw() +  draw_image(m, scale = 1)
 
-    ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
-                    labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
-                    rel_widths = c(9,9,8,8,6,6))
+    n <- png::readPNG("../figures/venn-chicks-gon.png")
+    n <- ggdraw() +  draw_image(n, scale = 1)
+
+    ghi <- plot_grid(g,h,k,l,nrow = 1,
+                    labels = c("A", "", "B"), label_size = 8, hjust = 0,
+                    rel_widths = c(9,9,6,6))
+
+    ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
+                    labels = c("C", "D"), label_size = 8, hjust = 0)
+
+    cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                    labels = c("E", "F"), label_size = 8, hjust = 0)
+
+    ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
+                    labels = c("G", "H", "I"), label_size = 8, hjust = 0)
+
 
     fig4 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
     fig4
@@ -632,40 +660,3 @@ Save files
 
     ## quartz_off_screen 
     ##                 2
-
-    sessionInfo()
-
-    ## R version 3.6.0 (2019-04-26)
-    ## Platform: x86_64-apple-darwin15.6.0 (64-bit)
-    ## Running under: macOS  10.15.4
-    ## 
-    ## Matrix products: default
-    ## BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-    ## LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
-    ## 
-    ## locale:
-    ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
-    ## 
-    ## attached base packages:
-    ## [1] stats     graphics  grDevices utils     datasets  methods   base     
-    ## 
-    ## other attached packages:
-    ##  [1] ggsignif_0.5.0     cowplot_1.0.0.9000 forcats_0.4.0      stringr_1.4.0     
-    ##  [5] dplyr_0.8.3        purrr_0.3.3        readr_1.3.1        tidyr_1.0.0       
-    ##  [9] tibble_2.1.3       ggplot2_3.3.0.9000 tidyverse_1.3.0   
-    ## 
-    ## loaded via a namespace (and not attached):
-    ##  [1] tidyselect_0.2.5 xfun_0.15        haven_2.2.0      lattice_0.20-38 
-    ##  [5] colorspace_1.4-1 vctrs_0.2.2      generics_0.0.2   htmltools_0.3.6 
-    ##  [9] yaml_2.2.1       utf8_1.1.4       rlang_0.4.4      pillar_1.4.3    
-    ## [13] glue_1.3.1       withr_2.1.2      DBI_1.1.0        dbplyr_1.4.2    
-    ## [17] modelr_0.1.5     readxl_1.3.1     lifecycle_0.1.0  munsell_0.5.0   
-    ## [21] gtable_0.3.0     cellranger_1.1.0 rvest_0.3.5      evaluate_0.14   
-    ## [25] labeling_0.3     knitr_1.29       fansi_0.4.1      broom_0.5.2     
-    ## [29] Rcpp_1.0.3       scales_1.1.0     backports_1.1.5  jsonlite_1.6.1  
-    ## [33] farver_2.0.3     fs_1.3.1         hms_0.5.3        digest_0.6.24   
-    ## [37] stringi_1.4.6    grid_3.6.0       cli_2.0.1        tools_3.6.0     
-    ## [41] magrittr_1.5     crayon_1.3.4     pkgconfig_2.0.3  ellipsis_0.3.0  
-    ## [45] xml2_1.2.2       reprex_0.3.0     lubridate_1.7.4  assertthat_0.2.1
-    ## [49] rmarkdown_1.15   httr_1.4.1       rstudioapi_0.11  R6_2.4.1        
-    ## [53] nlme_3.1-140     compiler_3.6.0

@@ -90,6 +90,11 @@ comparisonlevelsremoval <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.in
 comparisonlevelsreplace <- c("hatch_early", "inc.d17_prolong",  "hatch_prolong", 
                              "extend_hatch", "n5_extend")
 
+comparisonlablelssreplace <- c("hatch\nearly", "inc.d17\nprolong",  "hatch\nprolong", 
+                             "extend\nhatch", "n5\nextend")
+
+
+
 comparisonlevelsmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
                            "hatch_early",  "inc.d17_m.inc.d17", 
                            "hatch_prolong", "hatch_m.n2",

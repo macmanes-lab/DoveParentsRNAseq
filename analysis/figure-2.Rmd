@@ -163,6 +163,13 @@ summary(pitvsd)
 
 
 ```{r fig2, fig.width=7.5, fig.height=7.25}
+g <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
+h <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
+i <- plotremoval(hypvsdf, "HTR2C")+ labs(y = NULL) + labs(subtitle = " ")
+j <- plotremoval(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+k <- plotreplacement(hypvsdf, "HTR2C") + labs(y = NULL)+ labs(subtitle = " ")
+l <- plotreplacement(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+
 a <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
   facet_wrap(~sex) 
 
@@ -181,26 +188,30 @@ e <- makebargraphv3(DEGremove, "hypothalamus", "No. of DEGs\n (-)decreased  incr
 f <- makebargraphv3(DEGreplace, "hypothalamus", NULL,  comparisonlevelsreplace) +
   labs(x = "Offspring removal versus temporal or external control")
 
-g <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
-h <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
-i <- plotremoval(hypvsdf, "HTR2C")+ labs(y = NULL) + labs(subtitle = " ")
-j <- plotremoval(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
-k <- plotreplacement(hypvsdf, "HTR2C") + labs(y = NULL)+ labs(subtitle = " ")
-l <- plotreplacement(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+
+m <- png::readPNG("../figures/venn-eggs-hyp.png")
+m <- ggdraw() +  draw_image(m, scale = 1)
+
+n <- png::readPNG("../figures/venn-chicks-hyp.png")
+n <- ggdraw() +  draw_image(n, scale = 1)
+
+ghi <- plot_grid(g,h,k,l,nrow = 1,
+                labels = c("A", "", "B"), label_size = 8, hjust = 0,
+                rel_widths = c(9,9,6,6))
 
 ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
-                labels = c("D", "E"), label_size = 8, hjust = 0)
-cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
-                labels = c("F", "G"), label_size = 8, hjust = 0)
-ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
-                labels = c("H", "I"), label_size = 8, hjust = 0)
+                labels = c("C", "D"), label_size = 8, hjust = 0)
 
-ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
-                labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
-                rel_widths = c(9,9,8,8,6,6))
+cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                labels = c("E", "F"), label_size = 8, hjust = 0)
+
+ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
+                labels = c("G", "H", "I"), label_size = 8, hjust = 0)
+
 
 fig2 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
 fig2
+
 ```
 
 
@@ -218,7 +229,7 @@ d <- makebargraphv3(DEGchar, "pituitary", NULL,  comparisonlabelscharnobldg) +
 
 e <- makebargraphv3(DEGremove, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval) +
   labs(x = "Offspring removal versus temporal control")
-f <- makebargraphv3(DEGreplace, "pituitary", NULL,  comparisonlevelsreplace) +
+f <- makebargraphv3(DEGreplace, "pituitary", NULL,  comparisonlablelssreplace) +
   labs(x = "Offspring removal versus temporal or external control")
 
 g <- plotcandidatechar(pitvsdf, "PRL") + labs(subtitle = "Pituitary")
@@ -228,16 +239,25 @@ j <- plotremoval(pitvsdm, "PRL") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 k <- plotreplacement(pitvsdf, "PRL") + labs(y = NULL)+ labs(subtitle = " ")
 l <- plotreplacement(pitvsdm, "PRL") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 
-ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
-                labels = c("D", "E"), label_size = 8, hjust = 0)
-cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
-                labels = c("F", "G"), label_size = 8, hjust = 0)
-ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
-                labels = c("H", "I"), label_size = 8, hjust = 0)
+m <- png::readPNG("../figures/venn-eggs-pit.png")
+m <- ggdraw() +  draw_image(m, scale = 1)
 
-ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
-                labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
-                rel_widths = c(9,9,8,8,6,6))
+n <- png::readPNG("../figures/venn-chicks-pit.png")
+n <- ggdraw() +  draw_image(n, scale = 1)
+
+ghi <- plot_grid(g,h,k,l,nrow = 1,
+                labels = c("A", "", "B"), label_size = 8, hjust = 0,
+                rel_widths = c(9,9,6,6))
+
+ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
+                labels = c("C", "D"), label_size = 8, hjust = 0)
+
+cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                labels = c("E", "F"), label_size = 8, hjust = 0)
+
+ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
+                labels = c("G", "H", "I"), label_size = 8, hjust = 0)
+
 
 fig3 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
 fig3
@@ -259,7 +279,7 @@ d <- makebargraphv3(DEGchar, "gonad", NULL,  comparisonlabelscharnobldg) +
 
 e <- makebargraphv3(DEGremove, "gonad", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsremoval) +
   labs(x = "Offspring removal versus temporal control")
-f <- makebargraphv3(DEGreplace, "gonad", NULL,  comparisonlevelsreplace) +
+f <- makebargraphv3(DEGreplace, "gonad", NULL,  comparisonlablelssreplace) +
   labs(x = "Offspring removal versus temporal or external control")
 
 g <- plotcandidatechar(pitvsdf, "ESR1") + labs(subtitle = "Gonads")
@@ -269,16 +289,25 @@ j <- plotremoval(pitvsdm, "ESR1") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 k <- plotreplacement(pitvsdf, "ESR1") + labs(y = NULL)+ labs(subtitle = " ")
 l <- plotreplacement(pitvsdm, "ESR1") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 
-ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
-                labels = c("D", "E"), label_size = 8, hjust = 0)
-cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
-                labels = c("F", "G"), label_size = 8, hjust = 0)
-ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h",
-                labels = c("H", "I"), label_size = 8, hjust = 0)
+m <- png::readPNG("../figures/venn-eggs-gon.png")
+m <- ggdraw() +  draw_image(m, scale = 1)
 
-ghi <- plot_grid(g,h,i, j,k,l,nrow = 1,
-                labels = c("A", "", "B", "", "C"), label_size = 8, hjust = 0,
-                rel_widths = c(9,9,8,8,6,6))
+n <- png::readPNG("../figures/venn-chicks-gon.png")
+n <- ggdraw() +  draw_image(n, scale = 1)
+
+ghi <- plot_grid(g,h,k,l,nrow = 1,
+                labels = c("A", "", "B"), label_size = 8, hjust = 0,
+                rel_widths = c(9,9,6,6))
+
+ab <- plot_grid(a,b,rel_widths = c(1,2.5), 
+                labels = c("C", "D"), label_size = 8, hjust = 0)
+
+cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
+                labels = c("E", "F"), label_size = 8, hjust = 0)
+
+ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
+                labels = c("G", "H", "I"), label_size = 8, hjust = 0)
+
 
 fig4 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
 fig4
@@ -316,24 +345,4 @@ plot(fig4)
 dev.off()
 ```
 
-```{r refs}
-sessionInfo()
-```
-
-```{r}
-head(allDEG)
-
-library(UpSetR)
-head(allDEG)
-
-MG <- allDEG %>%
-  filter(sex == "male", tissue == "hypothalamus", 
-         comparison %in% comparisonlevelsreplace) %>%
-  select(sex, tissue, comparison, gene) %>%
-  mutate(seen = 1) %>%
-  pivot_wider(names_from = comparison, values_from = seen)
-MG
-
-upset(MG) 
-```
 
