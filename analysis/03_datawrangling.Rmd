@@ -315,6 +315,7 @@ venn.diagram(
   filename = '../figures/venn-pit.png',
   output=FALSE,
   print.mode = "raw",
+  imagetype = "png",
   col=c("#CDCDCD", '#262625', '#959595','#959595'),
   fill = c("#CDCDCD", "#262625", "#959595", "#959595"),
   main = "Pituitary - Offspring Removal",
@@ -369,6 +370,7 @@ venn.diagram(
   filename = '../figures/venn-chicks-hyp.png',
   output=FALSE,
   print.mode = "raw",
+  imagetype = "png",
   col=c('#3182bd', "#6baed6",  '#cbc9e2', '#6a51a3', '#08519c'),
   fill = c("#3182bd", "#6baed6", "#cbc9e2", '#6a51a3', "#08519c" ),
   main = "Hypothalamus - Nestling Care",
@@ -423,6 +425,9 @@ venn.diagram(
   filename = '../figures/venn-eggs-hyp.png',
   output=FALSE,
   print.mode = "raw",
+  imagetype = "png",
+  height = 1500,
+	width = 1500,
   col=c( '#78c679', "#fed98e",  '#9e9ac8','#006837', '#31a354'),
   fill = c("#78c679", "#fed98e",  "#9e9ac8",'#006837', "#31a354"),
   main = "Hypothalamus - Incubation",
@@ -430,3 +435,11 @@ venn.diagram(
   )
 
 ```
+```{r}
+library(cowplot)
+eggshyp <- png::readPNG("../figures/venn-eggs-hyp.png")
+eggshyp <- ggdraw() +  draw_image(eggshyp, scale = 1)
+
+plot_grid(eggshyp,eggshyp, eggshyp, nrow = 1)
+```
+
