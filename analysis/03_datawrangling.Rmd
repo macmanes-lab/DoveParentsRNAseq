@@ -214,7 +214,6 @@ filteredDEGs <- allDEG %>%
 dim(allDEG)
 dim(filteredDEGs)
 
-
 makemanipulationDEGtables <- function(whichcomparisons){
   df <- filteredDEGs %>%
     filter(comparison %in% whichcomparisons) %>%
@@ -274,21 +273,15 @@ head(manipDEGs)
 ```
 
 
-### overlap
+### removal overlap
 
 ```{r}
-removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
-early <- c("early_inc.d9", "hatch_early")
-late <- c("hatch_prolong", "inc.d17_prolong")
 
 filteredDEGs <- allDEG %>%
   filter(lfc > 1.1 | lfc < -1.1 ) %>%
-  filter(tissue == "gonad")
+  filter(tissue == "pituitary")
 
-filteredDEGs %>%
-  filter(comparison %in% removalcomps)  %>%
-  select(sex:gene) %>%
-  pivot_wider(names_from = comparison, values_from = direction)
+removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
 
 hatch_m.n2DEGs <- filteredDEGs %>%
   filter(comparison == "hatch_m.n2") %>%
@@ -309,32 +302,131 @@ inc.d9_m.inc.d9DEGs <- filteredDEGs %>%
   filter(comparison == "inc.d9_m.inc.d9") %>%
   drop_na() %>%
   pull(gene)
-  
- 
-# Generate 3 sets of 200 words
-# Chart
-
-venn.diagram(
-  x = list(hatch_m.n2DEGs, inc.d17_m.inc.d17DEGs, 
-           inc.d3_m.inc.d3DEGs, inc.d9_m.inc.d9DEGs),
-  category.names = c("Inc 3" , "Hatch" , "Inc 9", " Inc 17"),
-  filename = '../figures/venn-gonad.png',
-  output=FALSE,
-  print.mode = "raw",
-  col=c("#CDCDCD", '#262625', '#959595','#959595'),
-  fill = c("#CDCDCD", "#262625", "#959595", "#959595"),
-  main = "Gonads",
-  sub = "zero genes respond to all four offspring removal manipulations"
-  #main = "Pituitary",
-  #sub = "Six genes respond to all four offspring removal manipulations\n SSTR3, VTN, SARM1, ALK, LPAR1, and PHGDH"
-  #main = "Hypothalamus",
-  #sub = "Zero genes respond to all four offspring removal manipulations"
-  #main = "No. of genes that respond to offspring removal",
-  #sub = "9 shared genes: \nPHGDH, NRG2, LHX9, SSTR3, VTN, SARM1, ALK, LPAR1, and APOH"
-  )
 
 
 intersect(hatch_m.n2DEGs, inc.d17_m.inc.d17DEGs) %>%
   intersect(.,inc.d3_m.inc.d3DEGs) %>%
   intersect(.,inc.d9_m.inc.d9DEGs)
+
+venn.diagram(
+  x = list(inc.d3_m.inc.d3DEGs,hatch_m.n2DEGs,
+            inc.d9_m.inc.d9DEGs, inc.d17_m.inc.d17DEGs),
+  category.names = c("Inc 3" , "Hatch" , "Inc 9", " Inc 17"),
+  filename = '../figures/venn-pit.png',
+  output=FALSE,
+  print.mode = "raw",
+  col=c("#CDCDCD", '#262625', '#959595','#959595'),
+  fill = c("#CDCDCD", "#262625", "#959595", "#959595"),
+  main = "Pituitary - Offspring Removal",
+  sub = "Differentially expressed genes relative to internal controls"
+  )
+
+
+```
+
+## chicks / nesting care
+
+
+```{r}
+
+filteredDEGs <- allDEG %>%
+  filter(lfc > 1.1 | lfc < -1.1 ) %>%
+  filter(tissue == "hypothalamus")
+
+chicks <- c("bldg_hatch", "bldg_n5", "bldg_n9",
+            "bldg_extend", "bldg_early")
+
+bldg_hatchDEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_hatch") %>%
+  drop_na() %>%
+  pull(gene)
+
+bldg_n5DEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_n5") %>%
+  drop_na() %>%
+  pull(gene)
+
+bldg_n9DEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_n9") %>%
+  drop_na() %>%
+  pull(gene)
+
+bldg_extendDEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_extend") %>%
+  drop_na() %>%
+  pull(gene)
+
+bldg_earlyDEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_early") %>%
+  drop_na() %>%
+  pull(gene)
+
+# chicks
+venn.diagram(
+  x = list(bldg_n5DEGs, bldg_hatchDEGs, 
+           bldg_earlyDEGs,bldg_extendDEGs,  bldg_n9DEGs),
+  category.names = c( "N5" ,"Hatch" , "Early", " Extend", "N9"),
+  filename = '../figures/venn-chicks-hyp.png',
+  output=FALSE,
+  print.mode = "raw",
+  col=c('#3182bd', "#6baed6",  '#cbc9e2', '#6a51a3', '#08519c'),
+  fill = c("#3182bd", "#6baed6", "#cbc9e2", '#6a51a3', "#08519c" ),
+  main = "Hypothalamus - Nestling Care",
+  sub = "Differentially expressesed genes relative to nest building controls"
+  )
+
+```
+
+
+## eggs / incubation
+
+```{r}
+
+filteredDEGs <- allDEG %>%
+  filter(lfc > 1.1 | lfc < -1.1 ) %>%
+  filter(tissue == "hypothalamus") 
+
+eggs <- c("bldg_lay", 
+         "bldg_inc.d3", "bldg_inc.d9", "bldg_inc.d17",
+         "bldg_prolong")
+
+bldg_layDEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_lay") %>%
+  drop_na() %>%
+  pull(gene)
+
+bldg_inc.d3DEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_inc.d3") %>%
+  drop_na() %>%
+  pull(gene)
+
+bldg_inc.d9DEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_inc.d9") %>%
+  drop_na() %>%
+  pull(gene)
+
+bldg_inc.d17DEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_inc.d17") %>%
+  drop_na() %>%
+  pull(gene)
+
+bldg_prolongDEGs <- filteredDEGs %>%
+  filter(comparison == "bldg_prolong") %>%
+  drop_na() %>%
+  pull(gene)
+
+# chicks
+venn.diagram(
+  x = list(bldg_inc.d3DEGs, bldg_layDEGs,  bldg_prolongDEGs,
+           bldg_inc.d17DEGs, bldg_inc.d9DEGs),
+  category.names = c("Inc3" , "Lay" , "Prolong", " Inc17", "Inc9"),
+  filename = '../figures/venn-eggs-hyp.png',
+  output=FALSE,
+  print.mode = "raw",
+  col=c( '#78c679', "#fed98e",  '#9e9ac8','#006837', '#31a354'),
+  fill = c("#78c679", "#fed98e",  "#9e9ac8",'#006837', "#31a354"),
+  main = "Hypothalamus - Incubation",
+  sub = "Differentially expressesed genes relative to nest building controls"
+  )
+
 ```
