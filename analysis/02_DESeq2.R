@@ -12,14 +12,12 @@ source("R/themes.R")  # load custom themes and color palletes
 # DESeq2 was not designed to run on 100 + samples. But, I really like it, so I do it anyways. Some of these commands take like 15 min to run using 6 cores. 
 # Also, I don't run every chuck every time. When I want new analysese, I add them to the bottom and set `eval = F` for chunks I don't want to rerurn 
 
-
 # count data
 countData <- read.csv("results/00_counts.csv", header = T, row.names = 1)
 
-
-#### comment this out to run the whole thing
+#### uncomment this to subset the data for quick analysis
 #print("subset for quick run")
-#countData  <- head(countData, 1500) # suset for quick analysis
+#countData  <- head(countData, 1500)
 
 # col data or variable informaiton
 colData <- read.csv("metadata/00_colData.csv", header = T, row.names = 1) %>%
@@ -27,112 +25,46 @@ colData <- read.csv("metadata/00_colData.csv", header = T, row.names = 1) %>%
          treatment <- factor(treatment, levels = alllevels)) %>%
   mutate(sextissue = as.factor(paste(sex, tissue, sep = "_"))) 
 colData <- colData %>% drop_na()
-# 987 samples, 8 variables
+# 987 samples, 11 variables
 
 print(ncol(countData) == nrow(colData))
 
-# differential gene expression
+######## differential gene expression
 
+# contrastst part 1. versus control and bldg
+references <- c("control", "bldg")
+allotherstages   <- c(charlevelsnocontrol, maniplevels)
 
-returndds <- function(whichgroup){
-  
-  newcolData <- colData %>%
-    dplyr::filter(sextissue %in% whichgroup) %>%      
-    droplevels()
-  row.names(newcolData) <- newcolData$V1
-  
-  # save counts that match colData
-  savecols <- as.character(newcolData$V1) 
-  savecols <- as.vector(savecols) 
-  
-  newcountData <- countData %>% dplyr::select(one_of(savecols)) 
-  
-  dds <- DESeqDataSetFromMatrix(countData = newcountData,
-                                colData = newcolData,
-                                design = ~ treatment )
-  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
-  print(dds)
-  print(dim(dds))
-  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
-  return(dds)
-}
-
-
-returnvsd <- function(whichdds, whichgroup){
-
-  vsd <- as.data.frame(assay(vst(whichdds, blind=FALSE)))
-  myfilename = paste0("results/DEseq2/treatment/", whichgroup, "_vsd.csv")
-  write.csv(vsd, myfilename)
-  return(vsd)
-  print(head(vsd))
-  
-}
-
-
-
-createDEGdftreatmentvcontrols <- function(whichdds, whichgroup){
-  
-  for(down in downs){
-    for(up in ups){
-      if (up != down) {
-        
-        k <- paste(down, up, sep = " vs. ") #assigns usique rownames
-        print(k)
-  
-        res <- results(whichdds, contrast = c("treatment", up, down), 
-                       independentFiltering = T, alpha = 0.1)
-        
-        DEGs <- data.frame(gene = row.names(res),
-                           padj = res$padj, 
-                           logpadj = -log10(res$padj),
-                           lfc = res$log2FoldChange,
-                           sextissue = whichgroup)
-        DEGs <- na.omit(DEGs)
-        
-        DEGs <- DEGs %>%
-          dplyr::mutate(direction = ifelse(lfc > 0 & padj < 0.1, yes = up, 
-                                           ifelse(lfc < 0 & padj < 0.1, yes = down, 
-                                                  no = "NS"))) %>% 
-          dplyr::arrange(desc(lfc)) %>%
-          dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)))
-        
-        # write DEGsframe of only significant genes
-        DEGs <- DEGs %>% dplyr::filter(direction != "NS")
-        print(str(DEGs))
-        
-        partialfilename = paste("_", down, "_", up, sep = "")
-        myfilename = paste0("results/DESeq2/treatment/", 
-                            whichgroup, partialfilename, "_DEGs.csv")
-        
-        write.csv(DEGs, myfilename, row.names = F)
-        # return DEGs frome with all data, included NS genes
-        # print(head(DEGs))
-        
-        print(head(DEGs))
-      
-      }
-    }  
-  }
-  
-  up <- up[-1] 
-  down <- down[-1] 
-}
+# contrastst part 2. manips versus internal or other manips
+manipcontrols <- c("inc.d9", "inc.d17", "hatch", "n5",  "prolong", "early")
+replacements   <- c("early", "prolong", "extend")
 
 ddsMG <- returndds("male_hypothalamus")
-ddsFG <- returndds("female_hypothalamus")
-#ddsMG <- returndds("male_gonads")
-#ddsFH <- returndds("female_gonads")
-#ddsMP <- returndds("male_pituitary")
-#ddsFP <- returndds("female_pituitary")
-
 vsdMG <- returnvsd(ddsMG, "male_hypothalamus")
-vsdFG <- returnvsd(ddsMG, "female_hypothalamus")
+createDEGdftreatmentvcontrols(ddsMG, "male_hypothalamus", references, allotherstages)
+createDEGdftreatmentvcontrols(ddsMG, "male_hypothalamus", manipcontrols, replacements)
 
-# DEGs
-downs <- c("control", "bldg")
-ups   <- c(charlevelsnocontrol, maniplevels)
+ddsFH <- returndds("female_hypothalamus")
+vsdFH <- returnvsd(ddsFG, "female_hypothalamus")
+createDEGdftreatmentvcontrols(ddsFH, "female_hypothalamus", references, allotherstages)
+createDEGdftreatmentvcontrols(ddsFH, "female_hypothalamus", manipcontrols, replacements)
 
-createDEGdftreatmentvcontrols(ddsMG, "male_hypothalamus")
-createDEGdftreatmentvcontrols(ddsFG, "female_hypothalamus")
+ddsMP <- returndds("male_pituitary")
+vsdMP <- returnvsd(ddsMP, "male_pituitary")
+createDEGdftreatmentvcontrols(ddsMG, "male_pituitary", references, allotherstages)
+createDEGdftreatmentvcontrols(ddsMG, "male_pituitary", manipcontrols, replacements)
 
+ddsFP <- returndds("female_pituitary")
+vsdFP <- returnvsd(ddsFP, "female_pituitary")
+createDEGdftreatmentvcontrols(ddsMP, "male_hypothalamus", references, allotherstages)
+createDEGdftreatmentvcontrols(ddsMP, "male_hypothalamus", manipcontrols, replacements)
 
+ddsMG <- returndds("male_gonads")
+vsdMG <- returnvsd(ddsMG, "male_gonads")
+createDEGdftreatmentvcontrols(ddsMG, "male_gonads", references, allotherstages)
+createDEGdftreatmentvcontrols(ddsMG, "male_gonads", manipcontrols, replacements)
+
+ddsFG <- returndds("female_gonads")
+vsdFG <- returndds(ddsFG, "female_gonads")
+createDEGdftreatmentvcontrols(ddsFG, "female_gonads", references, allotherstages)
+createDEGdftreatmentvcontrols(ddsFG, "female_gonads", manipcontrols, replacements)

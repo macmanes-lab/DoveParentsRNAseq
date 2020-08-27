@@ -50,6 +50,100 @@ subsetcountData3 <- function(df){
 }
 
 
+########## DESeq2 dds and vsd
+
+returndds <- function(whichgroup){
+  
+  newcolData <- colData %>%
+    dplyr::filter(sextissue %in% whichgroup) %>%      
+    droplevels()
+  row.names(newcolData) <- newcolData$V1
+  
+  # save counts that match colData
+  savecols <- as.character(newcolData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  newcountData <- countData %>% dplyr::select(one_of(savecols)) 
+  
+  dds <- DESeqDataSetFromMatrix(countData = newcountData,
+                                colData = newcolData,
+                                design = ~ treatment )
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  print(dds)
+  print(dim(dds))
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  return(dds)
+}
+
+
+returnvsd <- function(whichdds, whichgroup){
+  
+  vsd <- as.data.frame(assay(vst(whichdds, blind=FALSE)))
+  myfilename = paste0("results/DEseq2/treatment/", whichgroup, "_vsd.csv")
+  write.csv(vsd, myfilename)
+  return(vsd)
+  print(head(vsd))
+  
+}
+
+
+
+##### DEGs
+
+
+createDEGdftreatmentvcontrols <- function(whichdds, whichgroup, downs, ups){
+  
+  for(down in downs){
+    for(up in ups){
+      if (up != down) {
+        if (up != "prolong" | down != "early") {
+          
+          cat("\n\n")
+          
+          k <- paste(down, up, sep = " vs. ") #assigns usique rownames
+          print(whichgroup)
+          print(k)
+          
+          res <- results(whichdds, contrast = c("treatment", up, down), 
+                         independentFiltering = T, alpha = 0.1,
+                         lfcThreshold=log2(2.14))
+          print(summary(res))
+          
+          DEGs <- data.frame(gene = row.names(res),
+                             padj = res$padj, 
+                             logpadj = -log10(res$padj),
+                             lfc = res$log2FoldChange,
+                             sextissue = whichgroup)
+          DEGs <- na.omit(DEGs)
+          
+          DEGs <- DEGs %>%
+            dplyr::mutate(direction = ifelse(lfc > 1.1 & padj < 0.1, yes = up, 
+                                             ifelse(lfc < 1.1 & padj < 0.1, yes = down, 
+                                                    no = "NS"))) %>% 
+            dplyr::arrange(desc(lfc)) %>%
+            dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)))
+          
+          # write DEGsframe of only significant genes
+          DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+          
+          top6 <- DEGs %>% head(.) %>% pull(gene)
+          print(top6)
+          
+          # return DEGs frome with all data, included NS genes
+          partialfilename = paste("_", down, "_", up, sep = "")
+          myfilename = paste0("results/DESeq2/treatment/", 
+                              whichgroup, partialfilename, "_DEGs.csv")
+          write.csv(DEGs, myfilename, row.names = F)
+        }
+      }  
+    }
+    up <- up[-1] 
+  }
+  down <- down[-1] 
+}
+
+
+
 ############ numDEGs #########
 
 # print total number of differntially expressed genes
