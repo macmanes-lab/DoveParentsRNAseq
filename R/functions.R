@@ -106,7 +106,7 @@ createDEGdftreatmentvcontrols <- function(whichdds, whichgroup, downs, ups){
           
           res <- results(whichdds, contrast = c("treatment", up, down), 
                          independentFiltering = T, alpha = 0.1,
-                         lfcThreshold=log2(2.14))
+                         lfcThreshold=log2(1.1))
           print(summary(res))
           
           DEGs <- data.frame(gene = row.names(res),
@@ -117,8 +117,8 @@ createDEGdftreatmentvcontrols <- function(whichdds, whichgroup, downs, ups){
           DEGs <- na.omit(DEGs)
           
           DEGs <- DEGs %>%
-            dplyr::mutate(direction = ifelse(lfc > 1.1 & padj < 0.1, yes = up, 
-                                             ifelse(lfc < 1.1 & padj < 0.1, yes = down, 
+            dplyr::mutate(direction = ifelse(lfc > 0.14 & padj < 0.1, yes = up, 
+                                             ifelse(lfc < 0.14 & padj < 0.1, yes = down, 
                                                     no = "NS"))) %>% 
             dplyr::arrange(desc(lfc)) %>%
             dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)))
