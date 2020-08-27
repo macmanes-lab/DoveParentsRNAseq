@@ -88,14 +88,14 @@ allvsd <- vsd_pathfiles %>%
   setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name")  %>% 
   dplyr::rename("gene" = "X1") %>% 
-  pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
+  #pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
+               #names_to = "samples", values_to = "counts") 
+  pivot_longer(cols = L.G118_female_hypothalamus_control.NYNO:y98.g54_female_hypothalamus_m.hatch, 
                names_to = "samples", values_to = "counts") 
 allvsd %>% select(-file_name) %>% head()
 
-
+tail((allvsd))
 ```
-
-
 
 
 
@@ -192,14 +192,16 @@ wideDEGsControl
 
 # sequential in 2 or more comparisons
 wideDEGsSequential <- wideDEGscandidates %>%
-  select(sextissue,gene, "control_bldg", "bldg_lay", "lay_inc.d3", "inc.d3_inc.d9",
-         "inc.d9_inc.d17", "inc.d17_hatch", "hatch_n5", "n5_n9") %>%
+  select(sextissue,gene, "control_bldg", "bldg_lay" #, 
+         #"lay_inc.d3", "inc.d3_inc.d9",
+         #"inc.d9_inc.d17", "inc.d17_hatch", "hatch_n5", "n5_n9"
+         ) %>%
   mutate(totalNA = rowSums(is.na(.))) %>%
   filter(totalNA < 8) %>%
   arrange(totalNA, gene, sextissue) %>%
-  #arrange( gene, sextissue) %>%
+  arrange( gene, sextissue) %>%
   select(-totalNA) %>% 
-  replace(., is.na(.), "")
+  replace(., is.na(.), "NS")
 wideDEGsSequential
 
 ```
@@ -210,7 +212,7 @@ wideDEGsSequential
 head(allDEG)
 
 filteredDEGs <- allDEG %>%
-  filter(lfc > 1.1 | lfc < -1.1 )
+  filter(lfc > 0.14 | lfc < -0.14 )
 dim(allDEG)
 dim(filteredDEGs)
 
@@ -278,8 +280,8 @@ head(manipDEGs)
 ```{r}
 
 filteredDEGs <- allDEG %>%
-  filter(lfc > 1.1 | lfc < -1.1 ) %>%
-  filter(tissue == "pituitary")
+  filter(lfc > 0.14 | lfc < -0.14 ) %>%
+  filter(tissue == "hypothalamus")
 
 removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
 
@@ -312,13 +314,13 @@ venn.diagram(
   x = list(inc.d3_m.inc.d3DEGs,hatch_m.n2DEGs,
             inc.d9_m.inc.d9DEGs, inc.d17_m.inc.d17DEGs),
   category.names = c("Inc 3" , "Hatch" , "Inc 9", " Inc 17"),
-  filename = '../figures/venn-pit.png',
+  filename = '../figures/venn-hyp.png',
   output=FALSE,
   print.mode = "raw",
   imagetype = "png",
   col=c("#CDCDCD", '#262625', '#959595','#959595'),
   fill = c("#CDCDCD", "#262625", "#959595", "#959595"),
-  main = "Pituitary - Offspring Removal",
+  main = "Hypothalamus - Offspring Removal",
   sub = "Differentially expressed genes relative to internal controls"
   )
 
@@ -332,7 +334,7 @@ venn.diagram(
 
 filteredDEGs <- allDEG %>%
   filter(lfc > 1.1 | lfc < -1.1 ) %>%
-  filter(tissue == "pituitary")
+  filter(tissue == "hypothalamus")
 
 chicks <- c("bldg_hatch", "bldg_n5", "bldg_n9",
             "bldg_extend", "bldg_early")
@@ -362,6 +364,7 @@ bldg_earlyDEGs <- filteredDEGs %>%
   drop_na() %>%
   pull(gene)
 
+
 # chicks
 venn.diagram(
   x = list(bldg_n5DEGs, bldg_hatchDEGs, 
@@ -389,7 +392,7 @@ venn.diagram(
 
 filteredDEGs <- allDEG %>%
   filter(lfc > 1.1 | lfc < -1.1 ) %>%
-  filter(tissue == "pituitary") 
+  filter(tissue == "hypothalamus") 
 
 eggs <- c("bldg_lay", 
          "bldg_inc.d3", "bldg_inc.d9", "bldg_inc.d17",

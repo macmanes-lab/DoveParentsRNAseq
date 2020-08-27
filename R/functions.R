@@ -126,7 +126,7 @@ createDEGdftreatmentvcontrols <- function(whichdds, whichgroup, downs, ups){
           # write DEGsframe of only significant genes
           DEGs <- DEGs %>% dplyr::filter(direction != "NS")
           
-          top6 <- DEGs %>% head(.) %>% pull(gene) %>% droplevels()
+          top6 <- DEGs %>% head(.) %>% pull(gene) 
           print(top6)
           
           # return DEGs frome with all data, included NS genes
