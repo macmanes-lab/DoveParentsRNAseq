@@ -69,7 +69,6 @@ parentalcaregenes <- GOgenesLong %>%
   left_join(geneids, by = c("geneid","NCBI")) %>%
   dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
-
 ```
 
 
@@ -90,11 +89,11 @@ allvsd <- vsd_pathfiles %>%
   dplyr::rename("gene" = "X1") %>% 
   #pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                #names_to = "samples", values_to = "counts") 
-  pivot_longer(cols = L.G118_female_hypothalamus_control.NYNO:y98.g54_female_hypothalamus_m.hatch, 
+  pivot_longer(cols = L.Blu13_male_hypothalamus_control.NYNO:y98.o50.x_male_hypothalamus_inc.d3, 
                names_to = "samples", values_to = "counts") 
 allvsd %>% select(-file_name) %>% head()
 
-tail((allvsd))
+tail(names(allvsd))
 ```
 
 
@@ -169,41 +168,24 @@ tempDEGs <- DEG_pathfiles %>%
   mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2))
 head(tempDEGs)
 
-wideDEGs <- tempDEGs %>%
-  mutate(lfc = round(lfc, 2),
-         padj =  round(padj,2)) %>%
-  mutate(sextissue = paste(sex, tissue, sep = "_"),
-         lfcpadj = paste(lfc, padj, sep = ", "))  %>%
-  dplyr::select(sextissue,comparison, gene, lfcpadj) %>%
-  pivot_wider(names_from = comparison, values_from = lfcpadj) 
-
-wideDEGscandidates <- wideDEGs %>%
-  filter(gene %in% GOgenesLong$gene)
-wideDEGscandidates
-
-wideDEGsBldg <- wideDEGscandidates %>%
-  select(sextissue,gene, contains("bldg"))
-wideDEGsBldg
-
-wideDEGsControl <- wideDEGscandidates %>%
-  select(sextissue,gene, contains("control"))
-wideDEGsControl
-
 
 # sequential in 2 or more comparisons
-wideDEGsSequential <- wideDEGscandidates %>%
-  select(sextissue,gene, "control_bldg", "bldg_lay" #, 
-         #"lay_inc.d3", "inc.d3_inc.d9",
-         #"inc.d9_inc.d17", "inc.d17_hatch", "hatch_n5", "n5_n9"
-         ) %>%
-  mutate(totalNA = rowSums(is.na(.))) %>%
-  filter(totalNA < 8) %>%
-  arrange(totalNA, gene, sextissue) %>%
-  arrange( gene, sextissue) %>%
-  select(-totalNA) %>% 
-  replace(., is.na(.), "NS")
-wideDEGsSequential
+wideDEGscandidates <- tempDEGs %>%
+  filter(gene %in% candidategenes) %>%
+  mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+         sex = recode(sex, "female" = "F", "male" = "M" ),
+         tissue = recode(tissue, 
+                         "hypothalamus" = "H",
+                         "pituitary" = "P", "gonad" = "G"),
+         group = paste(sex, tissue, sep = "")) %>%
+  mutate(res = paste("(", posneg, ")", sep = "")) %>%
+  mutate(compres = paste(group, res, sep = "")) %>%
+  group_by(gene, comparison) %>%
+  summarize(results = str_c(compres, collapse = "; ")) %>%
+  pivot_wider(names_from = comparison, values_from = results) 
+wideDEGscandidates
 
+unique(wideDEGscandidates$compres)
 ```
 
 ### manipuluation
@@ -243,13 +225,14 @@ return(df)
 }
 
 removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
-early <- c("early_inc.d9", "hatch_early")
-late <- c("hatch_prolong", "inc.d17_prolong")
-
+earlys <- c("inc.d9_early", "inc.d17_early", "hatch_early", "n5_early")
+prolongs <- c("inc.d9_prolong","inc.d17_prolong", "hatch_prolong",  "n5_prolong")
+extends <- c("inc.d9_extend","inc.d17_extend", "hatch_extend",  "n5_extend")
 
 removalDEGs <- makemanipulationDEGtables(removalcomps)
-hatchDEGs <- makemanipulationDEGtables(early)
-prolongDEGs <- makemanipulationDEGtables(late)
+earlyDEGs <- makemanipulationDEGtables(earlys)
+prolongDEGs <- makemanipulationDEGtables(prolongs)
+extendDEGs <- makemanipulationDEGtables(extends)
 
 manipDEGs <- rbind(removalDEGs, hatchDEGs) %>%
   rbind(., prolongDEGs) %>%
@@ -262,16 +245,10 @@ head(manipDEGs)
 ## save files
 
 ```{r write}
-#write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
-#write.csv(candidatevsd, "../results/03_candidatevsd.csv")
-#write.csv(wideDEGsSequential, "../results/table1.csv", row.names = F)
-
-#write.csv(removalDEGs, "../results/removalDEGs.csv")
-#write.csv(hatchDEGs, "../results/hatchDEGs.csv")
-#write.csv(prolongDEGs, "../results/prolongDEGs.csv")
-
-#write.csv(manipDEGs, "../results/manipDEGs.csv")
-
+write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
+write.csv(candidatevsd, "../results/03_candidatevsd.csv")
+write.csv(wideDEGsSequential, "../results/table1.csv", row.names = F)
+write.csv(manipDEGs, "../results/manipDEGs.csv")
 ```
 
 
