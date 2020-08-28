@@ -56,7 +56,7 @@ e3 <- plottsneelipsev3(gontsne, gontsne$treatment, allcolors ) +
 e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D"), label_size = 8)
 
 fig1 <- plot_grid(a, e, nrow = 2, rel_heights = c(2.4,1.6))
-fig1
+#fig1
 
 pdf(file="figures/fig1-1.pdf", width=7, height=4.5)
 plot(fig1)
