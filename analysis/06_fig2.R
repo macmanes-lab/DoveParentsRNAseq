@@ -88,7 +88,7 @@ DEGcontrolreplace <- allDEG %>%
 a1 <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
 a2 <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
 
-b1 <- plot.volcano("hypothalamus", sexlevels,  "control_bldg") + 
+b1 <- plot.volcano("hypothalamus", sexlevels,  "control_hatch") + 
   facet_wrap(~sex) 
 b2 <- plot.volcano("hypothalamus", sexlevels,  "hatch_n5") + 
   facet_wrap(~sex) 
@@ -99,9 +99,7 @@ ab <- plot_grid(a1,a2,b1,b2, nrow = 1,
                 labels = c("A", "B"), label_size = 8)
 
 c <- makebargraphv3(DEGcontrolreplace, "hypothalamus","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrolreaplce, comparisonlevelscontrolreplace)
-  labs(x = "Control versus all other reproductive and parental stages") +
-  geom_rect(mapping=aes(xmin=0.5, xmax=1.5, ymin=-1000, ymax = 350, fill = F), color="black", alpha=0.5) +
-  annotate("text", x = 1, y = -1075, label = "D", size = 2.5)   
+  labs(x = "Control versus all other reproductive and parental stages") 
 
 d <- makebargraphv3(DEGbldg, "hypothalamus", "No. of DEGs\n (-)decreased  increased (+)", comparisonlabelsbldg, comparisonlevelsbldg) +
   labs(x = "Nest-building versus all other parental stages")
