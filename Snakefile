@@ -1,6 +1,5 @@
 rule all:
   input:
-    "results/01_limma.csv",
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
     "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
     "results/03_allDEG.csv",
@@ -22,14 +21,14 @@ rule wrangle:
   shell:
     "Rscript analysis/00_wrangle.R"
     
-rule limma:
+rule fig1:
   input:
     "metadata/00_colData.csv",
-    "results/00_counts.csv",
+    "results/00_counts.csv"
   output:
-    "results/01_limma.csv"
+    "figures/fig1-1.pdf"
   shell:
-    "Rscript analysis/01_limma.R"
+    "Rscript analysis/01_fig1.R"  
     
 rule deseq2:
   input:
@@ -42,40 +41,30 @@ rule deseq2:
   shell:
     "Rscript analysis/02_DESeq2.R"
     
-rule degs:
-  input:
-    "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
-  output:
-    "results/03_allDEG.csv"
-  shell:
-    "Rscript analysis/03_DEGs.R"
-    
 rule vsd:
   input:
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
   output:
     "results/03_hypvsdf.csv"
   shell:
-    "Rscript analysis/04_vsd.R"
+    "Rscript analysis/03_vsd.R"    
     
-rule fig1:
+rule degs:
   input:
-    "metadata/00_colData.csv",
-    "results/00_counts.csv"
+    "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
   output:
-    "figures/fig1-1.pdf"
+    "results/03_allDEG.csv"
   shell:
-    "Rscript analysis/05_fig1.R"  
+    "Rscript analysis/04_DEGs.R"
     
-    
+
 rule fig2:
   input:
     "results/03_hypvsdf.csv"
   output:
     "figures/fig2-1.pdf"
   shell:
-    "Rscript analysis/06_fig2.R" 
-    
+    "Rscript analysis/05_fig2.R" 
     
 rule fig3:
   input:
@@ -83,4 +72,4 @@ rule fig3:
   output:
     "figures/fig3-1.pdf"
   shell:
-    "Rscript analysis/07_fig3.R"     
+    "Rscript analysis/06_fig3.R"     

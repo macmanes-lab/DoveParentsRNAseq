@@ -1,0 +1,427 @@
+---
+title: "forrechelle"
+output: md_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggimage)
+library(cowplot)
+library(forcats)
+library(corrr)
+library(apaTables)
+
+source("../R/themes.R")
+source("../R/functions.R")
+
+knitr::opts_chunk$set(echo = TRUE, fig.path = "../figures/favegenes/")
+```
+
+```{r input}
+
+candidategenes <- c("PRLR", "PRL", "CISH", "JAK2", "SOCS3", "GH", "FSHB", "CGA" )
+
+datadrivengenes <- c("COX1", "PRL", "CHGA", "ATP2B4", "LOC107055658")
+
+calisigenes <- c("PRL", "PRLR", 
+                 "VIP", "VIPR1", "VIPR2", 
+                 "OXT", "AVP", "AVPR1A", "AVPR1B", 
+                 "GNRH1","GNRHR", "NPVF",
+                 "NR3C1", "NR3C2",
+                 "ESR1", "ESR2", "AR",
+                 "FSH", "CGA")
+
+timepoints <- charlevels
+```
+
+```{r data, message=F, results=F}
+datapath <- "../results/"   # path to the data
+datafiles <- dir(datapath, pattern = "*allvsd.csv") # get file names
+datapathfile <- paste0(datapath, datafiles)
+
+df <- datapathfile %>%
+  setNames(nm = .) %>%
+  map_df(~read_csv(.x, col_types = cols(), col_names = T), .id = "filename") %>% 
+  mutate(tissue = sapply(strsplit(as.character(filename),'../results/06_'), "[", 2)) %>% 
+  mutate(tissue = sapply(strsplit(as.character(tissue),'allvsd.csv'), "[", 1))  %>% 
+  select(tissue, X1, everything()) 
+
+genes <- as.data.frame(df$X1)
+
+```
+## tissue specificiity
+
+```{r candidate genes}
+# check which genese appear in multiple tissue
+tissuespecificity <- df %>%
+  group_by(X1) %>%
+  summarize(tissues = str_c(tissue, collapse = ", ")) %>%
+  filter(tissues != "gon, hyp, pit") %>%
+  group_by(tissues) %>%
+  summarize(genes = str_c(X1, collapse = ", ")) %>% 
+  mutate(n = str_count(genes, ",") + 1) %>% 
+  arrange(desc(n))
+tissuespecificity
+
+write.csv(tissuespecificity, "../results/tissuespecificity.csv")
+```
+
+## candidate genes
+
+```{r candidates1}
+  
+df2 <-  df  %>%
+  filter(X1 %in% c(candidategenes)) %>%
+  pivot_longer(cols = L.Blu13_male_gonad_control.NYNO:y98.o50.x_male_pituitary_inc.d3, 
+               names_to = "sample", values_to = "vsd") %>%
+   mutate(sex = sapply(strsplit(as.character(sample),'_'), "[", 2)) %>%
+   mutate(treatment = sapply(strsplit(as.character(sample),'_'), "[", 4))  %>%
+   mutate(treatment = sapply(strsplit(as.character(treatment),'.NYNO'), "[", 1)) %>%
+  mutate(bird = sapply(strsplit(as.character(sample),'_'), "[", 1)) %>%
+  filter(treatment %in% timepoints) %>%
+  select(bird, sex, treatment, tissue, X1, vsd) %>%
+  mutate(tissue = fct_recode(tissue, "hypothalamus" = "hyp",
+                    "pituitary" = "pit",
+                    "gonads" = "gon"
+                    )) %>%
+  rename(gene = X1) %>%
+  drop_na() %>%
+  droplevels()
+head(df2)
+
+df2$treatment <- factor(df2$treatment, levels = alllevels)
+df2$tissue <- factor(df2$tissue, levels = tissuelevels)
+df2$gene <- factor(df2$gene)
+
+for (i in levels(df2$gene)) {
+  p <-  df2 %>%
+    filter(gene %in% i) %>%
+    ggplot(aes(x = treatment, y = vsd, color = sex, fill = treatment)) +
+    geom_boxplot() +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs(y = "expression", x = "parental stage", subtitle = i) +
+    facet_wrap(~ tissue , scales = "free_y", nrow = 3) +
+    theme_B3() +
+    scale_color_manual(values = sexcolors) +
+    scale_fill_manual(values = colorscharmaip)
+ print(p)
+}
+
+```
+
+```{r candidates2}
+
+df3 <- df2 %>% 
+  mutate(treatment = fct_relevel(treatment, timepoints)) %>% 
+  group_by(sex, treatment, tissue, gene)  %>% 
+  summarize(m = mean(vsd, na.rm = T), se = sd(vsd,  na.rm = T)/sqrt(length(vsd))) %>%
+  mutate(image = "../figures/images/DoveParentsRNAseq_note.png")
+head(df3)  
+
+for (i in levels(df3$tissue)) {
+  
+  p <-  df3 %>%
+    filter(tissue == i) %>%
+    ggplot(aes(x = treatment, y = m)) +
+    geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
+    geom_point(size = 1, aes(color = gene)) +
+    geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs(subtitle = i, y = "average expression", x = "parental stage") +
+    facet_wrap(~sex, nrow = 1) +
+    theme_B3()
+ print(p)
+}
+
+```
+
+```{r candidates3}
+
+df3 %>%
+    ggplot(aes(x = treatment, y = m)) +
+    geom_errorbar(aes(ymin=m-se, ymax=m+se, color=gene), width=.1) +
+    geom_point(size = 1, aes(color = gene)) +
+    geom_line(aes(x = as.numeric(treatment), y = m, color = gene)) +
+    scale_alpha_manual(values = c(0.5, 1)) +
+    labs( y = "average expression", x = "parental stage") +
+    facet_grid(sex ~ tissue, scales = "free_y") +
+    theme_B3() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+
+```{r victoria-ePRL-data}
+ePRL <- df2 %>% dplyr::rename(value = vsd, measurement = gene) %>% filter(measurement == "PRL") %>% droplevels()
+ePRLR <- df2 %>% dplyr::rename(value = vsd, measurement = gene) %>% filter(measurement == "PRLR") %>% droplevels()
+
+
+df4 <- df2 %>% dplyr::rename(value = vsd, measurement = gene) %>% filter(measurement %in% candidategenes)  %>%
+  pivot_wider(names_from = measurement, values_from = value)  %>%
+  drop_na() %>% droplevels()
+```
+
+
+```{r victoria-ePRL, fig.height=6}
+
+a <- ggplot(ePRL, aes(x = treatment, y = value)) +
+  geom_boxplot(aes(fill = treatment, color = sex)) +
+  facet_wrap(~tissue, scales = "free") +
+  theme_B3() +
+  theme(axis.text.x = element_blank(),
+        axis.title.x = element_blank(),
+        legend.position = "top",
+        plot.subtitle = element_text(face = "italic"),
+        axis.title.y = element_text(face = "italic"),
+        legend.title = element_blank(),
+        legend.key.size =  unit(0.25, "cm")) +
+  labs(x = "parental stage", y = "PRL") +
+  scale_color_manual(values =  sexcolors ) +
+  scale_fill_manual(values= colorschar) +
+  guides(fill = guide_legend(nrow = 1)) 
+
+b <- ggplot(ePRL, aes(x = treatment, y = value, color = sex)) +
+  geom_smooth(aes(x = as.numeric(treatment), y = value), se = T, na.rm  = TRUE) +
+  facet_wrap(~tissue, scales = "free")  +
+  theme_B3() +
+  scale_x_continuous(breaks = c(1,2,3,4,5,6,7,8,9),
+                     labels = charlevels) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        strip.text = element_blank(),
+        legend.position = "none",
+        legend.title = element_blank(),
+        axis.title.y = element_text(face = "italic")) +
+  labs(x = "parental stage", y = "PRL") +
+  scale_color_manual(values = sexcolors)
+
+
+plot_grid(a,b, nrow = 2, align = "v", labels = c("a", "b"), label_size = 8,
+          rel_heights = c(1.25,1))
+
+```
+
+```{r victoria-ePRL-corr}
+
+dft <- df %>% filter(X1 %in% candidategenes) %>%
+  unite("tissuegene", tissue:X1, remove = FALSE) %>%
+  select(-tissue, -`X1`, -filename)  %>%
+  pivot_longer(-tissuegene, names_to = "samples", values_to = "vsd") %>%
+  drop_na() %>%
+  mutate("bird" = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
+  select(bird,tissuegene,vsd) %>%
+  filter(bird != "x.g.g.ATLAS") %>%
+  pivot_wider(id_cols = bird, names_from = tissuegene, values_from = vsd)
+dft <- as.data.frame(dft)
+row.names(dft) <- dft$bird
+dft$bird <- NULL
+head(dft)
+
+x <- correlate(dft)
+
+x %>% network_plot.cor_df() + 
+  scale_color_gradient2(low = "blue", mid = "grey", high = "red", midpoint = 0, limits = c(-1,1)) 
+
+c <- x %>%
+  focus(hyp_PRL) %>%
+  mutate(rowname = reorder(rowname, hyp_PRL)) %>%
+  ggplot(aes(rowname, hyp_PRL, fill = hyp_PRL)) +
+    geom_col() + coord_flip() +
+  labs(y = "corr. w/ hyp PRL", x = "candidate genes by tissue") +
+  theme_B3() + 
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  scale_fill_gradient2(low = "blue", mid = "grey", high = "red", midpoint = 0, limits = c(-1,1)) +
+  ylim(c(-0.1,0.6))
+
+d <- x %>%
+  focus(pit_PRL) %>%
+  mutate(rowname = reorder(rowname, pit_PRL)) %>%
+  ggplot(aes(rowname, pit_PRL, fill = pit_PRL)) +
+    geom_col() + coord_flip() +
+  labs(y = "corr. w/ pit PRL", x = NULL) +
+  theme_B3() + 
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  scale_fill_gradient2(low = "blue", mid = "grey", high = "red", midpoint = 0, limits = c(-1,1))  +
+  ylim(c(-0.1,0.6))
+
+e <- x %>%
+  focus(gon_PRL) %>%
+  mutate(rowname = reorder(rowname, gon_PRL)) %>%
+  ggplot(aes(rowname, gon_PRL, fill = gon_PRL)) +
+    geom_col() + coord_flip() +
+  labs(y = "corr. w/ gon PRL", x = NULL) +
+  theme_B3() + 
+  theme(legend.position = "bottom", legend.title = element_blank()) +
+  scale_fill_gradient2(low = "blue", mid = "grey", high = "red", midpoint = 0, limits = c(-1,1))  +
+  ylim(c(-0.1,0.6))
+
+cde <- plot_grid(c,d, e, nrow = 1, rel_widths = c(1.1,1,1))
+cde
+
+
+f <- ggplot(df4, aes(x = PRL, y = PRLR)) +
+  geom_point(aes(color = treatment)) +
+  geom_smooth(method = "lm",  na.rm = T, aes(color = sex)) +
+  facet_wrap(~tissue, scales = "free") +
+  theme_B3() +
+  theme(legend.position = "none",
+        axis.title = element_text(face = "italic"),
+        #strip.text = element_blank(),
+        legend.title = element_blank()) +
+  guides(color = guide_legend(nrow = 1)) +
+   scale_color_manual(values = colorsvolcano)
+
+g <- ggplot(df4, aes(x = PRL, y = CISH)) +
+  geom_point(aes(color = treatment)) +
+  geom_smooth(method = "lm",  na.rm = T, aes(color = sex)) +
+  facet_wrap(~tissue, scales = "free") +
+  theme_B3() +
+  theme(legend.position = "none",
+        axis.title = element_text(face = "italic"),
+        strip.text = element_blank(),
+        legend.title = element_blank()) +
+  guides(color = guide_legend(nrow = 1)) +
+   scale_color_manual(values = colorsvolcano)
+
+h <- ggplot(df4, aes(x = PRL, y = GH)) +
+  geom_point(aes(color = treatment)) +
+  geom_smooth(method = "lm",  na.rm = T, aes(color = sex)) +
+  facet_wrap(~tissue, scales = "free") +
+  theme_B3() +
+  theme(legend.position = "bottom",
+        axis.title = element_text(face = "italic"),
+        strip.text = element_blank(),
+        legend.title = element_blank()) +
+  guides(color = guide_legend(nrow = 1)) +
+   scale_color_manual(values = colorsvolcano)
+
+
+plot_grid(f + theme(axis.title.x = element_blank()), 
+          g + theme(axis.title.x = element_blank()), h, 
+          nrow = 3, rel_heights = c(1.2,1,1.2), align = "v")
+```
+
+```{r victoria-ePRL-stats}
+
+aov_all = data.frame()
+for(i in charlevels){
+  for(j in tissuelevels){
+  
+  df <- df4 %>% 
+    filter(treatment == i) %>% 
+     filter(tissue == j) %>% 
+    droplevels()
+  aovtable <- apa.aov.table(aov(PRL ~ sex , data=df))
+  aovtable <- as.data.frame(aovtable$table_body)
+  totaldf <- aovtable[3, 3]
+  aovtable$df <- paste(aovtable$df, ", " , totaldf, sep = "")
+  aovtable$ANOVA <- "PRL ~ sex"
+  aovtable$stages <- paste(i)
+  aovtable$tissue <- paste(j)
+  aovtable$p <- as.numeric(as.character(aovtable$p))
+  aov_all <- rbind(aov_all,aovtable)
+  
+  }
+}
+
+aov_all$tissue <- factor(aov_all$tissue, levels = tissuelevels)
+
+aov_stats <- aov_all %>%
+  filter(Predictor == "sex")  %>%
+  select(stages, tissue, ANOVA, df, "F", p) %>%
+  mutate(sig = ifelse(p < 0.05, "*", " ")) %>%
+  arrange(tissue)
+
+aov_stats
+write_csv(aov_stats, "../results/20_ePRL_fig1.csv")
+
+
+
+aovall2 = data.frame()
+  for(j in tissuelevels){
+  
+  df <- df4 %>% 
+     filter(tissue == "hypothalamus") %>% 
+    droplevels()
+  
+  aovtable <- apa.aov.table(aov(PRL ~ treatment , data=df))
+  aovtable <- as.data.frame(aovtable$table_body)
+  totaldf <- aovtable[3, 3]
+  aovtable$df <- paste(aovtable$df, ", " , totaldf, sep = "")
+  aovtable$ANOVA <- "PRL ~ treatment"
+  aovtable$tissue <- paste(j)
+  aovtable$p <- as.numeric(as.character(aovtable$p))
+  aovall2 <- rbind(aovall2,aovtable)
+ }
+
+aovall2
+
+
+aov_stats2 <- aovall2 %>%
+  filter(Predictor == "treatment")  %>%
+   rename(stages = Predictor) %>%
+  select(stages, tissue, ANOVA, df, "F", p) %>%
+  mutate(sig = ifelse(p < 0.05, "*", " ")) %>%
+  arrange(tissue)
+
+aov_stats2
+
+aov1 <- aov(data = df4, PRL ~  sex * treatment * tissue )
+summary(aov1)
+
+
+hyp <- df4 %>% filter(tissue == "hypothalamus")
+aov4 <- aov(data = hyp, PRL ~  treatment)
+thsdhyp <- TukeyHSD(aov4, which = "treatment")
+thsdhyp <- as.data.frame(thsdhyp$treatment)
+thsdhyp$comparission <- row.names(thsdhyp) 
+thsdhyp <- thsdhyp %>% 
+  dplyr::filter(`p adj` < 0.05) %>%
+  dplyr::mutate(tissue = "hypothalamus") %>%
+  select(tissue, comparission, `p adj`, diff, lwr, upr)
+thsdhyp
+
+pit <- df4 %>% filter(tissue == "pituitary")
+aov5 <- aov(data = pit, PRL ~  treatment)
+thsdpit <- TukeyHSD(aov5, which = "treatment")
+thsdpit <- as.data.frame(thsdpit$treatment)
+thsdpit$comparission <- row.names(thsdpit) 
+thsdpit <- thsdpit %>% 
+  dplyr::filter(`p adj` < 0.05) %>%
+  dplyr::mutate(tissue = "pituitary") %>%
+  select(tissue, comparission, `p adj`, diff, lwr, upr)
+thsdpit
+
+fgonads <- df4 %>% filter(tissue == "gonads", sex == "female")
+aov2 <- aov(data = fgonads, PRL ~  treatment)
+thsdfgon <- TukeyHSD(aov2, which = "treatment")
+thsdfgon <- as.data.frame(thsdfgon$treatment)
+thsdfgon$comparission <- row.names(thsdfgon) 
+thsdfgon <- thsdfgon %>% 
+  dplyr::filter(`p adj` < 0.05) %>%
+  dplyr::mutate(tissue = "male gonads") %>%
+  select(tissue, comparission, `p adj`, diff, lwr, upr)
+thsdfgon
+
+mgonads <- df4 %>% filter(tissue == "gonads", sex == "male")
+aov3 <- aov(data = mgonads, PRL ~  treatment)
+thsdmgon <- TukeyHSD(aov3, which = "treatment")
+thsdmgon <- as.data.frame(thsdmgon$treatment)
+thsdmgon$comparission <- row.names(thsdmgon) 
+thsdmgon <- thsdmgon %>% 
+  dplyr::filter(`p adj` < 0.05) %>%
+  dplyr::mutate(tissue = "male gonads") %>%
+  select(tissue, comparission, `p adj`, diff, lwr, upr) 
+thsdmgon
+
+
+addtreatment <- rbind(thsdhyp, thsdpit, thsdfgon, thsdmgon) %>%
+  dplyr::mutate(diff = round(diff,2),
+                `p adj` = round(`p adj`,4),
+                lwr = round(lwr, 2),
+                upr = round(upr, 2))
+addtreatment
+
+write_csv(addtreatment, "../results/20_ePRL_stats.csv")
+```
+
+
