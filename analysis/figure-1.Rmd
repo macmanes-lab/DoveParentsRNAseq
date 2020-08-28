@@ -7,8 +7,7 @@ output: md_document
 library(tidyverse)
 library(cowplot)
 library(Rtsne)
-library(factoextra)
-library(ggsignif)
+
 
 source("../R/themes.R")
 source("../R/functions.R")
@@ -71,56 +70,6 @@ fig1
 
 
 
-## Supplemental PCA data
-
-
-```{r pca}
-# pca relies on count data from limma
-pca_h1 <- subsetmakepca("hypothalamus", alllevels, sexlevels)	
-pca_h2 <- makefvizdf("hypothalamus", alllevels, sexlevels)	
-
-pca_p1 <- subsetmakepca("pituitary", alllevels, sexlevels)	
-pca_p2 <- makefvizdf("pituitary", alllevels, sexlevels)
-
-pca_g1 <- subsetmakepca("gonads", alllevels, sexlevels)	
-pca_g2 <- makefvizdf("gonads", alllevels, sexlevels)	
-```
-
-## Supplemental Data-driven genes vsds for box plots
-
-```{r candidates}
-# genes lists in "./analysis/03_datawrangling.Rmd" and old lists in "./R/genelists.R"
-
-candidatevsd <- read_csv("../results/03_candidatevsd.csv") %>% 
-  select(-X1) %>%
-  filter(treatment %in% alllevels) %>%
-  mutate(treatment = factor(treatment, levels = charlevels)) %>%
-  drop_na() 
-head(candidatevsd)
-```
-
-
-## Fig 3
-
-```{r supplfig-1, fig.height=7.25, fig.width=7.25}
-
-a <- plotpc12(pca_h1, pca_h2, pca_h1$treatment, allcolors, "Hypothalamus", NULL) 
-c <- plotpc12(pca_p1, pca_p2, pca_p1$treatment, allcolors, "Pituitary", NULL) 
-e <- plotpc12(pca_g1, pca_g2, pca_g1$treatment, allcolors, "Gonads", NULL) 
-
-b1 <- fviz_screeplot(pca_h2, addlabels = F, barfill = "grey", barcolor = "grey") +
-  theme_B3() + labs(title = " ")
-d1 <- fviz_screeplot(pca_p2, addlabels = F, barfill = "grey", barcolor = "grey") +
-  theme_B3() + labs(title = " ")
-f1 <- fviz_screeplot(pca_g2, addlabels = F, barfill = "grey", barcolor = "grey") +
-  theme_B3() + labs(title = " ")
-
-b2 <- candidateboxplot("hypothalamus", c("COX1"), sexlevels)
-d2 <- candidateboxplot("pituitary", c("PRL"), sexlevels)
-f2 <- candidateboxplot("gonad", c("OVALY"), sexlevels)
-
-supplfig <- plot_grid(a,b1,b2, c,d1,d2,e,f1,f2, nrow = 3, rel_widths = c(2,1,2))
-```
 
 ## Save files
 
@@ -134,14 +83,6 @@ png("../figures/fig1-1.png", width = 7, height = 4.5,
 plot(fig1) 
 dev.off()
 
-pdf(file="../figures/supplfig-1-1.pdf", width=7.5, height=7.5)
-plot(supplfig)
-dev.off()
-
-png("../figures/supplfig-1-1.png", width = 7.5, height = 7.5, 
-    units = 'in', res = 300)
-plot(supplfig)  
-dev.off()
 
 sessionInfo()
 ```
