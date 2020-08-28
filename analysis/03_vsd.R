@@ -8,7 +8,7 @@ source("../R/genelists.R")
 ### variance stabilized gene expression  (vsd) 
 
 
-vsd_path <- "../results/DEseq2/treatment/"   # path to the data
+vsd_path <- "results/DEseq2/treatment/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
 vsd_pathfiles <- paste0(vsd_path, vsd_files)
 vsd_files
@@ -35,7 +35,7 @@ getcandidatevsdmanip <- function(whichgenes, whichtissue){
   candidates  <- allvsd %>%
     filter(gene %in% whichgenes) %>%
     dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1),
-                  sextissue = sapply(strsplit(sextissue, '../results/DEseq2/treatment/'), "[", 2),
+                  sextissue = sapply(strsplit(sextissue, 'results/DEseq2/treatment/'), "[", 2),
                   sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
                   sex = factor(sex),
                   tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
@@ -69,10 +69,10 @@ hypvsdm <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "male")
 pitvsdm <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "male") 
 gonvsdm <- candidatevsd %>% filter(tissue %in% "gonad", sex == "male") 
 
-write.csv(hypvsdf, "../results/03_hypvsdf.csv")
-write.csv(pitvsdf, "../results/03_pitvsdf.csv")
-write.csv(gonvsdf, "../results/03_gonvsdf.csv")
-write.csv(hypvsdm, "../results/03_hypvsdm.csv")
-write.csv(pitvsdm, "../results/03_pitvsdm.csv")
-write.csv(gonvsdm, "../results/03_gonvsdm.csv")
+write.csv(hypvsdf, "results/03_hypvsdf.csv")
+write.csv(pitvsdf, "results/03_pitvsdf.csv")
+write.csv(gonvsdf, "results/03_gonvsdf.csv")
+write.csv(hypvsdm, "results/03_hypvsdm.csv")
+write.csv(pitvsdm, "results/03_pitvsdm.csv")
+write.csv(gonvsdm, "results/03_gonvsdm.csv")
 

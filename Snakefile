@@ -2,8 +2,11 @@ rule all:
   input:
     "results/01_limma.csv",
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
-
-rule wrangledata:
+    "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
+    "results/03_allDEG.csv",
+    "results/03_hypvsdf.csv"
+    
+rule wrangle:
   input:
     "metadata/kallistosamples.txt",
     "results/kallistocounts.txt"
@@ -14,7 +17,7 @@ rule wrangledata:
     "results/00_counts.csv",
     "results/00_geneswithisoforms.csv"
   shell:
-    "Rscript analysis/00_datawrangling.R"
+    "Rscript analysis/00_wrangle.R"
     
 rule limma:
   input:
@@ -31,6 +34,24 @@ rule deseq2:
     "results/00_counts.csv",
   output:
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
+     "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
   threads: 6
   shell:
     "Rscript analysis/02_DESeq2.R"
+    
+rule degs:
+  input:
+    "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
+    "results/00_counts.csv",
+  output:
+    "results/03_allDEG.csv",
+  shell:
+    "Rscript analysis/03_DEGs.R"
+    
+rule vsd:
+  input:
+    "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
+  output:
+    "results/03_hypvsdf.csv",
+  shell:
+    "Rscript analysis/03_vsd.R"

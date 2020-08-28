@@ -7,7 +7,7 @@ source("../R/genelists.R")
 
 ## All DEGs 
 
-DEG_path <- "../results/DEseq2/treatment/"   # path to the data
+DEG_path <- "results/DEseq2/treatment/"   # path to the data
 DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
 DEG_pathfiles <- paste0(DEG_path, DEG_files)
 #DEG_files
@@ -15,7 +15,7 @@ DEG_pathfiles <- paste0(DEG_path, DEG_files)
 allDEG <- DEG_pathfiles %>%
   setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name") %>% 
-  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'results/DEseq2/treatment/'), "[", 2))  %>% 
   mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
   mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
   mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
@@ -31,7 +31,7 @@ unique(allDEG$comparison)
 tempDEGs <- DEG_pathfiles %>%
   setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name") %>% 
-  mutate(DEG = sapply(strsplit(as.character(file_name),'./results/DEseq2/treatment/'), "[", 2))  %>% 
+  mutate(DEG = sapply(strsplit(as.character(file_name),'results/DEseq2/treatment/'), "[", 2))  %>% 
   mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
   mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
   mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
@@ -176,9 +176,9 @@ DEGcontrolreplace <- allDEG %>%
 ## save files
 
 
-write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
-write.csv(candidatevsd, "../results/03_candidatevsd.csv")
-write.csv(manipDEGs, "../results/03_manipDEGs.csv")
-write.csv(wideDEGscandidates, "../results/03_wideDEGscandidates.csv", row.names = F)
+write.csv(allDEG, "results/03_allDEG.csv", row.names = F)
+write.csv(candidatevsd, "results/03_candidatevsd.csv")
+write.csv(manipDEGs, "results/03_manipDEGs.csv")
+write.csv(wideDEGscandidates, "results/03_wideDEGscandidates.csv", row.names = F)
 
 
