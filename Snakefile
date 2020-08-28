@@ -60,7 +60,7 @@ rule vsd:
 rule fig1:
   input:
     "metadata/00_colData.csv",
-    "results/01_limma.csv"
+    "results/00_counts.csv"
   output:
     "figures/fig1-1.pdf"
   shell:
