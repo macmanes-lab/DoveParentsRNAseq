@@ -1,9 +1,8 @@
 library(tidyverse)
 library(readr)
-library(VennDiagram)
 
-source("../R/themes.R")
-source("../R/genelists.R")
+source("R/themes.R")
+source("R/genelists.R")
 
 ### variance stabilized gene expression  (vsd) 
 
@@ -56,7 +55,7 @@ getcandidatevsdmanip <- function(whichgenes, whichtissue){
                                         eggs = c("lay","inc.d3", "inc.d9", "inc.d17", "prolong"),
                                         chicks = c("early", "hatch", "extend", "n5", "n9"),
                                         reference = c("control", "bldg")))  %>%
-    dplyr::select(gene, counts, sex, tissue, treatment, earlylate, extint, samples) 
+    dplyr::select(gene, counts, sex, tissue, treatment, extint, samples) 
   return(candidates)
 }
 

@@ -42,9 +42,8 @@ rule deseq2:
 rule degs:
   input:
     "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
-    "results/00_counts.csv",
   output:
-    "results/03_allDEG.csv",
+    "results/03_allDEG.csv"
   shell:
     "Rscript analysis/03_DEGs.R"
     
@@ -52,6 +51,6 @@ rule vsd:
   input:
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
   output:
-    "results/03_hypvsdf.csv",
+    "results/03_hypvsdf.csv"
   shell:
     "Rscript analysis/03_vsd.R"

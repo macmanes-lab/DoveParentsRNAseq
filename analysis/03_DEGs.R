@@ -1,9 +1,8 @@
 library(tidyverse)
 library(readr)
-library(VennDiagram)
 
-source("../R/themes.R")
-source("../R/genelists.R")
+source("R/themes.R")
+source("R/genelists.R")
 
 ## All DEGs 
 
@@ -114,71 +113,6 @@ manipDEGs <- rbind(removalDEGs, earlyDEGs) %>%
 head(manipDEGs)
 
 
-# for suppl figures
-DEGcontrol <- allDEG %>% 
-  filter(grepl("control", comparison),
-         !grepl("m.|early|extend|prolong", comparison))  %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelscontrol)) %>%
-  group_by(sex, tissue, comparison, direction, label) %>%
-  summarise(n = n()) %>%
-  mutate(n = ifelse(direction == "control", n*-1, n*1 ))
-
-
-DEGbldg <- allDEG %>% 
-  filter(grepl("bldg", comparison),
-         !grepl("m.|early|extend|prolong|control", comparison))  %>%
-  drop_na() %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))  %>%
-  group_by(sex, tissue, comparison, direction, label) %>%
-  summarise(n = n()) %>%
-  mutate(n = ifelse(direction == "bldg", n*-1, n*1 ))
-
-DEGchar <- allDEG %>% 
-  filter(comparison %in% comparisonlevelschar,
-         !grepl("control|bldg", comparison)) %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelschar)) %>%
-  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
-  group_by(sex, tissue, comparison, direction, label, updown) %>%
-  summarise(n = n()) %>%
-  mutate(n = n*updown ) %>%
-  select(-updown)
-
-DEGremove <- allDEG %>% 
-  filter(comparison %in% comparisonlevelsremoval) %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelsremoval)) %>%
-  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
-  group_by(sex, tissue, comparison, direction, label, updown) %>%
-  summarise(n = n()) %>%
-  mutate(n = n*updown ) %>%
-  select(-updown)
-DEGremove
-
-DEGreplace <- allDEG %>% 
-  filter(comparison %in% comparisonlevelsreplace) %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelsreplace)) %>%
-  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
-  group_by(sex, tissue, comparison, direction, label, updown) %>%
-  summarise(n = n()) %>%
-  mutate(n = n*updown ) %>%
-  select(-updown)
-DEGreplace
-
-
-DEGcontrolreplace <- allDEG %>% 
-  filter(comparison %in% comparisonlevelscontrolreplace)  %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelscontrolreplace)) %>%
-  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
-  group_by(sex, tissue, comparison, direction, label, updown) %>%
-  summarise(n = n()) %>%
-  mutate(n = n*updown ) %>%
-  select(-updown)
-
 ## save files
-
-
 write.csv(allDEG, "results/03_allDEG.csv", row.names = F)
-write.csv(candidatevsd, "results/03_candidatevsd.csv")
 write.csv(manipDEGs, "results/03_manipDEGs.csv")
-write.csv(wideDEGscandidates, "results/03_wideDEGscandidates.csv", row.names = F)
-
-

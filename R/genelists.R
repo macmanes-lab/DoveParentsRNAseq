@@ -3,10 +3,10 @@ library(tidyverse)
 # genelists
 
 ## all genes
-geneids <- read_csv("../metadata/00_geneinfo.csv") %>% select(-X1) 
+geneids <- read_csv("metadata/00_geneinfo.csv") %>% select(-X1) 
 
 ## genes WGCNA prl module
-WGCNAgenes <- read_csv("../results/05_PRLmodule.csv") %>% pull(x)
+WGCNAgenes <- read_csv("results/05_PRLmodule.csv") %>% pull(x)
 
 ## breast and ovarian cancers  https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
 suszynskaagenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1", "ATM",
@@ -40,14 +40,14 @@ literaturegenes <- as.data.frame(literaturegenes) %>%
   select(GO, gene)
 
 ## candidate gens from parental care GO terms 
-GO_path <- "../metadata/goterms/"   # path to the data
+GO_path <- "metadata/goterms/"   # path to the data
 GO_files <- dir(GO_path, pattern = "*.txt") # get file names
 GO_pathfiles <- paste0(GO_path, GO_files)
 
 GOgenesLong <- GO_pathfiles %>%
   setNames(nm = .) %>% 
   map_df(~read_table(.x, col_types = cols(), col_names = FALSE), .id = "file_name") %>% 
-  mutate(GO = sapply(strsplit(as.character(file_name),'../metadata/goterms/'), "[", 2)) %>% 
+  mutate(GO = sapply(strsplit(as.character(file_name),'metadata/goterms/'), "[", 2)) %>% 
   mutate(GO = sapply(strsplit(as.character(GO),'.txt'), "[", 1)) %>% 
   mutate(gene = sapply(strsplit(as.character(X1), "[\\\\]|[^[:print:]]" ), "[", 2)) %>% 
   select(GO, gene)  %>%
