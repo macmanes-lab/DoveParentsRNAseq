@@ -13,7 +13,7 @@ source("R/functions.R")
 ## import limma counts and sample info
 
 
-countData <- read_csv("results/01_limma.csv") %>%
+countData <- read_csv("results/00_counts.csv") %>%
   column_to_rownames(var = "X1")
 countData <- as.data.frame(t(countData))
 head(countData[1:3])
@@ -28,22 +28,14 @@ head(colData)
 # row.names(countData) == row.names(colData)
 head(row.names(countData) == row.names(colData))
 
-
-
 ## tsne
-
 
 # prep for tsne useing count data from limma and the custom `subsetmaketsne` function
 hyptsne <- subsetmaketsne("hypothalamus", alllevels, sexlevels)
 pittsne <- subsetmaketsne("pituitary", alllevels, sexlevels)
 gontsne <- subsetmaketsne("gonads", alllevels, sexlevels)
 
-
 ## Figure 1
-
-
-a <- png::readPNG("figures/images/fig_fig1a.png")
-a <- ggdraw() +  draw_image(a, scale = 1)
 
 e1 <- plottsne(hyptsne, hyptsne$treatment, allcolors) + 
   labs(subtitle = "hypothalamus") 
@@ -54,6 +46,10 @@ e3 <- plottsne(gontsne, gontsne$treatment, allcolors ) +
   labs(subtitle = "gonads") 
 
 e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D"), label_size = 8)
+
+a <- png::readPNG("figures/images/fig_fig1a.png")
+a <- ggdraw() +  draw_image(a, scale = 1)
+
 
 fig1 <- plot_grid(a, e, nrow = 2, rel_heights = c(2.4,1.6))
 #fig1

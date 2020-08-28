@@ -950,7 +950,7 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
   euclidist <- dist(countData) # euclidean distances between the rows
   
   tsne_model <- Rtsne(euclidist, check_duplicates=FALSE,
-                      dims = 3, perplexity = 20)
+                      dims = 3, perplexity = 30 )
   tsne_df = as.data.frame(tsne_model$Y) 
   
   # prep for adding columns
@@ -963,7 +963,7 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
 
 plottsne <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-    # stat_ellipse(linetype = 1, aes(color = pointcolor)) +
+    #stat_ellipse(linetype = 1, aes(color = treatment)) +
     geom_point(size = 1, aes(color = pointcolor, shape = sex)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2", 
