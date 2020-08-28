@@ -166,4 +166,12 @@ venn.diagram(
   fill = c("#78c679", "#fed98e",  "#9e9ac8",'#006837', "#31a354")
 )
 
+
+m <- png::readPNG("figures/venn-eggs-hyp.png")
+m <- ggdraw() +  draw_image(m, scale = 1)
+
+n <- png::readPNG("figures/venn-chicks-hyp.png")
+n <- ggdraw() +  draw_image(n, scale = 1)
+
+
 ```

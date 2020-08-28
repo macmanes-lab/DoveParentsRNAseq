@@ -67,7 +67,7 @@ c4 <- sexbarplots(gonsex, 0, 8100) + labs(subtitle = "gonads" ) +
   theme(axis.text.y = element_blank(), axis.line.y = element_blank(),  
         axis.ticks = element_blank(), axis.title.y = element_blank())
 bc <- plot_grid(b1,b2,b3,b4, c1,c2,c3,c4, nrow = 1, rel_widths = c(1.5,1.1,0.9,0.9,1.5,1.1,0.9,0.9),
-                labels = c("A", "", "", "", "B"), label_size = 8)
+                labels = c("A", "", "", "", "B")_size = 8)
 ```
 
 
@@ -100,7 +100,7 @@ s1 <- plot_grid(s1a, s1b,
           s1c, s1d, 
           s1e, s1f, nrow = 3,
           rel_heights = c(1,0.9,1.3),
-          labels = c("A", "B"), label_size = 8, rel_widths = c(1.1,1))
+          labels = c("A", "B")_size = 8, rel_widths = c(1.1,1))
 
 
 sa <- png::readPNG("../figures/images/fig_supplfig-1.png")
@@ -134,7 +134,7 @@ s2f <- makebargraph(goninc, "gonad","Total DEGs with +LFC", 0, 1800) +
   theme(strip.text = element_blank())
 supplfig2 <- plot_grid(s2a, s2b, s2c, s2d, s2e, s2f,
           rel_widths = c(2,1), rel_heights = c(1.1,1,1.1), ncol = 2,
-          labels = c("A", "B"), label_size = 8)
+          labels = c("A", "B")_size = 8)
 supplfig2
 ```
 
@@ -217,12 +217,12 @@ b8 <-  plottopDEGs(hilodf, "female",  "LFC lo vs. hi PRL", NULL)
 b9 <-  plottopDEGs(hilodf, "male",  "LFC lo vs. hi PRL", NULL)
 b15 <- plot_grid(b1,b25,nrow = 1, rel_widths = c(1.2,1))
 b69 <- plot_grid(b6,b7,b8,b9, align = "v" , rel_heights = c(1.2,1))
-b <- plot_grid(b15,b69, labels = c("C"), label_size = 8, rel_widths = c(1.2,1))
+b <- plot_grid(b15,b69s = c("C")_size = 8, rel_widths = c(1.2,1))
 
 c1 <- plotcorrplot(pithilo, NULL) + theme(legend.position = "none") + labs(subtitle = "Top 20 DEGs, low vs. high PRL") 
 c2 <- plotcorrplot(pitWGCNA, NULL) + theme(legend.position = "none") + labs(subtitle = "20 genes in WGCNA module with PRL") 
 c3 <- plotcorrplot(cancergenes, NULL) + theme(legend.position = "right") + labs(subtitle = "Breast, ovary, & piuitary cancer genes", color = "Correlation")
-c <- plot_grid(c1,c2,c3, nrow = 1, labels = c("D"), label_size = 8, rel_widths = c(1,1,1.3))
+c <- plot_grid(c1,c2,c3, nrow = 1s = c("D")_size = 8, rel_widths = c(1,1,1.3))
 
 fig3 <- plot_grid(a, b, c, nrow = 3, rel_heights = c(1.2,2,1.8))
 fig3
@@ -326,7 +326,7 @@ mylegend <- get_legend(forlegend)
 allcorplots <- plot_grid(b1,b4,b7,b10,
           b2,b5,b8,b11,
           b3,b6,b9,b12, rel_heights = c(1.4,1,1.2),
-          labels = c("A", " ", "B"), label_size = 8, rel_widths = c(1.4,1.2,1.2,1))
+          labels = c("A", " ", "B")_size = 8, rel_widths = c(1.4,1.2,1.2,1))
 
 supplfig2 <- plot_grid(allcorplots, mylegend, ncol = 1, rel_heights = c(1,0.1))
 supplfig2
@@ -381,7 +381,7 @@ plot3candidates <- function(hypgene, pitgene, gongene){
   gonplots <- plot_grid(c1,c2, c3, c4, rel_widths = c(2,1,2,1), nrow = 1)
   
   fig2alt <- plot_grid(hypplots, pitplots, gonplots, nrow = 3,
-                       labels = "AUTO", label_size = 8,
+                       labels = "AUTO"_size = 8,
                        rel_heights = c(1,1,1.2))
   print(fig2alt)
   
@@ -509,9 +509,9 @@ h <- makebargraphv3(DEGchar, "gonad", NULL, comparisonlabelscharnobldg) +
   labs(subtitle = "gonads")
 
 ab <- plot_grid(b,a,rel_widths = c(2.5,1), 
-                labels = c("A", "B"), label_size = 8, hjust = 0)
+                labels = c("A", "B")_size = 8, hjust = 0)
 cd <- plot_grid(c,d,rel_widths = c(1.1,1), align = "h",
-                labels = c("C", "D"), label_size = 8, hjust = 0)
+                labels = c("C", "D")_size = 8, hjust = 0)
 ef <- plot_grid(e,f,rel_widths = c(1.1,1), align = "h")
 gh <- plot_grid(g,h,rel_widths = c(1.1,1), align = "h")
 
@@ -519,68 +519,4 @@ fig <- plot_grid(ab,cd,ef, gh, ncol = 1)
 fig
 ```
 
-
-
-```{r}
-# from DEGs 
-
-# for suppl figures
-DEGcontrol <- allDEG %>% 
-  filter(grepl("control", comparison),
-         !grepl("m.|early|extend|prolong", comparison))  %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelscontrol)) %>%
-  group_by(sex, tissue, comparison, direction, label) %>%
-  summarise(n = n()) %>%
-  mutate(n = ifelse(direction == "control", n*-1, n*1 ))
-
-
-DEGbldg <- allDEG %>% 
-  filter(grepl("bldg", comparison),
-         !grepl("m.|early|extend|prolong|control", comparison))  %>%
-  drop_na() %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelsbldg))  %>%
-  group_by(sex, tissue, comparison, direction, label) %>%
-  summarise(n = n()) %>%
-  mutate(n = ifelse(direction == "bldg", n*-1, n*1 ))
-
-DEGchar <- allDEG %>% 
-  filter(comparison %in% comparisonlevelschar,
-         !grepl("control|bldg", comparison)) %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelschar)) %>%
-  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
-  group_by(sex, tissue, comparison, direction, label, updown) %>%
-  summarise(n = n()) %>%
-  mutate(n = n*updown ) %>%
-  select(-updown)
-
-DEGremove <- allDEG %>% 
-  filter(comparison %in% comparisonlevelsremoval) %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelsremoval)) %>%
-  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
-  group_by(sex, tissue, comparison, direction, label, updown) %>%
-  summarise(n = n()) %>%
-  mutate(n = n*updown ) %>%
-  select(-updown)
-DEGremove
-
-DEGreplace <- allDEG %>% 
-  filter(comparison %in% comparisonlevelsreplace) %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelsreplace)) %>%
-  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
-  group_by(sex, tissue, comparison, direction, label, updown) %>%
-  summarise(n = n()) %>%
-  mutate(n = n*updown ) %>%
-  select(-updown)
-DEGreplace
-
-
-DEGcontrolreplace <- allDEG %>% 
-  filter(comparison %in% comparisonlevelscontrolreplace)  %>%
-  mutate(comparison = factor(comparison, levels = comparisonlevelscontrolreplace)) %>%
-  mutate(updown = ifelse(lfc > 0, 1, -1)) %>%
-  group_by(sex, tissue, comparison, direction, label, updown) %>%
-  summarise(n = n()) %>%
-  mutate(n = n*updown ) %>%
-  select(-updown)
-```
 
