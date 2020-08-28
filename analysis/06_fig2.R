@@ -1,11 +1,5 @@
----
-title: "Fig 2"
-output: md_document
----
-
 # Fig 2
 
-```{r setup, include=T}
 library(tidyverse)
 library(cowplot)
 library(ggsignif)
@@ -14,13 +8,9 @@ source("../R/themes.R")
 source("../R/functions.R")
 source("../R/genelists.R")
 
-knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
-```
 
 
 
-
-```{r fig2, fig.width=7.5, fig.height=7.25}
 g <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
 h <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
 i <- plotremoval(hypvsdf, "HTR2C")+ labs(y = NULL) + labs(subtitle = " ")
@@ -70,10 +60,7 @@ ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
 fig2 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
 fig2
 
-```
 
-
-```{r fig3, fig.width=7.5, fig.height=7.25}
 a <- plot.volcano("pituitary", sexlevels,  "control_bldg") + 
   facet_wrap(~sex) 
 
@@ -119,11 +106,8 @@ ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
 
 fig3 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
 fig3
-```
 
 
-
-```{r fig4, fig.width=7.5, fig.height=7.25}
 a <- plot.volcano("gonad", sexlevels,  "control_bldg") + 
   facet_wrap(~sex) 
 
@@ -169,11 +153,8 @@ ef <- plot_grid(f,m,n, rel_widths = c(2,1,1), nrow =1,
 
 fig4 <- plot_grid(ghi,ab,cd,ef,  ncol = 1)
 fig4
-```
 
-## Save files
 
-```{r write}
 pdf(file="../figures/fig2-1.pdf", width=7, height=7)
 plot(fig2)
 dev.off()

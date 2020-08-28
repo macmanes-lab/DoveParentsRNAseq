@@ -1,32 +1,24 @@
----
-title: "Fig1"
-output: md_document
----
-
-```{r setup, include=T}
 library(tidyverse)
 library(cowplot)
 library(Rtsne)
 
 
-source("../R/themes.R")
-source("../R/functions.R")
+source("R/themes.R")
+source("R/functions.R")
 
-knitr::opts_chunk$set(echo = TRUE, fig.path = '../figures/')
-```
 
 #  Experimental design, tSNE analysis, and bar chars
 
 
 ## import limma counts and sample info
 
-```{r data}
-countData <- read_csv("../results/01_limma.csv") %>%
+
+countData <- read_csv("results/01_limma.csv") %>%
   column_to_rownames(var = "X1")
 countData <- as.data.frame(t(countData))
 head(countData[1:3])
 
-colData <- read_csv("../metadata/00_colData.csv") %>%
+colData <- read_csv("metadata/00_colData.csv") %>%
   mutate(treatment = factor(treatment, levels = alllevels),
          tissue = factor(tissue, levels = tissuelevels)) %>% 
   column_to_rownames(var = "X1") 
@@ -35,23 +27,22 @@ head(colData)
 # check ready for analysis
 # row.names(countData) == row.names(colData)
 head(row.names(countData) == row.names(colData))
-```
+
 
 
 ## tsne
 
-```{r tSNE-df}
+
 # prep for tsne useing count data from limma and the custom `subsetmaketsne` function
 hyptsne <- subsetmaketsne("hypothalamus", alllevels, sexlevels)
 pittsne <- subsetmaketsne("pituitary", alllevels, sexlevels)
 gontsne <- subsetmaketsne("gonads", alllevels, sexlevels)
-```
+
 
 ## Figure 1
 
-```{r fig1, fig.width=7, fig.height=4.5}
 
-a <- png::readPNG("../figures/images/fig_fig1a.png")
+a <- png::readPNG("figures/images/fig_fig1a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
 
 e1 <- plottsneelipsev3(hyptsne, hyptsne$treatment, allcolors) + 
@@ -66,23 +57,16 @@ e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D"), label_size = 8)
 
 fig1 <- plot_grid(a, e, nrow = 2, rel_heights = c(2.4,1.6))
 fig1
-```
 
-
-
-
-## Save files
-
-```{r write}
-pdf(file="../figures/fig1-1.pdf", width=7, height=4.5)
+pdf(file="figures/fig1-1.pdf", width=7, height=4.5)
 plot(fig1)
 dev.off()
 
-png("../figures/fig1-1.png", width = 7, height = 4.5, 
+png("figures/fig1-1.png", width = 7, height = 4.5, 
     units = 'in', res = 300)
 plot(fig1) 
 dev.off()
 
 
 sessionInfo()
-```
+

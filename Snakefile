@@ -4,7 +4,9 @@ rule all:
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
     "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
     "results/03_allDEG.csv",
-    "results/03_hypvsdf.csv"
+    "results/03_hypvsdf.csv",
+    "figures/fig1-1.pdf",
+    "figures/fig2-1.pdf"
     
 rule wrangle:
   input:
@@ -53,4 +55,22 @@ rule vsd:
   output:
     "results/03_hypvsdf.csv"
   shell:
-    "Rscript analysis/03_vsd.R"
+    "Rscript analysis/04_vsd.R"
+    
+rule fig1:
+  input:
+    "metadata/00_colData.csv",
+    "results/01_limma.csv"
+  output:
+    "figures/fig1-1.pdf"
+  shell:
+    "Rscript analysis/05_fig1.R"    
+    
+rule fig2:
+  input:
+    "metadata/00_colData.csv",
+    "results/01_limma.csv"
+  output:
+    "figures/fig2-1.pdf"
+  shell:
+    "Rscript analysis/06_fig2.R"        
