@@ -45,12 +45,12 @@ gontsne <- subsetmaketsne("gonads", alllevels, sexlevels)
 a <- png::readPNG("figures/images/fig_fig1a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
 
-e1 <- plottsneelipsev3(hyptsne, hyptsne$treatment, allcolors) + 
+e1 <- plottsne(hyptsne, hyptsne$treatment, allcolors) + 
   labs(subtitle = "hypothalamus") 
-e2 <- plottsneelipsev3(pittsne, pittsne$treatment, allcolors ) + 
+e2 <- plottsne(pittsne, pittsne$treatment, allcolors ) + 
   labs(subtitle = "pituitary") 
   theme(strip.text = element_blank())
-e3 <- plottsneelipsev3(gontsne, gontsne$treatment, allcolors ) + 
+e3 <- plottsne(gontsne, gontsne$treatment, allcolors ) + 
   labs(subtitle = "gonads") 
 
 e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D"), label_size = 8)

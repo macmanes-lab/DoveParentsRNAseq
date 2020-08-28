@@ -949,7 +949,8 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
   
   euclidist <- dist(countData) # euclidean distances between the rows
   
-  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE)
+  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE,
+                      dims = 3, perplexity = 20)
   tsne_df = as.data.frame(tsne_model$Y) 
   
   # prep for adding columns
@@ -959,34 +960,8 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
   return(tsne_df_cols)
 }
 
-plottsneelipse <- function(tsnedf, pointcolor, whichcolors){
-  p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-    stat_ellipse(linetype = 1, aes(color = tissue ))  +
-    geom_point(size = 0.5, aes(color = pointcolor)) +
-    theme_B3() +
-    labs(x = "tSNE 1", y = "tSNE 2") +
-    scale_color_manual(values = whichcolors) +
-    theme(legend.position = "none",
-          axis.text = element_blank(), 
-          axis.ticks = element_blank()) +
-    stat_ellipse(linetype = 1, aes(color = tissue )) 
-  return(p)
-}
 
-plottsneelipsev2 <- function(tsnedf, pointcolor, whichcolors){
-  p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-   # stat_ellipse(linetype = 1, aes(color = pointcolor)) +
-    geom_point(size = 1, aes(color = pointcolor)) +
-    theme_B3() +
-    labs(x = "tSNE 1", y = "tSNE 2",
-         subtitle = " ") +
-    scale_color_manual(values = whichcolors) +
-    theme(legend.position = "none",
-          axis.text = element_blank(), axis.ticks = element_blank()) 
-  return(p)
-}
-
-plottsneelipsev3 <- function(tsnedf, pointcolor, whichcolors){
+plottsne <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
     # stat_ellipse(linetype = 1, aes(color = pointcolor)) +
     geom_point(size = 1, aes(color = pointcolor, shape = sex)) +
