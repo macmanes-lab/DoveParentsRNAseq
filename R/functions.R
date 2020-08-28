@@ -509,7 +509,7 @@ plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
   volcano <- allDEG %>%
     filter(tissue == whichtissue,
            comparison == whichcomparison,
-           sex == whichsex) %>%
+           sex %in% whichsex) %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
     geom_point(aes(color = direction), size = 1, 
                alpha = 0.75, na.rm = T) + 
@@ -518,11 +518,10 @@ plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
                        name = "increased expression in:") +
     labs(y = "-log10(adj. p-value)", 
          x = "Log-fold change (LFC)") +
-    theme(legend.position = "top",
+    theme(legend.position = "bottom",
           legend.direction = "vertical",
           legend.key.height = unit(0, "cm"),      
-          legend.spacing.y = unit(0, "cm"),
-          legend.margin=margin(0,0, -5, 0)) +
+          legend.spacing.y = unit(0, "cm")) +
     guides(color = guide_legend(nrow = 1))
   return(volcano)
 }
@@ -1429,26 +1428,30 @@ plotreplacement <- function(df, whichgene){
     scale_color_manual(values = allcolors) +
     scale_fill_manual(values = allcolors)  +
     labs(y = whichgene,  x = "Offspring replacement") +
-    geom_signif(comparisons = list(c("inc.d9", "early"), 
-                                   c( "early", "hatch")),
+
+    geom_signif(comparisons = list(c("inc.d9", "early"),
+                                   c("inc.d17", "prolong"),
+                                   c( "hatch", "extend")),
                 map_signif_level=TRUE,
                 textsize = 2, family = 'Helvetica',
                 vjust = 0, size = 0.5, step_increase = 0.075) +
-    geom_signif(comparisons = list(c( "hatch", "extend"), 
+    geom_signif(comparisons = list(c("hatch", "early"),
+                                   c("hatch", "prolong"),
                                    c( "n5", "extend")),
                 map_signif_level=TRUE,
                 textsize = 2, family = 'Helvetica',
                 vjust = 0, size = 0.5, step_increase = 0.075) +
-    geom_signif(comparisons = list(c(  "inc.d17", "prolong"), 
-                                   c("prolong", "hatch")),
+    geom_signif(comparisons = list(),
                 map_signif_level=TRUE,
                 textsize = 2, family = 'Helvetica',
-                vjust = 0, size = 0.5, step_increase = 0.075)
-  
+                vjust = 0, size = 0.5, step_increase = 0.075) +
+    geom_signif(comparisons = list(),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0, size = 0.5, step_increase = 0.075) 
   return(p)
   
 }
-
 
 
 boxplotextint <- function(df, whichgene, whichtissue){

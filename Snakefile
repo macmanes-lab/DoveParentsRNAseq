@@ -64,4 +64,13 @@ rule fig1:
   output:
     "figures/fig1-1.pdf"
   shell:
-    "Rscript analysis/05_fig1.R"    
+    "Rscript analysis/05_fig1.R"  
+    
+    
+rule fig2:
+  input:
+    "results/03_hypvsdf.csv"
+  output:
+    "figures/fig2-1.pdf"
+  shell:
+    "Rscript analysis/06_fig2.R"        

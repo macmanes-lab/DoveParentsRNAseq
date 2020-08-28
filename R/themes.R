@@ -91,6 +91,9 @@ comparisonlabelsbldg <- c("lay\nbldg", "inc3\nbldg",
 
 comparisonlevelsremoval <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
 
+
+comparisonlablelsremoval <- c("m.inc.d3\ninc.d3", "m.inc.d9\ninc.d9", "m.inc.d17\ninc.d17", "m.n2\nhatch")
+
 comparisonlevelsreplace <- c("hatch_early", "inc.d17_prolong",  "hatch_prolong", 
                              "extend_hatch", "n5_extend")
 
