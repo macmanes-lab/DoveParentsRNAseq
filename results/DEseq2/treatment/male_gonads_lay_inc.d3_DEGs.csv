@@ -1,0 +1,3 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"HSP25",0.055883231804342,1.25271848598293,2.23445635774391,"male_gonads","inc.d3"
+"COL14A1",0.055883231804342,1.25271848598293,-3.72937478885032,"male_gonads","lay"

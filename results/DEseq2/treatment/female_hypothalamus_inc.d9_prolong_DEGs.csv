@@ -1,0 +1,3 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"LOC107049632",6.59632404582216e-16,15.1806980176946,17.4535026916411,"female_hypothalamus","prolong"
+"RPRD1A",0.00574915621451434,2.24039589066176,0.652683578747931,"female_hypothalamus","prolong"

@@ -1,4 +1,1 @@
 "gene","padj","logpadj","lfc","sextissue","direction"
-"ZNF488",0.0522351774586283,1.28203692552672,-0.887947415662738,"female_hypothalamus","bldg"
-"IRF1",0.0522351774586283,1.28203692552672,-1.12404466842707,"female_hypothalamus","bldg"
-"PMP2",0.073529957560724,1.13353568468988,-1.46276852395945,"female_hypothalamus","bldg"
