@@ -1,13 +1,13 @@
     library(tidyverse)
 
-    ## ── Attaching packages ───────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──
 
     ## ✓ ggplot2 3.3.0.9000     ✓ purrr   0.3.3     
     ## ✓ tibble  2.1.3          ✓ dplyr   0.8.3     
     ## ✓ tidyr   1.0.0          ✓ stringr 1.4.0     
     ## ✓ readr   1.3.1          ✓ forcats 0.4.0
 
-    ## ── Conflicts ──────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -116,10 +116,9 @@
     vsd_pathfiles <- paste0(vsd_path, vsd_files)
     vsd_files
 
-    ## [1] "female_gonad_vsd.csv"        "female_gonads_vsd.csv"      
-    ## [3] "female_hypothalamus_vsd.csv" "female_pituitary_vsd.csv"   
-    ## [5] "male_gonad_vsd.csv"          "male_gonads_vsd.csv"        
-    ## [7] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
+    ## [1] "female_gonads_vsd.csv"       "female_hypothalamus_vsd.csv"
+    ## [3] "female_pituitary_vsd.csv"    "male_gonads_vsd.csv"        
+    ## [5] "male_hypothalamus_vsd.csv"   "male_pituitary_vsd.csv"
 
     ## before pivoting, check names of df with
     ## head(names(allvsd)) and tail(names(allvsd))
@@ -130,10 +129,6 @@
       dplyr::rename("gene" = "X1") %>% 
       pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
                    names_to = "samples", values_to = "counts") 
-
-    ## Warning: Missing column names filled in: 'X1' [1]
-
-    ## Warning: Missing column names filled in: 'X1' [1]
 
     ## Warning: Missing column names filled in: 'X1' [1]
 
@@ -158,6 +153,10 @@
     ## 4 A2ML1 R.R9_female_gonad_control           11.7 
     ## 5 A2ML1 R.W44_female_gonad_control          13.2 
     ## 6 A2ML1 blk.s031.pu.d_female_gonad_prolong   7.42
+
+    tail(names(allvsd))
+
+    ## [1] "file_name" "gene"      "samples"   "counts"
 
 ### vsd for all and candidate genes
 
@@ -235,62 +234,50 @@ All DEGs
       mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2))
     head(tempDEGs)
 
-    wideDEGs <- tempDEGs %>%
-      mutate(lfc = round(lfc, 2),
-             padj =  round(padj,2)) %>%
-      mutate(sextissue = paste(sex, tissue, sep = "_"),
-             lfcpadj = paste(lfc, padj, sep = ", "))  %>%
-      dplyr::select(sextissue,comparison, gene, lfcpadj) %>%
-      pivot_wider(names_from = comparison, values_from = lfcpadj) 
-
-    wideDEGscandidates <- wideDEGs %>%
-      filter(gene %in% GOgenesLong$gene)
-    wideDEGscandidates
-
-    wideDEGsBldg <- wideDEGscandidates %>%
-      select(sextissue,gene, contains("bldg"))
-    wideDEGsBldg
-
-    wideDEGsControl <- wideDEGscandidates %>%
-      select(sextissue,gene, contains("control"))
-    wideDEGsControl
-
 
     # sequential in 2 or more comparisons
-    wideDEGsSequential <- wideDEGscandidates %>%
-      select(sextissue,gene, "control_bldg", "bldg_lay", "lay_inc.d3", "inc.d3_inc.d9",
-             "inc.d9_inc.d17", "inc.d17_hatch", "hatch_n5", "n5_n9") %>%
-      mutate(totalNA = rowSums(is.na(.))) %>%
-      filter(totalNA < 8) %>%
-      arrange(totalNA, gene, sextissue) %>%
-      #arrange( gene, sextissue) %>%
-      select(-totalNA) %>% 
-      replace(., is.na(.), "")
-    wideDEGsSequential
+    wideDEGscandidates <- tempDEGs %>%
+      filter(gene %in% candidategenes) %>%
+      mutate(posneg = ifelse(lfc >= 0, "+", "-"),
+             sex = recode(sex, "female" = "F", "male" = "M" ),
+             tissue = recode(tissue, 
+                             "hypothalamus" = "H",
+                             "pituitary" = "P", "gonad" = "G"),
+             group = paste(sex, tissue, sep = "")) %>%
+      mutate(res = paste("(", posneg, ")", sep = "")) %>%
+      mutate(compres = paste(group, res, sep = "")) %>%
+      group_by(gene, comparison) %>%
+      summarize(results = str_c(compres, collapse = "; ")) %>%
+      pivot_wider(names_from = comparison, values_from = results) 
+    wideDEGscandidates
+
+    unique(wideDEGscandidates$compres)
+
+    ## Warning: Unknown or uninitialised column: 'compres'.
 
 ### manipuluation
 
     head(allDEG)
 
     ## # A tibble: 6 x 8
-    ##   sex    tissue comparison  direction gene           lfc     padj logpadj
-    ##   <chr>  <chr>  <chr>       <chr>     <chr>        <dbl>    <dbl>   <dbl>
-    ## 1 female gonad  bldg_extend extend    CDK3         19.5  2.69e-20   19.6 
-    ## 2 female gonad  bldg_extend extend    CRISP2        6.52 3.48e- 3    2.46
-    ## 3 female gonad  bldg_extend extend    KRT20         5.47 3.67e- 4    3.44
-    ## 4 female gonad  bldg_extend extend    CLDN34        5.01 5.14e- 3    2.29
-    ## 5 female gonad  bldg_extend extend    LOC107049005  4.89 7.51e- 2    1.12
-    ## 6 female gonad  bldg_extend extend    OMD           3.53 5.38e- 4    3.27
+    ##   sex    tissue       comparison direction gene        lfc   padj logpadj
+    ##   <chr>  <chr>        <chr>      <chr>     <chr>     <dbl>  <dbl>   <dbl>
+    ## 1 female hypothalamus bldg_early early     PPP2R5C    2.03 0.0592    1.23
+    ## 2 female hypothalamus bldg_early early     LOC769052  1.94 0.0413    1.38
+    ## 3 female hypothalamus bldg_early early     PNO1       1.87 0.0429    1.37
+    ## 4 female hypothalamus bldg_early early     UNKL       1.80 0.0426    1.37
+    ## 5 female hypothalamus bldg_early early     SPAM1      1.63 0.0365    1.44
+    ## 6 female hypothalamus bldg_early early     SLCO4C1    1.62 0.0883    1.05
 
     filteredDEGs <- allDEG %>%
-      filter(lfc > 1.1 | lfc < -1.1 )
+      filter(lfc > 0.14 | lfc < -0.14 )
     dim(allDEG)
 
-    ## [1] 810213      8
+    ## [1] 327163      8
 
     dim(filteredDEGs)
 
-    ## [1] 123444      8
+    ## [1] 327163      8
 
     makemanipulationDEGtables <- function(whichcomparisons){
       df <- filteredDEGs %>%
@@ -319,104 +306,88 @@ All DEGs
     }
 
     removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
-    early <- c("early_inc.d9", "hatch_early")
-    late <- c("hatch_prolong", "inc.d17_prolong")
-
+    earlys <- c("inc.d9_early", "inc.d17_early", "hatch_early", "n5_early")
+    prolongs <- c("inc.d9_prolong","inc.d17_prolong", "hatch_prolong",  "n5_prolong")
+    extends <- c("inc.d9_extend","inc.d17_extend", "hatch_extend",  "n5_extend")
 
     removalDEGs <- makemanipulationDEGtables(removalcomps)
 
-    ## # A tibble: 6 x 4
-    ## # Groups:   group [4]
-    ##   group results                  genes                                         n
-    ##   <chr> <chr>                    <chr>                                     <dbl>
-    ## 1 FP    hatch_m.n2(-); inc.d17_… ADAMTSL2; AGR2; B3GNTL2; C12ORF57; CD164…    59
-    ## 2 FP    hatch_m.n2(+); inc.d17_… ADAMTS2; ANGPTL7; ANKRD34B; AQP3; ASIC4;…    46
-    ## 3 FH    hatch_m.n2(+); inc.d17_… BET3L; BRS3; CCDC60; CPA6; CYP2J2L6; CYP…    43
-    ## 4 MP    inc.d17_m.inc.d17(-); i… ANLN; APOD; APOH; AQP4; CDH19; CLDN11; C…    30
-    ## 5 FH    hatch_m.n2(-); inc.d17_… ADPRHL1; C7ORF72; CALB2; CBLN2; CRYGS; F…    25
-    ## 6 MH    hatch_m.n2(+); inc.d17_… AKAP5; BET3L; BRS3; CCDC60; ESRP2; FGF3;…    19
+    ## # A tibble: 0 x 4
+    ## # Groups:   group [0]
+    ## # … with 4 variables: group <chr>, results <chr>, genes <chr>, n <dbl>
 
-    hatchDEGs <- makemanipulationDEGtables(early)
+    earlyDEGs <- makemanipulationDEGtables(earlys)
 
     ## # A tibble: 6 x 4
     ## # Groups:   group [3]
-    ##   group results               genes                                            n
-    ##   <chr> <chr>                 <chr>                                        <dbl>
-    ## 1 MP    early_inc.d9(-); hat… A2ML3; ACCN2; ACSBG1; ADAMTS19; ADCYAP1; AD…   270
-    ## 2 MH    early_inc.d9(+); hat… ALDH1A1; CALB2; CALCA; CBLN2; CCK; CRYBB2; …    30
-    ## 3 MP    early_inc.d9(+); hat… ANXA5; ATP2B4; C10H15ORF60; KYNU; LOC101747…    13
-    ## 4 MH    early_inc.d9(-); hat… IGJ; IGLL1; LOC420300; PPP1R1B; SATB2; SH3R…     6
-    ## 5 FP    early_inc.d9(+); hat… ANXA5; AVD; SLC9A3                               3
-    ## 6 FP    early_inc.d9(-); hat… NINJ2; PDE6H                                     2
+    ##   group results                        genes                                   n
+    ##   <chr> <chr>                          <chr>                               <dbl>
+    ## 1 FP    hatch_early(-); inc.d17_early… ABCC8; ABCC9; ABCE1; ABRACL; AC005…   669
+    ## 2 MH    hatch_early(+); inc.d17_early… ABCC8; ABCC9; ABCG1; ACAP2; ACAP3;…   504
+    ## 3 MH    hatch_early(-); inc.d17_early… ABHD17B; ACE2; ACOT12; ACYP2; ADIP…   353
+    ## 4 FP    hatch_early(+); inc.d17_early… ACACA; ADCY9; AFF4; AGRN; AHDC1; A…   251
+    ## 5 MP    hatch_early(+); inc.d17_early… A2ML3; AAK1; ABAT; ACCN2; ACSBG1; …   180
+    ## 6 MP    hatch_early(-); inc.d17_early… AC005943.2; ADARB1; AGR2; AIMP1; A…   179
 
-    prolongDEGs <- makemanipulationDEGtables(late)
+    prolongDEGs <- makemanipulationDEGtables(prolongs)
+
+    ## # A tibble: 6 x 4
+    ## # Groups:   group [2]
+    ##   group  results                         genes                                 n
+    ##   <chr>  <chr>                           <chr>                             <dbl>
+    ## 1 Mgona… hatch_prolong(+); inc.d17_prol… ABLIM2; ACOX2; ADD3; AGBL2; AGPA…   363
+    ## 2 FH     hatch_prolong(+); inc.d17_prol… ABCG1; ACVR2A; ADGRV1; ADRA2C; A…   149
+    ## 3 Mgona… inc.d17_prolong(+); inc.d9_pro… ABCA3; ABCA5; ABCD3; ABCG4; ABHD…   130
+    ## 4 FH     hatch_prolong(-); inc.d17_prol… ACYP2; ANLN; APOBEC2; APOH; ARHG…   107
+    ## 5 Mgona… hatch_prolong(+); inc.d17_prol… AC113404.1; ACSF2; AEBP1; AHDC1;…   106
+    ## 6 Mgona… hatch_prolong(+); inc.d9_prolo… ATRNL1; B3GNT4; C8H1ORF168; CCDC…    35
+
+    extendDEGs <- makemanipulationDEGtables(extends)
 
     ## # A tibble: 6 x 4
     ## # Groups:   group [4]
-    ##   group results                 genes                                          n
-    ##   <chr> <chr>                   <chr>                                      <dbl>
-    ## 1 MG    hatch_prolong(+); inc.… ABLIM2; ACOX2; ACSF2; ADAM19; ADAM33; ADA…   431
-    ## 2 FG    hatch_prolong(+); inc.… ABCA4; ABCB11; ACOT12; ACR; ACRBP; ADAM20…   372
-    ## 3 FH    hatch_prolong(-); inc.… ACP5; ADIRF; APOBEC2; AvBD5; BAIAP2L2; BL…    54
-    ## 4 FH    hatch_prolong(+); inc.… ABCG8; ANKK1; ARSI; BRS3; CCDC60; CNTNAP4…    53
-    ## 5 MH    hatch_prolong(-); inc.… APOBEC2; CALCA; FXYD2; GBX2; HCRT; LOC101…    13
-    ## 6 FG    hatch_prolong(-); inc.… C11ORF34; C23H1ORF63; CDCA2; DPP9; HSP25;…    11
+    ##   group results                genes                                           n
+    ##   <chr> <chr>                  <chr>                                       <dbl>
+    ## 1 FP    hatch_extend(-); inc.… AC005943.2; AIMP2; ATOX1; AURKA; BOLA3; CE…    62
+    ## 2 FH    hatch_extend(+); inc.… ADAM23; ADGRV1; ANKRD10; ASB14; C5ORF30; C…    44
+    ## 3 MH    hatch_extend(-); inc.… CALB2; CBLN2; FZD10; GBX2; HAPLN4; HCRT; I…    27
+    ## 4 MP    hatch_extend(-); inc.… AC005943.2; APITD1; BIRC5; CKS2; COX4I1; C…    27
+    ## 5 FH    hatch_extend(-); inc.… ANXA6; C18ORF32; CALB2; CBLN2; GBX2; GPR17…    17
+    ## 6 FP    inc.d17_extend(-); in… AEBP1; BTC; C1QTNF4; CALML4; CD34; CD99; C…    17
 
-    manipDEGs <- rbind(removalDEGs, hatchDEGs) %>%
+    manipDEGs <- rbind(removalDEGs, earlyDEGs) %>%
       rbind(., prolongDEGs) %>%
+      rbind(., extendDEGs) %>%
       arrange(desc(n))
     head(manipDEGs)
 
     ## # A tibble: 6 x 4
-    ## # Groups:   group [5]
-    ##   group results                 genes                                          n
-    ##   <chr> <chr>                   <chr>                                      <dbl>
-    ## 1 MG    hatch_prolong(+); inc.… ABLIM2; ACOX2; ACSF2; ADAM19; ADAM33; ADA…   431
-    ## 2 FG    hatch_prolong(+); inc.… ABCA4; ABCB11; ACOT12; ACR; ACRBP; ADAM20…   372
-    ## 3 MP    early_inc.d9(-); hatch… A2ML3; ACCN2; ACSBG1; ADAMTS19; ADCYAP1; …   270
-    ## 4 FP    hatch_m.n2(-); inc.d17… ADAMTSL2; AGR2; B3GNTL2; C12ORF57; CD164L…    59
-    ## 5 FH    hatch_prolong(-); inc.… ACP5; ADIRF; APOBEC2; AvBD5; BAIAP2L2; BL…    54
-    ## 6 FH    hatch_prolong(+); inc.… ABCG8; ANKK1; ARSI; BRS3; CCDC60; CNTNAP4…    53
+    ## # Groups:   group [4]
+    ##   group  results                         genes                                 n
+    ##   <chr>  <chr>                           <chr>                             <dbl>
+    ## 1 FP     hatch_early(-); inc.d17_early(… ABCC8; ABCC9; ABCE1; ABRACL; AC0…   669
+    ## 2 MH     hatch_early(+); inc.d17_early(… ABCC8; ABCC9; ABCG1; ACAP2; ACAP…   504
+    ## 3 Mgona… hatch_prolong(+); inc.d17_prol… ABLIM2; ACOX2; ADD3; AGBL2; AGPA…   363
+    ## 4 MH     hatch_early(-); inc.d17_early(… ABHD17B; ACE2; ACOT12; ACYP2; AD…   353
+    ## 5 FP     hatch_early(+); inc.d17_early(… ACACA; ADCY9; AFF4; AGRN; AHDC1;…   251
+    ## 6 MP     hatch_early(+); inc.d17_early(… A2ML3; AAK1; ABAT; ACCN2; ACSBG1…   180
 
 save files
 ----------
 
     write.csv(allDEG, "../results/03_allDEG.csv", row.names = F)
     write.csv(candidatevsd, "../results/03_candidatevsd.csv")
-    write.csv(wideDEGsSequential, "../results/table1.csv", row.names = F)
-
-    write.csv(removalDEGs, "../results/removalDEGs.csv")
-    write.csv(hatchDEGs, "../results/hatchDEGs.csv")
-    write.csv(prolongDEGs, "../results/prolongDEGs.csv")
-
+    #write.csv(wideDEGsSequential, "../results/table1.csv", row.names = F)
     write.csv(manipDEGs, "../results/manipDEGs.csv")
+    write.csv(wideDEGscandidates, "../results/03_wideDEGscandidates.csv", row.names = F)
 
-### overlapp
+### removal overlap
+
+    filteredDEGs <- allDEG %>%
+      filter(lfc > 0.14 | lfc < -0.14 ) %>%
+      filter(tissue == "hypothalamus")
 
     removalcomps <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", "inc.d17_m.inc.d17", "hatch_m.n2")
-    early <- c("early_inc.d9", "hatch_early")
-    late <- c("hatch_prolong", "inc.d17_prolong")
-
-
-    filteredDEGs %>%
-      filter(comparison %in% removalcomps)  %>%
-      select(sex:gene) %>%
-      pivot_wider(names_from = comparison, values_from = direction)
-
-    ## # A tibble: 1,847 x 7
-    ##    sex   tissue gene  hatch_m.n2 inc.d17_m.inc.d… inc.d3_m.inc.d3
-    ##    <chr> <chr>  <chr> <chr>      <chr>            <chr>          
-    ##  1 fema… gonad  IQCG  m.n2       <NA>             <NA>           
-    ##  2 fema… gonad  LOC1… m.n2       <NA>             m.inc.d3       
-    ##  3 fema… gonad  PI15  m.n2       m.inc.d17        m.inc.d3       
-    ##  4 fema… gonad  REG4  m.n2       <NA>             <NA>           
-    ##  5 fema… gonad  MMP13 m.n2       <NA>             <NA>           
-    ##  6 fema… gonad  SLC2… m.n2       <NA>             <NA>           
-    ##  7 fema… gonad  GMNC  m.n2       m.inc.d17        <NA>           
-    ##  8 fema… gonad  AGT   m.n2       <NA>             <NA>           
-    ##  9 fema… gonad  JPH2  m.n2       <NA>             <NA>           
-    ## 10 fema… gonad  PHGDH m.n2       <NA>             <NA>           
-    ## # … with 1,837 more rows, and 1 more variable: inc.d9_m.inc.d9 <chr>
 
     hatch_m.n2DEGs <- filteredDEGs %>%
       filter(comparison == "hatch_m.n2") %>%
@@ -437,28 +408,138 @@ save files
       filter(comparison == "inc.d9_m.inc.d9") %>%
       drop_na() %>%
       pull(gene)
-      
 
-
-     
-    # Generate 3 sets of 200 words
-    # Chart
-
-    venn.diagram(
-      x = list(hatch_m.n2DEGs, inc.d17_m.inc.d17DEGs, 
-               inc.d3_m.inc.d3DEGs, inc.d9_m.inc.d9DEGs),
-      category.names = c("Inc 3" , "Hatch" , "Inc 9", " Inc 17"),
-      filename = '../figures/venn.png',
-      output=FALSE,
-      col=c("#CDCDCD", '#262625', '#959595','#959595'),
-      fill = c("#CDCDCD", "#262625", "#959595", "#959595"),
-      main = "No. of genes that respond to offspring removal",
-      sub = "9 shared genes: \nPHGDH, NRG2, LHX9, SSTR3, VTN, SARM1, ALK, LPAR1, and APOH" )
-
-    ## [1] 1
 
     intersect(hatch_m.n2DEGs, inc.d17_m.inc.d17DEGs) %>%
       intersect(.,inc.d3_m.inc.d3DEGs) %>%
       intersect(.,inc.d9_m.inc.d9DEGs)
 
-    ## [1] "PHGDH" "NRG2"  "LHX9"  "SSTR3" "VTN"   "SARM1" "ALK"   "LPAR1" "APOH"
+    ## character(0)
+
+    venn.diagram(
+      x = list(inc.d3_m.inc.d3DEGs,hatch_m.n2DEGs,
+                inc.d9_m.inc.d9DEGs, inc.d17_m.inc.d17DEGs),
+      category.names = c("Inc 3" , "Hatch" , "Inc 9", " Inc 17"),
+      filename = '../figures/venn-hyp.png',
+      output=FALSE,
+      print.mode = "raw",
+      imagetype = "png",
+      col=c("#CDCDCD", '#262625', '#959595','#959595'),
+      fill = c("#CDCDCD", "#262625", "#959595", "#959595"),
+      main = "Hypothalamus - Offspring Removal",
+      sub = "Differentially expressed genes relative to internal controls"
+      )
+
+    ## [1] 1
+
+chicks / nesting care
+---------------------
+
+    filteredDEGs <- allDEG %>%
+      filter(lfc > 1.1 | lfc < -1.1 ) %>%
+      filter(tissue == "hypothalamus")
+
+    chicks <- c("bldg_hatch", "bldg_n5", "bldg_n9",
+                "bldg_extend", "bldg_early")
+
+    bldg_hatchDEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_hatch") %>%
+      drop_na() %>%
+      pull(gene)
+
+    bldg_n5DEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_n5") %>%
+      drop_na() %>%
+      pull(gene)
+
+    bldg_n9DEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_n9") %>%
+      drop_na() %>%
+      pull(gene)
+
+    bldg_extendDEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_extend") %>%
+      drop_na() %>%
+      pull(gene)
+
+    bldg_earlyDEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_early") %>%
+      drop_na() %>%
+      pull(gene)
+
+
+    # chicks
+    venn.diagram(
+      x = list(bldg_n5DEGs, bldg_hatchDEGs, 
+               bldg_earlyDEGs,bldg_extendDEGs,  bldg_n9DEGs),
+      category.names = c( "N5" ,"Hatch" , "Early", " Extend", "N9"),
+      filename = '../figures/venn-chicks-pit.png',
+      output=FALSE,
+      print.mode = "raw",
+      imagetype = "png",
+      height = 1500,
+        width = 1750,
+      resolution = 500,
+      cex = 0.75,
+      cat.cex = 0.75,
+      col=c('#3182bd', "#6baed6",  '#cbc9e2', '#6a51a3', '#08519c'),
+      fill = c("#3182bd", "#6baed6", "#cbc9e2", '#6a51a3', "#08519c" )
+      )
+
+    ## [1] 1
+
+eggs / incubation
+-----------------
+
+    filteredDEGs <- allDEG %>%
+      filter(lfc > 1.1 | lfc < -1.1 ) %>%
+      filter(tissue == "hypothalamus") 
+
+    eggs <- c("bldg_lay", 
+             "bldg_inc.d3", "bldg_inc.d9", "bldg_inc.d17",
+             "bldg_prolong")
+
+    bldg_layDEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_lay") %>%
+      drop_na() %>%
+      pull(gene)
+
+    bldg_inc.d3DEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_inc.d3") %>%
+      drop_na() %>%
+      pull(gene)
+
+    bldg_inc.d9DEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_inc.d9") %>%
+      drop_na() %>%
+      pull(gene)
+
+    bldg_inc.d17DEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_inc.d17") %>%
+      drop_na() %>%
+      pull(gene)
+
+    bldg_prolongDEGs <- filteredDEGs %>%
+      filter(comparison == "bldg_prolong") %>%
+      drop_na() %>%
+      pull(gene)
+
+    # chicks
+    venn.diagram(
+      x = list(bldg_inc.d3DEGs, bldg_layDEGs,  bldg_prolongDEGs,
+               bldg_inc.d17DEGs, bldg_inc.d9DEGs),
+      category.names = c("Inc3" , "Lay" , "Prolong", " Inc17", "Inc9"),
+      filename = '../figures/venn-eggs-pit.png',
+      output=FALSE,
+      print.mode = "raw",
+      imagetype = "png",
+      height = 1500,
+        width = 1750,
+      resolution = 500,
+      cex = 0.75,
+      cat.cex = 0.75,
+      col=c( '#78c679', "#fed98e",  '#9e9ac8','#006837', '#31a354'),
+      fill = c("#78c679", "#fed98e",  "#9e9ac8",'#006837', "#31a354")
+      )
+
+    ## [1] 1
