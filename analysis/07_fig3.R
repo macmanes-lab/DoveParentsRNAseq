@@ -8,14 +8,11 @@ source("R/themes.R")
 source("R/functions.R")
 source("R/genelists.R")
 
-wranglevsds <- function(pathtofile){
-  df <- read_csv(pathtofile) %>%
-    mutate(treatment = factor(treatment, levels = alllevels))
-  return(df)
-}
 
-hypvsdf <- wranglevsds("results/03_hypvsdf.csv")
-hypvsdm <- wranglevsds("results/03_hypvsdm.csv")
+pitvsdf <- wranglevsds("results/03_pitvsdf.csv")
+pitvsdm <- wranglevsds("results/03_pitvsdm.csv")
+
+print("done with vsds")
 
 allDEG <- read_csv("results/03_allDEG.csv")
 
@@ -78,12 +75,12 @@ DEGcontrolreplace <- allDEG %>%
   select(-updown)
 
 
-a1 <- plotcandidatechar(hypvsdf, "HTR2C") + labs(subtitle = "Hypothalamus")
-a2 <- plotcandidatechar(hypvsdm, "HTR2C") + labs(y = NULL, x = "") + labs(subtitle = " ")
+a1 <- plotcandidatechar(pitvsdf, "PRL") + labs(subtitle = "Pituitary")
+a2 <- plotcandidatechar(pitvsdm, "PRL") + labs(y = NULL, x = "") + labs(subtitle = " ")
 
-b1 <- plot.volcano("hypothalamus", sexlevels,  "control_hatch") + 
+b1 <- plot.volcano("pituitary", sexlevels,  "control_inc.d17") + 
   facet_wrap(~sex) 
-b2 <- plot.volcano("hypothalamus", sexlevels,  "hatch_n5") + 
+b2 <- plot.volcano("pituitary", sexlevels,  "inc.d9_inc.d17") + 
   facet_wrap(~sex) 
 
 ab <- plot_grid(a1,a2,b1,b2, nrow = 1,
@@ -91,12 +88,12 @@ ab <- plot_grid(a1,a2,b1,b2, nrow = 1,
                  rel_widths = c(2,2,1,1),
                 labels = c("A", "B"), label_size = 8)
 
-c <- makebargraphv3(DEGcontrolreplace, "hypothalamus","No. of DEGs\n(-) decreased  increased (+)", comparisonlevelscontrolreplace, comparisonlevelscontrolreplace)
+c <- makebargraphv3(DEGcontrolreplace, "pituitary","No. of DEGs\n(-) decreased  increased (+)", comparisonlabelscontrolreaplce, comparisonlevelscontrolreplace)
   labs(x = "Control versus all other reproductive and parental stages") 
 
-d <- makebargraphv3(DEGbldg, "hypothalamus", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsbldg, comparisonlevelsbldg) +
+d <- makebargraphv3(DEGbldg, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlevelsbldg, comparisonlevelsbldg) +
   labs(x = "Nest-building versus all other parental stages")
-e <- makebargraphv3(DEGchar, "hypothalamus", NULL,  comparisonlevelscharnobldg,
+e <- makebargraphv3(DEGchar, "pituitary", NULL,  comparisonlevelscharnobldg,
                     comparisonlevelscharnobldg) +
   labs(x = "Comparison of sequential parental stages")
 
@@ -104,32 +101,32 @@ de <- plot_grid(d,e,
                 labels = c("D", "E"), label_size = 8)
 
 
-f1 <- plotremoval(hypvsdf, "HTR2C")+ labs(y = NULL) + labs(subtitle = " ")
-f2 <- plotremoval(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+f1 <- plotremoval(pitvsdf, "PRL")+ labs(y = NULL) + labs(subtitle = " ")
+f2 <- plotremoval(pitvsdm, "PRL") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 
-g1 <- plotreplacement(hypvsdf, "HTR2C") + labs(y = NULL)+ labs(subtitle = " ")
-g2 <- plotreplacement(hypvsdm, "HTR2C") + labs(y = NULL, x = "")+ labs(subtitle = " ")
+g1 <- plotreplacement(pitvsdf, "PRL") + labs(y = NULL)+ labs(subtitle = " ")
+g2 <- plotreplacement(pitvsdm, "PRL") + labs(y = NULL, x = "")+ labs(subtitle = " ")
 
 
-#h <- makebargraphv3(DEGremove, "hypothalamus", "No. of DEGs\n (-)decreased  increased (+)", comparisonlablelsremoval, comparisonlevelsremoval) +
+#h <- makebargraphv3(DEGremove, "pituitary", "No. of DEGs\n (-)decreased  increased (+)", comparisonlablelsremoval, comparisonlevelsremoval) +
   labs(x = "Offspring removal versus temporal control")
 
-i <- makebargraphv3(DEGreplace, "hypothalamus", NULL, comparisonlablelssreplace, comparisonlevelsreplace) +
+i <- makebargraphv3(DEGreplace, "pituitary", NULL, comparisonlablelssreplace, comparisonlevelsreplace) +
   labs(x = "Offspring removal versus temporal or external control")
 
 fghi <- plot_grid(f1,f2,g1,g2,i, nrow = 1, 
           labels = c("F", " ", "G", " ", "H", "I"), label_size = 8)
 
 
-fig2 <- plot_grid(ab,c,de, fghi, nrow = 4, 
+fig3 <- plot_grid(ab,c,de, fghi, nrow = 4, 
           labels = c(" ", "C"), label_size = 8)
 
 
-pdf(file="figures/fig2-1.pdf", width=7, height=7)
-plot(fig2)
+pdf(file="figures/fig3-1.pdf", width=7, height=7)
+plot(fig3)
 dev.off()
 
-png("figures/fig2-1.png", width = 7, height = 7, 
+png("figures/fig3-1.png", width = 7, height = 7, 
     units = 'in', res = 300)
-plot(fig2) 
+plot(fig3) 
 dev.off()

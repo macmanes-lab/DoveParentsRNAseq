@@ -87,6 +87,13 @@ returnvsd <- function(whichdds, whichgroup){
 }
 
 
+wranglevsds <- function(pathtofile){
+  df <- read_csv(pathtofile) %>%
+    mutate(treatment = factor(treatment, levels = alllevels))
+  return(df)
+}
+
+
 
 ##### DEGs
 
@@ -141,6 +148,7 @@ createDEGdftreatmentvcontrols <- function(whichdds, whichgroup, downs, ups){
   }
   down <- down[-1] 
 }
+
 
 
 

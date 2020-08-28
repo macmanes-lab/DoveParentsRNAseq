@@ -6,7 +6,8 @@ rule all:
     "results/03_allDEG.csv",
     "results/03_hypvsdf.csv",
     "figures/fig1-1.pdf",
-    "figures/fig2-1.pdf"
+    "figures/fig2-1.pdf",
+    "figures/fig3-1.pdf"
     
 rule wrangle:
   input:
@@ -73,4 +74,13 @@ rule fig2:
   output:
     "figures/fig2-1.pdf"
   shell:
-    "Rscript analysis/06_fig2.R"        
+    "Rscript analysis/06_fig2.R" 
+    
+    
+rule fig3:
+  input:
+    "results/03_pitvsdf.csv"
+  output:
+    "figures/fig3-1.pdf"
+  shell:
+    "Rscript analysis/07_fig3.R"     
