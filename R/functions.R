@@ -1005,10 +1005,11 @@ makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim, mylabels){
 
 
 
-makebargraphv3 <- function(df, whichtissue, myylab, mybreaks, mylabels){
+makebargraphv4 <- function(df, whichtissue, myylab, mybreaks, mylabels, whichsex){
   
   p <- df %>%
-    filter(tissue == whichtissue) %>%
+    filter(tissue == whichtissue,
+           sex == whichsex) %>%
     ggplot(aes(x = comparison, y = n, fill = direction)) +
     geom_bar(stat="identity") +
     facet_wrap(~sex) +
@@ -1410,8 +1411,11 @@ plotremoval <- function(df, whichgene){
     
     geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
                                    c( "inc.d9", "m.inc.d9"),
-                                   c( "inc.d17", "m.inc.d17"),
-                                   c( "hatch", "m.n2")),
+                                   c( "inc.d17", "m.inc.d17")),
+                map_signif_level=TRUE,
+                textsize = 2, family = 'Helvetica',
+                vjust = 0,  size = 0.5, step_increase = 0.075) +
+    geom_signif(comparisons = list(c( "hatch", "m.n2")),
                 map_signif_level=TRUE,
                 textsize = 2, family = 'Helvetica',
                 vjust = 0,  size = 0.5, step_increase = 0.075) 

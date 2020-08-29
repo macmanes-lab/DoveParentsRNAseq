@@ -1,12 +1,19 @@
 rule all:
   input:
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
-    "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/female_pituitary_vsd.csv",
+    #"results/DESeq2/treatment/female_gonads_vsd.csv",
+    
     "results/03_allDEG.csv",
+    
     "results/03_hypvsdf.csv",
+    "results/03_pitvsdf.csv",
+    "results/03_gonvsdf.csv",
+    
     "figures/fig1-1.pdf",
     "figures/fig2-1.pdf",
-    "figures/fig3-1.pdf"
+    "figures/fig3-1.pdf",
+    "figures/fig4-1.pdf"
     
 rule wrangle:
   input:
@@ -36,7 +43,9 @@ rule deseq2:
     "results/00_counts.csv",
   output:
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
-     "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/female_pituitary_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/female_gonads_control_bldg_DEGs.csv"
   threads: 6
   shell:
     "Rscript analysis/02_DESeq2.R"
@@ -52,24 +61,23 @@ rule vsd:
 rule degs:
   input:
     "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/female_pituitary_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/female_gonads_control_bldg_DEGs.csv"
   output:
     "results/03_allDEG.csv"
   shell:
     "Rscript analysis/04_DEGs.R"
     
 
-rule fig2:
+rule fig234:
   input:
-    "results/03_hypvsdf.csv"
+    "results/DESeq2/treatment/female_hypothalamus_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/female_pituitary_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/female_gonads_control_bldg_DEGs.csv"
   output:
-    "figures/fig2-1.pdf"
+    "figures/fig2-1.pdf",
+    "figures/fig3-1.pdf",
+    "figures/fig4-1.pdf"
   shell:
-    "Rscript analysis/05_fig2.R" 
+    "Rscript analysis/05_figs234.R" 
     
-rule fig3:
-  input:
-    "results/03_pitvsdf.csv"
-  output:
-    "figures/fig3-1.pdf"
-  shell:
-    "Rscript analysis/06_fig3.R"     

@@ -1,0 +1,3 @@
+"gene","padj","logpadj","lfc","sextissue","direction"
+"RGS7",0.0583930944552311,1.23363850934845,-1.64007018045133,"female_gonads","inc.d9"
+"ANXA5",0.0554277957610707,1.25627239198012,-2.1618853698793,"female_gonads","inc.d9"

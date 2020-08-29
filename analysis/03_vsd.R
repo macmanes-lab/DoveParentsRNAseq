@@ -63,10 +63,10 @@ candidatevsd <- getcandidatevsdmanip(candidategenes)
 
 hypvsdf <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "female")  
 pitvsdf <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "female")
-gonvsdf <- candidatevsd %>% filter(tissue %in% "gonad", sex == "female")  
+gonvsdf <- candidatevsd %>% filter(tissue %in% "gonads", sex == "female")  
 hypvsdm <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "male")  
 pitvsdm <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "male") 
-gonvsdm <- candidatevsd %>% filter(tissue %in% "gonad", sex == "male") 
+gonvsdm <- candidatevsd %>% filter(tissue %in% "gonads", sex == "male") 
 
 write.csv(hypvsdf, "results/03_hypvsdf.csv", row.names = F)
 write.csv(pitvsdf, "results/03_pitvsdf.csv", row.names = F)
