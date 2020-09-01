@@ -165,5 +165,5 @@ makefigs234("pituitary", pitf, pitm,
 
 makefigs234("gonads", gonf, gonm,
             "ESR1",
-            "control_lay", "hatch_early",
+            "control_lay", "lay_inc.d3",
             "fig4")
