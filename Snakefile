@@ -49,7 +49,7 @@ rule degs:
 
 rule fig234:
   input:
-    "03_allDEG.csv"
+    "results/03_allDEG.csv"
   output:
     "figures/fig2-1.pdf",
     "figures/fig3-1.pdf",
