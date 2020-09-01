@@ -61,9 +61,9 @@ levelssequential <- c("bldg_lay",  "lay_inc.d3",
                           "inc.d3_inc.d9",   "inc.d9_inc.d17",  
                           "inc.d17_hatch", "hatch_n5", "n5_n9")
 
-labelsssequential <- c("lay\nbldg",  "inc.d3\nlay",  
-                          "inc.d9\ninc.d3",   "inc.d17\ninc.d9",  
-                          "hatch\ninc.d17", "n5\nhatch", "n9\nn5")
+labelsssequential <- c("bldg_lay",  "lay_inc.d3",  
+                       "inc.d3_inc.d9",   "inc.d9_inc.d17",  
+                       "inc.d17_hatch", "hatch_n5", "n5_n9")
 
 comparisonlevelscontrol <- c("control_bldg", "control_lay",  "control_inc.d3",  
                           "control_inc.d9",   "control_inc.d17",  
@@ -113,11 +113,11 @@ levelsmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
                            "hatch_prolong", "hatch_m.n2",
                           "extend_hatch", "n5_extend")
 
-labelssmanip <- c("inc.d3vs.\nm.inc.d3", "inc.d9vs.\nm.inc.d9", "earlyvs.\ninc.d9" ,
-                            "hatchvs.\nearly", "inc.d17vs.\nm.inc.d17", 
-                           "inc.d17vs.\nprolong",
-                            "hatchvs.\nprolong", "hatchvs.\nm.n2",
-                            "extendvs.\nhatch", "n5vs.\nextend")
+labelssmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
+                  "hatch_early",  "inc.d17_m.inc.d17", 
+                  "inc.d17_prolong",
+                  "hatch_prolong", "hatch_m.n2",
+                  "extend_hatch", "n5_extend")
 
 levelscontrolcharmanip <- c("control_bldg", "control_lay",  "control_inc.d3",  
                              "control_inc.d9",   "control_inc.d17",  
