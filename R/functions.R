@@ -518,6 +518,7 @@ plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
     filter(tissue == whichtissue,
            comparison == whichcomparison,
            sex %in% whichsex) %>%
+    mutate(direction = factor(direction, levels = alllevels)) %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
     geom_point(aes(color = direction), size = 1, 
                alpha = 0.75, na.rm = T) + 
@@ -526,7 +527,7 @@ plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
                        name = "increased expression in:") +
     labs(y = "-log10(adj. p-value)", 
          x = "Log-fold change (LFC)") +
-    theme(legend.position = "bottom",
+    theme(legend.position = "top",
           legend.direction = "vertical",
           legend.key.height = unit(0, "cm"),      
           legend.spacing.y = unit(0, "cm")) +
@@ -1005,26 +1006,28 @@ makebargraph <- function(df, whichtissue, myylab, lowlim, higherlim, mylabels){
 
 
 
-makebargraphv4 <- function(df, whichtissue, myylab, mybreaks, mylabels, whichsex){
+makebargraphv4 <- function(df, whichtissue, myylab, 
+                           whichlevels, whichlabels, whichsex){
   
   p <- df %>%
     filter(tissue == whichtissue,
            sex == whichsex) %>%
     ggplot(aes(x = comparison, y = n, fill = direction)) +
     geom_bar(stat="identity") +
-    facet_wrap(~sex) +
     theme_B3() +
-    theme(legend.position = "none")  +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1))  +
     scale_fill_manual(values = allcolors,
-                      name = " ",
-                      drop = FALSE) +
+                      name = " ") +
     scale_color_manual(values = allcolors) +
     geom_text(stat='identity', aes(label= n), vjust =-0.5, 
               position = position_dodge(width = 1),
               size = 1.75, color = "black") +
     labs(x = NULL, y = myylab)  +
-    scale_x_discrete(breaks = mybreaks,
-                     labels = mylabels)
+    scale_x_discrete(breaks = whichlevels,
+                     labels = whichlabels,
+                     drop = F,
+                     position = "bottom") 
   return(p)
 }
 
@@ -1399,7 +1402,6 @@ plotremoval <- function(df, whichgene){
                   treatment %in% removallevels)  %>%
     ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
     geom_boxplot(outlier.shape = NA, lwd=0.5) +
-    facet_wrap(~sex) +
     geom_jitter(size = 0.25, aes(color = sex)) +
     theme_B3() +
     theme(legend.position = "none",
@@ -1431,7 +1433,6 @@ plotreplacement <- function(df, whichgene){
                   treatment %in% timinglevels)  %>%
     ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
     geom_boxplot(outlier.shape = NA, lwd=0.5) +
-    facet_wrap(~sex) +
     geom_jitter(size = 0.25, aes(color = sex)) +
     theme_B3() +
     theme(legend.position = "none",
