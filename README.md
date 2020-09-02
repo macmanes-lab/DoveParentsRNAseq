@@ -1,4 +1,4 @@
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/macmanes-lab/DoveParentsRNAseq/master?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/macmanes-lab/DoveParentsRNAseq/master?urlpath=rstudio) _Note: Binder not working :(_
 
 [![Shiny](https://img.shields.io/badge/Explore%20the%20data-Open%20and%20R%20Shiny%20app-blue)](https://raynamharris.shinyapps.io/musicalgenes/) To quickly explore the data in an internet browser, use [our R Shiny app](https://raynamharris.shinyapps.io/musicalgenes/). 
 
