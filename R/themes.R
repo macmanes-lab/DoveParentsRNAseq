@@ -51,61 +51,14 @@ myshapes = c("hypothalamus" = 20,  "pituitary" = 17,  "gonads" = 15)
 # sex
 sexlevels <- c("female", "male")
 
-levelsnewgrouping <-  c("control" , "bldg",  "earlyinc", 
-                        "nearhatch",  "chickcare", "manip")
-
-levelsextint <- c("nest", "eggs" , "chicks" )
-
 # DESeq
 levelssequential <- c("bldg_lay",  "lay_inc.d3",  
                           "inc.d3_inc.d9",   "inc.d9_inc.d17",  
                           "inc.d17_hatch", "hatch_n5", "n5_n9")
 
-labelsssequential <- c("bldg_lay",  "lay_inc.d3",  
-                       "inc.d3_inc.d9",   "inc.d9_inc.d17",  
-                       "inc.d17_hatch", "hatch_n5", "n5_n9")
-
-comparisonlevelscontrol <- c("control_bldg", "control_lay",  "control_inc.d3",  
-                          "control_inc.d9",   "control_inc.d17",  
-                          "control_hatch", "control_n5", "control_n9")
-
-comparisonlevelsbldg <- c( "bldg_lay",  "bldg_inc.d3",  
-                             "bldg_inc.d9", "bldg_inc.d17",  
-                             "bldg_hatch", "bldg_n5", "bldg_n9")
-
-comparisonlabelschar <- c("bldg\nlay" ,"lay\ninc.d3", 
-                           "inc.d3\ninc.d9", "inc.d9\ninc.d17", 
-                           "inc.d17\nhatch" , "hatch\nn5", "n5\nn9")
-
-comparisonlevelscharnobldg <- c("lay_inc.d3",  
-                          "inc.d3_inc.d9",   "inc.d9_inc.d17",  
-                          "inc.d17_hatch", "hatch_n5", "n5_n9")
-
-comparisonlabelscharnobldg <- c("lay\ninc3", 
-                          "inc3\ninc9", "inc.d9\ninc17", 
-                          "inc17\nhatch" , "hatch\nn5", "n5\nn9")
-
-comparisonlabelscontrol <- c("bldg\ncontrol" ,"lay\ncontrol", "inc3\ncontrol", 
-                                "inc9\ncontrol", "inc17\ncontrol", 
-                                "hatch\ncontrol" , "n5\ncontrol", "n9\ncontrol")
-
-comparisonlabelsbldg <- c("lay\nbldg", "inc3\nbldg", 
-                                "inc9\nbldg", "inc17\nbldg", 
-                                "hatch\nbldg" , "n5\nbldg", "n9\nbldg")
-
-comparisonlevelsremoval <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9", 
-                             "inc.d17_m.inc.d17", "hatch_m.n2")
-
-comparisonlablelsremoval <- c("m.inc.d3\ninc.d3", "m.inc.d9\ninc.d9", 
-                              "m.inc.d17\ninc.d17", "m.n2\nhatch")
-
-comparisonlevelsreplace <- c("hatch_early", "inc.d17_prolong",  "hatch_prolong", 
-                             "extend_hatch", "n5_extend")
-
-comparisonlablelssreplace <- c("hatch\nearly", "inc.d17\nprolong",  "hatch\nprolong", 
-                             "extend\nhatch", "n5\nextend")
-
-
+labelsssequential <- c("lay",  "inc.d3",  
+                       "inc.d9",   "inc.d17",  
+                       "hatch", "n5", "n9")
 
 levelsmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
                            "hatch_early",  "inc.d17_m.inc.d17", 
@@ -119,34 +72,46 @@ labelssmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
                   "hatch_prolong", "hatch_m.n2",
                   "extend_hatch", "n5_extend")
 
+levelsinc9 <- c("inc.d9_early", "inc.d9_m.inc.d9")
+levelsinc17 <- c("inc.d17_prolong", "inc.d17_m.inc.d17")
+levelshatch <- c("hatch_early", "hatch_prolong", "hatch_extend",  "hatch_m.n2" )
+
+labelsinc9 <- c("early", "m.inc.d9")
+labelsinc17 <- c("prolong", "m.inc.d17")
+labelshatch <- c("early",  "prolong", "extend", "m.n2")
+
 levelscontrolcharmanip <- c("control_bldg", "control_lay",  "control_inc.d3",  
                              "control_inc.d9",   "control_inc.d17",  
                              "control_hatch", "control_n5", "control_n9",
+                            "control_early", "control_prolong", "control_extend",
                              "control_m.inc.d3", "control_m.inc.d9",  
-                             "control_m.inc.d17","control_m.n2",
-                             "control_early", "control_prolong", "control_extend")
+                             "control_m.inc.d17","control_m.n2"
+                            )
 
 labelscontrolcharmanip  <- c("bldg" ,"lay", "inc3", 
                              "inc9", "inc17", 
                              "hatch" , "n5", "n9",
                              "m.inc3", "m.inc9",
-                             "m.inc17", ".m.n2" ,
-                             "early" , "prolong", "extend")
+                             "early" , "prolong", "extend",
+                             "m.inc17", ".m.n2" 
+                             )
 
 
 levelsbldgcharmanip <- c("bldg_lay",  "bldg_inc.d3",  
                             "bldg_inc.d9",   "bldg_inc.d17",  
                             "bldg_hatch", "bldg_n5", "bldg_n9",
+                         "bldg_early", "bldg_prolong", "bldg_extend",
                             "bldg_m.inc.d3", "bldg_m.inc.d9",  
-                            "bldg_m.inc.d17","bldg_m.n2",
-                            "bldg_early", "bldg_prolong", "bldg_extend")
+                            "bldg_m.inc.d17","bldg_m.n2"
+                            )
 
 labelsbldgcharmanip  <- c("lay", "inc3", 
                              "inc9", "inc17", 
                              "hatch" , "n5", "n9",
+                          "early" , "prolong", "extend",
                              "m.inc3", "m.inc9",
-                             "m.inc17", ".m.n2" ,
-                             "early" , "prolong", "extend")
+                             "m.inc17", ".m.n2" 
+                             )
 
 
 # custom colors
