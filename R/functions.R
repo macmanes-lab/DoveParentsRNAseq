@@ -957,8 +957,7 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
   
   euclidist <- dist(countData) # euclidean distances between the rows
   
-  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE,
-                      dims = 3, perplexity = 30 )
+  tsne_model <- Rtsne(euclidist, check_duplicates=FALSE)
   tsne_df = as.data.frame(tsne_model$Y) 
   
   # prep for adding columns
