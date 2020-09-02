@@ -47,13 +47,12 @@ rule degs:
     "Rscript analysis/04_DEGs.R"
     
 
-rule fig234:
+rule figs23:
   input:
     "results/03_allDEG.csv"
   output:
     "figures/fig2-1.pdf",
-    "figures/fig3-1.pdf",
-    "figures/fig4-1.pdf"
+    "figures/fig3-1.pdf"
   shell:
-    "Rscript analysis/05_figs234.R" 
+    "Rscript analysis/05_figs23.R" 
     

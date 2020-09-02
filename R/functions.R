@@ -518,16 +518,17 @@ plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
     filter(tissue == whichtissue,
            comparison == whichcomparison,
            sex %in% whichsex) %>%
-    mutate(direction = factor(direction, levels = alllevels)) %>%
+    mutate(direction = factor(direction, levels = alllevels2)) %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
     geom_point(aes(color = direction), size = 1, 
                alpha = 0.75, na.rm = T) + 
     theme_B3() +
     scale_color_manual(values = allcolors, 
-                       name = "increased expression in:") +
+                       name = "increased expression in:",
+                       breaks = alllevels) +
     labs(y = "-log10(adj. p-value)", 
          x = "Log-fold change (LFC)") +
-    theme(legend.position = "top",
+    theme(legend.position = "bottom",
           legend.direction = "vertical",
           legend.key.height = unit(0, "cm"),      
           legend.spacing.y = unit(0, "cm")) +
@@ -1009,7 +1010,7 @@ makebargraphv4 <- function(df, whichtissue, myylab,
                            whichlevels, whichlabels, whichsex){
   
   p <- df %>%
-    filter(tissue == whichtissue,
+    dplyr::filter(tissue == whichtissue,
            sex == whichsex) %>%
     ggplot(aes(x = comparison, y = n, fill = direction)) +
     geom_bar(stat="identity") +
@@ -1195,70 +1196,7 @@ scattercorrelations <- function(df, gene1, myylab, gene2, myxlab,  mylinecolor){
 
 
 
-plotcandidatemanipquad <- function(df, whichtissue, whichgenes){
-  
-  plotcandidatemanip <- function(whichsex, whichlevels){
-  
-  p <- df %>%
-    filter(tissue == whichtissue, sex == whichsex) %>%
-    filter(gene %in% whichgenes) %>%
-    filter(treatment %in% whichlevels) %>%
-    mutate(treatment = factor(treatment, levels = alllevels)) %>%
-    ggplot(aes(y =  counts, x = treatment, fill = treatment, color = sex)) +
-    geom_boxplot(outlier.shape = NA) +
-    geom_jitter(size = 0.25, aes(color = sex)) +
-    theme_B3() +
-    theme(legend.position = "none",
-          axis.text.x = element_blank(),
-          axis.title.x = element_blank(),
-          strip.text = element_text(face = "italic")) +
-    scale_color_manual(values = allcolors) +
-    scale_fill_manual(values = allcolors)  +
-    labs(subtitle = paste(whichsex, whichtissue, sep = " "), y = whichgenes)
-  
-  return(p)
-  
-  }  
-  
-  p1 <- plotcandidatemanip("female", c(timinglevels, removallevels))  +
-    geom_signif(comparisons = list(c( "inc.d9", "early"),
-                                   c( "inc.d17", "prolong"),
-                                   c( "hatch", "prolong"),
-                                   c( "hatch", "extend")),
-                map_signif_level=TRUE,
-                textsize = 3, family = 'Helvetica',
-                vjust = 1.5, size = 0)
-  p2 <- plotcandidatemanip("male", c(timinglevels, removallevels)) +
-    geom_signif(comparisons = list(c( "inc.d9", "early"),
-                                   c( "inc.d17", "prolong"),
-                                   c( "hatch", "prolong"),
-                                   c( "hatch", "extend")),
-                map_signif_level=TRUE,
-                textsize = 3, family = 'Helvetica',
-                vjust = 1.5, size = 0)
-  
-  p3 <- plotcandidatemanip("female", c(timinglevels, removallevels))  +
-    geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
-                                   c( "inc.d9", "m.inc.d9"),
-                                   c( "inc.d17", "m.inc.d17"),
-                                   c( "hatch", "m.n2")),
-                map_signif_level=TRUE,
-                textsize = 3, family = 'Helvetica',
-                vjust = 1.5, size = 0)
-  p4 <- plotcandidatemanip("male", c(timinglevels, removallevels))  +
-    geom_signif(comparisons = list(c( "inc.d3", "m.inc.d3"),
-                                   c( "inc.d9", "m.inc.d9"),
-                                   c( "inc.d17", "m.inc.d17"),
-                                   c( "hatch", "m.n2")),
-                map_signif_level= TRUE,
-                textsize = 3, family = 'Helvetica',
-                vjust = 1.5, size =0)
-  
-  p <- plot_grid(p1,p3,p2,p4, nrow = 2, rel_widths = c(1,1.2))
-  
-  
-  return(p)
-}
+
 
 ## candidate gene box plot 
 
@@ -1376,18 +1314,18 @@ plotcandidatechar <- function(df, whichgene){
                                    c( "bldg", "lay"), 
                                    c( "lay", "inc.d3")),
                 map_signif_level=TRUE,
-                textsize = 2, family = 'Helvetica',
+                textsize = 1.5, family = 'Helvetica',
                 vjust = 0, size = 0.5, step_increase = 0.075) +
     geom_signif(comparisons = list(c( "inc.d3", "inc.d9"),
                                    c( "inc.d9", "inc.d17"),
                                    c( "inc.d17", "hatch")),
                 map_signif_level=TRUE,
-                textsize = 2, family = 'Helvetica',
+                textsize = 1.5, family = 'Helvetica',
                 vjust = 0,  size = 0.5, step_increase = 0.075) +
     geom_signif(comparisons = list(c( "hatch", "n5"), 
                                    c( "n5", "n9")),
                 map_signif_level=TRUE,
-                textsize = 2, family = 'Helvetica',
+                textsize = 1.5, family = 'Helvetica',
                 vjust = 0, size = 0.5, step_increase = 0.075)
   
   return(p)
