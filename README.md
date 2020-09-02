@@ -23,22 +23,13 @@ The data, scripts, and resutls are oranzied in the following manner:
 - [results](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/results): contains outputs from .R scripts 
 
 
-## Results
-
-
-- [Table 1](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/table1.csv)
-- [Table 2](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/table2.csv)
-- [Suppl Table 1](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/suppltable1.csv)
-- [Suppl Table 2](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/suppltable2.csv)
-- [All differentially expressed genes](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/03_allDEG.csv)
-
+### Figures
 
 **_[High quality PDFs of all figures are available here](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/figures)_**
 
-
-### Figure 1 
-
 ![](./figures/fig1-1.png)
+*Figure 1 Experimental design.* *A)* We investigated nine timepoints that spanned the majority of reproductive efforts in this species. These time-points consisted of a "control" or non-parenting state (from MacManes et al 2016 and Calisi et al. 2017), nest-building, clutch initiation or the onset of incubation, clutch completion and early incubation, mid-incubation, late incubation, initiation of nestling care, early nestling care, and mid-nestling care. To teste whether external or internal factors were regulating gene activity, we also conducted a series of offspring removal *(B)* and replacement *(C)* manipulations to test whether transcriptional changes were dependent upon offspring presence or were regulated by an internal clock. *(D)* We used t-Distributed Stochastic Neighbor Embedding (t-SNE) to reduce the dimensionality of the transcriptomes from the hypothalamus, pituitary, and gonads of male and female rock. Circles and triangles represent female and male samples, respectively, and points are colored by treatment. 
+
 
 ### Figure 2 
 
@@ -47,6 +38,15 @@ The data, scripts, and resutls are oranzied in the following manner:
 ### Figure 3 
 
 ![](./figures/fig3-1.png)
+
+## Tables
+
+- [Table 1](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/table1.csv)
+- [Table 2](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/table2.csv)
+- [Suppl Table 1](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/suppltable1.csv)
+- [Suppl Table 2](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/suppltable2.csv)
+- [All differentially expressed genes](https://github.com/macmanes-lab/DoveParentsRNAseq/blob/master/results/03_allDEG.csv)
+
 
 
 ## Related documentation 
