@@ -2,16 +2,10 @@ library(tidyverse)
 library(cowplot)
 library(Rtsne)
 
-
 source("R/themes.R")
 source("R/functions.R")
 
-
-#  Experimental design, tSNE analysis, and bar chars
-
-
-## import limma counts and sample info
-
+#  Experimental design, tSNE analysis figure
 
 countData <- read_csv("results/00_counts.csv") %>%
   column_to_rownames(var = "X1")

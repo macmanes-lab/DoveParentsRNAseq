@@ -15,11 +15,14 @@ Suggests:
     rmarkdown
 Imports:
     tidyverse,
-    edgeR,
-    Glimma,
-    limma,
-    kableExtra,
-    cowplot 
+    cowplot,
+    tidyverse, 
+    knitr, 
+    rmarkdown,
+    cowplot, 
+    viridis, 
+    readr, 
+    ggsignif
 License: CC0
 LazyData: true
 VignetteBuilder: knitr
