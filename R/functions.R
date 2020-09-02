@@ -515,10 +515,10 @@ LDAplot.treatment <- function(LDAdata, mytitle, mysubtitle, myxlab, myylab){
 plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
   
   volcano <- allDEG %>%
-    filter(tissue == whichtissue,
-           comparison == whichcomparison,
+    dplyr::filter(tissue %in% whichtissue,
+           comparison %in% whichcomparison,
            sex %in% whichsex) %>%
-    mutate(direction = factor(direction, levels = alllevels2)) %>%
+    dplyr::mutate(direction = factor(direction, levels = alllevels2)) %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
     geom_point(aes(color = direction), size = 1, 
                alpha = 0.75, na.rm = T) + 

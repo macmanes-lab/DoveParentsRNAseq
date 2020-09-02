@@ -16,6 +16,8 @@ pitm <- wranglevsds("results/03_pitvsdm.csv")
 gonf <- wranglevsds("results/03_gonvsdf.csv")
 gonm <- wranglevsds("results/03_gonvsdm.csv")
 
+allDEG <- read_csv("results/03_allDEG.csv")
+
 ## figure 2 candidate genes
 
 makefig2 <- function(tissue, dff, dfm, candidategene, comp1, comp2, label1){
@@ -57,7 +59,7 @@ makefig2 <- function(tissue, dff, dfm, candidategene, comp1, comp2, label1){
   return(fig)
 }
 
-ab <- makefig2("hypothalamus", hypf, hypm, "HTR2C", "control_hatch", "hatch_m.n2", "A")
+ab <- makefig2("hypothalamus", hypf, hypm, "HTR2C", "control_hatch", "control_hatch", "A")
 cd <- makefig2("pituitary", pitf, pitm, "PRL", "inc.d9_inc.d17", "hatch_early", "B")
 ef <- makefig2("gonads", gonf, gonm, "ESR1", "control_lay", "lay_inc.d3", "C")
 
@@ -74,10 +76,7 @@ dev.off()
 
 ###### DEGs
 
-allDEG <- read_csv("results/03_allDEG.csv") %>%
-  mutate(sex = factor(sex, levels = sexlevels),
-         tissue = factor(tissue, levels = tissuelevels)) 
-head(allDEG)
+
 
 
 filterDEGs <- function(whichlevels){  
