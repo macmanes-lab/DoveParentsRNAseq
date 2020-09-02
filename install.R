@@ -3,6 +3,8 @@ pkgs = c("tidyverse", "knitr", "rmarkdown",
          
 install.packages(pkgs)
 
-source("https://bioconductor.org/biocLite.R")
-biocLite("DESeq2")
-biocLite("BiocParallel")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+  install.packages("BiocManager")
+
+BiocManager::install("DESeq2")
+BiocManager::install("BiocParallel")
