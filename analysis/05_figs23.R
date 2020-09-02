@@ -59,7 +59,7 @@ makefig2 <- function(tissue, dff, dfm, candidategene, comp1, comp2, label1){
   return(fig)
 }
 
-ab <- makefig2("hypothalamus", hypf, hypm, "HTR2C", "control_hatch", "control_hatch", "A")
+ab <- makefig2("hypothalamus", hypf, hypm, "HTR2C", "control_hatch", "hatch_m.n2", "A")
 cd <- makefig2("pituitary", pitf, pitm, "PRL", "inc.d9_inc.d17", "hatch_early", "B")
 ef <- makefig2("gonads", gonf, gonm, "ESR1", "control_lay", "lay_inc.d3", "C")
 
@@ -137,7 +137,7 @@ makefig3 <- function(tissue, label1){
          subtitle = " ") +
     theme(axis.text.x = element_blank())
   
-  efg <- plot_grid(e,f,g,g2, nrow = 1, rel_widths = c(2,2,1,1))
+  efg <- plot_grid(e,f,g,g2, nrow = 1, rel_widths = c(16,14,7,10))
 
   l <- makebargraphv4(DEGcharmanip, tissue, 
                       "No. of DEGs", 
@@ -168,7 +168,7 @@ makefig3 <- function(tissue, label1){
     labs(x = "other manipulations",
          subtitle = " ")
   
-  lmn <- plot_grid(l,m,n,n2, nrow = 1, rel_widths = c(2,2,1,1))
+  lmn <- plot_grid(l,m,n,n2, nrow = 1, rel_widths = c(16,14,7,10))
   
   fig <- plot_grid(efg,lmn, nrow = 2, rel_heights = c(1,1.2),
                    labels = label1, label_size = 8)
