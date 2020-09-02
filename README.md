@@ -17,6 +17,7 @@ These data anlyseses are conducted in R and the workflow is automated via Snakem
 
 The data, scripts, and resutls are oranzied in the following manner:
 
+- [R](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/R): contains custom functions and themes that are used by multiple anlaysis files
 - [analysis](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/analysis): contains .R scripts that are executed by snakemake live
 - [figures](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/figures): contains images and illustrations
 - [metadata](https://github.com/macmanes-lab/DoveParentsRNAseq/tree/master/metadata): contains files with biological descriptions of samples or genes
