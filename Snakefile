@@ -33,8 +33,10 @@ rule deseq2:
 rule vsd:
   input:
     "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
+    "R/genelists.R"
   output:
-    "results/03_hypvsdf.csv"
+    "results/03_hypvsdf.csv",
+    "results/03_candidatevsd.csv"
   shell:
     "Rscript analysis/03_vsd.R"    
     

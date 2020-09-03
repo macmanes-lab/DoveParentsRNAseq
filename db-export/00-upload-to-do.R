@@ -4,56 +4,27 @@ library(tidyr)
 library(data.table)
 library(RPostgreSQL)
 
+
+source("R/themes.R")
+
+###### variance statbilized data
+
 # allvsd ----
 
 geneids <- fread("metadata/00_geneinfo.csv")
 
-vsd_path <- "results/DEseq2/"   # path to the data
-vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
+vsd_path <- "results/"   # path to the data
+vsd_files <- dir(vsd_path, pattern = "*vsd[fm].csv") # get file names
 vsd_pathfiles <- paste0(vsd_path, vsd_files)
 
 # vsd_files
 
 allvsd <- vsd_pathfiles %>%
   setNames(nm = .) %>% 
-  map_df(~fread(.x), .id = "file_name")  %>% 
-  rename("gene" = "V1") %>% 
-  pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
-               names_to = "samples", values_to = "counts")
-
+  map_df(~fread(.x), .id = "file_name") 
 # alldeg ----
 
-DEG_path <- "results/DEseq2/"   # path to the data
-DEG_files <- dir(DEG_path, pattern = "*DEGs") # get file names
-DEG_pathfiles <- paste0(DEG_path, DEG_files)
-#DEG_files
-
-source("R/themes.R")
-
-allDEG <- DEG_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~fread(.x), .id = "file_name") %>% 
-  as_tibble() %>% 
-  
-  mutate(
-    DEG = sapply(strsplit(as.character(file_name),'results/DEseq2/'), "[", 2),
-    DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1),
-    tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1),
-    down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3),
-    up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4),
-    comparison = paste(down,up, sep = "_"),
-    sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1),
-    tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)
-  ) %>% 
-  
-  select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj)
-  
-allDEG <- allDEG %>% 
-  mutate(
-    tissue = factor(tissue, levels = tissuelevel),
-    comparison = factor(comparison , levels = comparisonlevels),
-    direction = factor(direction, levels = charlevels)
-  )
+allDEG <- read_csv("results/03_allDEG.csv")
 
 # upload to db ----
 
