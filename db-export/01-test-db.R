@@ -16,5 +16,3 @@ tbl(con, in_schema("public", "alldeg")) %>%
 
 df <- as_tibble(tbl(con, in_schema("public", "alldeg")))
 head(df)
-
-
