@@ -5,19 +5,12 @@ library(tidyverse)
 ## all genes
 geneids <- read_csv("metadata/00_geneinfo.csv") %>% select(-X1) 
 
-## genes WGCNA prl module
-WGCNAgenes <- read_csv("results/05_PRLmodule.csv") %>% pull(x)
-
-## breast and ovarian cancers  https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
-suszynskaagenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1", "ATM",
-                     "BARD1", "MESH6","MSH2", "BRIP1", "NBN", "FANCC", "FANCM", 
-                     "RAD51C","RAD51D")
-
-shaidgenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", "DICER1", 
-                "PRKAR1A", "PRKACA","SDH", "GPR101")
-
-cancergenes <- c(suszynskaagenes, shaidgenes)
-
+favoritegenes <- c("AR", "AVPR1B", "AVPR2", "CRH", "CRHR1",
+                   "DIO1", "DIO2", "DIO3", "ESR2", "FSHB",
+                   "FSHR", "GABRQ", "GALR1", "GNRH1", "GNRHR",
+                   "JAK2", "LHCGR", "NPFFR1", "NPVF", "NPY",
+                   "NR3C2", "OXTR", "POMC", "PRL", "PRLH",	
+                   "PRLHR", "SERPINA4", "STAT5A", "VIPR1")
 
 ## parental care genes 
 ## genes from Ch 17 Evolution of parental care
@@ -44,7 +37,7 @@ GO_path <- "metadata/goterms/"   # path to the data
 GO_files <- dir(GO_path, pattern = "*.txt") # get file names
 GO_pathfiles <- paste0(GO_path, GO_files)
 
-GOgenesLong <- GO_pathfiles %>%
+GOgenes <- GO_pathfiles %>%
   setNames(nm = .) %>% 
   map_df(~read_table(.x, col_types = cols(), col_names = FALSE), .id = "file_name") %>% 
   mutate(GO = sapply(strsplit(as.character(file_name),'metadata/goterms/'), "[", 2)) %>% 
@@ -53,15 +46,14 @@ GOgenesLong <- GO_pathfiles %>%
   select(GO, gene)  %>%
   filter(gene != "Symbol") %>%
   distinct(GO,gene)  %>%
-  mutate(gene = toupper(gene)) %>%
+  mutate(gene = toupper(gene))
+
+parentalcaregenes <- GOgenes %>%
   rbind(., literaturegenes) %>%
   arrange(gene) %>%
   left_join(., geneids, by = "gene") %>%
   arrange(gene) %>%
-  drop_na() 
-head(GOgenesLong)
-
-parentalcaregenes <- GOgenesLong %>% 
+  drop_na()  %>% 
   pivot_wider(
     names_from = GO,
     values_from = gene,
@@ -70,4 +62,26 @@ parentalcaregenes <- GOgenesLong %>%
   dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
 
-candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
+#candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
+candidategenes <- favoritegenes
+
+
+#####
+
+## old gene lists
+
+
+## breast and ovarian cancers  https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
+suszynskaagenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1", "ATM",
+                     "BARD1", "MESH6","MSH2", "BRIP1", "NBN", "FANCC", "FANCM", 
+                     "RAD51C","RAD51D")
+
+shaidgenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", "DICER1", 
+                "PRKAR1A", "PRKACA","SDH", "GPR101")
+
+cancergenes <- c(suszynskaagenes, shaidgenes)
+
+## genes WGCNA prl module
+WGCNAgenes <- read_csv("results/05_PRLmodule.csv") %>% pull(x)
+
+

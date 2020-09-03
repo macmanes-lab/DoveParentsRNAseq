@@ -48,7 +48,9 @@ wideDEGscandidates <- tempDEGs %>%
          sex = recode(sex, "female" = "F", "male" = "M" ),
          tissue = recode(tissue, 
                          "hypothalamus" = "H",
-                         "pituitary" = "P", "gonad" = "G"),
+                         "pituitary" = "P",
+                         "gonad" = "G",
+                         "gonads" = "G"),
          group = paste(sex, tissue, sep = "")) %>%
   mutate(res = paste("(", posneg, ")", sep = "")) %>%
   mutate(compres = paste(group, res, sep = "")) %>%
@@ -112,7 +114,7 @@ manipDEGs <- rbind(removalDEGs, earlyDEGs) %>%
   arrange(desc(n))
 head(manipDEGs)
 
-
 ## save files
 write.csv(allDEG, "results/03_allDEG.csv", row.names = F)
 write.csv(manipDEGs, "results/03_manipDEGs.csv")
+write.csv(wideDEGscandidates, "results/03_wideDEGscandidates.csv")
