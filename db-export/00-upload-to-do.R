@@ -23,7 +23,7 @@ allvsd <- vsd_pathfiles %>%
   map_df(~fread(.x), .id = "file_name") 
 # alldeg ----
 
-allDEG <- read_csv("results/03_allDEG.csv")
+alldeg <- read_csv("results/03_allDEG.csv")
 
 # upload to db ----
 

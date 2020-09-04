@@ -5,12 +5,12 @@ library(tidyverse)
 ## all genes
 geneids <- read_csv("metadata/00_geneinfo.csv") %>% select(-X1) 
 
-favoritegenes <- c("AR", "AVPR1B", "AVPR2", "CRH", "CRHR1",
+favoritegenes <- c("AR", "AVP", "AVPR1B", "AVPR2", "CRH", "CRHR1",
                    "DIO1", "DIO2", "DIO3", "ESR2", "FSHB",
                    "FSHR", "GABRQ", "GALR1", "GNRH1", "GNRHR",
                    "JAK2", "LHCGR", "NPFFR1", "NPVF", "NPY",
-                   "NR3C2", "OXTR", "POMC", "PRL", "PRLH",	
-                   "PRLHR", "SERPINA4", "STAT5A", "VIPR1")
+                   "NR3C2", "OXT", "OXTR", "POMC", "PRL", "PRLH",	
+                   "PRLHR", "SERPINA4", "STAT5A", "VIP", "VIPR1")
 
 ## parental care genes 
 ## genes from Ch 17 Evolution of parental care
@@ -62,9 +62,6 @@ parentalcaregenes <- GOgenes %>%
   dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
 
-#candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
-candidategenes <- favoritegenes
-
 
 #####
 
@@ -84,4 +81,19 @@ cancergenes <- c(suszynskaagenes, shaidgenes)
 ## genes WGCNA prl module
 WGCNAgenes <- read_csv("results/05_PRLmodule.csv") %>% pull(x)
 
+
+## all degs
+
+degs <- read_csv("results/03_allDEG.csv") %>%
+  filter(!grepl("LOC", gene),
+         !grepl("control|bldg", comparison))  %>%
+  distinct(gene) %>%
+  arrange(gene) %>%
+  pull(gene)
+head(degs)
+tail(degs)
+
+#candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
+candidategenes <- c(favoritegenes)
+shinygenes <- c(favoritegenes, cancergenes, parentalcaregenes)
 

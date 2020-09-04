@@ -55,7 +55,8 @@ getcandidatevsdmanip <- function(whichgenes, whichtissue){
                                         eggs = c("lay","inc.d3", "inc.d9", "inc.d17", "prolong"),
                                         chicks = c("early", "hatch", "extend", "n5", "n9"),
                                         reference = c("control", "bldg")))  %>%
-    dplyr::select(gene, counts, sex, tissue, treatment, extint, samples) 
+    dplyr::select(gene, counts, sex, tissue, treatment, extint, samples)  %>%
+    drop_na()
   return(candidates)
 }
 
@@ -75,5 +76,7 @@ write.csv(hypvsdm, "results/03_hypvsdm.csv", row.names = F)
 write.csv(pitvsdm, "results/03_pitvsdm.csv", row.names = F)
 write.csv(gonvsdm, "results/03_gonvsdm.csv", row.names = F)
 write.csv(candidatevsd, "results/03_candidatevsd.csv", row.names = F)
-write.csv(candidatevsd, "../musicalgenes/data/candidatecounts.csv", row.names = F)
 
+
+shinyvsd <- getcandidatevsdmanip(shinygenes)
+write.csv(shinyvsd, "../musicalgenes/data/candidatecounts.csv", row.names = F)
