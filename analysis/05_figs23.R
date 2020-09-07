@@ -66,8 +66,8 @@ cd <- makefig2("B", "E",  "pituitary", pitf, pitm, "PRL",
                "inc.d9_inc.d17", "hatch_early", 
                "inc.d9", "inc.d17",  "hatch", "early")
 ef <- makefig2("C", "F", "gonads", gonf, gonm, "ESR2",
-               "control_lay", "lay_inc.d3",
-               "control", "lay", "inc.d3", "m.inc.d3")
+               "control_lay", "inc.d17_prolong",
+               "control", "lay", "inc.d17", "prolong")
 
 fig2 <- plot_grid(ab,cd,ef, nrow = 3)
 

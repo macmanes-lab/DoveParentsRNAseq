@@ -1,26 +1,9 @@
-\begin{thebibliography}{8}
+\begin{thebibliography}{4}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
-
-\bibitem[Calisi et~al.(2018)Calisi, Austin, Lang, and MacManes]{Calisi2018}
-R.~M. Calisi, S.~H. Austin, A.~S. Lang, and M.~D. MacManes.
-\newblock {Sex-biased transcriptomic response of the reproductive axis to
-  stress}.
-\newblock \emph{Hormones and Behavior}, 100:\penalty0 56--68, apr 2018.
-\newblock ISSN 0018-506X.
-\newblock \doi{10.1016/J.YHBEH.2017.11.011}.
-\newblock URL
-  \url{https://www.sciencedirect.com/science/article/pii/S0018506X17302696?via{\%}3Dihub}.
-
-\bibitem[Dulac et~al.(2014)Dulac, O'Connell, and Wu]{Dulac2014}
-C.~Dulac, L.~A. O'Connell, and Z.~Wu.
-\newblock {Neural control of maternal and paternal behaviors}.
-\newblock \emph{Science}, 345\penalty0 (6198):\penalty0 765--770, aug 2014.
-\newblock ISSN 10959203.
-\newblock \doi{10.1126/science.1253291}.
 
 \bibitem[Jupyter et~al.(2018)Jupyter, Bussonnier, Forde, Freeman, Granger,
   Head, Holdgraf, Kelley, Nalvarte, Osheroff, Pacer, Panda, Perez,
@@ -34,25 +17,6 @@ P.~Jupyter, M.~Bussonnier, J.~Forde, J.~Freeman, B.~Granger, T.~Head,
   \emph{{\{}P{\}}roceedings of the 17th {\{}P{\}}ython in {\{}S{\}}cience
   {\{}C{\}}onference}, pages 113--120, 2018.
 \newblock \doi{10.25080/Majora-4af1f417-011}.
-
-\bibitem[Lea and Sharp(1989)]{Lea1989}
-R.~W. Lea and P.~J. Sharp.
-\newblock {Concentrations of plasma prolactin and luteinizing hormone following
-  nest deprivation and renesting in ring doves (Streptopelia risoria)}.
-\newblock \emph{Hormones and Behavior}, 23\penalty0 (2):\penalty0 279--289, jun
-  1989.
-\newblock ISSN 10956867.
-\newblock \doi{10.1016/0018-506X(89)90067-6}.
-
-\bibitem[MacManes et~al.(2017)MacManes, Austin, Lang, Booth, Farrar, and
-  Calisi]{MacManes2017}
-M.~D. MacManes, S.~H. Austin, A.~S. Lang, A.~Booth, V.~Farrar, and R.~M.
-  Calisi.
-\newblock {Widespread patterns of sexually dimorphic gene expression in an
-  avian hypothalamic-pituitary-gonadal (HPG) axis}.
-\newblock \emph{Scientific Reports}, 7\penalty0 (1):\penalty0 1--13, apr 2017.
-\newblock ISSN 20452322.
-\newblock \doi{10.1038/srep45125}.
 
 \bibitem[{R Development Core Team}(2013)]{RDevelopmentCoreTeam2013}
 {R Development Core Team}.

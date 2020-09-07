@@ -1,0 +1,1654 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.7)  7 SEP 2020 14:42
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**RJournal.sty
+(./RJournal.sty
+LaTeX2e <2020-02-02> patch level 5
+L3 programming layer <2020-09-03>
+
+LaTeX Warning: You have requested package `',
+               but the package provides `RJournal'.
+
+Package: RJournal 2013/08/27 v0.13 RJournal package
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/frontendlayer/tik
+z.sty
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pgf.st
+y
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgfrcs.
+sty
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfut
+il-common.tex
+\pgfutil@everybye=\toks15
+\pgfutil@tempdima=\dimen134
+\pgfutil@tempdimb=\dimen135
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfut
+il-common-lists.tex))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfut
+il-latex.def
+\pgfutil@abb=\box45
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/ms/everyshi.sty
+Package: everyshi 2001/05/15 v3.00 EveryShipout Package (MS)
+))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfrc
+s.code.tex
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/pgf.revision.te
+x)
+Package: pgfrcs 2020/01/08 v3.1.5b (3.1.5b)
+))
+Package: pgf 2020/01/08 v3.1.5b (3.1.5b)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/basiclayer/pgfcor
+e.sty
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 2019/11/30 v1.2a Enhanced LaTeX Graphics (DPC,SPQR)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2019/11/30 v1.4a Standard LaTeX Graphics (DPC,SPQR)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 2016/01/03 v1.10 sin cos tan (DPC)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/graphics-cfg/graphics
+.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 105.
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/graphics-def/pdftex.d
+ef
+File: pdftex.def 2020/08/26 v1.2 Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen136
+\Gin@req@width=\dimen137
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/systemlayer/pgfsy
+s.sty
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
+sys.code.tex
+Package: pgfsys 2020/01/08 v3.1.5b (3.1.5b)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfke
+ys.code.tex
+\pgfkeys@pathtoks=\toks17
+\pgfkeys@temptoks=\toks18
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfke
+ysfiltered.code.tex
+\pgfkeys@tmptoks=\toks19
+))
+\pgf@x=\dimen138
+\pgf@y=\dimen139
+\pgf@xa=\dimen140
+\pgf@ya=\dimen141
+\pgf@xb=\dimen142
+\pgf@yb=\dimen143
+\pgf@xc=\dimen144
+\pgf@yc=\dimen145
+\pgf@xd=\dimen146
+\pgf@yd=\dimen147
+\w@pgf@writea=\write3
+\r@pgf@reada=\read2
+\c@pgf@counta=\count168
+\c@pgf@countb=\count169
+\c@pgf@countc=\count170
+\c@pgf@countd=\count171
+\t@pgf@toka=\toks20
+\t@pgf@tokb=\toks21
+\t@pgf@tokc=\toks22
+\pgf@sys@id@count=\count172
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
+.cfg
+File: pgf.cfg 2020/01/08 v3.1.5b (3.1.5b)
+)
+Driver file for pgf: pgfsys-pdftex.def
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
+sys-pdftex.def
+File: pgfsys-pdftex.def 2020/01/08 v3.1.5b (3.1.5b)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
+sys-common-pdf.def
+File: pgfsys-common-pdf.def 2020/01/08 v3.1.5b (3.1.5b)
+)))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
+syssoftpath.code.tex
+File: pgfsyssoftpath.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgfsyssoftpath@smallbuffer@items=\count173
+\pgfsyssoftpath@bigbuffer@items=\count174
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/systemlayer/pgf
+sysprotocol.code.tex
+File: pgfsysprotocol.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/graphics-cfg/color.cf
+g
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+ore.code.tex
+Package: pgfcore 2020/01/08 v3.1.5b (3.1.5b)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.co
+de.tex
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathcal
+c.code.tex
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathuti
+l.code.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathpar
+ser.code.tex
+\pgfmath@dimen=\dimen148
+\pgfmath@count=\count175
+\pgfmath@box=\box46
+\pgfmath@toks=\toks23
+\pgfmath@stack@operand=\toks24
+\pgfmath@stack@operation=\toks25
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.code.tex
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.basic.code.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.trigonometric.code.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.random.code.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.comparison.code.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.base.code.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.round.code.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.misc.code.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathfun
+ctions.integerarithmetics.code.tex)))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmathflo
+at.code.tex
+\c@pgfmathroundto@lastzeros=\count176
+))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfint.cod
+e.tex)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orepoints.code.tex
+File: pgfcorepoints.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@picminx=\dimen149
+\pgf@picmaxx=\dimen150
+\pgf@picminy=\dimen151
+\pgf@picmaxy=\dimen152
+\pgf@pathminx=\dimen153
+\pgf@pathmaxx=\dimen154
+\pgf@pathminy=\dimen155
+\pgf@pathmaxy=\dimen156
+\pgf@xx=\dimen157
+\pgf@xy=\dimen158
+\pgf@yx=\dimen159
+\pgf@yy=\dimen160
+\pgf@zx=\dimen161
+\pgf@zy=\dimen162
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orepathconstruct.code.tex
+File: pgfcorepathconstruct.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@path@lastx=\dimen163
+\pgf@path@lasty=\dimen164
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orepathusage.code.tex
+File: pgfcorepathusage.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@shorten@end@additional=\dimen165
+\pgf@shorten@start@additional=\dimen166
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orescopes.code.tex
+File: pgfcorescopes.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgfpic=\box47
+\pgf@hbox=\box48
+\pgf@layerbox@main=\box49
+\pgf@picture@serial@count=\count177
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+oregraphicstate.code.tex
+File: pgfcoregraphicstate.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgflinewidth=\dimen167
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+oretransformations.code.tex
+File: pgfcoretransformations.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@pt@x=\dimen168
+\pgf@pt@y=\dimen169
+\pgf@pt@temp=\dimen170
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orequick.code.tex
+File: pgfcorequick.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+oreobjects.code.tex
+File: pgfcoreobjects.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orepathprocessing.code.tex
+File: pgfcorepathprocessing.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orearrows.code.tex
+File: pgfcorearrows.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgfarrowsep=\dimen171
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+oreshade.code.tex
+File: pgfcoreshade.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@max=\dimen172
+\pgf@sys@shading@range@num=\count178
+\pgf@shadingcount=\count179
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+oreimage.code.tex
+File: pgfcoreimage.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+oreexternal.code.tex
+File: pgfcoreexternal.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgfexternal@startupbox=\box50
+))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orelayers.code.tex
+File: pgfcorelayers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+oretransparency.code.tex
+File: pgfcoretransparency.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orepatterns.code.tex
+File: pgfcorepatterns.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/basiclayer/pgfc
+orerdf.code.tex
+File: pgfcorerdf.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmodu
+leshapes.code.tex
+File: pgfmoduleshapes.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgfnodeparttextbox=\box51
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmodu
+leplot.code.tex
+File: pgfmoduleplot.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/compatibility/pgf
+comp-version-0-65.sty
+Package: pgfcomp-version-0-65 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@nodesepstart=\dimen173
+\pgf@nodesepend=\dimen174
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/compatibility/pgf
+comp-version-1-18.sty
+Package: pgfcomp-version-1-18 2020/01/08 v3.1.5b (3.1.5b)
+))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgffor.
+sty
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/utilities/pgfkeys
+.sty
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgfke
+ys.code.tex))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/pgf/math/pgfmath.sty
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.co
+de.tex))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/utilities/pgffo
+r.code.tex
+Package: pgffor 2020/01/08 v3.1.5b (3.1.5b)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/math/pgfmath.co
+de.tex)
+\pgffor@iter=\dimen175
+\pgffor@skip=\dimen176
+\pgffor@stack=\toks26
+\pgffor@toks=\toks27
+))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/t
+ikz/tikz.code.tex
+Package: tikz 2020/01/08 v3.1.5b (3.1.5b)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/libraries/pgfli
+braryplothandlers.code.tex
+File: pgflibraryplothandlers.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgf@plot@mark@count=\count180
+\pgfplotmarksize=\dimen177
+)
+\tikz@lastx=\dimen178
+\tikz@lasty=\dimen179
+\tikz@lastxsaved=\dimen180
+\tikz@lastysaved=\dimen181
+\tikz@lastmovetox=\dimen182
+\tikz@lastmovetoy=\dimen183
+\tikzleveldistance=\dimen184
+\tikzsiblingdistance=\dimen185
+\tikz@figbox=\box52
+\tikz@figbox@bg=\box53
+\tikz@tempbox=\box54
+\tikz@tempbox@bg=\box55
+\tikztreelevel=\count181
+\tikznumberofchildren=\count182
+\tikznumberofcurrentchild=\count183
+\tikz@fig@count=\count184
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/modules/pgfmodu
+lematrix.code.tex
+File: pgfmodulematrix.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+\pgfmatrixcurrentrow=\count185
+\pgfmatrixcurrentcolumn=\count186
+\pgf@matrix@numberofcolumns=\count187
+)
+\tikz@expandcount=\count188
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pgf/frontendlayer/t
+ikz/libraries/tikzlibrarytopaths.code.tex
+File: tikzlibrarytopaths.code.tex 2020/01/08 v3.1.5b (3.1.5b)
+)))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+))
+\Gm@cnth=\count189
+\Gm@cntv=\count190
+\c@Gm@tempcnt=\count191
+\Gm@bindingoffset=\dimen186
+\Gm@wd@mp=\dimen187
+\Gm@odd@mp=\dimen188
+\Gm@even@mp=\dimen189
+\Gm@layoutwidth=\dimen190
+\Gm@layoutheight=\dimen191
+\Gm@layouthoffset=\dimen192
+\Gm@layoutvoffset=\dimen193
+\Gm@dimlist=\toks28
+
+! Missing \endcsname inserted.
+<to be read again> 
+                   \@classoptionslist 
+l.1003 \ProcessOptionsKV[c]{Gm}
+                               %
+The control sequence marked <to be read again> should
+not appear between \csname and \endcsname.
+
+
+! Package geometry Error: \paperwidth (0.0pt) too short.
+
+See the geometry package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1006 \Gm@process
+                  
+Set a paper type (e.g., `a4paper').
+
+
+! Package geometry Error: \paperheight (0.0pt) too short.
+
+See the geometry package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1006 \Gm@process
+                  
+Set a paper type (e.g., `a4paper').
+
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2019/01/31 v3.10 Extensive control of page headers and footer
+s
+\f@nch@headwidth=\skip47
+\f@nch@O@elh=\skip48
+\f@nch@O@erh=\skip49
+\f@nch@O@olh=\skip50
+\f@nch@O@orh=\skip51
+\f@nch@O@elf=\skip52
+\f@nch@O@erf=\skip53
+\f@nch@O@olf=\skip54
+\f@nch@O@orf=\skip55
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/microtype/microtype.s
+ty
+Package: microtype 2019/11/18 v2.7d Micro-typographical refinements (RS)
+\MT@toks=\toks29
+\MT@count=\count192
+LaTeX Info: Redefining \textls on input line 790.
+\MT@outer@kern=\dimen194
+LaTeX Info: Redefining \textmicrotypecontext on input line 1354.
+\MT@listname@count=\count193
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/microtype/microtype-p
+dftex.def
+File: microtype-pdftex.def 2019/11/18 v2.7d Definitions specific to pdftex (RS)
+
+LaTeX Info: Redefining \lsstyle on input line 914.
+LaTeX Info: Redefining \lslig on input line 914.
+\MT@outer@space=\skip56
+)
+Package microtype Info: Loading configuration file microtype.cfg.
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/microtype/microtype.c
+fg
+File: microtype.cfg 2019/11/18 v2.7d microtype main configuration file (RS)
+
+
+! LaTeX Error: The font size command \normalsize is not defined:
+               there is probably something wrong with the class file.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74    }
+         
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.74    }
+         
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Package microtype Warning: Could not parse font size `normalsize'
+(microtype)                in font set `basicmath' on input line 74.
+
+
+Package microtype Warning: Could not parse font size `footnotesize'
+(microtype)                in font set `basicmath' on input line 74.
+
+
+Package microtype Warning: Could not parse font size `small'
+(microtype)                in font set `basicmath' on input line 74.
+
+
+Package microtype Warning: Could not parse font size `large'
+(microtype)                in font set `basicmath' on input line 74.
+
+! Extra }, or forgotten \endgroup.
+\MT@clist@function ...,footnotesize,small,large}}}
+                                                  
+l.74    }
+         
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+Package microtype Warning: Could not parse font size `ex'
+(microtype)                in font set `basicmath' on input line 74.
+
+! Missing $ inserted.
+<inserted text> 
+                $
+l.74    }
+         
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.74    }
+         
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 74.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 74.
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.74    }
+         
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing { inserted.
+<to be read again> 
+                   \begingroup 
+l.74    }
+         
+A left brace was mandatory here, so I've put one in.
+You might want to delete and/or insert some corrections
+so that I will find a matching right brace soon.
+(If you're confused by all this, try typing `I}' now.)
+
+
+Package microtype Warning: Could not parse font size `sp'
+(microtype)                in font set `basicmath' on input line 74.
+
+
+Package microtype Warning: Could not parse font size `kn'
+(microtype)                in font set `basicmath' on input line 74.
+
+
+Package microtype Warning: Could not parse font size `tr'
+(microtype)                in font set `basicmath' on input line 74.
+
+
+! LaTeX Error: The font size command \normalsize is not defined:
+               there is probably something wrong with the class file.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.81    }
+         
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.81    }
+         
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Package microtype Warning: Could not parse font size `normalsize'
+(microtype)                in font set `basictext' on input line 81.
+
+
+Package microtype Warning: Could not parse font size `footnotesize'
+(microtype)                in font set `basictext' on input line 81.
+
+
+Package microtype Warning: Could not parse font size `small'
+(microtype)                in font set `basictext' on input line 81.
+
+
+Package microtype Warning: Could not parse font size `large'
+(microtype)                in font set `basictext' on input line 81.
+
+! Extra }, or forgotten \endgroup.
+\MT@clist@function ...,footnotesize,small,large}}}
+                                                  
+l.81    }
+         
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+Package microtype Warning: Could not parse font size `ex'
+(microtype)                in font set `basictext' on input line 81.
+
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.81    }
+         
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Missing { inserted.
+<to be read again> 
+                   \begingroup 
+l.81    }
+         
+A left brace was mandatory here, so I've put one in.
+You might want to delete and/or insert some corrections
+so that I will find a matching right brace soon.
+(If you're confused by all this, try typing `I}' now.)
+
+
+Package microtype Warning: Could not parse font size `sp'
+(microtype)                in font set `basictext' on input line 81.
+
+
+Package microtype Warning: Could not parse font size `kn'
+(microtype)                in font set `basictext' on input line 81.
+
+
+Package microtype Warning: Could not parse font size `tr'
+(microtype)                in font set `basictext' on input line 81.
+
+
+Package microtype Warning: Could not parse font size `small'
+(microtype)                in font set `footnotesize' on input line 91.
+
+
+Package microtype Warning: Could not parse font size `small'
+(microtype)                in font set `footnotesize' on input line 91.
+
+
+Package microtype Warning: Could not parse font size `small'
+(microtype)                in font set `footnotesize' on input line 91.
+
+
+Package microtype Warning: Could not parse font size `small'
+(microtype)                in font set `footnotesize' on input line 91.
+
+
+Package microtype Warning: Could not parse font size `small'
+(microtype)                in font set `footnotesize' on input line 91.
+
+
+Package microtype Warning: Could not parse font size `footnotesize'
+(microtype)                in font set `scriptsize' on input line 96.
+
+
+Package microtype Warning: Could not parse font size `footnotesize'
+(microtype)                in font set `scriptsize' on input line 96.
+
+
+Package microtype Warning: Could not parse font size `footnotesize'
+(microtype)                in font set `scriptsize' on input line 96.
+
+
+Package microtype Warning: Could not parse font size `footnotesize'
+(microtype)                in font set `scriptsize' on input line 96.
+
+
+Package microtype Warning: Could not parse font size `footnotesize'
+(microtype)                in font set `scriptsize' on input line 96.
+
+
+! LaTeX Error: The font size command \normalsize is not defined:
+               there is probably something wrong with the class file.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99    { font = */*/*/*/* }
+                            
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.99    { font = */*/*/*/* }
+                            
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Package microtype Warning: Could not parse font size `*'
+(microtype)                in font set `normalfont' on input line 99.
+
+! Extra }, or forgotten \endgroup.
+\MT@clist@function ...normalfont}{font=*/*/*/*/*}}
+                                                  
+l.99    { font = */*/*/*/* }
+                            
+I've deleted a group-closing symbol because it seems to be
+spurious, as in `$x}$'. But perhaps the } is legitimate and
+you forgot something else, as in `\hbox{$x}'. In such cases
+the way to recover is to insert both the forgotten and the
+deleted material, e.g., by typing `I$}'.
+
+
+Package microtype Warning: family axis is empty in font specification
+(microtype)                `ex////'. Using `cmr' instead on input line 99.
+
+
+Package microtype Warning: series axis is empty in font specification
+(microtype)                `ex////'. Using `m' instead on input line 99.
+
+
+Package microtype Warning: shape axis is empty in font specification
+(microtype)                `ex////'. Using `n' instead on input line 99.
+
+
+Package microtype Warning: size axis is empty in font specification
+(microtype)                `ex////'. Using `\normalsize' instead on input line 
+99.
+
+
+! LaTeX Error: The font size command \normalsize is not defined:
+               there is probably something wrong with the class file.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99    { font = */*/*/*/* }
+                            
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.99    { font = */*/*/*/* }
+                            
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Package microtype Warning: Could not parse font size `*'
+(microtype)                in font set `normalfont' on input line 99.
+
+
+Package microtype Warning: family axis is empty in font specification
+(microtype)                `sp////'. Using `cmr' instead on input line 99.
+
+
+Package microtype Warning: series axis is empty in font specification
+(microtype)                `sp////'. Using `m' instead on input line 99.
+
+
+Package microtype Warning: shape axis is empty in font specification
+(microtype)                `sp////'. Using `n' instead on input line 99.
+
+
+Package microtype Warning: size axis is empty in font specification
+(microtype)                `sp////'. Using `\normalsize' instead on input line 
+99.
+
+
+! LaTeX Error: The font size command \normalsize is not defined:
+               there is probably something wrong with the class file.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99    { font = */*/*/*/* }
+                            
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.99    { font = */*/*/*/* }
+                            
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Package microtype Warning: Could not parse font size `*'
+(microtype)                in font set `normalfont' on input line 99.
+
+
+Package microtype Warning: family axis is empty in font specification
+(microtype)                `kn////'. Using `cmr' instead on input line 99.
+
+
+Package microtype Warning: series axis is empty in font specification
+(microtype)                `kn////'. Using `m' instead on input line 99.
+
+
+Package microtype Warning: shape axis is empty in font specification
+(microtype)                `kn////'. Using `n' instead on input line 99.
+
+
+Package microtype Warning: size axis is empty in font specification
+(microtype)                `kn////'. Using `\normalsize' instead on input line 
+99.
+
+
+! LaTeX Error: The font size command \normalsize is not defined:
+               there is probably something wrong with the class file.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99    { font = */*/*/*/* }
+                            
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.99    { font = */*/*/*/* }
+                            
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Package microtype Warning: Could not parse font size `*'
+(microtype)                in font set `normalfont' on input line 99.
+
+
+Package microtype Warning: family axis is empty in font specification
+(microtype)                `tr////'. Using `cmr' instead on input line 99.
+
+
+Package microtype Warning: series axis is empty in font specification
+(microtype)                `tr////'. Using `m' instead on input line 99.
+
+
+Package microtype Warning: shape axis is empty in font specification
+(microtype)                `tr////'. Using `n' instead on input line 99.
+
+
+Package microtype Warning: size axis is empty in font specification
+(microtype)                `tr////'. Using `\normalsize' instead on input line 
+99.
+
+
+! LaTeX Error: The font size command \normalsize is not defined:
+               there is probably something wrong with the class file.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99    { font = */*/*/*/* }
+                            
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+! Undefined control sequence.
+\MT@get@size ... \def \MT@val {##2}}\@tempa \@nil 
+                                                  \fi \MT@ifdimen \MT@val {\...
+l.99    { font = */*/*/*/* }
+                            
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+Package microtype Warning: Could not parse font size `*'
+(microtype)                in font set `normalfont' on input line 99.
+
+
+! Package microtype Error: The expansion set `basictext' is not declared.
+(microtype)                Cannot make it the default set. Using set
+(microtype)                `all' instead.
+
+See the microtype package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.105 ...icrotypeSetDefault[expansion] {basictext}
+                                                  
+This error message was generated by an \errmessage
+command, so I can't give any explicit help.
+Pretend that you're Hercule Poirot: Examine all clues,
+and deduce the truth by order and method.
+
+
+! Package microtype Error: The spacing set `basictext' is not declared.
+(microtype)                Cannot make it the default set. Using set
+(microtype)                `all' instead.
+
+See the microtype package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.106 ...icrotypeSetDefault[spacing]   {basictext}
+                                                  
+(That was another \errmessage.)
+
+)
+! Missing \endcsname inserted.
+<to be read again> 
+                   \@classoptionslist 
+l.2246 \MT@ProcessOptionsWithKV{MT}
+                                   
+The control sequence marked <to be read again> should
+not appear between \csname and \endcsname.
+
+)
+! Missing $ inserted.
+<inserted text> 
+                $
+l.43 
+     
+I've inserted a begin-math/end-math symbol since I think
+you left one out. Proceed, with fingers crossed.
+
+! Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing \endgroup inserted.
+<inserted text> 
+                \endgroup 
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+! Missing } inserted.
+<inserted text> 
+                }
+l.43 
+     
+I've inserted something that you may have forgotten.
+(See the <inserted text> above.)
+With luck, this will get me unwedged. But if you
+really didn't forget anything, try typing `2' now; then
+my insertion and my current dilemma will both disappear.
+
+
+Overfull \hbox (21.0pt too wide) in paragraph at lines 74--43
+[]$[]$ 
+ []
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/psnfss/helvet.sty
+Package: helvet 2020/03/25PSNFSS-v9.3(WaS)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/psnfss/palatino.sty
+Package: palatino 2020/03/25PSNFSS-v9.3(SPQR)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/psnfss/mathpazo.sty
+Package: mathpazo 2020/03/25PSNFSS-v9.3Palatinow/PazoMath(D.Puga,WaS)
+\symupright=\mathgroup4
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/inconsolata/inconsola
+ta.sty
+Package: inconsolata 2019/05/17 v1.12
+ `inconsolata-zi4'v1.12,2019/05/17 TextmacrosforInconsolata(msharpe)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/base/textcomp.sty
+Package: textcomp 2020/02/02v2.0nStandardLaTeXpackage
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2014/12/03v2.7apackageoptionprocessing(HA)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/xkeyval/xkvutils.te
+x
+\XKV@toks=\toks30
+\XKV@tempa@toks=\toks31
+)
+\XKV@depth=\count194
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+)
+
+! Package xkeyval Error: xkeyvalloadedbefore\documentclass.
+
+See the xkeyval package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.62 ...yval loaded before \protect\documentclass}
+                                                  %
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+)
+\zifour@ocount=\count195
+) (/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/base/fontenc.sty
+Package: fontenc 2020/02/11v2.0oStandardLaTeXpackage
+LaTeX Font Info:    Trying to load font information for T1+ppl on input line 11
+2.
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/psnfss/t1ppl.fd
+File: t1ppl.fd 2001/06/04 font definitions for T1/ppl.
+))
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip16
+Package: url 2013/09/16 ver3.4 Verbmodeforurls,etc.
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2020-05-15v7.00eHypertextlinksforLaTeX
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2019/12/15 v1.24 LaTeX kernel commands for general use (HO)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pdftexcmds/pdftexcm
+ds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/infwarerr/infwarerr
+.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/kvsetkeys/kvsetkeys
+.sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/kvdefinekeys/kvdefi
+nekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/generic/pdfescape/pdfescape
+.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27v1.10Coloroptionsforhyperref/bookmark(HO)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/letltxmacro/letltxmac
+ro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17v1.6Hooksforauxiliaryfiles(HO)
+)
+Runaway argument?
+{##1}\immediate \write \@partaux {}\auxhook@nil \@include \endinput 
+! File ended while scanning use of \@include.
+<inserted text> 
+                \par 
+l.133 \RequirePackage{auxhook}[2009/12/14]
+                                          
+I suspect you have forgotten a `}', causing me
+to read past where you wanted me to stop.
+I'll try to recover; but if the error is serious,
+you'd better type `E' or `X' now and fix your file.
+
+! Text line contains an invalid character.
+l.837 ...\romannumeral\expandafter`\expandafter^^@
+                                                  %
+A funny symbol that I can't read has just been input.
+Continue, and I'll forget that it ever happened.
+
+! Text line contains an invalid character.
+l.838       \romannumeral`^^@
+                             %
+A funny symbol that I can't read has just been input.
+Continue, and I'll forget that it ever happened.
+
+! Text line contains an invalid character.
+l.1142     \def^^?
+                  #1^^7f#2^^7f{%
+A funny symbol that I can't read has just been input.
+Continue, and I'll forget that it ever happened.
+
+! Text line contains an invalid character.
+l.1142     \def^^?#1^^7f
+                        #2^^7f{%
+A funny symbol that I can't read has just been input.
+Continue, and I'll forget that it ever happened.
+
+! Text line contains an invalid character.
+l.1142     \def^^?#1^^7f#2^^7f
+                              {%
+A funny symbol that I can't read has just been input.
+Continue, and I'll forget that it ever happened.
+
+)
+Runaway argument?
+\let \@unprocessedoptions \@@unprocessedoptions \csname \@currname .\@currext \
+ETC.
+! File ended while scanning use of \x.
+<inserted text> 
+                \par 
+l.51 \renewcommand
+                  {\backref}[1]{[p#1]}
+I suspect you have forgotten a `}', causing me
+to read past where you wanted me to stop.
+I'll try to recover; but if the error is serious,
+you'd better type `E' or `X' now and fix your file.
+
+
+! LaTeX Error: Command \backref undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.51 \renewcommand{\backref}
+                            [1]{[p#1]}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.56 \hypersetup
+                {
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.57   c
+        olorlinks,%
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/setspace/setspace.sty
+Package: setspace 2011/12/19v6.7asetlinespacing
+)
+! Undefined control sequence.
+\setstretch ...ef \baselinestretch {#1}\@currsize 
+                                                  
+l.67 \setstretch{1.05}
+                      
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+! LaTeX Error: \usepackage before \documentclass.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.98 \usepackage[medium]{
+                         titlesec}
+\usepackage may only appear in the document preamble, i.e.,
+between \documentclass and \begin{document}.
+
+
+! LaTeX Error: \usepackage before \documentclass.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.99 \usepackage{
+                 titletoc}
+\usepackage may only appear in the document preamble, i.e.,
+between \documentclass and \begin{document}.
+
+! Undefined control sequence.
+l.100 \titleformat
+                  {\section}   {\normalfont\large\bfseries}{}{0em}{}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.100 \titleformat{\section
+                           }   {\normalfont\large\bfseries}{}{0em}{}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Argument of \set@fontsize has an extra }.
+<inserted text> 
+                \par 
+l.100 ...{\section}   {\normalfont\large\bfseries}
+                                                  {}{0em}{}
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\fi \xdef \font@name {\csname \curr@fontshape /\f@size \endcsname }\pickup@font
+ \ETC.
+! Paragraph ended before \set@fontsize was complete.
+<to be read again> 
+                   \par 
+l.100 ...{\section}   {\normalfont\large\bfseries}
+                                                  {}{0em}{}
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+
+Overfull \hbox (314.81522pt too wide) in paragraph at lines 57--100
+[]\T1/ppl/m/n/10 colorlinks,citecolor=link,filecolor=link,linkcolor=link,urlcol
+or=link 
+ []
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.100 ...ction}   {\normalfont\large\bfseries}{}{0
+                                                  em}{}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.101 \titleformat
+                  {\subsection}{\normalfont\normalsize\bfseries}{}{0em}{}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.101 \titleformat{\subsection
+                              }{\normalfont\normalsize\bfseries}{}{0em}{}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Argument of \set@fontsize has an extra }.
+<inserted text> 
+                \par 
+l.101 ...section}{\normalfont\normalsize\bfseries}
+                                                  {}{0em}{}
+I've run across a `}' that doesn't seem to match anything.
+For example, `\def\a#1{...}' and `\a}' would produce
+this error. If you simply proceed now, the `\par' that
+I've just inserted will cause me to report a runaway
+argument that might be the root of the problem. But if
+your `}' was spurious, just type `2' and it will go away.
+
+Runaway argument?
+\fi \xdef \font@name {\csname \curr@fontshape /\f@size \endcsname }\pickup@font
+ \ETC.
+! Paragraph ended before \set@fontsize was complete.
+<to be read again> 
+                   \par 
+l.101 ...section}{\normalfont\normalsize\bfseries}
+                                                  {}{0em}{}
+I suspect you've forgotten a `}', causing me to apply this
+control sequence to too much text. How can we recover?
+My plan is to forget the whole thing and hope for the best.
+
+
+Overfull \hbox (38.61987pt too wide) in paragraph at lines 100--101
+[]\T1/ppl/m/n/10 0em 
+ []
+
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.101 ...ion}{\normalfont\normalsize\bfseries}{}{0
+                                                  em}{}
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+! Undefined control sequence.
+l.102 \titlecontents
+                    {chapter}   [0em]{}{}{}{\titlerule*[1em]{.}\contentspage}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.102 ...ontents{chapter}   [0em]{}{}{}{\titlerule
+                                                  *[1em]{.}\contentspage}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.102 ...m]{}{}{}{\titlerule*[1em]{.}\contentspage
+                                                  }
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/placeins/placeins.sty
+Package: placeins 2005/04/18 v2.2
+)
+
+! LaTeX Error: Command \abstract undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.115 \renewcommand{\abstract}
+                              [1]{%
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Command \maketitle undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.127 \renewcommand{\maketitle}
+                               {%
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Command \chapter undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.150 \renewcommand\chapter
+                           {\secdef\RJ@chapter\@schapter}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2010/09/138.31b(PWD,AO)
+\bibhang=\skip57
+\bibsep=\skip58
+
+! Undefined control sequence.
+l.640  {\@listi
+                \global\bibsep\itemsep \global\advance\bibsep by\parsep}
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count196
+
+! LaTeX Error: Environment thebibliography undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.1063 \renewenvironment{thebibliography}
+                                         [1]{%
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+)
+
+! LaTeX Error: Command \thefigure undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.191 \renewcommand{\thefigure}
+                               {\@arabic\c@figure}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Command \thetable undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.192 \renewcommand{\thetable}
+                              {\@arabic\c@table}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Command \contentsname undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.199 \renewcommand{\contentsname}
+                                  {Contents}
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Command \tableofcontents undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.200 \renewcommand\tableofcontents
+                                   {%
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+! LaTeX Error: Command \titlepage undefined.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.206 \renewcommand{\titlepage}
+                               {%
+Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2020/05/03v3.6verbatimtext(tvz,hv)
+\FV@CodeLineNo=\count197
+
+Overfull \hbox (128.83885pt too wide) in paragraph at lines 101--356
+[]\T1/ppl/m/n/10 0emchapter[0em]*[1em]. 
+ []
+
+\FV@InFile=\read3
+\FV@TabBox=\box56
+\c@FancyVerbLine=\count198
+\FV@StepNumber=\count199
+\FV@OutFile=\write4
+) (/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/base/alltt.sty
+Package: alltt 1997/06/16v2.0gdefinesallttenvironment
+)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+Package: amsfonts 2013/01/14v3.01BasicAMSFontssupport
+\@emptytoks=\toks32
+\symAMSa=\mathgroup5
+\symAMSb=\mathgroup6
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+) (/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2020/09/02v3.5aCustomizingcaptions(AR)
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2020/08/30v2.0caption3kernel(AR)
+\captionmargin=\dimen195
+\captionmargin@=\dimen196
+\captionwidth=\dimen197
+\caption@tempdima=\dimen198
+\caption@indent=\dimen199
+\caption@parindent=\dimen256
+\caption@hangindent=\dimen257
+\abovecaptionskip=\skip59
+\belowcaptionskip=\skip60
+Package caption Info: Documentclassw/ocaptionstuffdetected.
+)
+\c@caption@flags=\count266
+\c@continuedfloat=\count267
+Package caption Info: hyperrefpackageisloaded.
+Package caption Info: Hyperrefsupportisturnedoff
+(caption)             becausehyperrefhasstoppedearly.
+) (/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/environ/environ.sty
+Package: environ 2014/05/04v0.3Anewwaytodefineenvironments
+
+(/Users/raynamharris/Library/TinyTeX/texmf-dist/tex/latex/trimspaces/trimspaces
+.sty
+Package: trimspaces 2009/09/17v1.1Trimspacesaroundatokenlist
+)
+\@envbody=\toks33
+))
+! Emergency stop.
+<*> RJournal.sty
+                
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 17267 strings out of 482828
+ 332503 string characters out of 5952564
+ 577544 words of memory out of 5000000
+ 32361 multiletter control sequences out of 15000+600000
+ 536019 words of font info for 30 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 60i,6n,97p,389b,2934s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!
