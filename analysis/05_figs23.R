@@ -59,13 +59,13 @@ makefig2 <- function(label1, label2, tissue, dff, dfm,
   return(fig)
 }
 
-ab <- makefig2("A", "D","hypothalamus", hypf, hypm, "HTR2C", 
+ab <- makefig2("A", "D","hypothalamus", hypf, hypm, "VIPR1", 
                "control_hatch", "hatch_m.n2", 
                "control", "hatch", "hatch", "m.n2")
 cd <- makefig2("B", "E",  "pituitary", pitf, pitm, "PRL", 
                "inc.d9_inc.d17", "hatch_early", 
                "inc.d9", "inc.d17",  "hatch", "early")
-ef <- makefig2("C", "F", "gonads", gonf, gonm, "ESR1",
+ef <- makefig2("C", "F", "gonads", gonf, gonm, "ESR2",
                "control_lay", "lay_inc.d3",
                "control", "lay", "inc.d3", "m.inc.d3")
 
