@@ -1,9 +1,10 @@
 ---
 title: Transcriptional changes in the reproductive axis of parenting pigeons
 author:
-  - name: Rayna M Harris ^[equal contribtion] 
-    affiliation: University of California, Davis
   - name: Suzanne H. Austin  ^[equal contribtion, currently at the University of Oregon] 
+    affiliation: University of California, Davis
+    email:  suzannehaustin@gmail.com
+  - name: Rayna M Harris ^[equal contribtion] 
     affiliation: University of California, Davis
   - name: Andrew S. Lang
     affiliation: University of New Hampshire
@@ -104,62 +105,24 @@ We thank Irene, Erica, Beth Krestoff and Tiffany Chen for assistance in managing
 \newpage
 
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/fig1-1}
-  \caption{Broad patterns of variation in hypothalamic, pituitary, and gonadal gene expression in male and female rock doves across reproductive and parental transitions.** A) Experimental design. B) The t-SNE plot shows all 636 samples as points in space colored by tissue with ellipses drawn around show 95% confidence interval, and the bar plots show the total number of differentially expressioned genes (DEGs) whose expression was significantly higher in one tissue versus the other. C) This t-SNE plot shows the same data points colored by sex while the ellipses delinate the source tissue; bar plots show the DEGs between the sexes for each tissue. D) These t-SNE and bar plots provide insight into the temporal differences in gene expression within each tissue for each sex. Here, the bar plots highlight the number of DEGs between each sequential time point. For comparisons to controls, see fupplemental figure 1.}
-  \label{figure:fig1}
-\end{figure}
+## Figures
 
+\includegraphics[width=0.95\linewidth]{fig1-1}
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/supplfig-1-1}
-  \caption{Summary of the total number of differentially expressed genes (DEGs) from pair-wise comparison using DESeq2.** Bar plots showing the total number of differentially expressed genes (p < 0.1) and colored by the direction of increased expression (or positive log fold change (+LFC))  are shown for three different analysis: relative to the control group (A), the nest-building (bldg) group (B), and the previous sampling timepoint (C).}
-  \label{figure:supplfig1}
-\end{figure}
+**Figure 1. Experimental design.** A) We investigated nine timepoints that spanned the majority of reproductive efforts in this species. These time-points consisted of a "control" or non-parenting state (from MacManes et al 2016 and Calisi et al. 2017), nest-building, clutch initiation or the onset of incubation, clutch completion and early incubation, mid-incubation, late incubation, initiation of nestling care, early nestling care, and mid-nestling care. To teste whether external or internal factors were regulating gene activity, we also conducted a series of offspring removal (B) and replacement (C) manipulations to test whether transcriptional changes were dependent upon offspring presence or were regulated by an internal clock. (D) We used t-Distributed Stochastic Neighbor Embedding (t-SNE) to reduce the dimensionality of the transcriptomes from the hypothalamus, pituitary, and gonads of male and female rock. Circles and triangles represent female and male samples, respectively, and points are colored by treatment.
 
+\includegraphics[width=0.95\linewidth]{fig2-1}
 
+**Figure 2. Hypothesis-driven and data-driven approaches to identifying changes in gene expression.** Box-and-whisker plots show changes in gene expression of serotonin receptor (HTR2C) in the hypothalamus (A), prolactin (PRL) in the pituitary (B), and estrogen receptor 1 (ESR1) in the gonads.Bar and statistics are shown for one contrast of interest between treatment groups. Boxes are colored by treatment. Volcano plots show the log-fold change (LFC) and -log10(FDR) for all genes that are significantly different differentially between the aforementioned treatment groups. Boxes are colored by the treatment were gene expression was higher.
 
-\newpage
+\includegraphics[width=0.95\linewidth]{fig3-1}
 
-\begin{figure}[h]
-  \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/fig2-1}
-  \caption{Differential gene expression differences between sequential parental stages. a) We calculated the differentail gene expression between each consequtive parental stage samples, for a total of 8 pair-wise comparisons for each sex in each tissue. The y-axis of these bar plots displays the total number of differentially expressed genes for each comparsison in the hypothalamus (b), pituitary (c), gonads (d). Bars are collored by the direction of the change in gene expression. Control: control: red or , nest-building (bldg): orange, lay: yellow; incubation day 3 (inc.d3): light green, inc.d9: green, inc.d17: dark green, hatch: dark blue, nestling care day 5 (n5): blue, and n9: light blue.}
-  \label{figure:fig2}
-\end{figure}
-
-
-\newpage
-
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/fig3-1}
-  \caption{Another another figure}
-  \label{figure:fig3}
-\end{figure}
-
-
-\newpage
-
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=1.0\textwidth]{../../figures/fig4-1}
-  \caption{Another another figure}
-  \label{figure:fig4}
-\end{figure}
-
-\newpage
-
+**Figure 3. Summary of differentially expressed genes.** Bar plots show the total number of significantly differentially expressed genes for all two-way comparisons in the hypothalamus (A), pituitary (B), gonads (C) . Contrasts are made relative to the non-breeding controls, the nest-building group, the previous stage, or the internal or external control group. Bars are colored by the treatment where gene expression was higher. A negative number of differentially expressed genes means that many genes had increase expression in the reference group.
 
 
 \newpage
 
 ## Author affiliations
-
 
 <!-- 
 Introductory section which may include references in parentheses
