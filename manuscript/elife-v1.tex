@@ -141,8 +141,9 @@ rock dove pairs across (Fig. 1). These samples come from nine timepoints
 that encapsulate important transitions in reproduction (Fig. 1A), four
 offspring removal manipulations (Fig. 1B), and three offspring
 replacement manipulations (Fig. 1C) to determine the influence of
-internal mechanisms and external stimuli on gene expression. Using
-T-distributed Stochastic Neighbor Embedding (tSNE) we show broad
+internal mechanisms and external stimuli on gene expression.
+
+Using T-distributed Stochastic Neighbor Embedding (tSNE) we show broad
 patterns of variation due to treatment or sex in each tissue (Fig. 1D).
 In the hypothalamus, tSNE dimension visually separates most of the
 samples that were subject to an offspring manipulation from those from
@@ -151,12 +152,6 @@ cluster more by wether they were before incubation day 9 or after
 incubation day 17. Neither the hypothalamus or pituitary show strong sex
 differences at this level, but the gonads samples from very distinct,
 sex-specific clusters.
-
-\begin{Schunk}
-\begin{figure}
-\includegraphics{elife_v1_files/figure-latex/fig1-1} \caption[Experimental design]{Experimental design. A) We investigated nine timepoints that spanned the majority of reproductive efforts in this species. These timepoints consisted of a "control" or non-parenting state (from MacManes et al 2016 and Calisi et al. 2017), nest-building, clutch initiation or the onset of incubation, clutch completion and early incubation, mid-incubation, late incubation, initiation of nestling care, early nestling care, and mid-nestling care. To teste whether external or internal factors were regulating gene activity, we also conducted a series of offspring removal (B) and replacement (C) manipulations to test whether transcriptional changes were dependent upon offspring presence or were regulated by an internal clock. (D) We used t-Distributed Stochastic Neighbor Embedding (t-SNE) to reduce the dimensionality of the transcriptomes from the hypothalamus, pituitary, and gonads of male and female rock. Circles and triangles represent female and male samples, respectively, and points are colored by treatment.}\label{fig:fig1}
-\end{figure}
-\end{Schunk}
 
 \hypertarget{discussion}{%
 \subsection{Discussion}\label{discussion}}
@@ -243,73 +238,119 @@ and cite). Data can be explored in the cloud using Binder
 \begin{Schunk}
 \begin{table}
 
-\caption{\label{tab:table1}Changes in candidate gene expression. Significant chagns in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.}
+\caption{\label{tab:table1}Changes in candidate gene expression over the course of parental care in rock doves. Significant changes in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.}
 \centering
 \begin{tabular}[t]{l|l|l|l|l|l|l|l}
 \hline
 gene & bldg-lay & lay-inc3 & inc3-inc9 & inc9-inc17 & inc17-hatch & hatch-n5 & n5-n9\\
 \hline
-AR &  &  &  &  &  &  & \\
-\hline
-AVPR1B &  &  &  &  &  &  & \\
-\hline
 AVPR2 &  &  &  &  &  & FP(+) & \\
-\hline
-CRH &  &  &  &  &  &  & \\
-\hline
-CRHR1 &  &  &  &  &  &  & \\
-\hline
-DIO1 &  &  &  &  &  &  & \\
 \hline
 DIO2 &  & FG(-) &  &  &  &  & \\
 \hline
 DIO3 & FP(-) &  &  &  &  &  & \\
 \hline
-ESR2 &  &  &  &  &  &  & \\
-\hline
-FSHB &  &  &  &  &  &  & \\
-\hline
-FSHR &  &  &  &  &  &  & \\
-\hline
-GABRQ &  &  &  &  &  &  & \\
-\hline
-GALR1 &  &  &  &  &  &  & \\
-\hline
-GNRH1 &  &  &  &  &  &  & \\
-\hline
 GNRHR & FP(-) &  &  &  &  &  & \\
-\hline
-JAK2 &  &  &  &  &  &  & \\
-\hline
-LHCGR &  &  &  &  &  &  & \\
-\hline
-NPFFR1 &  &  &  &  &  &  & \\
-\hline
-NPVF &  &  &  &  &  &  & \\
-\hline
-NPY &  &  &  &  &  &  & \\
-\hline
-NR3C2 &  &  &  &  &  &  & \\
-\hline
-POMC &  &  &  &  &  &  & \\
 \hline
 PRL &  &  &  & FP(+); MP(+) &  &  & \\
 \hline
 PRLH & FP(-) & FP(+) &  & FP(+) &  &  & \\
-\hline
-PRLHR &  &  &  &  &  &  & \\
-\hline
-SERPINA4 &  &  &  &  &  &  & \\
-\hline
-VIPR1 &  &  &  &  &  &  & \\
 \hline
 \end{tabular}
 \end{table}
 
 \end{Schunk}
 
+\begin{Schunk}
+\begin{table}
+
+\caption{\label{tab:table2}Changes in candidate gene expression in response to removal. Significant changess in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.}
+\centering
+\begin{tabular}[t]{l|l|l|l|l}
+\hline
+gene & inc.d3\_m.inc.d3 & inc.d9\_m.inc.d9 & inc.d17\_m.inc.d17 & hatch\_m.n2\\
+\hline
+AVPR1B &  &  &  & FP(+)\\
+\hline
+AVPR2 &  &  &  & FP(+)\\
+\hline
+DIO3 &  &  & FP(+); MH(-) & FH(-); FP(+)\\
+\hline
+ESR2 &  &  & FH(-); MH(-) & \\
+\hline
+FSHB &  &  & FP(-) & FH(-); FP(-)\\
+\hline
+GABRQ &  &  & FH(+) & FH(+)\\
+\hline
+JAK2 &  &  & FP(+) & FP(+)\\
+\hline
+LHCGR &  &  & FH(-) & FH(-); MH(-)\\
+\hline
+NPVF & FH(-) &  & FH(-) & FH(-); MH(-)\\
+\hline
+NPY & FP(-) &  &  & MP(+)\\
+\hline
+PRL &  &  & FP(-) & MP(-)\\
+\hline
+PRLH &  &  &  & MH(+)\\
+\hline
+SERPINA4 &  &  & FP(+) & FP(+)\\
+\hline
+\end{tabular}
+\end{table}
+
+\end{Schunk}
+
+\begin{Schunk}
+\begin{table}
+
+\caption{\label{tab:table3}Changes in candidate gene expression in response to replacement. Significant changess in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.}
+\centering
+\begin{tabular}[t]{l|l|l|l|l|l}
+\hline
+gene & inc.d9\_early & inc.d17\_prolong & hatch\_early & hatch\_prolong & hatch\_extend\\
+\hline
+AR &  &  & FP(+) &  & \\
+\hline
+AVPR2 &  &  & FP(+) &  & \\
+\hline
+CRHR1 &  & MG(+) &  &  & \\
+\hline
+ESR2 &  & MG(+) &  &  & \\
+\hline
+GABRQ & MP(+) & FH(+) & MH(+); MP(+) & FH(+); MG(+) & FH(+)\\
+\hline
+GNRH1 &  &  & FH(+) &  & \\
+\hline
+LHCGR &  & FH(-) & MH(-) & FH(-) & FH(-); MH(-)\\
+\hline
+NPVF & MH(-) & FH(-) & FH(-); MH(-) & FH(-) & FH(-)\\
+\hline
+NPY &  & MP(-) & MP(+) &  & \\
+\hline
+POMC &  &  & FH(-) & FH(-) & \\
+\hline
+PRL &  &  & FP(-); MP(-) &  & \\
+\hline
+PRLHR &  &  & MP(+) &  & \\
+\hline
+SERPINA4 &  & MG(+) & MH(+) &  & \\
+\hline
+\end{tabular}
+\end{table}
+
+\end{Schunk}
+
+levelsmanip
+
 \hypertarget{figures}{%
 \subsection{Figures}\label{figures}}
+
+\begin{Schunk}
+\begin{figure}
+\includegraphics{elife_v1_files/figure-latex/fig1-1} \caption[Experimental design]{Experimental design. A) We investigated nine timepoints that spanned the majority of reproductive efforts in this species. These timepoints consisted of a "control" or non-parenting state (from MacManes et al 2016 and Calisi et al. 2017), nest-building, clutch initiation or the onset of incubation, clutch completion and early incubation, mid-incubation, late incubation, initiation of nestling care, early nestling care, and mid-nestling care. To teste whether external or internal factors were regulating gene activity, we also conducted a series of offspring removal (B) and replacement (C) manipulations to test whether transcriptional changes were dependent upon offspring presence or were regulated by an internal clock. (D) We used t-Distributed Stochastic Neighbor Embedding (t-SNE) to reduce the dimensionality of the transcriptomes from the hypothalamus, pituitary, and gonads of male and female rock. Circles and triangles represent female and male samples, respectively, and points are colored by treatment.}\label{fig:fig1}
+\end{figure}
+\end{Schunk}
 
 \begin{Schunk}
 \begin{figure}

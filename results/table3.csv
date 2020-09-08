@@ -1,0 +1,14 @@
+gene,inc.d9_early,inc.d17_prolong,hatch_early,hatch_prolong,hatch_extend
+AR, , ,FP(+), , 
+AVPR2, , ,FP(+), , 
+CRHR1, ,MG(+), , , 
+ESR2, ,MG(+), , , 
+GABRQ,MP(+),FH(+),MH(+); MP(+),FH(+); MG(+),FH(+)
+GNRH1, , ,FH(+), , 
+LHCGR, ,FH(-),MH(-),FH(-),FH(-); MH(-)
+NPVF,MH(-),FH(-),FH(-); MH(-),FH(-),FH(-)
+NPY, ,MP(-),MP(+), , 
+POMC, , ,FH(-),FH(-), 
+PRL, , ,FP(-); MP(-), , 
+PRLHR, , ,MP(+), , 
+SERPINA4, ,MG(+),MH(+), , 

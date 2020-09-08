@@ -75,6 +75,10 @@ labelssmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
 levelsinc9 <- c("inc.d9_early", "inc.d9_m.inc.d9")
 levelsinc17 <- c("inc.d17_prolong", "inc.d17_m.inc.d17")
 levelshatch <- c("hatch_early", "hatch_prolong", "hatch_extend",  "hatch_m.n2" )
+levelsmanip <- c(levelsinc9,levelsinc17,  levelshatch )
+
+levelsrm <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9","inc.d17_m.inc.d17",  "hatch_m.n2" )
+levelsreplace <- c("inc.d9_early","inc.d17_prolong", "hatch_early", "hatch_prolong", "hatch_extend")
 
 labelsinc9 <- c("early", "m.inc.d9")
 labelsinc17 <- c("prolong", "m.inc.d17")

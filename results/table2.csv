@@ -1,42 +1,14 @@
-"gene","inc.d3_m.inc.d3","inc.d9_m.inc.d9","inc.d17_m.inc.d17","hatch_m.n2","inc.d17_prolong","hatch_prolong","extend_hatch","n5_extend","early_inc.d9","hatch_early"
-"ADRA2A",NA,NA,NA,NA,"MG+","MG+ MG+","FH-",NA,NA,"MP+"
-"AVP",NA,NA,"FH-",NA,NA,NA,NA,NA,"MP-",NA
-"AVPR1A",NA,NA,NA,"FH+ MP+","MG+",NA,"FH-",NA,NA,"FH+"
-"BRINP1",NA,NA,"FG- FH+",NA,"MG+","FH+ MG+ MG+",NA,NA,NA,"MP+"
-"CGNRH-R",NA,NA,NA,NA,NA,NA,NA,NA,NA,"FH-"
-"COMT","FH-",NA,"FH-","FH- MH-","FH-","FH- MH-","FH+ MH+",NA,NA,"FH- MH-"
-"CREBRF",NA,NA,"FP+ MP+","FP+ MP+","FG+ MP+","MP+","FH- FP- MG-",NA,"MP-","FH+ FP+"
-"CRH","FH+",NA,NA,NA,NA,"FH+",NA,NA,NA,"MH+"
-"CRHBP",NA,NA,"FH+ MH+","FH+ MH+","MG+","FH+ MG+ MG+","FH- MH-",NA,"MH-","FH+ MH+"
-"CRHR1",NA,NA,NA,"FH+ FP+","MG+","FH+ MG+ MG+","FP-",NA,NA,"FP+"
-"CRHR2","FH+",NA,"FH+ MH+","FH+ MH+","FH+ MH+","FH+","FH- FP- MH-",NA,"MH-","FH+ MH+"
-"DBH",NA,NA,NA,NA,"FG+",NA,NA,NA,NA,NA
-"DRD1","FH+",NA,"FH+ MH+ MP+","FH+ MH+","FH+ MH+","FH+ MH+","FH- MH-",NA,"MH-","FH+ MH+"
-"DRD4","FP+",NA,"FH+ FP+","FH+ FP+ MP+","FH+ FP+ MG+","FH+ MG+ MG+","FH- MH- MP-",NA,"MH-","FH+ MH+"
-"ESR1",NA,NA,NA,NA,"MG+","MG+ MG+",NA,NA,NA,NA
-"ESR2","FH-",NA,"FH- MH- MP-",NA,"MG+","MG+ MG+","FH-",NA,"MH+","FH+"
-"FOS","FH+",NA,"FH+",NA,"FG- MG+",NA,NA,NA,"MH-",NA
-"FSHB",NA,NA,"FP- MH-","FH- FP- MH-",NA,NA,NA,NA,NA,"MH-"
-"FSHR",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
-"GAL",NA,NA,NA,"FP+","MG+",NA,NA,NA,"MP-","MP+"
-"GNAQ","FP+",NA,NA,"FH+ FP+","FP+","FH+ FP+","FH- FP-","MG+","MH- MP-","FH+ FP+ MH+ MP+"
-"GNRH1",NA,NA,NA,"FH+ MH+",NA,NA,"MH-",NA,NA,"FH+"
-"GNRHR",NA,NA,NA,"FP+",NA,NA,"FP+","FP-",NA,NA
-"HTR2C","FH+",NA,"FH+ MH+","FH+ MH+","FH+ MG+ MH+","FH+ MH+","FH- MH-",NA,"MH-","FH+ MH+"
-"KALRN",NA,NA,"FH+","FH+ MH+","FH+","FH+","FH- MH-",NA,NA,"FH+ MH+"
-"MBD2",NA,NA,"FH-",NA,NA,NA,NA,NA,"MH+","MH- MP-"
-"MEST","FP-",NA,"FP-","FP-",NA,NA,NA,"FP+",NA,"FH+ FP- MH+ MP-"
-"NPAS3",NA,NA,"FP+ MH-",NA,NA,"MP+",NA,NA,"MP-","FP+ MP+"
-"NR3C1",NA,NA,NA,"FP+ MP+","FG+","FP+","FP-",NA,NA,"FP+ MP+"
-"OPRK1",NA,NA,"FG- FH+","FH+ FP+ MH+","FG- FH+","FH+ MH+","FH- MH-",NA,"MP-","FH+ FP+ MH+ MP+"
-"OPRM1",NA,NA,NA,NA,"FG+ MG-",NA,"FH-",NA,"MP-","FH+ MP+"
-"OXT",NA,NA,"FH-",NA,NA,NA,NA,NA,"MP-","MP+"
-"PGR","FP+ MP+","FP+","FP+","FH+ FP+ MH+ MP+",NA,"FH+","FH- MP-",NA,NA,"FH+ FP+ MP+"
-"PRL",NA,NA,"FP-","FH- FP- MP-",NA,"FH-",NA,NA,NA,"FP- MP-"
-"PRLR",NA,NA,"FH+ FP- MH+","FH+","FP- MH+","FH+","FH-",NA,NA,"FH+"
-"PTEN","FH+ FP+",NA,"FP+ MP+","MP+","FP+ MP+","MP+",NA,NA,NA,"MP+"
-"SLC6A4",NA,NA,NA,"FP-",NA,NA,NA,NA,NA,NA
-"TH",NA,"FP+","FP+","FP+ MP+","MG+","FH- MG+ MG+ MP+",NA,NA,NA,"FP+"
-"THRB","FP+",NA,"FH+","FH+ MP-","FH+","FH+","FH-",NA,NA,"FH+ MH+ MP-"
-"VIP","FP-","FP+",NA,"FP+ MP+","FP+",NA,"FP-",NA,"MP-","MP+"
-"ZFX","FP+",NA,"FP+","FH+ FP+","FG+",NA,"FH- FP- MH-",NA,NA,"FH+ MH+"
+gene,inc.d3_m.inc.d3,inc.d9_m.inc.d9,inc.d17_m.inc.d17,hatch_m.n2
+AVPR1B, , , ,FP(+)
+AVPR2, , , ,FP(+)
+DIO3, , ,FP(+); MH(-),FH(-); FP(+)
+ESR2, , ,FH(-); MH(-), 
+FSHB, , ,FP(-),FH(-); FP(-)
+GABRQ, , ,FH(+),FH(+)
+JAK2, , ,FP(+),FP(+)
+LHCGR, , ,FH(-),FH(-); MH(-)
+NPVF,FH(-), ,FH(-),FH(-); MH(-)
+NPY,FP(-), , ,MP(+)
+PRL, , ,FP(-),MP(-)
+PRLH, , , ,MH(+)
+SERPINA4, , ,FP(+),FP(+)

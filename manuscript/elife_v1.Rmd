@@ -34,6 +34,8 @@ output:
 library(tidyverse)
 library(kableExtra)
 library(cowplot)
+
+source("../R/themes.R")
 ```
 
 
@@ -53,14 +55,8 @@ Additionally, because these data are extensive, we took the opportunity to provi
 ### The rock dove reproduction and parental care transcriptome
 
 We created the rock dove transcriptome by sequenced 987 RNA samples from the hypothalamus, pituitary and gonads from the female and male of 166 rock dove pairs across (Fig. 1). These samples come from nine timepoints that encapsulate important transitions in reproduction (Fig. 1A), four offspring removal manipulations (Fig. 1B), and three offspring replacement manipulations (Fig. 1C) to determine the influence of internal mechanisms and external stimuli on gene expression. 
+
 Using T-distributed Stochastic Neighbor Embedding (tSNE) we show broad patterns of variation due to treatment or sex in each tissue (Fig. 1D). In the hypothalamus, tSNE dimension visually separates most of the samples that were subject to an offspring manipulation from those from naturally occurring parental stages. In the pituitary however, samples cluster more by wether they were before incubation day 9 or after incubation day 17. Neither the hypothalamus or pituitary show strong sex differences at this level, but the gonads samples from very distinct, sex-specific clusters.  
-
-```{r fig1, echo = F, message = F, fig.cap = 'Experimental design. A) We investigated nine timepoints that spanned the majority of reproductive efforts in this species. These timepoints consisted of a "control" or non-parenting state (from MacManes et al 2016 and Calisi et al. 2017), nest-building, clutch initiation or the onset of incubation, clutch completion and early incubation, mid-incubation, late incubation, initiation of nestling care, early nestling care, and mid-nestling care. To teste whether external or internal factors were regulating gene activity, we also conducted a series of offspring removal (B) and replacement (C) manipulations to test whether transcriptional changes were dependent upon offspring presence or were regulated by an internal clock. (D) We used t-Distributed Stochastic Neighbor Embedding (t-SNE) to reduce the dimensionality of the transcriptomes from the hypothalamus, pituitary, and gonads of male and female rock. Circles and triangles represent female and male samples, respectively, and points are colored by treatment.'}
-a <- png::readPNG("../figures/fig1-1.png")
-a <- ggdraw() +  draw_image(a, scale = 0.95)
-a
-```
-
 
 ## Discussion
 
@@ -87,6 +83,46 @@ Processing of brains, pituitaries, and gonads for RNA sequenceing is described i
 Statistical analyses and modeling were perforeming using R \citep{RDevelopmentCoreTeam2013, Wickham2016}. Limma was use to process all samples using the model ~ tissue \* sex \* treatment (citation). t-Distributed Stochastic Neighbor Embedding (t-SNE) analysis was conducted using a perplexity of 10 \citep{VanDerMaaten2008}. Principal Component Analysis (PCA) was conducted using the top 500 most varying genes (citation). DESeq2 was used to model gene express for sex and tissue combination separately using the model ~treatment \citep{Love2014). Weighted correlation network analysis (WGCNA) was used to identify set of genes with simliar patterns of gene expression over the course of reprodution and parental care (citation). ANOVAs were used to test whether specific genes were differnetially expressed between between sequential timepoints. 
 
 
+```{r cDEGs, include = F}
+cDEGs <- read_csv("../results/03_wideDEGscandidates.csv") %>%
+  select(-X1)
+
+# helper function to add column of NAs if no DEGs exist
+fncols <- function(data, cname) {
+  add <-cname[!cname%in%names(data)]
+  if(length(add)!=0) data[add] <- NA
+  data
+}
+
+
+maketables123 <- function(df, whichlevels){
+  table <- fncols(cDEGs, whichlevels) %>% 
+    select(gene, whichlevels)  %>%
+    mutate(allres = rowSums(is.na(.))) 
+  
+  numcomparisons <- ncol(table) -2
+  
+  table <- table %>%
+    filter(allres < numcomparisons) %>%
+    select(-allres)
+  table[is.na(table)] <- " "
+  print(table)
+  return(table)
+  
+}
+
+table1 <- maketables123(cDEGs, levelssequential) 
+table2 <- maketables123(cDEGs, levelsrm) 
+table3 <- maketables123(cDEGs, levelsreplace) 
+
+write_csv(table1, "../results/table1.csv")
+write_csv(table2, "../results/table2.csv")
+write_csv(table3, "../results/table3.csv")
+
+```
+
+
+
 _Data availablility_
 
 RNA sequencing data for available through the European Nucleotide Archive (ENA) project ID PRJEB16136 and XXXXX. Code and data for reproducing the results described in the manuscript are available at https://github.com/macmanes-lab/DoveParentsRNAseq (upload to zendo and cite). Data can be explored in the cloud using Binder \citep{project_jupyter-proc-scipy-2018}. 
@@ -99,17 +135,33 @@ RNA sequencing data for available through the European Nucleotide Archive (ENA) 
 
 
 ```{r table1, echo =FALSE, message = F }
-table1 <- read_csv("../results/table1.csv")
-table1[is.na(table1)] <- " "
 kable(table1,
       col.names = c('gene', 'bldg-lay',  'lay-inc3', 'inc3-inc9', 'inc9-inc17', 
                     'inc17-hatch', 'hatch-n5', 'n5-n9'),
-      caption = "Changes in candidate gene expression. Significant chagns in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.") 
+      caption = "Changes in candidate gene expression over the course of parental care in rock doves. Significant changes in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.") 
 ```
+
+```{r table2, echo =FALSE, message = F }
+kable(table2,
+      caption = "Changes in candidate gene expression in response to removal. Significant changess in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.") 
+```
+
+
+```{r table3, echo =FALSE, message = F }
+kable(table3,
+      caption = "Changes in candidate gene expression in response to replacement. Significant changess in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.") 
+```
+
+levelsmanip
 
 ## Figures
 
 
+```{r fig1, echo = F, message = F, fig.cap = 'Experimental design. A) We investigated nine timepoints that spanned the majority of reproductive efforts in this species. These timepoints consisted of a "control" or non-parenting state (from MacManes et al 2016 and Calisi et al. 2017), nest-building, clutch initiation or the onset of incubation, clutch completion and early incubation, mid-incubation, late incubation, initiation of nestling care, early nestling care, and mid-nestling care. To teste whether external or internal factors were regulating gene activity, we also conducted a series of offspring removal (B) and replacement (C) manipulations to test whether transcriptional changes were dependent upon offspring presence or were regulated by an internal clock. (D) We used t-Distributed Stochastic Neighbor Embedding (t-SNE) to reduce the dimensionality of the transcriptomes from the hypothalamus, pituitary, and gonads of male and female rock. Circles and triangles represent female and male samples, respectively, and points are colored by treatment.'}
+a <- png::readPNG("../figures/fig1-1.png")
+a <- ggdraw() +  draw_image(a, scale = 0.95)
+a
+```
 
 
 
