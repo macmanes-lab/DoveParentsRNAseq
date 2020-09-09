@@ -115,6 +115,6 @@ manipDEGs <- rbind(removalDEGs, earlyDEGs) %>%
 head(manipDEGs)
 
 ## save files
-write.csv(allDEG, "results/03_allDEG.csv", row.names = F)
-write.csv(manipDEGs, "results/03_manipDEGs.csv")
-write.csv(wideDEGscandidates, "results/03_wideDEGscandidates.csv")
+write.csv(allDEG, "results/04_allDEG.csv", row.names = F)
+write.csv(manipDEGs, "results/04_manipDEGs.csv")
+write.csv(wideDEGscandidates, "results/04_candidateDEGs.csv.csv")

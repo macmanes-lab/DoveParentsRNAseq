@@ -16,7 +16,7 @@ pitm <- wranglevsds("results/03_pitvsdm.csv")
 gonf <- wranglevsds("results/03_gonvsdf.csv")
 gonm <- wranglevsds("results/03_gonvsdm.csv")
 
-allDEG <- read_csv("results/03_allDEG.csv")
+allDEG <- read_csv("results/04_allDEG.csv")
 
 ## figure 2 candidate genes
 
