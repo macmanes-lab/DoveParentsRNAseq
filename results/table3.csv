@@ -1,14 +1,19 @@
 gene,inc.d9_early,inc.d17_prolong,hatch_early,hatch_prolong,hatch_extend
-AR, , ,FP(+), , 
-AVPR2, , ,FP(+), , 
-CRHR1, ,MG(+), , , 
-ESR2, ,MG(+), , , 
+AR,NA,NA,FP(+),NA,NA
+AVPR2,NA,NA,FP(+),NA,NA
+CRHR1,NA,MG(+),NA,NA,NA
+ESR2,NA,MG(+),NA,NA,NA
 GABRQ,MP(+),FH(+),MH(+); MP(+),FH(+); MG(+),FH(+)
-GNRH1, , ,FH(+), , 
-LHCGR, ,FH(-),MH(-),FH(-),FH(-); MH(-)
+GAL,NA,NA,MP(+),NA,NA
+GNRH1,NA,NA,FH(+),NA,NA
+LHCGR,NA,FH(-),MH(-),FH(-),FH(-); MH(-)
+MC4R,MP(+),NA,MP(+),NA,NA
+MC5R,NA,NA,FP(+); MP(+),NA,NA
 NPVF,MH(-),FH(-),FH(-); MH(-),FH(-),FH(-)
-NPY, ,MP(-),MP(+), , 
-POMC, , ,FH(-),FH(-), 
-PRL, , ,FP(-); MP(-), , 
-PRLHR, , ,MP(+), , 
-SERPINA4, ,MG(+),MH(+), , 
+NPY,NA,MP(-),MP(+),NA,NA
+OXT,NA,NA,MP(+),NA,NA
+POMC,NA,NA,FH(-),FH(-),NA
+PRL,NA,NA,FP(-); MP(-),NA,NA
+PRLHR,NA,NA,MP(+),NA,NA
+SERPINA4,NA,MG(+),MH(+),NA,NA
+VIP,MP(+),NA,MP(+),NA,NA

@@ -22,23 +22,7 @@ allDEG <- DEG_pathfiles %>%
   mutate(comparison = paste(down,up, sep = "_")) %>%
   mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
   mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-  dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj) 
-head(allDEG)
-
-unique(allDEG$comparison)
-
-candidateDEGs <- DEG_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_csv(.x), .id = "file_name") %>% 
-  mutate(DEG = sapply(strsplit(as.character(file_name),'results/DEseq2/treatment/'), "[", 2))  %>% 
-  mutate(DEG = sapply(strsplit(as.character(DEG),'_diffexp.csv'), "[", 1))  %>% 
-  mutate(tissue = sapply(strsplit(as.character(DEG),'\\.'), "[", 1)) %>%
-  mutate(down = sapply(strsplit(as.character(DEG),'\\_'), "[", 3)) %>%
-  mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
-  mutate(comparison = paste(down,up, sep = "_")) %>%
-  mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
-  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-  filter(gene %in% candidategenes) %>%
+  dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj)  %>%
   mutate(posneg = ifelse(lfc >= 0, "+", "-"),
          sex = recode(sex, "female" = "F", "male" = "M" ),
          tissue = recode(tissue, 
@@ -46,7 +30,13 @@ candidateDEGs <- DEG_pathfiles %>%
                          "pituitary" = "P",
                          "gonad" = "G",
                          "gonads" = "G"),
-         group = paste(sex, tissue, sep = "")) %>%
+         group = paste(sex, tissue, sep = ""))
+head(allDEG)
+
+unique(allDEG$comparison)
+
+candidateDEGs <- allDEG %>%
+  filter(gene %in% candidategenes) %>%
   mutate(res = paste("(", posneg, ")", sep = "")) %>%
   mutate(compres = paste(group, res, sep = "")) %>%
   group_by(gene, comparison) %>%
@@ -59,16 +49,8 @@ head(candidateDEGs)
 makemanipulationDEGtables <- function(whichcomparisons){
   df <- allDEG %>%
     filter(comparison %in% whichcomparisons) %>%
-    mutate(posneg = ifelse(lfc >= 0, "+", "-"),
-           sex = recode(sex, "female" = "F", "male" = "M" ),
-           tissue = recode(tissue, 
-                           "hypothalamus" = "H",
-                           "pituitary" = "P", 
-                           "gonad" = "G",
-                           "gonads" = "G"),
-           group = paste(sex, tissue, sep = "")) %>%
     mutate(res = paste("(", posneg, ")", sep = "")) %>%
-    mutate(compres = paste(comparison, res, sep = "")) %>%
+    mutate(compres = paste(group, res, sep = "")) %>%
     select(gene, group, compres) %>%
     group_by(group,gene) %>%
     summarize(results = str_c(compres, collapse = "; ")) %>%
@@ -114,6 +96,7 @@ fncols <- function(data, cname) {
 maketables123 <- function(df, whichlevels){
   table <- fncols(df, whichlevels) %>% 
     select(gene, whichlevels)  %>%
+    ungroup() %>%
     mutate(allres = rowSums(is.na(.))) 
   
   numcomparisons <- ncol(table) -2
@@ -135,6 +118,6 @@ write.csv(allDEG, "results/04_allDEG.csv", row.names = F)
 write.csv(manipDEGs, "results/04_manipDEGs.csv")
 write.csv(candidateDEGs, "results/04_candidateDEGs.csv")
 
-write_csv(table1, "../results/table1.csv")
-write_csv(table2, "../results/table2.csv")
-write_csv(table3, "../results/table3.csv")
+write_csv(table1, "results/table1.csv")
+write_csv(table2, "results/table2.csv")
+write_csv(table3, "results/table3.csv")
