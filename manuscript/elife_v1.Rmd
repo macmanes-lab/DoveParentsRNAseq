@@ -84,45 +84,6 @@ Processing of brains, pituitaries, and gonads for RNA sequenceing is described i
 Statistical analyses and modeling were perforeming using R \citep{RDevelopmentCoreTeam2013, Wickham2016}. Limma was use to process all samples using the model ~ tissue \* sex \* treatment (citation). t-Distributed Stochastic Neighbor Embedding (t-SNE) analysis was conducted using a perplexity of 10 \citep{VanDerMaaten2008}. Principal Component Analysis (PCA) was conducted using the top 500 most varying genes (citation). DESeq2 was used to model gene express for sex and tissue combination separately using the model ~treatment \citep{Love2014). Weighted correlation network analysis (WGCNA) was used to identify set of genes with simliar patterns of gene expression over the course of reprodution and parental care (citation). ANOVAs were used to test whether specific genes were differnetially expressed between between sequential timepoints. 
 
 
-```{r cDEGs, include = F}
-cDEGs <- read_csv("../results/04_candidateDEGs.csv") %>%
-  select(-X1)
-
-# helper function to add column of NAs if no DEGs exist
-fncols <- function(data, cname) {
-  add <-cname[!cname%in%names(data)]
-  if(length(add)!=0) data[add] <- NA
-  data
-}
-
-
-maketables123 <- function(df, whichlevels){
-  table <- fncols(cDEGs, whichlevels) %>% 
-    select(gene, whichlevels)  %>%
-    mutate(allres = rowSums(is.na(.))) 
-  
-  numcomparisons <- ncol(table) -2
-  
-  table <- table %>%
-    filter(allres < numcomparisons) %>%
-    select(-allres)
-  table[is.na(table)] <- " "
-  print(table)
-  return(table)
-  
-}
-
-table1 <- maketables123(cDEGs, levelssequential) 
-table2 <- maketables123(cDEGs, levelsrm) 
-table3 <- maketables123(cDEGs, levelsreplace) 
-
-write_csv(table1, "../results/table1.csv")
-write_csv(table2, "../results/table2.csv")
-write_csv(table3, "../results/table3.csv")
-
-```
-
-
 
 _Data availablility_
 
@@ -136,6 +97,8 @@ RNA sequencing data for available through the European Nucleotide Archive (ENA) 
 
 
 ```{r table1, echo =FALSE, message = F }
+table1 <- read_csv("../results/table1.csv")
+table1[is.na(table1)] <- " "
 kable(table1,
       col.names = c('gene', 'bldg-lay',  'lay-inc3', 'inc3-inc9', 'inc9-inc17', 
                     'inc17-hatch', 'hatch-n5', 'n5-n9'),
@@ -143,12 +106,16 @@ kable(table1,
 ```
 
 ```{r table2, echo =FALSE, message = F }
+table2 <- read_csv("../results/table2.csv")
+table2[is.na(table2)] <- " "
 kable(table2,
       caption = "Changes in candidate gene expression in response to removal. Significant changess in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.") 
 ```
 
 
 ```{r table3, echo =FALSE, message = F }
+table3 <- read_csv("../results/table3.csv")
+table3[is.na(table3)] <- " "
 kable(table3,
       caption = "Changes in candidate gene expression in response to replacement. Significant changess in gene expression are shown for X candidate genes. Positive and negative changes are denoted with (+) and (-) respectively for female (F) and male (M) hypothalamus (H), pituitary (P) and gonads (G). Comparisons are denoted in the column names. The first group is the reference group.") 
 ```

@@ -29,7 +29,6 @@ datadrivengenes <- c("COX1", "COX2", "CYTB", "ATP2B4", "LOC107055658",
 literaturegenes <- c(curleychampagnegenes, datadrivengenes,
                      "VIP", "GNIH", "GAL", "TH", "THRB",
                      "GNRHR", "GNRH1", "CGNRH-R", "FSHB", "FSHR")
-literaturegenes
 
 literaturegenes <- as.data.frame(literaturegenes) %>%
   mutate(GO = "literature", gene = literaturegenes)  %>%
@@ -65,11 +64,17 @@ parentalcaregenes <- GOgenes %>%
   dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
 
+#candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
+candidategenes <- c(favoritegenes)
+shinygenes <- c(favoritegenes, parentalcaregenes)
 
-#####
 
-## old gene lists
 
+
+
+
+
+### old gene lists
 
 ## breast and ovarian cancers  https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
 suszynskaagenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1", "ATM",
@@ -81,22 +86,5 @@ shaidgenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", "DICER1"
 
 cancergenes <- c(suszynskaagenes, shaidgenes)
 
-## genes WGCNA prl module
-WGCNAgenes <- read_csv("results/05_PRLmodule.csv") %>% pull(x)
 
-
-## all degs
-
-degs <- read_csv("results/03_allDEG.csv") %>%
-  filter(!grepl("LOC", gene),
-         !grepl("control|bldg", comparison))  %>%
-  distinct(gene) %>%
-  arrange(gene) %>%
-  pull(gene)
-head(degs)
-tail(degs)
-
-#candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
-candidategenes <- c(favoritegenes)
-shinygenes <- c(favoritegenes, parentalcaregenes)
 

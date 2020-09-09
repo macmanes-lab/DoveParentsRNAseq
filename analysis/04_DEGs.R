@@ -27,7 +27,7 @@ head(allDEG)
 
 unique(allDEG$comparison)
 
-tempDEGs <- DEG_pathfiles %>%
+candidateDEGs <- DEG_pathfiles %>%
   setNames(nm = .) %>% 
   map_df(~read_csv(.x), .id = "file_name") %>% 
   mutate(DEG = sapply(strsplit(as.character(file_name),'results/DEseq2/treatment/'), "[", 2))  %>% 
@@ -37,12 +37,7 @@ tempDEGs <- DEG_pathfiles %>%
   mutate(up = sapply(strsplit(as.character(DEG),'\\_'), "[", 4)) %>%
   mutate(comparison = paste(down,up, sep = "_")) %>%
   mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
-  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2))
-head(tempDEGs)
-
-
-# sequential in 2 or more comparisons
-wideDEGscandidates <- tempDEGs %>%
+  mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
   filter(gene %in% candidategenes) %>%
   mutate(posneg = ifelse(lfc >= 0, "+", "-"),
          sex = recode(sex, "female" = "F", "male" = "M" ),
@@ -57,21 +52,12 @@ wideDEGscandidates <- tempDEGs %>%
   group_by(gene, comparison) %>%
   summarize(results = str_c(compres, collapse = "; ")) %>%
   pivot_wider(names_from = comparison, values_from = results) 
-wideDEGscandidates
-
+head(candidateDEGs)
 
 ### manipuluation
 
-
-head(allDEG)
-
-filteredDEGs <- allDEG %>%
-  filter(lfc > 0.14 | lfc < -0.14 )
-dim(allDEG)
-dim(filteredDEGs)
-
 makemanipulationDEGtables <- function(whichcomparisons){
-  df <- filteredDEGs %>%
+  df <- allDEG %>%
     filter(comparison %in% whichcomparisons) %>%
     mutate(posneg = ifelse(lfc >= 0, "+", "-"),
            sex = recode(sex, "female" = "F", "male" = "M" ),
@@ -114,7 +100,41 @@ manipDEGs <- rbind(removalDEGs, earlyDEGs) %>%
   arrange(desc(n))
 head(manipDEGs)
 
+
+# make tables
+
+# helper function to add column of NAs if no DEGs exist
+fncols <- function(data, cname) {
+  add <-cname[!cname%in%names(data)]
+  if(length(add)!=0) data[add] <- NA
+  data
+}
+
+
+maketables123 <- function(df, whichlevels){
+  table <- fncols(df, whichlevels) %>% 
+    select(gene, whichlevels)  %>%
+    mutate(allres = rowSums(is.na(.))) 
+  
+  numcomparisons <- ncol(table) -2
+  
+  table <- table %>%
+    filter(allres < numcomparisons) %>%
+    select(-allres)
+  print(table)
+  return(table)
+  
+}
+
+table1 <- maketables123(candidateDEGs, levelssequential) 
+table2 <- maketables123(candidateDEGs, levelsrm) 
+table3 <- maketables123(candidateDEGs, levelsreplace) 
+
 ## save files
 write.csv(allDEG, "results/04_allDEG.csv", row.names = F)
 write.csv(manipDEGs, "results/04_manipDEGs.csv")
-write.csv(wideDEGscandidates, "results/04_candidateDEGs.csv.csv")
+write.csv(candidateDEGs, "results/04_candidateDEGs.csv")
+
+write_csv(table1, "../results/table1.csv")
+write_csv(table2, "../results/table2.csv")
+write_csv(table3, "../results/table3.csv")

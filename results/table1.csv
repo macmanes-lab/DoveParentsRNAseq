@@ -1,7 +1,0 @@
-gene,bldg_lay,lay_inc.d3,inc.d3_inc.d9,inc.d9_inc.d17,inc.d17_hatch,hatch_n5,n5_n9
-AVPR2, , , , , ,FP(+), 
-DIO2, ,FG(-), , , , , 
-DIO3,FP(-), , , , , , 
-GNRHR,FP(-), , , , , , 
-PRL, , , ,FP(+); MP(+), , , 
-PRLH,FP(-),FP(+), ,FP(+), , , 

@@ -45,14 +45,16 @@ rule degs:
     "results/DESeq2/treatment/female_gonads_control_early_DEGs.csv",
     "results/DESeq2/treatment/male_gonads_inc.d3_m.inc.d3_DEGs.csv"
   output:
-    "results/03_allDEG.csv"
+    "results/04_allDEG.csv",
+     "results/table1.csv",
   shell:
     "Rscript analysis/04_DEGs.R"
     
 
 rule figs23:
   input:
-    "results/03_allDEG.csv"
+    "results/03_allDEG.csv",
+    "results/04_allDEG.csv"
   output:
     "figures/fig2-1.pdf",
     "figures/fig3-1.pdf"
