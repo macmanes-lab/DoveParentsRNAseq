@@ -8,7 +8,9 @@ geneids <- read_csv("metadata/00_geneinfo.csv") %>% select(-X1)
 favoritegenes <- c("AR", "AVP", "AVPR1B", "AVPR2", "CRH", "CRHR1",
                    "DIO1", "DIO2", "DIO3", "ESR2", "FSHB",
                    "FSHR", "GABRQ", "GAL", "GALR1", "GNRH1", "GNRHR",
-                   "JAK2", "LHCGR", "NPFFR1", "NPVF", "NPY",
+                   "JAK2", 
+                   "LHCGR", "CGA",
+                   "NPFFR1", "NPVF", "NPY",
                    "NR3C2", "OXT", "OXTR", "POMC", "MC3R", "MC4R", "MC5R",
                    "PRL", "PRLH",	
                    "PRLHR", "SERPINA4", "STAT5A", "VIP", "VIPR1")
