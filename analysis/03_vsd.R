@@ -42,20 +42,8 @@ getcandidatevsdmanip <- function(whichgenes, whichtissue){
                   treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1),
                   treatment = recode(treatment, "m.hatch" = "m.n2", "extend.hatch" = "m.n2",
                                      "inc.prolong" = "prolong", "m.inc.d8" = "early"),
-                  treatment =  factor(treatment, levels = alllevels),
-                  earlylate = fct_collapse(treatment, 
-                                           early = c("early", "m.inc.d3", "m.inc.d9",
-                                                     "lay", "inc.d3", "inc.d9" ),
-                                           
-                                           late = c("inc.d17", "m.inc.d17", "prolong" ,  "hatch" , 
-                                                    "m.n2", "extend", "n5", "n9"),
-                                           reference = c("control", "bldg")),
-                  extint = fct_collapse(treatment, 
-                                        loss = c("m.inc.d3", "m.inc.d9", "m.n2", "m.inc.d17"),
-                                        eggs = c("lay","inc.d3", "inc.d9", "inc.d17", "prolong"),
-                                        chicks = c("early", "hatch", "extend", "n5", "n9"),
-                                        reference = c("control", "bldg")))  %>%
-    dplyr::select(gene, counts, sex, tissue, treatment, extint, samples)  %>%
+                  treatment =  factor(treatment, levels = alllevels))  %>%
+    dplyr::select(gene, counts, sex, tissue, treatment, samples)  %>%
     drop_na()
   return(candidates)
 }
