@@ -1,11 +1,14 @@
 library(tidyverse)
 library(readr)
 
-source("R/themes.R")
-source("R/genelists.R")
+source("R/themes.R") # info about samples and dataset formatting
+source("R/genelists.R") # genes of interest
+
+## gene list
+## useful for finding genes of interest
+geneinfo <- read_csv("metadata/00_geneinfo.csv")
 
 ### variance stabilized gene expression  (vsd) 
-
 
 vsd_path <- "results/DEseq2/treatment/"   # path to the data
 vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names

@@ -61,4 +61,3 @@ rule figs23:
     "figures/fig3-1.pdf"
   shell:
     "Rscript analysis/05_figs23.R" 
-    

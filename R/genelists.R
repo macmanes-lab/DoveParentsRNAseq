@@ -7,8 +7,9 @@ geneids <- read_csv("metadata/00_geneinfo.csv") %>% select(-X1)
 
 favoritegenes <- c("AR", "AVP", "AVPR1B", "AVPR2", "CRH", "CRHR1",
                    "DIO1", "DIO2", "DIO3", "ESR2", "FSHB",
-                   "FSHR", "GABRQ", "GAL", "GALR1", "GNRH1", "GNRHR",
-                   "JAK2", 
+                   "FSHR", "GABRQ", "GAL", "GALR1",
+                   "GNRH1", "GNRHR",
+                   "JAK2", "NPVF",
                    "LHCGR", "CGA",
                    "NPFFR1", "NPVF", "NPY",
                    "NR3C2", "OXT", "OXTR", "POMC", "MC3R", "MC4R", "MC5R",
@@ -76,7 +77,7 @@ ovariancancergenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", 
 
 ## genes from github issues 
 ## https://github.com/raynamharris/musicalgenes/blob/master/.github/ISSUE_TEMPLATE/request-a-gene.md
-githubgenes <- c("BRCA1")
+githubgenes <- c("BRCA1", "NPVF")
 
 
 #candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)

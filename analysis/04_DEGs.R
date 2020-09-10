@@ -35,6 +35,8 @@ head(allDEG)
 
 unique(allDEG$comparison)
 
+print(candidategenes)
+
 candidateDEGs <- allDEG %>%
   filter(gene %in% candidategenes) %>%
   mutate(res = paste("(", posneg, ")", sep = "")) %>%
