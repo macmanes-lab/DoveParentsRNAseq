@@ -36,7 +36,8 @@ rule vsd:
     "R/genelists.R"
   output:
     "results/03_hypvsdf.csv",
-    "results/03_candidatevsd.csv"
+    "results/03_candidatevsd.csv",
+    "results/03_shinyvsd.csv"
   shell:
     "Rscript analysis/03_vsd.R"    
     

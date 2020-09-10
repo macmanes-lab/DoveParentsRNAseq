@@ -67,3 +67,4 @@ write.csv(candidatevsd, "results/03_candidatevsd.csv", row.names = F)
 
 shinyvsd <- getcandidatevsdmanip(shinygenes)
 write.csv(shinyvsd, "../musicalgenes/data/candidatecounts.csv", row.names = F)
+write.csv(shinyvsd, "results/03_shinyvsd.csv", row.names = F)

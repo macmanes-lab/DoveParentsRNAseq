@@ -64,27 +64,21 @@ parentalcaregenes <- GOgenes %>%
   dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
 
-#candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
-candidategenes <- c(favoritegenes)
-shinygenes <- c(favoritegenes, parentalcaregenes)
 
-
-
-
-
-
-
-### old gene lists
 
 ## breast and ovarian cancers  https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
-suszynskaagenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1", "ATM",
+breastcancergenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1", "ATM",
                      "BARD1", "MESH6","MSH2", "BRIP1", "NBN", "FANCC", "FANCM", 
                      "RAD51C","RAD51D")
-
-shaidgenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", "DICER1", 
+ovariancancergenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", "DICER1", 
                 "PRKAR1A", "PRKACA","SDH", "GPR101")
 
-cancergenes <- c(suszynskaagenes, shaidgenes)
+
+## genes from github issues 
+## https://github.com/raynamharris/musicalgenes/blob/master/.github/ISSUE_TEMPLATE/request-a-gene.md
+githubgenes <- c("BRCA1")
 
 
-
+#candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
+candidategenes <- c(favoritegenes)
+shinygenes <- c(favoritegenes, parentalcaregenes, githubgenes)
