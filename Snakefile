@@ -61,3 +61,11 @@ rule figs23:
     "figures/fig3-1.pdf"
   shell:
     "Rscript analysis/05_figs23.R" 
+    
+rule figsup1:
+  input:
+    "figures/images/fig_supfig1a.png"
+  output:
+    "figures/figsupp1-1.pdf"
+  shell:
+    "Rscript analysis/06_figsup1.R"     
