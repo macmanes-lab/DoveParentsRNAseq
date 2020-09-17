@@ -1,4 +1,4 @@
-# Fig 2, 3, and 4
+# Fig 2 and 3
 
 library(tidyverse)
 library(cowplot)

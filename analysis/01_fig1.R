@@ -39,7 +39,7 @@ e2 <- plottsne(pittsne, pittsne$treatment, allcolors ) +
 e3 <- plottsne(gontsne, gontsne$treatment, allcolors ) + 
   labs(subtitle = "gonads") 
 
-e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D"), label_size = 8)
+e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D", "E", "F"), label_size = 8)
 
 a <- png::readPNG("figures/images/fig_fig1a.png")
 a <- ggdraw() +  draw_image(a, scale = 1)
