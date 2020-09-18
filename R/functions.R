@@ -31,6 +31,7 @@ returnvsd <- function(whichdds, whichgroup){
   vsd <- as.data.frame(assay(vst(whichdds, blind=FALSE)))
   myfilename = paste0("results/DEseq2/treatment/", whichgroup, "_vsd.csv")
   write.csv(vsd, myfilename)
+  
   return(vsd)
   print(head(vsd))
   
@@ -48,7 +49,7 @@ wranglevsds <- function(pathtofile){
 ##### DEGs
 
 
-createDEGdftreatmentvcontrols <- function(whichdds, whichgroup, downs, ups){
+createDEGdfs <- function(whichdds, whichgroup, downs, ups){
   
   for(down in downs){
     for(up in ups){
@@ -67,6 +68,7 @@ createDEGdftreatmentvcontrols <- function(whichdds, whichgroup, downs, ups){
           print(summary(res))
           
           DEGs <- data.frame(gene = row.names(res),
+                             pvalue = res$pvalue, 
                              padj = res$padj, 
                              logpadj = -log10(res$padj),
                              lfc = res$log2FoldChange,
@@ -75,22 +77,44 @@ createDEGdftreatmentvcontrols <- function(whichdds, whichgroup, downs, ups){
           
           DEGs <- DEGs %>%
             dplyr::mutate(direction = ifelse(lfc > 0.14 & padj < 0.1, yes = up, 
-                                             ifelse(lfc < 0.14 & padj < 0.1, yes = down, 
+                                             ifelse(lfc < -0.14 & padj < 0.1, yes = down, 
                                                     no = "NS"))) %>% 
-            dplyr::arrange(desc(lfc)) %>%
-            dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)))
+            dplyr::mutate(direction2 = ifelse(lfc > 0.14 & pvalue < 0.05, yes = up, 
+                                             ifelse(lfc < -0.14 & pvalue < 0.05, yes = down, 
+                                                    no = "NS"))) %>% 
+            dplyr::arrange(gene) %>%
+            dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)),
+                          direction2 = factor(direction2, levels = c(down, "NS", up)))
+          
+
+         
           
           # write DEGsframe of only significant genes
-          DEGs <- DEGs %>% dplyr::filter(direction != "NS")
+          DEGs <- DEGs %>% dplyr::filter(direction2 != "NS") %>%
+            select(sextissue, gene, 
+                   padj, direction, pvalue, direction2, 
+                   lfc, logpadj)
           
-          top6 <- DEGs %>% head(.) %>% pull(gene) 
-          print(top6)
+          print("First 5 genes with un-adjusted p < 0.5")
+          
+          DEGs %>%
+            select(-sextissue, -logpadj) %>%
+            head() %>%
+            print()
+          
+          print("Candidate genes with un-adjusted p < 0.05")
+          listogenes <- DEGs %>% arrange(gene) %>%  
+            mutate(gene = as.character(gene)) %>%
+            filter(gene %in% candidategenes) %>%
+            pull(gene) 
+          print(listogenes)
           
           # return DEGs frome with all data, included NS genes
           partialfilename = paste("_", down, "_", up, sep = "")
           myfilename = paste0("results/DESeq2/treatment/", 
                               whichgroup, partialfilename, "_DEGs.csv")
           write.csv(DEGs, myfilename, row.names = F)
+          
         }
       }  
     }

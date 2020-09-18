@@ -25,7 +25,8 @@ rule deseq2:
     "metadata/00_colData.csv",
     "results/00_counts.csv"
   output:
-    "results/DESeq2/treatment/female_pituitary_control_bldg_DEGs.csv"
+    "results/DESeq2/treatment/female_pituitary_control_bldg_DEGs.csv",
+    "results/DESeq2/treatment/male_hypothalamus_inc.d9_inc.d17_DEGs.csv"
   threads: 6
   shell:
     "Rscript analysis/02_DESeq2.R"
@@ -43,6 +44,7 @@ rule vsd:
     
 rule degs:
   input:
+    "results/DESeq2/treatment/male_hypothalamus_inc.d9_inc.d17_DEGs.csv",
     "results/DESeq2/treatment/female_gonads_control_early_DEGs.csv",
     "results/DESeq2/treatment/male_gonads_inc.d3_m.inc.d3_DEGs.csv"
   output:

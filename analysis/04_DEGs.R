@@ -59,11 +59,12 @@ allDEG <- DEG_pathfiles %>%
                          "gonad" = "G",
                          "gonads" = "G"),
          group = paste(sex, tissue, sep = ""))
+
 head(allDEG)
 
-unique(allDEG$comparison)
+allDEG %>%
+  filter(gene == "AR", tissue == "H", sex == "M")
 
-print(candidategenes)
 
 candidateDEGs <- allDEG %>%
   filter(gene %in% candidategenes) %>%
@@ -72,8 +73,9 @@ candidateDEGs <- allDEG %>%
   group_by(gene, comparison) %>%
   summarize(results = str_c(compres, collapse = "; ")) %>%
   pivot_wider(names_from = comparison, values_from = results) 
-head(candidateDEGs)
 
+print(candidategenes)
+print(head(candidateDEGs))
 
 
 # make tables

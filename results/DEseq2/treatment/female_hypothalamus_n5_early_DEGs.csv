@@ -1,1 +1,6 @@
-"gene","padj","logpadj","lfc","sextissue","direction"
+"gene","pvalue","padj","logpadj","lfc","sextissue","direction","direction2"
+"ACSM3",0.0273561571252757,1,0,0.945775878335174,"female_hypothalamus","NS","early"
+"ADAM23",0.0450877379615205,1,0,0.687973122170894,"female_hypothalamus","NS","early"
+"ANXA8",0.0435737757901498,1,0,1.3358439433653,"female_hypothalamus","NS","early"
+"ATP6",0.00176848236665113,1,0,-2.80726775468388,"female_hypothalamus","NS","n5"
+"C18ORF42",0.0210935740136661,1,0,-0.739342651634713,"female_hypothalamus","NS","n5"

@@ -73,9 +73,9 @@ makefig2 <- function(label1, label2, tissue, dff, dfm,
   return(fig)
 }
 
-ab <- makefig2("A", "D","hypothalamus", hypf, hypm, "VIPR1", 
-               "control_hatch", "hatch_m.n2", 
-               "control", "hatch", "hatch", "m.n2")
+ab <- makefig2("A", "D", "hypothalamus", hypf, hypm, "AR", 
+               "control_bldg", "hatch_m.n2", 
+               "control", "bldg", "hatch", "m.n2")
 cd <- makefig2("B", "E",  "pituitary", pitf, pitm, "PRL", 
                "inc.d9_inc.d17", "hatch_early", 
                "inc.d9", "inc.d17",  "hatch", "early")
@@ -84,7 +84,7 @@ ef <- makefig2("C", "F", "gonads", gonf, gonm, "ESR2",
                "control", "lay", "inc.d17", "prolong")
 
 fig2 <- plot_grid(ab,cd,ef, nrow = 3)
-
+fig2
 
 png(file = "figures/fig2-1.png", width = 7, height = 7, 
     units = 'in', res = 300)

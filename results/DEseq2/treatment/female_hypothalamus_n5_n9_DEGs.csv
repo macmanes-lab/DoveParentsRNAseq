@@ -1,1 +1,10 @@
-"gene","padj","logpadj","lfc","sextissue","direction"
+"sextissue","gene","padj","direction","pvalue","direction2","lfc","logpadj"
+"female_hypothalamus","ABCG8",1,"NS",0.0219448984432466,"n5",-1.53721151788173,0
+"female_hypothalamus","ADRA2L1",1,"NS",0.0296734353406723,"n9",0.449584745635831,0
+"female_hypothalamus","AKIP1",1,"NS",0.0286103610993235,"n9",0.568636982663233,0
+"female_hypothalamus","ARL6IP4",1,"NS",0.0236310667733942,"n9",0.434662785902525,0
+"female_hypothalamus","ATP5E",1,"NS",0.0391806720567763,"n9",0.650783101048088,0
+"female_hypothalamus","ATP5SL",1,"NS",0.0188789836387343,"n9",0.762447029657479,0
+"female_hypothalamus","BARHL2",1,"NS",0.0462896271589552,"n5",-0.934513814022253,0
+"female_hypothalamus","C23H1ORF63",1,"NS",0.00281660707227351,"n9",1.36546044987416,0
+"female_hypothalamus","C2H8ORF76",1,"NS",0.0337612470188695,"n5",-0.787960253941207,0

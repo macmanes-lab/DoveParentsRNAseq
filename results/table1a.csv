@@ -1,9 +1,0 @@
-gene,bldg_lay,lay_inc.d3,inc.d3_inc.d9,inc.d9_inc.d17,inc.d17_hatch,hatch_n5,n5_n9
-AVPR2,NA,NA,NA,NA,NA,FP(+),NA
-CGA,FP(-),NA,NA,NA,NA,NA,NA
-DIO2,NA,FG(-),NA,NA,NA,NA,NA
-DIO3,FP(-),NA,NA,NA,NA,NA,NA
-GAL,FP(-),NA,NA,NA,NA,NA,NA
-GNRHR,FP(-),NA,NA,NA,NA,NA,NA
-PRL,NA,NA,NA,FP(+); MP(+),NA,NA,NA
-PRLH,FP(-),FP(+),NA,FP(+),NA,NA,NA
