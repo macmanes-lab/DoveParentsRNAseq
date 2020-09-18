@@ -1,0 +1,35 @@
+gene,control_bldg,control_lay,control_inc.d3,control_inc.d9,control_inc.d17,control_hatch,control_n5,control_n9
+AR,FG(+); FP(+); MG(+); MH(+); MP(+),FG(+); FH(+); FP(+); MG(+); MH(+); MP(+),FP(+); MH(+); MP(+),FG(+); FP(+); MG(+); MH(+); MP(+),FH(+); MH(+); MP(+),FG(+); FH(+); MG(+); MH(+),FG(+); FH(+); FP(+); MG(+); MH(+); MP(+),FG(+); FH(+); FP(+); MG(+); MH(+); MP(+)
+AVP,FP(-); MP(-),FP(-); MH(+),FP(-); MP(-),FP(-); MP(-),FP(-); MH(+); MP(-),FP(-),FP(-),FG(+); FP(-)
+AVPR1B,MP(+),FH(-),NA,NA,NA,NA,NA,FP(+)
+AVPR2,FP(+); MP(+),MP(+),MP(+),FP(+); MP(+),MP(+),MP(+),FP(+),MH(-)
+CGA,FH(-); FP(+); MG(-); MH(-),FH(-); FP(-); MG(-); MH(-),FH(-); MG(-); MH(-),FH(-); MG(-); MH(-),FH(-); MG(-); MH(-),FH(-); MG(-); MH(-),FH(-); MH(-),FH(-); MH(-)
+CRH,MH(+),MH(+),MH(+),MH(+),MH(+),MH(+),MH(+),MH(+)
+CRHR1,FG(-),FG(-),FG(-),FG(-),NA,NA,FG(-),FG(-)
+DIO1,FG(-),FG(-),FG(-); FP(-),FG(-); FP(-),NA,FG(-),FG(-),FG(-)
+DIO2,FG(+),FG(+); FH(+); MH(+),NA,NA,NA,NA,NA,FG(+)
+DIO3,FP(+),NA,FP(+),NA,NA,NA,NA,NA
+ESR2,NA,NA,NA,NA,NA,NA,NA,NA
+FSHB,FG(-); FH(-),FH(-); MP(-),FH(-); MH(-),FH(-); MH(-); MP(-),FH(-); FP(+),FH(-); MG(-),FH(-); MP(-),FH(-)
+FSHR,FG(-),FG(-); FH(+),FG(-),FG(-); FH(+),NA,FG(-),FG(-); FH(+),FG(-)
+GABRQ,FH(+); MH(+),FH(+); MH(+),FH(+); MH(+),FH(+); MH(+),FH(+); FP(-); MH(+),FH(+); MH(+),FH(+); MH(+),FH(+); MH(+)
+GAL,FG(-); FH(-); MH(-),FG(-); FH(-); FP(-); MH(-),FG(-); FH(-); MH(-); MP(-),FG(-); FH(-); MH(-); MP(-),FH(-); MH(-); MP(-),FH(-); FP(-); MH(-); MP(-),FG(-); FH(-); MH(-); MP(-),FG(-); FH(-); MH(-); MP(-)
+GALR1,MH(+),FH(+); MH(+),MH(+),FH(+); MH(+),MH(+),MG(+); MH(+),FH(+); MH(+); MP(+),MH(+)
+GNRH1,FP(-); MH(-),FP(-); MH(-),FP(-); MH(-),FP(-); MH(-),FP(-); MH(-),FH(-); FP(-); MH(-),FP(-); MH(-); MP(-),FP(-); MH(-)
+GNRHR,FH(-); MH(-),FP(-),FP(-); MH(-),FP(-); MH(-),FH(-); FP(-),FP(-),FH(-); FP(-); MH(-),MH(-)
+JAK2,FG(-),NA,NA,NA,NA,NA,MG(-),MG(-)
+LHCGR,NA,NA,FP(-),NA,FP(-),FP(-),NA,NA
+MC4R,MH(-),MH(-),MH(-),FP(-); MH(-),FP(-); MH(-),FH(-); MH(-),MH(-),MH(-)
+MC5R,NA,NA,NA,FG(-),NA,NA,NA,NA
+NPFFR1,FH(-); FP(-); MP(-),FH(-); FP(-); MH(-); MP(-),FG(-); FH(-); FP(-); MP(-),FG(-); FH(-); FP(-); MH(-); MP(-),FH(-); FP(-); MP(-),FH(-); MH(-); MP(-),FH(-); MH(-); MP(-),FH(-); MP(-)
+NPVF,FP(-); MH(-),FP(-); MH(-),FH(-); FP(-); MH(-),FH(-); FP(-); MH(-),FP(-); MH(-),FP(-); MH(-),FH(-); FP(-); MH(-),FH(-); FP(-); MH(-)
+NPY,FP(-); MH(-); MP(-),MG(-); MH(-),MH(-); MP(-),FP(-); MH(-),FP(-); MH(-),FP(-); MH(-); MP(-),FP(-); MG(-); MH(-),MH(-)
+NR3C2,FH(+),FG(+); FH(+),FH(+),FH(+),FH(+),FH(+),FH(+),FH(+)
+OXT,FP(-); MP(-),FP(-),FP(-); MP(-),FP(-),FP(-),FP(-); MH(-); MP(-),FP(-); MP(-),FP(-); MP(-)
+POMC,MG(-); MH(-); MP(-),FH(-); MG(-); MP(-),FH(-); MG(-); MH(-); MP(-),FG(-); FH(-); MG(-); MH(-); MP(-),FH(-); MH(-); MP(-),MG(-); MH(-); MP(-),FH(-); MG(-); MH(-); MP(-),FH(-); MG(-); MH(-); MP(-)
+PRL,FH(-); FP(-); MG(-); MH(-); MP(-),FG(+); FH(-); FP(-); MH(-); MP(-),FH(-); FP(-); MG(-); MH(-); MP(-),FH(-); FP(-); MG(-); MH(-),FP(+); MG(-); MH(-); MP(+),FP(+); MG(-); MH(-); MP(+),MH(-); MP(+),MH(-); MP(+)
+PRLH,FH(-); FP(-),FH(-); FP(-),FH(-); FP(-); MH(-),FH(-); FP(-),FH(-); FP(-),FH(-); FP(-); MH(-),FH(-); FP(-),NA
+PRLHR,FG(-); FP(-); MH(-),MH(-),FG(-); MH(-),FG(-); MH(-),MH(-),FH(-); MH(-); MP(-),MH(-),FG(-); MH(-)
+SERPINA4,MH(-); MP(-),MP(-),FH(+); MP(-),FH(+); MP(-),MH(-); MP(-),FH(+); MH(-); MP(-),FH(+),FG(-); FH(+)
+VIP,MH(-),NA,NA,FH(-); FP(-); MH(-); MP(+),MH(-),MH(-),NA,MH(-); MP(+)
+VIPR1,FP(-); MP(-),FP(-); MH(+); MP(-),FG(-); FP(-); MH(+); MP(-),FP(-); MH(+); MP(-),MH(+),NA,MH(+),MH(+)

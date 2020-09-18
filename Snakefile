@@ -46,8 +46,8 @@ rule degs:
     "results/DESeq2/treatment/female_gonads_control_early_DEGs.csv",
     "results/DESeq2/treatment/male_gonads_inc.d3_m.inc.d3_DEGs.csv"
   output:
-    "results/04_allDEG.csv",
-     "results/table1.csv",
+    "results/table1a.csv",
+    "results/tableS1.csv"
   shell:
     "Rscript analysis/04_DEGs.R"
     
