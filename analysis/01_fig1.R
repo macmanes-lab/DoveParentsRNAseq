@@ -25,34 +25,58 @@ head(row.names(countData) == row.names(colData))
 ## tsne
 
 # prep for tsne useing count data from limma and the custom `subsetmaketsne` function
-hyptsne <- subsetmaketsne("hypothalamus", alllevels, sexlevels)
-pittsne <- subsetmaketsne("pituitary", alllevels, sexlevels)
-gontsne <- subsetmaketsne("gonads", alllevels, sexlevels)
+hyptsne <- subsetmaketsne("hypothalamus", alllevelswithmanip, sexlevels)
+pittsne <- subsetmaketsne("pituitary", alllevelswithmanip, sexlevels)
+gontsne <- subsetmaketsne("gonads", alllevelswithmanip, sexlevels)
+
+hyptsnechar <- subsetmaketsne("hypothalamus", charlevels, sexlevels)
+pittsnechar <- subsetmaketsne("pituitary", charlevels, sexlevels)
+gontsnechar <- subsetmaketsne("gonads", charlevels, sexlevels)
+
 
 ## Figure 1
 
-e1 <- plottsne(hyptsne, hyptsne$treatment, allcolors) + 
+
+ab <- png::readPNG("figures/images/fig_fig1a.png")
+ab <- ggdraw() +  draw_image(ab, scale = 1)
+
+
+f <- plottsne(hyptsnechar, hyptsnechar$treatment, allcolors) + 
   labs(subtitle = "hypothalamus") 
-e2 <- plottsne(pittsne, pittsne$treatment, allcolors ) + 
+g <- plottsne(pittsnechar, pittsnechar$treatment, allcolors ) + 
   labs(subtitle = "pituitary") 
-  theme(strip.text = element_blank())
-e3 <- plottsne(gontsne, gontsne$treatment, allcolors ) + 
+theme(strip.text = element_blank())
+h <- plottsne(gontsnechar, gontsnechar$treatment, allcolors ) + 
   labs(subtitle = "gonads") 
 
-e <- plot_grid(e1,e2,e3, ncol = 3, labels = c("D", "E", "F"), label_size = 8)
+fgh <- plot_grid(f,g,h, ncol = 3, 
+                 label_size = 8,
+                 labels = c("A2", "A3", "A4"))
 
-a <- png::readPNG("figures/images/fig_fig1a.png")
-a <- ggdraw() +  draw_image(a, scale = 1)
 
 
-fig1 <- plot_grid(a, e, nrow = 2, rel_heights = c(2.4,1.6))
-#fig1
+c <- plottsne(hyptsne, hyptsne$treatment, allcolors) + 
+  labs(subtitle = "hypothalamus") 
+d <- plottsne(pittsne, pittsne$treatment, allcolors ) + 
+  labs(subtitle = "pituitary") 
+theme(strip.text = element_blank())
+e <- plottsne(gontsne, gontsne$treatment, allcolors ) + 
+  labs(subtitle = "gonads") 
 
-pdf(file="figures/fig1-1.pdf", width=7, height=4.5)
+cde <- plot_grid(c,d,e, ncol = 3, 
+                 labels = c("B2", "B3", "B4"), 
+                label_size = 8)
+
+
+
+fig1 <- plot_grid(ab, fgh, cde, nrow = 3, rel_heights = c(2,1,1))
+fig1
+
+pdf(file="figures/fig1-1.pdf", width=7, height=6)
 plot(fig1)
 dev.off()
 
-png("figures/fig1-1.png", width = 7, height = 4.5, 
+png("figures/fig1-1.png", width = 7, height = 6, 
     units = 'in', res = 300)
 plot(fig1) 
 dev.off()

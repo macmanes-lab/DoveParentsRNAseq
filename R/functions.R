@@ -971,7 +971,7 @@ subsetmaketsne <- function(whichtissue, whichtreatment, whichsex){
 
 plottsne <- function(tsnedf, pointcolor, whichcolors){
   p <- ggplot(tsnedf, aes(x = V1, y = V2)) +
-    #stat_ellipse(linetype = 1, aes(color = treatment)) +
+    
     geom_point(size = 1, aes(color = pointcolor, shape = sex)) +
     theme_B3() +
     labs(x = "tSNE 1", y = "tSNE 2", 
@@ -1029,7 +1029,38 @@ makebargraphv4 <- function(df, whichtissue, myylab,
                      labels = whichlabels,
                      drop = F,
                      position = "bottom") +
-    ylim(myymin, myymax)
+   # ylim(myymin, myymax) +
+    scale_y_continuous(breaks = c(-1500,-1000, -500, 0, 500, 1000),
+                       limits = c(myymin, myymax))
+  return(p)
+}
+
+makebargraphv5 <- function(df, whichtissue, myylab, 
+                           whichlevels, whichlabels, whichsex,
+                           myymin, myymax){
+  
+  p <- df %>%
+    dplyr::filter(tissue == whichtissue,
+                  sex == whichsex) %>%
+    ggplot(aes(x = comparison, y = n, fill = direction)) +
+    geom_bar(stat="identity") +
+    theme_B3() +
+    theme(legend.position = "none",
+          axis.text.x = element_text(angle = 45, hjust = 1))  +
+    scale_fill_manual(values = allcolors,
+                      name = " ") +
+    scale_color_manual(values = allcolors) +
+    #geom_text(stat='identity', aes(label= n), vjust =-0.5, 
+    #          position = position_dodge(width = 1),
+    #         size = 1.25, color = "black") +
+    labs(x = NULL, y = myylab)  +
+    scale_x_discrete(breaks = whichlevels,
+                     labels = whichlabels,
+                     drop = F,
+                     position = "bottom") +
+    scale_y_continuous(breaks = c(-4000,-3000, -2000, -1000, 0, 1000, 2000, 3000),
+                       limits = c(myymin, myymax))
+    
   return(p)
 }
 

@@ -95,7 +95,7 @@ fncols <- function(data, cname) {
 }
 
 
-maketables123 <- function(df, whichlevels){
+maketable1 <- function(df, whichlevels){
   table <- fncols(df, whichlevels) %>% 
     select(gene, whichlevels)  %>%
     ungroup() %>%
@@ -111,15 +111,15 @@ maketables123 <- function(df, whichlevels){
   
 }
 
-table1 <- maketables123(candidateDEGs, levelssequential) 
-table2 <- maketables123(candidateDEGs, levelsrm) 
-table3 <- maketables123(candidateDEGs, levelsreplace) 
+table1a <- maketables123(candidateDEGs, levelssequential) 
+table1b <- maketables123(candidateDEGs, levelsrm) 
+table1c <- maketables123(candidateDEGs, levelsreplace) 
 
 ## save files
 write.csv(allDEG, "results/04_allDEG.csv", row.names = F)
 write.csv(manipDEGs, "results/04_manipDEGs.csv")
 write.csv(candidateDEGs, "results/04_candidateDEGs.csv")
 
-write_csv(table1, "results/table1.csv")
-write_csv(table2, "results/table2.csv")
-write_csv(table3, "results/table3.csv")
+write_csv(table1a, "results/table1a.csv")
+write_csv(table1b, "results/table1b.csv")
+write_csv(table1c, "results/table1c.csv")

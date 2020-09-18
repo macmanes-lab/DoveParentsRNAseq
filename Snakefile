@@ -54,7 +54,7 @@ rule degs:
 
 rule figs23:
   input:
-    "results/03_allDEG.csv",
+    "results/03_hypvsdf.csv",
     "results/04_allDEG.csv"
   output:
     "figures/fig2-1.pdf",

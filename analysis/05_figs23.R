@@ -16,7 +16,21 @@ pitm <- wranglevsds("results/03_pitvsdm.csv")
 gonf <- wranglevsds("results/03_gonvsdf.csv")
 gonm <- wranglevsds("results/03_gonvsdm.csv")
 
-allDEG <- read_csv("results/04_allDEG.csv")
+allDEG <- read_csv("results/04_allDEG.csv",
+                   col_types = list(col_character(), col_character(),
+                                    col_character(), col_character(),
+                                    col_character(),
+                                    col_double(),col_double(),col_double(),
+                                    col_character(),col_character())) %>%
+  dplyr::mutate(tissue = recode(tissue, 
+                  "H" = "hypothalamus",
+                  "P" = "pituitary",
+                  "G"= "gonads" ),
+                sex = recode(sex, 
+                                "F" = "female",
+                                "M" = "male"))
+
+
 
 ## figure 2 candidate genes
 
@@ -107,6 +121,23 @@ DEGinc9 <- filterDEGs(levelsinc9)
 DEGinc17 <- filterDEGs(levelsinc17)
 DEGhatch <- filterDEGs(levelshatch)
 
+max(DEGcontrol$n)
+min(DEGcontrol$n)
+
+max(DEGbldg$n)
+max(DEGsequential$n)
+max(DEGinc9$n)
+max(DEGinc17$n)
+max(DEGhatch$n)
+
+min(DEGbldg$n)
+min(DEGsequential$n)
+min(DEGinc9$n)
+min(DEGinc17$n)
+min(DEGhatch$n)
+
+
+
 ### fig 3 DEGs
 
 makefig3 <- function(tissue, label1){
@@ -114,73 +145,74 @@ makefig3 <- function(tissue, label1){
   fsubtitle = paste("Female", tissue, sep = " ")
   msubtitle = paste("Male", tissue, sep = " ")
   
-  a <- makebargraphv4(DEGcontrol, tissue, "No. of DEGs", 
+  a <- makebargraphv5(DEGcontrol, tissue, "No. of DEGs", 
                       levelscontrolcharmanip, labelscontrolcharmanip, "female",
-                      -4000, 4000) +
+                      -4000, 3000) +
     labs(x =  NULL, subtitle = fsubtitle) +
     theme(axis.text.x = element_blank()) 
   
   b <- makebargraphv4(DEGbldg, tissue, NULL, 
                       levelsbldgcharmanip, labelsbldgcharmanip, "female",
-                      -1500, 1500) +
+                      -1600, 1100) +
     labs(x = NULL, subtitle = " ") +
     theme(axis.text.x = element_blank()) 
   
   c <- makebargraphv4(DEGsequential, tissue, NULL,  
                       levelssequential, labelsssequential,"female",
-                      -1500, 1500) +
+                      -1600, 1100) +
     labs(x = NULL, subtitle = " ") +
     theme(axis.text.x = element_blank(),
           axis.text.y = element_blank())
   
   d <- makebargraphv4(DEGinc9, tissue, NULL,  
                       levelsinc9, labelsinc9, "female",
-                      -1500, 1500) +
+                      -1600, 1100) +
     labs(x = NULL, subtitle = " ") +
     theme(axis.text.x = element_blank(),
           axis.text.y = element_blank())
   
   e <- makebargraphv4(DEGinc17, tissue, NULL,  
                       levelsinc17, labelsinc17, "female",
-                      -1500, 1500) +
+                      -1600, 1100) +
     labs(x = NULL, subtitle = " ") +
     theme(axis.text.x = element_blank(),
           axis.text.y = element_blank())
   
   f <- makebargraphv4(DEGhatch, tissue, NULL,  
                       levelshatch, labelshatch, "female",
-                      -1500, 1500) +
+                      -1600, 1100) +
     labs(x = NULL, subtitle = " ") +
     theme(axis.text.x = element_blank(),
           axis.text.y = element_blank())
   
-  abcdef <- plot_grid(a,b,c,d,e,f, nrow = 1, rel_widths = c(26,20,10,4,4,6))
+  abcdef <- plot_grid(a,b,c,d,e,f, nrow = 1, rel_widths = c(20,20,10,4,4,6),
+                      labels = label1, label_size = 8)
 
-  g <- makebargraphv4(DEGcontrol, tissue, "No. of DEGs", 
+  g <- makebargraphv5(DEGcontrol, tissue, "No. of DEGs", 
                       levelscontrolcharmanip, labelscontrolcharmanip, "male",
-                      -4000, 4000) +
+                      -4000, 3000) +
     labs(x = "Relative to... non-breeing controls,", subtitle = msubtitle) 
   
   h <- makebargraphv4(DEGbldg, tissue, NULL,
                       levelsbldgcharmanip, labelsbldgcharmanip, "male",
-                      -1500, 1500) +
-    labs(x = "nest-building controls...", subtitle = " ")
+                      -1600, 1100) +
+    labs(x = "nest-building controls...", subtitle = " ") 
   
   i <- makebargraphv4(DEGsequential, tissue,  NULL,  
                       levelssequential, labelsssequential, "male",
-                      -1500, 1500) +
+                      -1700, 1200) +
     labs(x = "previous stage...",  subtitle = " ") +
     theme(axis.text.y = element_blank())
   
   j <- makebargraphv4(DEGinc9, tissue, NULL,  
                       levelsinc9, labelsinc9, "male",
-                      -1500, 1500) +
+                      -1600, 1100) +
     labs(x = "inc.d9...",  subtitle = " ") +
     theme(axis.text.y = element_blank()) 
   
   k<- makebargraphv4(DEGinc17, tissue, NULL,  
                       levelsinc17, labelsinc17, "male",
-                     -1500, 1500) +
+                     -1700, 1200) +
     labs(x = NULL, subtitle = " ")+
     labs(x = "inc.d17...",  subtitle = " ") +
     theme(axis.text.y = element_blank())
@@ -188,21 +220,20 @@ makefig3 <- function(tissue, label1){
   
   l <- makebargraphv4(DEGhatch, tissue, NULL,  
                       levelshatch, labelshatch, "male",
-                      -1500, 1500) +
-    labs(x = "hatch",  subtitle = " ") +
+                      -1600, 1100) +
+    labs(x = "and hatch.",  subtitle = " ") +
     theme(axis.text.y = element_blank())
   
-  ghijkl <- plot_grid(g,h,i,j,k,l, nrow = 1, rel_widths = c(26,20,10,4,4,6),
+  ghijkl <- plot_grid(g,h,i,j,k,l, nrow = 1, rel_widths = c(20,20,10,4,4,6),
                       align = "h")
   
-  fig <- plot_grid(abcdef,ghijkl, nrow = 2, rel_heights = c(1,1.2),
-                   labels = label1, label_size = 8)
+  fig <- plot_grid(abcdef,ghijkl, nrow = 2, rel_heights = c(1,1.2))
   return(fig)
 }
 
-ab <- makefig3("hypothalamus", "A")
-cd <- makefig3("pituitary", "B")
-ef <- makefig3("gonads", "C")
+ab <- makefig3("hypothalamus", c("A1", "2", "3", "4", "5", "6"))
+cd <- makefig3("pituitary", c("B"))
+ef <- makefig3("gonads", c("C1"))
 
 fig3 <- plot_grid(ab,cd,ef, nrow = 3)
 
