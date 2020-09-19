@@ -81,7 +81,7 @@ replacements   <- c("early", "prolong", "extend")
 
 ddsMP <- returndds("male_pituitary")
 vsdMP <- returnvsd(ddsMP, "male_pituitary")
-createDEGdfs(ddsMP, "male_pituitary", references, allotherstages)
+#createDEGdfs(ddsMP, "male_pituitary", references, allotherstages)
 createDEGdfs(ddsMP, "male_pituitary", manipcontrols, replacements)
 createDEGdfs(ddsMP, "male_pituitary", "lay", "inc.d3")
 createDEGdfs(ddsMP, "male_pituitary", "inc.d3", "inc.d9")

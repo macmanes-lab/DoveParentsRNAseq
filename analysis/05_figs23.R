@@ -34,52 +34,61 @@ allDEG <- read_csv("results/04_allDEG.csv",
 
 ## figure 2 candidate genes
 
-makefig2 <- function(label1, label2, tissue, dff, dfm, 
+makefig2 <- function(mylabels, tissue, dff, dfm, 
                      candidategene, comp1, comp2, 
                      treatment1, treatment2, treatment3, treatment4){
   
   fsubtitle = paste("Female", tissue, sep = " ")
   msubtitle = paste("Male", tissue, sep = " ")
 
-  a <- plotcandidatechar(dff, candidategene, treatment1, treatment2) + labs(subtitle = fsubtitle) +
-    theme(axis.title.x = element_blank(), axis.text.x = element_blank())
-  b <- plotcandidatemanip(dff, candidategene, treatment3, treatment4) + labs(y = NULL) + labs(subtitle = " ") +
-    theme(axis.title.x = element_blank(), axis.text.x = element_blank())
+  a <- plotcandidatechar(dff, candidategene, treatment1, treatment2) + 
+    labs(subtitle = fsubtitle) +
+    theme(axis.title.x = element_blank(), 
+          axis.text.x = element_blank())
   
-  c <- plot.volcano(tissue, "female",  comp1) + labs(subtitle = " ") +
+  b <- plotcandidatemanip(dff, candidategene, treatment3, treatment4) + 
+    labs(subtitle = " ") +
+    theme(axis.title.x = element_blank(), 
+          axis.text.x = element_blank())
+  
+  c <- plot.volcano(tissue, "female",  comp1) + 
+    labs(subtitle = " ") +
     theme(axis.title.x = element_blank(),
           legend.position = "none")
-  d <- plot.volcano(tissue, "female",  comp2) + labs(subtitle = " ")  +
+  
+  d <- plot.volcano(tissue, "female",  comp2) + 
+    labs(subtitle = " ")  +
     theme(axis.title.x = element_blank(),
-          axis.title.y = element_blank(),
           legend.position = "none")
   
-  abcd <- plot_grid(a,b,c,d,nrow = 1, rel_widths = c(9,12,7.35,7),
-                    labels = c(label1, "", label2), label_size = 8)
+  abcd <- plot_grid(a,c,b,d,nrow = 1, rel_widths = c(9,7.35,12,7),
+                    labels = mylabels, label_size = 8)
   
 
-  e <- plotcandidatechar(dfm, candidategene, treatment1, treatment2) + labs(subtitle = msubtitle)
-  f <- plotcandidatemanip(dfm, candidategene, treatment3, treatment4) + labs(y = NULL) + labs(subtitle = " ")
+  e <- plotcandidatechar(dfm, candidategene, treatment1, treatment2) + 
+    labs(subtitle = msubtitle)
+  f <- plotcandidatemanip(dfm, candidategene, treatment3, treatment4) + 
+    labs(subtitle = " ")
   
-  g <- plot.volcano(tissue, "male",  comp1)  + labs(subtitle = " ") 
-  h <- plot.volcano(tissue, "male",  comp2) + labs(subtitle = " ") +
-    theme(axis.title.y = element_blank())
-  
-  
-  efgh <- plot_grid(e,f,g,h,nrow = 1, rel_widths = c(9,12,7.35,7))
+  g <- plot.volcano(tissue, "male",  comp1)  + 
+    labs(subtitle = " ") 
+  h <- plot.volcano(tissue, "male",  comp2) + 
+    labs(subtitle = " ") 
+
+  efgh <- plot_grid(e,g,f,h,nrow = 1, rel_widths = c(9,7.35,12,7))
   
   fig <- plot_grid(abcd, efgh, nrow = 2,
                    rel_heights = c(1,1.2))
   return(fig)
 }
 
-ab <- makefig2("A", "D", "hypothalamus", hypf, hypm, "AR", 
+ab <- makefig2(c("A1", "A2", "A3", "A4"), "hypothalamus", hypf, hypm, "AR", 
                "control_bldg", "hatch_m.n2", 
                "control", "bldg", "hatch", "m.n2")
-cd <- makefig2("B", "E",  "pituitary", pitf, pitm, "PRL", 
+cd <- makefig2(c("B1", "B2", "B3", "B4"),  "pituitary", pitf, pitm, "PRL", 
                "inc.d9_inc.d17", "hatch_early", 
                "inc.d9", "inc.d17",  "hatch", "early")
-ef <- makefig2("C", "F", "gonads", gonf, gonm, "ESR2",
+ef <- makefig2(c("C1", "C2", "C3", "C4"), "gonads", gonf, gonm, "ESR2",
                "control_lay", "inc.d17_prolong",
                "control", "lay", "inc.d17", "prolong")
 

@@ -50,7 +50,7 @@ allDEG <- DEG_pathfiles %>%
   mutate(comparison = paste(down,up, sep = "_")) %>%
   mutate(sex = sapply(strsplit(as.character(sextissue),'\\_'), "[", 1)) %>%
   mutate(tissue = sapply(strsplit(as.character(sextissue),'\\_'), "[", 2)) %>%
-  dplyr::select(sex,tissue,comparison, direction, gene, lfc, padj, logpadj)  %>%
+  dplyr::select(sex,tissue,comparison, gene, lfc, padj, direction, pvalue, direction2,  logpadj)  %>%
   mutate(posneg = ifelse(lfc >= 0, "+", "-"),
          sex = recode(sex, "female" = "F", "male" = "M" ),
          tissue = recode(tissue, 
@@ -58,15 +58,15 @@ allDEG <- DEG_pathfiles %>%
                          "pituitary" = "P",
                          "gonad" = "G",
                          "gonads" = "G"),
-         group = paste(sex, tissue, sep = ""))
-
+         group = paste(sex, tissue, sep = "")) %>%
+  drop_na()
 head(allDEG)
 
-allDEG %>%
-  filter(gene == "AR", tissue == "H", sex == "M")
-
+allDEG %>% filter(gene == "AR", tissue == "H", sex == "M")
 
 candidateDEGs <- allDEG %>%
+  #remove padj
+  select(-padj, -direction) %>%
   filter(gene %in% candidategenes) %>%
   mutate(res = paste("(", posneg, ")", sep = "")) %>%
   mutate(compres = paste(group, res, sep = "")) %>%
@@ -77,6 +77,13 @@ candidateDEGs <- allDEG %>%
 print(candidategenes)
 print(head(candidateDEGs))
 
+## drop pvalues from allDEG
+
+
+allDEG <- allDEG %>%
+  #remove pvalue
+  select(-pvalue, -direction2) %>% 
+  filter(direction != "NS")
 
 # make tables
 
