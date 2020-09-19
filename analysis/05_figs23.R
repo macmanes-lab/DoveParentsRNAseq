@@ -82,7 +82,7 @@ makefig2 <- function(mylabels, tissue, dff, dfm,
   return(fig)
 }
 
-ab <- makefig2(c("A1", "A2", "A3", "A4"), "hypothalamus", hypf, hypm, "AR", 
+ab <- makefig2(c("A1", "A2", "A3", "A4"), "hypothalamus", hypf, hypm, "AVP", 
                "control_bldg", "hatch_m.n2", 
                "control", "bldg", "hatch", "m.n2")
 cd <- makefig2(c("B1", "B2", "B3", "B4"),  "pituitary", pitf, pitm, "PRL", 

@@ -103,7 +103,6 @@ tableS2b <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
 
 ## save files
 write.csv(allDEG, "results/04_allDEG.csv", row.names = F)
-write.csv(candidateDEGs, "results/04_candidateDEGs.csv")
 
 write_csv(table1a, "results/table1a.csv")
 write_csv(table1b, "results/table1b.csv")
