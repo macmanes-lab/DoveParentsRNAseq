@@ -9,8 +9,10 @@ source("R/functions.R")  # load custom functions
 source("R/themes.R")  # load custom themes and color palletes
 source("R/genelists.R") # load candidate genes
 
-# DESeq2 was not designed to run on 100 + samples. But, I really like it, so I do it anyways. Some of these commands take like 15 min to run using 6 cores. 
-# Also, I don't run every chuck every time. When I want new analysese, I add them to the bottom and set `eval = F` for chunks I don't want to rerurn 
+# DESeq2 was not designed to run on 100 + samples. But, I really like it, so I do it anyways. 
+# Some of these commands take like 15 min to run using 6 cores. 
+# Also, I don't run every chuck every time. When I want new analyses, 
+# I add them to the bottom and set `eval = F` for chunks I don't want to rerurn 
 
 # count data
 countData <- read.csv("results/00_counts.csv", header = T, row.names = 1)
@@ -39,6 +41,9 @@ allotherstages   <- c(charlevelsnocontrol, maniplevels)
 manipcontrols <- c("inc.d9", "inc.d17", "hatch", "n5",  "prolong", "early")
 replacements   <- c("early", "prolong", "extend")
 
+
+### same code, for female and male HPG
+
 #ddsMH <- returndds("male_hypothalamus")
 #vsdMH <- returnvsd(ddsMH, "male_hypothalamus")
 #createDEGdfs(ddsMH, "male_hypothalamus", references, allotherstages)
@@ -60,7 +65,6 @@ replacements   <- c("early", "prolong", "extend")
 #createDEGdfs(ddsMH, "male_hypothalamus", "hatch", "m.n2")
 
 
-
 #ddsFH <- returndds("female_hypothalamus")
 #vsdFH <- returnvsd(ddsFH, "female_hypothalamus")
 #createDEGdfs(ddsFH, "female_hypothalamus", references, allotherstages)
@@ -76,7 +80,6 @@ replacements   <- c("early", "prolong", "extend")
 #createDEGdfs(ddsFH, "female_hypothalamus", "inc.d9", "m.inc.d9")
 #createDEGdfs(ddsFH, "female_hypothalamus", "inc.d17", "m.inc.d17")
 #createDEGdfs(ddsFH, "female_hypothalamus", "hatch", "m.n2")
-
 
 
 ddsMP <- returndds("male_pituitary")
@@ -145,6 +148,3 @@ createDEGdfs(ddsFG, "female_gonads",  "inc.d3", "m.inc.d3")
 createDEGdfs(ddsFG, "female_gonads",  "inc.d9", "m.inc.d9")
 createDEGdfs(ddsFG, "female_gonads",  "inc.d17", "m.inc.d17")
 createDEGdfs(ddsFG, "female_gonads", "hatch", "m.n2")
-
-
-
