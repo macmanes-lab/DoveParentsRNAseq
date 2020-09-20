@@ -46,6 +46,7 @@ rule degs:
   input:
     "results/DESeq2/treatment/female_gonads_control_early_DEGs.csv"
   output:
+    "results/04_allDEG.csv",
     "results/table1a.csv",
     "results/tableS1.csv"
   shell:

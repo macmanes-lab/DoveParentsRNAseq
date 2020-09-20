@@ -16,21 +16,7 @@ pitm <- wranglevsds("results/03_pitvsdm.csv")
 gonf <- wranglevsds("results/03_gonvsdf.csv")
 gonm <- wranglevsds("results/03_gonvsdm.csv")
 
-allDEG <- read_csv("results/04_allDEG.csv",
-                   col_types = list(col_character(), col_character(),
-                                    col_character(), col_character(),
-                                    col_character(),
-                                    col_double(),col_double(),col_double(),
-                                    col_character(),col_character())) %>%
-  dplyr::mutate(tissue = recode(tissue, 
-                  "H" = "hypothalamus",
-                  "P" = "pituitary",
-                  "G"= "gonads" ),
-                sex = recode(sex, 
-                                "F" = "female",
-                                "M" = "male"))
-
-
+allDEG <- read_csv("results/04_allDEG.csv")
 
 ## figure 2 candidate genes
 
