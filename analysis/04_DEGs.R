@@ -69,10 +69,9 @@ candidateDEGs <- allDEG %>%
   #remove padj
   select(-padj, -direction) %>%
   filter(gene %in% candidategenes) %>%
-  mutate(res = paste("(", posneg, ")", sep = "")) %>%
-  mutate(compres = paste(group, res, sep = "")) %>%
+  mutate(compres = paste(group, posneg, sep = "")) %>%
   group_by(gene, comparison) %>%
-  summarize(results = str_c(compres, collapse = "; ")) %>%
+  summarize(results = str_c(compres, collapse = "  ")) %>%
   pivot_wider(names_from = comparison, values_from = results) 
 
 print(candidategenes)
@@ -103,6 +102,7 @@ tableS2b <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
 
 ## save files
 write.csv(allDEG, "results/04_allDEG.csv", row.names = F)
+write.csv(allDEG, "results/04_candidateDEGs.csv", row.names = F)
 
 write_csv(table1, "results/table1.csv")
 write_csv(table2, "results/table2.csv")

@@ -1,33 +1,35 @@
 gene,bldg_m.inc.d3,bldg_m.inc.d9,bldg_m.inc.d17,bldg_m.n2,bldg_early,bldg_prolong,bldg_extend
-AR,NA,NA,NA,NA,NA,FP(-),FP(-)
-AVP,NA,NA,NA,NA,MP(+),NA,NA
+AR,NA,NA,NA,NA,NA,FP-,FP-
+AVP,NA,NA,NA,NA,MP+,NA,NA
 AVPR1B,NA,NA,NA,NA,NA,NA,NA
-AVPR2,NA,NA,NA,NA,NA,FP(-),FP(-)
-CGA,NA,NA,NA,NA,FP(-); MP(-),FP(-); MP(-),FP(-)
-CRH,FH(+); MH(+),NA,NA,NA,NA,NA,NA
+AVPR2,NA,NA,NA,NA,NA,FP-,FP-
+CGA,NA,NA,NA,NA,FP-  MP-,FP-  MP-,FP-
+CRH,FH+  MH+,NA,NA,NA,NA,NA,NA
 CRHR1,NA,NA,NA,NA,NA,NA,NA
-DIO2,FG(-),FG(-),FG(-),NA,FG(-),FG(-),FG(-)
-DIO3,FH(-); MH(-),FH(-),FH(-); MH(-),FH(-); MH(-),FH(-); FP(-); MP(+),FH(-); FP(-),FP(-)
-ESR2,NA,NA,MP(-),MP(-),NA,MG(+),NA
-FSHB,NA,NA,MH(-),FH(-); FP(-); MH(-),NA,NA,NA
-FSHR,FH(+),NA,FG(+),FG(+),FH(+),FG(+),FG(+)
-GABRQ,FH(+); MH(+),FH(+); FP(+); MP(+),FH(+); MH(+),FH(+); MH(+),FH(+); MH(+); MP(+),FH(+); MG(+); MH(+),FH(+); MH(+)
-GAL,NA,NA,NA,NA,FP(-); MP(+),MG(+),FP(-)
-GALR1,NA,NA,NA,NA,FH(+),NA,NA
-GNRH1,NA,MP(+),NA,NA,NA,NA,NA
-GNRHR,NA,NA,NA,FP(-),FP(-),FP(-),FP(-)
-JAK2,NA,NA,FP(+),FP(+),NA,NA,FG(+)
-LHCGR,FH(-),FG(+); MP(+),FG(+); FH(-),FG(+); FH(-); MH(-),MH(-); MP(+),FH(-),FH(-); MH(-)
-MC4R,NA,MP(+),NA,NA,MP(+),NA,FG(-)
-MC5R,NA,NA,NA,NA,NA,NA,FG(+)
-NPFFR1,NA,NA,NA,NA,NA,MG(-),NA
-NPVF,FH(-); MH(-),NA,FH(-); FP(+),FH(-); FP(+); MH(-); MP(+),FH(-); MH(-),FH(-); FP(+),FH(-); FP(+); MH(-)
-NPY,FG(-); FP(-); MG(-),FG(-); MP(+),FG(-); FP(-),MG(-); MP(+),FG(-); FP(-); MP(+),FG(-),FG(-); MG(-)
-OXT,NA,NA,NA,NA,MP(+),NA,NA
-POMC,FG(+),NA,NA,NA,NA,FH(-); MG(-),NA
-PRL,FG(+); FP(+),NA,FP(+); MP(+),FP(+); MP(+),FP(+),FP(+); MP(+),FG(+); FP(+); MP(+)
-PRLH,NA,NA,NA,NA,MP(+),NA,FG(-)
-PRLHR,FH(-),FP(+),FH(-); MH(-),FP(+),FP(+); MH(-),FH(-); MG(+); MP(-),NA
-SERPINA4,FH(+),FP(+); MP(+),FH(+); FP(+); MH(+),FP(+); MH(+),FH(+); MH(+),FH(+),FH(+); MG(+); MH(+)
-VIP,NA,MP(+),FP(-),MP(+),MP(+),NA,NA
-VIPR1,FP(+); MH(+); MP(+),NA,FP(+); MP(+),FP(+); MP(+),FP(+); MH(+); MP(+),FP(+); MG(+); MH(+); MP(+),FP(+); MP(+)
+DIO2,FG-,FG-,FG-,NA,FG-,FG-,FG-
+DIO3,FH-  MH-,FH-,FH-  MH-,FH-  MH-,FH-  FP-  MP+,FH-  FP-,FP-
+ESR1,FG-,FG-,FG-,FG-,FP+,FG-  MG+,FP+
+ESR2,NA,NA,MP-,MP-,NA,MG+,NA
+FSHB,NA,NA,MH-,FH-  FP-  MH-,NA,NA,NA
+FSHR,FH+,NA,FG+,FG+,FH+,FG+,FG+
+GABRQ,FH+  MH+,FH+  FP+  MP+,FH+  MH+,FH+  MH+,FH+  MH+  MP+,FH+  MG+  MH+,FH+  MH+
+GAL,NA,NA,NA,NA,FP-  MP+,MG+,FP-
+GALR1,NA,NA,NA,NA,FH+,NA,NA
+GNRH1,NA,MP+,NA,NA,NA,NA,NA
+GNRHR,NA,NA,NA,FP-,FP-,FP-,FP-
+JAK2,NA,NA,FP+,FP+,NA,NA,FG+
+LHCGR,FH-,FG+  MP+,FG+  FH-,FG+  FH-  MH-,MH-  MP+,FH-,FH-  MH-
+MC4R,NA,MP+,NA,NA,MP+,NA,FG-
+MC5R,NA,NA,NA,NA,NA,NA,FG+
+NPFFR1,NA,NA,NA,NA,NA,MG-,NA
+NPVF,FH-  MH-,NA,FH-  FP+,FH-  FP+  MH-  MP+,FH-  MH-,FH-  FP+,FH-  FP+  MH-
+NPY,FG-  FP-  MG-,FG-  MP+,FG-  FP-,MG-  MP+,FG-  FP-  MP+,FG-,FG-  MG-
+OXT,NA,NA,NA,NA,MP+,NA,NA
+POMC,FG+,NA,NA,NA,NA,FH-  MG-,NA
+PRL,FG+  FP+,NA,FP+  MP+,FP+  MP+,FP+,FP+  MP+,FG+  FP+  MP+
+PRLH,NA,NA,NA,NA,MP+,NA,FG-
+PRLHR,FH-,FP+,FH-  MH-,FP+,FP+  MH-,FH-  MG+  MP-,NA
+SERPINA4,FH+,FP+  MP+,FH+  FP+  MH+,FP+  MH+,FH+  MH+,FH+,FH+  MG+  MH+
+STAT5B,NA,NA,NA,NA,NA,NA,NA
+VIP,NA,MP+,FP-,MP+,MP+,NA,NA
+VIPR1,FP+  MH+  MP+,NA,FP+  MP+,FP+  MP+,FP+  MH+  MP+,FP+  MG+  MH+  MP+,FP+  MP+

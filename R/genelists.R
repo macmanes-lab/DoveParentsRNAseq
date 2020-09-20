@@ -5,16 +5,18 @@ library(tidyverse)
 ## all genes
 geneids <- read_csv("metadata/00_geneinfo.csv") %>% select(-X1) 
 
-favoritegenes <- c("AR", "AVP", "AVPR1B", "AVPR2", "CRH", "CRHR1",
-                   "DIO1", "DIO2", "DIO3", "ESR2", "FSHB",
+favoritegenes <- c("AR", "AVP", "AVPR1B", "AVPR2",
+                   "CGA", "CRH", "CRHR1",
+                   "DIO1", "DIO2", "DIO3", "ESR1",  "ESR2", "FSHB",
                    "FSHR", "GABRQ", "GAL", "GALR1",
                    "GNRH1", "GNRHR",
-                   "JAK2", "NPVF",
-                   "LHCGR", "CGA",
+                   "JAK2", 
+                   "LHCGR", 
+                   "MC3R", "MC4R", "MC5R",
                    "NPFFR1", "NPVF", "NPY",
-                   "NR3C2", "OXT", "OXTR", "POMC", "MC3R", "MC4R", "MC5R",
-                   "PRL", "PRLH",	
-                   "PRLHR", "SERPINA4", "STAT5A", "VIP", "VIPR1")
+                   "NR3C2", "OXT", "POMC", 
+                   "PRL", "PRLH",	"PRLHR", 
+                   "SERPINA4", "STAT5B", "VIP", "VIPR1")
 
 ## parental care genes 
 ## genes from Ch 17 Evolution of parental care
