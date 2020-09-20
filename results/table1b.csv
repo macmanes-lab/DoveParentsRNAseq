@@ -1,16 +1,31 @@
 gene,inc.d3_m.inc.d3,inc.d9_m.inc.d9,inc.d17_m.inc.d17,hatch_m.n2
+AR,NA,NA,NA,FP(+)
+AVP,NA,MH(+),FG(+); MH(-),NA
 AVPR1B,NA,NA,NA,FP(+)
-AVPR2,NA,NA,NA,FP(+)
-CGA,NA,NA,FP(+),NA
-DIO3,NA,NA,FP(+); MH(-),FH(-); FP(+)
-ESR2,NA,NA,FH(-); MH(-),NA
-FSHB,NA,NA,FP(-),FH(-); FP(-)
-GABRQ,NA,NA,FH(+),FH(+)
+AVPR2,NA,FH(-),NA,FP(+)
+CGA,NA,NA,FP(+),FP(+)
+CRH,FH(+),NA,NA,NA
+CRHR1,NA,NA,NA,FP(+)
+DIO2,NA,NA,FG(+),NA
+DIO3,FH(-),NA,FH(-); FP(+); MH(-),FH(-); FP(+); MH(-)
+ESR2,FH(-),NA,FH(-); MH(-); MP(-),NA
+FSHB,NA,NA,FP(-); MH(-),FH(-); FP(-); MH(-)
+GABRQ,FH(+); MH(+),FP(+); MP(+),FH(+); MH(+),FH(+); MH(+)
+GAL,NA,NA,NA,FP(+)
+GNRH1,NA,NA,NA,FH(+); MH(+)
 JAK2,NA,NA,FP(+),FP(+)
-LHCGR,NA,NA,FH(-),FH(-); MH(-)
-NPVF,FH(-),NA,FH(-),FH(-); MH(-)
-NPY,FP(-),NA,NA,MP(+)
-PRL,NA,NA,FP(-),MP(-)
-PRLH,NA,NA,NA,MH(+)
-SERPINA4,NA,NA,FP(+),FP(+)
-VIP,NA,NA,NA,FP(+)
+LHCGR,FH(-),FG(+); MP(+),FH(-),FH(-); MH(-)
+MC4R,NA,NA,NA,FH(+)
+MC5R,NA,NA,NA,FP(+)
+NPFFR1,NA,NA,NA,FH(+)
+NPVF,FH(-),NA,FH(-); MH(-),FH(-); MH(-); MP(+)
+NPY,FP(-),FP(+),NA,FG(+); MP(+)
+NR3C2,NA,NA,FG(-),NA
+OXT,NA,MH(+),FH(-),NA
+POMC,NA,NA,NA,FH(-); MH(-)
+PRL,FG(+),NA,FP(-),FP(-); MP(-)
+PRLH,MH(+),FP(+); MH(+),MP(-),MH(+)
+PRLHR,NA,NA,MH(-),NA
+SERPINA4,FH(+),MP(+),FG(-); FH(+); FP(+); MH(+),FP(+); MH(+)
+VIP,FP(-),FP(+),NA,FP(+); MP(+)
+VIPR1,FG(+); MP(+),NA,FP(+); MG(-); MP(+),NA

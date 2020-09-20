@@ -44,9 +44,7 @@ rule vsd:
     
 rule degs:
   input:
-    "results/DESeq2/treatment/male_hypothalamus_inc.d9_inc.d17_DEGs.csv",
-    "results/DESeq2/treatment/female_gonads_control_early_DEGs.csv",
-    "results/DESeq2/treatment/male_gonads_inc.d3_m.inc.d3_DEGs.csv"
+    "results/DESeq2/treatment/female_gonads_control_early_DEGs.csv"
   output:
     "results/table1a.csv",
     "results/tableS1.csv"
