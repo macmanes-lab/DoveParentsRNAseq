@@ -88,9 +88,8 @@ allDEG <- allDEG %>%
 
 # make tables
 
-table1a <- maketable1(candidateDEGs, levelssequential) 
-table1b <- maketable1(candidateDEGs, levelsrm) 
-table1c <- maketable1(candidateDEGs, levelsreplace) 
+table1 <- maketable1(candidateDEGs, levelssequential) 
+table2 <- maketable1(candidateDEGs, c(levelsrm, levelsreplace))
 
 tableS1 <- maketable1(candidateDEGs, levelscontrolcharmanip) %>%
   select(gene, control_bldg:control_n9)
@@ -105,9 +104,8 @@ tableS2b <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
 ## save files
 write.csv(allDEG, "results/04_allDEG.csv", row.names = F)
 
-write_csv(table1a, "results/table1a.csv")
-write_csv(table1b, "results/table1b.csv")
-write_csv(table1c, "results/table1c.csv")
+write_csv(table1, "results/table1.csv")
+write_csv(table2, "results/table2.csv")
 
 write_csv(tableS1, "results/tableS1.csv")
 write_csv(tableS2a, "results/tableS2a.csv")

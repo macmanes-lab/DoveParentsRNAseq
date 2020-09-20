@@ -1,0 +1,26 @@
+gene,inc.d3_m.inc.d3,inc.d9_m.inc.d9,inc.d17_m.inc.d17,hatch_m.n2,inc.d9_early,inc.d17_prolong,hatch_early,hatch_prolong,hatch_extend
+AR,NA,NA,NA,NA,NA,NA,MP(+),NA,NA
+AVP,NA,MH(+),MH(-),NA,MP(+),NA,NA,NA,NA
+AVPR2,NA,FH(-),NA,NA,NA,NA,NA,NA,NA
+CRH,FH(+),NA,NA,NA,NA,NA,NA,FH(+),NA
+DIO3,FH(-),NA,FH(-); MH(-),FH(-); MH(-),NA,MH(-),NA,NA,NA
+ESR2,FH(-),NA,FH(-); MH(-); MP(-),NA,MH(-),NA,FH(+),NA,NA
+FSHB,NA,NA,MH(-),FH(-); MH(-),NA,NA,MH(-),NA,NA
+GABRQ,FH(+); MH(+),MP(+),FH(+); MH(+),FH(+); MH(+),MH(+); MP(+),FH(+); MH(+),FH(+); MH(+); MP(+),FH(+); MH(+),FH(+); MH(+)
+GAL,NA,NA,NA,NA,MP(+),NA,MP(+),NA,NA
+GALR1,NA,NA,NA,NA,NA,NA,FH(+),NA,NA
+GNRH1,NA,NA,NA,FH(+); MH(+),NA,NA,FH(+),NA,MH(+)
+LHCGR,FH(-),MP(+),FH(-),FH(-); MH(-),MH(-); MP(+),FH(-),MH(-); MP(+),FH(-); MH(-),FH(-); MH(-)
+MC4R,NA,NA,NA,FH(+),MP(+),NA,FH(+); MP(+),NA,NA
+MC5R,NA,NA,NA,NA,MP(+),NA,MP(+),NA,NA
+NPFFR1,NA,NA,NA,FH(+),NA,NA,FH(+); MH(+); MP(+),NA,NA
+NPVF,FH(-),NA,FH(-); MH(-),FH(-); MH(-); MP(+),MH(-),FH(-); MH(-),FH(-); MH(-),FH(-); MH(-),FH(-); MH(-)
+NPY,NA,NA,NA,MP(+),MP(+),MP(-),MP(+),NA,NA
+OXT,NA,MH(+),FH(-),NA,MP(+),NA,MP(+),NA,NA
+POMC,NA,NA,NA,FH(-); MH(-),NA,FH(-); MP(-),FH(-); MH(-),FH(-),FH(-)
+PRL,NA,NA,NA,MP(-),NA,NA,MP(-),NA,NA
+PRLH,MH(+),MH(+),MP(-),MH(+),NA,NA,NA,MP(-),NA
+PRLHR,NA,NA,MH(-),NA,NA,NA,MP(+),NA,NA
+SERPINA4,FH(+),MP(+),FH(+); MH(+),MH(+),NA,FH(+),MH(+); MP(+),FH(+),MH(+)
+VIP,NA,NA,NA,MP(+),MP(+),NA,MP(+),NA,NA
+VIPR1,MP(+),NA,MP(+),NA,NA,NA,MH(+),NA,NA

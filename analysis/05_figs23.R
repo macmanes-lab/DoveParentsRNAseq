@@ -18,6 +18,8 @@ gonm <- wranglevsds("results/03_gonvsdm.csv")
 
 allDEG <- read_csv("results/04_allDEG.csv")
 
+
+
 ## figure 2 candidate genes
 
 makefig2 <- function(mylabels, tissue, dff, dfm, 
@@ -69,11 +71,11 @@ makefig2 <- function(mylabels, tissue, dff, dfm,
 }
 
 ab <- makefig2(c("A1", "A2", "A3", "A4"), "hypothalamus", hypf, hypm, "AVP", 
-               "control_bldg", "hatch_m.n2", 
-               "control", "bldg", "hatch", "m.n2")
+               "control_hatch", "hatch_m.n2", 
+               "control", "hatch", "hatch", "m.n2")
 cd <- makefig2(c("B1", "B2", "B3", "B4"),  "pituitary", pitf, pitm, "PRL", 
-               "inc.d9_inc.d17", "hatch_early", 
-               "inc.d9", "inc.d17",  "hatch", "early")
+               "inc.d9_inc.d17", "inc.d17_m.inc.d17", 
+               "inc.d9", "inc.d17",  "inc.d17", "m.inc.d17")
 ef <- makefig2(c("C1", "C2", "C3", "C4"), "gonads", gonf, gonm, "ESR2",
                "control_lay", "inc.d17_prolong",
                "control", "lay", "inc.d17", "prolong")
