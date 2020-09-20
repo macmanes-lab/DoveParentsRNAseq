@@ -16,9 +16,17 @@ pitm <- wranglevsds("results/03_pitvsdm.csv")
 gonf <- wranglevsds("results/03_gonvsdf.csv")
 gonm <- wranglevsds("results/03_gonvsdm.csv")
 
+hyp <- rbind(hypf, hypm)
+pit <- rbind(pitf, pitm)
+gon <- rbind(gonf, gonm)
+
 allDEG <- read_csv("results/04_allDEG.csv")
 
 
+hyp %>%
+  filter(gene == "AR") %>%
+  ggplot(aes(x = treatment, y = counts)) +
+  geom_boxplot() + facet_wrap(~sex)
 
 ## figure 2 candidate genes
 
@@ -48,13 +56,10 @@ makefig2 <- function(mylabels, tissue, dff, dfm,
     labs(subtitle = " ")  +
     theme(axis.title.x = element_blank(),
           legend.position = "none")
-  
-  abcd <- plot_grid(a,c,b,d,nrow = 1, rel_widths = c(9,7.35,12,7),
-                    labels = mylabels, label_size = 8)
-  
 
   e <- plotcandidatechar(dfm, candidategene, treatment1, treatment2) + 
     labs(subtitle = msubtitle)
+  
   f <- plotcandidatemanip(dfm, candidategene, treatment3, treatment4) + 
     labs(subtitle = " ")
   
@@ -63,14 +68,14 @@ makefig2 <- function(mylabels, tissue, dff, dfm,
   h <- plot.volcano(tissue, "male",  comp2) + 
     labs(subtitle = " ") 
 
-  efgh <- plot_grid(e,g,f,h,nrow = 1, rel_widths = c(9,7.35,12,7))
+
   
-  fig <- plot_grid(abcd, efgh, nrow = 2,
-                   rel_heights = c(1,1.2))
+  fig <- plot_grid(a,e,b,f, nrow = 1)
   return(fig)
 }
 
-ab <- makefig2(c("A1", "A2", "A3", "A4"), "hypothalamus", hypf, hypm, "AVP", 
+ab <- makefig2(c("A1", "A2", "A3", "A4"), 
+               "hypothalamus", hypf, hypm, "AVP", 
                "control_hatch", "hatch_m.n2", 
                "control", "hatch", "hatch", "m.n2")
 cd <- makefig2(c("B1", "B2", "B3", "B4"),  "pituitary", pitf, pitm, "PRL", 
