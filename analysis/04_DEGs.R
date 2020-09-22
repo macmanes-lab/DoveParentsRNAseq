@@ -58,6 +58,14 @@ head(allDEG)
 
 allDEG %>% filter(gene == "AR", tissue == "H", sex == "M")
 
+## drop pvalues from allDEG
+
+allDEG <- allDEG %>%
+  #remove pvalue
+  select(-pvalue, -direction2) %>% 
+  filter(direction != "NS")
+
+## subset only candidates
 candidateDEGs <- allDEG %>%
   mutate(sex = recode(sex, "female" = "F", "male" = "M" ),
          tissue = recode(tissue, 
@@ -66,8 +74,6 @@ candidateDEGs <- allDEG %>%
                          "gonad" = "G",
                          "gonads" = "G"),
          group = paste(sex, tissue, sep = "")) %>%
-  #remove padj
-  select(-padj, -direction) %>%
   filter(gene %in% candidategenes) %>%
   mutate(compres = paste(group, posneg, sep = "")) %>%
   group_by(gene, comparison) %>%
@@ -77,14 +83,6 @@ candidateDEGs <- allDEG %>%
 print(candidategenes)
 print(head(candidateDEGs))
 
-## drop pvalues from allDEG
-
-
-allDEG <- allDEG %>%
-  #remove pvalue
-  select(-pvalue, -direction2) %>% 
-  filter(direction != "NS")
-
 # make tables
 
 table1 <- maketable1(candidateDEGs, levelssequential) 
@@ -92,12 +90,11 @@ table2 <- maketable1(candidateDEGs, c(levelsrm, levelsreplace))
 
 tableS1 <- maketable1(candidateDEGs, levelscontrolcharmanip) %>%
   select(gene, control_bldg:control_n9)
+tableS2 <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
+  select(gene, bldg_lay:bldg_n9)
 tableS3 <- maketable1(candidateDEGs, levelscontrolcharmanip) %>%
   select(gene, control_m.inc.d3:control_extend)
-
-tableS2a <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
-  select(gene, bldg_lay:bldg_n9)
-tableS2b <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
+tableS4 <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
   select(gene, bldg_m.inc.d3:bldg_extend)
 
 ## save files
@@ -108,6 +105,6 @@ write_csv(table1, "results/table1.csv")
 write_csv(table2, "results/table2.csv")
 
 write_csv(tableS1, "results/tableS1.csv")
-write_csv(tableS2a, "results/tableS2a.csv")
-write_csv(tableS2b, "results/tableS2b.csv")
+write_csv(tableS2, "results/tableS2.csv")
 write_csv(tableS3, "results/tableS3.csv")
+write_csv(tableS4, "results/tableS4.csv")
