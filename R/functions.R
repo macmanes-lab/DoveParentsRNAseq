@@ -40,7 +40,7 @@ returnvsd <- function(whichdds, whichgroup){
 
 wranglevsds <- function(pathtofile){
   df <- read_csv(pathtofile) %>%
-    mutate(treatment = factor(treatment, levels = alllevels))
+    mutate(treatment = factor(treatment, levels = alllevels2))
   return(df)
 }
 
@@ -133,17 +133,17 @@ createDEGdfs <- function(whichdds, whichgroup, downs, ups){
 
 ## volcano plots
 
-plot.volcano <- function(whichtissue, whichsex,  whichcomparison){
+plot.volcano <- function(whichtissue,  whichcomparison){
   
   volcano <- allDEG %>%
     dplyr::filter(tissue %in% whichtissue,
-           comparison %in% whichcomparison,
-           sex %in% whichsex) %>%
+           comparison %in% whichcomparison) %>%
     dplyr::mutate(direction = factor(direction, levels = alllevels2)) %>%
     ggplot(aes(x = lfc, y = logpadj)) + 
     geom_point(aes(color = direction), size = 1, 
                alpha = 0.75, na.rm = T) + 
     theme_B3() +
+    facet_wrap(~sex, nrow = 2, scales = "free_y") +
     scale_color_manual(values = allcolors, 
                        name = "increased expression in:",
                        breaks = alllevels) +
@@ -280,13 +280,13 @@ plotcandidatechar <- function(df, whichgene){
                   treatment %in% charlevels)  %>%
     ggplot(aes(y =  counts, x = treatment, fill = treatment)) +
     geom_boxplot(lwd=0.5 , outlier.size = 0.1) +
-    facet_wrap(~sex) +
+    facet_wrap(~sex, nrow = 2, scales = "free_y") +
     theme_B3() +
     theme(legend.position = "none",
           axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
-    labs(y = whichgene, x = "Characterization") 
+    labs(y = whichgene, x = "Reproductive or Parental Stage") 
   return(p)
   
 }
@@ -299,12 +299,12 @@ plotcandidatemanip <- function(df, whichgene){
     ggplot(aes(y =  counts, x = treatment, fill = treatment)) +
     geom_boxplot(lwd=0.5, outlier.size = 0.1) +
     theme_B3() +
-    facet_wrap(~sex) +
+    facet_wrap(~sex, nrow = 2, scales = "free_y") +
     theme(legend.position = "none",
           axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
-    labs( y = whichgene,  x = "Removal and replacement") 
+    labs( y = whichgene,  x = "Offspring removal and replacement") 
   return(p)
   
 }

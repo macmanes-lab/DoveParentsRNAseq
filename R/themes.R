@@ -21,9 +21,10 @@ charlevelsnocontrol <- c( "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch",
 maniplevels <- c("m.inc.d3" ,  "early" ,  "m.inc.d9" , "m.inc.d17", "prolong" ,  "m.n2", "extend")
 
 # manipulation
-timinglevels <- c("inc.d9", "early" , "inc.d17", "prolong" , "hatch", "extend", "n5")
-removallevels <- c("inc.d3",  "m.inc.d3" , "inc.d9", "m.inc.d9" ,
-             "inc.d17", "m.inc.d17" , "hatch", "m.n2")
+timinglevels <- c("control", "early" , "prolong" ,  "extend")
+
+removallevels <- c( "m.inc.d3" ,  "m.inc.d9" ,
+             "m.inc.d17" ,  "m.n2")
 
 # mix of characterization and manipulation, ordered by time
 alllevels <- c("control", "bldg", "lay", "inc.d3", "m.inc.d3" ,  
@@ -49,10 +50,8 @@ alllevelswithmanip <- c("inc.d3", "m.inc.d3" ,
 # characteriation first, then manip by time
 alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9", 
                 "inc.d17", "hatch", "n5", "n9",
-                "m.inc.d3" ,  
-                 "m.inc.d9" , "early" , 
-                 "m.inc.d17" , "prolong" ,
-                "m.n2", "extend")
+                "m.inc.d3" ,   "m.inc.d9" , "m.inc.d17"  , "m.n2", 
+                "early" , "prolong", "extend")
 
 hypothesislevels <- c(  "nest",  "eggs", "chicks" ,  "lo" , "hi" , "early", "late")
 

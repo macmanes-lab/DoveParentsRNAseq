@@ -25,17 +25,29 @@ allDEG <- read_csv("results/04_allDEG.csv")
 
 ##  figure 2
 
-a <- plotcandidatechar(hyp, "NPVF") 
-d <- plotcandidatemanip(hyp, "NPVF") 
-b <- plotcandidatechar(pit, "PRL")
-e <- plotcandidatemanip(pit, "PRL")
-c <- plotcandidatechar(gon, "ESR1")
-f <- plotcandidatemanip(gon, "ESR1")
+a <- plotcandidatechar(hyp, "NPVF") + labs(subtitle = "Hypothalamus")
+f <- plotcandidatemanip(hyp, "NPVF") + labs(subtitle = "Hypothalamus")
 
-abc <- plot_grid(a,b,c, nrow = 1)
-def <- plot_grid(d,e,f, nrow = 1)
+b <- plotcandidatechar(pit, "PRL") + labs(subtitle = "Pituitary")
+g <- plotcandidatemanip(pit, "PRL") + labs(subtitle = "Pituitary")
 
-plot_grid(abc,def, nrow  = 2)
+c <- plotcandidatechar(gon, "ESR1") + labs(subtitle = "Gonads")
+h <- plotcandidatemanip(gon, "ESR1") + labs(subtitle = "Gonads")
+
+
+d <- plot.volcano("pituitary", "control_inc.d17") + labs(subtitle = "Pituitary")
+e <- plot.volcano("pituitary", "inc.d9_inc.d17") + labs(subtitle = " ")
+
+i <- plot.volcano("pituitary", "control_m.inc.d17")  + labs(subtitle = "Pituitary")
+j <- plot.volcano("pituitary", "inc.d17_m.inc.d17") labs(subtitle = " ")
+
+abcde <- plot_grid(a,b,c,d,e, nrow = 1, 
+                   labels = c("A", "B", "C", "D", "E"), label_size = 8)
+fghij <- plot_grid(f,g,h,i,j, nrow = 1, 
+                   labels = c("F", "G", "H", "I", "J"), label_size = 8)
+
+fig2 <- plot_grid(abcde,fghij, nrow  = 2)
+
 
 png(file = "figures/fig2-1.png", width = 7, height = 7, 
     units = 'in', res = 300)

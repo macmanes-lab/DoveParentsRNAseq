@@ -88,16 +88,14 @@ top10 <- c(  "EGFR", "VEGFA",
 ## https://github.com/raynamharris/musicalgenes/blob/master/.github/ISSUE_TEMPLATE/request-a-gene.md
 githubgenes <- c("BRCA1", "NPVF")
 
-
-
 #candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
 candidategenes <- c(favoritegenes, curleychampagnegenes)
 candidategenes <- unique(candidategenes) %>% sort(.) 
 length(candidategenes)
 
-breastcancergenes
+
 # check that all canididates actually in transcriptome
-geneids %>% filter(gene %in% breastcancergenes) %>%  arrange(gene)
+geneids %>% filter(gene %in% candidategenes) %>%  arrange(gene) %>% pull(gene) %>% unique()
 
 shinygenes <- c(favoritegenes, listoparentalcaregenes, top10, breastcancergenes, githubgenes)
 shinygenes <- unique(shinygenes) %>% sort(.) 
