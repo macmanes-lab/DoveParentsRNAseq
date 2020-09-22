@@ -271,64 +271,40 @@ makebargraphv5 <- function(df, whichtissue, myylab,
 
 
 
-
-
-
-
-
-
-
-
-
 ## candidate gene box plot 
 
-
-
-
-
-
-## box plots fig 2
-
-plotcandidatechar <- function(df, whichgene,  treatment1, treatment2){
+plotcandidatechar <- function(df, whichgene){
   
   p <- df %>%
     dplyr::filter(gene  == whichgene,
                   treatment %in% charlevels)  %>%
     ggplot(aes(y =  counts, x = treatment, fill = treatment)) +
     geom_boxplot(lwd=0.5 , outlier.size = 0.1) +
-    #geom_jitter(size = 0.25) +
+    facet_wrap(~sex) +
     theme_B3() +
     theme(legend.position = "none",
           axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
-    labs(y = whichgene, x = "Characterization") +
-    geom_signif(comparisons = list(c(treatment1, treatment2)),
-                map_signif_level=F,
-                textsize = 1.5, family = 'Helvetica',
-                vjust = 1.5, size = 0.5) 
+    labs(y = whichgene, x = "Characterization") 
   return(p)
   
 }
 
-plotcandidatemanip <- function(df, whichgene, treatment3, treatment4){
+plotcandidatemanip <- function(df, whichgene){
   
   p <- df %>%
     dplyr::filter(gene  == whichgene,
                   treatment %in% c(removallevels, timinglevels))  %>%
     ggplot(aes(y =  counts, x = treatment, fill = treatment)) +
     geom_boxplot(lwd=0.5, outlier.size = 0.1) +
-   # geom_jitter(size = 0.25) +
     theme_B3() +
+    facet_wrap(~sex) +
     theme(legend.position = "none",
           axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
-    labs( y = whichgene,  x = "Removal and replacement") +
-    geom_signif(comparisons = list(c(treatment3, treatment4)),
-                map_signif_level= F,
-                textsize = 1.5, family = 'Helvetica',
-                vjust = 1.5,  size = 0.5) 
+    labs( y = whichgene,  x = "Removal and replacement") 
   return(p)
   
 }

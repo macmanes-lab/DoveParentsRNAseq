@@ -23,70 +23,19 @@ gon <- rbind(gonf, gonm)
 allDEG <- read_csv("results/04_allDEG.csv")
 
 
-hyp %>%
-  filter(gene == "AR") %>%
-  ggplot(aes(x = treatment, y = counts)) +
-  geom_boxplot() + facet_wrap(~sex)
+##  figure 2
 
-## figure 2 candidate genes
+a <- plotcandidatechar(hyp, "NPVF") 
+d <- plotcandidatemanip(hyp, "NPVF") 
+b <- plotcandidatechar(pit, "PRL")
+e <- plotcandidatemanip(pit, "PRL")
+c <- plotcandidatechar(gon, "ESR1")
+f <- plotcandidatemanip(gon, "ESR1")
 
-makefig2 <- function(mylabels, tissue, dff, dfm, 
-                     candidategene, comp1, comp2, 
-                     treatment1, treatment2, treatment3, treatment4){
-  
-  fsubtitle = paste("Female", tissue, sep = " ")
-  msubtitle = paste("Male", tissue, sep = " ")
+abc <- plot_grid(a,b,c, nrow = 1)
+def <- plot_grid(d,e,f, nrow = 1)
 
-  a <- plotcandidatechar(dff, candidategene, treatment1, treatment2) + 
-    labs(subtitle = fsubtitle) +
-    theme(axis.title.x = element_blank(), 
-          axis.text.x = element_blank())
-  
-  b <- plotcandidatemanip(dff, candidategene, treatment3, treatment4) + 
-    labs(subtitle = " ") +
-    theme(axis.title.x = element_blank(), 
-          axis.text.x = element_blank())
-  
-  c <- plot.volcano(tissue, "female",  comp1) + 
-    labs(subtitle = " ") +
-    theme(axis.title.x = element_blank(),
-          legend.position = "none")
-  
-  d <- plot.volcano(tissue, "female",  comp2) + 
-    labs(subtitle = " ")  +
-    theme(axis.title.x = element_blank(),
-          legend.position = "none")
-
-  e <- plotcandidatechar(dfm, candidategene, treatment1, treatment2) + 
-    labs(subtitle = msubtitle)
-  
-  f <- plotcandidatemanip(dfm, candidategene, treatment3, treatment4) + 
-    labs(subtitle = " ")
-  
-  g <- plot.volcano(tissue, "male",  comp1)  + 
-    labs(subtitle = " ") 
-  h <- plot.volcano(tissue, "male",  comp2) + 
-    labs(subtitle = " ") 
-
-
-  
-  fig <- plot_grid(a,e,b,f, nrow = 1)
-  return(fig)
-}
-
-ab <- makefig2(c("A1", "A2", "A3", "A4"), 
-               "hypothalamus", hypf, hypm, "AVP", 
-               "control_hatch", "hatch_m.n2", 
-               "control", "hatch", "hatch", "m.n2")
-cd <- makefig2(c("B1", "B2", "B3", "B4"),  "pituitary", pitf, pitm, "PRL", 
-               "inc.d9_inc.d17", "inc.d17_m.inc.d17", 
-               "inc.d9", "inc.d17",  "inc.d17", "m.inc.d17")
-ef <- makefig2(c("C1", "C2", "C3", "C4"), "gonads", gonf, gonm, "ESR2",
-               "control_lay", "inc.d17_prolong",
-               "control", "lay", "inc.d17", "prolong")
-
-fig2 <- plot_grid(ab,cd,ef, nrow = 3)
-fig2
+plot_grid(abc,def, nrow  = 2)
 
 png(file = "figures/fig2-1.png", width = 7, height = 7, 
     units = 'in', res = 300)

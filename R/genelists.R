@@ -67,7 +67,7 @@ parentalcaregenes <- GOgenes %>%
   dplyr::rename("GO"= "parentalbehavior" )
 head(parentalcaregenes)
 
-
+listoparentalcaregenes <- parentalcaregenes %>% pull(gene)
 
 ## breast and ovarian cancers  https://www.gynecologiconcology-online.net/article/S0090-8258(19)30069-1/fulltext
 breastcancergenes <- c("BRCA1","BRCA2", "CDKN2A", "PTEN", "PALB2", "TP53", "CDH1", "ATM",
@@ -77,11 +77,28 @@ ovariancancergenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", 
                 "PRKAR1A", "PRKACA","SDH", "GPR101")
 
 
+# most popular genes in human genome
+# https://www.nature.com/articles/d41586-017-07291-9
+
+top10 <- c(  "EGFR", "VEGFA",
+           "IL6", "TGFB1", "MTHFR", "ESR1", "AKT1")
+
+
 ## genes from github issues 
 ## https://github.com/raynamharris/musicalgenes/blob/master/.github/ISSUE_TEMPLATE/request-a-gene.md
 githubgenes <- c("BRCA1", "NPVF")
 
 
+
 #candidategenes <- GOgenesLong %>% distinct(gene) %>% pull(gene)
-candidategenes <- c(favoritegenes)
-shinygenes <- c(favoritegenes, parentalcaregenes, githubgenes)
+candidategenes <- c(favoritegenes, curleychampagnegenes)
+candidategenes <- unique(candidategenes) %>% sort(.) 
+length(candidategenes)
+
+breastcancergenes
+# check that all canididates actually in transcriptome
+geneids %>% filter(gene %in% breastcancergenes) %>%  arrange(gene)
+
+shinygenes <- c(favoritegenes, listoparentalcaregenes, top10, breastcancergenes, githubgenes)
+shinygenes <- unique(shinygenes) %>% sort(.) 
+shinygenes
