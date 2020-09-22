@@ -39,7 +39,7 @@ d <- plot.volcano("pituitary", "control_inc.d17") + labs(subtitle = "Pituitary")
 e <- plot.volcano("pituitary", "inc.d9_inc.d17") + labs(subtitle = " ")
 
 i <- plot.volcano("pituitary", "control_m.inc.d17")  + labs(subtitle = "Pituitary")
-j <- plot.volcano("pituitary", "inc.d17_m.inc.d17") labs(subtitle = " ")
+j <- plot.volcano("pituitary", "inc.d17_m.inc.d17") + labs(subtitle = " ")
 
 abcde <- plot_grid(a,b,c,d,e, nrow = 1, 
                    labels = c("A", "B", "C", "D", "E"), label_size = 8)
