@@ -25,26 +25,28 @@ allDEG <- read_csv("results/04_allDEG.csv")
 
 ##  figure 2
 
-a <- plotcandidatechar(hyp, "NPVF") + labs(subtitle = "Hypothalamus")
-f <- plotcandidatemanip(hyp, "NPVF") + labs(subtitle = "Hypothalamus")
+a <- plotcandidatechar(hyp, "NPVF") + labs(subtitle = "Hypothalamus", x = " ") 
+f <- plotcandidatemanip(hyp, "NPVF") + labs(subtitle = "Hypothalamus",  x = " ")
 
 b <- plotcandidatechar(pit, "PRL") + labs(subtitle = "Pituitary")
 g <- plotcandidatemanip(pit, "PRL") + labs(subtitle = "Pituitary")
 
-c <- plotcandidatechar(gon, "ESR1") + labs(subtitle = "Gonads")
-h <- plotcandidatemanip(gon, "ESR1") + labs(subtitle = "Gonads")
+c <- plotcandidatechar(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
+h <- plotcandidatemanip(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
 
 
 d <- plot.volcano("pituitary", "control_inc.d17") + labs(subtitle = "Pituitary")
-e <- plot.volcano("pituitary", "inc.d9_inc.d17") + labs(subtitle = " ")
+e <- plot.volcano("pituitary", "inc.d9_inc.d17") + labs(subtitle = " ", y = NULL) 
 
 i <- plot.volcano("pituitary", "control_m.inc.d17")  + labs(subtitle = "Pituitary")
-j <- plot.volcano("pituitary", "inc.d17_m.inc.d17") + labs(subtitle = " ")
+j <- plot.volcano("pituitary", "inc.d17_m.inc.d17") + labs(subtitle = " ", y = NULL)
 
 abcde <- plot_grid(a,b,c,d,e, nrow = 1, 
-                   labels = c("A", "B", "C", "D", "E"), label_size = 8)
+                   labels = c("A", "B", "C", "D" ), label_size = 8,
+                   rel_widths = c(1,1,1,0.9,0.8))
 fghij <- plot_grid(f,g,h,i,j, nrow = 1, 
-                   labels = c("F", "G", "H", "I", "J"), label_size = 8)
+                   labels = c("D", "E", "F", "G"), label_size = 8,
+                   rel_widths = c(1,1,1,0.9,0.8))
 
 fig2 <- plot_grid(abcde,fghij, nrow  = 2)
 

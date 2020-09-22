@@ -152,7 +152,8 @@ plot.volcano <- function(whichtissue,  whichcomparison){
     theme(legend.position = "bottom",
           legend.direction = "vertical",
           legend.key.height = unit(0, "cm"),      
-          legend.spacing.y = unit(0, "cm")) +
+          legend.spacing.y = unit(0, "cm"),
+          legend.spacing.x = unit(0, "cm")) +
     guides(color = guide_legend(nrow = 1))
   return(volcano)
 }
@@ -286,7 +287,10 @@ plotcandidatechar <- function(df, whichgene){
           axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
-    labs(y = whichgene, x = "Reproductive or Parental Stage") 
+    labs(y = whichgene, x = "Reproductive/Parental Stage") +
+    geom_signif(comparisons = list(c("control", "inc.d17"),
+                                   c("inc.d9", "inc.d17")),
+                map_signif_level=F, step_increase = 0.1)
   return(p)
   
 }
@@ -304,7 +308,9 @@ plotcandidatemanip <- function(df, whichgene){
           axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
-    labs( y = whichgene,  x = "Offspring removal and replacement") 
+    labs( y = whichgene,  x = "Offspring Removal/Replacement")  +
+    geom_signif(comparisons = list(c("control", "m.inc.d17")),
+                map_signif_level=F, step_increase = 0.1)
   return(p)
   
 }
