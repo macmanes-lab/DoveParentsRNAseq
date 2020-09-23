@@ -66,7 +66,7 @@ h <- plotcandidatemanip(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
 d <- plot.volcano("pituitary", "control_inc.d17") + labs(subtitle = "Pituitary")
 e <- plot.volcano("pituitary", "inc.d9_inc.d17") + labs(subtitle = " ", y = NULL) 
 
-e2 <- makebargraphv5(fig2Adegs, "pituitary", "No. of DEGs", 
+e2 <- makebargraphv4(fig2Adegs, "pituitary", "No. of DEGs", 
                      fig2Acomps, fig2Alabels)  + 
   labs(x = "Comparison", subtitle = "Pituitary", title = " ")
 
@@ -74,7 +74,7 @@ e2 <- makebargraphv5(fig2Adegs, "pituitary", "No. of DEGs",
 i <- plot.volcano("pituitary", "control_m.inc.d17")  + labs(subtitle = "Pituitary")
 j <- plot.volcano("pituitary", "early_extend") + labs(subtitle = " ", y = NULL)
 
-j2 <- makebargraphv5(fig2Ddegs, "pituitary", "No. of DEGs", 
+j2 <- makebargraphv4(fig2Ddegs, "pituitary", "No. of DEGs", 
                      fig2Dcomps, fig2Dlabels) + 
   labs(x = "Comparison", subtitle = "Pituitary", title = " ")
 
