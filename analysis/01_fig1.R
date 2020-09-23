@@ -24,7 +24,7 @@ head(row.names(countData) == row.names(colData))
 
 ## tsne
 
-# prep for tsne useing count data from limma and the custom `subsetmaketsne` function
+# prep for tsne useing count data and the custom `subsetmaketsne` function
 hyptsne <- subsetmaketsne("hypothalamus", alllevelswithmanip, sexlevels)
 pittsne <- subsetmaketsne("pituitary", alllevelswithmanip, sexlevels)
 gontsne <- subsetmaketsne("gonads", alllevelswithmanip, sexlevels)
@@ -42,7 +42,7 @@ ab <- ggdraw() +  draw_image(ab, scale = 1)
 
 
 f <- plottsne(hyptsnechar, hyptsnechar$treatment, allcolors) + 
-  labs(subtitle = "hypothalamus") 
+  labs(subtitle = "hypothalamus", y = "Characterization\ntSNE2") 
 g <- plottsne(pittsnechar, pittsnechar$treatment, allcolors ) + 
   labs(subtitle = "pituitary") 
 theme(strip.text = element_blank())
@@ -51,12 +51,13 @@ h <- plottsne(gontsnechar, gontsnechar$treatment, allcolors ) +
 
 fgh <- plot_grid(f,g,h, ncol = 3, 
                  label_size = 8,
-                 labels = c("A2", "A3", "A4"))
+                 labels = c("C", "D", "E"),
+                 rel_widths = c(1.2,1,1))
 
 
 
 c <- plottsne(hyptsne, hyptsne$treatment, allcolors) + 
-  labs(subtitle = "hypothalamus") 
+  labs(subtitle = "hypothalamus", y = "Manipulation\ntSNE2") 
 d <- plottsne(pittsne, pittsne$treatment, allcolors ) + 
   labs(subtitle = "pituitary") 
 theme(strip.text = element_blank())
@@ -64,8 +65,9 @@ e <- plottsne(gontsne, gontsne$treatment, allcolors ) +
   labs(subtitle = "gonads") 
 
 cde <- plot_grid(c,d,e, ncol = 3, 
-                 labels = c("B2", "B3", "B4"), 
-                label_size = 8)
+                 labels = c("F", "G", "H"), 
+                label_size = 8,
+                rel_widths = c(1.2,1,1))
 
 
 

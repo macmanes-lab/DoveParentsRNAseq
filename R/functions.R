@@ -145,15 +145,16 @@ plot.volcano <- function(whichtissue,  whichcomparison){
     theme_B3() +
     facet_wrap(~sex, nrow = 2, scales = "free_y") +
     scale_color_manual(values = allcolors, 
-                       name = "increased expression in:",
+                       name = "higher in:",
                        breaks = alllevels) +
     labs(y = expression(-log[10]("FDR")), 
-         x = "Log-fold change (LFC)") +
-    theme(legend.position = "bottom",
+         x = "LFC",
+         title = " ") +
+    theme(legend.position = "top",
           legend.direction = "vertical",
-          legend.key.height = unit(0, "cm"),      
-          legend.spacing.y = unit(0, "cm"),
-          legend.spacing.x = unit(0, "cm")) +
+          legend.key.height = unit(-0.2, "cm"),      
+          #legend.spacing.y = unit(-0.2, "cm"),
+          legend.spacing.x = unit(-0.2, "cm")) +
     guides(color = guide_legend(nrow = 1))
   return(volcano)
 }
@@ -213,15 +214,14 @@ plottsne <- function(tsnedf, pointcolor, whichcolors){
 ## bar graphs fig 3
 
 makebargraphv4 <- function(df, whichtissue, myylab, 
-                           whichlevels, whichlabels, whichsex,
-                           myymin, myymax){
+                           whichlevels, whichlabels){
   
   p <- df %>%
-    dplyr::filter(tissue == whichtissue,
-           sex == whichsex) %>%
+    dplyr::filter(tissue == whichtissue) %>%
     ggplot(aes(x = comparison, y = n, fill = direction)) +
     geom_bar(stat="identity") +
     theme_B3() +
+    facet_wrap(~sex, nrow =  2) +
     theme(legend.position = "none",
           axis.text.x = element_text(angle = 45, hjust = 1))  +
     scale_fill_manual(values = allcolors,
@@ -234,20 +234,15 @@ makebargraphv4 <- function(df, whichtissue, myylab,
     scale_x_discrete(breaks = whichlevels,
                      labels = whichlabels,
                      drop = F,
-                     position = "bottom") +
-   # ylim(myymin, myymax) +
-    scale_y_continuous(breaks = c(-1500,-1000, -500, 0, 500, 1000),
-                       limits = c(myymin, myymax))
+                     position = "bottom") 
   return(p)
 }
 
 makebargraphv5 <- function(df, whichtissue, myylab, 
-                           whichlevels, whichlabels, whichsex,
-                           myymin, myymax){
+                           whichlevels, whichlabels){
   
   p <- df %>%
-    dplyr::filter(tissue == whichtissue,
-                  sex == whichsex) %>%
+    dplyr::filter(tissue == whichtissue) %>%
     ggplot(aes(x = comparison, y = n, fill = direction)) +
     geom_bar(stat="identity") +
     theme_B3() +
@@ -256,16 +251,12 @@ makebargraphv5 <- function(df, whichtissue, myylab,
     scale_fill_manual(values = allcolors,
                       name = " ") +
     scale_color_manual(values = allcolors) +
-    #geom_text(stat='identity', aes(label= n), vjust =-0.5, 
-    #          position = position_dodge(width = 1),
-    #         size = 1.25, color = "black") +
+    facet_wrap(~sex, nrow = 2) +
     labs(x = NULL, y = myylab)  +
     scale_x_discrete(breaks = whichlevels,
                      labels = whichlabels,
                      drop = F,
-                     position = "bottom") +
-    scale_y_continuous(breaks = c(-4000,-3000, -2000, -1000, 0, 1000, 2000, 3000),
-                       limits = c(myymin, myymax))
+                     position = "bottom") 
     
   return(p)
 }
@@ -287,7 +278,7 @@ plotcandidatechar <- function(df, whichgene){
           axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
-    labs(y = whichgene, x = "Reproductive/Parental Stage") +
+    labs(y = whichgene, x = "Stage", title =" ") +
     geom_signif(comparisons = list(c("control", "inc.d17"),
                                    c("inc.d9", "inc.d17")),
                 map_signif_level=F, step_increase = 0.1,
@@ -309,7 +300,7 @@ plotcandidatemanip <- function(df, whichgene){
           axis.text.x = element_text(angle = 45, hjust = 1),
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
-    labs( y = whichgene,  x = "Offspring Removal/Replacement")  +
+    labs( y = whichgene,  x = "Treatment", title =" ")  +
     geom_signif(comparisons = list(c("control", "m.inc.d17"),
                                    c("early", "extend")),
                 map_signif_level=F, step_increase = 0.1,

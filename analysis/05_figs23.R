@@ -3,6 +3,7 @@
 library(tidyverse)
 library(cowplot)
 library(ggsignif)
+library(stringr)
 
 source("R/themes.R")
 source("R/functions.R")
@@ -22,44 +23,6 @@ gon <- rbind(gonf, gonm)
 
 allDEG <- read_csv("results/04_allDEG.csv")
 
-
-##  figure 2
-
-a <- plotcandidatechar(hyp, "NPVF") + labs(subtitle = "Hypothalamus", x = " ") 
-f <- plotcandidatemanip(hyp, "NPVF") + labs(subtitle = "Hypothalamus",  x = " ")
-
-b <- plotcandidatechar(pit, "PRL") + labs(subtitle = "Pituitary")
-g <- plotcandidatemanip(pit, "PRL") + labs(subtitle = "Pituitary")
-
-c <- plotcandidatechar(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
-h <- plotcandidatemanip(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
-
-
-d <- plot.volcano("pituitary", "control_inc.d17") + labs(subtitle = "Pituitary")
-e <- plot.volcano("pituitary", "inc.d9_inc.d17") + labs(subtitle = " ", y = NULL) 
-
-i <- plot.volcano("pituitary", "control_m.inc.d17")  + labs(subtitle = "Pituitary")
-j <- plot.volcano("pituitary", "early_extend") + labs(subtitle = " ", y = NULL)
-
-abcde <- plot_grid(a,b,c,d,e, nrow = 1, 
-                   labels = c("A", "B", "C", "D" ), label_size = 8,
-                   rel_widths = c(1,1,1,0.9,0.8))
-fghij <- plot_grid(f,g,h,i,j, nrow = 1, 
-                   labels = c("D", "E", "F", "G"), label_size = 8,
-                   rel_widths = c(1,1,1,0.9,0.8))
-
-fig2 <- plot_grid(abcde,fghij, nrow  = 2)
-
-
-png(file = "figures/fig2-1.png", width = 7, height = 7, 
-    units = 'in', res = 300)
-plot(fig2) 
-dev.off()
-
-pdf(file = "figures/fig2-1.pdf", width=7, height=7)
-plot(fig2)
-dev.off()
-
 ###### DEGs
 
 
@@ -78,6 +41,67 @@ filterDEGs <- function(whichlevels){
   return(df)
 }
 
+##  figure 2 DEGs
+fig2Acomps <- c("control_inc.d9", "inc.d9_inc.d17" )
+fig2Dcomps <- c("control_m.inc.d17", "early_extend" )
+
+fig2Alabels <- c("control vs.\ninc.d9\n", "inc.d9 vs.\ninc.d17" )
+fig2Dlabels <- c("control vs.\nm.inc.d17\n", "early vs.\nextend" )
+
+
+fig2Adegs <- filterDEGs(fig2Acomps)
+fig2Ddegs <- filterDEGs(fig2Dcomps)
+
+
+a <- plotcandidatechar(hyp, "AVP") + labs(subtitle = "Hypothalamus", x = " ", title = "Characterization") 
+f <- plotcandidatemanip(hyp, "AVP") + labs(subtitle = "Hypothalamus",  x = " ", title = "Manipulation")
+
+b <- plotcandidatechar(pit, "PRL") + labs(subtitle = "Pituitary")
+g <- plotcandidatemanip(pit, "PRL") + labs(subtitle = "Pituitary")
+
+c <- plotcandidatechar(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
+h <- plotcandidatemanip(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
+
+
+d <- plot.volcano("pituitary", "control_inc.d17") + labs(subtitle = "Pituitary")
+e <- plot.volcano("pituitary", "inc.d9_inc.d17") + labs(subtitle = " ", y = NULL) 
+
+e2 <- makebargraphv5(fig2Adegs, "pituitary", "No. of DEGs", 
+                     fig2Acomps, fig2Alabels)  + 
+  labs(x = "Comparison", subtitle = "Pituitary", title = " ")
+
+
+i <- plot.volcano("pituitary", "control_m.inc.d17")  + labs(subtitle = "Pituitary")
+j <- plot.volcano("pituitary", "early_extend") + labs(subtitle = " ", y = NULL)
+
+j2 <- makebargraphv5(fig2Ddegs, "pituitary", "No. of DEGs", 
+                     fig2Dcomps, fig2Dlabels) + 
+  labs(x = "Comparison", subtitle = "Pituitary", title = " ")
+
+abcde <- plot_grid(a,b,c,d,e,e2, nrow = 1, 
+                   labels = c("A", "B", "C", "D", " ", "E" ), label_size = 8,
+                   rel_widths = c(1,1,1,0.85,0.75,0.7))
+fghij <- plot_grid(f,g,h,i,j,j2, nrow = 1, 
+                   labels = c("F", "G", "H", "I", "", "J"), label_size = 8,
+                   rel_widths = c(1,1,1,0.85,0.75,0.7))
+
+fig2 <- plot_grid(abcde,fghij, nrow  = 2)
+
+
+png(file = "figures/fig2-1.png", width = 7, height = 7, 
+    units = 'in', res = 300)
+plot(fig2) 
+dev.off()
+
+pdf(file = "figures/fig2-1.pdf", width=7, height=7)
+plot(fig2)
+dev.off()
+
+
+
+### fig 3 DEGs
+
+
 DEGcontrol <- filterDEGs(levelscontrolcharmanip)
 DEGbldg <- filterDEGs(levelsbldgcharmanip)
 DEGsequential <- filterDEGs(levelssequential)
@@ -86,119 +110,42 @@ DEGinc9 <- filterDEGs(levelsinc9)
 DEGinc17 <- filterDEGs(levelsinc17)
 DEGhatch <- filterDEGs(levelshatch)
 
-max(DEGcontrol$n)
-min(DEGcontrol$n)
 
-max(DEGbldg$n)
-max(DEGsequential$n)
-max(DEGinc9$n)
-max(DEGinc17$n)
-max(DEGhatch$n)
-
-min(DEGbldg$n)
-min(DEGsequential$n)
-min(DEGinc9$n)
-min(DEGinc17$n)
-min(DEGhatch$n)
-
-
-
-### fig 3 DEGs
 
 makefig3 <- function(tissue, label1){
-  
-  fsubtitle = paste("Female", tissue, sep = " ")
-  msubtitle = paste("Male", tissue, sep = " ")
-  
-  a <- makebargraphv5(DEGcontrol, tissue, "No. of DEGs", 
-                      levelscontrolcharmanip, labelscontrolcharmanip, "female",
-                      -4000, 3000) +
-    labs(x =  NULL, subtitle = fsubtitle) +
-    theme(axis.text.x = element_blank()) 
-  
-  b <- makebargraphv4(DEGbldg, tissue, NULL, 
-                      levelsbldgcharmanip, labelsbldgcharmanip, "female",
-                      -1600, 1100) +
-    labs(x = NULL, subtitle = " ") +
-    theme(axis.text.x = element_blank()) 
-  
-  c <- makebargraphv4(DEGsequential, tissue, NULL,  
-                      levelssequential, labelsssequential,"female",
-                      -1600, 1100) +
-    labs(x = NULL, subtitle = " ") +
-    theme(axis.text.x = element_blank(),
-          axis.text.y = element_blank())
-  
-  d <- makebargraphv4(DEGinc9, tissue, NULL,  
-                      levelsinc9, labelsinc9, "female",
-                      -1600, 1100) +
-    labs(x = NULL, subtitle = " ") +
-    theme(axis.text.x = element_blank(),
-          axis.text.y = element_blank())
-  
-  e <- makebargraphv4(DEGinc17, tissue, NULL,  
-                      levelsinc17, labelsinc17, "female",
-                      -1600, 1100) +
-    labs(x = NULL, subtitle = " ") +
-    theme(axis.text.x = element_blank(),
-          axis.text.y = element_blank())
-  
-  f <- makebargraphv4(DEGhatch, tissue, NULL,  
-                      levelshatch, labelshatch, "female",
-                      -1600, 1100) +
-    labs(x = NULL, subtitle = " ") +
-    theme(axis.text.x = element_blank(),
-          axis.text.y = element_blank())
-  
-  abcdef <- plot_grid(a,b,c,d,e,f, nrow = 1, rel_widths = c(20,20,10,4,4,6),
-                      labels = label1, label_size = 8)
 
-  g <- makebargraphv5(DEGcontrol, tissue, "No. of DEGs", 
-                      levelscontrolcharmanip, labelscontrolcharmanip, "male",
-                      -4000, 3000) +
-    labs(x = "Relative to... non-breeing controls,", subtitle = msubtitle) 
+  tissuetitle <- str_to_sentence(tissue, locale = "en")
+  ylab <- paste(tissuetitle, "\nNo. of DEGs", sep = "")
   
-  h <- makebargraphv4(DEGbldg, tissue, NULL,
-                      levelsbldgcharmanip, labelsbldgcharmanip, "male",
-                      -1600, 1100) +
-    labs(x = "nest-building controls...", subtitle = " ") 
+  a <- makebargraphv5(DEGcontrol, tissue, ylab, 
+                      levelscontrolcharmanip, labelscontrolcharmanip) +
+    labs(x = "Relative to... non-breeing controls", subtitle = " ") 
   
-  i <- makebargraphv4(DEGsequential, tissue,  NULL,  
-                      levelssequential, labelsssequential, "male",
-                      -1700, 1200) +
-    labs(x = "previous stage...",  subtitle = " ") +
-    theme(axis.text.y = element_blank())
+  b <- makebargraphv5(DEGbldg, tissue, NULL, 
+                      levelsbldgcharmanip, labelsbldgcharmanip) +
+    labs(x = "nest-building controls...", subtitle = " ")
   
-  j <- makebargraphv4(DEGinc9, tissue, NULL,  
-                      levelsinc9, labelsinc9, "male",
-                      -1600, 1100) +
-    labs(x = "inc.d9...",  subtitle = " ") +
-    theme(axis.text.y = element_blank()) 
+  c <- makebargraphv5(DEGsequential, tissue, NULL,  
+                      levelssequential, labelsssequential) +
+    labs(x = "previous stage...", subtitle = " ") 
   
-  k<- makebargraphv4(DEGinc17, tissue, NULL,  
-                      levelsinc17, labelsinc17, "male",
-                     -1700, 1200) +
-    labs(x = NULL, subtitle = " ")+
-    labs(x = "inc.d17...",  subtitle = " ") +
-    theme(axis.text.y = element_blank())
+  e <- makebargraphv5(DEGinc17, tissue, NULL,  
+                      levelsinc17, labelsinc17) +
+    labs(x = "inc.d17...", subtitle = " ") 
   
+  f <- makebargraphv5(DEGhatch, tissue, NULL,  
+                      levelshatch, labelshatch) +
+    labs(x = "and hatch.", subtitle = " ") 
   
-  l <- makebargraphv4(DEGhatch, tissue, NULL,  
-                      levelshatch, labelshatch, "male",
-                      -1600, 1100) +
-    labs(x = "and hatch.",  subtitle = " ") +
-    theme(axis.text.y = element_blank())
-  
-  ghijkl <- plot_grid(g,h,i,j,k,l, nrow = 1, rel_widths = c(20,20,10,4,4,6),
-                      align = "h")
-  
-  fig <- plot_grid(abcdef,ghijkl, nrow = 2, rel_heights = c(1,1.2))
+  fig <- plot_grid(a,b,c,#d,
+                      e,f, nrow = 1, rel_widths = c(17,16,10,5,7),
+                      labels = label1, label_size = 8)
   return(fig)
 }
 
-ab <- makefig3("hypothalamus", c("A1", "2", "3", "4", "5", "6"))
+ab <- makefig3("hypothalamus", c("A"))
 cd <- makefig3("pituitary", c("B"))
-ef <- makefig3("gonads", c("C1"))
+ef <- makefig3("gonads", c("C"))
 
 fig3 <- plot_grid(ab,cd,ef, nrow = 3)
 
@@ -210,3 +157,6 @@ dev.off()
 pdf(file = "figures/fig3-1.pdf", width=7, height=7)
 plot(fig3)
 dev.off()
+
+
+
