@@ -50,10 +50,10 @@ filterDEGs <- function(whichlevels){
 
 ##  figure 2 DEGs
 fig2Acomps <- c("bldg_inc.d17", "inc.d9_inc.d17" )
-fig2Dcomps <- c("inc.d17_m.inc.d17", "early_extend" )
+fig2Dcomps <- c("inc.d17_m.inc.d17", "inc.d17_prolong" )
 
 fig2Alabels <- c("inc.d9_inc.d17 vs.\ninc.d9", "inc.d9 vs.\ninc.d17" )
-fig2Dlabels <- c("inc.d17vs.\nm.inc.d17", "early vs.\nextend" )
+fig2Dlabels <- c("inc.d17vs\nm.inc.d17", "inc.d17vs\nprolong" )
 
 
 fig2Adegs <- filterDEGs(fig2Acomps)
@@ -79,7 +79,7 @@ e2 <- makebargraphv4(fig2Adegs, "pituitary", "No. of DEGs",
 
 
 i <- plot.volcano("pituitary", "inc.d17_m.inc.d17")  + labs(subtitle = "Pituitary")
-j <- plot.volcano("pituitary", "early_extend") + labs(subtitle = " ", y = NULL)
+j <- plot.volcano("pituitary", "inc.d17_prolong") + labs(subtitle = " ", y = NULL)
 
 j2 <- makebargraphv4(fig2Ddegs, "pituitary", "No. of DEGs", 
                      fig2Dcomps, fig2Dlabels) + 

@@ -302,7 +302,7 @@ plotcandidatemanip <- function(df, whichgene){
     scale_fill_manual(values = allcolors)  +
     labs( y = whichgene,  x = "Treatment", title =" ")  +
     geom_signif(comparisons = list(c("inc.d17", "m.inc.d17"),
-                                   c("early", "extend")),
+                                   c("inc.d17", "prolong")),
                 map_signif_level=F, step_increase = 0.1,
                 textsize = 1.5)
   return(p)
