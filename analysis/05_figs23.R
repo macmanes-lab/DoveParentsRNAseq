@@ -23,6 +23,13 @@ gon <- rbind(gonf, gonm)
 
 allDEG <- read_csv("results/04_allDEG.csv")
 
+# reverse sign of control bldg comparisons
+
+allDEG <- allDEG %>%
+  mutate(lfc = ifelse(comparison == "control_bldg", lfc * -1 , 
+                      ifelse(comparison == "inc.d9_early", lfc * -1 , lfc)))
+
+
 ###### DEGs
 
 
@@ -42,11 +49,11 @@ filterDEGs <- function(whichlevels){
 }
 
 ##  figure 2 DEGs
-fig2Acomps <- c("control_inc.d9", "inc.d9_inc.d17" )
-fig2Dcomps <- c("control_m.inc.d17", "early_extend" )
+fig2Acomps <- c("bldg_inc.d17", "inc.d9_inc.d17" )
+fig2Dcomps <- c("inc.d17_m.inc.d17", "early_extend" )
 
-fig2Alabels <- c("control vs.\ninc.d9\n", "inc.d9 vs.\ninc.d17" )
-fig2Dlabels <- c("control vs.\nm.inc.d17\n", "early vs.\nextend" )
+fig2Alabels <- c("inc.d9_inc.d17 vs.\ninc.d9", "inc.d9 vs.\ninc.d17" )
+fig2Dlabels <- c("inc.d17vs.\nm.inc.d17", "early vs.\nextend" )
 
 
 fig2Adegs <- filterDEGs(fig2Acomps)
@@ -63,7 +70,7 @@ c <- plotcandidatechar(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
 h <- plotcandidatemanip(gon, "ESR1") + labs(subtitle = "Gonads", x = " ")
 
 
-d <- plot.volcano("pituitary", "control_inc.d17") + labs(subtitle = "Pituitary")
+d <- plot.volcano("pituitary", "bldg_inc.d17") + labs(subtitle = "Pituitary")
 e <- plot.volcano("pituitary", "inc.d9_inc.d17") + labs(subtitle = " ", y = NULL) 
 
 e2 <- makebargraphv4(fig2Adegs, "pituitary", "No. of DEGs", 
@@ -71,7 +78,7 @@ e2 <- makebargraphv4(fig2Adegs, "pituitary", "No. of DEGs",
   labs(x = "Comparison", subtitle = "Pituitary", title = " ")
 
 
-i <- plot.volcano("pituitary", "control_m.inc.d17")  + labs(subtitle = "Pituitary")
+i <- plot.volcano("pituitary", "inc.d17_m.inc.d17")  + labs(subtitle = "Pituitary")
 j <- plot.volcano("pituitary", "early_extend") + labs(subtitle = " ", y = NULL)
 
 j2 <- makebargraphv4(fig2Ddegs, "pituitary", "No. of DEGs", 
@@ -102,43 +109,38 @@ dev.off()
 ### fig 3 DEGs
 
 
-DEGcontrol <- filterDEGs(levelscontrolcharmanip)
-DEGbldg <- filterDEGs(levelsbldgcharmanip)
+DEGbldg <- filterDEGs(levelsbldgchar)
 DEGsequential <- filterDEGs(levelssequential)
-
-DEGinc9 <- filterDEGs(levelsinc9)
 DEGinc17 <- filterDEGs(levelsinc17)
 DEGhatch <- filterDEGs(levelshatch)
-
-
+DEGearly <- filterDEGs(levelsearly)
 
 makefig3 <- function(tissue, label1){
 
   tissuetitle <- str_to_sentence(tissue, locale = "en")
   ylab <- paste(tissuetitle, "\nNo. of DEGs", sep = "")
   
-  a <- makebargraphv5(DEGcontrol, tissue, ylab, 
-                      levelscontrolcharmanip, labelscontrolcharmanip) +
-    labs(x = "Relative to... non-breeing controls", subtitle = " ") 
-  
-  b <- makebargraphv5(DEGbldg, tissue, NULL, 
-                      levelsbldgcharmanip, labelsbldgcharmanip) +
-    labs(x = "nest-building controls...", subtitle = " ")
+  b <- makebargraphv5(DEGbldg, tissue, ylab, 
+                      levelsbldgchar, labelsbldgchar) +
+    labs(x = "Relative to...nest-building controls,", subtitle = " ")
   
   c <- makebargraphv5(DEGsequential, tissue, NULL,  
                       levelssequential, labelsssequential) +
-    labs(x = "previous stage...", subtitle = " ") 
+    labs(x = "previous stage,", subtitle = " ") 
   
   e <- makebargraphv5(DEGinc17, tissue, NULL,  
                       levelsinc17, labelsinc17) +
-    labs(x = "inc.d17...", subtitle = " ") 
+    labs(x = "inc.d17,", subtitle = " ") 
   
   f <- makebargraphv5(DEGhatch, tissue, NULL,  
                       levelshatch, labelshatch) +
-    labs(x = "and hatch.", subtitle = " ") 
+    labs(x = "hatch,", subtitle = " ") 
+ 
+   g <- makebargraphv5(DEGearly, tissue, NULL,  
+                      levelsearly, labelsearly) +
+    labs(x = "and early.", subtitle = " ") 
   
-  fig <- plot_grid(a,b,c,#d,
-                      e,f, nrow = 1, rel_widths = c(17,16,10,5,7),
+  fig <- plot_grid(b,c,e,f,g, nrow = 1, rel_widths = c(15,12,5,7,5),
                       labels = label1, label_size = 8)
   return(fig)
 }

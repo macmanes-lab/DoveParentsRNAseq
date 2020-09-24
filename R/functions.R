@@ -279,7 +279,7 @@ plotcandidatechar <- function(df, whichgene){
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
     labs(y = whichgene, x = "Stage", title =" ") +
-    geom_signif(comparisons = list(c("control", "inc.d17"),
+    geom_signif(comparisons = list(c("bldg", "inc.d17"),
                                    c("inc.d9", "inc.d17")),
                 map_signif_level=F, step_increase = 0.1,
                 textsize = 1.5)
@@ -301,7 +301,7 @@ plotcandidatemanip <- function(df, whichgene){
           axis.title.y = element_text(face = "italic")) +
     scale_fill_manual(values = allcolors)  +
     labs( y = whichgene,  x = "Treatment", title =" ")  +
-    geom_signif(comparisons = list(c("control", "m.inc.d17"),
+    geom_signif(comparisons = list(c("inc.d17", "m.inc.d17"),
                                    c("early", "extend")),
                 map_signif_level=F, step_increase = 0.1,
                 textsize = 1.5)

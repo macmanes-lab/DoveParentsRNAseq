@@ -21,7 +21,7 @@ charlevelsnocontrol <- c( "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch",
 maniplevels <- c("m.inc.d3" ,  "early" ,  "m.inc.d9" , "m.inc.d17", "prolong" ,  "m.n2", "extend")
 
 # manipulation
-timinglevels <- c("control", "early" , "prolong" ,  "extend")
+timinglevels <- c("inc.d17", "early" , "prolong" ,  "extend")
 
 removallevels <- c( "m.inc.d3" ,  "m.inc.d9" ,
              "m.inc.d17" ,  "m.n2")
@@ -87,6 +87,8 @@ labelssmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
 levelsinc9 <- c("inc.d9_m.inc.d9", "inc.d9_early")
 levelsinc17 <- c("inc.d17_m.inc.d17", "inc.d17_prolong")
 levelshatch <- c("hatch_m.n2", "hatch_early", "hatch_prolong", "hatch_extend" )
+levelsearly <- c("inc.d9_early", "early_extend")
+
 levelsmanip <- c(levelsinc9,levelsinc17,  levelshatch )
 
 levelsrm <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9","inc.d17_m.inc.d17",  "hatch_m.n2" )
@@ -95,6 +97,7 @@ levelsreplace <- c("inc.d9_early","inc.d17_prolong", "hatch_early", "hatch_prolo
 labelsinc9 <- c("m.inc.d9", "early")
 labelsinc17 <- c("m.inc.d17", "prolong")
 labelshatch <- c("m.n2", "early",  "prolong", "extend")
+labelsearly <- c("inc.d9", "extend")
 
 levelscontrolcharmanip <- c("control_bldg", "control_lay",  "control_inc.d3",  
                              "control_inc.d9",   "control_inc.d17",  
@@ -114,19 +117,14 @@ labelscontrolcharmanip  <- c("bldg" ,"lay", "inc3",
                              )
 
 
-levelsbldgcharmanip <- c("bldg_lay",  "bldg_inc.d3",  
+levelsbldgchar <- c("control_bldg", "bldg_lay",  "bldg_inc.d3",  
                             "bldg_inc.d9",   "bldg_inc.d17",  
-                            "bldg_hatch", "bldg_n5", "bldg_n9",
-                            "bldg_m.inc.d3", "bldg_m.inc.d9",  
-                            "bldg_m.inc.d17","bldg_m.n2",
-                         "bldg_early", "bldg_prolong", "bldg_extend")
+                            "bldg_hatch", "bldg_n5", "bldg_n9"
+                            )
 
-labelsbldgcharmanip  <- c("lay", "inc3", 
+labelsbldgchar  <- c("control", "lay", "inc3", 
                              "inc9", "inc17", 
-                             "hatch" , "n5", "n9",
-                             "m.inc3", "m.inc9",
-                             "m.inc17", ".m.n2" ,
-                          "early" , "prolong", "extend"
+                             "hatch" , "n5", "n9"
                              )
 
 
