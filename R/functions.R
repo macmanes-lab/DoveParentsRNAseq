@@ -155,7 +155,7 @@ plot.volcano <- function(whichtissue,  whichcomparison){
           legend.key.height = unit(-0.2, "cm"),      
           #legend.spacing.y = unit(-0.2, "cm"),
           legend.spacing.x = unit(-0.2, "cm")) +
-    guides(color = guide_legend(nrow = 1))
+    guides(color = guide_legend(nrow = 1)) 
   return(volcano)
 }
 
@@ -219,6 +219,7 @@ makebargraphv4 <- function(df, whichtissue, myylab,
   p <- df %>%
     dplyr::filter(tissue == whichtissue) %>%
     ggplot(aes(x = comparison, y = n, fill = direction)) +
+    geom_hline(yintercept = 0) +
     geom_bar(stat="identity") +
     theme_B3() +
     facet_wrap(~sex, nrow =  2) +
@@ -234,7 +235,7 @@ makebargraphv4 <- function(df, whichtissue, myylab,
     scale_x_discrete(breaks = whichlevels,
                      labels = whichlabels,
                      drop = F,
-                     position = "bottom") 
+                     position = "bottom")  
   return(p)
 }
 
@@ -244,6 +245,7 @@ makebargraphv5 <- function(df, whichtissue, myylab,
   p <- df %>%
     dplyr::filter(tissue == whichtissue) %>%
     ggplot(aes(x = comparison, y = n, fill = direction)) +
+    geom_hline(yintercept = 0) +
     geom_bar(stat="identity") +
     theme_B3() +
     theme(legend.position = "none",
@@ -256,7 +258,7 @@ makebargraphv5 <- function(df, whichtissue, myylab,
     scale_x_discrete(breaks = whichlevels,
                      labels = whichlabels,
                      drop = F,
-                     position = "bottom") 
+                     position = "bottom")  
     
   return(p)
 }
