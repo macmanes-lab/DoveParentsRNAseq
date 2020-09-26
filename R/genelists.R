@@ -80,8 +80,7 @@ ovariancancergenes <- c("GNAS", "USB8", "PIK3CA", "GPR101","RAS","MEN1", "AIP", 
 # most popular genes in human genome
 # https://www.nature.com/articles/d41586-017-07291-9
 
-top10 <- c(  "EGFR", "VEGFA",
-           "IL6", "TGFB1", "MTHFR", "ESR1", "AKT1")
+top10 <- c("EGFR", "VEGFA", "IL6", "TGFB1", "MTHFR", "ESR1", "AKT1")
 
 ## stress genes from CORT paper
 
@@ -89,7 +88,6 @@ stressgenes <- c("A2ML1", "ABCA1", "ACOT12", "ANLN",
                  "APCDD1L", "APOD", "APOH", "APOLD1",
                  "CDH19", "CEBPD", "CISH",
                  "CITED2",  "CKMT1A", "CNP", "CREB5")
-
 
 ## genes from github issues 
 ## https://github.com/raynamharris/musicalgenes/blob/master/.github/ISSUE_TEMPLATE/request-a-gene.md
