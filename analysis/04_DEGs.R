@@ -108,3 +108,22 @@ write_csv(tableS1, "results/tableS1.csv")
 write_csv(tableS2, "results/tableS2.csv")
 write_csv(tableS3, "results/tableS3.csv")
 write_csv(tableS4, "results/tableS4.csv")
+
+## sex differences
+
+hypsex <- read_csv("results/DEseq2/sex/pituitary_female_male_DEGs.csv") %>%
+  rename(tissue = sextissue)
+pitsex <- read_csv("results/DEseq2/sex/hypothalamus_female_male_DEGs.csv") %>%
+  rename(tissue = sextissue)
+gonsex <- read_csv("results/DEseq2/sex/gonad_female_male_DEGs.csv")
+
+sharedsexdifs <- rbind(hypsex, pitsex) %>%
+  mutate(res = paste("higher in the", direction, tissue, sep = " "))  %>%
+  select(gene, res) %>%
+  group_by(gene) %>%
+  summarize(res = str_c(res, collapse = "; ")) %>%
+  group_by(res) %>%
+  summarize(genes = str_c(gene, collapse = " "))
+
+head(sharedsexdifs) 
+write.csv(sharedsexdifs, "results/sharedsexdifs.csv")
