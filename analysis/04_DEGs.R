@@ -4,34 +4,6 @@ library(readr)
 source("R/themes.R")
 source("R/genelists.R")
 
-## functions
-
-
-# helper function to add column of NAs if no DEGs exist
-fncols <- function(data, cname) {
-  add <-cname[!cname%in%names(data)]
-  if(length(add)!=0) data[add] <- NA
-  data
-}
-
-
-# make table of candidate pairwise degs
-maketable1 <- function(df, whichlevels){
-  table <- fncols(df, whichlevels) %>% 
-    select(gene, whichlevels)  %>%
-    ungroup() %>%
-    mutate(allres = rowSums(is.na(.))) 
-  
-  numcomparisons <- ncol(table) -2
-  
-  table <- table %>%
-    filter(allres < numcomparisons) %>%
-    select(-allres)
-  print(table)
-  return(table)
-  
-}
-
 ## All DEGs 
 
 DEG_path <- "results/DEseq2/treatment/"   # path to the data
@@ -56,7 +28,6 @@ allDEG <- DEG_pathfiles %>%
   drop_na()
 head(allDEG)
 
-allDEG %>% filter(gene == "AR", tissue == "H", sex == "M")
 
 ## drop pvalues from allDEG
 
@@ -64,6 +35,10 @@ allDEG <- allDEG %>%
   #remove pvalue
   select(-pvalue, -direction2) %>% 
   filter(direction != "NS")
+
+# make df of candidate genes to add NS genes
+gene <- candidategenes
+candidategenedf <- as.data.frame(gene) 
 
 ## subset only candidates
 candidateDEGs <- allDEG %>%
@@ -78,24 +53,38 @@ candidateDEGs <- allDEG %>%
   mutate(compres = paste(group, posneg, sep = "")) %>%
   group_by(gene, comparison) %>%
   summarize(results = str_c(compres, collapse = "  ")) %>%
-  pivot_wider(names_from = comparison, values_from = results) 
-
-print(candidategenes)
-print(head(candidateDEGs))
+  pivot_wider(names_from = comparison, values_from = results) %>%
+  full_join(., candidategenedf) %>%
+  arrange(gene)
+head(candidateDEGs)
 
 # make tables
 
-table1 <- maketable1(candidateDEGs, levelssequential) 
-table2 <- maketable1(candidateDEGs, c(levelsrm, levelsreplace))
 
-tableS1 <- maketable1(candidateDEGs, levelscontrolcharmanip) %>%
+# helper function to add column of NAs if no DEGs exist
+fncols <- function(data, cname) {
+  add <-cname[!cname%in%names(data)]
+  if(length(add)!=0) data[add] <- NA
+  data
+}
+
+# make table of candidate pairwise degs
+makefinaltables <- function(df, whichlevels){
+  table <- fncols(df, whichlevels) %>% 
+    select(gene, whichlevels)  
+  return(table)
+}
+
+table1 <- makefinaltables(candidateDEGs, levelsbldgchar) %>%
+  select(gene, control_bldg:bldg_n9)
+table2 <- makefinaltables(candidateDEGs, c(levelsrm, levelsreplace))
+
+tableS1 <- makefinaltables(candidateDEGs, levelscontrolcharmanip) %>%
   select(gene, control_bldg:control_n9)
-tableS2 <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
-  select(gene, bldg_lay:bldg_n9)
-tableS3 <- maketable1(candidateDEGs, levelscontrolcharmanip) %>%
+tableS2 <- makefinaltables(candidateDEGs, levelssequential) 
+tableS3 <- makefinaltables(candidateDEGs, levelscontrolcharmanip) %>%
   select(gene, control_m.inc.d3:control_extend)
-tableS4 <- maketable1(candidateDEGs, levelsbldgcharmanip) %>%
-  select(gene, bldg_m.inc.d3:bldg_extend)
+
 
 ## save files
 write.csv(allDEG, "results/04_allDEG.csv", row.names = F)
@@ -107,7 +96,6 @@ write_csv(table2, "results/table2.csv")
 write_csv(tableS1, "results/tableS1.csv")
 write_csv(tableS2, "results/tableS2.csv")
 write_csv(tableS3, "results/tableS3.csv")
-write_csv(tableS4, "results/tableS4.csv")
 
 ## sex differences
 
@@ -119,11 +107,16 @@ gonsex <- read_csv("results/DEseq2/sex/gonad_female_male_DEGs.csv")
 
 sharedsexdifs <- rbind(hypsex, pitsex) %>%
   mutate(res = paste("higher in the", direction, tissue, sep = " "))  %>%
+  filter(gene %in% candidategenes) %>%
   select(gene, res) %>%
   group_by(gene) %>%
   summarize(res = str_c(res, collapse = "; ")) %>%
   group_by(res) %>%
-  summarize(genes = str_c(gene, collapse = " "))
+  summarize(genes = str_c(gene, collapse = " ")) %>%
+  mutate(n = str_count(genes, " "),
+         n = n + 1) %>%
+  select(n, res, genes) %>%
+  arrange(desc(n))
 
 head(sharedsexdifs) 
 write.csv(sharedsexdifs, "results/sharedsexdifs.csv")

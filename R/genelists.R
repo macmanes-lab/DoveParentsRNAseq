@@ -12,7 +12,7 @@ favoritegenes <- c("AR", "AVP", "AVPR1B", "AVPR2",
                    "GNRH1", "GNRHR",
                    "JAK2", 
                    "LHCGR", 
-                   "MC3R", "MC4R", "MC5R",
+                   "MC3R", "MC4R", 
                    "NPFFR1", "NPVF", "NPY",
                    "NR3C2", "OXT", "POMC", 
                    "PRL", "PRLH",	"PRLHR", 
@@ -23,7 +23,7 @@ favoritegenes <- c("AR", "AVP", "AVPR1B", "AVPR2",
 curleychampagnegenes <- c("AVP", "AVPR1A", "ADRA2A",    
                           "COMT", "CRH", "CRHBP", "CRHR1", "CRHR2", 
                           "DRD1", "DRD4","ESR1", "ESR2", #ERa ERbeta
-                          "FOS", "HTR2C", "MEST", "NR3C1", #GR
+                          "FOS", "HTR2C", "NR3C1", #GR
                           "OPRM1", "OXT" , "PGR", "PRL", "PRLR",  "SLC6A4") #5HTT
 
 datadrivengenes <- c("COX1", "COX2", "CYTB", "ATP2B4", "LOC107055658", 

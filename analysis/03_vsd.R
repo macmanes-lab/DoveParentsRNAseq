@@ -32,6 +32,18 @@ allvsd <- as_tibble(allvsd)
 head(allvsd[2:4])
 tail(allvsd[2:4])
 
+ngon <- allvsd %>%
+  filter(grepl('gonad', samples)) %>%
+  distinct(gene)
+
+npit <- allvsd %>%
+  filter(grepl('pit', samples)) %>%
+  distinct(gene)
+
+nhyp <- allvsd %>%
+  filter(grepl('hyp', samples)) %>%
+  distinct(gene)
+
 # for plotting gene expression over time
 getcandidatevsdmanip <- function(whichgenes, whichtissue){
   

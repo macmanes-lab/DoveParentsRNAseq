@@ -11,8 +11,6 @@ source("R/genelists.R") # load candidate genes
 
 # DESeq2 was not designed to run on 100 + samples. But, I really like it, so I do it anyways. 
 # Some of these commands take like 15 min to run using 6 cores. 
-# Also, I don't run every chuck every time. When I want new analyses, 
-# I add them to the bottom and set `eval = F` for chunks I don't want to rerurn 
 
 # count data
 countData <- read.csv("results/00_counts.csv", header = T, row.names = 1)
