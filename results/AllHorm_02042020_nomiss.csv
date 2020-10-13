@@ -1,0 +1,353 @@
+﻿id,studytype,treatment,num,num.treatment,sex,date,starttime,decaptime,moltbin,t,cort,p4,prl,e2,gon,gonad,molt,stage,maniptype
+blu20-x,characterization,control,0,0.bl,f,.,.,.,.,.,1.583342913,1.356917476,34.14090909,0.03796287,.,.,.,none,.
+s-x,characterization,control,0,0.bl,f,.,.,.,.,.,0.897142061,3.832743751,39.49,0.052197545,.,.,.,none,.
+x-g106,characterization,control,0,0.bl,f,3/10/16,9:53:00,0:03:00,.,.,1.321874327,0.457540909,16.73,0.20291406,SF,"1 big, 2 med, bunch small foll",.,none,.
+x-r20_lay,characterization,control,0,0.bl,f,3/11/16,10:34:00,0:06:00,.,.,0.591740661,1.987782944,38.63,0.083921747,SF,"1 big, 8 medium, many small follicles, egg with shell",.,none,.
+x-r9_lay,characterization,control,0,0.bl,f,3/10/16,9:39:00,0:01:00,.,.,1.142658641,2.858559469,34.14,0.075316037,SF,"2 big, 7 med, bunch small foll; 2 yolking",.,none,.
+g108-x,characterization,control,0,0.bl,f,3/10/16,10:42:00,0:03:00,.,.,6.80887405,1.356917476,19.59,0.052345272,MF,"3 big (yolky), 11 med, bunch small foll",.,none,.
+x-g/g_f,characterization,control,0,0.bl,f,.,.,.,.,.,1.149061878,1.356917476,21.53,0.234680477,AE,"albumen on egg, some mature follicles, 2nd egg without albumen",.,none,.
+r/r-x,characterization,control,0,0.bl,f,.,.,.,.,.,0.84,0.656652946,36.15,0.115269543,LF,"froze egg, big egg no albumen, one egg laid 12/8/15",.,none,.
+w191-r1,characterization,control,0,0.bl,f,9/9/16,10:19:00,0:03:00,1,.,1.434209445,0.603291478,4.2,0.039674073,SF,many small (2-3mm_ yolky follicles,body,none,.
+r/r-x,characterization,control,0,0.bl,f,.,.,.,.,.,0.979979311,1.356917476,22.83,0.036723922,MF,no egg medium follicles,.,none,.
+blu/o-x,characterization,control,0,0.bl,f,.,.,.,.,.,0.817578332,0.28788884,85.28,0.059269466,MF,"no eggs, medium follicles",.,none,.
+x-w44,characterization,control,0,0.bl,f,3/11/16,10:25:00,0:02:00,.,.,1.433653338,0.170879471,56.98,0.392959499,R,very regressed follicles,.,none,.
+x-blk/blk,characterization,control,0,0.bl,m,.,.,.,.,1.001124015,0.850483345,0.473444794,4.15,.,.,.,.,none,.
+x-blu/o,characterization,control,0,0.bl,m,.,.,.,.,3.051120065,1.443938337,0.308975809,14.92,.,.,.,.,none,.
+x-g,characterization,control,0,0.bl,m,.,.,.,.,0.186722692,0.589956834,0.382478504,3.83,.,.,.,.,none,.
+x-g/g,characterization,control,0,0.bl,m,.,.,.,.,0.660945836,0.817403745,0.441381143,3.28,.,.,.,.,none,.
+x-g/g/g,characterization,control,0,0.bl,m,.,.,.,.,1.73723184,1.03,0.400089566,25.35,.,.,.,.,none,.
+blu13-x,characterization,control,0,0.bl,m,3/11/16,10:25:00,0:01:00,.,0.335770406,1.154019089,0.335616333,3.02,.,L,Big gonads,.,none,.
+r8-x,characterization,control,0,0.bl,m,3/11/16,10:34:00,0:07:00,.,0.829029377,1.815394571,0.698451075,17.88,.,L,Big gonads,.,none,.
+w3-x,characterization,control,0,0.bl,m,3/11/16,9:42:00,0:03:00,.,0.444907449,1.17,0.487857371,4.27,.,L,Big gonads,.,none,.
+w33-x,characterization,control,0,0.bl,m,3/11/16,10:25:00,0:02:00,.,0.366962646,0.830650125,0.249335741,72.25,.,L,Big gonads,.,none,.
+w4-x,characterization,control,0,0.bl,m,3/11/16,11:09:00,0:03:00,.,0.900104838,0.912850671,0.288651096,2.02,.,L,Big gonads,.,none,.
+x-y108/w29,characterization,control,0,0.bl,m,3/11/16,9:33:00,0:02:00,.,2.200019855,0.95536916,0.374048555,5.38,.,L,Big gonads,.,none,.
+g107-x,characterization,control,0,0.bl,m,3/10/16,9:53:00,0:04:00,.,0.487544559,1.213103801,0.233203806,20.11,.,L,big testes,.,none,.
+r3-x,characterization,control,0,0.bl,m,3/11/16,11:09:00,0:02:00,.,0.27723432,0.917283674,0.228395524,2.88,.,M,medium gonads,.,none,.
+o38/blu29-x,characterization,bldg,1,1.bldg,f,9/8/16,10:16:00,0:03:00,1,.,1.09492579,0.310904379,8.15,0.240469199,LF,1 large yolky follicles,p5,early,.
+s/blk-r/o,characterization,bldg,1,1.bldg,f,2/17/17,9:36:00,0:03:00,1,.,0.891396125,1.842237115,8.12,0.071243085,SF,"2mm yolky foll, oviduct med, hierarchy","body, p1, p2",early,.
+w196/r35-x,characterization,bldg,1,1.bldg,f,2/6/17,10:15:00,0:03:00,0,.,0.523844389,0.153308032,35.33,0.156692959,E,"egg in oviduct, lg oviduct",no,early,.
+l/s-y/blk,characterization,bldg,1,1.bldg,f,3/6/17,10:24:00,0:02:00,1,.,0.485549772,0.23029791,20.53,0.041515661,G,"granulosa, oviduct very small","P8, tail, heavy body molt",early,.
+s/d-blk/l,characterization,bldg,1,1.bldg,f,2/15/17,9:00:00,0:01:41,1,.,0.942648981,0.191994373,8.06,0.160335132,G,"granulosa, sm oviduct","body, p3, p2",early,.
+x-r39/g10,characterization,bldg,1,1.bldg,f,9/20/16,11:49:59,0:02:20,1,.,0.840892955,0.35846196,3.58,0.262663109,MF,"hierarchy, ~4mm","body, 1 smaller secondary",early,.
+r/s-g/o,characterization,bldg,1,1.bldg,f,2/9/17,10:26:00,0:01:00,1,.,0.979473768,2.477182407,14.38,0.835757718,LF,huge,p10,early,.
+r83-g45,characterization,bldg,1,1.bldg,f,2/7/17,10:11:00,0:02:00,1,.,1.889350896,0.559878442,29.8,0.932986992,LF,"huge oviduct, 10mm yolky follicle, hierarchy","p11, p1 on R side",early,.
+blu38/g135-x,characterization,bldg,1,1.bldg,f,9/28/16,11:09:00,0:03:00,1,.,0.757011001,0.571257189,20.37,0.703096088,LF,lg (see notes),"body, secondary",early,.
+blk11-x,characterization,bldg,1,1.bldg,f,9/27/16,11:02:52,0:00:48,1,.,0.533776389,0.128435322,9.32,0.183025323,R,R,"p9, body, p3",early,.
+g141/blu27-x,characterization,bldg,1,1.bldg,f,9/27/16,11:14:00,0:03:10,1,.,4.786075607,0.100106664,3.89,0.161187691,MF,yolky follicles. 1 at 6mm. oviduct is medium to lg,body,early,.
+x-o30/g134,characterization,bldg,1,1.bldg,m,9/8/16,10:16:00,0:02:00,1,1.536617303,0.871687563,0.218628513,7.37,.,L,"big cream, colored","body, tail, primary",early,.
+blu33/y88-x,characterization,bldg,1,1.bldg,m,9/27/16,11:02:45,0:02:40,1,0.290325237,1.828215302,0.294066562,6.36,.,L,large,body,early,.
+s/l-d/o,characterization,bldg,1,1.bldg,m,3/6/17,10:24:00,0:02:00,1,4.795860038,2.227035346,0.287891067,12.3,.,L,large,body,early,.
+blu114-r38/w78,characterization,bldg,1,1.bldg,m,9/28/16,11:09:00,0:03:00,1,0.904672467,4.291788132,0.123557331,5.56,.,L,lg,body,early,.
+g52-blu58,characterization,bldg,1,1.bldg,m,9/27/16,11:14:14,0:06:11,1,0.445867085,1.427503402,1.385317817,6,.,L,lg,"body, p3",early,.
+r/s-d/o,characterization,bldg,1,1.bldg,m,2/17/17,9:36:00,0:03:00,1,1.536617303,1.414840487,0.473558131,3.13,.,L,lg,"body, p9",early,.
+s/l-d/r,characterization,bldg,1,1.bldg,m,2/15/17,9:00:00,0:01:41,1,3.341892426,1.115481732,0.190803005,10.42,.,L,lg,body,early,.
+x-g104/w82,characterization,bldg,1,1.bldg,m,2/7/17,10:11:00,0:02:00,.,1.32876079,1.539611415,1.151277474,5.54,.,L,lg,.,early,.
+x-r67/blu35,characterization,bldg,1,1.bldg,m,9/20/16,11:49:57,0:01:37,1,0.84045417,0.866436303,0.136923277,6.05,.,L,lg,body,early,.
+s/pu-blk/r,characterization,bldg,1,1.bldg,m,2/9/17,10:26:00,0:03:00,1,0.345106208,117.7709097,0.473558131,3.59,.,L,"lg, put gonads in x-g70 tube by mistake","p10, body",early,.
+r/s-o/d,manipulation,extend,6.75,6.75.e,f,5/19/17,10:40:00,0:01:00,1,.,2.194346135,1.376601308,46.98,0.069647402,.,.,"p10, body, tail",late,period
+g17/w108-x,manipulation,extend,6.75,6.75.e,f,6/8/17,9:58:00,0:03:00,1,.,4.166797116,0.504051529,120.35,0.037505461,SF,"1-2mm yolky foll, hierarchy","p11, p4, body, secondary, tail",late,period
+blk19-x,manipulation,extend,6.75,6.75.e,f,5/10/17,9:28:30,0:02:30,0,.,2.539481279,0.271742636,100.68,0.053640984,SF,"1-2mm yolky follicles, hierarchy, small oviduct",none,late,period
+s/g-blk/y,manipulation,extend,6.75,6.75.e,f,5/10/17,9:51:00,0:03:00,1,.,2.329129739,0.137518889,48.44,0.134394921,SF,"2-3mm follicle, hierarchy, med oviduct",p9,late,period
+x-o61,manipulation,extend,6.75,6.75.e,f,3/13/17,10:30:00,0:02:00,0,.,2.163011212,0.165297232,80.96,0.126688582,SF,2-3mm hierarchy,none,late,period
+s/blk-pk/pu,manipulation,extend,6.75,6.75.e,f,5/19/17,10:14:00,0:02:00,1,.,3.211362155,0.425119496,59.99,0.044176314,SF,"3mm yolky foll,",body,late,period
+g22-blu118,manipulation,extend,6.75,6.75.e,f,6/9/17,9:54:00,0:03:00,1,.,3.794711285,0.122543835,82.03,0.060455681,MF,"5mm foll, small to medium oviduct","body, p8, tail",late,period
+blu44-y102,manipulation,extend,6.75,6.75.e,f,6/7/17,9:54:00,0:03:00,1,.,9.69129464,0.170609784,152.37,0.037867647,MF,6mm yolky foll,"body, p6, p5",late,period
+s/l-o/pk,manipulation,extend,6.75,6.75.e,f,5/25/17,10:22:40,0:02:20,1,.,4.929286804,0.213680871,65.04,0.041911782,MF,"6mm yolky foll, hierarchy, med oviduct",body,late,period
+x-y64,manipulation,extend,6.75,6.75.e,f,5/1/17,10:04:00,0:02:49,1,.,1.556400688,0.181428234,72.76,0.042635065,LF,"hierarchy, 10mm yolky foll",body,late,period
+blu84-x,manipulation,extend,6.75,6.75.e,m,3/13/17,10:30:00,0:02:00,1,0.414964528,1.44947818,0.771082137,80.69,.,L,lg,"heavy body, tail, p10",late,period
+g/s-pk/w,manipulation,extend,6.75,6.75.e,m,6/7/17,9:54:00,0:02:00,1,0.941115099,1.548633271,0.122913252,64.99,.,L,lg,"p8, p1, tail, secondary",late,period
+g3-g119/w20,manipulation,extend,6.75,6.75.e,m,6/8/17,9:58:00,0:02:00,1,0.699580576,2.439766135,1.38859117,59.7,.,L,lg,"body, p11, p6, p7 on R, tail",late,period
+g8/w32-y147,manipulation,extend,6.75,6.75.e,m,6/9/17,9:54:00,0:02:00,0,0.469064212,1.382792904,1.015730925,38.17,.,L,lg,none,late,period
+l/s-o/blk,manipulation,extend,6.75,6.75.e,m,5/19/17,10:40:00,0:01:00,1,0.555197083,2.599454094,0.254247897,45.07,.,L,lg,"body, p19, secondary, tail",late,period
+r/s-l/blk,manipulation,extend,6.75,6.75.e,m,5/10/17,9:28:30,0:02:30,1,1.914868809,2.741491116,0.771082137,60.72,.,L,lg,"body, tail",late,period
+r/s-l/y,manipulation,extend,6.75,6.75.e,m,5/25/17,10:22:40,0:02:20,1,0.910630449,4.217974044,0.103143545,74.04,.,L,lg,"body, p2, secondary, p10 on R",late,period
+x-blu69,manipulation,extend,6.75,6.75.e,m,5/10/17,9:51:00,0:03:00,1,0.955953598,1.947901571,1.502932703,35.15,.,L,lg,"body, p10, secondary",late,period
+x-blu73,manipulation,extend,6.75,6.75.e,m,5/1/17,10:04:00,0:01:40,1,0.256819413,0.713103397,1.01001547,66.9,.,L,lg,body,late,period
+x-r44/w95,characterization,hatch,6,6.h,f,8/15/16,9:51:00,0:02:00,1,.,2.582412477,1.361660603,92.22,0.215699355,MF,3-4mm hierarchy,left tail molt,late,.
+r183-o72,characterization,hatch,6,6.h,f,2/9/17,10:38:00,0:02:00,1,.,3.090189599,0.311848932,80.77,0.188040203,MF,"3mm yolky foll, hierarchy, small oviduct",body,late,.
+o172/w115-x,characterization,hatch,6,6.h,f,7/27/16,11:43:00,0:03:00,0,.,1.438779342,0.12655177,63.41,0.140386018,MF,4mm yolky follicle- hierarchy,none,late,.
+blu103-x,characterization,hatch,6,6.h,f,7/22/16,10:51:00,0:04:00,1,.,1.388756175,1.454389627,42.47,0.202442577,MF,"follicle hierarchy. yolky, no albumen. 3-4mm.",molt on p8? shorter than others,late,.
+x-o37/blu50,characterization,hatch,6,6.h,f,2/9/17,10:38:00,0:02:00,1,.,1.695390838,0.88454451,58.68,0.307362873,SF,hierarchy 2-3mm,body,late,.
+y15-x,characterization,hatch,6,6.h,f,2/16/17,9:57:00,0:03:00,1,.,3.433226862,1.639952067,71.09,0.248203766,MF,"hierarchy, 3mm",slight body,late,.
+blu124/w180-x,characterization,hatch,6,6.h,f,11/7/16,11:03:00,0:02:00,0,.,4.334516836,0.484782388,93.48,0.994276676,LF,"large follicles, hierarchy",N,late,.
+blk21-x,characterization,hatch,6,6.h,f,2/22/17,9:35:00,0:03:00,.,.,3.247187942,0.262000809,86.72,0.322931078,SF,small hierarchy,.,late,.
+x-Y90,characterization,hatch,6,6.h,f,10/27/16,10:44:27,0:03:58,1,.,1.924041003,1.435169886,92.91,0.14692331,SF,small hierarchy,"body, p10",late,.
+blu104/w120-x,characterization,hatch,6,6.h,m,7/27/16,11:43:00,0:03:00,1,0.136721878,2.152752854,1.678750554,56.98,.,L,large,p10 molt,late,.
+o44/blu26-x,characterization,hatch,6,6.h,m,2/1/17,10:17:00,0:03:00,1,0.110136219,0.957200051,0.686555208,84.44,.,L,large,body,late,.
+x-r178,characterization,hatch,6,6.h,m,2/22/17,9:35:00,0:04:00,1,2.447408466,1.545899767,0.119252645,74.31,.,L,large,"body, secondary",late,.
+g114/w83-x,characterization,hatch,6,6.h,m,7/22/16,10:51:00,0:04:00,1,3.211480029,3.336004385,0.119211388,29.05,.,L,large testes,molt on P8; (second feather in from outside),late,.
+R72/Y83-x,characterization,hatch,6,6.h,m,10/27/16,10:44:27,0:03:58,1,0.119835774,2.994159834,0.123830213,85.15,.,L,large testes,p10,late,.
+g53-y84,characterization,hatch,6,6.h,m,2/16/17,9:57:00,0:02:00,1,0.165062638,0.903546065,0.906587092,87.14,.,L,lg,slight body,late,.
+x-g70,characterization,hatch,6,6.h,m,2/9/17,10:38:00,0:02:00,1,2.128348217,0.869591861,1.242816777,90.94,.,L,lg,"secondary, body",late,.
+x-o160/w102,characterization,hatch,6,6.h,m,2/9/17,10:38:00,0:02:00,1,2.290113695,1.123182974,0.339220259,65.24,.,L,lg,"p6, p9, body",late,.
+o39/y77-x,characterization,hatch,6,6.h,m,11/7/16,11:03:00,0:02:00,1,0.422906299,1.994435524,1.348831794,81.49,.,M,medium,"body, tail",late,.
+r41/w99-x,characterization,hatch,6,6.h,m,8/15/16,9:51:00,0:02:00,1,1.225779246,5.081471812,0.300496151,77.01,.,L,very big,"body molt, P8, tail (lots)",late,.
+y135/blu107-x,characterization,inc17,5,5.i17,f,8/2/16,9:48:00,0:03:00,0,.,1.615436155,0.23497029,81.04,0.15381832,SF,"2-3mm follicles, yolky, hierarchy",none,late,.
+y130/o170-x,characterization,inc17,5,5.i17,f,9/22/16,10:19:30,0:03:26,.,.,4.479875259,0.551210268,98.98,0.57498105,SF,2-3mm hierarchy,.,late,.
+r49/w189-x,characterization,inc17,5,5.i17,f,10/4/16,10:57:00,0:05:00,.,.,5.949296081,0.186137873,94.75,0.159154196,SF,2-3mm yolky follicles,.,late,.
+y126/w92-x,characterization,inc17,5,5.i17,f,7/28/16,10:41:00,0:04:00,1,.,1.731925747,0.141931437,72.34,0.147264259,MF,3-4mm hierarchy. small oviduct,p10 left molt,late,.
+x-blu116,characterization,inc17,5,5.i17,f,7/27/16,9:42:00,0:04:00,1,.,2.967750473,0.465733895,76.69,0.245619257,MF,"follicles have hierarchy, 3-4mm in size",secondary molt on right wing only,late,.
+x-o159/w90,characterization,inc17,5,5.i17,f,8/2/16,9:32:00,0:01:00,0,.,1.383050847,0.279364353,62.37,0.056838331,MF,hierarchy in follicles (~3mm=largest); yolky,none,late,.
+y136-x,characterization,inc17,5,5.i17,f,9/19/16,0:35:00,0:02:10,.,.,1.154447212,0.137212313,14.47,0.147318751,MF,"hierarchy, lg oviduct",na,late,.
+x-r48/y139,characterization,inc17,5,5.i17,f,8/8/16,11:30:00,0:03:00,0,.,3.259350304,1.659202433,89.04,0.148279778,SF,hierarchy. 1 larger follicle (2-3mm),none,late,.
+o35/r51-x,characterization,inc17,5,5.i17,f,9/8/16,10:58:00,0:04:00,0,.,1.478160864,0.14079615,38.03,0.626673063,SF,multiple yolky follicles (2-3mm),none,late,.
+g142/r40-x,characterization,inc17,5,5.i17,f,11/29/16,10:00:00,0:02:00,1,.,1.411796135,0.192549725,113,0.14434064,SF,"oviduct large, hierarchy 2-3mm",right P7,late,.
+o52-blu53,characterization,inc17,5,5.i17,f,10/18/16,9:51:00,0:03:00,1,.,1.743171282,1.133964107,19.03,0.297524183,R,"small, R",p8?,late,.
+x-y132/w76,characterization,inc17,5,5.i17,m,8/8/16,11:30:00,0:04:00,1,2.991220004,4.456049275,0.316650818,63.52,.,L,big testes,p10-both sides,late,.
+blu113/w124-x,characterization,inc17,5,5.i17,m,7/27/16,9:42:00,0:07:00,1,1.386502248,6.628547064,0.702709012,60.09,.,L,large gonads,tail molt,late,.
+blu121/w91-x,characterization,inc17,5,5.i17,m,8/2/16,9:32:00,0:04:00,0,0.297541947,1.673698729,0.702709012,68.15,.,L,large testes,none,late,.
+x-blu117/w89,characterization,inc17,5,5.i17,m,7/28/16,10:41:00,0:02:00,1,0.224753307,1.639412976,0.643503386,72.73,.,L,large testes,alula molt,late,.
+x-r29/w96,characterization,inc17,5,5.i17,m,8/2/16,9:48:00,0:02:00,0,0.46049279,1.133394927,1.43271235,14.95,.,L,"large, cream colored",none,late,.
+g130/y81-x,characterization,inc17,5,5.i17,m,10/4/16,10:57:00,0:07:00,.,1.428555963,1.947229528,0.166722525,100.91,.,L,lg,.,late,.
+g143/blu32-x,characterization,inc17,5,5.i17,m,9/19/16,0:35:00,0:02:32,.,0.359637229,1.056881854,0.196342912,16.67,.,L,lg,.,late,.
+r176-blu54,characterization,inc17,5,5.i17,m,10/18/16,9:51:00,0:03:00,1,1.931291258,1.489278643,1.27616356,19.94,.,L,lg,body,late,.
+y133/w77-r58,characterization,inc17,5,5.i17,m,9/22/16,10:19:50,0:02:46,1,0.108402024,1.279641929,0.261858495,42.12,.,L,lg,body,late,.
+blk17-x,characterization,inc17,5,5.i17,m,11/29/16,10:00:00,0:03:00,1,2.160743394,1.85817094,1.327718049,97.43,.,L,v lg,p9,late,.
+x-g14/w199,characterization,inc17,5,5.i17,m,9/8/16,10:58:00,0:03:00,.,3.902384561,2.244518977,0.702709012,33.64,.,L,very large,.,late,.
+x-r33/w183,characterization,inc3,3,3.i3,f,8/25/16,11:04:00,0:03:00,1,.,1.251140115,0.140400237,20.73,0.430640583,MF,"1 large >5mm, yolky follicles, many small","body, no other molt",early,.
+g6/w197-x,characterization,inc3,3,3.i3,f,1/18/17,10:37:00,0:04:00,1,.,5.045182614,0.374467726,27.51,0.151206405,MF,"3-4mm yolky follicles, hierarchy","body, secondary- 1 feather (asym)",early,.
+o165/w122-x,characterization,inc3,3,3.i3,f,7/27/16,9:42:00,0:05:00,0,.,6.588524518,1.786873047,91.77,0.145801338,SF,3mm yolky follicles; strange flattened appearance to some of follicles- these have no apparent yolk.,no,early,.
+blu39/o26-x,characterization,inc3,3,3.i3,f,2/2/17,9:32:00,0:03:00,1,.,1.116201384,0.328844832,12.92,0.148602211,G,"granulosa no follicle, no hierarchy.",body,early,.
+x-blu102/w105,characterization,inc3,3,3.i3,f,2/1/17,10:01:00,0:04:00,1,.,3.364881218,0.588762473,47.96,0.158034053,SF,"hierarchy, 3mm",body,early,.
+r73/g127-x,characterization,inc3,3,3.i3,f,8/25/16,10:40:00,0:03:00,1,.,1.902913452,0.301158624,16.75,0.837670532,SF,"large oviduct, 1-3mm yolky follicles",body,early,.
+o173/w179-x,characterization,inc3,3,3.i3,f,11/9/16,9:47:00,0:03:00,0,.,1.687368564,0.261899461,29.28,0.147310413,SF,"lg oviduct; 1-3mm follicles, yolky. many in hierarchy",no,early,.
+o156/w80-x,characterization,inc3,3,3.i3,f,8/17/16,10:56:00,0:03:00,1,.,2.736331886,0.345473994,26.29,0.675810429,MF,"lg, hierarchy 3-4mm","body molt, no tail",early,.
+y13-x,characterization,inc3,3,3.i3,f,2/1/17,10:01:00,0:02:00,1,.,0.8606765,0.615804726,6.01,0.46125277,SF,no hierarchy,body,early,.
+r27/w111-blu125,characterization,inc3,3,3.i3,f,8/24/16,10:49:00,0:04:00,0,.,2.693419772,1.414362139,12.12,0.144979922,SF,"small, yolky, hierarchy",none,early,.
+x-g147/blu28,characterization,inc3,3,3.i3,m,8/25/16,11:04:00,0:06:00,1,0.187338051,2.064228216,1.185913471,5.42,.,L,huge!,"body, no wing",early,.
+blu111/w113-x,characterization,inc3,3,3.i3,m,2/1/17,10:01:00,0:04:00,1,0.211438579,3.235237222,0.37694131,25.57,.,L,large,body,early,.
+g146-blu51,characterization,inc3,3,3.i3,m,2/1/17,10:01:00,0:03:00,1,1.436548482,0.977416979,0.333972333,6.03,.,L,large,body,early,.
+g20/w106-x,characterization,inc3,3,3.i3,m,8/24/16,10:49:00,0:03:00,1,0.858639899,2.093433361,0.26232905,28.93,.,L,large cream colored,"secondary molt, p3",early,.
+x-o163/w101,characterization,inc3,3,3.i3,m,7/27/16,9:42:00,0:08:00,1,0.066059803,6.980235203,1.027522057,3.65,.,L,large gonads,tail molt,early,.
+x-r64/g140,characterization,inc3,3,3.i3,m,8/25/16,10:40:00,0:05:00,1,1.609210562,1.763950781,3.248137361,7.89,.,L,large testes,"p8, both sides",early,.
+o48/r197-x,characterization,inc3,3,3.i3,m,1/18/17,10:37:00,0:02:00,1,0.34718024,1.308417597,0.269608408,11.45,.,L,lg,"body, p11",early,.
+x-blu42/o28,characterization,inc3,3,3.i3,m,2/2/17,9:32:00,0:03:00,1,1.013991734,0.895380854,1.072119267,14.85,.,L,lg,body,early,.
+y98/o50-x,characterization,inc3,3,3.i3,m,11/9/16,9:47:00,0:03:00,1,0.079902934,3.163789489,1.471155252,15.56,.,L,lg,body,early,.
+y149/r52-x,characterization,inc3,3,3.i3,m,8/17/16,10:56:00,0:02:00,1,0.094599356,0.988382179,1.027522057,6.2,.,L,lg cream colored,"body molt, p8, tail",early,.
+x-blu101/w43,characterization,inc9,4,4.i9,f,1/20/17,10:08:00,0:02:00,1,.,0.918075128,0.14489406,27.25,0.151302059,SF,"~2mm small follicles, no hierarchy","body, p10 on L side",early,.
+x-y109,characterization,inc9,4,4.i9,f,11/10/16,9:56:00,0:04:00,1,.,1.679627787,1.30698442,16.8,0.217383835,SF,1-2mm yolky foll. many. hierarchy,body,early,.
+x-Y93/G126,characterization,inc9,4,4.i9,f,10/27/16,10:35:00,0:02:00,1,.,1.029396976,0.13368734,8.34,0.147094286,SF,"1-2mm yolky follicles, hierarchy but many immature granulosa",body,early,.
+blu47/y96-x,characterization,inc9,4,4.i9,f,11/14/16,11:10:00,0:02:00,1,.,1.698159785,0.111987133,30.29,0.057230423,SF,"1-2mm yolky follicles, hierarchy, oviduct medium",body,early,.
+o73-x,characterization,inc9,4,4.i9,f,11/14/16,11:29:00,0:03:00,1,.,2.757044188,0.768719041,28.94,0.145545891,SF,"1-2mm yolky follicles, hierarchy, oviduct medium",body,early,.
+blk/s-pu/y,characterization,inc9,4,4.i9,f,11/17/16,10:08:00,0:02:00,1,.,1.011016195,0.205573522,11.89,0.04437707,MF,"4mm follicles, hierarchy","tail, body, p9",early,.
+blu122/r66-x,characterization,inc9,4,4.i9,f,9/14/16,9:55:00,0:03:00,.,.,2.118949291,0.194917405,18.08,0.17515172,MF,4mm yolky follicles hierarchy,.,early,.
+x-g9/o166,characterization,inc9,4,4.i9,f,7/25/16,10:21:00,0:03:00,.,.,2.00020765,0.357596232,33.86,0.211448607,MF,"hierarchy in follicles, small and yolky (3-4mm for larger ones)",.,early,.
+r30/w112-r46,characterization,inc9,4,4.i9,f,8/11/16,10:48:00,0:03:00,1,.,1.929768912,0.239891119,17.55,0.148813622,MF,lots of follicles,"p10 shorter, secondary on left",early,.
+g75-x,characterization,inc9,4,4.i9,f,10/20/16,10:27:00,0:02:00,1,.,1.079721875,0.162925243,13.1,0.147753193,MF,medium follicles (yolky) hierarchy largest follicle ~3mm,"body, p9",early,.
+y140/w119-x,characterization,inc9,4,4.i9,f,10/20/16,11:16:00,0:03:00,1,.,1.425614013,0.250803744,35.13,0.128427643,MF,"medium follicles (yolky) hierarchy, largest follicle ~4mm",p10 (one),early,.
+R36/w184-x,characterization,inc9,4,4.i9,f,8/3/16,9:46:00,0:02:00,1,.,1.746150909,1.803122732,23.92,0.172455936,MF,"small yolky follicles, hierarchy (largest ~3mm)",p1- asymmetrical,early,.
+y95/g131-x,characterization,inc9,4,4.i9,m,11/14/16,11:29:00,0:03:00,.,0.152641347,0.927096214,0.28144778,11.73,.,.,.,.,early,.
+o49-x,characterization,inc9,4,4.i9,m,11/17/16,10:08:00,0:04:00,1,0.965307984,1.714570526,0.280146491,27.21,.,L,large,body,early,.
+w34-x,characterization,inc9,4,4.i9,m,11/10/16,9:56:00,0:04:00,1,3.015105266,1.814467154,1.041813248,12.38,.,L,large,body,early,.
+x-blu106/o153,characterization,inc9,4,4.i9,m,7/25/16,10:21:00,0:02:00,1,0.286937374,1.140185721,0.271013237,35.69,.,L,large testes,p8 shorter on both wings (probably typical in these birds); egg was double-yolked. No visible development.,early,.
+o57-g59,characterization,inc9,4,4.i9,m,11/14/16,11:10:00,0:03:00,1,0.144455927,1.056821637,0.1894088,32.44,.,L,lg,body,early,.
+x-g13/w109,characterization,inc9,4,4.i9,m,8/11/16,10:48:00,0:02:00,0,0.402026576,0.827541749,0.131280522,14.97,.,L,lg,none,early,.
+x-y127/w93,characterization,inc9,4,4.i9,m,8/3/16,9:46:00,0:04:00,1,0.327482391,0.775196473,0.256210537,23.46,.,L,lg testes,"tail, p10 asymmetrical",early,.
+g19/w36-x,characterization,inc9,4,4.i9,m,1/20/17,10:08:00,0:02:00,.,1.164142765,1.674053838,1.018584871,16.4,.,M,medium,na,early,.
+R45-X,characterization,inc9,4,4.i9,m,10/27/16,10:35:00,0:01:00,1,0.138611515,0.830526437,1.013165431,21.29,.,M,"medium testes,",body,early,.
+x-o47/y82,characterization,inc9,4,4.i9,m,10/20/16,11:16:00,0:03:30,1,0.7123166,1.044147359,0.583384496,19.91,.,L,v lg,body,early,.
+x-w192/o157,characterization,inc9,4,4.i9,m,10/20/16,10:27:00,0:03:00,1,1.97263058,4.45702901,1.786325792,10.87,.,L,v lg,body,early,.
+x-y141/w116,characterization,inc9,4,4.i9,m,9/14/16,9:55:00,0:05:00,.,0.413199278,2.777524024,0.147832746,15.29,.,L,very large,.,early,.
+x-blu6/y80,characterization,lay,2,2.lay,f,9/28/16,11:26:00,0:02:00,1,.,1.670986755,0.326827276,14.53,0.145744027,SF,"1-2mm yolky follicles, med to lg oviduct",body,early,.
+g/blk-s/pk,characterization,lay,2,2.lay,f,5/3/17,11:06:00,0:02:00,1,.,0.584968464,2.047198524,5.47,1.021406122,E,egg in oviduct,"body, tail",early,.
+s/blk-pu/r,characterization,lay,2,2.lay,f,5/19/17,10:40:00,0:04:00,1,.,0.728352167,0.742585937,6.08,0.164316777,E,egg in oviduct,"body, secondary",early,.
+s/g-blk/o,characterization,lay,2,2.lay,f,5/16/17,10:48:30,0:02:30,1,.,2.517484676,10.68399138,7.46,0.190706129,E,egg in oviduct,light body,early,.
+s/o-pk/pu,characterization,lay,2,2.lay,f,5/2/17,11:00:00,0:02:00,0,.,0.928177942,2.070323386,6.88,0.156667283,E,egg in oviduct,none,early,.
+s/d-w/o,characterization,lay,2,2.lay,f,5/24/17,10:29:00,0:02:00,1,.,0.864690709,0.505582259,28.28,0.256463499,E,egg in oviduct; huge gonads,body,early,.
+x-w51,characterization,lay,2,2.lay,f,5/16/17,10:02:00,0:02:00,1,.,1.31752803,0.72622774,5.85,0.156780527,E,egg in oviduct. huge,"body, tail",early,.
+G/S-Blk/O,characterization,lay,2,2.lay,f,3/8/17,10:51:00,0:04:00,1,.,1.914258265,0.466172366,8.02,0.268995777,E,"huge egg in oviduct, hierarchy in ovary. ",body,early,.
+y/s-o/r,characterization,lay,2,2.lay,f,5/25/17,10:48:00,0:03:00,1,.,1.98159117,13.19406892,10.18,0.237869208,E,"huge oviduct, egg in oviduct","body, p10, secondary",early,.
+s-o/pk,characterization,lay,2,2.lay,f,5/18/17,10:26:00,0:02:00,1,.,0.551469792,0.545745107,4.42,0.356682075,E,"huge, egg in oviduct","p9, p3 on R",early,.
+g/s-blk/y,characterization,lay,2,2.lay,m,3/8/17,10:51:00,0:04:00,1,0.527465726,3.812690837,0.573866007,11.74,.,L,large,body,early,.
+g/s-pu/blk,characterization,lay,2,2.lay,m,5/24/17,10:29:00,0:01:00,1,0.912145171,1.780053166,0.779506363,11.07,.,L,lg,body,early,.
+o/s-w/r,characterization,lay,2,2.lay,m,5/18/17,10:26:00,0:02:00,1,0.354287557,1.469319534,0.306928296,31.76,.,L,lg,body,early,.
+pk/w-s/o,characterization,lay,2,2.lay,m,5/2/17,11:00:00,0:03:00,1,0.229511714,1.271980868,0.194786331,16.3,.,L,lg,"body, p9, tail",early,.
+r/s-blk/pu,characterization,lay,2,2.lay,m,5/19/17,10:40:00,0:04:00,1,0.094912269,1.585593212,0.599132106,15.19,.,L,lg,"body, p11",early,.
+r/s-pk/blk,characterization,lay,2,2.lay,m,5/16/17,10:48:30,0:01:30,0,0.266844309,3.059702362,0.243409012,26.94,.,L,lg,none,early,.
+r190/o43-x,characterization,lay,2,2.lay,m,9/28/16,11:26:00,0:02:00,1,0.659807731,0.774815984,0.599132106,24.22,.,L,lg,body,early,.
+s/blk-pk/r,characterization,lay,2,2.lay,m,5/16/17,10:02:00,0:01:00,1,1.487116698,1.803830373,0.298299899,4.2,.,L,lg,"body, p5, tail, p6",early,.
+s/w-g/blk,characterization,lay,2,2.lay,m,5/25/17,10:48:00,0:04:00,1,0.61912264,6.220640994,0.900885577,3.16,.,L,lg,"body, p11, secondary",early,.
+pk/s-blk/w,characterization,lay,2,2.lay,m,5/3/17,11:06:00,0:02:00,1,1.446863499,1.105661701,1.495375364,7.67,.,M,small to medium,"p7, body",early,.
+pk/s-blk/g,manipulation,m.hatch,6.25,6.25.mh,f,.,.,.,.,.,1.658319,0.407671452,30.85,0.165698199,.,.,.,late,rm
+blk/s-g/w,manipulation,m.hatch,6.25,6.25.mh,f,4/4/17,9:54:00,0:02:00,1,.,1.249122491,0.407671452,90.75,0.036333886,.,.,"body, heavy",late,rm
+y98-g54,manipulation,m.hatch,6.25,6.25.mh,f,5/10/17,10:14:40,0:02:20,1,.,1.132334438,0.164142056,14.79,0.195454672,.,.,"body, p6",late,rm
+x-blu96,manipulation,m.hatch,6.25,6.25.mh,f,2/28/17,10:38:00,0:03:00,1,.,0.947499773,0.382505727,9.31,0.088333344,SF,"1-2mm yolky foll., hierarchy, small oviduct",secondary on R side,late,rm
+g/s-pk/r,manipulation,m.hatch,6.25,6.25.mh,f,5/24/17,9:48:00,0:02:00,1,.,2.200299298,0.208974378,11.47,0.165698199,SF,"2-3mm yolky foll, hierarchy","body, p11",late,rm
+x-r74/o29,manipulation,m.hatch,6.25,6.25.mh,f,5/25/17,9:57:00,0:03:00,1,.,1.768722643,0.096435565,21.04,0.165734459,SF,"2-3mm yolky foll, sm to med oviduct","body, p5, p4",late,rm
+x-o171/w45,manipulation,m.hatch,6.25,6.25.mh,f,5/12/17,9:16:00,0:03:00,1,.,0.917225552,1.576964257,45.2,0.236276454,SF,"2-3mm yolky follicles, hierarchy","p6 on L, body",late,rm
+blk0-x,manipulation,m.hatch,6.25,6.25.mh,f,2/8/17,10:05:00,0:04:00,1,.,4.619618528,0.310578118,15.26,0.172746292,MF,"4mm yolky foll, hierarchy",secondary on L side,late,rm
+l/s-w/d,manipulation,m.hatch,6.25,6.25.mh,f,.,10:06:00,0:03:00,1,.,1.017495171,0.174926369,23.31,0.033387098,MF,"4mm yolky foll, hierarchy","body, tail, p9",late,rm
+s/y-blk/pk,manipulation,m.hatch,6.25,6.25.mh,f,5/11/17,9:57:00,0:03:00,1,.,1.072553107,0.346845147,47.69,0.10963234,MF,"4mm yolky foll, hierarchy","slight body, p7, p6, secondary",late,rm
+blu110/w26-x,manipulation,m.hatch,6.25,6.25.mh,m,5/12/17,9:16:00,0:03:00,1,5.747120767,2.366374957,0.176352344,18.35,.,L,lg,"body, p6, tail",late,rm
+g/s-pk/pu,manipulation,m.hatch,6.25,6.25.mh,m,5/24/17,9:48:00,0:03:00,1,5.331283852,5.245736813,1.087480569,4.88,.,L,lg,"body, p10, body",late,rm
+g34-x,manipulation,m.hatch,6.25,6.25.mh,m,5/17/17,9:37:00,0:01:00,1,6.816797097,1.103396393,1.733111112,4.75,.,L,lg,"p5, p3, secondary, body",late,rm
+o3-x,manipulation,m.hatch,6.25,6.25.mh,m,2/28/17,10:38:00,0:03:00,0,0.871811519,1.365548357,1.402579211,4.26,.,L,lg,none,late,rm
+s-o/r,manipulation,m.hatch,6.25,6.25.mh,m,.,10:06:00,0:03:00,1,7.068793131,0.894494304,1.282975383,17.71,.,L,lg,"p11, body",late,rm
+s/blk-pk/w,manipulation,m.hatch,6.25,6.25.mh,m,4/4/17,9:54:00,0:04:00,1,0.750629843,0.601353511,1.282975383,61.94,.,L,lg,"body (light), p10",late,rm
+s/d-blk/g,manipulation,m.hatch,6.25,6.25.mh,m,5/25/17,9:57:00,0:04:00,1,3.741041858,4.292515291,0.401399503,10.81,.,L,lg,body,late,rm
+x-blk23,manipulation,m.hatch,6.25,6.25.mh,m,2/8/17,10:05:00,0:04:00,1,6.407067626,2.9576742,2.415320764,36.24,.,L,lg,"body, 1 tail feather",late,rm
+x-blu76,manipulation,m.hatch,6.25,6.25.mh,m,5/11/17,9:57:00,0:03:00,1,5.222085373,0.887935186,1.764584176,11.67,.,L,lg,"body, p4, p3, tail",late,rm
+x-o4,manipulation,m.hatch,6.25,6.25.mh,m,5/10/17,10:14:40,0:03:20,1,1.286830526,2.764680492,1.282975383,28.88,.,L,lg,"p5, p3, body",late,rm
+o/s-w/blk,manipulation,m.inc17,5.5,5.5.mi17,f,3/14/17,9:25:00,0:04:00,1,.,3.339150625,0.502911756,29.66,0.141362569,SF,"1-2mm foll. hierarchy, small oviduct",light body molt,late,rm
+x-y119/w11,manipulation,m.inc17,5.5,5.5.mi17,f,3/31/17,9:31:00,0:02:00,1,.,0.537475063,0.694859049,11.31,0.16777606,SF,"1-2mm yolky foll, hierarchy, small to medium oviduct","light body, p9, p6, p4, p3",late,rm
+o169/r28-x,manipulation,m.inc17,5.5,5.5.mi17,f,3/28/17,9:27:00,0:03:00,1,.,1.699167786,0.295604684,58.22,0.18180929,SF,"1-2mm yolky foll, med oviduct, hierarchy","body, p4, p9, tail",late,rm
+s/l-pk/blk,manipulation,m.inc17,5.5,5.5.mi17,f,5/1/17,9:54:30,0:02:30,1,.,2.173143659,1.294007003,13.28,0.123104774,SF,"2-3mm yolky foll, small to medium oviduct","body, p11 on L side, secondary",late,rm
+g63-blu65,manipulation,m.inc17,5.5,5.5.mi17,f,5/5/17,9:56:00,0:02:00,1,.,0.851948628,0.262456773,12.88,0.135856306,SF,"2-3mm, yolky foll., hierarchy, medium oviduct","light body, secondary",late,rm
+x-blu94,manipulation,m.inc17,5.5,5.5.mi17,f,3/14/17,9:59:00,0:04:00,1,.,0.795754917,0.672468948,25.37,0.150320822,MF,"5mm yolky foll=largest, hierarchy, medium oviduct",light body,late,rm
+pk/s-o/y,manipulation,m.inc17,5.5,5.5.mi17,f,5/1/17,9:43:00,0:04:00,1,.,1.198657357,1.068885286,21.17,0.103882211,G,granulosa,body,late,rm
+y85/r71-x,manipulation,m.inc17,5.5,5.5.mi17,f,2/2/17,9:43:00,0:01:00,0,.,1.814376609,0.1077252,5.84,0.118294298,SF,hierarchy 2-3mm,none,late,rm
+s/g-d/blk,manipulation,m.inc17,5.5,5.5.mi17,f,4/19/17,10:34:00,0:02:00,1,.,0.928709532,1.948155986,10.54,0.110045873,SF,"hierarchy, 2-5mm","p7, 5, body",late,rm
+d/s-blk/w,manipulation,m.inc17,5.5,5.5.mi17,f,4/5/17,9:45:00,0:03:00,1,.,0.936114279,0.694859049,49.71,0.140564277,MF,"hierarchy, 3mm=largest yolky foll.",p8,late,rm
+g/y-blk/s,manipulation,m.inc17,5.5,5.5.mi17,f,5/2/17,10:40:00,0:02:00,0,.,0.973618573,0.101515804,31.84,0.17319057,SF,small foll,none,late,rm
+y4-x,manipulation,m.inc17,5.5,5.5.mi17,m,2/2/17,9:43:00,0:02:00,0,0.720569961,0.991499187,0.136236686,76.73,.,L,large,no,late,rm
+g/o-y/s,manipulation,m.inc17,5.5,5.5.mi17,m,3/14/17,9:59:00,0:04:00,1,2.858795888,1.666116156,0.279621317,15.22,.,L,lg,"med body, p10, tail",late,rm
+g32-blu79,manipulation,m.inc17,5.5,5.5.mi17,m,3/14/17,9:25:00,0:03:00,1,4.281536013,1.56172466,0.930345032,8.88,.,L,lg,"light body, p10, tail",late,rm
+l/s-y/g,manipulation,m.inc17,5.5,5.5.mi17,m,5/1/17,9:43:00,0:03:00,1,0.675487829,1.09860274,1.265005303,65.16,.,L,lg,"body, tail",late,rm
+o59-blu64,manipulation,m.inc17,5.5,5.5.mi17,m,5/5/17,9:56:00,0:04:00,1,4.848572632,2.213374248,1.817969641,15.22,.,L,lg,"light body, p6, secondary",late,rm
+s/g-blk/pu,manipulation,m.inc17,5.5,5.5.mi17,m,4/19/17,10:34:00,0:02:00,1,3.841167185,0.823939044,0.218067675,6.68,.,L,lg,"p5, tail",late,rm
+x-o40/r70,manipulation,m.inc17,5.5,5.5.mi17,m,4/5/17,9:45:00,0:03:00,1,3.589225601,4.617099942,0.507409051,16.62,.,L,lg,"tail, body",late,rm
+x-r10/w18,manipulation,m.inc17,5.5,5.5.mi17,m,3/31/17,9:31:00,0:03:00,1,3.971099535,1.873036805,1.7772494,7.4,.,L,lg,body,late,rm
+y148/w81-g145,manipulation,m.inc17,5.5,5.5.mi17,m,3/28/17,9:27:00,0:03:00,1,2.858795888,0.843972711,0.930345032,31.81,.,L,lg,"body, P9, P10, tail",late,rm
+s/g-blk/pk,manipulation,m.inc17,5.5,5.5.mi17,m,5/1/17,9:54:30,0:02:30,1,0.942708349,0.971796065,1.44120118,3.44,.,M,med,"body, p11",late,rm
+s/y-pk/blk,manipulation,m.inc3,3.5,3.5.mi3,f,3/31/17,9:56:00,0:02:00,1,.,1.779591697,0.214432075,7.25,0.080170422,SF,"1-2mm yolky foll, oviduct med, hierarchy",body,early,rm
+d/s-blk/r,manipulation,m.inc3,3.5,3.5.mi3,f,3/14/17,9:59:00,0:02:00,1,.,0.746724709,0.512214265,6.35,0.040659209,SF,"1-2mm yolky follicles, hierarchy, smallish oviduct, small thymus","light body, p11",early,rm
+blk/s-pu/w,manipulation,m.inc3,3.5,3.5.mi3,f,2/28/17,10:27:00,0:03:00,1,.,3.229712887,0.928888253,19.36,0.040454676,SF,"2-3mm yolky foll., hierarchy.",body,early,rm
+blu56-o53,manipulation,m.inc3,3.5,3.5.mi3,f,3/7/17,9:49:00,0:05:00,1,.,3.800618531,1.125227113,21.31,0.132062295,MF,"3-4mm foll. hierarchy, small oviduct",p5 on L side; very light body molt,early,rm
+g144/r54-x,manipulation,m.inc3,3.5,3.5.mi3,f,4/19/17,10:24:00,0:02:00,1,.,1.575811356,0.251633507,9.19,0.034977106,MF,"hierarchy, d=3mm",body,early,rm
+blk/s-y/g,manipulation,m.inc3,3.5,3.5.mi3,f,3/30/17,9:50:00,0:02:30,1,.,2.94570993,0.6562115,27.05,0.033057453,SF,"medium oviduct, 1-2mm follicles, yolky, hierarchy","body, p9 (L), tail",early,rm
+s/blk-y/d,manipulation,m.inc3,3.5,3.5.mi3,f,3/8/17,10:01:00,0:03:00,1,.,1.116362683,0.602928695,16.7,0.041665885,SF,"small, no hierarchy",some body,early,rm
+s/pk-pu/g,manipulation,m.inc3,3.5,3.5.mi3,f,3/1/17,9:48:00,0:03:00,1,.,2.576841295,0.269597099,9.53,0.508125108,SF,"small, no hierarchy","body, secondaries",early,rm
+x-r180,manipulation,m.inc3,3.5,3.5.mi3,f,3/8/17,9:50:00,0:03:00,1,.,0.65114786,0.342123461,17.15,0.039912097,SF,"small, slight hierarchy",body,early,rm
+r/s-y/blk,manipulation,m.inc3,3.5,3.5.mi3,f,3/15/17,9:44:00,0:03:00,1,.,4.198740885,1.126030983,16.86,0.093693678,SF,"very small, no hierarchy",body,early,rm
+g/blk-s/r,manipulation,m.inc3,3.5,3.5.mi3,m,3/1/17,9:48:00,0:03:00,1,0.787519875,4.639099192,0.090054968,7.24,.,L,large,body,early,rm
+s/pu-g/pk,manipulation,m.inc3,3.5,3.5.mi3,m,3/8/17,10:01:00,0:04:00,1,0.045603937,3.602017129,0.398545376,13.64,.,L,large,body,early,rm
+o/s-r/blk,manipulation,m.inc3,3.5,3.5.mi3,m,3/15/17,9:44:00,0:06:00,1,1.78615073,13.29809308,1.261793634,4.71,.,L,lg,body,early,rm
+r185-x,manipulation,m.inc3,3.5,3.5.mi3,m,2/28/17,10:27:00,0:03:00,1,0.823349036,1.283392822,0.211720021,4.94,.,L,lg,body,early,rm
+s/blk-pu/pk,manipulation,m.inc3,3.5,3.5.mi3,m,3/30/17,9:50:30,0:04:30,1,0.238805468,3.06525816,0.398545376,6.3,.,L,lg,"body, p7, secondary, tail",early,rm
+s/l-blk/w,manipulation,m.inc3,3.5,3.5.mi3,m,3/31/17,9:56:00,0:03:00,1,1.62431131,3.261456646,0.398545376,3.51,.,L,lg,"body, tail, p9, secondary",early,rm
+x-g5/w79,manipulation,m.inc3,3.5,3.5.mi3,m,3/7/17,9:49:00,0:03:00,1,1.183576922,1.086372034,0.263153839,8.92,.,L,lg,body and wing,early,rm
+blk5-x,manipulation,m.inc3,3.5,3.5.mi3,m,4/19/17,10:24:00,0:02:00,1,1.176094136,2.163570989,0.11639628,11.48,.,L,lg testes,body,early,rm
+d/s-g/blk,manipulation,m.inc3,3.5,3.5.mi3,m,3/14/17,9:59:00,0:03:00,1,1.892441304,2.421059491,0.398545376,5.2,.,M,med,"light body, p11",early,rm
+y18-X,manipulation,m.inc3,3.5,3.5.mi3,m,3/8/17,9:50:00,0:02:00,1,7.801162309,0.866260554,0.448153512,8.33,.,L,v large,body,early,rm
+s/blk-r/g,manipulation,m.inc8,4.5,4.5.mi8,f,4/3/17,10:39:00,0:04:00,1,.,2.962079947,0.766231554,16.68,0.079887687,SF,"1-2mm foll, hierarchy, small to medium oviduct","body, p10",early,period
+blu80-r97,manipulation,m.inc8,4.5,4.5.mi8,f,5/3/17,10:13:00,0:03:00,1,.,1.729950962,1.302655359,20.54,0.05176619,SF,"1-2mm yolky foll, hierarchy, small oviduct",light body,early,period
+s002-x,manipulation,m.inc8,4.5,4.5.mi8,f,3/13/17,10:19:00,0:03:00,1,.,1.387526072,0.299622754,39.3,0.041423166,SF,"1-2mm yolky foll, hierarchy, small to med oviduct","heavy body, p3 on L, tail",early,period
+x-s188,manipulation,m.inc8,4.5,4.5.mi8,f,5/2/17,9:52:00,0:02:00,1,.,2.391392662,0.382304335,11.67,0.03659381,SF,"1mm yolky foll, hierarchy, but v small oviduct",p4,early,period
+pk/s-d/l,manipulation,m.inc8,4.5,4.5.mi8,f,3/30/17,10:10:00,0:01:00,1,.,1.329165484,0.328067229,14.67,0.036214928,MF,"hierarchy, 3mm yolky","body, p10",early,period
+x-g26,manipulation,m.inc8,4.5,4.5.mi8,f,4/19/17,10:13:00,0:02:00,0,.,1.805107661,1.705127619,27.47,0.096559321,MF,"hierarchy, d=4mm",none,early,period
+blk/y-l/s,manipulation,m.inc8,4.5,4.5.mi8,f,3/15/17,9:59:00,0:03:00,1,.,1.711482279,0.262415793,8,0.038245464,SF,"sm, no hierarchy","body, secondary",early,period
+x-y5,manipulation,m.inc8,4.5,4.5.mi8,f,3/1/17,9:38:00,0:02:00,1,.,1.21639156,0.397641191,35.96,0.054384367,SF,"small, no hierarchy",body,early,period
+s/o-l/y,manipulation,m.inc8,4.5,4.5.mi8,m,3/1/17,9:38:00,0:03:00,.,1.405108562,2.02953278,0.351823857,13.28,.,.,.,.,early,period
+blu119/w84-x,manipulation,m.inc8,4.5,4.5.mi8,m,5/3/17,10:35:00,0:02:00,1,0.589747068,0.981395195,1.561558364,19.66,.,L,lg,"body, tail",early,period
+g/s-o/pk,manipulation,m.inc8,4.5,4.5.mi8,m,4/3/17,10:39:00,0:04:00,1,0.527040304,3.283365162,0.761642918,15.86,.,L,lg,"heavy body, p8",early,period
+g137-r24/w5,manipulation,m.inc8,4.5,4.5.mi8,m,5/3/17,10:35:00,0:01:44,1,0.660662305,1.108729921,0.273127988,8.01,.,L,lg,"body,tail",early,period
+pu/blk-s/y,manipulation,m.inc8,4.5,4.5.mi8,m,5/3/17,10:13:00,0:03:00,1,0.89275421,4.287877265,1.204595565,14.7,.,L,lg,body,early,period
+r/s-d/l,manipulation,m.inc8,4.5,4.5.mi8,m,3/15/17,9:59:00,0:02:00,1,0.441326622,1.631212924,0.761642918,6.76,.,L,lg,body,early,period
+r4-x,manipulation,m.inc8,4.5,4.5.mi8,m,3/13/17,10:19:00,0:03:00,1,0.693780055,2.244749633,0.761642918,19.8,.,L,lg,heavy body,early,period
+s/blk-d/r,manipulation,m.inc8,4.5,4.5.mi8,m,3/15/17,10:11:00,0:04:00,1,1.034345625,4.489466138,0.761642918,18.43,.,L,lg,body,early,period
+y55-x,manipulation,m.inc8,4.5,4.5.mi8,m,5/2/17,9:52:00,0:02:00,1,0.704979918,2.58008247,1.334580828,6.33,.,L,lg,body,early,period
+x-y51,manipulation,m.inc8,4.5,4.5.mi8,m,4/19/17,10:13:00,0:02:00,1,2.105957506,1.087819794,0.432961071,8.11,.,L,"lg testes, growth...",body,early,period
+g/s-r/blk,manipulation,m.inc8,4.5,4.5.mi8,m,3/30/17,10:10:00,0:02:00,1,0.10840598,3.261388706,0.172852754,25.95,.,M,medium,"body, tail",early,period
+d/r-blk/s,manipulation,m.inc9,4.75,4.75.mi9,f,6/17/17,9:40:00,0:03:00,.,.,0.919530208,0.143851264,8.7,0.071198921,SF,1-2 mm,.,early,rm
+y12-x,manipulation,m.inc9,4.75,4.75.mi9,f,2/2/17,9:53:00,0:02:00,1,.,0.825702546,1.694861497,19.86,0.048126625,SF,"1-2mm yolky follicles, hierarchy",body,early,rm
+o45/g128-x,manipulation,m.inc9,4.75,4.75.mi9,f,2/7/17,9:47:00,0:02:00,1,.,1.11697112,0.933174607,36.79,0.12905326,SF,"2-3mm yolky follicles, medium oviduct, hierarchy",P11,early,rm
+x-blu25,manipulation,m.inc9,4.75,4.75.mi9,f,1/26/17,10:20:00,0:02:00,1,.,0.890657241,1.745027119,10.9,0.118084488,SF,hierarchy,body,early,rm
+g73-x,manipulation,m.inc9,4.75,4.75.mi9,f,2/9/17,10:49:00,0:03:00,1,.,0.574358188,0.326364048,3.35,0.107689223,SF,"hierarchy, 1-2mm","p1, body",early,rm
+o36/r62-x,manipulation,m.inc9,4.75,4.75.mi9,f,11/15/16,9:36:00,0:01:30,.,.,0.557771891,1.377801381,39.83,0.131527056,SF,"hierarchy, 2-3mm follicles",.,early,rm
+blu63-g62,manipulation,m.inc9,4.75,4.75.mi9,f,1/26/17,10:06:00,0:02:00,1,.,1.52958352,0.512078752,8.91,0.037898531,MF,"hierarchy, d=3mm f1.",yes,early,rm
+y128/g23-x,manipulation,m.inc9,4.75,4.75.mi9,f,11/8/16,10:05:00,0:03:00,1,.,0.874945502,0.111240772,29.57,0.037849647,SF,"large oviduct, 2-3 mm yolky follicles","body, p8, p9 on L side growing in",early,rm
+x-blu43/g132,manipulation,m.inc9,4.75,4.75.mi9,f,11/15/16,10:18:40,0:02:01,1,.,0.511131213,1.601603796,31.37,0.258202584,MF,largest follicle 5mm,body,early,rm
+x-r76,manipulation,m.inc9,4.75,4.75.mi9,f,2/10/17,10:29:00,0:02:00,0,.,1.803462297,1.421971533,14.31,0.166962734,R,R,none,early,rm
+r85-g39,manipulation,m.inc9,4.75,4.75.mi9,m,2/7/17,9:47:00,0:01:00,.,4.689293656,0.943824812,0.259804815,8.45,.,.,.,.,early,rm
+blu108/w40-o158,manipulation,m.inc9,4.75,4.75.mi9,m,11/8/16,10:05:00,0:02:00,1,3.670106092,0.946402888,0.365570968,11.61,.,L,large,"body, p3",early,rm
+r196-x,manipulation,m.inc9,4.75,4.75.mi9,m,11/15/16,9:36:00,0:01:49,1,2.811721911,1.019625533,0.204615352,7.21,.,L,large,body,early,rm
+r37/w100-x,manipulation,m.inc9,4.75,4.75.mi9,m,11/15/16,10:18:40,0:03:53,1,6.729852941,0.853196466,1.476761504,12.79,.,L,large,"body, s3, s4, ra2",early,rm
+x-o117,manipulation,m.inc9,4.75,4.75.mi9,m,1/26/17,10:20:00,0:03:00,1,2.253461016,1.487306758,0.276261362,34.39,.,L,large,"body, p6",early,rm
+l/s-g/blk,manipulation,m.inc9,4.75,4.75.mi9,m,6/17/17,9:40:00,0:03:00,.,5.67128071,1.058705702,0.838069768,16.47,.,L,lg,.,early,rm
+o/d-s,manipulation,m.inc9,4.75,4.75.mi9,m,2/9/17,10:49:00,0:03:00,1,2.274177428,3.303128498,1.760224609,13.78,.,L,lg,"body, primary",early,rm
+x-y63,manipulation,m.inc9,4.75,4.75.mi9,m,2/2/17,9:53:00,0:02:00,1,0.310071378,0.889660463,0.384668734,6.67,.,L,lg,body,early,rm
+y/w-blk,manipulation,m.inc9,4.75,4.75.mi9,m,2/10/17,10:29:00,0:02:00,1,2.764239827,0.909620675,1.9766508,3.48,.,L,lg,body,early,rm
+blu55-g51,characterization,n5,7,7.n5,f,2/10/17,10:16:00,0:02:00,1,.,3.297365125,1.118909143,203.69,0.221616668,SF,"1-2mm hierarchy, oviduct smallish","body, p3 on left",late,.
+x-o175/g21,characterization,n5,7,7.n5,f,3/2/17,10:14:00,0:02:00,1,.,3.065155964,0.710229912,76.54,0.362882381,SF,"1-2mm yolky follicles, hierarchy, sm to med oviduct",body,late,.
+x-g49,characterization,n5,7,7.n5,f,2/28/17,10:16:00,0:02:00,0,.,4.033064982,0.994602984,59.95,0.356315748,SF,"1-2mm yolky follicles, medium oviduct",none,late,.
+x-r50/w97,characterization,n5,7,7.n5,f,3/3/17,9:46:00,0:04:00,0,.,0.829183769,1.472254842,50.76,0.482327193,SF,"1-5mm yolky foll., hierarchy; small to medium oviduct.",none,late,.
+x-blu109/w121,characterization,n5,7,7.n5,f,10/26/16,11:02:00,0:04:00,0,.,3.834705615,1.028887821,42.67,0.050593667,SF,"2-3mm follicle, many, hierarchy of all yolky follicles",N,late,.
+x-g37,characterization,n5,7,7.n5,f,2/17/17,9:47:00,0:04:00,0,.,3.574433035,1.991261948,42.89,0.158072607,MF,"3-4mm yolky foll, hierarchy, small oviduct",no,late,.
+x-g43,characterization,n5,7,7.n5,f,1/30/17,10:03:00,0:05:00,0,.,1.369367746,1.118909143,62.48,0.147480224,SF,"hierarchy, 2mm",none,late,.
+o162/w35-x,characterization,n5,7,7.n5,f,7/28/16,12:19:00,0:06:00,.,.,0.581257229,0.226799374,79.33,0.148595636,LF,"hierarchy, large 8mm follicles",.,late,.
+y6-o54,characterization,n5,7,7.n5,f,3/1/17,10:01:00,0:04:00,.,.,2.812970077,1.394476458,16.46,0.163314291,R,regressed,.,late,.
+x-o70,characterization,n5,7,7.n5,f,1/25/17,10:05:00,0:02:00,1,.,1.171444323,1.132759803,76.74,0.154736151,SF,small follicles,secondary,late,.
+x-y94/g133,characterization,n5,7,7.n5,f,2/1/17,10:17:00,0:03:00,1,.,5.338635201,1.118909143,39.07,0.224593457,SF,"small, no hierarchy",secondary,late,.
+D/S-Y/Blk,characterization,n5,7,7.n5,m,1/30/17,10:03:00,0:05:00,1,0.220951103,2.887716392,0.568234757,46.99,.,L,large,body,late,.
+blk12-x,characterization,n5,7,7.n5,m,2/1/17,10:17:00,0:02:00,1,0.24652882,3.396335989,0.967244611,42.45,.,L,large testes,p10,late,.
+o152-o120/w42,characterization,n5,7,7.n5,m,3/3/17,9:46:00,0:03:00,1,0.710021866,1.305278351,0.790393637,61.03,.,L,lg,L secondary feather,late,.
+x-blu30,characterization,n5,7,7.n5,m,3/1/17,10:01:00,0:05:00,1,0.24652882,7.234880793,0.568234757,56.58,.,L,lg,body,late,.
+x-o164/w123,characterization,n5,7,7.n5,m,2/28/17,10:16:00,0:03:00,1,0.297432249,3.523276819,0.487439473,68.09,.,L,lg,p4,late,.
+x-o68,characterization,n5,7,7.n5,m,3/2/17,10:14:00,0:03:00,1,2.378260474,1.745314479,0.576558294,48.13,.,L,lg,"body, p3",late,.
+x-r181,characterization,n5,7,7.n5,m,2/10/17,10:16:00,0:02:00,0,0.398857709,7.385439645,0.605107093,82.73,.,L,lg,none,late,.
+blu41/y100-x,characterization,n5,7,7.n5,m,1/25/17,10:05:00,0:03:00,0,0.171029121,1.732483399,0.559911219,50.7,.,L,normal,n,late,.
+d/s-blk/o,characterization,n5,7,7.n5,m,2/17/17,9:47:00,0:02:00,0,0.120509254,1.346790313,0.100301176,76.22,.,M,smallish,no,late,.
+blu37/r65-x,characterization,n5,7,7.n5,m,10/26/16,11:02:00,0:03:00,0,0.078260312,1.977024069,0.413685621,27.69,.,L,very large,N,late,.
+x-w6,characterization,n9,8,8.n9,f,3/2/17,9:41:00,0:05:00,1,.,0.488561945,0.197984156,19.98,0.54253481,LF,"10mm and 7mm yolky foll. huge oviduct, hierarchy",body,late,.
+r/s-l/w,characterization,n9,8,8.n9,f,6/17/17,9:17:00,0:03:00,.,.,1.322463365,0.131183411,63.7,0.430776758,MF,4mm yolky foll,.,late,.
+x-y138/w176,characterization,n9,8,8.n9,f,10/4/16,10:25:00,0:03:00,.,.,0.824428331,0.495083426,43.35,0.690467479,MF,"5-7mm yolky follicles, hierarchy",.,late,.
+x-y9,characterization,n9,8,8.n9,f,3/2/17,9:59:00,0:02:00,1,.,2.638465395,0.384761097,55.28,0.322960209,MF,"5mm yolky foll., hierarchy, med oviduct",P11,late,.
+x-g4/w50,characterization,n9,8,8.n9,f,11/15/16,9:36:00,0:02:10,.,.,1.342036007,0.155365355,58.86,1.069644604,LF,"follicles, largest 1cm",.,late,.
+blu36-w16,characterization,n9,8,8.n9,f,11/15/16,11:03:20,0:01:23,.,.,0.989090059,0.205399526,50.03,1.115639537,SF,hierarchy,.,late,.
+y97-x,characterization,n9,8,8.n9,f,3/7/17,10:02:00,0:03:00,1,.,0.964546366,0.266476541,44.81,0.16872651,SF,"hierarchy, 1-2mm foll.","light body, heavy tail and p2",late,.
+w178-x,characterization,n9,8,8.n9,f,11/2/16,11:07:00,0:03:00,0,.,1.649155837,0.414476486,54.16,0.330415811,LF,large hierarchy,no,late,.
+blk4-x,characterization,n9,8,8.n9,f,2/6/17,10:27:30,0:04:30,0,.,0.518721199,0.41906466,59.31,0.439255657,LF,"lg oviduct, 1 7mm yolky foll. hierarchy, another 2 ~5mm follicle",no,late,.
+r95-blu99,characterization,n9,8,8.n9,f,2/22/17,9:50:00,0:04:00,0,.,2.258741156,1.760396654,16.24,0.314926723,R,regressed,none,late,.
+blu81-r88,characterization,n9,8,8.n9,m,2/22/17,9:50:00,0:04:00,1,0.345463113,0.994294936,1.593674717,42.55,.,L,large,body,late,.
+y129-x,characterization,n9,8,8.n9,m,11/15/16,9:36:00,0:02:33,.,4.218193517,2.341259742,1.090920068,21.62,.,L,large,.,late,.
+r/y-s/blk,characterization,n9,8,8.n9,m,11/2/16,11:07:00,0:03:00,1,2.367698806,2.159105618,1.888466383,24.28,.,L,large testes,"p9, p1, tail",late,.
+blk/d-g/s,characterization,n9,8,8.n9,m,3/2/17,9:41:00,0:05:00,1,4.321452604,1.305571239,0.950347547,39.98,.,L,lg,"primary, body",late,.
+R195-X,characterization,n9,8,8.n9,m,3/2/17,9:59:00,0:02:00,1,2.000253236,1.731016866,0.268609666,43.24,.,L,lg,body,late,.
+s/l-o/r,characterization,n9,8,8.n9,m,6/17/17,9:17:00,0:03:00,.,2.366128497,1.874067709,0.118150178,39.59,.,L,lg,.,late,.
+x-blk16,characterization,n9,8,8.n9,m,2/6/17,10:27:30,0:04:30,1,1.789542462,1.195025159,0.278695349,53.65,.,L,lg,P1 on L side,late,.
+x-o2,characterization,n9,8,8.n9,m,3/7/17,10:02:00,0:05:00,1,2.327829533,4.581648762,0.950347547,10.36,.,L,lg,light body,late,.
+y131/w185-x,characterization,n9,8,8.n9,m,10/4/16,10:25:00,0:03:00,.,3.1817226,1.616936803,1.28654068,30.91,.,L,lg,.,late,.
+x-blu23/w14,characterization,n9,8,8.n9,m,11/15/16,11:03:20,0:01:45,.,0.36001096,0.825547481,1.077723333,45.02,.,M,medium,.,late,.
+l/s-pk/r,manipulation,prolong,6.5,6.5.pl,f,3/13/17,10:39:00,0:02:00,0,.,1.267707993,0.467346698,72.59,0.07546615,SF,"1-2mm foll., hierarchy, sm oviduct",none,late,period
+x-g50,manipulation,prolong,6.5,6.5.pl,f,2/13/17,10:11:00,0:04:00,0,.,2.411689537,0.293253549,44.23,0.040930954,SF,"1-2mm yolky foll. hierarchy, oviduct sm to med",none,late,period
+r194-x,manipulation,prolong,6.5,6.5.pl,f,3/9/17,9:42:00,0:02:00,1,.,1.046094949,0.144376398,86.44,0.035825652,SF,"1-2mm yolky foll. hierarchy, small to medium oviduct",light body,late,period
+x-blk20,manipulation,prolong,6.5,6.5.pl,f,.,9:33:00,0:01:00,1,.,1.655056316,0.290582273,85.62,0.067524895,SF,"1-2mm yolky follicles, hierarchy",p3,late,period
+blk/s-pu/d,manipulation,prolong,6.5,6.5.pl,f,5/2/17,10:19:00,0:02:00,1,.,0.942507258,0.296382103,43.81,0.055450954,SF,"2-3mm hierarchy, yolky foll","p2 on L, body",late,period
+s-pu/pk,manipulation,prolong,6.5,6.5.pl,f,.,9:41:00,0:04:30,1,.,2.706985428,0.661518722,84.42,0.079712875,SF,"2-3mm yolky foll, hierarchy","light body, p11",late,period
+blu115-x,manipulation,prolong,6.5,6.5.pl,f,2/17/17,9:21:35,0:01:55,0,.,1.032535651,0.111697186,58.54,0.122583764,SF,"2mm yolky foll, hierarchy, sm. oviduct",no,late,period
+x-y145/r55,manipulation,prolong,6.5,6.5.pl,f,2/10/17,10:00:00,0:04:00,1,.,3.017080621,0.243033776,78.75,0.09647916,SF,hierarchy,p3,late,period
+y146/r32-x,manipulation,prolong,6.5,6.5.pl,f,2/10/17,10:00:00,0:02:00,.,.,1.08873012,0.115276421,86.71,0.040647131,R,r,.,late,period
+l/s-o/w,manipulation,prolong,6.5,6.5.pl,f,5/2/17,9:32:00,0:03:00,1,.,7.328963029,2.049999851,68.54,0.060627418,SF,small,body,late,period
+x-y79,manipulation,prolong,6.5,6.5.pl,m,3/13/17,10:39:00,0:05:00,1,0.375351808,3.498404941,0.103783643,74.77,.,L,large,"body, p1, p2, p11, multiple secondaries",late,period
+blk/s-o/g,manipulation,prolong,6.5,6.5.pl,m,5/2/17,10:19:00,0:01:40,1,1.09734505,1.748194431,1.973270864,35.27,.,L,lg,body,late,period
+g/y-o/s,manipulation,prolong,6.5,6.5.pl,m,.,9:41:00,0:03:40,1,4.563717932,1.857900676,0.36461598,3.78,.,L,lg,tail,late,period
+g38-x,manipulation,prolong,6.5,6.5.pl,m,2/13/17,10:11:00,0:02:00,0,1.228304102,0.656453064,2.169413102,61.35,.,L,lg,none,late,period
+l/s-blk/r,manipulation,prolong,6.5,6.5.pl,m,5/2/17,9:32:00,0:03:00,1,2.845579898,2.017334828,0.88943032,4.66,.,L,lg,body,late,period
+o114-blu9,manipulation,prolong,6.5,6.5.pl,m,2/10/17,10:00:00,0:03:00,1,3.113357007,1.983780428,0.242451806,85.17,.,L,lg,body,late,period
+pk/s-d/g,manipulation,prolong,6.5,6.5.pl,m,.,9:33:00,0:01:00,1,1.9362491,0.907536912,0.992539502,93.7,.,L,lg,"light body, p1, secondary",late,period
+r90-x,manipulation,prolong,6.5,6.5.pl,m,2/10/17,10:00:00,0:03:00,1,1.21665159,0.943998309,0.277037866,64.08,.,L,lg,"body, p1",late,period
+x-blu57,manipulation,prolong,6.5,6.5.pl,m,3/9/17,9:42:00,0:05:00,1,1.62406011,7.342908328,0.265541544,73.62,.,L,lg,light body,late,period
+r81-x,manipulation,prolong,6.5,6.5.pl,m,2/17/17,9:21:35,0:02:50,0,0.277145041,1.989585049,1.616218569,47.51,.,M,medium,no,late,period
+x-y116,manipulation,stress,9,9.stress,f,3/10/16,9:55:00,0:32:00,.,.,11.15,0.610895518,.,.,LF,"1 XL,2  big,2 med, bunch small foll",.,.,.
+x-w7,manipulation,stress,9,9.stress,f,3/10/16,9:55:00,0:31:00,.,.,21.18,0.647942896,.,.,LF,"2 big, 5 med, bunch small foll",.,.,.
+x-r23,manipulation,stress,9,9.stress,f,5/27/16,10:17:00,.,.,.,31.19,0.9538423,.,.,MF,"2 medium follicles, rest [are] small",.,.,.
+x-w24/w49,manipulation,stress,9,9.stress,f,6/22/16,10:40:00,0:43:00,1,.,4.07,1.261190759,.,.,LF,big yolky follicles,secondary molt,.,.
+x-g113,manipulation,stress,9,9.stress,f,5/27/16,10:27:00,.,.,.,14.22,0.520018994,.,.,SF,bunch of small follicles,.,.,.
+g101-x,manipulation,stress,9,9.stress,f,9/9/16,10:48:00,0:34:00,1,.,5.1,0.528463144,.,.,MF,many small follicles (5-6mm),body,.,.
+x-y106,manipulation,stress,9,9.stress,f,6/22/16,10:40:00,0:34:00,1,.,13.24,0.351752056,.,.,SF,many small follicles (no hierarchy),"primary molt, 1 feather",.,.
+blu7-x,manipulation,stress,9,9.stress,f,6/22/16,10:55:00,0:39:00,1,.,15.39,0.615403056,.,.,SF,"small yellow follicles, no hierarchy",primary molt,.,.
+y104-w190,manipulation,stress,9,9.stress,f,9/12/16,10:54:00,0:34:00,.,.,11.63,0.985091277,.,.,MF,"yolky follicles, lg oviduct",.,.,.
+x-w31,manipulation,stress,9,9.stress,m,5/27/16,10:27:00,.,.,.,15.54,1.086912851,.,.,L,"3 large, 7 med, rest [are] small foll.",.,.,.
+blu123/w38-x,manipulation,stress,9,9.stress,m,3/11/16,9:42:00,0:33:00,.,.,2.58,0.176181839,.,.,L,Big gonads,.,.,.
+o116-x,manipulation,stress,9,9.stress,m,3/11/16,11:09:00,.,.,.,5.46,0.192750293,.,.,L,Big gonads,.,.,.
+o123/w29-x,manipulation,stress,9,9.stress,m,3/11/16,9:33:00,0:29:00,.,.,24.32,0.493751567,.,.,L,Big gonads,.,.,.
+x-blu8/w30,manipulation,stress,9,9.stress,m,3/11/16,10:25:00,0:31:00,.,.,22.86,0.607490531,.,.,L,Big gonads,.,.,.
+x-o105/w27,manipulation,stress,9,9.stress,m,3/11/16,9:42:00,0:31:00,.,.,3.03,0.122179443,.,.,L,Big gonads,.,.,.
+y101-x,manipulation,stress,9,9.stress,m,3/11/16,11:09:00,.,.,.,23.81,0.618258534,.,.,L,Big gonads,.,.,.
+y111-x,manipulation,stress,9,9.stress,m,3/11/16,10:25:00,0:29:00,.,.,17.36,0.341312228,.,.,L,Big gonads,.,.,.
+r2-x,manipulation,stress,9,9.stress,m,3/10/16,9:39:00,0:32:00,.,.,5.64,0.243044559,.,.,L,big testes,.,.,.
+o122/g2-x,manipulation,stress,9,9.stress,m,5/27/16,11:07:00,.,.,.,9.25,0.227594876,.,.,L,large,.,.,.
+y110-x,manipulation,stress,9,9.stress,m,5/27/16,11:07:00,.,.,.,18.71,0.749588993,.,.,L,large,.,.,.
+g105-x,manipulation,stress,9,9.stress,m,5/27/16,10:17:00,.,.,.,25.68,0.665109486,.,.,M,medium,.,.,.
+.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.,.

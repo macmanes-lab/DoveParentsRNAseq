@@ -32,17 +32,7 @@ allvsd <- as_tibble(allvsd)
 head(allvsd[2:4])
 tail(allvsd[2:4])
 
-ngon <- allvsd %>%
-  filter(grepl('gonad', samples)) %>%
-  distinct(gene)
 
-npit <- allvsd %>%
-  filter(grepl('pit', samples)) %>%
-  distinct(gene)
-
-nhyp <- allvsd %>%
-  filter(grepl('hyp', samples)) %>%
-  distinct(gene)
 
 # for plotting gene expression over time
 getcandidatevsdmanip <- function(whichgenes, whichtissue){
@@ -85,3 +75,31 @@ write.csv(candidatevsd, "results/03_candidatevsd.csv", row.names = F)
 shinyvsd <- getcandidatevsdmanip(shinygenes)
 write.csv(shinyvsd, "../musicalgenes/data/candidatecounts.csv", row.names = F)
 write.csv(shinyvsd, "results/03_shinyvsd.csv", row.names = F)
+
+
+## calculate total DEGs 
+
+ngon <- allvsd %>%
+  filter(grepl('gonad', samples)) %>%
+  distinct(gene)
+
+npit <- allvsd %>%
+  filter(grepl('pit', samples)) %>%
+  distinct(gene)
+
+nhyp <- allvsd %>%
+  filter(grepl('hyp', samples)) %>%
+  distinct(gene)
+
+
+## all pit vsds for correlation (after removing some unknown genes)
+
+pitvsd <- allvsd %>%
+  filter(grepl('pit', samples)) %>%
+  select(-file_name) %>%
+  filter(!grepl('LOC', gene)) %>%
+  filter(!grepl('\\.', gene)) %>%
+  pivot_wider(names_from = gene, values_from = counts)
+head(pitvsd)
+
+write.csv(pitvsd, "results/03_pitvsdAll.csv", row.names = F)
