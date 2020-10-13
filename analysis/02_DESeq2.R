@@ -42,7 +42,7 @@ replacements   <- c("early", "prolong", "extend")
 
 ### same code, for female and male HPG
 
-#ddsMH <- returndds("male_hypothalamus")
+ddsMH <- returndds("male_hypothalamus")
 #vsdMH <- returnvsd(ddsMH, "male_hypothalamus")
 #createDEGdfs(ddsMH, "male_hypothalamus", references, allotherstages)
 #createDEGdfs(ddsMH, "male_hypothalamus", manipcontrols, replacements)
@@ -50,7 +50,7 @@ replacements   <- c("early", "prolong", "extend")
 # sequential
 #createDEGdfs(ddsMH, "male_hypothalamus", "lay", "inc.d3")
 #createDEGdfs(ddsMH, "male_hypothalamus", "inc.d3", "inc.d9")
-#createDEGdfs(ddsMH, "male_hypothalamus", "inc.d9", "inc.d17")
+createDEGdfs(ddsMH, "male_hypothalamus", "inc.d9", "inc.d17")
 #createDEGdfs(ddsMH, "male_hypothalamus", "inc.d17", "hatch")
 #createDEGdfs(ddsMH, "male_hypothalamus", "hatch", "n5")
 #createDEGdfs(ddsMH, "male_hypothalamus", "n5", "n9")
