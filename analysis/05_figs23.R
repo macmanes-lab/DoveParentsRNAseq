@@ -93,7 +93,7 @@ fghij <- plot_grid(f,g,h,i,j,j2, nrow = 1,
                    rel_widths = c(1,1,1,0.85,0.75,0.7))
 
 fig2 <- plot_grid(abcde,fghij, nrow  = 2)
-
+fig2
 
 png(file = "figures/fig2-1.png", width = 7, height = 7, 
     units = 'in', res = 300)
@@ -104,10 +104,7 @@ pdf(file = "figures/fig2-1.pdf", width=7, height=7)
 plot(fig2)
 dev.off()
 
-
-
 ### fig 3 DEGs
-
 
 DEGbldg <- filterDEGs(levelsbldgchar)
 DEGsequential <- filterDEGs(levelssequential)
