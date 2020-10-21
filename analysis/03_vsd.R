@@ -1,105 +1,81 @@
 library(tidyverse)
-library(readr)
 library(corrr)
 
-source("R/themes.R") # info about samples and dataset formatting
-source("R/genelists.R") # genes of interest
+samples <- read_csv("metadata/00_birds_sachecked.csv") %>%
+  mutate(id = bird) %>%
+  select(id, horm.id)
+head(samples)
 
-## gene list
-## useful for finding genes of interest
-geneinfo <- read_csv("metadata/00_geneinfo.csv")
+hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
+  mutate(id = str_replace_all(id, c("-" = ".", "/" = "."))) %>%
+  mutate(prl = as.numeric(prl),
+         cort = as.numeric(cort),
+         p4 = as.numeric(p4),
+         e2 = as.numeric(e2),
+         t = as.numeric(t)) %>%
+  full_join(., samples) %>%
+  select(id, treatment, sex, prl, cort, p4, e2, t) %>%
+  filter(treatment != "NA", treatment != ".")
+tail(hormones)
 
-### variance stabilized gene expression  (vsd) 
-
-vsd_path <- "results/DEseq2/treatment/"   # path to the data
-vsd_files <- dir(vsd_path, pattern = "*vsd.csv") # get file names
-vsd_pathfiles <- paste0(vsd_path, vsd_files)
-vsd_files
-
-allvsd <- vsd_pathfiles %>%
-  setNames(nm = .) %>% 
-  map_df(~read_csv(.x), .id = "file_name")  %>% 
-  dplyr::rename("gene" = "X1") 
-
-## before pivoting, check names of df with
-## head(names(allvsd)) and tail(names(allvsd))
-
-allvsd <- allvsd %>% 
-  pivot_longer(cols = L.G118_female_gonad_control:y98.o50.x_male_pituitary_inc.d3, 
-               names_to = "samples", values_to = "counts")  %>% 
-  drop_na() 
-allvsd <- as_tibble(allvsd)
-head(allvsd[2:4])
-tail(allvsd[2:4])
-
-
-
-# for plotting gene expression over time
-getcandidatevsdmanip <- function(whichgenes, whichtissue){
-  
-  candidates  <- allvsd %>%
-    filter(gene %in% whichgenes) %>%
-    dplyr::mutate(sextissue = sapply(strsplit(file_name, '_vsd.csv'), "[", 1),
-                  sextissue = sapply(strsplit(sextissue, 'results/DEseq2/treatment/'), "[", 2),
-                  sex = sapply(strsplit(sextissue, '\\_'), "[", 1),
-                  sex = factor(sex),
-                  tissue = sapply(strsplit(sextissue, '\\_'), "[", 2),
-                  treatment = sapply(strsplit(samples, '\\_'), "[", 4),
-                  treatment = sapply(strsplit(treatment, '.NYNO'), "[", 1),
-                  treatment = recode(treatment, "m.hatch" = "m.n2", "extend.hatch" = "m.n2",
-                                     "inc.prolong" = "prolong", "m.inc.d8" = "early"),
-                  treatment =  factor(treatment, levels = alllevels))  %>%
-    dplyr::select(gene, counts, sex, tissue, treatment, samples)  %>%
-    drop_na()
-  return(candidates)
+femalegenesnhomrmones <- function(vsds){
+  df <- vsds %>% 
+    inner_join(hormones, ., by = "id") %>%
+    filter(sex == "f") %>%
+    select(-t) 
+  print(head(df))
+  return(df)
 }
 
-candidatevsd <- getcandidatevsdmanip(candidategenes)
+malegenesnhomrmones <- function(vsds){
+  df <-  vsds %>% 
+    inner_join(hormones, ., by = "id") %>%
+    filter(sex == "m") %>%
+    select(-e2)
+  print(head(df))
+  return(df)
+}
 
-hypvsdf <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "female")  
-pitvsdf <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "female")
-gonvsdf <- candidatevsd %>% filter(tissue %in% "gonads", sex == "female")  
-hypvsdm <- candidatevsd %>% filter(tissue %in% "hypothalamus", sex == "male")  
-pitvsdm <- candidatevsd %>% filter(tissue %in% "pituitary", sex == "male") 
-gonvsdm <- candidatevsd %>% filter(tissue %in% "gonads", sex == "male") 
+pitvsdAll <- read_csv("results/03_pitvsdAll.csv")
+hypvsdAll <- read_csv("results/03_hypvsdAll.csv")
+gonvsdAll <- read_csv("results/03_gonvsdAll.csv")
 
-write.csv(hypvsdf, "results/03_hypvsdf.csv", row.names = F)
-write.csv(pitvsdf, "results/03_pitvsdf.csv", row.names = F)
-write.csv(gonvsdf, "results/03_gonvsdf.csv", row.names = F)
-write.csv(hypvsdm, "results/03_hypvsdm.csv", row.names = F)
-write.csv(pitvsdm, "results/03_pitvsdm.csv", row.names = F)
-write.csv(gonvsdm, "results/03_gonvsdm.csv", row.names = F)
-write.csv(candidatevsd, "results/03_candidatevsd.csv", row.names = F)
+pitf <- femalegenesnhomrmones(pitvsdAll)
+gonf <- femalegenesnhomrmones(hypvsdAll)
+hypf <- femalegenesnhomrmones(gonvsdAll) 
 
-# for shiny
-shinyvsd <- getcandidatevsdmanip(shinygenes)
-write.csv(shinyvsd, "../musicalgenes/data/candidatecounts.csv", row.names = F)
-write.csv(shinyvsd, "results/03_shinyvsd.csv", row.names = F)
-
-
-## calculate total DEGs 
-
-ngon <- allvsd %>%
-  filter(grepl('gonad', samples)) %>%
-  distinct(gene)
-
-npit <- allvsd %>%
-  filter(grepl('pit', samples)) %>%
-  distinct(gene)
-
-nhyp <- allvsd %>%
-  filter(grepl('hyp', samples)) %>%
-  distinct(gene)
+pitm <- malegenesnhomrmones(pitvsdAll)
+gonm <- malegenesnhomrmones(hypvsdAll)
+hypm <- malegenesnhomrmones(gonvsdAll) 
 
 
-## all pit vsds for correlation (after removing some unknown genes)
 
-pitvsd <- allvsd %>%
-  filter(grepl('pit', samples)) %>%
-  select(-file_name) %>%
-  filter(!grepl('LOC', gene)) %>%
-  filter(!grepl('\\.', gene)) %>%
-  pivot_wider(names_from = gene, values_from = counts)
-head(pitvsd)
 
-write.csv(pitvsd, "results/03_pitvsdAll.csv", row.names = F)
+plotcorrelation <- function(df, xvar, yvar, xlab, ylab){
+  df %>%
+    ggplot(aes(x = xvar, y = yvar, color = sex)) +
+    geom_point() +
+    geom_smooth(method = "lm") +
+    scale_y_log10() +
+    scale_x_log10() +
+    labs(x = xlab, y = ylab) 
+}
+
+plotcorrelation(pitm,
+                pitm$prl, pitm$PRL,
+                "circulating PRL", "PRL expression")
+
+plotcorrelation(pitf,
+                pitf$prl, pitf$PRL,
+                "circulating PRL", "PRL expression")
+
+calculatecorrs <- function(df){
+  df2 <- df %>%
+    select(-id, -sex, -treatment) %>%
+    correlate(.)
+  print(head(df2)[1:6])
+  return(df2)
+}
+
+pitfcorrs <- calculatecorrs(pitf)
+pitmcorrs <- calculatecorrs(pitm)

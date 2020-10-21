@@ -1,47 +1,120 @@
 library(tidyverse)
+library(corrr)
 
+# sample information ----
+samples <- read_csv("metadata/00_birds_sachecked.csv") %>%
+  mutate(id = bird) %>%
+  select(id, horm.id)
+head(samples)
+
+
+# hormones ---
 hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
-  select(id, prl) %>%
   mutate(id = str_replace_all(id, c("-" = ".", "/" = "."))) %>%
-  mutate(prl = as.numeric(prl))
+  mutate(prl = as.numeric(prl),
+         cort = as.numeric(cort),
+         p4 = as.numeric(p4),
+         e2 = as.numeric(e2),
+         t = as.numeric(t)) %>%
+  full_join(., samples) %>%
+  select(id, treatment, sex, prl, cort, p4, e2, t) %>%
+  filter(treatment != "NA", treatment != ".")
+tail(hormones)
 
-genes <- read_csv("results/03_pitvsdAll.csv") %>%
-  mutate(id = sapply(strsplit(samples, '\\_'), "[", 1),
-         id = str_replace_all(id, c(".ATLAS" = "")),
-         id = tolower(id)) 
+# vsds (gene expression) ----
+pitvsdAll <- read_csv("results/03_pitvsdAll.csv")
+hypvsdAll <- read_csv("results/03_hypvsdAll.csv")
+gonvsdAll <- read_csv("results/03_gonvsdAll.csv")
 
-genesnhomrones <- full_join(genes, hormones, by = "id") %>%
-  arrange(id) 
-head(genesnhomrones)
+# join vsds and hormones ----
+femalegenesnhomrmones <- function(vsds){
+  df <- vsds %>% 
+    inner_join(hormones, ., by = "id") %>%
+    filter(sex == "f") %>%
+    select(-t) 
+  print(head(df))
+  return(df)
+}
 
-genesnhomrones %>%
-  select(prl, PRL) %>%
-  drop_na() %>%
-  ggplot(aes(x = prl, y = PRL)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  scale_y_log10() +
-  scale_x_log10() +
-  labs(x = "circulating prolactin (ng/mL)",
-       y = "prolactin gene expression (counts)")
+malegenesnhomrmones <- function(vsds){
+  df <-  vsds %>% 
+    inner_join(hormones, ., by = "id") %>%
+    filter(sex == "m") %>%
+    select(-e2)
+  print(head(df))
+  return(df)
+}
 
-genesnhomrones %>%
-  select(prl, STT3B) %>%
-  drop_na() %>%
-  ggplot(aes(x = prl, y = STT3B)) +
-  geom_point() +
-  geom_smooth(method = "lm") +
-  scale_y_log10() +
-  scale_x_log10() +
-  labs(x = "circulating prolactin (ng/mL)",
-       y = "CAMKK2 gene expression (counts)")
+# genes and hormones by sex and tissue ---
+pitf <- femalegenesnhomrmones(pitvsdAll)
+gonf <- femalegenesnhomrmones(hypvsdAll)
+hypf <- femalegenesnhomrmones(gonvsdAll) 
 
-prlcor <- genesnhomrones %>%
-  select(-samples, -id) %>%
-  correlate(.) %>%
-  focus(prl) 
+pitm <- malegenesnhomrmones(pitvsdAll)
+gonm <- malegenesnhomrmones(hypvsdAll)
+hypm <- malegenesnhomrmones(gonvsdAll) 
 
-prlcor %>% arrange(desc(prl))
-prlcor %>% arrange(prl)
 
-#write.csv(genesnhomrones, "~/Desktop/genesnhomrones.csv")
+
+# correlations ---
+plotcorrelation <- function(df, xvar, yvar, xlab, ylab){
+  df %>%
+    ggplot(aes(x = xvar, y = yvar, color = sex)) +
+    geom_point() +
+    geom_smooth(method = "lm") +
+    scale_y_log10() +
+    scale_x_log10() +
+    labs(x = xlab, y = ylab) 
+}
+
+calculatecorrs <- function(df){
+  df2 <- df %>%
+    select(-id, -sex, -treatment) %>%
+    correlate(.)
+  print(head(df2)[1:6])
+  return(df2)
+}
+
+plotcorrelation(pitm,
+                pitm$prl, pitm$PRL,
+                "circulating PRL", "PRL expression")
+
+plotcorrelation(pitf,
+                pitf$prl, pitf$PRL,
+                "circulating PRL", "PRL expression")
+
+plotcorrelation(pitf,
+                pitf$cort, pitf$PRL,
+                "circulating cort", "PRL expression")
+
+
+pitfcorrs <- calculatecorrs(pitf)
+pitmcorrs <- calculatecorrs(pitm)
+
+pitfcorrs %>% focus(PRL) %>% arrange(PRL)
+pitfcorrs %>% focus(PRL) %>% arrange(desc(PRL))
+pitmcorrs %>% focus(PRL) %>% arrange(PRL)
+pitmcorrs %>% focus(PRL) %>% arrange(desc(PRL))
+
+pitfcorrs %>% focus(prl) %>% arrange(prl)
+pitfcorrs %>% focus(prl) %>% arrange(desc(prl))
+pitmcorrs %>% focus(prl) %>% arrange(prl)
+pitmcorrs %>% focus(prl) %>% arrange(desc(prl))
+
+pitfcorrs %>% focus(cort) %>% arrange(cort)
+pitfcorrs %>% focus(cort) %>% arrange(desc(cort))
+pitmcorrs %>% focus(cort) %>% arrange(cort)
+pitmcorrs %>% focus(cort) %>% arrange(desc(cort))
+
+pitfcorrs %>% focus(e2) %>% arrange(e2)
+pitfcorrs %>% focus(e2) %>% arrange(desc(e2))
+pitmcorrs %>% focus(t) %>% arrange(t)
+pitmcorrs %>% focus(t) %>% arrange(desc(t))
+
+gonfcorrs <- calculatecorrs(gonf)
+gonmcorrs <- calculatecorrs(gonm)
+
+gonfcorrs %>% focus(e2) %>% arrange(e2)
+gonfcorrs %>% focus(e2) %>% arrange(desc(e2))
+gonmcorrs %>% focus(t) %>% arrange(t)
+gonmcorrs %>% focus(t) %>% arrange(desc(t))
