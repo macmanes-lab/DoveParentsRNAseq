@@ -27,6 +27,8 @@ hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
   select(id, treatment, sex, prl, cort, p4, e2t)  
 head(hormones)
 
+write_csv(hormones, "../musicalgenes/data/hormones.csv")
+
 # vsds (gene expression) ----
 
 
