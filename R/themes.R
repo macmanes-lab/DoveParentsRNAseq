@@ -174,7 +174,8 @@ colorstissue <- c("hypothalamus" = "#d95f02",
                   "gonads" =  "#7570b3",
                   "gonad" =  "#7570b3")
 
-sexcolors <- c("female" = "#969696", "male" = "#525252")
+sexcolors <- c("female" = "#969696", "male" = "#525252",
+               "f" = "#969696", "m" = "#525252")
 
 colorsvolcano <-  c(colorschar,
                     
