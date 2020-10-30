@@ -121,5 +121,13 @@ p2 <- plot_grid(e,h,f,i,g,j, nrow = 1, rel_widths = c(1.2,1,1,1,1,1,1.2))
 p2
 
 
+png(file = "figures/fig-geneshormones.png", width = 7, height = 7, 
+    units = 'in', res = 300)
+plot(p2) 
+dev.off()
+
+pdf(file = "figures/fig-geneshormones.pdf", width=7, height=7)
+plot(p2)
+dev.off()
 
 
