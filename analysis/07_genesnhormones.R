@@ -1,6 +1,7 @@
 library(tidyverse)
 library(corrr)
 library(cowplot)
+library(Hmisc)
 
 source("R/genelists.R")
 source("R/themes.R")
@@ -24,10 +25,11 @@ hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
   filter(treatment != "NA", treatment != ".") %>%
   mutate(e2t = ifelse(sex == "f", e2, t)) %>%
   mutate(sex = recode(sex, "f" = "female", "m" = "male" )) %>%
-  select(id, treatment, sex, prl, cort, p4, e2t)  
+  select(id, treatment, sex, prl, cort, p4, e2t)   %>%
+  filter(treatment != "control")
 head(hormones)
 
-write_csv(hormones, "../musicalgenes/data/hormones.csv")
+#write_csv(hormones, "../musicalgenes/data/hormones.csv")
 
 # vsds (gene expression) ----
 
@@ -71,65 +73,105 @@ plotcorrelation <- function(xvar, xlab, yvar, ylab){
 }
 
 
-plotcorrelation(genesnhomrmones$e2t, "Circulating E2 or T (ng/mL)",
-                genesnhomrmones$PRLH, "PRLH expression")
-
 plotcorrelation(genesnhomrmones$prl, "Circulating prolactin (ng/mL)",
                 genesnhomrmones$PRL, "Prolactin (PRL) expression")
 
-plotcorrelation(genesnhomrmones$prl, "Circulating prolactin (ng/mL)",
-                genesnhomrmones$PRL, "Prolactin (PRL) expression")
+plotcorrelation(genesnhomrmones$COMT, "COMT",
+                genesnhomrmones$DRD1, "DRD1")
 
-plot_grid(a,b,c, ncol = 1)
+plotcorrelation(genesnhomrmones$OPRM1, "OPRM1",
+                genesnhomrmones$PGR, "PGR")
 
 
+cor.test(genesnhomrmones$prl, genesnhomrmones$PRL, 
+                method = "pearson")
 
-plotcorrrs <- function(whichtissue, whichsex, mytitle){
-  p <- genesnhomrmones %>%
-    filter(tissue == whichtissue,
-           sex %in% whichsex) %>%
-    select(-id, -sex, -tissue,-treatment) %>%
-    correlate(.) %>% 
-    select(rowname, prl, cort, p4, e2t) %>%
-    filter(!rowname %in% c("prl", "cort", "p4", "e2t")) %>%
-    rplot(colors = 
-            c("skyblue1", "white","indianred2")) +
-    theme_minimal(base_size = 9) +
-    theme(axis.text.y = element_blank(), 
-          legend.position = "none") +
-    labs(subtitle = mytitle)
-  return(p)
+
+# get all correlations for each sex tissue without stats
+
+corrs <- genesnhomrmones %>%
+  filter(sex == "female", tissue == "hypothalamus") %>%
+  select(-id, -sex, -tissue, -treatment, 
+         -NPVF, -MC3R, -VIP, -CRH) %>%
+  cor(.) %>%  
+  as.data.frame(.) %>%
+  rownames_to_column(., var = "var1") %>%
+  pivot_longer(cols = prl:VIPR1, 
+               names_to = "var2", values_to = "R2")  %>%
+  mutate(sex = "female", tissue = "hypothalamus") %>%
+  filter(R2 != 1) %>%
+  arrange(desc(R2))
+corrs
+
+
+# get all correlations for each sex tissue with stats
+
+flattenCorrMatrix <- function(cormat, pmat) {
+  ut <- upper.tri(cormat)
+  data.frame(
+    row = rownames(cormat)[row(cormat)[ut]],
+    column = rownames(cormat)[col(cormat)[ut]],
+    cor  =(cormat)[ut],
+    p = pmat[ut]
+  )
 }
 
-a <- plotcorrrs("hypothalamus", sexlevels, "Hypothalamus") + 
-  theme(axis.text.y = element_text(face = "italic"))
-b <- plotcorrrs("pituitary", sexlevels, "Pituitary")
-c <- plotcorrrs("gonads", sexlevels, "Gonads") + 
-  theme(legend.position = "right")
 
-p <- plot_grid(a,b,c, nrow = 1, rel_widths = c(1.2,1,1.2))
-p
-
-e <- plotcorrrs("hypothalamus", "female", "F Hyp") + 
-  theme(axis.text.y = element_text(face = "italic"))
-f <- plotcorrrs("pituitary", "female", "F Pit")
-g <- plotcorrrs("gonads", "female", "F Gon") 
-
-h <- plotcorrrs("hypothalamus", "male", "M Hyp") 
-i <- plotcorrrs("pituitary", "male", "M Pit")
-j <- plotcorrrs("gonads", "male", "M Gon") + 
-  theme(legend.position = "right") 
-p2 <- plot_grid(e,h,f,i,g,j, nrow = 1, rel_widths = c(1.2,1,1,1,1,1,1.2))
-p2
+mkFrameForLoop <- function(nRow,nCol) {
+  d <- c()
+  for(i in seq_len(nRow)) {
+    ri <- mkRow(nCol)
+    di <- data.frame(ri,
+                     stringsAsFactors=FALSE)
+    d <- rbind(d,di)
+  }
+  d
+}
 
 
-png(file = "figures/fig-geneshormones.png", width = 7, height = 7, 
-    units = 'in', res = 300)
-plot(p2) 
-dev.off()
+makecortable <- function(){
+  
+  d <- c()
+  
+  for(i in sexlevels){
+    for(j in tissuelevels){
+      
+      res2 <- genesnhomrmones %>%
+        filter(sex == i, tissue == j) %>%
+        select(-id, -sex, -tissue, -treatment, 
+               -NPVF, -MC3R, -VIP, -CRH)  %>%
+        as.matrix()
+      res2 <- rcorr(res2)
+      
+      flatres2 <- flattenCorrMatrix(res2$r, res2$P)
+      flatres2 <- as.tibble(flatres2) %>%
+        arrange(desc(cor,p)) %>%
+        #filter(p < 0.01) %>%
+        mutate(sex = i, tissue = j)
+      flatres2   
+      
+      d <- rbind(d, flatres2)
+    }
+  }
+  d
+}
 
-pdf(file = "figures/fig-geneshormones.pdf", width=7, height=7)
-plot(p2)
-dev.off()
+sigcors <- makecortable()  %>%
+  mutate(direction = if_else(cor > 0, 
+                             "positive", "negative")) %>%
+  mutate(tissue = factor(tissue, levels = tissuelevels))
 
+sigcors  %>%
+  ggplot(aes(x = tissue, y = cor, fill = sex)) +
+  geom_boxplot() +
+  facet_wrap(~direction)
 
+top70 <- sigcors %>%
+  filter(cor > 0.7)
+
+bottom70 <- sigcors %>%
+  filter(cor < -0.7)
+
+ggplot(sigcors, aes(x = cor, fill = sex)) +
+  geom_histogram() +
+  facet_wrap(sex ~tissue)
