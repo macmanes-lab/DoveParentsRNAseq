@@ -117,16 +117,6 @@ flattenCorrMatrix <- function(cormat, pmat) {
 }
 
 
-mkFrameForLoop <- function(nRow,nCol) {
-  d <- c()
-  for(i in seq_len(nRow)) {
-    ri <- mkRow(nCol)
-    di <- data.frame(ri,
-                     stringsAsFactors=FALSE)
-    d <- rbind(d,di)
-  }
-  d
-}
 
 
 makecortable <- function(){
@@ -156,22 +146,42 @@ makecortable <- function(){
   d
 }
 
-sigcors <- makecortable()  %>%
+allcors <- makecortable()  %>%
   mutate(direction = if_else(cor > 0, 
                              "positive", "negative")) %>%
   mutate(tissue = factor(tissue, levels = tissuelevels))
 
-sigcors  %>%
+allcors  %>%
   ggplot(aes(x = tissue, y = cor, fill = sex)) +
   geom_boxplot() +
   facet_wrap(~direction)
 
-top70 <- sigcors %>%
-  filter(cor > 0.7)
+top50 <- allcors %>%
+  filter(cor > 0.5)
 
-bottom70 <- sigcors %>%
-  filter(cor < -0.7)
+bottom50 <- allcors %>%
+  filter(cor < -0.5)
 
-ggplot(sigcors, aes(x = cor, fill = sex)) +
+ggplot(allcors, aes(x = cor, fill = sex)) +
   geom_histogram() +
   facet_wrap(sex ~tissue)
+
+allcors %>%
+  filter( row == "prl") %>%
+  filter(p < 0.01)
+
+allcors %>%
+  filter( row == "cort") %>%
+  filter(p < 0.01)
+
+allcors %>%
+  filter( row == "e2t") %>%
+  filter(p < 0.01)
+
+allcors %>%
+  filter( row == "p4") %>%
+  filter(p < 0.01)
+
+plotcorrelation(genesnhomrmones$cort, "Circulating corticosterone (ng/mL)",
+                genesnhomrmones$FOS, "FOS expression")
+
