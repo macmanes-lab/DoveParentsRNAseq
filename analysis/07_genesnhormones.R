@@ -10,26 +10,37 @@ source("R/themes.R")
 samples <- read_csv("metadata/00_birds_sachecked.csv") %>%
   mutate(id = bird) %>%
   select(id, horm.id)
-glimpse(samples)
+head(samples)
+
 
 
 # hormones ---
 hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
-  mutate(id = str_replace_all(id, c("-" = ".", "/" = "."))) %>%
+  rename("horm.id" = "id") %>%
   mutate(prl = as.numeric(prl),
          cort = as.numeric(cort),
          p4 = as.numeric(p4),
          e2 = as.numeric(e2),
          t = as.numeric(t)) %>%
-  full_join(., samples) %>%
-  filter(treatment != "NA", treatment != ".") %>%
+  full_join(samples, ., by = "horm.id") %>%
+  arrange(desc(studytype)) %>%
+  filter(treatment != "NA", treatment != ".", treatment != "stress") %>%
   mutate(e2t = ifelse(sex == "f", e2, t)) %>%
   mutate(sex = recode(sex, "f" = "female", "m" = "male" )) %>%
-  select(id, treatment, sex, prl, cort, p4, e2t)   %>%
-  filter(treatment != "control")
-head(hormones)
+  select(id, treatment, sex, prl, cort, p4, e2t) %>%
+  mutate(treatment = ifelse(treatment == "inc17", "inc.d17",
+                            ifelse(treatment == "inc9", "inc.d9",
+                                   ifelse(treatment == "inc3", "inc.d3",
+                                          ifelse(treatment == "m.inc17", "m.inc.d17",
+                                                 ifelse(treatment == "m.inc9", "m.inc.d9",
+                                                        ifelse(treatment == "m.inc3", "m.inc.d3",
+                                          ifelse(grepl("m.hatch", treatment), "m.n2",
+                                                 ifelse(treatment == "m.inc8", "early",
+                                                  treatment)))))))))
 
-#write_csv(hormones, "../musicalgenes/data/hormones.csv")
+
+
+write_csv(hormones, "../musicalgenes/data/hormones.csv")
 
 # vsds (gene expression) ----
 
@@ -44,17 +55,25 @@ vsd_pathfiles
 candidatevsds <- vsd_pathfiles %>%
   map_dfr(~read_csv(.x)) %>%
   mutate(id = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
-  filter(id != "x.g.g.ATLAS") %>%
-  select(id, tissue, gene, counts) %>%
-  pivot_wider(names_from = "gene", values_from = "counts")
+  select(id, sex, tissue, treatment, gene, counts) %>%
+  pivot_wider(names_from = "gene", values_from = "counts") 
 head(candidatevsds)
 
+unique(candidatevsds$treatment)
+
 # join genes and hormones ----
-genesnhomrmones <- inner_join(hormones, candidatevsds, by = "id")  %>%
+genesnhomrmones <- full_join(hormones, candidatevsds, by = "id")  %>%
   select(id, sex, tissue, treatment, 
          prl, cort, p4, e2t, everything()) %>%
   mutate(tissue = factor(tissue, levels = tissuelevels))
 head(genesnhomrmones)
+
+genesnhomrmones$treatment.x
+
+x <- genesnhomrmones %>% filter_(~sex.x != sex.y) %>%
+  select(id, treatment.x, treatment.y, sex.x, sex.y) %>%
+  distinct()
+x
 
 # correlations ---
 
