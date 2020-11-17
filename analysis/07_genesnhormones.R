@@ -12,8 +12,6 @@ samples <- read_csv("metadata/00_birds_sachecked.csv") %>%
   select(id, horm.id)
 head(samples)
 
-
-
 # hormones ---
 hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
   rename("horm.id" = "id") %>%
@@ -36,8 +34,13 @@ hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
                                                         ifelse(treatment == "m.inc3", "m.inc.d3",
                                           ifelse(grepl("m.hatch", treatment), "m.n2",
                                                  ifelse(treatment == "m.inc8", "early",
-                                                  treatment)))))))))
+                                                  treatment))))))))) %>%
+  filter(!id %in% c("pk.s054.d.g", "blu119.w84.x", "blu84.x", "x.g.g.ATLAS")) 
+head(hormones)
 
+## fix bad samples in hormones
+# pk.s054.d.g is a female m.hatch (n2) bad, drop
+# blu119.w84.x is male and female in other ds
 
 
 write_csv(hormones, "../musicalgenes/data/hormones.csv")
@@ -56,24 +59,35 @@ candidatevsds <- vsd_pathfiles %>%
   map_dfr(~read_csv(.x)) %>%
   mutate(id = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
   select(id, sex, tissue, treatment, gene, counts) %>%
-  pivot_wider(names_from = "gene", values_from = "counts") 
+  pivot_wider(names_from = "gene", values_from = "counts")  %>%
+  mutate(treatment = ifelse(id == "x.o61", "extend",
+                            ifelse(grepl("y128.g23.x|blu108.w40.o158|x.blu43.g132|r37.w100.x", id), "m.inc.d9",
+                            treatment))) %>%
+  filter(!id %in% c("pk.s054.d.g", "blu119.w84.x", "blu84.x", "x.g.g.ATLAS") ) 
 head(candidatevsds)
 
-unique(candidatevsds$treatment)
+# fix bad hormoen samples
+
+# x.o61 is a female extend fixed
+# y128.g23.x is a female m.inc.d9 fixed
+# blu108.w40.o158 is a male m.inc.d9 fixed
+# x.blu43.g132 is a female m.inc.d9 fixed
+# r37.w100.x is a male m.inc.d9 fixed
+
+# remove x.g.g.ATLAS has same name for males and females
+# rmove blu119.w84.x has same name for males and females
+
 
 # join genes and hormones ----
-genesnhomrmones <- full_join(hormones, candidatevsds, by = "id")  %>%
+
+genesnhomrmones <- inner_join(hormones, candidatevsds, by = "id")  %>%
+  rename("treatment" = "treatment.x", "sex" = "sex.x" ) %>%
+  select(-treatment.y, sex.y) %>%
   select(id, sex, tissue, treatment, 
          prl, cort, p4, e2t, everything()) %>%
-  mutate(tissue = factor(tissue, levels = tissuelevels))
+  mutate(tissue = factor(tissue, levels = tissuelevels),
+         treatment = factor(treatment, levels = alllevels))
 head(genesnhomrmones)
-
-genesnhomrmones$treatment.x
-
-x <- genesnhomrmones %>% filter_(~sex.x != sex.y) %>%
-  select(id, treatment.x, treatment.y, sex.x, sex.y) %>%
-  distinct()
-x
 
 # correlations ---
 
@@ -101,106 +115,6 @@ plotcorrelation(genesnhomrmones$COMT, "COMT",
 plotcorrelation(genesnhomrmones$OPRM1, "OPRM1",
                 genesnhomrmones$PGR, "PGR")
 
-
 cor.test(genesnhomrmones$prl, genesnhomrmones$PRL, 
                 method = "pearson")
-
-
-# get all correlations for each sex tissue without stats
-
-corrs <- genesnhomrmones %>%
-  filter(sex == "female", tissue == "hypothalamus") %>%
-  select(-id, -sex, -tissue, -treatment, 
-         -NPVF, -MC3R, -VIP, -CRH) %>%
-  cor(.) %>%  
-  as.data.frame(.) %>%
-  rownames_to_column(., var = "var1") %>%
-  pivot_longer(cols = prl:VIPR1, 
-               names_to = "var2", values_to = "R2")  %>%
-  mutate(sex = "female", tissue = "hypothalamus") %>%
-  filter(R2 != 1) %>%
-  arrange(desc(R2))
-corrs
-
-
-# get all correlations for each sex tissue with stats
-
-flattenCorrMatrix <- function(cormat, pmat) {
-  ut <- upper.tri(cormat)
-  data.frame(
-    row = rownames(cormat)[row(cormat)[ut]],
-    column = rownames(cormat)[col(cormat)[ut]],
-    cor  =(cormat)[ut],
-    p = pmat[ut]
-  )
-}
-
-
-
-
-makecortable <- function(){
-  
-  d <- c()
-  
-  for(i in sexlevels){
-    for(j in tissuelevels){
-      
-      res2 <- genesnhomrmones %>%
-        filter(sex == i, tissue == j) %>%
-        select(-id, -sex, -tissue, -treatment, 
-               -NPVF, -MC3R, -VIP, -CRH)  %>%
-        as.matrix()
-      res2 <- rcorr(res2)
-      
-      flatres2 <- flattenCorrMatrix(res2$r, res2$P)
-      flatres2 <- as.tibble(flatres2) %>%
-        arrange(desc(cor,p)) %>%
-        #filter(p < 0.01) %>%
-        mutate(sex = i, tissue = j)
-      flatres2   
-      
-      d <- rbind(d, flatres2)
-    }
-  }
-  d
-}
-
-allcors <- makecortable()  %>%
-  mutate(direction = if_else(cor > 0, 
-                             "positive", "negative")) %>%
-  mutate(tissue = factor(tissue, levels = tissuelevels))
-
-allcors  %>%
-  ggplot(aes(x = tissue, y = cor, fill = sex)) +
-  geom_boxplot() +
-  facet_wrap(~direction)
-
-top50 <- allcors %>%
-  filter(cor > 0.5)
-
-bottom50 <- allcors %>%
-  filter(cor < -0.5)
-
-ggplot(allcors, aes(x = cor, fill = sex)) +
-  geom_histogram() +
-  facet_wrap(sex ~tissue)
-
-allcors %>%
-  filter( row == "prl") %>%
-  filter(p < 0.01)
-
-allcors %>%
-  filter( row == "cort") %>%
-  filter(p < 0.01)
-
-allcors %>%
-  filter( row == "e2t") %>%
-  filter(p < 0.01)
-
-allcors %>%
-  filter( row == "p4") %>%
-  filter(p < 0.01)
-
-plotcorrelation(genesnhomrmones$cort, "Circulating corticosterone (ng/mL)",
-                genesnhomrmones$FOS, "FOS expression")
 
