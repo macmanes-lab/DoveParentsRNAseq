@@ -165,7 +165,11 @@ colorhypothesis <- c("none" = "#cc5500",
                      "hi" = "#19757A",
                      "early" = "#B5C4B2",
                      "late" = "#19757A",
-                     "reference" = "#F8766D" )
+                     "reference" = "#F8766D" ,
+                     "earlier" = "#B5C4B2",
+                     "later" = "#19757A",
+                     "control" = "#F8766D",
+                     "controls" = "#F8766D")
 
 levelhypothesis <- c("reference", "eggs", "chicks", "loss", "early", "late")
 
