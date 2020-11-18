@@ -9,8 +9,7 @@ source("R/themes.R")
 # sample information ----
 samples <- read_csv("metadata/00_birds_sachecked.csv") %>%
   mutate(id = bird) %>%
-  select(id, horm.id) %>%
-  filter(id != "L.G118")
+  select(id, horm.id) 
 head(samples)
 
 # hormones ---
@@ -49,10 +48,20 @@ head(hormones)
 # pk.s054.d.g is a female m.hatch (n2) bad, drop
 # blu119.w84.x is male and female in other ds
 
-write_csv(hormones, "../musicalgenes/data/hormones.csv")
+
+
+# fix bad  samples in gene exrpress
+
+# x.o61 is a female extend fixed
+# y128.g23.x is a female m.inc.d9 fixed
+# blu108.w40.o158 is a male m.inc.d9 fixed
+# x.blu43.g132 is a female m.inc.d9 fixed
+# r37.w100.x is a male m.inc.d9 fixed
+
+# remember that x.g.g.ATLAS has same name for males and females
+
 
 # vsds (gene expression) ----
-
 
 vsd_path <- "results/"   # path to the data
 vsd_files <- c("03_gonvsdf.csv" ,  "03_gonvsdm.csv" ,
@@ -74,16 +83,14 @@ candidatevsds <- vsd_pathfiles %>%
 head(candidatevsds)
 
 
-# fix bad hormoen samples
+# made new file for shiny app
 
-# x.o61 is a female extend fixed
-# y128.g23.x is a female m.inc.d9 fixed
-# blu108.w40.o158 is a male m.inc.d9 fixed
-# x.blu43.g132 is a female m.inc.d9 fixed
-# r37.w100.x is a male m.inc.d9 fixed
-
-# remove x.g.g.ATLAS has same name for males and females
-# rmove blu119.w84.x has same name for males and females
+candidatecounts <- candidatevsds %>%
+  pivot_longer(cols = ADRA2A:MC3R, 
+               names_to = "gene", values_to = "counts") %>%
+  mutate(samples = paste(id, sex, tissue, treatment, sep = "_")) %>%
+  select(gene, counts, sex, tissue, treatment, samples)
+head(candidatecounts)
 
 
 # join genes and hormones ----
@@ -181,6 +188,8 @@ allcors <- makecortable()  %>%
                              "positive", "negative")) %>%	
   mutate(tissue = factor(tissue, levels = tissuelevels))	
 
+head(allcors)
+
 sigcors <- allcors %>%
   filter(p < 0.01)
 
@@ -214,3 +223,8 @@ write_csv(hormonecorrs, "results/07_hormonecorrs.csv")
 
 plotcorrelation(genesnhomrmones$cort, "Circulating corticosterone (ng/mL)",	
                 genesnhomrmones$FOS, "FOS expression")
+
+## save file for musical genes 
+
+write_csv(hormones, "../musicalgenes/data/hormones.csv")
+write_csv(candidatecounts, "../musicalgenes/data/candidatecounts.csv")
