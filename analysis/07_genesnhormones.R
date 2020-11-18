@@ -65,7 +65,7 @@ candidatevsds <- vsd_pathfiles %>%
   map_dfr(~read_csv(.x)) %>%
   mutate(id = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
   select(id, sex, tissue, treatment, gene, counts) %>%
-  filter(!gene %in% c("CRH" , "MC3R", "NPVF")) %>%
+  #filter(!gene %in% c("CRH" , "MC3R", "NPVF")) %>%
   pivot_wider(names_from = "gene", values_from = "counts")  %>%
   mutate(treatment = ifelse(grepl("x.o61|blu84.x", id), "extend",
                             ifelse(grepl("y128.g23.x|blu108.w40.o158|x.blu43.g132|r37.w100.x", 
@@ -112,6 +112,8 @@ plotcorrelation <- function(xvar, xlab, yvar, ylab){
 }
 
 
+## plot correlations
+
 plotcorrelation(genesnhomrmones$prl, "Circulating prolactin (ng/mL)",
                 genesnhomrmones$PRL, "Prolactin (PRL) expression")
 
@@ -121,5 +123,94 @@ plotcorrelation(genesnhomrmones$COMT, "COMT",
 plotcorrelation(genesnhomrmones$OPRM1, "OPRM1",
                 genesnhomrmones$PGR, "PGR")
 
-cor.test(genesnhomrmones$prl, genesnhomrmones$PRL, 
-                method = "pearson")
+
+a <- plotcorrelation(genesnhomrmones$HTR2C, "HTR2C",
+                genesnhomrmones$DRD1, "DRD1")
+
+b <- plotcorrelation(genesnhomrmones$POMC, "POMC",
+                genesnhomrmones$DRD1, "DRD1")
+
+plot_grid(a,b)
+
+
+## sig correlatoins 
+
+# get all correlations for each sex tissue with stats	
+
+flattenCorrMatrix <- function(cormat, pmat) {	
+  ut <- upper.tri(cormat)	
+  data.frame(	
+    row = rownames(cormat)[row(cormat)[ut]],	
+    column = rownames(cormat)[col(cormat)[ut]],	
+    cor  =(cormat)[ut],	
+    p = pmat[ut]	
+  )	
+}	
+
+
+
+
+makecortable <- function(){	
+  
+  d <- c()	
+  
+  for(i in sexlevels){	
+    for(j in tissuelevels){	
+      
+      res2 <- genesnhomrmones %>%	
+        filter(sex == i, tissue == j) %>%	
+        select(-id, -sex, -tissue, -treatment)  %>%	
+        as.matrix()	
+      res2 <- rcorr(res2)	
+      
+      flatres2 <- flattenCorrMatrix(res2$r, res2$P)	
+      flatres2 <- as_tibble(flatres2) %>%	
+        arrange(desc(cor,p)) %>%	
+        #filter(p < 0.01) %>%	
+        mutate(sex = i, tissue = j)	
+      flatres2   	
+      
+      d <- rbind(d, flatres2)	
+    }	
+  }	
+  d	
+}	
+
+allcors <- makecortable()  %>%	
+  mutate(direction = if_else(cor > 0, 	
+                             "positive", "negative")) %>%	
+  mutate(tissue = factor(tissue, levels = tissuelevels))	
+
+sigcors <- allcors %>%
+  filter(p < 0.01)
+
+sigcors  %>%	
+  ggplot(aes(x = tissue, y = cor, fill = sex)) +	
+    geom_boxplot() +	
+    facet_wrap(~direction)
+
+sigcors %>%
+  ggplot(aes(x = cor, fill = sex)) +	
+    geom_histogram() +	
+    facet_wrap(sex ~tissue)	
+
+top50 <- sigcors %>%	
+  filter(cor > 0.5)	
+
+bottom50 <- sigcors %>%	
+  filter(cor < -0.5)	
+
+topbottom50 <- rbind(top50,bottom50) %>%
+  arrange(row,column)
+topbottom50
+
+hormonecorrs <- sigcors %>%
+  filter(row %in% c("prl", "cort", "p4", "e2t"))  %>%
+  arrange(row,column)
+
+write_csv(topbottom50, "results/07_topsigcorrsover50.csv")
+write_csv(hormonecorrs, "results/07_hormonecorrs.csv")
+
+
+plotcorrelation(genesnhomrmones$cort, "Circulating corticosterone (ng/mL)",	
+                genesnhomrmones$FOS, "FOS expression")
