@@ -9,11 +9,15 @@ source("R/themes.R")
 # sample information ----
 samples <- read_csv("metadata/00_birds_sachecked.csv") %>%
   mutate(id = bird) %>%
-  select(id, horm.id)
+  select(id, horm.id) %>%
+  filter(id != "L.G118")
 head(samples)
 
 # hormones ---
-hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
+hormones <- read_csv("results/AllHorm_02042020_nomiss.csv",
+                    # skip last line  
+                    n_max = 351
+                    ) %>%
   rename("horm.id" = "id") %>%
   mutate(prl = as.numeric(prl),
          cort = as.numeric(cort),
@@ -22,7 +26,7 @@ hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
          t = as.numeric(t)) %>%
   full_join(samples, ., by = "horm.id") %>%
   arrange(desc(studytype)) %>%
-  filter(treatment != "NA", treatment != ".", treatment != "stress") %>%
+  filter(treatment != "NA", treatment != "stress") %>%
   mutate(e2t = ifelse(sex == "f", e2, t)) %>%
   mutate(sex = recode(sex, "f" = "female", "m" = "male" )) %>%
   select(id, treatment, sex, prl, cort, p4, e2t) %>%
@@ -34,14 +38,16 @@ hormones <- read_csv("results/AllHorm_02042020_nomiss.csv") %>%
                                                         ifelse(treatment == "m.inc3", "m.inc.d3",
                                           ifelse(grepl("m.hatch", treatment), "m.n2",
                                                  ifelse(treatment == "m.inc8", "early",
-                                                  treatment))))))))) %>%
-  filter(!id %in% c("pk.s054.d.g", "blu119.w84.x", "blu84.x", "x.g.g.ATLAS")) 
+                                                  treatment)))))))),
+         treatment = ifelse(id == "pk.s054.d.g", "m.n2", treatment),
+         sex = ifelse(id == "pk.s054.d.g", "female", sex),
+         sex = ifelse(id == "blu119.w84.x", "female", sex))  %>%
+  drop_na()
 head(hormones)
 
 ## fix bad samples in hormones
 # pk.s054.d.g is a female m.hatch (n2) bad, drop
 # blu119.w84.x is male and female in other ds
-
 
 write_csv(hormones, "../musicalgenes/data/hormones.csv")
 
@@ -59,12 +65,18 @@ candidatevsds <- vsd_pathfiles %>%
   map_dfr(~read_csv(.x)) %>%
   mutate(id = sapply(strsplit(as.character(samples),'\\_'), "[", 1)) %>%
   select(id, sex, tissue, treatment, gene, counts) %>%
+  filter(!gene %in% c("CRH" , "MC3R", "NPVF")) %>%
   pivot_wider(names_from = "gene", values_from = "counts")  %>%
-  mutate(treatment = ifelse(id == "x.o61", "extend",
-                            ifelse(grepl("y128.g23.x|blu108.w40.o158|x.blu43.g132|r37.w100.x", id), "m.inc.d9",
-                            treatment))) %>%
-  filter(!id %in% c("pk.s054.d.g", "blu119.w84.x", "blu84.x", "x.g.g.ATLAS") ) 
+  mutate(treatment = ifelse(grepl("x.o61|blu84.x", id), "extend",
+                            ifelse(grepl("y128.g23.x|blu108.w40.o158|x.blu43.g132|r37.w100.x", 
+                                         id), "m.inc.d9",
+                            treatment)))  %>%
+  full_join(samples, .) %>%
+  drop_na() %>%
+  select(-horm.id)
 head(candidatevsds)
+
+
 
 # fix bad hormoen samples
 
@@ -80,9 +92,7 @@ head(candidatevsds)
 
 # join genes and hormones ----
 
-genesnhomrmones <- inner_join(hormones, candidatevsds, by = "id")  %>%
-  rename("treatment" = "treatment.x", "sex" = "sex.x" ) %>%
-  select(-treatment.y, sex.y) %>%
+genesnhomrmones <- full_join(hormones, candidatevsds, by = c("id", "sex", "treatment"))  %>%
   select(id, sex, tissue, treatment, 
          prl, cort, p4, e2t, everything()) %>%
   mutate(tissue = factor(tissue, levels = tissuelevels),
