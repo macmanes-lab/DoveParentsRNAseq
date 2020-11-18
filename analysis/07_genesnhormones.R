@@ -70,12 +70,8 @@ candidatevsds <- vsd_pathfiles %>%
   mutate(treatment = ifelse(grepl("x.o61|blu84.x", id), "extend",
                             ifelse(grepl("y128.g23.x|blu108.w40.o158|x.blu43.g132|r37.w100.x", 
                                          id), "m.inc.d9",
-                            treatment)))  %>%
-  full_join(samples, .) %>%
-  drop_na() %>%
-  select(-horm.id)
+                            treatment)))
 head(candidatevsds)
-
 
 
 # fix bad hormoen samples
@@ -127,4 +123,3 @@ plotcorrelation(genesnhomrmones$OPRM1, "OPRM1",
 
 cor.test(genesnhomrmones$prl, genesnhomrmones$PRL, 
                 method = "pearson")
-
