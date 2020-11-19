@@ -171,7 +171,6 @@ de <- plot_grid(e,d)
 abc <- plot_grid(a,bc,de, nrow = 3,
                  rel_heights = c(1.2,1,1))
 
-
 pdf(file="figures/fig-randomforest.pdf", width=7, height=6)
 plot(abc)
 dev.off()
