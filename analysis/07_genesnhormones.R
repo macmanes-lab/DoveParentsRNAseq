@@ -102,6 +102,11 @@ genesnhomrmones <- full_join(hormones, candidatevsds, by = c("id", "sex", "treat
          treatment = factor(treatment, levels = alllevels))
 head(genesnhomrmones)
 
+samplesfixed <- genesnhomrmones %>%
+  select(id, sex, treatment) %>%
+  distinct() %>% arrange(id)
+head(samplesfixed)
+
 # correlations ---
 
 plotcorrelation <- function(xvar, xlab, yvar, ylab){
@@ -226,5 +231,6 @@ plotcorrelation(genesnhomrmones$cort, "Circulating corticosterone (ng/mL)",
 
 ## save file for musical genes 
 
+write_csv(samplesfixed, "metadata/00_birds_fixed.csv")
 write_csv(hormones, "../musicalgenes/data/hormones.csv")
 write_csv(candidatecounts, "../musicalgenes/data/candidatecounts.csv")
