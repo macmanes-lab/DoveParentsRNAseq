@@ -7,44 +7,7 @@ library(cowplot)
 
 source("R/themes.R")
 
-
 # https://towardsdatascience.com/random-forest-in-r-f66adf80ec9
-
-genesnhomrmones <- full_join(hormones, candidatevsds, by = c("id", "sex", "treatment"))  %>%
-  select(id, sex, tissue, treatment, 
-         prl, cort, p4, e2t, everything()) %>%
-  mutate(tissue = factor(tissue, levels = tissuelevels),
-         treatment = factor(treatment, levels = alllevels)) %>% 
-  mutate_if(is.character, as.factor) %>%
-  drop_na() %>%
-  mutate(external = fct_collapse(treatment,
-                               eggs = c("lay", "inc.d3", "inc.d9", "inc.d17", "prolong"),
-                               chicks = c("hatch", "n5", "n9", "extend" , "early" ),
-                               loss = c("m.inc.d3",  "m.inc.d9",  "m.inc.d17",  "m.n2"),
-                               controls = c("control", "bldg")),
-       internal = fct_collapse(treatment,
-                               earlier = c("lay", "inc.d3", "m.inc.d3",  "m.inc.d9",
-                                         "inc.d9",  "early"),
-                               later = c("hatch", "n5", "n9", "extend" ,  "prolong", "inc.d17",
-                                        "m.inc.d17",  "m.n2"),
-                               controls = c("control", "bldg")),
-       hybrid = fct_collapse(treatment,
-                               earlypresent = c("lay", "inc.d3", "inc.d9",  "early"),
-                               earlyloss = c( "m.inc.d3",  "m.inc.d9"),
-                               laterpresent = c("hatch", "n5", "n9", "extend" ,  "prolong", "inc.d17"),
-                               laterloss = c("m.inc.d17",  "m.n2"),
-                               controls = c("control", "bldg")),
-       study = fct_collapse(treatment,
-                             char = c("lay", "inc.d3", "inc.d9", "hatch", "n5", "n9", "inc.d17" ),
-                             manip = c( "m.inc.d3",  "m.inc.d9", "m.inc.d17",  "m.n2",
-                                        "early", "extend" ,  "prolong"),
-                             controls = c("control", "bldg"))) %>%
-  select(-id,  -MC3R, -CRH, -NPVF, -VIPR1) %>%
-  select(treatment, external, internal, hybrid, study, sex, tissue, everything())
-head(genesnhomrmones)
-
-
-
 
 # need bird info to join with vsds 
 
