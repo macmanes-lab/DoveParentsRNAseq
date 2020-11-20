@@ -242,7 +242,7 @@ kp.r,bird,sex,treatment,horm.id,notes
 228,x.blu25,female,m.inc.d9,x-blu25,
 285,x.r76,female,m.inc.d9,x-r76,
 307,y12.x,female,m.inc.d9,y12-x,
-310,y128.g23.x,female,m.inc.d9,y128/g23-x,should be inc9; listed 2x
+310,y128.g23.x,female,m.inc.d9,y128/g23-x,should be m.inc9; listed 2x
 106,l.s280.g.blk,male,m.inc.d9,l/s-g/blk,
 107,o.d.s009,male,m.inc.d9,o/d-s,
 159,r196.x,male,m.inc.d9,r196-x,

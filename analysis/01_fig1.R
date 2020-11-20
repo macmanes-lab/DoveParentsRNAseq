@@ -7,7 +7,7 @@ source("R/functions.R")
 
 #  Experimental design, tSNE analysis figure
 
-countData <- read_csv("results/00_counts.csv") %>%
+countData <- read_csv("results/00_countData.csv") %>%
   column_to_rownames(var = "X1")
 countData <- as.data.frame(t(countData))
 head(countData[1:3])

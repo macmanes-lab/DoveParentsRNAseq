@@ -4,3 +4,4 @@ results/03_allDEG.csv filter=lfs diff=lfs merge=lfs -text
 results/03_pitvsdAll.csv filter=lfs diff=lfs merge=lfs -text
 results/03_hypvsdAll.csv filter=lfs diff=lfs merge=lfs -text
 results/03_gonvsdAll.csv filter=lfs diff=lfs merge=lfs -text
+results/00_countData.csv filter=lfs diff=lfs merge=lfs -text

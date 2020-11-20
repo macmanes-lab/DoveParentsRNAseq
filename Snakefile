@@ -3,16 +3,15 @@ rule wrangle:
     "metadata/kallistosamples.txt",
     "results/kallistocounts.txt"
   output:
-    "metadata/00_geneinfo.csv",
     "metadata/00_colData.csv",
-    "results/00_counts.csv"
+    "results/00_countData.csv"
   shell:
     "Rscript analysis/00_wrangle.R"
     
 rule fig1:
   input:
     "metadata/00_colData.csv",
-    "results/00_counts.csv"
+    "results/00_countData.csv"
   output:
     "figures/fig1-1.pdf"
   shell:
@@ -21,7 +20,7 @@ rule fig1:
 rule deseq2:
   input:
     "metadata/00_colData.csv",
-    "results/00_counts.csv"
+    "results/00_countData.csv"
   output:
     "results/DESeq2/treatment/female_pituitary_control_bldg_DEGs.csv",
     "results/DESeq2/treatment/male_hypothalamus_inc.d9_inc.d17_DEGs.csv"
