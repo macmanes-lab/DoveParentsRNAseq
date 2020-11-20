@@ -85,10 +85,13 @@ DEGvsds2 <- DEGvsds %>%
 head(DEGvsds2) 
 
 
+##  suset for random forest testing and training
 
+# random sampling
 sample = sample.split(DEGvsds2$treatment, SplitRatio = .75)
 train = subset(DEGvsds2, sample == TRUE)
 test  = subset(DEGvsds2, sample == FALSE)
+
 dim(train)
 dim(test)
 
@@ -127,30 +130,7 @@ res3 <- test %>%
 res3
 
 
-
-rf4 <- randomForest(
-  hybrid ~ . * sex * tissue,
-  data=train
-)
-rf4 
-
-pred4 = predict(rf4, newdata=test[-4])
-res4 <- test %>%
-  mutate(pred = pred4) %>%
-  select(hybrid, pred)
-
-
-rf5 <- randomForest(
-  study ~ . * sex * tissue,
-  data=train
-)
-rf5 
-
-pred5 = predict(rf5, newdata=test[-5])
-res5 <- test %>%
-  mutate(pred = pred5) %>%
-  select(study, pred)
-
+## random forest stacked bar plots
 
 a <- ggplot(res1, aes(x = treatment, fill = pred)) +
   geom_bar(position = "fill") +
