@@ -18,7 +18,7 @@ countData <- read_csv("results/00_countData.csv") %>%
 
 #### uncomment this to subset the data for quick analysis
 print("subset for quick run")
-countData  <- head(countData, 1500)
+countData  <- head(countData, 1550)
 
 # col data or variable informaiton
 colData <- read.csv("metadata/00_colData.csv", header = T, row.names = 1) %>%
@@ -37,24 +37,23 @@ head(row.names(colData))
 
 ######## differential gene expression
 
-ddsMH <- returndds("male_hypothalamus")
-vsdMH <- returnvsd(ddsMH, "male_hypothalamus")
+ddsH <- returndds(c("female_hypothalamus", "male_hypothalamus"))
+vsdH <- returnvsd(ddsH, c("hypothalamus"))
 
-ddsFH <- returndds("female_hypothalamus")
-vsdFH <- returnvsd(ddsFH, "female_hypothalamus")
+ddsP <- returndds(c("female_pituitary", "male_pituitary"))
+vsdP <- returnvsd(ddsP, "pituitary")
 
-# ddsMP <- returndds("male_pituitary")
-# vsdMP <- returnvsd(ddsMP, "male_pituitary")
-# 
-# ddsFP <- returndds("female_pituitary")
-# vsdFP <- returnvsd(ddsFP, "female_pituitary")
-# 
-# ddsMG <- returndds("male_gonads")
-# vsdMG <- returnvsd(ddsMG, "male_gonads")
-# 
-# ddsFG <- returndds("female_gonads")
-# vsdFG <- returnvsd(ddsFG, "female_gonads")
+ddsG <- returndds("female_gonads", "male_gonads")
+vsdG <- returnvsd(ddsG, "gonads")
 
+
+# sex-specific DEGs
+
+calculateSexDEGs(ddsH, "hypothalamus")
+calculateSexDEGs(ddsP, "pituitary")
+calculateSexDEGs(ddsG, "gonads")
+
+# treatment-specific DEGs
 
 savealltheDEGs <- function(whichdds, whichgroup){
   
@@ -70,18 +69,18 @@ savealltheDEGs <- function(whichdds, whichgroup){
   createDEGdfs(whichdds, whichgroup, "n5", "n9")
 
   # removal
-  createDEGdfs(whichdds, whichgroup,  "inc.d3", "m.inc.d3")
-  createDEGdfs(whichdds, whichgroup,  "inc.d9", "m.inc.d9")
+  createDEGdfs(whichdds, whichgroup, "inc.d3", "m.inc.d3")
+  createDEGdfs(whichdds, whichgroup, "inc.d9", "m.inc.d9")
   createDEGdfs(whichdds, whichgroup, "inc.d17", "m.inc.d17")
   createDEGdfs(whichdds, whichgroup, "hatch", "m.n2")
   
   # replacement
-  createDEGdfs(whichdds, "male_hypothalamus", manipcontrols, replacements)
+  createDEGdfs(whichdds, whichgroup, manipcontrols, replacements)
 }
 
-savealltheDEGs(ddsFH, "female_hypothalamus")
-savealltheDEGs(ddsMH, "male_hypothalamus")
-# savealltheDEGs(ddsFP, "female_pituitary")
-# savealltheDEGs(ddsMP, "male_pituitary")
-# savealltheDEGs(ddsFG, "female_gonads")
-# savealltheDEGs(ddsMG, "male_gonads")
+savealltheDEGs(ddsH, "female_hypothalamus")
+savealltheDEGs(ddsH, "male_hypothalamus")
+savealltheDEGs(ddsP, "female_pituitary")
+savealltheDEGs(ddsP, "male_pituitary")
+savealltheDEGs(ddsG, "female_gonads")
+savealltheDEGs(ddsG, "male_gonads")

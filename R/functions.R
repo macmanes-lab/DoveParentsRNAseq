@@ -17,7 +17,7 @@ returndds <- function(whichgroup){
   
   dds <- DESeqDataSetFromMatrix(countData = newcountData,
                                 colData = newcolData,
-                                design = ~ treatment )
+                                design = ~ treatment * sex )
   dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than 10 sample with less 0 counts
 
   print(dds)
@@ -57,9 +57,7 @@ createDEGdfs <- function(whichdds, whichgroup, downs, ups){
       if (up != down) {
         if (up != "prolong" | down != "early") {
           
-          cat("\n\n")
-          
-          k <- paste(down, up, sep = " vs. ") #assigns usique rownames
+          k <- paste(down, up, sep = " vs. ") 
           print(whichgroup)
           print(k)
           
@@ -86,9 +84,6 @@ createDEGdfs <- function(whichdds, whichgroup, downs, ups){
             dplyr::arrange(gene) %>%
             dplyr::mutate(direction = factor(direction, levels = c(down, "NS", up)),
                           direction2 = factor(direction2, levels = c(down, "NS", up)))
-          
-
-         
           
           # write DEGsframe of only significant genes
           DEGs <- DEGs %>% dplyr::filter(direction2 != "NS") %>%
@@ -127,6 +122,45 @@ createDEGdfs <- function(whichdds, whichgroup, downs, ups){
 
 
 
+
+
+calculateSexDEGs <- function(whichdds, whichtissue){
+  res <- results(whichdds, contrast = c("sex", "male", "female"), 
+                 independentFiltering = T, alpha = 0.1,
+                 lfcThreshold=log2(1.1))
+  print(summary(res))
+  
+  DEGs <- data.frame(gene = row.names(res),
+                     pvalue = res$pvalue, 
+                     padj = res$padj, 
+                     logpadj = -log10(res$padj),
+                     lfc = res$log2FoldChange,
+                     tissue = whichtissue)
+  DEGs <- na.omit(DEGs)
+  
+  DEGs <- DEGs %>%
+    dplyr::mutate(direction = ifelse(lfc > 0.14 & padj < 0.1, yes = "male", 
+                                     ifelse(lfc < -0.14 & padj < 0.1, yes = "female", 
+                                            no = "NS"))) %>% 
+    dplyr::mutate(direction2 = ifelse(lfc > 0.14 & pvalue < 0.05, yes = "male", 
+                                      ifelse(lfc < -0.14 & pvalue < 0.05, yes = "female", 
+                                             no = "NS"))) %>% 
+    dplyr::arrange(gene) %>%
+    dplyr::mutate(direction = factor(direction, levels = c("female", "NS", "male")),
+                  direction2 = factor(direction2, levels = c("female", "NS", "male")))
+  
+  # write DEGsframe of only significant genes
+  DEGs <- DEGs %>% dplyr::filter(direction2 != "NS") %>%
+    select(tissue, gene, 
+           padj, direction, pvalue, direction2, 
+           lfc, logpadj)
+  
+  
+  # return DEGs frome with all data, included NS genes
+  myfilename = paste0("results/DESeq2/sex/", whichtissue, "_DEGs.csv")
+  write.csv(DEGs, myfilename, row.names = F)
+}
+  
 
 
 
