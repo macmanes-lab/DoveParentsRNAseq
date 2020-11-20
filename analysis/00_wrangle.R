@@ -12,11 +12,6 @@ kallistodata <- kallistodata %>%
                 "gene" = "Name")
 head(kallistodata[1:3])
 
-## save gene information
-geneinfo <- kallistodata %>%
-  select(gene, geneid, NCBI) 
-head(geneinfo)
-
 ## check for genes that have multple transcripts expressed
 
 isoforms <- kallistodata %>%
@@ -124,6 +119,9 @@ birds <- colData %>%
 head(birds)
 
 ## save files for downstream use
+
+write.csv(hugopresent, "metadata/00_hugopresent.csv")
+write.csv(hugoabsent, "metadata/00_hugoasent.csv")
 
 write.csv(countData, "results/00_counts.csv")
 write.csv(isoforms, "results/00_geneswithisoforms.csv", row.names = T)
