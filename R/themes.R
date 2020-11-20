@@ -53,6 +53,11 @@ alllevels2 <- c("control", "bldg", "lay", "inc.d3", "inc.d9",
                 "m.inc.d3" ,   "m.inc.d9" , "m.inc.d17"  , "m.n2", 
                 "early" , "prolong", "extend")
 
+deseq2levels <- c("bldg", "control", "lay", "inc.d3", "inc.d9", 
+                "inc.d17", "hatch", "n5", "n9",
+                "m.inc.d3" ,   "m.inc.d9" , "m.inc.d17"  , "m.n2", 
+                "early" , "prolong", "extend")
+
 hypothesislevels <- c(  "nest",  "eggs", "chicks" ,  "lo" , "hi" , "early", "late")
 
 # tissue

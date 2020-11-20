@@ -43,17 +43,17 @@ vsdMH <- returnvsd(ddsMH, "male_hypothalamus")
 ddsFH <- returndds("female_hypothalamus")
 vsdFH <- returnvsd(ddsFH, "female_hypothalamus")
 
-ddsMP <- returndds("male_pituitary")
-vsdMP <- returnvsd(ddsMP, "male_pituitary")
-
-ddsFP <- returndds("female_pituitary")
-vsdFP <- returnvsd(ddsFP, "female_pituitary")
-
-ddsMG <- returndds("male_gonads")
-vsdMG <- returnvsd(ddsMG, "male_gonads")
-
-ddsFG <- returndds("female_gonads")
-vsdFG <- returnvsd(ddsFG, "female_gonads")
+# ddsMP <- returndds("male_pituitary")
+# vsdMP <- returnvsd(ddsMP, "male_pituitary")
+# 
+# ddsFP <- returndds("female_pituitary")
+# vsdFP <- returnvsd(ddsFP, "female_pituitary")
+# 
+# ddsMG <- returndds("male_gonads")
+# vsdMG <- returnvsd(ddsMG, "male_gonads")
+# 
+# ddsFG <- returndds("female_gonads")
+# vsdFG <- returnvsd(ddsFG, "female_gonads")
 
 
 savealltheDEGs <- function(whichdds, whichgroup){
@@ -68,8 +68,7 @@ savealltheDEGs <- function(whichdds, whichgroup){
   createDEGdfs(whichdds, whichgroup, "inc.d17", "hatch")
   createDEGdfs(whichdds, whichgroup, "hatch", "n5")
   createDEGdfs(whichdds, whichgroup, "n5", "n9")
-  createDEGdfs(whichdds, whichgroup, "control", "bldg")
-  
+
   # removal
   createDEGdfs(whichdds, whichgroup,  "inc.d3", "m.inc.d3")
   createDEGdfs(whichdds, whichgroup,  "inc.d9", "m.inc.d9")
@@ -82,7 +81,7 @@ savealltheDEGs <- function(whichdds, whichgroup){
 
 savealltheDEGs(ddsFH, "female_hypothalamus")
 savealltheDEGs(ddsMH, "male_hypothalamus")
-savealltheDEGs(ddsFP, "female_pituitary")
-savealltheDEGs(ddsMP, "male_pituitary")
-savealltheDEGs(ddsFG, "female_gonads")
-savealltheDEGs(ddsFP, "male_gonads")
+# savealltheDEGs(ddsFP, "female_pituitary")
+# savealltheDEGs(ddsMP, "male_pituitary")
+# savealltheDEGs(ddsFG, "female_gonads")
+# savealltheDEGs(ddsMG, "male_gonads")
