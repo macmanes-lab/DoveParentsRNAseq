@@ -15,7 +15,7 @@ head(countData[1:3])
 colData <- read_csv("metadata/00_colData.csv") %>%
   mutate(treatment = factor(treatment, levels = alllevels),
          tissue = factor(tissue, levels = tissuelevels)) %>% 
-  column_to_rownames(var = "X1") 
+  column_to_rownames(var = "V1")  %>% select(-X1)
 head(colData)
 
 # check ready for analysis
