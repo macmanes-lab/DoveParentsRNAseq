@@ -99,7 +99,7 @@ labelsinc17 <- c("m.inc.d17", "prolong")
 labelshatch <- c("m.n2", "early",  "prolong", "extend")
 labelsearly <- c("inc.d9", "extend")
 
-levelscontrolcharmanip <- c("control_bldg", "control_lay",  "control_inc.d3",  
+levelscontrolcharmanip <- c("bldg_control", "control_lay",  "control_inc.d3",  
                              "control_inc.d9",   "control_inc.d17",  
                              "control_hatch", "control_n5", "control_n9",
                             
@@ -117,7 +117,7 @@ labelscontrolcharmanip  <- c("bldg" ,"lay", "inc3",
                              )
 
 
-levelsbldgchar <- c("control_bldg", "bldg_lay",  "bldg_inc.d3",  
+levelsbldgchar <- c("bldg_control", "bldg_lay",  "bldg_inc.d3",  
                             "bldg_inc.d9",   "bldg_inc.d17",  
                             "bldg_hatch", "bldg_n5", "bldg_n9"
                             )
@@ -127,6 +127,13 @@ labelsbldgchar  <- c("control", "lay", "inc3",
                              "hatch" , "n5", "n9"
                              )
 
+
+# contrastst part 1. versus control and bldg
+references <- c("bldg")
+
+# contrastst part 2. manips versus internal or other manips
+manipcontrols <- c("inc.d9", "inc.d17", "hatch", "n5",  "prolong", "early")
+replacements   <- c("early", "prolong", "extend")
 
 # custom colors
 

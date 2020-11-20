@@ -18,7 +18,8 @@ returndds <- function(whichgroup){
   dds <- DESeqDataSetFromMatrix(countData = newcountData,
                                 colData = newcolData,
                                 design = ~ treatment )
-  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than sample with less 0 counts
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than 10 sample with less 0 counts
+
   print(dds)
   print(dim(dds))
   dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis

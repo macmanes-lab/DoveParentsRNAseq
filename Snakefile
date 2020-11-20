@@ -22,8 +22,8 @@ rule deseq2:
     "metadata/00_colData.csv",
     "results/00_countData.csv"
   output:
-    "results/DESeq2/treatment/female_pituitary_control_bldg_DEGs.csv",
-    "results/DESeq2/treatment/male_hypothalamus_inc.d9_inc.d17_DEGs.csv"
+    "results/DESeq2/treatment/female_hypothalamus_vsd.csv",
+    "results/DESeq2/treatment/male_hypothalamus_vsd.csv"
   threads: 6
   shell:
     "Rscript analysis/02_DESeq2.R"
