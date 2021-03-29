@@ -38,24 +38,24 @@ head(row.names(colData))
 savealltheDEGs <- function(whichdds, whichgroup){
   
   createDEGdfs(whichdds, whichgroup, "bldg", "control")
-  createDEGdfs(whichdds, whichgroup, references, charlevelsnocontrol)
+  #createDEGdfs(whichdds, whichgroup, references, charlevelsnocontrol)
   
   # sequential
-  createDEGdfs(whichdds, whichgroup, "lay", "inc.d3")
-  createDEGdfs(whichdds, whichgroup, "inc.d3", "inc.d9")
-  createDEGdfs(whichdds, whichgroup, "inc.d9", "inc.d17")
-  createDEGdfs(whichdds, whichgroup, "inc.d17", "hatch")
-  createDEGdfs(whichdds, whichgroup, "hatch", "n5")
-  createDEGdfs(whichdds, whichgroup, "n5", "n9")
+  #createDEGdfs(whichdds, whichgroup, "lay", "inc.d3")
+  #createDEGdfs(whichdds, whichgroup, "inc.d3", "inc.d9")
+  #createDEGdfs(whichdds, whichgroup, "inc.d9", "inc.d17")
+  #createDEGdfs(whichdds, whichgroup, "inc.d17", "hatch")
+  #createDEGdfs(whichdds, whichgroup, "hatch", "n5")
+  #createDEGdfs(whichdds, whichgroup, "n5", "n9")
   
   # removal
-  createDEGdfs(whichdds, whichgroup, "inc.d3", "m.inc.d3")
-  createDEGdfs(whichdds, whichgroup, "inc.d9", "m.inc.d9")
-  createDEGdfs(whichdds, whichgroup, "inc.d17", "m.inc.d17")
-  createDEGdfs(whichdds, whichgroup, "hatch", "m.n2")
+  #createDEGdfs(whichdds, whichgroup, "inc.d3", "m.inc.d3")
+  #createDEGdfs(whichdds, whichgroup, "inc.d9", "m.inc.d9")
+  #createDEGdfs(whichdds, whichgroup, "inc.d17", "m.inc.d17")
+  #createDEGdfs(whichdds, whichgroup, "hatch", "m.n2")
   
   # replacement
-  createDEGdfs(whichdds, whichgroup, manipcontrols, replacements)
+  #createDEGdfs(whichdds, whichgroup, manipcontrols, replacements)
 }
 
 ######## differential gene expression
