@@ -129,6 +129,9 @@ ncol(countData) == nrow(colData)
 colData %>% select(sex, tissue, treatment, study)  %>%  summary()
 table(colData$sex, colData$treatment, colData$tissue)
 
+colData %>%
+  count(sex, tissue, treatment, sort = TRUE)
+
 length(unique(colData$bird))
 table(colData$sex, colData$tissue)
 
@@ -155,3 +158,7 @@ write.csv(countData, "results/00_countData.csv")
 write.csv(colData, "metadata/00_colData.csv")
 write.csv(samples, "metadata/00_samples.csv")
 write.csv(geneinfo, "metadata/00_geneinfo.csv", row.names = TRUE)
+write.csv(isoforms, "results/00_isoforms.csv", row.names = TRUE)
+
+
+
