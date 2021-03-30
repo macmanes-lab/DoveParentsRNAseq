@@ -69,7 +69,7 @@ returndds2 <- function(whichgroup){
 
 wranglevsds <- function(pathtofile){
   df <- read_csv(pathtofile) %>%
-    mutate(treatment = factor(treatment, levels = alllevels2))
+    mutate(treatment = factor(treatment, levels = alllevels))
   return(df)
 }
 
@@ -206,25 +206,21 @@ plot.volcano <- function(whichtissue,  whichcomparison){
     geom_point(aes(color = direction), size = 1, 
                alpha = 0.75, na.rm = T) + 
     theme_B3() +
-    facet_wrap(~sex, nrow = 2, scales = "free_y") +
+    facet_wrap(~sex, nrow = 1, strip.position = "top") +
     scale_color_manual(values = allcolors, 
-                       name = "higher in:",
+                       name = "Increased expression in:",
                        breaks = alllevels) +
     labs(y = expression(-log[10]("FDR")), 
          x = "LFC",
          title = " ") +
-    theme(legend.position = "top",
+    theme(legend.position = "bottom",
           legend.direction = "vertical",
           legend.key.height = unit(-0.2, "cm"),      
           #legend.spacing.y = unit(-0.2, "cm"),
           legend.spacing.x = unit(-0.2, "cm")) +
-    guides(color = guide_legend(nrow = 1)) 
+    guides(color = guide_legend(nrow = 1, reverse = TRUE)) 
   return(volcano)
 }
-
-
-
-
 
 
 
@@ -307,21 +303,21 @@ makebargraphv5 <- function(df, whichtissue, myylab,
   
   p <- df %>%
     dplyr::filter(tissue == whichtissue) %>%
+    drop_na() %>%
     ggplot(aes(x = comparison, y = n, fill = direction)) +
     geom_hline(yintercept = 0) +
     geom_bar(stat="identity") +
     theme_B3() +
     theme(legend.position = "none",
-          axis.text.x = element_text(angle = 45, hjust = 1))  +
+          axis.text.x = element_text(angle = 45, vjust = 0.5))  +
     scale_fill_manual(values = allcolors,
                       name = " ") +
     scale_color_manual(values = allcolors) +
-    facet_wrap(~sex, nrow = 2) +
+    facet_wrap(~sex, nrow = 1, strip.position = "top") +
     labs(x = NULL, y = myylab)  +
     scale_x_discrete(breaks = whichlevels,
                      labels = whichlabels,
-                     drop = F,
-                     position = "bottom")  
+                     drop = F)  
     
   return(p)
 }

@@ -23,13 +23,6 @@ gon <- rbind(gonf, gonm)
 
 allDEG <- read_csv("results/04_allDEG.csv")
 
-# reverse sign of control bldg comparisons
-
-allDEG <- allDEG %>%
-  mutate(lfc = ifelse(comparison == "control_bldg", lfc * -1 , 
-                      ifelse(comparison == "inc.d9_early", lfc * -1 , lfc)))
-
-
 ###### DEGs
 
 
@@ -85,12 +78,12 @@ j2 <- makebargraphv4(fig2Ddegs, "pituitary", "No. of DEGs",
                      fig2Dcomps, fig2Dlabels) + 
   labs(x = "Comparison", subtitle = "Pituitary", title = " ")
 
-abcde <- plot_grid(a,b,c,d,e,e2, nrow = 1, 
-                   labels = c("A", "B", "C", "D", " ", "E" ), label_size = 8,
-                   rel_widths = c(1,1,1,0.85,0.75,0.7))
-fghij <- plot_grid(f,g,h,i,j,j2, nrow = 1, 
-                   labels = c("F", "G", "H", "I", "", "J"), label_size = 8,
-                   rel_widths = c(1,1,1,0.85,0.75,0.7))
+abcde <- plot_grid(a,b,c, nrow = 1, 
+                   labels = c("A", "B", "C" ), label_size = 8,
+                   rel_widths = c(1,1,1))
+fghij <- plot_grid(f,g,h,nrow = 1, 
+                   labels = c("D", "E", "F" ), label_size = 8,
+                   rel_widths = c(1,1,1))
 
 fig2 <- plot_grid(abcde,fghij, nrow  = 2)
 fig2
@@ -108,37 +101,57 @@ dev.off()
 
 DEGbldg <- filterDEGs(levelsbldgchar)
 DEGsequential <- filterDEGs(levelssequential)
+DEGinc9 <- filterDEGs(levelsinc9)
 DEGinc17 <- filterDEGs(levelsinc17)
 DEGhatch <- filterDEGs(levelshatch)
-DEGearly <- filterDEGs(levelsearly)
+DEGearly <- filterDEGs(levelsearly) %>%
+  mutate(tissue = factor(tissue, levels = tissuelevels),
+         sex = factor(sex , levels = sexlevels))
+
+
+
+
 
 makefig3 <- function(tissue, label1){
 
   tissuetitle <- str_to_sentence(tissue, locale = "en")
+  
   ylab <- paste(tissuetitle, "\nNo. of DEGs", sep = "")
+  
+  #ylab <- "Genes with increased expression"
+  
+  
+  a <-  plot.volcano(tissue, "bldg_control") + 
+    labs(subtitle = tissuetitle) 
   
   b <- makebargraphv5(DEGbldg, tissue, ylab, 
                       levelsbldgchar, labelsbldgchar) +
-    labs(x = "Relative to...nest-building controls,", subtitle = " ")
+    labs(x = "Relative to nest-building controls,", subtitle = " ") 
   
   c <- makebargraphv5(DEGsequential, tissue, NULL,  
                       levelssequential, labelsssequential) +
-    labs(x = "previous stage,", subtitle = " ") 
+    labs(x = "Relative to the previous stage,", subtitle = " ") 
+  
+  d <- makebargraphv5(DEGinc9, tissue, NULL,  
+                      levelsinc9, labelsinc9) +
+    labs(x = "... to inc.d9,", subtitle = " ") 
+  
   
   e <- makebargraphv5(DEGinc17, tissue, NULL,  
                       levelsinc17, labelsinc17) +
-    labs(x = "inc.d17,", subtitle = " ") 
+    labs(x = "... to inc.d17,", subtitle = " ") 
   
   f <- makebargraphv5(DEGhatch, tissue, NULL,  
                       levelshatch, labelshatch) +
-    labs(x = "hatch,", subtitle = " ") 
+    labs(x = "... to hatch,", subtitle = " ") 
  
    g <- makebargraphv5(DEGearly, tissue, NULL,  
                       levelsearly, labelsearly) +
-    labs(x = "and early.", subtitle = " ") 
+    labs(x = "Relative to early.", subtitle = " ") 
   
-  fig <- plot_grid(b,c,e,f,g, nrow = 1, rel_widths = c(15,12,5,7,5),
-                      labels = label1, label_size = 8)
+  fig <- plot_grid(b,c,d, e,f, nrow = 1, rel_widths = c(7,5.5,2.5,2.5,3.5),
+                      labels = label1, label_size = 8, align = "h")
+  
   return(fig)
 }
 
@@ -147,6 +160,8 @@ cd <- makefig3("pituitary", c("B"))
 ef <- makefig3("gonads", c("C"))
 
 fig3 <- plot_grid(ab,cd,ef, nrow = 3)
+fig3
+
 
 png(file = "figures/fig3-1.png", width = 7, height = 7, 
     units = 'in', res = 300)

@@ -21,7 +21,7 @@ charlevelsnocontrol <- c( "bldg", "lay", "inc.d3", "inc.d9", "inc.d17", "hatch",
 maniplevels <- c("m.inc.d3" ,  "early" ,  "m.inc.d9" , "m.inc.d17", "prolong" ,  "m.n2", "extend")
 
 # manipulation
-timinglevels <- c("inc.d17", "early" , "prolong" ,  "extend")
+timinglevels <- c("inc.d3", "inc.d9", "inc.d17", "early" , "prolong" ,  "extend")
 
 removallevels <- c( "m.inc.d3" ,  "m.inc.d9" ,
              "m.inc.d17" ,  "m.n2")
@@ -92,7 +92,7 @@ labelssmanip <- c("inc.d3_m.inc.d3", "inc.d9_m.inc.d9",  "early_inc.d9" ,
 levelsinc9 <- c("inc.d9_m.inc.d9", "inc.d9_early")
 levelsinc17 <- c("inc.d17_m.inc.d17", "inc.d17_prolong")
 levelshatch <- c("hatch_m.n2", "hatch_early", "hatch_prolong", "hatch_extend" )
-levelsearly <- c("inc.d9_early", "early_extend")
+levelsearly <- c("early_prolong", "early_extend")
 
 levelsmanip <- c(levelsinc9,levelsinc17,  levelshatch )
 
@@ -102,7 +102,7 @@ levelsreplace <- c("inc.d9_early","inc.d17_prolong", "hatch_early", "hatch_prolo
 labelsinc9 <- c("m.inc.d9", "early")
 labelsinc17 <- c("m.inc.d17", "prolong")
 labelshatch <- c("m.n2", "early",  "prolong", "extend")
-labelsearly <- c("inc.d9", "extend")
+labelsearly <- c("prolong", "extend")
 
 levelscontrolcharmanip <- c("bldg_control", "control_lay",  "control_inc.d3",  
                              "control_inc.d9",   "control_inc.d17",  

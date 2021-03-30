@@ -120,3 +120,9 @@ sharedsexdifs <- rbind(hypsex, pitsex) %>%
 
 head(sharedsexdifs) 
 write.csv(sharedsexdifs, "results/sharedsexdifs.csv")
+
+head(allDEG)
+
+allDEG %>%
+  filter(tissue == "hypothalamus") %>%
+  filter(comparison %in% c("bldg_control", "") )
