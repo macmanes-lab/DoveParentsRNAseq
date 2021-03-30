@@ -39,6 +39,34 @@ returnvsd <- function(whichdds, whichgroup){
 }
 
 
+
+returndds2 <- function(whichgroup){
+  
+  newcolData <- colData %>%
+    dplyr::filter(sextissue %in% whichgroup) %>%      
+    droplevels()
+  row.names(newcolData) <- newcolData$V1
+  
+  # save counts that match colData
+  savecols <- as.character(newcolData$V1) 
+  savecols <- as.vector(savecols) 
+  
+  newcountData <- countData %>% dplyr::select(one_of(savecols)) 
+  
+  dds <- DESeqDataSetFromMatrix(countData = newcountData,
+                                colData = newcolData,
+                                design = ~ treatment  )
+  dds <- dds[rowSums(counts(dds) > 1) >= 10]  # filter more than 10 sample with less 0 counts
+  
+  print(dds)
+  print(dim(dds))
+  dds <- DESeq(dds, parallel = TRUE) # Differential expression analysis
+  return(dds)
+}
+
+
+
+
 wranglevsds <- function(pathtofile){
   df <- read_csv(pathtofile) %>%
     mutate(treatment = factor(treatment, levels = alllevels2))

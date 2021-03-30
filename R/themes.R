@@ -134,6 +134,7 @@ labelsbldgchar  <- c("control", "lay", "inc3",
 
 
 # contrastst part 1. versus control and bldg
+#references <- c("control", "bldg")
 references <- c("bldg")
 
 # contrastst part 2. manips versus internal or other manips

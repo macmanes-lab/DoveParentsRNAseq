@@ -38,48 +38,47 @@ head(row.names(colData))
 savealltheDEGs <- function(whichdds, whichgroup){
   
   createDEGdfs(whichdds, whichgroup, "bldg", "control")
-  #createDEGdfs(whichdds, whichgroup, references, charlevelsnocontrol)
+  createDEGdfs(whichdds, whichgroup, references, charlevelsnocontrol)
   
   # sequential
-  #createDEGdfs(whichdds, whichgroup, "lay", "inc.d3")
-  #createDEGdfs(whichdds, whichgroup, "inc.d3", "inc.d9")
-  #createDEGdfs(whichdds, whichgroup, "inc.d9", "inc.d17")
-  #createDEGdfs(whichdds, whichgroup, "inc.d17", "hatch")
-  #createDEGdfs(whichdds, whichgroup, "hatch", "n5")
-  #createDEGdfs(whichdds, whichgroup, "n5", "n9")
+  createDEGdfs(whichdds, whichgroup, "lay", "inc.d3")
+  createDEGdfs(whichdds, whichgroup, "inc.d3", "inc.d9")
+  createDEGdfs(whichdds, whichgroup, "inc.d9", "inc.d17")
+  createDEGdfs(whichdds, whichgroup, "inc.d17", "hatch")
+  createDEGdfs(whichdds, whichgroup, "hatch", "n5")
+  createDEGdfs(whichdds, whichgroup, "n5", "n9")
   
   # removal
-  #createDEGdfs(whichdds, whichgroup, "inc.d3", "m.inc.d3")
-  #createDEGdfs(whichdds, whichgroup, "inc.d9", "m.inc.d9")
-  #createDEGdfs(whichdds, whichgroup, "inc.d17", "m.inc.d17")
-  #createDEGdfs(whichdds, whichgroup, "hatch", "m.n2")
+  createDEGdfs(whichdds, whichgroup, "inc.d3", "m.inc.d3")
+  createDEGdfs(whichdds, whichgroup, "inc.d9", "m.inc.d9")
+  createDEGdfs(whichdds, whichgroup, "inc.d17", "m.inc.d17")
+  createDEGdfs(whichdds, whichgroup, "hatch", "m.n2")
   
   # replacement
-  #createDEGdfs(whichdds, whichgroup, manipcontrols, replacements)
+  createDEGdfs(whichdds, whichgroup, manipcontrols, replacements)
 }
 
 ######## differential gene expression
 
-ddsH <- returndds(c("female_hypothalamus", "male_hypothalamus"))
-vsdH <- returnvsd(ddsH, c("hypothalamus"))
 
-calculateSexDEGs(ddsH, "hypothalamus")
-savealltheDEGs(ddsH, "hypothalamus")
+ddsHf <- returndds2(c("female_hypothalamus"))
+savealltheDEGs(ddsHf, "female_hypothalamus")
 
-
-ddsP <- returndds(c("female_pituitary", "male_pituitary"))
-vsdP <- returnvsd(ddsP, "pituitary")
-
-ddsG <- returndds("female_gonads", "male_gonads")
-vsdG <- returnvsd(ddsG, "gonads")
+ddsHm <- returndds2(c("male_hypothalamus"))
+savealltheDEGs(ddsHm, "male_hypothalamus")
 
 
-# sex-specific DEGs
+ddsGm <- returndds2(c("male_gonads"))
+savealltheDEGs(ddsGm, "male_gonads")
 
-calculateSexDEGs(ddsP, "pituitary")
-calculateSexDEGs(ddsG, "gonads")
+ddsGf <- returndds2(c("female_gonads"))
+savealltheDEGs(ddsGf, "female_gonads")
 
-# treatment-specific DEGs
+ddsPf <- returndds2(c("female_pituitary"))
+savealltheDEGs(ddsPf, "female_pituitary")
 
-savealltheDEGs(ddsP, "pituitary")
-savealltheDEGs(ddsG, "gonads")
+ddsPm <- returndds2(c("male_pituitary"))
+savealltheDEGs(ddsPm, "male_pituitary")
+
+
+

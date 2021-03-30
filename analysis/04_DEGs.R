@@ -76,11 +76,11 @@ makefinaltables <- function(df, whichlevels){
 }
 
 table1 <- makefinaltables(candidateDEGs, levelsbldgchar) %>%
-  select(gene, control_bldg:bldg_n9)
+  select(gene, bldg_control:bldg_n9)
 table2 <- makefinaltables(candidateDEGs, c(levelsrm, levelsreplace))
 
 tableS1 <- makefinaltables(candidateDEGs, levelscontrolcharmanip) %>%
-  select(gene, control_bldg:control_n9)
+  select(gene, bldg_control:control_n9)
 tableS2 <- makefinaltables(candidateDEGs, levelssequential) 
 tableS3 <- makefinaltables(candidateDEGs, levelscontrolcharmanip) %>%
   select(gene, control_m.inc.d3:control_extend)
